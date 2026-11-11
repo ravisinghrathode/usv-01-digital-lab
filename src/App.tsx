@@ -1,933 +1,734 @@
-import { useState, useEffect } from 'react';
-import {
-  ShieldAlert,
-  Cpu,
-  Layers,
-  CheckCircle2,
-  AlertTriangle,
-  Sliders,
-  BookOpen,
-  RefreshCw,
-  Anchor,
-  Zap,
-  Activity,
-  Check,
-  X,
-  Search
-} from 'lucide-react';
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
-import { AgentRegistry } from './core/registry/AgentRegistry.ts';
-import { ExecutionEngine } from './core/engine/ExecutionEngine.ts';
-import { CentralOrchestrator } from './core/orchestrator/CentralOrchestrator.ts';
-import { ToolRegistry } from './core/tools/ToolRegistry.ts';
-import { SharedMemory } from './core/memory/SharedMemory.ts';
-import { ApprovalGateManager } from './core/safety/HumanApprovalGate.ts';
-import { AuditLogger } from './core/safety/AuditLogger.ts';
-import { AgentSpec, AgentStatus } from './core/types/agent.ts';
-import { EngineeringTask } from './core/types/orchestrator.ts';
-import { HumanApprovalGate } from './core/types/safety.ts';
-import { EngineeringParameter } from './core/types/memory.ts';
+import React, { useState, useEffect, useMemo } from 'react';
+import { NavigationSidebar, NavigationModule } from './components/NavigationSidebar';
+import { TopBar } from './components/TopBar';
+import { ProjectOverview } from './components/ProjectOverview';
+import { SystemsEngineeringView } from './components/SystemsEngineeringView';
+import { NavalArchitectureView } from './components/NavalArchitectureView';
+import { HydrodynamicsView } from './components/HydrodynamicsView';
+import { MechanicalStructuralView } from './components/MechanicalStructuralView';
+import { ElectricalPowerView } from './components/ElectricalPowerView';
+import { PropulsionView } from './components/PropulsionView';
+import { SoftwareAutonomyView } from './components/SoftwareAutonomyView';
+import { VerificationValidationView } from './components/VerificationValidationView';
+import { SimulationCentreView } from './components/SimulationCentreView';
+import { RisksDecisionsView } from './components/RisksDecisionsView';
+import { ProcurementBOMView } from './components/ProcurementBOMView';
+import { TraceabilityMatrixView } from './components/TraceabilityMatrixView';
+import { KnowledgeCentreView } from './components/KnowledgeCentreView';
+import { AgentOrchestratorView } from './components/AgentOrchestratorView';
+import { AiEngineeringAssistant } from './components/AiEngineeringAssistant';
+import { NewRecordModal } from './components/NewRecordModal';
+import { ExportImportModal } from './components/ExportImportModal';
+import { ContextGuideModal } from './components/ContextGuideModal';
+
+import {
+  ProjectInfo,
+  WorkstreamSummary,
+  Requirement,
+  DesignDecision,
+  EngineeringRisk,
+  SimulationJob,
+  VerificationPlan,
+  TestRecord,
+  ComponentBOM,
+  ActivityLogItem,
+  PrincipalParticulars,
+  WeightCGItem,
+  ResistanceEstimate,
+  MaterialRecord,
+  LoadCaseRecord,
+  PowerLoadItem,
+  InterfaceDefinition,
+  KnowledgeNote,
+  WorkstreamCode,
+  EngineeringStatus,
+  SimulationRunStatus
+} from './types/engineering';
+
+import {
+  INITIAL_PROJECT,
+  INITIAL_WORKSTREAMS,
+  INITIAL_REQUIREMENTS,
+  INITIAL_DECISIONS,
+  INITIAL_RISKS,
+  INITIAL_SIMULATIONS,
+  INITIAL_VERIFICATION_PLANS,
+  INITIAL_TEST_RECORDS,
+  INITIAL_COMPONENTS_BOM,
+  INITIAL_ACTIVITY_LOG,
+  INITIAL_NAVAL_PARTICULARS,
+  INITIAL_WEIGHT_CG,
+  INITIAL_RESISTANCE,
+  INITIAL_MATERIALS,
+  INITIAL_LOAD_CASES,
+  INITIAL_POWER_LOADS,
+  INITIAL_INTERFACES,
+  INITIAL_KNOWLEDGE_NOTES
+} from './data/initialProjectData';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'agents' | 'orchestrator' | 'approvals' | 'tools' | 'parameters' | 'audit'>('agents');
-  
-  // Singletons
-  const registry = AgentRegistry.getInstance();
-  const executionEngine = ExecutionEngine.getInstance();
-  const orchestrator = CentralOrchestrator.getInstance();
-  const toolRegistry = ToolRegistry.getInstance();
-  const sharedMemory = SharedMemory.getInstance();
-  const gateManager = ApprovalGateManager.getInstance();
-  const auditLogger = AuditLogger.getInstance();
+  // Navigation & UI state
+  const [currentModule, setCurrentModule] = useState<NavigationModule>('overview');
+  const [globalSearch, setGlobalSearch] = useState('');
+  const [isAiOpen, setIsAiOpen] = useState(false);
+  const [aiPrefillPrompt, setAiPrefillPrompt] = useState<string | undefined>();
+  const [isNewRecordModalOpen, setIsNewRecordModalOpen] = useState(false);
+  const [defaultNewSubsystem, setDefaultNewSubsystem] = useState<WorkstreamCode>('SYS');
+  const [isExportImportModalOpen, setIsExportImportModalOpen] = useState(false);
+  const [isContextGuideOpen, setIsContextGuideOpen] = useState(false);
 
-  // State
-  const [agents, setAgents] = useState<AgentSpec[]>([]);
-  const [agentStatuses, setAgentStatuses] = useState<Record<string, AgentStatus>>({});
-  const [selectedAgent, setSelectedAgent] = useState<AgentSpec | null>(null);
-  const [agentFilter, setAgentFilter] = useState<string>('ALL');
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  // Application Data Stores
+  const [project, setProject] = useState<ProjectInfo>(INITIAL_PROJECT);
+  const [workstreams, setWorkstreams] = useState<WorkstreamSummary[]>(INITIAL_WORKSTREAMS);
+  const [requirements, setRequirements] = useState<Requirement[]>(INITIAL_REQUIREMENTS);
+  const [decisions, setDecisions] = useState<DesignDecision[]>(INITIAL_DECISIONS);
+  const [risks, setRisks] = useState<EngineeringRisk[]>(INITIAL_RISKS);
+  const [simulations, setSimulations] = useState<SimulationJob[]>(INITIAL_SIMULATIONS);
+  const [verificationPlans, setVerificationPlans] = useState<VerificationPlan[]>(INITIAL_VERIFICATION_PLANS);
+  const [testRecords, setTestRecords] = useState<TestRecord[]>(INITIAL_TEST_RECORDS);
+  const [components, setComponents] = useState<ComponentBOM[]>(INITIAL_COMPONENTS_BOM);
+  const [activityLogs, setActivityLogs] = useState<ActivityLogItem[]>(INITIAL_ACTIVITY_LOG);
 
-  const [tasks, setTasks] = useState<EngineeringTask[]>([]);
-  const [pendingGates, setPendingGates] = useState<HumanApprovalGate[]>([]);
-  const [parameters, setParameters] = useState<EngineeringParameter[]>([]);
-  const [logs, setLogs] = useState<any[]>([]);
-  const [isExecutingWorkflow, setIsExecutingWorkflow] = useState(false);
+  // Discipline specific stores
+  const [particulars, setParticulars] = useState<PrincipalParticulars>(INITIAL_NAVAL_PARTICULARS);
+  const [weightItems, setWeightItems] = useState<WeightCGItem[]>(INITIAL_WEIGHT_CG);
+  const [resistanceEstimates, setResistanceEstimates] = useState<ResistanceEstimate[]>(INITIAL_RESISTANCE);
+  const [materials, setMaterials] = useState<MaterialRecord[]>(INITIAL_MATERIALS);
+  const [loadCases, setLoadCases] = useState<LoadCaseRecord[]>(INITIAL_LOAD_CASES);
+  const [powerLoads, setPowerLoads] = useState<PowerLoadItem[]>(INITIAL_POWER_LOADS);
+  const [interfaces, setInterfaces] = useState<InterfaceDefinition[]>(INITIAL_INTERFACES);
+  const [knowledgeNotes, setKnowledgeNotes] = useState<KnowledgeNote[]>(INITIAL_KNOWLEDGE_NOTES);
 
-  // Tool Calculator State
-  const [selectedToolId, setSelectedToolId] = useState<string>('TOOL-HYDROSTATICS-01');
-  const [toolInputs, setToolInputs] = useState<Record<string, any>>({
-    lwlMeters: 10.5,
-    beamMeters: 2.8,
-    draftMeters: 0.65,
-    blockCoefficientCb: 0.44,
-    kgMeters: 0.85
-  });
-  const [toolOutput, setToolOutput] = useState<any>(null);
-
-  // Director Approval Notes State
-  const [directorNote, setDirectorNote] = useState<string>('Approved under director review against DNV-RU-NAV specifications.');
-  const [obsidianExportModal, setObsidianExportModal] = useState<boolean>(false);
-  const [exportedNotes, setExportedNotes] = useState<Record<string, string>>({});
-
-  const refreshState = () => {
-    setAgents(registry.getAllAgents());
-    setAgentStatuses(executionEngine.getAllStatuses());
-    setTasks(orchestrator.getAllTasks());
-    setPendingGates(gateManager.getPendingGates());
-    setParameters(sharedMemory.getAllParameters());
-    setLogs(auditLogger.getLogs().reverse().slice(0, 50));
-  };
-
+  // Fetch initial snapshot from backend on mount
   useEffect(() => {
-    refreshState();
-    setSelectedAgent(registry.getAgent('LEAD-SYS-01') || null);
+    fetch('/api/data/snapshot')
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.success && resData.data) {
+          const d = resData.data;
+          if (d.requirements?.length) setRequirements(d.requirements);
+          if (d.design_decisions?.length) setDecisions(d.design_decisions);
+          if (d.engineering_risks?.length) setRisks(d.engineering_risks);
+          if (d.simulation_jobs?.length) setSimulations(d.simulation_jobs);
+          if (d.verification_plans?.length) setVerificationPlans(d.verification_plans);
+          if (d.test_records?.length) setTestRecords(d.test_records);
+          if (d.components?.length) setComponents(d.components);
+          if (d.activity_log?.length) setActivityLogs(d.activity_log);
+          if (d.knowledge_notes?.length) setKnowledgeNotes(d.knowledge_notes);
+          if (d.power_loads?.length) setPowerLoads(d.power_loads);
+          if (d.interfaces?.length) setInterfaces(d.interfaces);
+          if (d.materials?.length) setMaterials(d.materials);
+          if (d.load_cases?.length) setLoadCases(d.load_cases);
+          if (d.resistance_estimates?.length) setResistanceEstimates(d.resistance_estimates);
+          if (d.weight_cg?.length) setWeightItems(d.weight_cg);
+        }
+      })
+      .catch((err) => {
+        console.warn('Could not fetch snapshot from server, using local seed dataset:', err);
+      });
   }, []);
 
-  // Run Baseline Sizing Workflow
-  const handleRunSizingWorkflow = async () => {
-    setIsExecutingWorkflow(true);
-    orchestrator.clearTasks();
+  // Sync log helper
+  const addActivityLog = (action: ActivityLogItem['action'], recordType: string, recordId: string, details: string) => {
+    const newLog: ActivityLogItem = {
+      id: `LOG-${Date.now()}`,
+      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+      userId: 'usr-engineer',
+      userName: 'Lead Engineer',
+      action,
+      recordType,
+      recordId,
+      details
+    };
+    setActivityLogs((prev) => [newLog, ...prev]);
 
-    orchestrator.registerTask({
-      id: 'TASK-HULL-PARAM',
-      title: 'Principal Particulars & Parametric Geometry',
-      description: 'Define initial hull parameters and form coefficients',
-      assignedAgentId: 'HULL-GEO-05',
-      discipline: 'NA',
-      priority: 'HIGH',
-      dependencies: [],
-      input: {
-        taskId: 'TASK-HULL-PARAM',
-        context: {},
-        parameters: { lwlMeters: 11.2, beamMeters: 2.9, draftMeters: 0.68, blockCoefficientCb: 0.42 }
-      },
-      status: 'PENDING',
-      createdAt: new Date().toISOString(),
-      safetyCritical: false
-    });
+    // Send to server in background
+    fetch('/api/data/activity_log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newLog)
+    }).catch(() => {});
+  };
 
-    orchestrator.registerTask({
-      id: 'TASK-MASS-SWBS',
-      title: 'Weight Group Ledger & CG Calculation',
-      description: 'SWBS lightship and center of gravity synthesis',
-      assignedAgentId: 'WGT-BAL-09',
-      discipline: 'NA',
-      priority: 'HIGH',
-      dependencies: ['TASK-HULL-PARAM'],
-      input: {
-        taskId: 'TASK-MASS-SWBS',
-        context: {},
-        parameters: {
-          components: [
-            { name: 'Carbon Composite Hull', massKg: 1950, lcgMetersFromTransom: 5.2, tcgMetersFromCl: 0, vcgMetersFromKeel: 0.65, designMarginPercent: 10 },
-            { name: 'Dual Torqeedo Deep Blue Motors', massKg: 380, lcgMetersFromTransom: 1.8, tcgMetersFromCl: 0, vcgMetersFromKeel: 0.42, designMarginPercent: 5 },
-            { name: 'BMW i3 High-Voltage Battery Pack', massKg: 1250, lcgMetersFromTransom: 4.1, tcgMetersFromCl: 0, vcgMetersFromKeel: 0.38, designMarginPercent: 10 },
-            { name: 'Sensor Mast & Mission Radome', massKg: 160, lcgMetersFromTransom: 6.2, tcgMetersFromCl: 0, vcgMetersFromKeel: 2.2, designMarginPercent: 15 }
-          ]
-        }
-      },
-      status: 'PENDING',
-      createdAt: new Date().toISOString(),
-      safetyCritical: false
-    });
+  // Requirements handlers
+  const handleAddRequirement = (reqData: Partial<Requirement>) => {
+    const newReq: Requirement = {
+      id: `REQ-${reqData.subsystemCode || 'SYS'}-${Date.now().toString().slice(-3)}`,
+      projectId: 'PRJ-USV-01',
+      subsystemCode: reqData.subsystemCode || 'SYS',
+      title: reqData.title || 'Untitled Requirement',
+      description: reqData.description || '',
+      category: reqData.category || 'Functional',
+      priority: reqData.priority || 'High',
+      subsystemAllocation: reqData.subsystemAllocation || reqData.subsystemCode || 'SYS',
+      verificationMethod: reqData.verificationMethod || 'Test',
+      acceptanceCriteria: reqData.acceptanceCriteria || 'Acceptance criteria [TBD]',
+      owner: reqData.owner || 'Lead Engineer',
+      revision: 'Rev 1.0',
+      status: reqData.status || 'Draft',
+      isIllustrative: false,
+      relatedDecisions: reqData.relatedDecisions || [],
+      relatedSimulations: reqData.relatedSimulations || [],
+      relatedVerifications: reqData.relatedVerifications || [],
+      createdAt: new Date().toISOString().split('T')[0],
+      updatedAt: new Date().toISOString().split('T')[0]
+    };
 
-    orchestrator.registerTask({
-      id: 'TASK-STAB-AUDIT',
-      title: 'Hydrostatic Intact Stability Verification',
-      description: 'Evaluate transverse GMt and righting energy against ISO 12217-5',
-      assignedAgentId: 'STAB-HYD-06',
-      discipline: 'NA',
-      priority: 'CRITICAL',
-      dependencies: ['TASK-HULL-PARAM', 'TASK-MASS-SWBS'],
-      input: {
-        taskId: 'TASK-STAB-AUDIT',
-        context: {},
-        parameters: {
-          lwlMeters: 11.2,
-          beamMeters: 2.9,
-          draftMeters: 0.68,
-          blockCoefficientCb: 0.42,
-          waterplaneCoefficientCwp: 0.64,
-          kgMeters: 0.82
-        }
-      },
-      status: 'PENDING',
-      createdAt: new Date().toISOString(),
-      safetyCritical: true
-    });
+    setRequirements((prev) => [newReq, ...prev]);
+    addActivityLog('CREATE', 'REQUIREMENT', newReq.id, `Created requirement: ${newReq.title}`);
 
-    orchestrator.registerTask({
-      id: 'TASK-RES-POWER',
-      title: 'Calm Water Resistance & Powering Curve',
-      description: 'Holtrop-Mennen estimation at 22 knots sprint',
-      assignedAgentId: 'RES-SEAK-07',
-      discipline: 'NA',
-      priority: 'MEDIUM',
-      dependencies: ['TASK-HULL-PARAM', 'TASK-MASS-SWBS'],
-      input: {
-        taskId: 'TASK-RES-POWER',
-        context: {},
-        parameters: {
-          lwlMeters: 11.2,
-          beamMeters: 2.9,
-          draftMeters: 0.68,
-          displacementTonnes: 7.8,
-          speedKnots: 22.0
-        }
-      },
-      status: 'PENDING',
-      createdAt: new Date().toISOString(),
-      safetyCritical: false
-    });
+    fetch('/api/data/requirements', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newReq)
+    }).catch(() => {});
+  };
 
-    refreshState();
+  const handleUpdateRequirement = (id: string, updates: Partial<Requirement>) => {
+    setRequirements((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, ...updates, updatedAt: new Date().toISOString().split('T')[0] } : r))
+    );
+    addActivityLog('UPDATE', 'REQUIREMENT', id, `Updated requirement fields`);
 
+    fetch(`/api/data/requirements/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates)
+    }).catch(() => {});
+  };
+
+  const handleArchiveRequirement = (id: string) => {
+    setRequirements((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, status: 'Archived' as EngineeringStatus } : r))
+    );
+    addActivityLog('ARCHIVE', 'REQUIREMENT', id, `Archived requirement`);
+
+    fetch(`/api/data/requirements/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'Archived' })
+    }).catch(() => {});
+  };
+
+  // Decisions handler
+  const handleUpdateDecisionStatus = (id: string, status: EngineeringStatus) => {
+    setDecisions((prev) =>
+      prev.map((d) => (d.id === id ? { ...d, approvalState: status, updatedAt: new Date().toISOString().split('T')[0] } : d))
+    );
+    addActivityLog(status === 'Approved' ? 'APPROVE' : 'UPDATE', 'DECISION', id, `Changed decision state to ${status}`);
+
+    fetch(`/api/data/design_decisions/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ approvalState: status })
+    }).catch(() => {});
+  };
+
+  // Simulations handler
+  const handleUpdateSimStatus = (id: string, newStatus: SimulationRunStatus) => {
+    setSimulations((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, runStatus: newStatus, updatedAt: new Date().toISOString().split('T')[0] } : s))
+    );
+    addActivityLog('UPDATE', 'SIMULATION', id, `Updated run status to ${newStatus}`);
+
+    fetch(`/api/data/simulation_jobs/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ runStatus: newStatus })
+    }).catch(() => {});
+  };
+
+  // Modal new record dispatcher
+  const handleCreateRecordFromModal = (kind: string, data: any) => {
+    if (kind === 'requirement') {
+      handleAddRequirement(data);
+    } else if (kind === 'decision') {
+      const newDec: DesignDecision = {
+        id: `DEC-${data.subsystemCode || 'SYS'}-${Date.now().toString().slice(-3)}`,
+        projectId: 'PRJ-USV-01',
+        subsystemCode: data.subsystemCode,
+        title: data.title,
+        problemStatement: data.problemStatement,
+        alternatives: data.alternatives || [],
+        rationale: data.rationale,
+        supportingEvidence: data.supportingEvidence || '',
+        consequences: data.consequences || '',
+        reviewer: data.reviewer,
+        approvalState: data.approvalState || 'Draft',
+        revision: 'Rev 0.1',
+        isAiProposal: false,
+        isIllustrative: false,
+        createdAt: new Date().toISOString().split('T')[0],
+        updatedAt: new Date().toISOString().split('T')[0]
+      };
+      setDecisions((prev) => [newDec, ...prev]);
+      addActivityLog('CREATE', 'DECISION', newDec.id, `Created decision: ${newDec.title}`);
+      fetch('/api/data/design_decisions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newDec)
+      }).catch(() => {});
+    } else if (kind === 'risk') {
+      const newRisk: EngineeringRisk = {
+        id: `RSK-${Date.now().toString().slice(-3)}`,
+        projectId: 'PRJ-USV-01',
+        subsystemCode: data.subsystemCode,
+        description: data.description,
+        probability: data.probability,
+        impact: data.impact,
+        riskScore: data.riskScore,
+        mitigation: data.mitigation,
+        owner: data.owner,
+        status: 'Open',
+        isIllustrative: false,
+        createdAt: new Date().toISOString().split('T')[0],
+        updatedAt: new Date().toISOString().split('T')[0]
+      };
+      setRisks((prev) => [newRisk, ...prev]);
+      addActivityLog('CREATE', 'RISK', newRisk.id, `Logged risk score ${newRisk.riskScore}`);
+      fetch('/api/data/engineering_risks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newRisk)
+      }).catch(() => {});
+    } else if (kind === 'simulation') {
+      const newSim: SimulationJob = {
+        id: `SIM-${data.discipline || 'HYD'}-${Date.now().toString().slice(-3)}`,
+        projectId: 'PRJ-USV-01',
+        discipline: data.discipline,
+        name: data.name,
+        geometryRevision: data.geometryRevision,
+        inputConfiguration: data.inputConfiguration,
+        solver: data.solver,
+        boundaryConditions: data.boundaryConditions,
+        unitsAndReferenceFrame: data.unitsAndReferenceFrame,
+        assumptions: data.assumptions,
+        computeEnvironment: data.computeEnvironment,
+        runStatus: data.runStatus || 'Ready',
+        outputFiles: data.outputFiles || '',
+        resultsSummary: data.resultsSummary,
+        reviewer: data.reviewer,
+        validationStatus: data.validationStatus,
+        isIllustrative: false,
+        createdAt: new Date().toISOString().split('T')[0],
+        updatedAt: new Date().toISOString().split('T')[0]
+      };
+      setSimulations((prev) => [newSim, ...prev]);
+      addActivityLog('CREATE', 'SIMULATION', newSim.id, `Created simulation job: ${newSim.name}`);
+      fetch('/api/data/simulation_jobs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newSim)
+      }).catch(() => {});
+    } else if (kind === 'verification') {
+      const newPlan: VerificationPlan = {
+        id: `VER-${data.subsystemCode || 'SYS'}-${Date.now().toString().slice(-3)}`,
+        projectId: 'PRJ-USV-01',
+        subsystemCode: data.subsystemCode,
+        title: data.title,
+        procedureSummary: data.procedureSummary,
+        acceptanceCriteria: data.acceptanceCriteria,
+        instrumentationAndCalibration: data.instrumentationAndCalibration,
+        targetReqIds: data.targetReqIds || [],
+        status: 'Draft',
+        owner: data.owner,
+        isIllustrative: false,
+        createdAt: new Date().toISOString().split('T')[0],
+        updatedAt: new Date().toISOString().split('T')[0]
+      };
+      setVerificationPlans((prev) => [newPlan, ...prev]);
+      addActivityLog('CREATE', 'VERIFICATION', newPlan.id, `Created verification plan: ${newPlan.title}`);
+      fetch('/api/data/verification_plans', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newPlan)
+      }).catch(() => {});
+    } else if (kind === 'component') {
+      const newComp: ComponentBOM = {
+        id: `BOM-${Date.now().toString().slice(-3)}`,
+        projectId: 'PRJ-USV-01',
+        subsystemCode: data.subsystemCode,
+        partNumber: data.partNumber,
+        description: data.description,
+        manufacturer: data.manufacturer,
+        supplier: data.supplier,
+        technicalSpecs: data.technicalSpecs,
+        quantity: data.quantity,
+        unitCost: data.unitCost,
+        leadTimeWeeks: data.leadTimeWeeks,
+        procurementStatus: data.procurementStatus || 'Specifying',
+        isIllustrative: false,
+        createdAt: new Date().toISOString().split('T')[0],
+        updatedAt: new Date().toISOString().split('T')[0]
+      };
+      setComponents((prev) => [newComp, ...prev]);
+      addActivityLog('CREATE', 'BOM', newComp.id, `Added BOM component: ${newComp.partNumber}`);
+      fetch('/api/data/components', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newComp)
+      }).catch(() => {});
+    }
+  };
+
+  // Reset demo data handler
+  const handleResetDemoData = async () => {
     try {
-      await orchestrator.executeWorkflow();
+      const res = await fetch('/api/data/reset-demo', { method: 'POST' });
+      const data = await res.json();
+      if (data.success && data.data) {
+        setRequirements(data.data.requirements);
+        setDecisions(data.data.design_decisions);
+        setRisks(data.data.engineering_risks);
+        setSimulations(data.data.simulation_jobs);
+        setVerificationPlans(data.data.verification_plans);
+        setTestRecords(data.data.test_records);
+        setComponents(data.data.components);
+        setActivityLogs(data.data.activity_log);
+      }
+    } catch {
+      // Offline fallback
+      setRequirements(INITIAL_REQUIREMENTS);
+      setDecisions(INITIAL_DECISIONS);
+      setRisks(INITIAL_RISKS);
+      setSimulations(INITIAL_SIMULATIONS);
+      setVerificationPlans(INITIAL_VERIFICATION_PLANS);
+      setTestRecords(INITIAL_TEST_RECORDS);
+      setComponents(INITIAL_COMPONENTS_BOM);
+      setActivityLogs(INITIAL_ACTIVITY_LOG);
+    }
+  };
+
+  // Full export JSON
+  const handleExportJson = () => {
+    const fullStore = {
+      project,
+      workstreams,
+      requirements,
+      design_decisions: decisions,
+      engineering_risks: risks,
+      simulation_jobs: simulations,
+      verification_plans: verificationPlans,
+      test_records: testRecords,
+      components,
+      activity_log: activityLogs,
+      knowledge_notes: knowledgeNotes,
+      power_loads: powerLoads,
+      interfaces,
+      materials,
+      load_cases: loadCases,
+      resistance_estimates: resistanceEstimates,
+      weight_cg: weightItems
+    };
+
+    const blob = new Blob([JSON.stringify(fullStore, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `USV01_Digital_Engineering_Lab_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  // Full import JSON
+  const handleImportJson = async (jsonString: string): Promise<boolean> => {
+    try {
+      const parsed = JSON.parse(jsonString);
+      if (parsed.requirements) setRequirements(parsed.requirements);
+      if (parsed.design_decisions) setDecisions(parsed.design_decisions);
+      if (parsed.engineering_risks) setRisks(parsed.engineering_risks);
+      if (parsed.simulation_jobs) setSimulations(parsed.simulation_jobs);
+      if (parsed.verification_plans) setVerificationPlans(parsed.verification_plans);
+      if (parsed.test_records) setTestRecords(parsed.test_records);
+      if (parsed.components) setComponents(parsed.components);
+      if (parsed.activity_log) setActivityLogs(parsed.activity_log);
+
+      // Post to server
+      await fetch('/api/import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: jsonString
+      });
+
+      return true;
     } catch (e) {
       console.error(e);
-    } finally {
-      setIsExecutingWorkflow(false);
-      refreshState();
+      return false;
     }
   };
 
-  // Evaluate Approval Gate
-  const handleDecision = (gateId: string, decision: 'APPROVED' | 'REJECTED') => {
-    try {
-      gateManager.evaluateDecision(gateId, decision, directorNote, 'ENGINEERING_DIRECTOR');
-      refreshState();
-    } catch (err: any) {
-      alert(err.message);
-    }
+  // Trigger AI assistant from any sub-view
+  const triggerAiQuery = (prompt: string, record?: any) => {
+    setAiPrefillPrompt(prompt);
+    setIsAiOpen(true);
   };
 
-  // Run Deterministic Tool
-  const handleExecuteTool = async () => {
-    const res = await toolRegistry.executeTool(selectedToolId, toolInputs, ['CALCULATION_EXEC']);
-    setToolOutput(res);
-    refreshState();
-  };
-
-  // Export Obsidian Vault
-  const handleExportObsidian = () => {
-    const exported = sharedMemory.exportObsidianVault();
-    setExportedNotes(exported);
-    setObsidianExportModal(true);
-  };
-
-  // Filtered Agents
-  const filteredAgents = agents.filter(agent => {
-    const matchesDiv = agentFilter === 'ALL' || agent.division === agentFilter;
-    const matchesSearch = agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          agent.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          agent.speciality.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesDiv && matchesSearch;
-  });
-
-  const getStatusBadge = (status?: AgentStatus) => {
-    switch (status) {
-      case 'EXECUTING':
-        return <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 animate-pulse">EXECUTING</span>;
-      case 'WAITING_APPROVAL':
-        return <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/30">WAITING APPROVAL</span>;
-      case 'COMPLETED':
-        return <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">COMPLETED</span>;
-      case 'FAILED':
-        return <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/30">FAILED</span>;
+  // Map module to display title
+  const currentModuleName = useMemo(() => {
+    switch (currentModule) {
+      case 'overview':
+        return 'Project Overview & Executive Command';
+      case 'agent-orchestrator':
+        return '25-Agent Autonomous Directorate & DAG Orchestrator';
+      case 'workstream-SYS':
+        return 'Subsystem 1: Systems Engineering';
+      case 'workstream-NAV':
+        return 'Subsystem 2: Naval Architecture';
+      case 'workstream-HYD':
+        return 'Subsystem 3: Hydrodynamics & CFD';
+      case 'workstream-MEC':
+        return 'Subsystem 4: Mechanical & Structural';
+      case 'workstream-ELE':
+        return 'Subsystem 5: Electrical & Power';
+      case 'workstream-PRP':
+        return 'Subsystem 6: Propulsion';
+      case 'workstream-AUT':
+        return 'Subsystem 7: Software & Autonomy';
+      case 'workstream-VNV':
+        return 'Subsystem 8: Verification & Validation';
+      case 'traceability':
+        return 'Requirements Traceability Matrix';
+      case 'simulations':
+        return 'Central Simulation Register';
+      case 'risks-decisions':
+        return 'Risks & Architectural Decisions';
+      case 'procurement-bom':
+        return 'Procurement & Bill of Materials';
+      case 'knowledge-centre':
+        return 'Knowledge Centre & Obsidian Graph';
       default:
-        return <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700">IDLE</span>;
+        return 'Digital Engineering Lab';
     }
-  };
+  }, [currentModule]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-950 text-slate-100 font-sans">
-      {/* Top Header */}
-      <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-40 px-6 py-3.5 flex items-center justify-between shadow-md">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-cyan-950/70 border border-cyan-500/30 rounded-lg text-cyan-400">
-            <Anchor className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-semibold tracking-wider px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800">
-                USV-01
-              </span>
-              <h1 className="font-bold text-lg text-slate-100 tracking-tight">
-                Digital Engineering Lab
-              </h1>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 flex items-center gap-1 font-medium">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                25 Agents Active
-              </span>
-            </div>
-            <p className="text-xs text-slate-400">Deterministic Naval Systems & Multi-Agent Engineering Architecture</p>
-          </div>
-        </div>
+    <div className="flex h-screen bg-slate-950 text-slate-100 font-sans antialiased overflow-hidden">
+      {/* Left Persistent Navigation Sidebar */}
+      <NavigationSidebar
+        currentModule={currentModule}
+        onSelectModule={(mod) => setCurrentModule(mod)}
+        openRequirementsCount={requirements.filter((r) => r.status !== 'Archived').length}
+        openDecisionsCount={decisions.filter((d) => d.approvalState !== 'Approved').length}
+        openRisksCount={risks.filter((r) => r.status === 'Open').length}
+        openSimulationsCount={simulations.filter((s) => s.runStatus === 'Under Review' || s.runStatus === 'Running').length}
+      />
 
-        {/* Governance Authority Badge */}
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-slate-900 border border-slate-800 text-xs">
-            <ShieldAlert className="w-4 h-4 text-amber-400" />
-            <div>
-              <span className="text-slate-400">Authority: </span>
-              <span className="font-semibold text-slate-200">Engineering Director</span>
-            </div>
-          </div>
+      {/* Main Workspace Area */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        {/* Top Header Bar */}
+        <TopBar
+          currentModuleName={currentModuleName}
+          searchQuery={globalSearch}
+          onSearchChange={setGlobalSearch}
+          onOpenNewRecord={() => {
+            setDefaultNewSubsystem('SYS');
+            setIsNewRecordModalOpen(true);
+          }}
+          onOpenExportImport={() => setIsExportImportModalOpen(true)}
+          onResetDemo={handleResetDemoData}
+          onToggleAiAssistant={() => setIsAiOpen(!isAiOpen)}
+          isAiAssistantOpen={isAiOpen}
+          onOpenContextGuide={() => setIsContextGuideOpen(true)}
+        />
 
-          {pendingGates.length > 0 && (
-            <button
-              onClick={() => setActiveTab('approvals')}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-purple-950/80 border border-purple-500/50 text-purple-300 text-xs font-semibold hover:bg-purple-900 transition-colors animate-pulse"
-            >
-              <AlertTriangle className="w-3.5 h-3.5 text-purple-400" />
-              <span>{pendingGates.length} Pending Approval{pendingGates.length > 1 ? 's' : ''}</span>
-            </button>
+        {/* Scrollable Workspace Body */}
+        <main className="flex-1 overflow-y-auto bg-slate-950/60 pb-12">
+          {currentModule === 'overview' && (
+            <ProjectOverview
+              workstreams={workstreams}
+              requirements={requirements}
+              decisions={decisions}
+              risks={risks}
+              simulations={simulations}
+              verificationPlans={verificationPlans}
+              activityLogs={activityLogs}
+              onNavigate={(mod) => setCurrentModule(mod)}
+              onAskAi={triggerAiQuery}
+            />
           )}
 
-          <button
-            onClick={refreshState}
-            className="p-2 rounded-md hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800 transition"
-            title="Refresh System State"
-          >
-            <RefreshCw className="w-4 h-4" />
-          </button>
-        </div>
-      </header>
+          {currentModule === 'agent-orchestrator' && (
+            <AgentOrchestratorView onAskAi={triggerAiQuery} />
+          )}
 
-      {/* Main Navigation Bar */}
-      <nav className="border-b border-slate-800 bg-slate-900/50 px-6 py-2 flex items-center justify-between text-xs">
-        <div className="flex gap-2">
-          {[
-            { id: 'agents', label: 'Agent Matrix (25)', icon: Cpu },
-            { id: 'orchestrator', label: 'Mission Cockpit & DAG', icon: Sliders },
-            { id: 'approvals', label: `Director Approvals (${pendingGates.length})`, icon: ShieldAlert },
-            { id: 'tools', label: 'Deterministic Tools Lab', icon: Zap },
-            { id: 'parameters', label: 'Baseline & TBD Register', icon: Layers },
-            { id: 'audit', label: 'Audit & Safety Log', icon: Activity }
-          ].map(tab => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-md font-medium transition-all ${
-                  isActive
-                    ? 'bg-cyan-950/60 text-cyan-300 border border-cyan-500/40 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent'
-                }`}
-              >
-                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
+          {currentModule === 'workstream-SYS' && (
+            <SystemsEngineeringView
+              requirements={requirements}
+              onAddRequirement={handleAddRequirement}
+              onUpdateRequirement={handleUpdateRequirement}
+              onArchiveRequirement={handleArchiveRequirement}
+              onAskAi={triggerAiQuery}
+              onOpenNewModal={(sub) => {
+                setDefaultNewSubsystem(sub || 'SYS');
+                setIsNewRecordModalOpen(true);
+              }}
+              filterSubsystem={undefined}
+            />
+          )}
 
-        <button
-          onClick={handleExportObsidian}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
-        >
-          <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
-          <span>Export Obsidian Notes</span>
-        </button>
-      </nav>
+          {currentModule === 'workstream-NAV' && (
+            <NavalArchitectureView
+              particulars={particulars}
+              weightItems={weightItems}
+              onUpdateParticulars={(updated) => setParticulars((prev) => ({ ...prev, ...updated }))}
+              onAskAi={triggerAiQuery}
+            />
+          )}
 
-      {/* Content Area */}
-      <main className="flex-1 p-6 overflow-auto">
-        {/* TAB 1: 25 AGENT MATRIX */}
-        {activeTab === 'agents' && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Agent List Column */}
-            <div className="lg:col-span-2 space-y-4">
-              <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
-                <div className="relative flex-1 max-w-sm">
-                  <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-500" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    placeholder="Search by ID, name, or speciality..."
-                    className="w-full bg-slate-900 border border-slate-800 rounded-md pl-9 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500"
-                  />
-                </div>
+          {currentModule === 'workstream-HYD' && (
+            <HydrodynamicsView
+              resistanceEstimates={resistanceEstimates}
+              simulations={simulations}
+              onOpenNewSimModal={() => {
+                setDefaultNewSubsystem('HYD');
+                setIsNewRecordModalOpen(true);
+              }}
+              onAskAi={triggerAiQuery}
+            />
+          )}
 
-                <div className="flex gap-1.5 flex-wrap">
-                  {['ALL', 'DIRECTORATE', 'REQUIREMENTS_BASELINE', 'NAVAL_ARCHITECTURE', 'STRUCTURES_MECHANICAL', 'POWER_PROPULSION', 'AUTONOMY_ELECTRONICS', 'SYSTEMS_VVT', 'OPERATIONS_DELIVERABLES'].map(div => (
-                    <button
-                      key={div}
-                      onClick={() => setAgentFilter(div)}
-                      className={`px-2 py-1 rounded text-[11px] font-medium transition ${
-                        agentFilter === div
-                          ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
-                          : 'bg-slate-900 text-slate-400 hover:bg-slate-800 border border-slate-800'
-                      }`}
-                    >
-                      {div === 'ALL' ? 'All Divisions' : div.split('_')[0]}
-                    </button>
-                  ))}
-                </div>
-              </div>
+          {currentModule === 'workstream-MEC' && (
+            <MechanicalStructuralView
+              materials={materials}
+              loadCases={loadCases}
+              simulations={simulations}
+              onAskAi={triggerAiQuery}
+            />
+          )}
 
-              {/* Agents Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {filteredAgents.map(agent => {
-                  const status = agentStatuses[agent.id] || 'IDLE';
-                  const isSelected = selectedAgent?.id === agent.id;
-                  return (
-                    <div
-                      key={agent.id}
-                      onClick={() => setSelectedAgent(agent)}
-                      className={`p-3.5 rounded-lg border transition cursor-pointer flex flex-col justify-between ${
-                        isSelected
-                          ? 'bg-slate-900/90 border-cyan-500/50 shadow-md ring-1 ring-cyan-500/30'
-                          : 'bg-slate-900/40 border-slate-800/80 hover:bg-slate-900/70 hover:border-slate-700'
-                      }`}
-                    >
-                      <div>
-                        <div className="flex items-center justify-between mb-1.5">
-                          <span className="font-mono text-xs font-bold text-cyan-400 bg-cyan-950/60 px-1.5 py-0.5 rounded border border-cyan-800/60">
-                            {agent.id}
-                          </span>
-                          {getStatusBadge(status)}
-                        </div>
-                        <h3 className="font-semibold text-sm text-slate-100">{agent.name}</h3>
-                        <p className="text-xs text-slate-400 line-clamp-2 mt-1">{agent.speciality}</p>
-                      </div>
+          {currentModule === 'workstream-ELE' && (
+            <ElectricalPowerView
+              powerLoads={powerLoads}
+              testRecords={testRecords}
+              onAskAi={triggerAiQuery}
+            />
+          )}
 
-                      <div className="mt-3 pt-2.5 border-t border-slate-800/70 flex items-center justify-between text-[11px] text-slate-500">
-                        <span>Tools: {agent.permittedTools.length}</span>
-                        <span>Deps: {agent.dependencies.length > 0 ? agent.dependencies.join(', ') : 'None'}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+          {currentModule === 'workstream-PRP' && (
+            <PropulsionView
+              propulsionComponents={components.filter((c) => c.subsystemCode === 'PRP')}
+              onAskAi={triggerAiQuery}
+            />
+          )}
 
-            {/* Selected Agent Inspector Panel */}
-            <div className="space-y-4">
-              {selectedAgent ? (
-                <div className="bg-slate-900/70 border border-slate-800 rounded-lg p-5 sticky top-24 space-y-4 shadow-xl">
-                  <div className="flex items-start justify-between border-b border-slate-800 pb-3">
-                    <div>
-                      <span className="font-mono text-xs font-bold text-cyan-400 bg-cyan-950 px-2 py-0.5 rounded border border-cyan-800">
-                        {selectedAgent.id}
-                      </span>
-                      <h2 className="font-bold text-base text-slate-100 mt-1.5">{selectedAgent.name}</h2>
-                      <p className="text-xs text-slate-400 mt-0.5">{selectedAgent.speciality}</p>
-                    </div>
-                    {getStatusBadge(agentStatuses[selectedAgent.id])}
-                  </div>
+          {currentModule === 'workstream-AUT' && (
+            <SoftwareAutonomyView
+              interfaces={interfaces}
+              requirements={requirements}
+              simulations={simulations}
+              onAskAi={triggerAiQuery}
+            />
+          )}
 
-                  <div>
-                    <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Core Responsibilities</h4>
-                    <ul className="text-xs text-slate-400 space-y-1 list-disc list-inside">
-                      {selectedAgent.responsibilities.map((r, i) => (
-                        <li key={i}>{r}</li>
-                      ))}
-                    </ul>
-                  </div>
+          {currentModule === 'workstream-VNV' && (
+            <VerificationValidationView
+              plans={verificationPlans}
+              testRecords={testRecords}
+              onOpenNewModal={() => {
+                setDefaultNewSubsystem('VNV');
+                setIsNewRecordModalOpen(true);
+              }}
+              onAskAi={triggerAiQuery}
+            />
+          )}
 
-                  <div>
-                    <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">System Instructions</h4>
-                    <pre className="text-[11px] font-mono text-slate-300 bg-slate-950 p-2.5 rounded border border-slate-800 max-h-36 overflow-y-auto whitespace-pre-wrap">
-                      {selectedAgent.systemInstructions}
-                    </pre>
-                  </div>
+          {currentModule === 'traceability' && (
+            <TraceabilityMatrixView
+              requirements={requirements}
+              decisions={decisions}
+              simulations={simulations}
+              verificationPlans={verificationPlans}
+              testRecords={testRecords}
+              onAskAi={triggerAiQuery}
+            />
+          )}
 
-                  <div className="grid grid-cols-2 gap-3 text-xs">
-                    <div>
-                      <span className="text-slate-500">Reports To:</span>
-                      <p className="font-mono text-slate-300">{selectedAgent.reportingTo}</p>
-                    </div>
-                    <div>
-                      <span className="text-slate-500">Audit Level:</span>
-                      <p className={`font-semibold ${selectedAgent.auditRequirement.logLevel === 'SAFETY_CRITICAL' ? 'text-amber-400' : 'text-slate-300'}`}>
-                        {selectedAgent.auditRequirement.logLevel}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-slate-500">Model Preference:</span>
-                      <p className="font-mono text-slate-300">{selectedAgent.modelConfig.preferredProvider} ({selectedAgent.modelConfig.modelName})</p>
-                    </div>
-                    <div>
-                      <span className="text-slate-500">Independent Review:</span>
-                      <p className="font-semibold text-slate-300">{selectedAgent.verificationCriteria.independentReviewRequired ? 'MANDATORY' : 'STANDARD'}</p>
-                    </div>
-                  </div>
+          {currentModule === 'simulations' && (
+            <SimulationCentreView
+              simulations={simulations}
+              onOpenNewSimModal={() => {
+                setDefaultNewSubsystem('HYD');
+                setIsNewRecordModalOpen(true);
+              }}
+              onUpdateSimStatus={handleUpdateSimStatus}
+              onAskAi={triggerAiQuery}
+            />
+          )}
 
-                  <div>
-                    <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Permitted Tools</h4>
-                    <div className="flex flex-wrap gap-1">
-                      {selectedAgent.permittedTools.map(t => (
-                        <span key={t} className="px-2 py-0.5 rounded bg-slate-800 text-[11px] font-mono text-cyan-300 border border-slate-700">
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+          {currentModule === 'risks-decisions' && (
+            <RisksDecisionsView
+              risks={risks}
+              decisions={decisions}
+              onOpenNewRiskModal={() => {
+                setDefaultNewSubsystem('SYS');
+                setIsNewRecordModalOpen(true);
+              }}
+              onOpenNewDecisionModal={() => {
+                setDefaultNewSubsystem('SYS');
+                setIsNewRecordModalOpen(true);
+              }}
+              onUpdateDecisionStatus={handleUpdateDecisionStatus}
+              onAskAi={triggerAiQuery}
+            />
+          )}
 
-                  <div className="pt-2">
-                    <button
-                      onClick={async () => {
-                        const input = {
-                          taskId: `TASK-SAMPLE-${Date.now()}`,
-                          context: {},
-                          parameters: { lwlMeters: 10.5, beamMeters: 2.8, draftMeters: 0.65 }
-                        };
-                        await executionEngine.executeAgent(selectedAgent.id, input);
-                        refreshState();
-                      }}
-                      className="w-full py-2 px-3 rounded-md bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-semibold text-xs transition flex items-center justify-center gap-2 shadow-md"
-                    >
-                      <Zap className="w-3.5 h-3.5" />
-                      <span>Execute Single Agent Test Run</span>
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-8 text-center text-slate-500 text-xs">
-                  Select an agent from the matrix to inspect its architecture.
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+          {currentModule === 'procurement-bom' && (
+            <ProcurementBOMView
+              components={components}
+              onOpenNewModal={() => {
+                setDefaultNewSubsystem('SYS');
+                setIsNewRecordModalOpen(true);
+              }}
+              onAskAi={triggerAiQuery}
+            />
+          )}
 
-        {/* TAB 2: ORCHESTRATOR & TASK DAG */}
-        {activeTab === 'orchestrator' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between bg-slate-900/60 p-4 rounded-lg border border-slate-800">
-              <div>
-                <h2 className="font-bold text-base text-slate-100">Central Orchestrator Cockpit</h2>
-                <p className="text-xs text-slate-400 mt-0.5">Topological dependency scheduling and multi-agent synthesis workflows</p>
-              </div>
+          {currentModule === 'knowledge-centre' && (
+            <KnowledgeCentreView
+              notes={knowledgeNotes}
+              onAskAi={triggerAiQuery}
+            />
+          )}
+        </main>
+      </div>
 
-              <div className="flex gap-3">
-                <button
-                  disabled={isExecutingWorkflow}
-                  onClick={handleRunSizingWorkflow}
-                  className="px-4 py-2 rounded-md bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold text-xs flex items-center gap-2 transition disabled:opacity-50 shadow-md"
-                >
-                  {isExecutingWorkflow ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
-                  <span>{isExecutingWorkflow ? 'Executing Workflow...' : 'Launch Sizing Workflow (4 Agents)'}</span>
-                </button>
-              </div>
-            </div>
+      {/* AI Engineering Assistant Sliding Panel */}
+      <AiEngineeringAssistant
+        isOpen={isAiOpen}
+        onClose={() => setIsAiOpen(false)}
+        currentWorkstream={currentModuleName}
+        prefillPrompt={aiPrefillPrompt}
+        onClearPrefill={() => setAiPrefillPrompt(undefined)}
+      />
 
-            {/* Task Pipeline List */}
-            <div className="space-y-3">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Task Dependency Pipeline ({tasks.length} Tasks)</h3>
-              {tasks.length === 0 ? (
-                <div className="bg-slate-900/40 border border-slate-800 rounded-lg p-8 text-center text-slate-500 text-xs">
-                  No tasks currently in workflow queue. Click "Launch Sizing Workflow" above to dispatch multi-agent pipeline.
-                </div>
-              ) : (
-                <div className="space-y-2.5">
-                  {tasks.map((task, idx) => (
-                    <div
-                      key={task.id}
-                      className="bg-slate-900/70 border border-slate-800 rounded-lg p-4 flex flex-col md:flex-row md:items-center justify-between gap-4"
-                    >
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-xs font-bold text-slate-300">#{idx + 1} {task.id}</span>
-                          <span className="font-mono text-xs px-1.5 py-0.2 rounded bg-slate-800 text-cyan-400 border border-slate-700">
-                            {task.assignedAgentId}
-                          </span>
-                          {task.safetyCritical && (
-                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800">
-                              SAFETY CRITICAL
-                            </span>
-                          )}
-                        </div>
-                        <h4 className="font-semibold text-sm text-slate-100">{task.title}</h4>
-                        <p className="text-xs text-slate-400">{task.description}</p>
-                        <div className="text-[11px] text-slate-500">
-                          Dependencies: {task.dependencies.length > 0 ? task.dependencies.join(' -> ') : 'None (Root Node)'}
-                        </div>
-                      </div>
+      {/* New Record Modal */}
+      <NewRecordModal
+        isOpen={isNewRecordModalOpen}
+        onClose={() => setIsNewRecordModalOpen(false)}
+        defaultSubsystem={defaultNewSubsystem}
+        onCreateRecord={handleCreateRecordFromModal}
+      />
 
-                      <div className="flex items-center gap-3">
-                        <span className={`px-2.5 py-1 rounded text-xs font-semibold ${
-                          task.status === 'COMPLETED' ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' :
-                          task.status === 'WAITING_HUMAN_APPROVAL' ? 'bg-purple-950 text-purple-300 border border-purple-800 animate-pulse' :
-                          task.status === 'RUNNING' ? 'bg-amber-950 text-amber-300 border border-amber-800' :
-                          task.status === 'FAILED' ? 'bg-rose-950 text-rose-300 border border-rose-800' :
-                          'bg-slate-800 text-slate-400 border border-slate-700'
-                        }`}>
-                          {task.status}
-                        </span>
+      {/* JSON Backup Export & Import Modal */}
+      <ExportImportModal
+        isOpen={isExportImportModalOpen}
+        onClose={() => setIsExportImportModalOpen(false)}
+        onExportJson={handleExportJson}
+        onImportJson={handleImportJson}
+        onResetDemo={handleResetDemoData}
+      />
 
-                        {task.approvalGateId && task.status === 'WAITING_HUMAN_APPROVAL' && (
-                          <button
-                            onClick={() => setActiveTab('approvals')}
-                            className="px-3 py-1 rounded bg-purple-600 hover:bg-purple-500 text-white text-xs font-medium"
-                          >
-                            Review Gate
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* TAB 3: HUMAN DIRECTOR APPROVALS */}
-        {activeTab === 'approvals' && (
-          <div className="space-y-6">
-            <div className="bg-slate-900/60 p-4 rounded-lg border border-slate-800 flex items-center justify-between">
-              <div>
-                <h2 className="font-bold text-base text-slate-100 flex items-center gap-2">
-                  <ShieldAlert className="w-5 h-5 text-purple-400" />
-                  <span>Engineering Director Safety & Approval Queue</span>
-                </h2>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Mandatory human-in-the-loop sign-off for safety-critical calculations, baseline modifications, and high-consequence decisions.
-                </p>
-              </div>
-
-              <div className="text-right">
-                <span className="text-xs text-slate-400">Authenticated Role: </span>
-                <span className="text-xs font-bold font-mono text-cyan-300">ENGINEERING_DIRECTOR</span>
-              </div>
-            </div>
-
-            {pendingGates.length === 0 ? (
-              <div className="bg-slate-900/40 border border-slate-800 rounded-lg p-12 text-center text-slate-500 text-xs">
-                <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-emerald-500/50" />
-                No pending safety approval gates. All systems operating within approved envelope.
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {pendingGates.map(gate => (
-                  <div key={gate.id} className="bg-slate-900/80 border border-purple-500/40 rounded-lg p-5 space-y-4 shadow-lg">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-xs font-bold text-purple-400 bg-purple-950 px-2 py-0.5 rounded border border-purple-800">
-                            {gate.id}
-                          </span>
-                          <span className="text-xs font-mono text-slate-400">From Agent: {gate.agentId}</span>
-                        </div>
-                        <h3 className="font-bold text-base text-slate-100 mt-1">{gate.title}</h3>
-                        <p className="text-xs text-slate-400 mt-0.5">{gate.description}</p>
-                      </div>
-
-                      <span className="px-2.5 py-1 rounded text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                        DECISION REQUIRED
-                      </span>
-                    </div>
-
-                    <div className="p-3 bg-rose-950/20 border border-rose-500/30 rounded text-xs text-rose-300">
-                      <span className="font-bold uppercase tracking-wider">Safety Implication: </span>
-                      {gate.safetyImplication}
-                    </div>
-
-                    <div>
-                      <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Proposed Deliverable Data:</h4>
-                      <pre className="text-[11px] font-mono text-slate-300 bg-slate-950 p-2.5 rounded border border-slate-800 max-h-48 overflow-y-auto">
-                        {JSON.stringify(gate.proposedChanges, null, 2)}
-                      </pre>
-                    </div>
-
-                    <div className="space-y-2 pt-2 border-t border-slate-800">
-                      <label className="text-xs font-semibold text-slate-300">Director Sign-off / Review Rationale:</label>
-                      <input
-                        type="text"
-                        value={directorNote}
-                        onChange={e => setDirectorNote(e.target.value)}
-                        placeholder="Enter director engineering notes for permanent audit log..."
-                        className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
-                      />
-
-                      <div className="flex gap-3 justify-end pt-2">
-                        <button
-                          onClick={() => handleDecision(gate.id, 'REJECTED')}
-                          className="px-4 py-1.5 rounded bg-rose-900/60 hover:bg-rose-800 text-rose-200 font-semibold text-xs border border-rose-700 transition flex items-center gap-1.5"
-                        >
-                          <X className="w-3.5 h-3.5" />
-                          <span>Reject Proposal</span>
-                        </button>
-                        <button
-                          onClick={() => handleDecision(gate.id, 'APPROVED')}
-                          className="px-5 py-1.5 rounded bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs transition flex items-center gap-1.5 shadow-md"
-                        >
-                          <Check className="w-3.5 h-3.5" />
-                          <span>Approve & Authorize Baseline</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* TAB 4: DETERMINISTIC TOOLS LAB */}
-        {activeTab === 'tools' && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="space-y-4">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Verified Naval Tool Suite</h3>
-              <div className="space-y-2">
-                {[
-                  { id: 'TOOL-HYDROSTATICS-01', name: 'Hydrostatics & GMt Stability Calculator', cat: 'HYDROSTATICS' },
-                  { id: 'TOOL-RESISTANCE-01', name: 'Resistance & Effective Power (PE)', cat: 'HYDRODYNAMICS' },
-                  { id: 'TOOL-MASS-BALANCE-01', name: 'SWBS Mass Balance & CG Ledger', cat: 'WEIGHT_MASS' },
-                  { id: 'TOOL-ELECTRICAL-01', name: 'DC Load Balance & Battery Sizing', cat: 'ELECTRICAL' },
-                  { id: 'TOOL-STRUCTURES-01', name: 'Bottom Slamming & Plating Scantling', cat: 'STRUCTURES' },
-                  { id: 'TOOL-COLREGS-01', name: 'COLREGS 1972 Collision Encounter Solver', cat: 'AUTONOMY_COLREGS' }
-                ].map(tool => (
-                  <div
-                    key={tool.id}
-                    onClick={() => {
-                      setSelectedToolId(tool.id);
-                      if (tool.id === 'TOOL-HYDROSTATICS-01') {
-                        setToolInputs({ lwlMeters: 10.5, beamMeters: 2.8, draftMeters: 0.65, blockCoefficientCb: 0.44, kgMeters: 0.85 });
-                      } else if (tool.id === 'TOOL-RESISTANCE-01') {
-                        setToolInputs({ lwlMeters: 10.5, beamMeters: 2.8, draftMeters: 0.65, displacementTonnes: 7.2, speedKnots: 20 });
-                      } else if (tool.id === 'TOOL-COLREGS-01') {
-                        setToolInputs({ ownCourseDeg: 0, ownSpeedKnots: 14, targetBearingDeg: 35, targetRangeNm: 2.5, targetCourseDeg: 270, targetSpeedKnots: 12 });
-                      }
-                      setToolOutput(null);
-                    }}
-                    className={`p-3 rounded border cursor-pointer transition ${
-                      selectedToolId === tool.id
-                        ? 'bg-slate-900 border-cyan-500/50 shadow-md ring-1 ring-cyan-500/30'
-                        : 'bg-slate-900/40 border-slate-800 hover:bg-slate-900/70'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-[11px] text-cyan-400">{tool.id}</span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">{tool.cat}</span>
-                    </div>
-                    <h4 className="font-semibold text-xs text-slate-200 mt-1">{tool.name}</h4>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Interactive Calculator Workpad */}
-            <div className="lg:col-span-2 space-y-4">
-              <div className="bg-slate-900/70 border border-slate-800 rounded-lg p-5 space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                  <div>
-                    <span className="font-mono text-xs font-bold text-cyan-400">{selectedToolId}</span>
-                    <h3 className="font-bold text-sm text-slate-100">Deterministic Computation Workbench</h3>
-                  </div>
-                  <button
-                    onClick={handleExecuteTool}
-                    className="px-4 py-1.5 rounded bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition shadow"
-                  >
-                    <Zap className="w-3.5 h-3.5" />
-                    <span>Run Calculation</span>
-                  </button>
-                </div>
-
-                {/* Input Parameters Form */}
-                <div>
-                  <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Input Parameters (JSON):</h4>
-                  <textarea
-                    rows={6}
-                    value={JSON.stringify(toolInputs, null, 2)}
-                    onChange={e => {
-                      try {
-                        setToolInputs(JSON.parse(e.target.value));
-                      } catch {
-                        // wait for valid json
-                      }
-                    }}
-                    className="w-full bg-slate-950 border border-slate-800 font-mono text-xs text-cyan-300 p-3 rounded focus:outline-none focus:border-cyan-500"
-                  />
-                </div>
-
-                {/* Execution Output */}
-                <div>
-                  <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Computation Results & Verification:</h4>
-                  {toolOutput ? (
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className={`font-semibold ${toolOutput.success ? 'text-emerald-400' : 'text-rose-400'}`}>
-                          Status: {toolOutput.success ? 'SUCCESS (DETERMINISTIC_PASS)' : 'FAILED'}
-                        </span>
-                        <span className="text-slate-500">Execution Time: {toolOutput.executionTimeMs?.toFixed(2)} ms</span>
-                      </div>
-                      <pre className="bg-slate-950 border border-slate-800 rounded p-4 font-mono text-xs text-emerald-300 max-h-64 overflow-y-auto">
-                        {JSON.stringify(toolOutput.output, null, 2)}
-                      </pre>
-                    </div>
-                  ) : (
-                    <div className="bg-slate-950 border border-slate-800 rounded p-6 text-center text-slate-500 text-xs">
-                      Click "Run Calculation" to execute deterministic formulas and verify output against classification criteria.
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 5: BASELINE & TBD REGISTER */}
-        {activeTab === 'parameters' && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between bg-slate-900/60 p-4 rounded-lg border border-slate-800">
-              <div>
-                <h2 className="font-bold text-base text-slate-100">Baseline Parameter Register & TBD Ledger</h2>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Governed engineering repository. Unknown vessel parameters are strictly preserved as TBD.
-                </p>
-              </div>
-
-              <button
-                onClick={handleExportObsidian}
-                className="px-3.5 py-1.5 rounded bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition"
-              >
-                <BookOpen className="w-3.5 h-3.5" />
-                <span>Export to Obsidian Vault</span>
-              </button>
-            </div>
-
-            <div className="overflow-x-auto rounded-lg border border-slate-800 bg-slate-900/40">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-slate-900/80 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800">
-                  <tr>
-                    <th className="px-4 py-3">ID</th>
-                    <th className="px-4 py-3">Parameter Name</th>
-                    <th className="px-4 py-3">Discipline</th>
-                    <th className="px-4 py-3">Current Value</th>
-                    <th className="px-4 py-3">Status</th>
-                    <th className="px-4 py-3">Rev</th>
-                    <th className="px-4 py-3">Modifying Agent</th>
-                    <th className="px-4 py-3">Assumptions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-800/60">
-                  {parameters.map(param => (
-                    <tr key={param.id} className="hover:bg-slate-900/60 transition">
-                      <td className="px-4 py-3 font-mono font-bold text-cyan-400">{param.id}</td>
-                      <td className="px-4 py-3 font-medium text-slate-200">{param.name}</td>
-                      <td className="px-4 py-3 font-mono text-slate-400">{param.discipline}</td>
-                      <td className="px-4 py-3 font-semibold text-slate-100">
-                        {param.value} {param.unit}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                          param.status === 'TBD' ? 'bg-amber-950 text-amber-300 border border-amber-800' :
-                          param.status === 'DIRECTOR_APPROVED' ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' :
-                          'bg-cyan-950 text-cyan-300 border border-cyan-800'
-                        }`}>
-                          {param.status}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 font-mono text-slate-400">r{param.revision}</td>
-                      <td className="px-4 py-3 font-mono text-slate-300">{param.lastModifiedByAgent}</td>
-                      <td className="px-4 py-3 text-slate-400 max-w-xs truncate" title={param.assumptions.join('; ')}>
-                        {param.assumptions.length > 0 ? param.assumptions.join('; ') : 'None'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 6: AUDIT & TRACEABILITY LOG */}
-        {activeTab === 'audit' && (
-          <div className="space-y-4">
-            <div className="bg-slate-900/60 p-4 rounded-lg border border-slate-800 flex items-center justify-between">
-              <div>
-                <h2 className="font-bold text-base text-slate-100">Immutable Audit Trail & Security Ledger</h2>
-                <p className="text-xs text-slate-400 mt-0.5">Every agent action, tool invocation, and human approval decision is permanently traced</p>
-              </div>
-
-              <span className="text-xs text-slate-500 font-mono">Retained Events: {logs.length}</span>
-            </div>
-
-            <div className="space-y-2">
-              {logs.map(log => (
-                <div
-                  key={log.id}
-                  className={`p-3 rounded-md border text-xs flex items-start justify-between gap-4 font-mono ${
-                    log.severity === 'SAFETY_CRITICAL' ? 'bg-rose-950/20 border-rose-500/40 text-rose-200' :
-                    log.severity === 'APPROVAL_ACTION' ? 'bg-purple-950/20 border-purple-500/40 text-purple-200' :
-                    'bg-slate-900/40 border-slate-800 text-slate-300'
-                  }`}
-                >
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-slate-500 text-[11px]">{log.timestamp.split('T')[1].slice(0, 8)}</span>
-                      <span className="font-bold text-cyan-400">[{log.agentId || 'SYSTEM'}]</span>
-                      <span className="font-semibold text-slate-100">{log.action}</span>
-                    </div>
-                    <div className="text-slate-400 text-[11px]">
-                      {JSON.stringify(log.details)}
-                    </div>
-                  </div>
-
-                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                    log.severity === 'SAFETY_CRITICAL' ? 'bg-rose-900 text-rose-300' :
-                    log.severity === 'APPROVAL_ACTION' ? 'bg-purple-900 text-purple-300' :
-                    'bg-slate-800 text-slate-400'
-                  }`}>
-                    {log.severity}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </main>
-
-      {/* Obsidian Vault Export Modal */}
-      {obsidianExportModal && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-6">
-          <div className="bg-slate-900 border border-slate-800 rounded-lg max-w-3xl w-full p-6 space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <div className="flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-cyan-400" />
-                <h3 className="font-bold text-base text-slate-100">Obsidian Markdown Knowledge Graph Export</h3>
-              </div>
-              <button
-                onClick={() => setObsidianExportModal(false)}
-                className="text-slate-400 hover:text-slate-200"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <p className="text-xs text-slate-400">
-              The following linked Markdown notes with [[wikilinks]] have been generated directly from the live shared memory register:
-            </p>
-
-            <div className="space-y-3 max-h-96 overflow-y-auto">
-              {Object.entries(exportedNotes).map(([filename, content]) => (
-                <div key={filename} className="border border-slate-800 rounded p-3 bg-slate-950">
-                  <span className="font-mono text-xs font-bold text-cyan-400">{filename}</span>
-                  <pre className="text-[11px] font-mono text-slate-300 mt-2 whitespace-pre-wrap max-h-36 overflow-y-auto">
-                    {content}
-                  </pre>
-                </div>
-              ))}
-            </div>
-
-            <div className="flex justify-end pt-2 border-t border-slate-800">
-              <button
-                onClick={() => setObsidianExportModal(false)}
-                className="px-4 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Project Baseline Context Guide Modal */}
+      <ContextGuideModal
+        isOpen={isContextGuideOpen}
+        onClose={() => setIsContextGuideOpen(false)}
+      />
     </div>
   );
 }

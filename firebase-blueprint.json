@@ -1,0 +1,187 @@
+{
+  "entities": {
+    "projects": {
+      "title": "Project",
+      "description": "USV project configuration and global metadata",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "code": { "type": "string" },
+        "description": { "type": "string" },
+        "status": { "type": "string", "enum": ["Active", "Paused", "Archived"] },
+        "governanceState": { "type": "string" },
+        "leadEngineer": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "name", "code", "status"]
+    },
+    "subsystems": {
+      "title": "Subsystem",
+      "description": "Engineering discipline workstream definition",
+      "properties": {
+        "id": { "type": "string" },
+        "projectId": { "type": "string" },
+        "code": { "type": "string" },
+        "name": { "type": "string" },
+        "lead": { "type": "string" },
+        "status": { "type": "string" },
+        "progressPercent": { "type": "number" },
+        "openItems": { "type": "number" }
+      },
+      "required": ["id", "projectId", "code", "name"]
+    },
+    "requirements": {
+      "title": "Requirement",
+      "description": "Authoritative engineering requirement item",
+      "properties": {
+        "id": { "type": "string" },
+        "projectId": { "type": "string" },
+        "subsystemCode": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string" },
+        "priority": { "type": "string", "enum": ["Critical", "High", "Medium", "Low"] },
+        "parentReqId": { "type": "string" },
+        "verificationMethod": { "type": "string", "enum": ["Analysis", "Test", "Demonstration", "Inspection", "Simulation"] },
+        "acceptanceCriteria": { "type": "string" },
+        "owner": { "type": "string" },
+        "revision": { "type": "string" },
+        "status": { "type": "string", "enum": ["Draft", "In Review", "Approved", "Superseded", "Archived"] },
+        "relatedDecisions": { "type": "array", "items": { "type": "string" } },
+        "relatedSimulations": { "type": "array", "items": { "type": "string" } },
+        "relatedVerifications": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "projectId", "title", "description", "status"]
+    },
+    "design_decisions": {
+      "title": "Design Decision",
+      "description": "Formal engineering architectural trade-off and rationale",
+      "properties": {
+        "id": { "type": "string" },
+        "projectId": { "type": "string" },
+        "subsystemCode": { "type": "string" },
+        "title": { "type": "string" },
+        "problemStatement": { "type": "string" },
+        "alternatives": { "type": "string" },
+        "rationale": { "type": "string" },
+        "supportingEvidence": { "type": "string" },
+        "consequences": { "type": "string" },
+        "reviewer": { "type": "string" },
+        "status": { "type": "string", "enum": ["Draft", "In Review", "Approved", "Rejected", "Superseded"] },
+        "revision": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "projectId", "title", "problemStatement", "status"]
+    },
+    "engineering_risks": {
+      "title": "Engineering Risk",
+      "description": "Technical and project risk tracking",
+      "properties": {
+        "id": { "type": "string" },
+        "projectId": { "type": "string" },
+        "subsystemCode": { "type": "string" },
+        "description": { "type": "string" },
+        "probability": { "type": "number" },
+        "impact": { "type": "number" },
+        "riskScore": { "type": "number" },
+        "mitigation": { "type": "string" },
+        "owner": { "type": "string" },
+        "status": { "type": "string", "enum": ["Open", "Mitigated", "Closed", "Accepted"] }
+      },
+      "required": ["id", "projectId", "description", "probability", "impact", "status"]
+    },
+    "simulation_jobs": {
+      "title": "Simulation Job",
+      "description": "CFD, FEA, seakeeping, or hydrodynamic analysis run",
+      "properties": {
+        "id": { "type": "string" },
+        "projectId": { "type": "string" },
+        "discipline": { "type": "string" },
+        "name": { "type": "string" },
+        "geometryRevision": { "type": "string" },
+        "solver": { "type": "string" },
+        "boundaryConditions": { "type": "string" },
+        "unitsReference": { "type": "string" },
+        "assumptions": { "type": "string" },
+        "computeEnvironment": { "type": "string" },
+        "runStatus": { "type": "string", "enum": ["Draft", "Ready", "Queued", "Running", "Completed", "Failed", "Under Review", "Approved"] },
+        "outputFiles": { "type": "string" },
+        "results": { "type": "string" },
+        "reviewer": { "type": "string" },
+        "validationStatus": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "projectId", "name", "discipline", "runStatus"]
+    },
+    "verification_plans": {
+      "title": "Verification Plan",
+      "description": "Testing and validation procedure",
+      "properties": {
+        "id": { "type": "string" },
+        "projectId": { "type": "string" },
+        "subsystemCode": { "type": "string" },
+        "title": { "type": "string" },
+        "procedure": { "type": "string" },
+        "acceptanceCriteria": { "type": "string" },
+        "instrumentation": { "type": "string" },
+        "targetReqIds": { "type": "array", "items": { "type": "string" } },
+        "status": { "type": "string", "enum": ["Draft", "Approved", "Executed", "Closed"] }
+      },
+      "required": ["id", "projectId", "title", "acceptanceCriteria"]
+    },
+    "test_records": {
+      "title": "Test Record",
+      "description": "Physical trial or lab execution evidence",
+      "properties": {
+        "id": { "type": "string" },
+        "planId": { "type": "string" },
+        "testDate": { "type": "string" },
+        "executingEngineer": { "type": "string" },
+        "resultStatus": { "type": "string", "enum": ["Passed", "Failed", "Inconclusive", "Deviation"] },
+        "measuredData": { "type": "string" },
+        "deviations": { "type": "string" },
+        "evidenceUrls": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["id", "planId", "resultStatus"]
+    },
+    "components": {
+      "title": "Component (BOM)",
+      "description": "Procurement and Bill of Materials item",
+      "properties": {
+        "id": { "type": "string" },
+        "projectId": { "type": "string" },
+        "subsystemCode": { "type": "string" },
+        "partNumber": { "type": "string" },
+        "description": { "type": "string" },
+        "manufacturer": { "type": "string" },
+        "supplier": { "type": "string" },
+        "technicalSpecs": { "type": "string" },
+        "quantity": { "type": "number" },
+        "unitCost": { "type": "string" },
+        "leadTimeWeeks": { "type": "string" },
+        "procurementStatus": { "type": "string", "enum": ["Specifying", "Quoted", "Ordered", "Received", "In Inspection", "Installed"] },
+        "datasheetUrl": { "type": "string" }
+      },
+      "required": ["id", "projectId", "partNumber", "description", "procurementStatus"]
+    },
+    "activity_log": {
+      "title": "Activity Log",
+      "description": "Immutable engineering audit trail",
+      "properties": {
+        "id": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "action": { "type": "string" },
+        "recordType": { "type": "string" },
+        "recordId": { "type": "string" },
+        "details": { "type": "string" }
+      },
+      "required": ["id", "timestamp", "action", "recordType"]
+    }
+  }
+}
