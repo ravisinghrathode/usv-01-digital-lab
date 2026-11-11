@@ -192,13 +192,34 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
     const testSigningKey = '3f3e07df0401f535dd1254d57accc68ed8171a5aa7055d3d22ae024bcb7cf04e';
 
     it('should strictly detect and reject stale ECR approvals if code changed post-approval', () => {
-      // Current ECR was approved for commit 'fa2329e', but subsequent commits modified baseline files
-      const res = evaluateStageDHumanApproval('origin/main', testSigningKey);
-      expect(res.humanApprovalRequired).toBe(true);
-      expect(res.highestRisk).toBe('CRITICAL');
-      expect(res.ecrRecordFound).toBe(true);
-      expect(res.signatureVerified).toBe(false);
-      expect(res.summary).toContain('STALE APPROVAL REJECTED');
+      const ecrPath = path.join(process.cwd(), 'governance', 'ecr', 'ECR-20261111-001_EGS_IMPLEMENTATION.md');
+      const origContent = fs.readFileSync(ecrPath, 'utf8');
+      try {
+        // Set implementation commit to an earlier commit where subsequent commits modified baseline code
+        const staleCommit = 'fa2329e8811af00af678f55a3aaeb9981ab1eef8';
+        const signature = generateECRSignature(
+          'ECR-20261111-001',
+          'APPROVED',
+          'usr-eng-dir-8841',
+          'ENGINEERING_DIRECTOR',
+          '2026-11-11T22:06:30.213Z',
+          staleCommit,
+          testSigningKey
+        );
+        const updated = origContent
+          .replace(/Implementation Commit:\*?\*?\s*[^\n\r]+/i, `Implementation Commit: ${staleCommit}`)
+          .replace(/(?:Cryptographic Signature \/ Hash|Signature|Approval Hash):?\*?\*?\s*[^\n\r]+/i, `Cryptographic Signature / Hash: ${signature}`);
+        fs.writeFileSync(ecrPath, updated, 'utf8');
+
+        const res = evaluateStageDHumanApproval('origin/main', testSigningKey);
+        expect(res.humanApprovalRequired).toBe(true);
+        expect(res.highestRisk).toBe('CRITICAL');
+        expect(res.ecrRecordFound).toBe(true);
+        expect(res.signatureVerified).toBe(false);
+        expect(res.summary).toContain('STALE APPROVAL REJECTED');
+      } finally {
+        fs.writeFileSync(ecrPath, origContent, 'utf8');
+      }
     });
 
     it('should verify human authority closure when ECR is bound to current commit SHA', () => {
