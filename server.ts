@@ -119,7 +119,13 @@ export interface AuthenticatedUser {
   expiresAt: number;
 }
 
-const AUTHORIZED_MEMBERS: Record<string, { userId: string; userName: string; role: string }> = {
+export interface StaffMember {
+  userId: string;
+  userName: string;
+  role: string;
+}
+
+export const AUTHORIZED_MEMBERS: Record<string, StaffMember> = {
   'usr-eng-dir-8841': {
     userId: 'usr-eng-dir-8841',
     userName: 'Chief Naval Architect & Systems Director',
@@ -134,6 +140,26 @@ const AUTHORIZED_MEMBERS: Record<string, { userId: string; userName: string; rol
     userId: 'usr-naval-arch-05',
     userName: 'Senior Hydrodynamics Engineer',
     role: 'NAVAL_ARCHITECT'
+  },
+  'usr-struct-eng-10': {
+    userId: 'usr-struct-eng-10',
+    userName: 'Hull Structural & Composites Engineer',
+    role: 'STRUCTURAL_ENGINEER'
+  },
+  'usr-prop-elec-14': {
+    userId: 'usr-prop-elec-14',
+    userName: 'Marine Electrical & Power Systems Engineer',
+    role: 'ELECTRICAL_ENGINEER'
+  },
+  'usr-vvt-qa-18': {
+    userId: 'usr-vvt-qa-18',
+    userName: 'Test & Verification Specialist',
+    role: 'VVT_SPECIALIST'
+  },
+  'usr-sec-analyst-20': {
+    userId: 'usr-sec-analyst-20',
+    userName: 'Cyber-Physical Security Analyst',
+    role: 'SECURITY_ANALYST'
   }
 };
 
@@ -205,51 +231,96 @@ app.use(['/api/data', '/api/export', '/api/import', '/api/gemini/assist', '/api/
 // Must be configured in runtime environment; no hardcoded fallback allowed
 const DIRECTOR_KEY = process.env.LAB_DIRECTOR_KEY;
 
-// --- AUTHENTICATION & GOVERNANCE SIGNING ENDPOINTS ---
-app.post('/api/auth/login', (req, res) => {
-  const { userId, role, passphrase } = req.body || {};
-  const requestedRole = role || (userId === 'usr-eng-dir-8841' ? 'ENGINEERING_DIRECTOR' : 'SYSTEMS_ENGINEER');
-  const requestedUserId = userId || (requestedRole === 'ENGINEERING_DIRECTOR' ? 'usr-eng-dir-8841' : 'usr-lead-sys-01');
+export function authenticateLoginRequest(body: { userId?: string; role?: string; passphrase?: string }): {
+  statusCode: number;
+  body: { success: boolean; user?: StaffMember; token?: string; error?: string };
+} {
+  const { userId, role, passphrase } = body || {};
 
-  // Privileged Engineering Director authority strictly requires verified passphrase
-  if (requestedRole === 'ENGINEERING_DIRECTOR' || requestedUserId === 'usr-eng-dir-8841') {
-    if (!DIRECTOR_KEY) {
-      return res.status(503).json({
+  if (!userId || typeof userId !== 'string') {
+    return {
+      statusCode: 400,
+      body: {
         success: false,
-        error: "Authentication service unavailable: LAB_DIRECTOR_KEY is not configured in the server environment. Engineering Director sessions are disabled."
-      });
+        error: "Authentication failed: Missing required 'userId'."
+      }
+    };
+  }
+
+  // Reject any identity not in the authoritative allowlist
+  const authorizedMember = AUTHORIZED_MEMBERS[userId];
+  if (!authorizedMember) {
+    return {
+      statusCode: 403,
+      body: {
+        success: false,
+        error: `Access Denied: Identity '${userId}' is not recognized in the authoritative staff member allowlist.`
+      }
+    };
+  }
+
+  // Reject unauthorized role spoofing: client cannot claim a different role than the authoritative assignment
+  if (role && role !== authorizedMember.role) {
+    return {
+      statusCode: 403,
+      body: {
+        success: false,
+        error: `Access Denied: User '${userId}' is strictly authorized only for role '${authorizedMember.role}'. Unauthorized role claim '${role}' rejected.`
+      }
+    };
+  }
+
+  // Privileged Engineering Director authority strictly requires verified passphrase against LAB_DIRECTOR_KEY
+  if (authorizedMember.role === 'ENGINEERING_DIRECTOR') {
+    const directorKey = process.env.LAB_DIRECTOR_KEY;
+    if (!directorKey) {
+      return {
+        statusCode: 503,
+        body: {
+          success: false,
+          error: "Authentication service unavailable: LAB_DIRECTOR_KEY is not configured in the server environment. Engineering Director sessions are disabled."
+        }
+      };
     }
 
     if (!passphrase || typeof passphrase !== 'string') {
-      return res.status(401).json({
-        success: false,
-        error: "Authentication failed: Engineering Director session requires a verified passphrase/credential."
-      });
+      return {
+        statusCode: 401,
+        body: {
+          success: false,
+          error: "Authentication failed: Engineering Director session requires a verified passphrase/credential."
+        }
+      };
     }
 
     const bufProvided = Buffer.from(passphrase);
-    const bufExpected = Buffer.from(DIRECTOR_KEY);
+    const bufExpected = Buffer.from(directorKey);
     if (bufProvided.length !== bufExpected.length || !crypto.timingSafeEqual(bufProvided, bufExpected)) {
-      return res.status(401).json({
-        success: false,
-        error: "Authentication failed: Invalid Engineering Director passphrase."
-      });
+      return {
+        statusCode: 401,
+        body: {
+          success: false,
+          error: "Authentication failed: Invalid Engineering Director passphrase."
+        }
+      };
     }
   }
 
-  // Look up known member or create authenticated staff session
-  const member = AUTHORIZED_MEMBERS[requestedUserId] || {
-    userId: requestedUserId,
-    userName: requestedRole === 'ENGINEERING_DIRECTOR' ? 'Chief Naval Architect & Systems Director' : `Engineer (${requestedUserId})`,
-    role: requestedRole
+  const token = createSessionToken(authorizedMember);
+  return {
+    statusCode: 200,
+    body: {
+      success: true,
+      token,
+      user: authorizedMember
+    }
   };
+}
 
-  const token = createSessionToken(member);
-  res.json({
-    success: true,
-    token,
-    user: member
-  });
+// --- AUTHENTICATION & GOVERNANCE SIGNING ENDPOINTS ---
+app.post('/api/auth/login', (req, res) => {
+  const result = authenticateLoginRequest(req.body || {});
+  res.status(result.statusCode).json(result.body);
 });
 
 app.get('/api/auth/session', (req, res) => {
@@ -646,4 +717,6 @@ async function startServer() {
   });
 }
 
-startServer();
+if (process.argv[1] && (process.argv[1].endsWith('server.ts') || process.argv[1].endsWith('server.js'))) {
+  startServer();
+}

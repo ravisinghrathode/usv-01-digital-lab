@@ -168,7 +168,77 @@ export class GeminiProvider implements IModelProvider {
   }
 }
 
-// 3. Model Provider Router / Dispatcher
+// 3. OpenAI Provider
+export class OpenAIProvider implements IModelProvider {
+  name = 'openai';
+
+  isAvailable(): boolean {
+    return !!process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY.trim().length > 0;
+  }
+
+  async generateText(request: ModelPromptRequest, config?: ModelConfig): Promise<ModelPromptResponse> {
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      throw new Error('OPENAI_API_KEY environment variable is missing');
+    }
+
+    const model = config?.modelName || process.env.CHATGPT_MODEL || 'gpt-4o-mini';
+    const messages = [
+      { role: 'system', content: request.systemInstructions },
+      { role: 'user', content: `${request.userPrompt}\n\nContext:\n${JSON.stringify(request.context, null, 2)}` }
+    ];
+
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model,
+        messages,
+        temperature: config?.temperature ?? 0.1,
+        max_tokens: config?.maxTokens ?? 4096
+      })
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`OpenAI API error HTTP ${res.status}: ${errText}`);
+    }
+
+    const data = await res.json();
+    const content = data.choices?.[0]?.message?.content || '';
+    let parsedJson: Record<string, any> | undefined;
+    try {
+      const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)\s*```/) || [null, content];
+      parsedJson = JSON.parse(jsonMatch[1]);
+    } catch {
+      // Non-JSON response
+    }
+
+    return {
+      content,
+      parsedJson,
+      providerUsed: 'openai',
+      modelUsed: model,
+      tokenUsage: {
+        promptTokens: data?.usage?.prompt_tokens || 0,
+        completionTokens: data?.usage?.completion_tokens || 0,
+        totalTokens: data?.usage?.total_tokens || 0
+      }
+    };
+  }
+}
+
+export function isTestExecutionEnvironment(): boolean {
+  return process.env.NODE_ENV === 'test' ||
+    process.env.ALLOW_TEST_MOCK === 'true' ||
+    process.env.VITEST === 'true' ||
+    process.env.CI === 'true';
+}
+
+// 4. Model Provider Router / Dispatcher
 export class ModelProviderRouter {
   private static instance: ModelProviderRouter;
   private providers: Map<string, IModelProvider> = new Map();
@@ -176,6 +246,7 @@ export class ModelProviderRouter {
   private constructor() {
     this.registerProvider(new MockDeterministicProvider());
     this.registerProvider(new GeminiProvider());
+    this.registerProvider(new OpenAIProvider());
   }
 
   public static getInstance(): ModelProviderRouter {
@@ -190,25 +261,31 @@ export class ModelProviderRouter {
   }
 
   public async generate(request: ModelPromptRequest, config: ModelConfig): Promise<ModelPromptResponse> {
+    const isTestMode = isTestExecutionEnvironment();
+
+    if (!isTestMode && config.preferredProvider === 'mock_deterministic') {
+      throw new Error("Production Engineering Safety Invariant: Direct invocation of 'mock_deterministic' provider is prohibited in production baseline execution. Certified engineering calculations must execute against authenticated model providers.");
+    }
+
     const preferred = this.providers.get(config.preferredProvider);
 
     if (preferred && (await Promise.resolve(preferred.isAvailable()))) {
       try {
         return await preferred.generateText(request, config);
       } catch (err) {
-        if (!config.fallbackToMock) {
-          throw new Error(`Preferred provider '${config.preferredProvider}' failed and fallbackToMock is disabled: ${err}`);
+        if (!isTestMode) {
+          throw new Error(`Production Engineering Safety Invariant: Preferred model provider '${config.preferredProvider}' failed during execution: ${err}. Mock fallback is strictly prohibited in production baseline execution.`);
         }
-        console.warn(`[SAFETY ALERT] Preferred provider '${config.preferredProvider}' failed. Falling back to UNVERIFIED mock simulation.`);
+        console.warn(`[SAFETY ALERT] Preferred provider '${config.preferredProvider}' failed in test environment. Using test mock simulation.`);
       }
     } else if (config.preferredProvider !== 'mock_deterministic') {
-      if (!config.fallbackToMock) {
-        throw new Error(`Preferred provider '${config.preferredProvider}' is unavailable and fallbackToMock is disabled. Cannot synthesize unverified engineering evidence.`);
+      if (!isTestMode) {
+        throw new Error(`Production Engineering Safety Invariant: Preferred model provider '${config.preferredProvider}' is unavailable. Production baseline execution strictly prohibits unverified synthetic mock fallback. Execution halted.`);
       }
-      console.warn(`[SAFETY ALERT] Preferred provider '${config.preferredProvider}' is unavailable. Falling back to UNVERIFIED mock simulation.`);
+      console.warn(`[SAFETY ALERT] Preferred provider '${config.preferredProvider}' is unavailable in test environment. Using test mock simulation.`);
     }
 
-    // Fallback to Mock Provider
+    // Fallback to Mock Provider (Explicitly permitted ONLY in test environment)
     const fallback = this.providers.get('mock_deterministic')!;
     const response = await fallback.generateText(request, config);
     response.isMock = true;

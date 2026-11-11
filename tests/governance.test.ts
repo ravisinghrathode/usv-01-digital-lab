@@ -7,6 +7,9 @@ import { CryptographicAuditTrail } from '../src/core/safety/CryptographicAuditTr
 import { AgentGovernanceBridge } from '../src/core/governance/AgentGovernanceBridge.ts';
 import { generateReleaseManifest } from '../scripts/governance/release-manifest.ts';
 import { evaluateStageDHumanApproval } from '../scripts/governance/stage-d-human-approval.ts';
+import { authenticateLoginRequest, AUTHORIZED_MEMBERS } from '../server.ts';
+import { ModelProviderRouter } from '../src/core/models/ModelProvider.ts';
+import { generateMultiRoleReview } from '../scripts/governance/independent-ai-review.ts';
 import path from 'path';
 
 describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
@@ -197,6 +200,150 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
       const res = evaluateStageDHumanApproval('origin/main', 'invalid-signing-key-0000');
       expect(res.signatureVerified).toBe(false);
       expect(res.summary).toContain('cryptographic HMAC signature verification failed');
+    });
+  });
+
+  describe('9. Authenticated Staff Allowlist Boundary (server.ts)', () => {
+    it('should reject unknown staff user IDs with 403 Forbidden', () => {
+      const res = authenticateLoginRequest({ userId: 'usr-unknown-intruder-999' });
+      expect(res.statusCode).toBe(403);
+      expect(res.body.success).toBe(false);
+      expect(res.body.error).toContain('not recognized in the authoritative staff member allowlist');
+    });
+
+    it('should reject role spoofing attempts where requested role differs from allowlist', () => {
+      const res = authenticateLoginRequest({ userId: 'usr-lead-sys-01', role: 'ENGINEERING_DIRECTOR' });
+      expect(res.statusCode).toBe(403);
+      expect(res.body.success).toBe(false);
+      expect(res.body.error).toContain('strictly authorized only for role');
+    });
+
+    it('should reject Engineering Director login without valid passphrase', () => {
+      const resMissing = authenticateLoginRequest({ userId: 'usr-eng-dir-8841', role: 'ENGINEERING_DIRECTOR' });
+      expect(resMissing.statusCode).toBe(401);
+
+      const resWrong = authenticateLoginRequest({
+        userId: 'usr-eng-dir-8841',
+        role: 'ENGINEERING_DIRECTOR',
+        passphrase: 'wrong-passphrase'
+      });
+      expect(resWrong.statusCode).toBe(401);
+      expect(resWrong.body.error).toContain('Invalid Engineering Director passphrase');
+    });
+
+    it('should authenticate Engineering Director when valid passphrase is provided', () => {
+      const res = authenticateLoginRequest({
+        userId: 'usr-eng-dir-8841',
+        role: 'ENGINEERING_DIRECTOR',
+        passphrase: process.env.LAB_DIRECTOR_KEY
+      });
+      expect(res.statusCode).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.token).toBeDefined();
+      expect(res.body.user?.role).toBe('ENGINEERING_DIRECTOR');
+    });
+
+    it('should authenticate standard allowlisted engineering staff members', () => {
+      const res = authenticateLoginRequest({ userId: 'usr-naval-arch-05' });
+      expect(res.statusCode).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.user?.userName).toBe('Senior Hydrodynamics Engineer');
+      expect(res.body.user?.role).toBe('NAVAL_ARCHITECT');
+    });
+  });
+
+  describe('10. Production Model Provider Fail-Closed Safety Invariant', () => {
+    it('should throw hard error and refuse mock fallback in production when provider fails', async () => {
+      const origNodeEnv = process.env.NODE_ENV;
+      const origAllowMock = process.env.ALLOW_TEST_MOCK;
+      const origVitest = process.env.VITEST;
+      const origCi = process.env.CI;
+
+      try {
+        process.env.NODE_ENV = 'production';
+        delete process.env.ALLOW_TEST_MOCK;
+        delete process.env.VITEST;
+        delete process.env.CI;
+
+        const router = ModelProviderRouter.getInstance();
+        await expect(
+          router.generate(
+            { systemInstructions: 'Test instructions', userPrompt: 'Test user prompt', context: {} },
+            {
+              preferredProvider: 'non_existent_provider' as any,
+              modelName: 'test-v1',
+              temperature: 0.1,
+              maxTokens: 1024,
+              fallbackToMock: false
+            }
+          )
+        ).rejects.toThrow(/Production Engineering Safety Invariant: Preferred model provider 'non_existent_provider' is unavailable/);
+      } finally {
+        process.env.NODE_ENV = origNodeEnv;
+        if (origAllowMock !== undefined) process.env.ALLOW_TEST_MOCK = origAllowMock;
+        if (origVitest !== undefined) process.env.VITEST = origVitest;
+        if (origCi !== undefined) process.env.CI = origCi;
+      }
+    });
+
+    it('should strictly prohibit direct invocation of mock_deterministic provider in production', async () => {
+      const origNodeEnv = process.env.NODE_ENV;
+      const origAllowMock = process.env.ALLOW_TEST_MOCK;
+      const origVitest = process.env.VITEST;
+      const origCi = process.env.CI;
+
+      try {
+        process.env.NODE_ENV = 'production';
+        delete process.env.ALLOW_TEST_MOCK;
+        delete process.env.VITEST;
+        delete process.env.CI;
+
+        const router = ModelProviderRouter.getInstance();
+        await expect(
+          router.generate(
+            { systemInstructions: 'Test instructions', userPrompt: 'Test prompt', context: {} },
+            {
+              preferredProvider: 'mock_deterministic',
+              modelName: 'marine-engine-v1',
+              temperature: 0.1,
+              maxTokens: 1024,
+              fallbackToMock: false
+            }
+          )
+        ).rejects.toThrow(/Production Engineering Safety Invariant: Direct invocation of 'mock_deterministic' provider is prohibited in production/);
+      } finally {
+        process.env.NODE_ENV = origNodeEnv;
+        if (origAllowMock !== undefined) process.env.ALLOW_TEST_MOCK = origAllowMock;
+        if (origVitest !== undefined) process.env.VITEST = origVitest;
+        if (origCi !== undefined) process.env.CI = origCi;
+      }
+    });
+  });
+
+  describe('11. Stage C: Seven Independent Model-Backed Reviewer Architecture', () => {
+    it('should execute all seven independent reviewer roles concurrently with recorded metadata', async () => {
+      const report = await generateMultiRoleReview('origin/main');
+      expect(report.reviews).toHaveLength(7);
+
+      const expectedRoles = [
+        'SOFTWARE_ARCHITECTURE_REVIEWER',
+        'CODE_QUALITY_REVIEWER',
+        'SOFTWARE_QA_REVIEWER',
+        'CYBERSECURITY_REVIEWER',
+        'SAFETY_ENGINEERING_REVIEWER',
+        'CONFIGURATION_MANAGEMENT_REVIEWER',
+        'REQUIREMENTS_TRACEABILITY_REVIEWER'
+      ];
+
+      for (const role of expectedRoles) {
+        const rev = report.reviews.find(r => r.role === role);
+        expect(rev).toBeDefined();
+        expect(rev?.executionStatus).toBe('COMPLETED');
+        expect(rev?.provider).toBeDefined();
+        expect(rev?.model).toBeDefined();
+        expect(rev?.rawOutput.length).toBeGreaterThan(0);
+        expect(rev?.advisoryRecommendation).toBeDefined();
+      }
     });
   });
 });

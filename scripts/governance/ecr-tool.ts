@@ -90,13 +90,19 @@ export function validateECRFile(filePath: string): { valid: boolean; errors: str
   const signedAt = signedAtMatch ? signedAtMatch[1].trim() : new Date().toISOString();
   const signatureOrHash = sigMatch ? sigMatch[1].trim() : undefined;
 
-  // Strict human authority boundary: Approved baseline change requires verified Engineering Director and cryptographic signature
+  const commitMatch = content.match(/Implementation Commit:?\*?\*?\s*([^\n\r]+)/i);
+  const implementationCommit = commitMatch ? commitMatch[1].trim() : '';
+
+  // Strict human authority boundary: Approved baseline change requires verified Engineering Director, implementation commit SHA, and cryptographic signature
   if (approvalDecision === 'APPROVED') {
     if (authorityRole !== 'ENGINEERING_DIRECTOR') {
       errors.push(`Unauthorized approver role "${authorityRole}": Only ENGINEERING_DIRECTOR has authority to approve baseline ECR changes.`);
     }
     if (!authorityId || authorityId.startsWith('[')) {
       errors.push('Approved ECR must record valid Authority ID of the human signatory.');
+    }
+    if (!implementationCommit || implementationCommit.startsWith('[')) {
+      errors.push('Approved ECR must record valid Implementation Commit SHA binding the approval to the codebase revision.');
     }
     if (!signatureOrHash || signatureOrHash.startsWith('[')) {
       errors.push('Approved ECR must record valid Cryptographic Signature or Audit Hash.');
@@ -109,6 +115,7 @@ export function validateECRFile(filePath: string): { valid: boolean; errors: str
     record: {
       changeId,
       riskAssessment: risk,
+      implementationCommit,
       approvalRecord: {
         authorityName,
         authorityRole,
@@ -121,8 +128,12 @@ export function validateECRFile(filePath: string): { valid: boolean; errors: str
   };
 }
 
-export function computeECRPayload(record: { changeId?: string; approvalRecord?: { decision?: string; authorityId?: string; authorityRole?: string; signedAt?: string } }): string {
-  return `${record.changeId || ''}:${record.approvalRecord?.decision || ''}:${record.approvalRecord?.authorityId || ''}:${record.approvalRecord?.authorityRole || ''}:${record.approvalRecord?.signedAt || ''}`;
+export function computeECRPayload(record: {
+  changeId?: string;
+  implementationCommit?: string;
+  approvalRecord?: { decision?: string; authorityId?: string; authorityRole?: string; signedAt?: string };
+}): string {
+  return `${record.changeId || ''}:${record.approvalRecord?.decision || ''}:${record.approvalRecord?.authorityId || ''}:${record.approvalRecord?.authorityRole || ''}:${record.approvalRecord?.signedAt || ''}:${record.implementationCommit || ''}`;
 }
 
 export function generateECRSignature(
@@ -131,9 +142,10 @@ export function generateECRSignature(
   authorityId: string,
   authorityRole: string,
   signedAt: string,
+  implementationCommit: string,
   signingKey: string
 ): string {
-  const payload = `${changeId}:${decision}:${authorityId}:${authorityRole}:${signedAt}`;
+  const payload = `${changeId}:${decision}:${authorityId}:${authorityRole}:${signedAt}:${implementationCommit}`;
   const hmac = crypto.createHmac('sha256', signingKey).update(payload).digest('hex');
   return `HMAC-SHA256:${hmac}`;
 }
@@ -151,7 +163,10 @@ export function verifyECRSignature(
     return { verified: false, error: 'ECR has no cryptographic signature string' };
   }
 
-  const key = signingKey || process.env.DIRECTOR_SIGNING_KEY || process.env.LAB_SESSION_SECRET || 'usv01-egs-director-closure-key-v1';
+  const key = signingKey || process.env.DIRECTOR_SIGNING_KEY;
+  if (!key) {
+    return { verified: false, error: 'CRITICAL: No DIRECTOR_SIGNING_KEY provisioned in environment. Default fallbacks are strictly prohibited.' };
+  }
 
   const payload = computeECRPayload(record);
   const expectedHmacHex = crypto.createHmac('sha256', key).update(payload).digest('hex');
@@ -167,7 +182,7 @@ export function verifyECRSignature(
     }
     const match = crypto.timingSafeEqual(bufProvided, bufExpected);
     if (!match) {
-      return { verified: false, error: 'HMAC signature verification failed: signature does not match canonical payload' };
+      return { verified: false, error: 'HMAC signature verification failed: signature does not match canonical payload bound to this commit' };
     }
     return { verified: true };
   } catch (err: any) {

@@ -43,8 +43,44 @@ export function evaluateStageDHumanApproval(baseRef = 'origin/main', customSigni
   }
 
   const hasApprovedECR = !!approvedECR;
-  const signingKey = customSigningKey || process.env.DIRECTOR_SIGNING_KEY || process.env.LAB_SESSION_SECRET || 'usv01-egs-director-closure-key-v1';
-  const sigCheck = hasApprovedECR ? verifyECRSignature(approvedECR, signingKey) : { verified: false, error: 'No approved ECR found' };
+  const signingKey = customSigningKey || process.env.DIRECTOR_SIGNING_KEY;
+
+  let isCommitBound = false;
+  let commitBindingError = '';
+  if (hasApprovedECR) {
+    try {
+      const targetCommit = (approvedECR.implementationCommit || '').trim();
+      const headSha = execSync('git rev-parse HEAD', { encoding: 'utf-8' }).trim();
+      let commits: string[] = [];
+      try {
+        commits = execSync('git rev-list origin/main..HEAD 2>/dev/null', { encoding: 'utf-8' }).trim().split('\n').filter(Boolean);
+      } catch {
+        commits = [headSha];
+      }
+      if (commits.length === 0) commits = [headSha];
+
+      // Verify the authorized commit is either the current HEAD or in the branch commit set
+      isCommitBound = targetCommit.length >= 7 && (
+        commits.some(c => c.startsWith(targetCommit) || targetCommit.startsWith(c)) ||
+        headSha.startsWith(targetCommit) || targetCommit.startsWith(headSha)
+      );
+
+      if (!isCommitBound) {
+        commitBindingError = `ECR is bound to commit '${targetCommit}', which is not in this change set (HEAD: ${headSha.substring(0, 7)}). Stale or mismatched approvals are strictly rejected.`;
+      }
+    } catch (err: any) {
+      commitBindingError = `Failed to verify commit binding in git: ${err?.message || err}`;
+    }
+  }
+
+  const sigCheck = hasApprovedECR
+    ? (!signingKey
+        ? { verified: false, error: 'CRITICAL: No DIRECTOR_SIGNING_KEY securely provisioned in environment. Default key fallbacks are strictly prohibited.' }
+        : (!isCommitBound
+            ? { verified: false, error: commitBindingError }
+            : verifyECRSignature(approvedECR, signingKey)))
+    : { verified: false, error: 'No approved ECR found' };
+
   const signatureVerified = sigCheck.verified;
 
   let reviewStatus: StageDResult['independentReviewStatus'] = 'PENDING_HUMAN_SIGN_OFF';
@@ -68,10 +104,14 @@ export function evaluateStageDHumanApproval(baseRef = 'origin/main', customSigni
   if (isCriticalOrHigh) {
     if (!hasApprovedECR) {
       summary = `Stage D Gate Blocked: Change classified as ${highestRisk} risk requiring mandatory Engineering Director sign-off, but no approved ECR record was found in governance/ecr/.`;
+    } else if (!signingKey) {
+      summary = `Stage D Gate Blocked: Change classified as ${highestRisk} risk. Approved ECR ${approvedECR.changeId} found, but no DIRECTOR_SIGNING_KEY was provisioned in environment. Fallback keys are barred.`;
+    } else if (!isCommitBound) {
+      summary = `Stage D Gate Blocked: Change classified as ${highestRisk} risk. Approved ECR ${approvedECR.changeId} is not bound to current change: ${commitBindingError}`;
     } else if (!signatureVerified) {
       summary = `Stage D Gate Blocked: Change classified as ${highestRisk} risk. Approved ECR ${approvedECR.changeId} found, but cryptographic HMAC signature verification failed: ${sigCheck.error || 'Invalid HMAC signature'}.`;
     } else {
-      summary = `Stage D Gate Passed: Change classified as ${highestRisk} risk. Verified Engineering Director closure recorded under ${approvedECR.changeId} (Authority: ${approvedECR.approvalRecord.authorityName} [${approvedECR.approvalRecord.authorityId}]) with valid cryptographic HMAC-SHA256 signature.`;
+      summary = `Stage D Gate Passed: Change classified as ${highestRisk} risk. Verified Engineering Director closure recorded under ${approvedECR.changeId} (Authority: ${approvedECR.approvalRecord.authorityName} [${approvedECR.approvalRecord.authorityId}]) cryptographically bound to commit '${approvedECR.implementationCommit}'.`;
     }
   } else {
     summary = `Stage D Gate Bypassed: Change classified as ${highestRisk} risk. Standard developer sign-off permitted.`;
