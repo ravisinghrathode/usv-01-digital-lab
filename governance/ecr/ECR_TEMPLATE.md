@@ -34,6 +34,8 @@
 - **Approval Decision:** [APPROVED | REJECTED | PENDING]
 - **Authority Name:** [Designated Human Engineering Authority]
 - **Authority Role:** ENGINEERING_DIRECTOR
+- **Authority ID:** [e.g. usr-eng-dir-8841]
 - **Signed At:** [ISO-8601 Timestamp]
+- **Cryptographic Signature / Hash:** [HMAC-SHA256 signature or SHA256 audit hash]
 - **Implementation Commit:** [Git Commit SHA]
 - **Notes:** [Engineering Director rationale and stipulations]

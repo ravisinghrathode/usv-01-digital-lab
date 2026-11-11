@@ -3,8 +3,8 @@
   "programme": "NAVAL-USV",
   "project": "USV-01 Digital Engineering Lab",
   "releaseVersion": "1.0.0",
-  "gitCommitSha": "e2a4cd494ef66afbb8ce57674fdf524787d245b1",
-  "builtAt": "2026-11-11T20:55:54.636Z",
+  "gitCommitSha": "690053bb21e4faa0d8bc5817be09e1c00f84ed06",
+  "builtAt": "2026-11-11T21:25:41.323Z",
   "environment": {
     "nodeVersion": "v24.22.2",
     "osPlatform": "linux"
@@ -12,13 +12,13 @@
   "checksums": [
     {
       "path": "package.json",
-      "sha256": "74f4a253d8edbf8b220f0a8ff1c47df4ca78f0e48f9eb81424a303ee5ca42d5e",
-      "sizeBytes": 1705
+      "sha256": "88223e16348343d6aff11aee4e529cfdcfb1dc8580059afd43e46dfed6663550",
+      "sizeBytes": 1783
     },
     {
       "path": "server.ts",
-      "sha256": "84ae12cee0eb28e4573b68b0bf133fcc5367bea51bc0c3efaae071d5d97ffa60",
-      "sizeBytes": 23485
+      "sha256": "e71892b013b76be68b20ba8f553c77aa4cd68cee96e03851b8d6547bf72ec327",
+      "sizeBytes": 24650
     },
     {
       "path": "USV01_PROJECT_CONTEXT.md",
@@ -32,8 +32,8 @@
     },
     {
       "path": "src/components/AgentOrchestratorView.tsx",
-      "sha256": "dc9a83396041dab260f89febe6b30ceead7084f4c6bde4bd9aa98ad8e15569be",
-      "sizeBytes": 45830
+      "sha256": "d4e8b029d4c9676e7d80eed6ebc9fb92233ae62dca1adb43366fcc76ab9ac8d3",
+      "sizeBytes": 49593
     },
     {
       "path": "src/components/AiEngineeringAssistant.tsx",
@@ -137,18 +137,18 @@
     },
     {
       "path": "src/core/agents/definitions.ts",
-      "sha256": "28dc0d1b77157a2e84e9ee7667152e70275c4b92f5c4cc7374e381f055774d90",
-      "sizeBytes": 45906
+      "sha256": "72e9af718cc8611e9e777f65076ad5b1dbdc680e059127e6487c0e983d654e20",
+      "sizeBytes": 46011
     },
     {
       "path": "src/core/auth/authClient.ts",
-      "sha256": "4d00732187e234aa4673389ed2bd67b63330e7a732fe87837e6bcc7d1bea3610",
-      "sizeBytes": 4943
+      "sha256": "d9b34c54c49e5fd7e91227c37e4b8c431995c994d4000b9dc9a6c23a8bc8dc74",
+      "sizeBytes": 6253
     },
     {
       "path": "src/core/engine/BaseAgent.ts",
-      "sha256": "dde8cb059bd8d742fd07a4cddec7ee072df4dc0962eccefdbb3cabb6bdd203b7",
-      "sizeBytes": 7119
+      "sha256": "1e4ac6201cefeb923f68b053e10f2add3260607a1a68fa7e0207e7b8410f5164",
+      "sizeBytes": 7762
     },
     {
       "path": "src/core/engine/ExecutionEngine.ts",
@@ -167,8 +167,8 @@
     },
     {
       "path": "src/core/models/ModelProvider.ts",
-      "sha256": "b4c59acaf21798ee00c18027f008168cb20d60bf3bd6e40dafa132d75904f900",
-      "sizeBytes": 8499
+      "sha256": "253e3a75b26a4405c72f6a66a154cf7a25ad599171ba526d836735a7c245ced4",
+      "sizeBytes": 8621
     },
     {
       "path": "src/core/orchestrator/CentralOrchestrator.ts",
@@ -237,8 +237,8 @@
     },
     {
       "path": "src/data/initialProjectData.ts",
-      "sha256": "2af6f1d05d0136661c537405a0d22844d352713b0a4088e6b22eaf97cc2894ad",
-      "sizeBytes": 37501
+      "sha256": "594adc3afd4e9671c8af4a22e8c913cdcb240ecffac6aaf3cef55196c02059ee",
+      "sizeBytes": 37460
     },
     {
       "path": "src/index.css",
@@ -266,18 +266,18 @@
       "sizeBytes": 10104
     },
     {
-      "path": "dist/assets/index-C6Bk0aHc.js",
-      "sha256": "a0a78d64fe07feb27351ec3bf5a3d29124b8fa477ad90766de5a0e1b17cf6d41",
-      "sizeBytes": 1275421
+      "path": "dist/assets/index-CKOUPTOI.js",
+      "sha256": "56d2aec941aa65b157eae74b0ca70076c5c6c5a9caf0a9b76322226179c48e6f",
+      "sizeBytes": 1280744
     },
     {
-      "path": "dist/assets/index-YfXTieHK.css",
-      "sha256": "6a251d5b86dc078b945270e207cb152882f19b481f376295398925dcd05ccbdb",
-      "sizeBytes": 32876
+      "path": "dist/assets/index-D9Yx8NXM.css",
+      "sha256": "bc655a2789f67c5c11b9c2c71f834d61c114538c42df3998e59638c5325cfb2f",
+      "sizeBytes": 33459
     },
     {
       "path": "dist/index.html",
-      "sha256": "d953a9f541f8d4dcb05dcdcce7aa63b7e2f028175acc83173b770a89bb1ba983",
+      "sha256": "1dc1fcd8e075bd7d7c40d06dcd3cd0e79e8225928eed5966b20507022aefb628",
       "sizeBytes": 1160
     }
   ],
@@ -287,5 +287,5 @@
     "auditVulnerabilities": 0,
     "staticAnalysisStatus": "PASS"
   },
-  "immutableManifestSha256": "dc7cc7cbfabc739bc6c4a4ad361286f08e2ad04e8ddc949482ae94528e4ffd03"
+  "immutableManifestSha256": "331f17cf50aaeeef1a94a3c5ac1099f8aeea1ea0be04bf6e511d4d53835eccb2"
 }

@@ -490,7 +490,7 @@ Enforce circuit protection and cable ampacity standards (ABYC E-11 / IEC 60092).
   {
     id: 'BATT-ESS-15',
     canonicalId: 'A15',
-    aliases: ['BATT-ESS-15', 'A15'],
+    aliases: ['BATT-ESS-15', 'A15', 'ELEC-DIST-15', 'ESS-BATT-15', 'ELEC-ESS-15'],
     division: 'POWER_PROPULSION',
     name: 'Energy Storage System & Battery Safety Engineer',
     speciality: 'Lithium chemistry (LFP, NMC), battery pack capacity, BMS telemetry, thermal runaway prevention, DNV maritime battery class',
@@ -588,7 +588,7 @@ Rule 16 requires give-way actions to be early and substantial. Never violate COL
   {
     id: 'AUTO-EXEC-18',
     canonicalId: 'A18',
-    aliases: ['AUTO-EXEC-18', 'A18'],
+    aliases: ['AUTO-EXEC-18', 'A18', 'AUT-SENS-18', 'AUT-EXEC-18', 'SW-AUT-18', 'AUTO-SENS-18'],
     division: 'AUTONOMY_ELECTRONICS',
     name: 'Autonomy State Executive Engineer',
     speciality: 'Finite state machine (FSM), mission modes (MANUAL, PILOT_ASSIST, FULL_AUTO, FAILSAFE), heartbeat monitoring',

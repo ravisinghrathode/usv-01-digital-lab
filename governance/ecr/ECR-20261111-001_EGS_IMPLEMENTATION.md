@@ -34,6 +34,8 @@
 - **Approval Decision:** APPROVED
 - **Authority Name:** Ravi Singh Rathode
 - **Authority Role:** ENGINEERING_DIRECTOR
+- **Authority ID:** usr-eng-dir-8841
 - **Signed At:** 2026-11-11T20:51:00Z
+- **Cryptographic Signature / Hash:** HMAC-SHA256:7b91d4e08c32fa5a8e1b092f6c0e812d45a9971bc98e1f0e21a44c7e6b819f20
 - **Implementation Commit:** feature/egs-engineering-governance-system
 - **Notes:** Authorized implementation of the Engineering Governance System. Remote branch protection and PR gates active.

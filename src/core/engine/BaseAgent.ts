@@ -144,14 +144,23 @@ export class BaseAgent {
     let requiresDirectorApproval = false;
     let approvalRationale: string | undefined;
 
+    const warnings = [...(synthesized.warnings || [])];
+
+    // Synthetic mock fallback can NEVER be certified as verified baseline success
+    if (modelResponse.isMock || !modelResponse.evidenceValid) {
+      requiresDirectorApproval = true;
+      approvalRationale = 'Synthetic mock fallback used. Physics evidence not confirmed by live solver or verified model; requires human approval.';
+      warnings.push('CRITICAL: Output generated via synthetic mock fallback. Not certified as verified engineering evidence.');
+    }
+
     if (this.spec.verificationCriteria.independentReviewRequired) {
       requiresDirectorApproval = true;
-      approvalRationale = `Agent ${this.spec.id} (${this.spec.name}) requires Independent Review and Director Sign-off per Verification Policy.`;
+      approvalRationale = approvalRationale || `Agent ${this.spec.id} (${this.spec.name}) requires Independent Review and Director Sign-off per Verification Policy.`;
     }
 
     if (this.spec.auditRequirement.logLevel === 'SAFETY_CRITICAL') {
       requiresDirectorApproval = true;
-      approvalRationale = `Safety-critical engineering output from ${this.spec.id} requires Engineering Director approval.`;
+      approvalRationale = approvalRationale || `Safety-critical engineering output from ${this.spec.id} requires Engineering Director approval.`;
     }
 
     const output: AgentExecutionOutput = {
@@ -161,13 +170,15 @@ export class BaseAgent {
       status: requiresDirectorApproval ? 'NEEDS_HUMAN_APPROVAL' : 'SUCCESS',
       data: {
         ...synthesized,
+        isMockFallback: !!modelResponse.isMock,
+        evidenceValid: !!modelResponse.evidenceValid,
         executionTimeMs: performance.now() - startTime,
         modelUsed: modelResponse.modelUsed
       },
       assumptions,
       deterministicToolEvidence: deterministicEvidence,
       openTbdItems: synthesized.openTbdItems || [],
-      warnings: synthesized.warnings || [],
+      warnings,
       recommendations: synthesized.recommendations || [],
       requiresDirectorApproval,
       approvalRationale

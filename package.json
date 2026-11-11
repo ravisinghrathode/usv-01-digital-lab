@@ -17,6 +17,7 @@
     "governance:validate": "tsx scripts/governance/validate-config.ts",
     "governance:ecr": "tsx scripts/governance/ecr-tool.ts",
     "governance:review": "tsx scripts/governance/independent-ai-review.ts",
+    "governance:stage-d": "tsx scripts/governance/stage-d-human-approval.ts",
     "governance:manifest": "tsx scripts/governance/release-manifest.ts",
     "prepare": "node -e \"const fs = require('fs'); try { fs.copyFileSync('scripts/pre-push.sh', '.git/hooks/pre-push'); fs.chmodSync('.git/hooks/pre-push', 0o755); } catch {}\" || true"
   },

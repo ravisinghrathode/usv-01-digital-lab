@@ -109,3 +109,22 @@ Every reviewer must output findings structured with:
 - **Potential Consequences:** Operational, safety, or architectural failure modes.
 - **Recommended Corrective Action:** Step-by-step resolution.
 - **Advisory Recommendation:** `ADVISORY_APPROVE`, `ADVISORY_REQUEST_CHANGES`, or `ADVISORY_BLOCK`.
+
+---
+
+### 5. Dual-Control Independent Review & Single-Maintainer Protocols
+
+In repositories where the PR author is also the sole or primary designated CODEOWNER (`@ravisinghrathode`):
+
+#### 5.1 The Branch Protection Constraint
+GitHub server-side branch protection (`require_code_owner_reviews: true` and `require_last_push_approval: true`) strictly prohibits an author from approving their own PR. This guarantees that no single developer can silently merge changes without independent verification.
+
+#### 5.2 Workable Review Paths:
+1. **Peer Reviewer Invitation (Standard Operations):**
+   - A secondary reviewer or software assurance reviewer (e.g. organizational co-maintainer or independent technical reviewer) is invited to inspect the PR diff and submit an approving review.
+2. **Cryptographic ECR Dual-Key Authorization (Stage D):**
+   - Prior to merging, the Engineering Director generates and signs a formal ECR record in `governance/ecr/` (`ECR-YYYYMMDD-XXX.md`) binding the PR commit SHA, Authority ID (`usr-eng-dir-8841`), and HMAC-SHA256 signature.
+   - The automated CI pipeline executes `scripts/governance/stage-d-human-approval.ts` to verify the cryptographic signature and ECR compliance.
+3. **Audit-Logged Administrator Merge:**
+   - When all automated gates (Stages A, B, C, D) pass cleanly and the ECR signature is verified, the authorized repository administrator may merge the PR with full audit traceability recorded in `RELEASE_MANIFEST.json` and `CryptographicAuditTrail`.
+

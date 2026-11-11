@@ -57,3 +57,8 @@ jobs:
           npx tsx scripts/governance/classify-change.ts origin/main >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           npx tsx scripts/governance/independent-ai-review.ts origin/main >> $GITHUB_STEP_SUMMARY
+
+      - name: Stage D — Human Authority & ECR Authorization Verification
+        if: github.event_name == 'pull_request'
+        run: |
+          npx tsx scripts/governance/stage-d-human-approval.ts origin/main

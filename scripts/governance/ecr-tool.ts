@@ -18,8 +18,10 @@ export interface ECRRecord {
   approvalRecord: {
     authorityName: string;
     authorityRole: string;
+    authorityId?: string;
     decision: 'APPROVED' | 'REJECTED' | 'PENDING';
     signedAt: string;
+    signatureOrHash?: string;
     notes?: string;
   };
   implementationCommit: string;
@@ -74,6 +76,32 @@ export function validateECRFile(filePath: string): { valid: boolean; errors: str
   const approvedMatch = content.match(/Approval Decision:?\*?\*?\s*(APPROVED|REJECTED|PENDING)/i);
   const approvalDecision = approvedMatch ? approvedMatch[1] : 'PENDING';
 
+  // Extract approver details and cryptographic evidence
+  const nameMatch = content.match(/Authority Name:?\*?\*?\s*([^\n\r]+)/i);
+  const roleMatch = content.match(/Authority Role:?\*?\*?\s*([^\n\r]+)/i);
+  const idMatchUser = content.match(/Authority ID:?\*?\*?\s*([^\n\r]+)/i);
+  const signedAtMatch = content.match(/Signed At:?\*?\*?\s*([^\n\r]+)/i);
+  const sigMatch = content.match(/(?:Cryptographic Signature \/ Hash|Signature|Approval Hash):?\*?\*?\s*([^\n\r]+)/i);
+
+  const authorityName = nameMatch ? nameMatch[1].trim() : 'Unknown';
+  const authorityRole = roleMatch ? roleMatch[1].trim() : 'UNKNOWN';
+  const authorityId = idMatchUser ? idMatchUser[1].trim() : undefined;
+  const signedAt = signedAtMatch ? signedAtMatch[1].trim() : new Date().toISOString();
+  const signatureOrHash = sigMatch ? sigMatch[1].trim() : undefined;
+
+  // Strict human authority boundary: Approved baseline change requires verified Engineering Director and cryptographic signature
+  if (approvalDecision === 'APPROVED') {
+    if (authorityRole !== 'ENGINEERING_DIRECTOR') {
+      errors.push(`Unauthorized approver role "${authorityRole}": Only ENGINEERING_DIRECTOR has authority to approve baseline ECR changes.`);
+    }
+    if (!authorityId || authorityId.startsWith('[')) {
+      errors.push('Approved ECR must record valid Authority ID of the human signatory.');
+    }
+    if (!signatureOrHash || signatureOrHash.startsWith('[')) {
+      errors.push('Approved ECR must record valid Cryptographic Signature or Audit Hash.');
+    }
+  }
+
   return {
     valid: errors.length === 0,
     errors,
@@ -81,10 +109,12 @@ export function validateECRFile(filePath: string): { valid: boolean; errors: str
       changeId,
       riskAssessment: risk,
       approvalRecord: {
-        authorityName: 'Engineering Director',
-        authorityRole: 'ENGINEERING_DIRECTOR',
+        authorityName,
+        authorityRole,
+        authorityId,
         decision: approvalDecision as any,
-        signedAt: new Date().toISOString()
+        signedAt,
+        signatureOrHash
       }
     }
   };

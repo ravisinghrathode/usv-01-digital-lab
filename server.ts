@@ -201,14 +201,39 @@ export const authMiddleware = (req: express.Request, res: express.Response, next
 // Protect data, export/import, AI assistant, and gate signing endpoints
 app.use(['/api/data', '/api/export', '/api/import', '/api/gemini/assist', '/api/auth/sign-gate', '/api/auth/session'], authMiddleware);
 
+// Secret passphrase required to claim Engineering Director credentials
+const DIRECTOR_KEY = process.env.LAB_DIRECTOR_KEY || 'usv01-director-auth-8841-alpha';
+
 // --- AUTHENTICATION & GOVERNANCE SIGNING ENDPOINTS ---
 app.post('/api/auth/login', (req, res) => {
-  const { userId, role } = req.body || {};
-  const memberKey = userId || 'usr-eng-dir-8841';
-  const member = AUTHORIZED_MEMBERS[memberKey] || {
-    userId: memberKey,
-    userName: memberKey === 'usr-eng-dir-8841' ? 'Chief Naval Architect & Systems Director' : `User (${memberKey})`,
-    role: role || (memberKey === 'usr-eng-dir-8841' ? 'ENGINEERING_DIRECTOR' : 'SYSTEMS_ENGINEER')
+  const { userId, role, passphrase } = req.body || {};
+  const requestedRole = role || (userId === 'usr-eng-dir-8841' ? 'ENGINEERING_DIRECTOR' : 'SYSTEMS_ENGINEER');
+  const requestedUserId = userId || (requestedRole === 'ENGINEERING_DIRECTOR' ? 'usr-eng-dir-8841' : 'usr-lead-sys-01');
+
+  // Privileged Engineering Director authority strictly requires verified passphrase
+  if (requestedRole === 'ENGINEERING_DIRECTOR' || requestedUserId === 'usr-eng-dir-8841') {
+    if (!passphrase || typeof passphrase !== 'string') {
+      return res.status(401).json({
+        success: false,
+        error: "Authentication failed: Engineering Director session requires a verified passphrase/credential."
+      });
+    }
+
+    const bufProvided = Buffer.from(passphrase);
+    const bufExpected = Buffer.from(DIRECTOR_KEY);
+    if (bufProvided.length !== bufExpected.length || !crypto.timingSafeEqual(bufProvided, bufExpected)) {
+      return res.status(401).json({
+        success: false,
+        error: "Authentication failed: Invalid Engineering Director passphrase."
+      });
+    }
+  }
+
+  // Look up known member or create authenticated staff session
+  const member = AUTHORIZED_MEMBERS[requestedUserId] || {
+    userId: requestedUserId,
+    userName: requestedRole === 'ENGINEERING_DIRECTOR' ? 'Chief Naval Architect & Systems Director' : `Engineer (${requestedUserId})`,
+    role: requestedRole
   };
 
   const token = createSessionToken(member);

@@ -54,10 +54,45 @@ export function clearSession(): void {
 }
 
 /**
- * Ensures an authenticated session exists with the backend digital lab server.
- * Exchanges credentials for a cryptographically signed HMAC session token.
+ * Authenticates specifically with Engineering Director authority using the required passphrase.
  */
-export async function ensureAuthenticatedSession(): Promise<{ token: string; user: ApproverIdentity }> {
+export async function authenticateAsDirector(passphrase: string): Promise<ApproverIdentity> {
+  const loginRes = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      userId: 'usr-eng-dir-8841',
+      role: 'ENGINEERING_DIRECTOR',
+      passphrase
+    })
+  });
+
+  if (!loginRes.ok) {
+    const errData = await loginRes.json().catch(() => ({}));
+    throw new Error(errData.error || `Director authentication failed with HTTP ${loginRes.status}`);
+  }
+
+  const loginData = await loginRes.json();
+  if (!loginData.success || !loginData.token) {
+    throw new Error(loginData.error || 'Failed to obtain director session token');
+  }
+
+  const identity: ApproverIdentity = {
+    userId: loginData.user.userId,
+    userName: loginData.user.userName,
+    role: loginData.user.role,
+    authenticatedAt: new Date().toISOString()
+  };
+
+  setSession(loginData.token, identity);
+  return identity;
+}
+
+/**
+ * Ensures an authenticated session exists with the backend digital lab server.
+ * Defaults to authenticated Staff Systems Engineer; Director privileges require explicit credential verification.
+ */
+export async function ensureAuthenticatedSession(directorPassphrase?: string): Promise<{ token: string; user: ApproverIdentity }> {
   // If we have a valid token, verify it with the server
   if (currentSessionToken && currentUser) {
     try {
@@ -83,11 +118,15 @@ export async function ensureAuthenticatedSession(): Promise<{ token: string; use
     }
   }
 
-  // Request new authenticated session from server (defaults to Engineering Director in the digital lab)
+  // If a director passphrase is provided, authenticate as Director; otherwise authenticate as Staff Systems Engineer
+  const payload = directorPassphrase
+    ? { userId: 'usr-eng-dir-8841', role: 'ENGINEERING_DIRECTOR', passphrase: directorPassphrase }
+    : { userId: 'usr-lead-sys-01', role: 'LEAD_SYSTEMS_ENGINEER' };
+
   const loginRes = await fetch('/api/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userId: 'usr-eng-dir-8841', role: 'ENGINEERING_DIRECTOR' })
+    body: JSON.stringify(payload)
   });
 
   if (!loginRes.ok) {

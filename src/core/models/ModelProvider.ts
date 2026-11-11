@@ -70,25 +70,25 @@ export class MockDeterministicProvider implements IModelProvider {
     };
 
     if (isHydrostatics || isStability) {
-      resultData.disciplineSummary = 'Hydrostatic characteristics verified against intact stability standards.';
+      resultData.disciplineSummary = '[UNVERIFIED MOCK FALLBACK] Offline parametric estimate. Hydrostatic characteristics NOT verified.';
       resultData.keyMetrics = {
         ...resultData.keyMetrics,
-        hydrostaticAudit: 'PASS',
-        minTransverseMetacentricHeight: 'GMt > 0.35m'
+        hydrostaticAudit: 'UNVERIFIED_MOCK',
+        minTransverseMetacentricHeight: 'UNVERIFIED (Requires live solver)'
       };
     } else if (isResistance) {
-      resultData.disciplineSummary = 'Hydrodynamic resistance evaluated across transit and sprint profiles.';
+      resultData.disciplineSummary = '[UNVERIFIED MOCK FALLBACK] Offline parametric estimate. Hydrodynamic resistance NOT verified.';
       resultData.keyMetrics = {
         ...resultData.keyMetrics,
-        regimeClassification: 'Semi-displacement',
-        recommendedThrustMargin: '25%'
+        regimeClassification: 'UNVERIFIED_MOCK',
+        recommendedThrustMargin: 'UNVERIFIED'
       };
     } else if (isElectrical) {
-      resultData.disciplineSummary = 'DC bus architecture and continuous hotel/propulsion balance evaluated.';
+      resultData.disciplineSummary = '[UNVERIFIED MOCK FALLBACK] Offline parametric estimate. DC bus architecture NOT verified.';
       resultData.keyMetrics = {
         ...resultData.keyMetrics,
-        nominalBusVoltage: '48V DC',
-        converterMargin: '20%'
+        nominalBusVoltage: 'UNVERIFIED_MOCK',
+        converterMargin: 'UNVERIFIED'
       };
     }
 
