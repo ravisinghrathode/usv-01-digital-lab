@@ -2,5 +2,5 @@
   "name": "USV-01 Digital Engineering Lab",
   "description": "Central digital workspace for the USV-01 unmanned surface vessel engineering project, featuring systems engineering, naval architecture, hydrodynamics, simulation registers, and verification traceability.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": []
 }
