@@ -27,6 +27,11 @@ async function runChatGPTReview() {
   console.log('🤖 USV-01 DIGITAL LAB — CHATGPT PRE-PUSH REVIEW GATE');
   console.log('======================================================\n');
 
+  if (process.env.GIT_CHATGPT_BYPASS === '1' || process.argv.includes('--bypass')) {
+    console.warn('⚠️  WARNING: ChatGPT pre-push verification gate was manually bypassed (GIT_CHATGPT_BYPASS=1).');
+    process.exit(0);
+  }
+
   // 1. Get git diff
   let diff = '';
   try {
@@ -52,10 +57,6 @@ async function runChatGPTReview() {
   // 2. Validate OpenAI API key
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
-    if (process.env.GIT_CHATGPT_BYPASS === '1' || process.argv.includes('--bypass')) {
-      console.warn('\n⚠️  WARNING: ChatGPT pre-push verification gate was manually bypassed (GIT_CHATGPT_BYPASS=1).');
-      process.exit(0);
-    }
     console.error('\n❌ ERROR: OPENAI_API_KEY environment variable is missing.');
     console.error('To enable the ChatGPT pre-push verification gate:');
     console.error('  1. Add OPENAI_API_KEY=sk-... to your .env file or export it in your terminal.');
@@ -127,6 +128,15 @@ Respond STRICTLY with valid JSON adhering to this schema:
 
     if (!response.ok) {
       const errText = await response.text();
+      try {
+        const parsedErr = JSON.parse(errText);
+        if (parsedErr.error?.code === 'credit_balance_exhausted' || parsedErr.error?.type === 'insufficient_quota') {
+          console.error('\n⚠️  OPENAI BILLING NOTICE: Your OpenAI account has exhausted its API credit balance.');
+          console.error('To run live ChatGPT reviews, add API credits at: https://platform.openai.com/settings/organization/billing/');
+          console.error('(To push without live review during billing maintenance: GIT_CHATGPT_BYPASS=1 git push)\n');
+          process.exit(1);
+        }
+      } catch {}
       throw new Error(`OpenAI API HTTP ${response.status}: ${errText}`);
     }
 
