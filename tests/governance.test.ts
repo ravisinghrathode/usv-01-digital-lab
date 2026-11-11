@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { classifyFile } from '../scripts/governance/classify-change.ts';
 import { scanContentForSecrets } from '../scripts/governance/secret-scanner.ts';
 import { validateRepositoryConfiguration } from '../scripts/governance/validate-config.ts';
@@ -204,6 +204,22 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
   });
 
   describe('9. Authenticated Staff Allowlist Boundary (server.ts)', () => {
+    const testDirectorKey = 'test-director-passphrase-8841-alpha';
+    let origDirectorKey: string | undefined;
+
+    beforeAll(() => {
+      origDirectorKey = process.env.LAB_DIRECTOR_KEY;
+      process.env.LAB_DIRECTOR_KEY = testDirectorKey;
+    });
+
+    afterAll(() => {
+      if (origDirectorKey !== undefined) {
+        process.env.LAB_DIRECTOR_KEY = origDirectorKey;
+      } else {
+        delete process.env.LAB_DIRECTOR_KEY;
+      }
+    });
+
     it('should reject unknown staff user IDs with 403 Forbidden', () => {
       const res = authenticateLoginRequest({ userId: 'usr-unknown-intruder-999' });
       expect(res.statusCode).toBe(403);
@@ -216,6 +232,18 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
       expect(res.statusCode).toBe(403);
       expect(res.body.success).toBe(false);
       expect(res.body.error).toContain('strictly authorized only for role');
+    });
+
+    it('should return 503 when LAB_DIRECTOR_KEY is not configured in environment', () => {
+      const current = process.env.LAB_DIRECTOR_KEY;
+      try {
+        delete process.env.LAB_DIRECTOR_KEY;
+        const res = authenticateLoginRequest({ userId: 'usr-eng-dir-8841', role: 'ENGINEERING_DIRECTOR' });
+        expect(res.statusCode).toBe(503);
+        expect(res.body.error).toContain('LAB_DIRECTOR_KEY is not configured');
+      } finally {
+        process.env.LAB_DIRECTOR_KEY = current;
+      }
     });
 
     it('should reject Engineering Director login without valid passphrase', () => {
@@ -235,7 +263,7 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
       const res = authenticateLoginRequest({
         userId: 'usr-eng-dir-8841',
         role: 'ENGINEERING_DIRECTOR',
-        passphrase: process.env.LAB_DIRECTOR_KEY
+        passphrase: testDirectorKey
       });
       expect(res.statusCode).toBe(200);
       expect(res.body.success).toBe(true);
