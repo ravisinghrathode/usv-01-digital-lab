@@ -1,14 +1,14 @@
 {
   "summary": {
-    "totalFilesChanged": 36,
-    "totalLinesAdded": 3390,
-    "totalLinesDeleted": 61,
+    "totalFilesChanged": 40,
+    "totalLinesAdded": 4384,
+    "totalLinesDeleted": 121,
     "dominantCategories": [
-      "DOCUMENTATION",
       "SOFTWARE",
+      "DOCUMENTATION",
       "CONFIGURATION",
-      "SECURITY",
       "ARCHITECTURE",
+      "SECURITY",
       "RELEASE",
       "SAFETY",
       "REQUIREMENTS"
@@ -18,6 +18,15 @@
     "requiresECR": true
   },
   "fileDetails": [
+    {
+      "file": ".env.example",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 4,
+      "linesDeleted": 0
+    },
     {
       "file": ".github/CODEOWNERS",
       "categories": [
@@ -33,7 +42,7 @@
         "CONFIGURATION"
       ],
       "risk": "CRITICAL",
-      "linesAdded": 33,
+      "linesAdded": 35,
       "linesDeleted": 5
     },
     {
@@ -204,7 +213,7 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 159,
+      "linesAdded": 229,
       "linesDeleted": 0
     },
     {
@@ -213,7 +222,7 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 315,
+      "linesAdded": 695,
       "linesDeleted": 0
     },
     {
@@ -231,7 +240,16 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 94,
+      "linesAdded": 90,
+      "linesDeleted": 0
+    },
+    {
+      "file": "scripts/governance/sign-ecr.ts",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 102,
       "linesDeleted": 0
     },
     {
@@ -240,7 +258,7 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 101,
+      "linesAdded": 154,
       "linesDeleted": 0
     },
     {
@@ -258,8 +276,8 @@
         "SOFTWARE"
       ],
       "risk": "HIGH",
-      "linesAdded": 31,
-      "linesDeleted": 6
+      "linesAdded": 122,
+      "linesDeleted": 16
     },
     {
       "file": "src/components/AgentOrchestratorView.tsx",
@@ -276,8 +294,8 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 2,
-      "linesDeleted": 2
+      "linesAdded": 49,
+      "linesDeleted": 42
     },
     {
       "file": "src/core/auth/authClient.ts",
@@ -312,8 +330,17 @@
         "ARCHITECTURE"
       ],
       "risk": "HIGH",
-      "linesAdded": 9,
-      "linesDeleted": 9
+      "linesAdded": 94,
+      "linesDeleted": 17
+    },
+    {
+      "file": "src/core/registry/AgentRegistry.ts",
+      "categories": [
+        "ARCHITECTURE"
+      ],
+      "risk": "HIGH",
+      "linesAdded": 1,
+      "linesDeleted": 1
     },
     {
       "file": "src/core/safety/CryptographicAuditTrail.ts",
@@ -341,9 +368,18 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 196,
+      "linesAdded": 349,
       "linesDeleted": 0
+    },
+    {
+      "file": "tests/registry.test.ts",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 10,
+      "linesDeleted": 1
     }
   ],
-  "timestamp": "2026-11-11T21:45:28.121Z"
+  "timestamp": "2026-11-11T22:07:05.084Z"
 }
