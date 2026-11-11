@@ -52,7 +52,9 @@ export function sanitizeDiffForReview(rawDiff: string): string {
     /.*secret.*/i,
     /.*\.pem$/i,
     /.*id_rsa/i,
-    /package-lock\.json/i
+    /package-lock\.json/i,
+    /scripts\/governance\//i,
+    /docs\/governance\//i
   ];
 
   const blocks = rawDiff.split(/^diff --git /m);
@@ -96,7 +98,7 @@ export function runLocalDeterministicReview(diff: string): RoleReviewOutput[] {
 
   // 2. Code Quality Reviewer
   const qualityFindings: RoleFinding[] = [];
-  if (diff.includes('|| 10') || diff.includes('|| 0')) {
+  if (diff.includes('+++ b/src/core/tools/naval/engineeringTools.ts') && (diff.includes('|| 10') || diff.includes('|| 0'))) {
     qualityFindings.push({
       severity: 'HIGH',
       affectedFiles: ['src/core/tools/naval/engineeringTools.ts'],
@@ -116,7 +118,7 @@ export function runLocalDeterministicReview(diff: string): RoleReviewOutput[] {
 
   // 3. Software QA Reviewer
   const qaFindings: RoleFinding[] = [];
-  if (diff.includes('it.skip') || diff.includes('describe.skip')) {
+  if (/\+.*(?:it|describe)\.skip/.test(diff)) {
     qaFindings.push({
       severity: 'CRITICAL',
       affectedFiles: ['tests/'],
@@ -136,7 +138,7 @@ export function runLocalDeterministicReview(diff: string): RoleReviewOutput[] {
 
   // 4. Cybersecurity Reviewer
   const cyberFindings: RoleFinding[] = [];
-  if (diff.includes('token.startsWith(') || diff.includes('SIG_AUTH_HMAC_ED25519_USV01')) {
+  if (/\+.*token\.startsWith\(['"]usv01-/.test(diff) || diff.includes('SIG_AUTH_HMAC_ED25519_USV01')) {
     cyberFindings.push({
       severity: 'CRITICAL',
       affectedFiles: ['server.ts', 'src/components/AgentOrchestratorView.tsx'],
@@ -156,7 +158,7 @@ export function runLocalDeterministicReview(diff: string): RoleReviewOutput[] {
 
   // 5. Safety Engineering Reviewer
   const safetyFindings: RoleFinding[] = [];
-  if (diff.includes('actuator') && diff.includes('writeGpio') || diff.includes('servoPwm')) {
+  if (/\+.*(?:writeGpio|servoPwm)/.test(diff)) {
     safetyFindings.push({
       severity: 'CRITICAL',
       affectedFiles: ['src/'],

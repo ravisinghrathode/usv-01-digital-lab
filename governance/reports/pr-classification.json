@@ -1,15 +1,17 @@
 {
   "summary": {
-    "totalFilesChanged": 27,
-    "totalLinesAdded": 2665,
-    "totalLinesDeleted": 5,
+    "totalFilesChanged": 36,
+    "totalLinesAdded": 3304,
+    "totalLinesDeleted": 61,
     "dominantCategories": [
       "DOCUMENTATION",
       "SOFTWARE",
       "CONFIGURATION",
-      "RELEASE",
       "SECURITY",
-      "SAFETY"
+      "ARCHITECTURE",
+      "RELEASE",
+      "SAFETY",
+      "REQUIREMENTS"
     ],
     "overallRisk": "CRITICAL",
     "requiresDesignatedAuthorityApproval": true,
@@ -31,7 +33,7 @@
         "CONFIGURATION"
       ],
       "risk": "CRITICAL",
-      "linesAdded": 28,
+      "linesAdded": 33,
       "linesDeleted": 5
     },
     {
@@ -112,7 +114,7 @@
         "DOCUMENTATION"
       ],
       "risk": "LOW",
-      "linesAdded": 111,
+      "linesAdded": 130,
       "linesDeleted": 0
     },
     {
@@ -157,7 +159,7 @@
         "DOCUMENTATION"
       ],
       "risk": "LOW",
-      "linesAdded": 39,
+      "linesAdded": 41,
       "linesDeleted": 0
     },
     {
@@ -166,7 +168,16 @@
         "DOCUMENTATION"
       ],
       "risk": "LOW",
-      "linesAdded": 39,
+      "linesAdded": 41,
+      "linesDeleted": 0
+    },
+    {
+      "file": "governance/reports/pr-classification.json",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 265,
       "linesDeleted": 0
     },
     {
@@ -175,7 +186,7 @@
         "CONFIGURATION"
       ],
       "risk": "HIGH",
-      "linesAdded": 6,
+      "linesAdded": 7,
       "linesDeleted": 0
     },
     {
@@ -193,7 +204,7 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 129,
+      "linesAdded": 159,
       "linesDeleted": 0
     },
     {
@@ -220,7 +231,16 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 90,
+      "linesAdded": 94,
+      "linesDeleted": 0
+    },
+    {
+      "file": "scripts/governance/stage-d-human-approval.ts",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 101,
       "linesDeleted": 0
     },
     {
@@ -233,6 +253,51 @@
       "linesDeleted": 0
     },
     {
+      "file": "server.ts",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "HIGH",
+      "linesAdded": 31,
+      "linesDeleted": 6
+    },
+    {
+      "file": "src/components/AgentOrchestratorView.tsx",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 84,
+      "linesDeleted": 20
+    },
+    {
+      "file": "src/core/agents/definitions.ts",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 2,
+      "linesDeleted": 2
+    },
+    {
+      "file": "src/core/auth/authClient.ts",
+      "categories": [
+        "SECURITY"
+      ],
+      "risk": "CRITICAL",
+      "linesAdded": 43,
+      "linesDeleted": 4
+    },
+    {
+      "file": "src/core/engine/BaseAgent.ts",
+      "categories": [
+        "ARCHITECTURE"
+      ],
+      "risk": "HIGH",
+      "linesAdded": 14,
+      "linesDeleted": 3
+    },
+    {
       "file": "src/core/governance/AgentGovernanceBridge.ts",
       "categories": [
         "SOFTWARE"
@@ -240,6 +305,15 @@
       "risk": "MEDIUM",
       "linesAdded": 117,
       "linesDeleted": 0
+    },
+    {
+      "file": "src/core/models/ModelProvider.ts",
+      "categories": [
+        "ARCHITECTURE"
+      ],
+      "risk": "HIGH",
+      "linesAdded": 9,
+      "linesDeleted": 9
     },
     {
       "file": "src/core/safety/CryptographicAuditTrail.ts",
@@ -252,14 +326,24 @@
       "linesDeleted": 0
     },
     {
+      "file": "src/data/initialProjectData.ts",
+      "categories": [
+        "REQUIREMENTS",
+        "SOFTWARE"
+      ],
+      "risk": "HIGH",
+      "linesAdded": 12,
+      "linesDeleted": 12
+    },
+    {
       "file": "tests/governance.test.ts",
       "categories": [
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 181,
+      "linesAdded": 196,
       "linesDeleted": 0
     }
   ],
-  "timestamp": "2026-11-11T21:25:54.031Z"
+  "timestamp": "2026-11-11T21:28:44.441Z"
 }
