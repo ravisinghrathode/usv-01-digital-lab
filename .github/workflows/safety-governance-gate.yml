@@ -14,6 +14,7 @@ permissions:
 jobs:
   governance-verification:
     name: Deterministic Quality & Governance Gate
+    runs-on: ubuntu-latest
     env:
       DIRECTOR_PUBLIC_KEY: ${{ vars.DIRECTOR_PUBLIC_KEY || secrets.DIRECTOR_PUBLIC_KEY }}
       PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
