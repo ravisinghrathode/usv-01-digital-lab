@@ -14,6 +14,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { WorkstreamCode } from '../types/engineering';
+import { authenticatedFetch } from '../core/auth/authClient.ts';
 
 interface Message {
   id: string;
@@ -88,12 +89,10 @@ How can I assist your engineering evaluation today?`,
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/gemini/assist', {
+      const response = await authenticatedFetch('/api/gemini/assist', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer usv01-auth-token-dir-8841',
-          'X-Project-Member-Id': 'usr-eng-dir-8841'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           prompt,

@@ -28,13 +28,13 @@ export class BaseAgent {
     // 1. Validate Input Schema
     const inputParse = this.spec.inputSchema.safeParse(input);
     if (!inputParse.success) {
-      const errorMsg = `Input schema validation failed: ${inputParse.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ')}`;
+      const errorMsg = `Input schema validation failed: ${inputParse.error.issues.map((e: any) => `${e.path.join('.')}: ${e.message}`).join(', ')}`;
       this.auditLogger.log({
         severity: 'WARN',
         agentId: this.spec.id,
         taskId,
         action: 'INPUT_VALIDATION_FAILED',
-        details: { errors: inputParse.error.errors }
+        details: { errors: inputParse.error.issues }
       });
 
       return {

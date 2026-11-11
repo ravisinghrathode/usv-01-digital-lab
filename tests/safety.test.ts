@@ -3,6 +3,7 @@ import { ApprovalGateManager } from '../src/core/safety/HumanApprovalGate.ts';
 import { SharedMemory } from '../src/core/memory/SharedMemory.ts';
 import { AuditLogger } from '../src/core/safety/AuditLogger.ts';
 import { MockDeterministicProvider } from '../src/core/models/ModelProvider.ts';
+import { generateApproverSignature } from '../src/core/safety/ApproverSigner.ts';
 
 describe('STAGE F: Human Authority Gates & Safety Governance', () => {
   const gateManager = ApprovalGateManager.getInstance();
@@ -23,22 +24,33 @@ describe('STAGE F: Human Authority Gates & Safety Governance', () => {
     expect(gate.state).toBe('PENDING');
   });
 
-  it('should block approval attempt if role is NOT ENGINEERING_DIRECTOR', () => {
+  it('should block approval attempt if role is NOT ENGINEERING_DIRECTOR or identity is invalid', () => {
     const gate = gateManager.createGate({
       taskId: 'TASK-ELEC-DEMO',
       agentId: 'ELEC-PWR-14',
       title: 'High Voltage DC Bus Approval',
       description: '400V DC bus integration sign-off',
-      safetyImplication: 'High voltage marine safety risk',
+      safetyImplication: 'High voltage marine marine safety risk',
       proposedChanges: { busVoltageV: 400 }
     });
 
+    // String identity must be rejected
     expect(() => {
-      gateManager.evaluateDecision(gate.id, 'APPROVED', 'Approved by agent', 'JUNIOR_AGENT');
-    }).toThrow('Security Violation: Only \'ENGINEERING_DIRECTOR\' has authority');
+      gateManager.evaluateDecision(gate.id, 'APPROVED', 'Approved by agent', 'JUNIOR_AGENT' as any);
+    }).toThrow("Security Violation: Approver must provide verified ApproverIdentity object");
+
+    // Invalid role must be rejected
+    expect(() => {
+      gateManager.evaluateDecision(gate.id, 'APPROVED', 'Approved by agent', {
+        userId: 'usr-agent-01',
+        userName: 'Junior Agent',
+        role: 'JUNIOR_AGENT',
+        authenticatedAt: new Date().toISOString()
+      });
+    }).toThrow("Security Violation: Only 'ENGINEERING_DIRECTOR' has authority");
   });
 
-  it('should allow approval when authenticated as ENGINEERING_DIRECTOR', () => {
+  it('should allow approval when authenticated as ENGINEERING_DIRECTOR with valid cryptographic signature', () => {
     const gate = gateManager.createGate({
       taskId: 'TASK-VALID-APPROVAL',
       agentId: 'LEAD-SYS-01',
@@ -48,15 +60,30 @@ describe('STAGE F: Human Authority Gates & Safety Governance', () => {
       proposedChanges: { baselineRev: 1 }
     });
 
+    const timestamp = new Date().toISOString();
+    const signature = generateApproverSignature(
+      gate.id,
+      'APPROVED',
+      'usr-dir-001',
+      'ENGINEERING_DIRECTOR',
+      timestamp
+    );
+
     const approvedGate = gateManager.evaluateDecision(
       gate.id,
       'APPROVED',
       'Verified with independent red team review. Calculations compliant.',
-      'ENGINEERING_DIRECTOR'
+      {
+        userId: 'usr-dir-001',
+        userName: 'Engineering Director (Authenticated)',
+        role: 'ENGINEERING_DIRECTOR',
+        tokenSignature: signature,
+        authenticatedAt: timestamp
+      }
     );
 
     expect(approvedGate.state).toBe('APPROVED');
-    expect(approvedGate.decidedBy).toBe('ENGINEERING_DIRECTOR');
+    expect(approvedGate.decidedBy).toContain('Engineering Director (Authenticated)');
     expect(approvedGate.directorNotes).toContain('Verified with independent red team review');
   });
 
@@ -100,7 +127,7 @@ describe('STAGE F: Human Authority Gates & Safety Governance', () => {
     expect(res.parsedJson?.keyMetrics.analysisMode).toBe('SYNTHETIC_MOCK_FALLBACK');
   });
 
-  it('should enforce verified ApproverIdentity object authentication and reject unverified users', () => {
+  it('should enforce verified ApproverIdentity object authentication and reject unverified users or invalid signatures', () => {
     const gate = gateManager.createGate({
       taskId: 'TASK-IDENTITY-CHECK',
       agentId: 'LEAD-SYS-01',
@@ -120,17 +147,38 @@ describe('STAGE F: Human Authority Gates & Safety Governance', () => {
       });
     }).toThrow("Security Violation: Only 'ENGINEERING_DIRECTOR' has authority");
 
-    // Verified Director identity should succeed
-    const approved = gateManager.evaluateDecision(gate.id, 'APPROVED', 'Notes', {
+    // Invalid or forged signature must be rejected
+    expect(() => {
+      gateManager.evaluateDecision(gate.id, 'APPROVED', 'Notes', {
+        userId: 'usr-eng-dir-8841',
+        userName: 'Chief Naval Architect',
+        role: 'ENGINEERING_DIRECTOR',
+        tokenSignature: 'FORGED_HEX_SIGNATURE_0123456789abcdef',
+        authenticatedAt: new Date().toISOString()
+      });
+    }).toThrow("Security Violation: Cryptographic signature verification failed");
+
+    // Valid cryptographic signature should succeed
+    const validTimestamp = new Date().toISOString();
+    const validSignature = generateApproverSignature(
+      gate.id,
+      'APPROVED',
+      'usr-eng-dir-8841',
+      'ENGINEERING_DIRECTOR',
+      validTimestamp
+    );
+
+    const approved = gateManager.evaluateDecision(gate.id, 'APPROVED', 'Verified by director', {
       userId: 'usr-eng-dir-8841',
       userName: 'Chief Naval Architect',
       role: 'ENGINEERING_DIRECTOR',
-      tokenSignature: 'SIG_AUTH_HMAC_ED25519_USV01',
-      authenticatedAt: new Date().toISOString()
+      tokenSignature: validSignature,
+      authenticatedAt: validTimestamp
     });
 
     expect(approved.state).toBe('APPROVED');
     expect(approved.decidedByIdentity?.userId).toBe('usr-eng-dir-8841');
-    expect(approved.decidedByIdentity?.tokenSignature).toBe('SIG_AUTH_HMAC_ED25519_USV01');
+    expect(approved.decidedByIdentity?.tokenSignature).toBe(validSignature);
   });
 });
+

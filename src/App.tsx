@@ -25,6 +25,7 @@ import { AiEngineeringAssistant } from './components/AiEngineeringAssistant';
 import { NewRecordModal } from './components/NewRecordModal';
 import { ExportImportModal } from './components/ExportImportModal';
 import { ContextGuideModal } from './components/ContextGuideModal';
+import { authenticatedFetch, ensureAuthenticatedSession } from './core/auth/authClient.ts';
 
 import {
   ProjectInfo,
@@ -104,21 +105,10 @@ export default function App() {
   const [interfaces, setInterfaces] = useState<InterfaceDefinition[]>(INITIAL_INTERFACES);
   const [knowledgeNotes, setKnowledgeNotes] = useState<KnowledgeNote[]>(INITIAL_KNOWLEDGE_NOTES);
 
-  // Authenticated fetch helper for secure API communication
-  const authenticatedFetch = (url: string, init?: RequestInit): Promise<Response> => {
-    return fetch(url, {
-      ...init,
-      headers: {
-        'Authorization': 'Bearer usv01-auth-token-dir-8841',
-        'X-Project-Member-Id': 'usr-eng-dir-8841',
-        ...(init?.headers || {})
-      }
-    });
-  };
-
-  // Fetch initial snapshot from backend on mount
+  // Authenticated session state and initial snapshot fetch on mount
   useEffect(() => {
-    authenticatedFetch('/api/data/snapshot')
+    ensureAuthenticatedSession()
+      .then(() => authenticatedFetch('/api/data/snapshot'))
       .then((res) => res.json())
       .then((resData) => {
         if (resData.success && resData.data) {

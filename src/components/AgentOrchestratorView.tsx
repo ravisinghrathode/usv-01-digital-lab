@@ -35,6 +35,7 @@ import { EngineeringTask } from '../core/types/orchestrator.ts';
 import { HumanApprovalGate, ApproverIdentity } from '../core/types/safety.ts';
 import { EngineeringParameter } from '../core/types/memory.ts';
 import { downloadCsv } from '../utils/engineeringUtils.ts';
+import { signApprovalGate, ensureAuthenticatedSession } from '../core/auth/authClient.ts';
 
 interface AgentOrchestratorViewProps {
   onAskAi?: (prompt: string, record?: any) => void;
@@ -89,11 +90,10 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
   const [studySpeed, setStudySpeed] = useState<number>(22.0);
 
   // Authenticated Engineering Director Identity
-  const [approverIdentity] = useState<ApproverIdentity>({
+  const [approverIdentity, setApproverIdentity] = useState<ApproverIdentity>({
     userId: 'usr-eng-dir-8841',
     userName: 'Chief Naval Architect & Systems Director',
     role: 'ENGINEERING_DIRECTOR',
-    tokenOrSignature: 'SIG_AUTH_HMAC_ED25519_USV01',
     authenticatedAt: new Date().toISOString()
   });
 
@@ -112,6 +112,13 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
 
   useEffect(() => {
     refreshState();
+    ensureAuthenticatedSession()
+      .then((session) => {
+        if (session.user) {
+          setApproverIdentity(session.user);
+        }
+      })
+      .catch((err) => console.warn('Could not establish director session:', err));
   }, []);
 
   // Run Baseline or Exploratory Topological Workflow
@@ -223,13 +230,15 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
     }
   };
 
-  // Evaluate Approval Gate with Authenticated Approver Identity
-  const handleDecision = (gateId: string, decision: 'APPROVED' | 'REJECTED') => {
+  // Evaluate Approval Gate with Cryptographically Signed Decision
+  const handleDecision = async (gateId: string, decision: 'APPROVED' | 'REJECTED') => {
     try {
-      gateManager.evaluateDecision(gateId, decision, directorNote, approverIdentity);
+      // Request cryptographic signature from backend signing authority
+      const signedIdentity = await signApprovalGate(gateId, decision, directorNote);
+      gateManager.evaluateDecision(gateId, decision, directorNote, signedIdentity);
       refreshState();
     } catch (err: any) {
-      alert(err.message);
+      alert(`Approval Gate Authorization Failed: ${err.message}`);
     }
   };
 
@@ -661,7 +670,7 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
               <span className="text-slate-200 font-mono">{approverIdentity.userName} ({approverIdentity.userId})</span>
             </div>
             <span className="font-mono text-[11px] text-cyan-300 bg-cyan-950/70 border border-cyan-800/50 px-2 py-0.5 rounded">
-              Role: {approverIdentity.role} [Token: {approverIdentity.tokenOrSignature?.slice(0, 16)}...]
+              Role: {approverIdentity.role} [HMAC-SHA256 Authority: Active]
             </span>
           </div>
 

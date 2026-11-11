@@ -4,15 +4,15 @@ import { AgentSpec } from '../types/agent.ts';
 // Common Schema definitions
 const genericInputSchema = z.object({
   taskId: z.string(),
-  context: z.record(z.any()),
-  parameters: z.record(z.any()),
-  priorAgentOutputs: z.record(z.any()).optional(),
+  context: z.record(z.string(), z.any()),
+  parameters: z.record(z.string(), z.any()),
+  priorAgentOutputs: z.record(z.string(), z.any()).optional(),
   userNotes: z.string().optional()
 });
 
 const genericOutputSchema = z.object({
   disciplineSummary: z.string(),
-  keyMetrics: z.record(z.union([z.string(), z.number(), z.boolean()])),
+  keyMetrics: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
   designDecisions: z.array(z.string()),
   assumptions: z.array(z.object({
     id: z.string(),

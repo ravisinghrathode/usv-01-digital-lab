@@ -113,7 +113,7 @@ export class ToolRegistry {
         output: {},
         executionTimeMs: performance.now() - startTime,
         error: 'Input Schema Validation Failed',
-        validationErrors: inputParse.error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+        validationErrors: inputParse.error.issues.map((e: any) => `${e.path.join('.')}: ${e.message}`)
       };
       this.executionHistory.push(result);
       return result;
@@ -133,7 +133,7 @@ export class ToolRegistry {
           output: rawOutput,
           executionTimeMs: performance.now() - startTime,
           error: 'Output Schema Validation Failed on Tool Execution',
-          validationErrors: outputParse.error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+          validationErrors: outputParse.error.issues.map((e: any) => `${e.path.join('.')}: ${e.message}`)
         };
         this.executionHistory.push(result);
         return result;
@@ -143,8 +143,8 @@ export class ToolRegistry {
         toolId,
         timestamp: new Date().toISOString(),
         success: true,
-        input: inputParse.data,
-        output: outputParse.data,
+        input: inputParse.data as Record<string, any>,
+        output: outputParse.data as Record<string, any>,
         executionTimeMs: performance.now() - startTime
       };
       this.executionHistory.push(result);

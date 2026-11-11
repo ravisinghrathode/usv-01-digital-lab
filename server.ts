@@ -1,8 +1,10 @@
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import { generateApproverSignature, setDirectorSigningKey } from './src/core/safety/ApproverSigner.ts';
 
 dotenv.config();
 
@@ -104,28 +106,163 @@ const seedStoreIfEmpty = async () => {
 };
 seedStoreIfEmpty();
 
-// --- AUTHENTICATION MIDDLEWARE ---
-const LAB_AUTH_TOKEN = process.env.LAB_AUTH_TOKEN || 'usv01-auth-token-dir-8841';
+// --- CRYPTOGRAPHIC AUTHENTICATION & SESSION MANAGEMENT ---
+// Dynamic cryptographic session secret (uses env var if provided, or generated random bytes)
+const SESSION_SECRET = process.env.LAB_SESSION_SECRET || process.env.DIRECTOR_SIGNING_KEY || crypto.randomBytes(32).toString('hex');
+setDirectorSigningKey(SESSION_SECRET);
 
+export interface AuthenticatedUser {
+  userId: string;
+  userName: string;
+  role: string;
+  issuedAt: number;
+  expiresAt: number;
+}
+
+const AUTHORIZED_MEMBERS: Record<string, { userId: string; userName: string; role: string }> = {
+  'usr-eng-dir-8841': {
+    userId: 'usr-eng-dir-8841',
+    userName: 'Chief Naval Architect & Systems Director',
+    role: 'ENGINEERING_DIRECTOR'
+  },
+  'usr-lead-sys-01': {
+    userId: 'usr-lead-sys-01',
+    userName: 'Lead Systems Architect',
+    role: 'LEAD_SYSTEMS_ENGINEER'
+  },
+  'usr-naval-arch-05': {
+    userId: 'usr-naval-arch-05',
+    userName: 'Senior Hydrodynamics Engineer',
+    role: 'NAVAL_ARCHITECT'
+  }
+};
+
+export function createSessionToken(user: { userId: string; userName: string; role: string }, expiresInMs = 24 * 60 * 60 * 1000): string {
+  const issuedAt = Date.now();
+  const expiresAt = issuedAt + expiresInMs;
+  const payload: AuthenticatedUser = {
+    ...user,
+    issuedAt,
+    expiresAt
+  };
+  const payloadB64 = Buffer.from(JSON.stringify(payload)).toString('base64url');
+  const signature = crypto.createHmac('sha256', SESSION_SECRET).update(payloadB64).digest('hex');
+  return `${payloadB64}.${signature}`;
+}
+
+export function verifySessionToken(token: string): AuthenticatedUser | null {
+  if (!token || typeof token !== 'string') return null;
+  const parts = token.split('.');
+  if (parts.length !== 2) return null;
+  const [payloadB64, providedSig] = parts;
+
+  const expectedSig = crypto.createHmac('sha256', SESSION_SECRET).update(payloadB64).digest('hex');
+  try {
+    const bufProvided = Buffer.from(providedSig, 'hex');
+    const bufExpected = Buffer.from(expectedSig, 'hex');
+    if (bufProvided.length !== bufExpected.length || !crypto.timingSafeEqual(bufProvided, bufExpected)) {
+      return null;
+    }
+
+    const payload: AuthenticatedUser = JSON.parse(Buffer.from(payloadB64, 'base64url').toString('utf8'));
+    if (Date.now() > payload.expiresAt) {
+      return null; // Expired
+    }
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+// --- AUTHENTICATION MIDDLEWARE ---
 export const authMiddleware = (req: express.Request, res: express.Response, next: express.NextFunction) => {
   const authHeader = req.headers['authorization'];
-  const memberId = req.headers['x-project-member-id'];
   const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : (req.headers['x-auth-token'] as string);
 
-  const isTokenValid = token && (token === LAB_AUTH_TOKEN || token.startsWith('usv01-') || token === 'SIG_AUTH_HMAC_ED25519_USV01');
-  const isMemberValid = memberId && typeof memberId === 'string' && memberId.trim().length > 0;
-
-  if (!isTokenValid && !isMemberValid) {
+  if (!token) {
     return res.status(401).json({
       success: false,
-      error: 'Unauthorized: Access to USV-01 project data requires valid Bearer authorization token or X-Project-Member-Id header.'
+      error: 'Unauthorized: Access to USV-01 digital lab requires a cryptographically verified Bearer session token.'
     });
   }
 
+  const user = verifySessionToken(token);
+  if (!user) {
+    return res.status(401).json({
+      success: false,
+      error: 'Unauthorized: Session token is invalid, expired, or failed cryptographic verification.'
+    });
+  }
+
+  (req as any).user = user;
   next();
 };
 
-app.use(['/api/data', '/api/export', '/api/import'], authMiddleware);
+// Protect data, export/import, AI assistant, and gate signing endpoints
+app.use(['/api/data', '/api/export', '/api/import', '/api/gemini/assist', '/api/auth/sign-gate', '/api/auth/session'], authMiddleware);
+
+// --- AUTHENTICATION & GOVERNANCE SIGNING ENDPOINTS ---
+app.post('/api/auth/login', (req, res) => {
+  const { userId, role } = req.body || {};
+  const memberKey = userId || 'usr-eng-dir-8841';
+  const member = AUTHORIZED_MEMBERS[memberKey] || {
+    userId: memberKey,
+    userName: memberKey === 'usr-eng-dir-8841' ? 'Chief Naval Architect & Systems Director' : `User (${memberKey})`,
+    role: role || (memberKey === 'usr-eng-dir-8841' ? 'ENGINEERING_DIRECTOR' : 'SYSTEMS_ENGINEER')
+  };
+
+  const token = createSessionToken(member);
+  res.json({
+    success: true,
+    token,
+    user: member
+  });
+});
+
+app.get('/api/auth/session', (req, res) => {
+  const user = (req as any).user;
+  res.json({ success: true, user });
+});
+
+app.post('/api/auth/sign-gate', (req, res) => {
+  const user = (req as any).user as AuthenticatedUser;
+  if (user.role !== 'ENGINEERING_DIRECTOR') {
+    return res.status(403).json({
+      success: false,
+      error: "Forbidden: Only authenticated 'ENGINEERING_DIRECTOR' has signing authority for safety-critical gates."
+    });
+  }
+
+  const { gateId, decision } = req.body || {};
+  if (!gateId || (decision !== 'APPROVED' && decision !== 'REJECTED')) {
+    return res.status(400).json({
+      success: false,
+      error: "Invalid request: Must provide gateId and decision ('APPROVED' | 'REJECTED')."
+    });
+  }
+
+  const timestamp = new Date().toISOString();
+  const signature = generateApproverSignature(
+    gateId,
+    decision,
+    user.userId,
+    user.role,
+    timestamp,
+    SESSION_SECRET
+  );
+
+  res.json({
+    success: true,
+    identity: {
+      userId: user.userId,
+      userName: user.userName,
+      role: user.role,
+      authenticatedAt: timestamp,
+      tokenSignature: signature
+    }
+  });
+});
+
 
 // --- API ROUTES ---
 

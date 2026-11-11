@@ -1,0 +1,36 @@
+name: USV-01 Safety & Governance Branch Protection Gate
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  governance-verification:
+    name: Deterministic Quality & Governance Gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Project Dependencies
+        run: npm ci
+
+      - name: Dependency Security Audit
+        run: npm audit --audit-level=high
+
+      - name: TypeScript Static Typecheck & Lint
+        run: npm run lint
+
+      - name: Execute Deterministic & Safety Test Suite
+        run: npm test
+
+      - name: Production Bundle Verification
+        run: npm run build

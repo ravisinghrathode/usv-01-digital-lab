@@ -22,48 +22,75 @@ interface ReviewResult {
   };
 }
 
+/**
+ * Strips sensitive files (environment files, private keys, lockfiles) from git diff
+ * prior to sending diff payloads to external AI endpoints.
+ */
+function sanitizeDiff(rawDiff: string): string {
+  const sensitivePatterns = [
+    /\.env.*/i,
+    /.*secret.*/i,
+    /.*\.pem$/i,
+    /.*id_rsa/i,
+    /package-lock\.json/i
+  ];
+
+  const blocks = rawDiff.split(/^diff --git /m);
+  const sanitizedBlocks = blocks.filter(block => {
+    if (!block.trim()) return false;
+    const firstLine = block.split('\n')[0];
+    for (const pattern of sensitivePatterns) {
+      if (pattern.test(firstLine)) {
+        console.log(`🔒 Privacy Filter: Redacted file from AI diff payload: ${firstLine}`);
+        return false;
+      }
+    }
+    return true;
+  });
+
+  return sanitizedBlocks.map(b => 'diff --git ' + b).join('\n');
+}
+
 async function runChatGPTReview() {
-  console.log('\n======================================================');
-  console.log('🤖 USV-01 DIGITAL LAB — CHATGPT PRE-PUSH REVIEW GATE');
-  console.log('======================================================\n');
+  console.log('\n================================================================');
+  console.log('🤖 USV-01 DIGITAL LAB — LOCAL ADVISORY CHATGPT PRE-PUSH REVIEW');
+  console.log('   (Authoritative branch protection is enforced by GitHub Actions CI)');
+  console.log('================================================================\n');
 
   if (process.env.GIT_CHATGPT_BYPASS === '1' || process.argv.includes('--bypass')) {
-    console.warn('⚠️  WARNING: ChatGPT pre-push verification gate was manually bypassed (GIT_CHATGPT_BYPASS=1).');
+    console.warn('⚠️  ADVISORY NOTICE: ChatGPT pre-push verification gate was manually bypassed (GIT_CHATGPT_BYPASS=1).');
+    console.warn('    Server-side GitHub Actions branch protection will remain authoritative upon push.\n');
     process.exit(0);
   }
 
   // 1. Get git diff
-  let diff = '';
+  let rawDiff = '';
   try {
-    // Attempt diff against origin/main
-    diff = execSync('git diff origin/main..HEAD', { encoding: 'utf-8' });
+    rawDiff = execSync('git diff origin/main..HEAD', { encoding: 'utf-8' });
   } catch {
     try {
-      // Fallback: diff against latest commit
-      diff = execSync('git diff HEAD~1..HEAD', { encoding: 'utf-8' });
+      rawDiff = execSync('git diff HEAD~1..HEAD', { encoding: 'utf-8' });
     } catch {
-      diff = execSync('git diff --staged', { encoding: 'utf-8' });
+      rawDiff = execSync('git diff --staged', { encoding: 'utf-8' });
     }
   }
 
-  if (!diff || diff.trim().length === 0) {
+  if (!rawDiff || rawDiff.trim().length === 0) {
     console.log('ℹ️  No unpushed git diff detected relative to remote. Push permitted.');
     process.exit(0);
   }
 
-  const lineCount = diff.split('\n').length;
-  console.log(`📋 Analyzing diff: ${lineCount} lines across modified files...`);
+  const sanitized = sanitizeDiff(rawDiff);
+  const lineCount = sanitized.split('\n').length;
+  console.log(`📋 Sanitized diff: ${lineCount} lines across modified files ready for advisory review...`);
 
   // 2. Validate OpenAI API key
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
-    console.error('\n❌ ERROR: OPENAI_API_KEY environment variable is missing.');
-    console.error('To enable the ChatGPT pre-push verification gate:');
-    console.error('  1. Add OPENAI_API_KEY=sk-... to your .env file or export it in your terminal.');
-    console.error('  2. Run: npm run chatgpt:verify');
-    console.error('  (For emergency offline bypass, push with GIT_CHATGPT_BYPASS=1 git push)\n');
-    console.error('Fail-closed: Push aborted because review gate is enforced.');
-    process.exit(1);
+    console.warn('\nℹ️  NOTICE: OPENAI_API_KEY environment variable is not configured.');
+    console.warn('Local advisory ChatGPT review skipped.');
+    console.warn('Authoritative protection is provided by GitHub Actions CI on repository pull requests.\n');
+    process.exit(0);
   }
 
   const model = process.env.CHATGPT_MODEL || 'gpt-4o-mini';
@@ -106,7 +133,7 @@ Respond STRICTLY with valid JSON adhering to this schema:
 `;
 
   // Truncate diff to 60,000 characters if oversized to prevent token overflows
-  const truncatedDiff = diff.length > 60000 ? diff.slice(0, 60000) + '\n\n[... Diff truncated for token limits ...]' : diff;
+  const truncatedDiff = sanitized.length > 60000 ? sanitized.slice(0, 60000) + '\n\n[... Diff truncated for token limits ...]' : sanitized;
 
   try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -131,10 +158,9 @@ Respond STRICTLY with valid JSON adhering to this schema:
       try {
         const parsedErr = JSON.parse(errText);
         if (parsedErr.error?.code === 'credit_balance_exhausted' || parsedErr.error?.type === 'insufficient_quota') {
-          console.error('\n⚠️  OPENAI BILLING NOTICE: Your OpenAI account has exhausted its API credit balance.');
-          console.error('To run live ChatGPT reviews, add API credits at: https://platform.openai.com/settings/organization/billing/');
-          console.error('(To push without live review during billing maintenance: GIT_CHATGPT_BYPASS=1 git push)\n');
-          process.exit(1);
+          console.warn('\n⚠️  OPENAI BILLING NOTICE: OpenAI account has exhausted its API credit balance.');
+          console.warn('Advisory review skipped; authoritative safety tests will execute in GitHub Actions CI.\n');
+          process.exit(0);
         }
       } catch {}
       throw new Error(`OpenAI API HTTP ${response.status}: ${errText}`);
