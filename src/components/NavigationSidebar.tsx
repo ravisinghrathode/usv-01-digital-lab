@@ -16,7 +16,9 @@ import {
   Network,
   ShieldCheck,
   ChevronRight,
-  Database
+  Database,
+  Compass,
+  Radio
 } from 'lucide-react';
 import { WorkstreamCode } from '../types/engineering';
 
@@ -35,7 +37,9 @@ export type NavigationModule =
   | 'simulations'
   | 'risks-decisions'
   | 'procurement-bom'
-  | 'knowledge-centre';
+  | 'knowledge-centre'
+  | 'realtime-sim'
+  | 'ship-building';
 
 interface NavigationSidebarProps {
   currentModule: NavigationModule;
@@ -120,6 +124,42 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
               </div>
             </div>
             {currentModule === 'agent-orchestrator' && <ChevronRight className="w-3.5 h-3.5 text-cyan-400" />}
+          </button>
+
+          <button
+            onClick={() => onSelectModule('realtime-sim')}
+            className={`w-full flex items-center justify-between px-2.5 py-2 rounded transition-colors ${
+              currentModule === 'realtime-sim'
+                ? 'bg-teal-500/15 text-teal-300 border border-teal-500/30 font-medium'
+                : 'text-slate-300 hover:bg-slate-900/80 hover:text-slate-100'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <Compass className="w-4 h-4 text-teal-400" />
+              <div className="flex items-center gap-1.5">
+                <span>Real-Time Simulator</span>
+                <span className="text-[10px] px-1 py-0.2 rounded bg-teal-950/80 text-teal-400 border border-teal-800/40 font-mono">LIVE</span>
+              </div>
+            </div>
+            {currentModule === 'realtime-sim' && <ChevronRight className="w-3.5 h-3.5 text-teal-400" />}
+          </button>
+
+          <button
+            onClick={() => onSelectModule('ship-building')}
+            className={`w-full flex items-center justify-between px-2.5 py-2 rounded transition-colors ${
+              currentModule === 'ship-building'
+                ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30 font-medium'
+                : 'text-slate-300 hover:bg-slate-900/80 hover:text-slate-100'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <Hammer className="w-4 h-4 text-amber-400" />
+              <div className="flex items-center gap-1.5">
+                <span>Shipbuilding Lifecycle</span>
+                <span className="text-[10px] px-1 py-0.2 rounded bg-amber-950/80 text-amber-400 border border-amber-800/40 font-mono">BUILD</span>
+              </div>
+            </div>
+            {currentModule === 'ship-building' && <ChevronRight className="w-3.5 h-3.5 text-amber-400" />}
           </button>
         </div>
 

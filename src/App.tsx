@@ -21,6 +21,8 @@ import { ProcurementBOMView } from './components/ProcurementBOMView';
 import { TraceabilityMatrixView } from './components/TraceabilityMatrixView';
 import { KnowledgeCentreView } from './components/KnowledgeCentreView';
 import { AgentOrchestratorView } from './components/AgentOrchestratorView';
+import { RealtimeSimulationView } from './components/RealtimeSimulationView';
+import { ShipBuildingProcessView } from './components/ShipBuildingProcessView';
 import { AiEngineeringAssistant } from './components/AiEngineeringAssistant';
 import { NewRecordModal } from './components/NewRecordModal';
 import { ExportImportModal } from './components/ExportImportModal';
@@ -532,6 +534,10 @@ export default function App() {
         return 'Procurement & Bill of Materials';
       case 'knowledge-centre':
         return 'Knowledge Centre & Obsidian Graph';
+      case 'realtime-sim':
+        return 'Real-Time COLREGs Autonomous Simulation & Flotation Physics';
+      case 'ship-building':
+        return 'Physical Shipbuilding & Commissioning Lifecycle';
       default:
         return 'Digital Engineering Lab';
     }
@@ -742,6 +748,14 @@ export default function App() {
               notes={knowledgeNotes}
               onAskAi={triggerAiQuery}
             />
+          )}
+
+          {currentModule === 'realtime-sim' && (
+            <RealtimeSimulationView onAskAi={triggerAiQuery} />
+          )}
+
+          {currentModule === 'ship-building' && (
+            <ShipBuildingProcessView onAskAi={triggerAiQuery} />
           )}
         </main>
       </div>
