@@ -5,6 +5,8 @@ import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { generateApproverSignature, setDirectorSigningKey } from './src/core/safety/ApproverSigner.ts';
+import { AUTHORIZED_MEMBERS, type StaffMember } from './src/core/auth/staffDirectory.ts';
+import { verifyStaffCredential, isLockedOut, recordFailure, recordSuccess } from './src/core/auth/credentialStore.ts';
 
 dotenv.config();
 
@@ -108,7 +110,7 @@ seedStoreIfEmpty();
 
 // --- CRYPTOGRAPHIC AUTHENTICATION & SESSION MANAGEMENT ---
 // Dynamic cryptographic session secret (uses env var if provided, or generated random bytes)
-const SESSION_SECRET = process.env.LAB_SESSION_SECRET || process.env.DIRECTOR_SIGNING_KEY || crypto.randomBytes(32).toString('hex');
+const SESSION_SECRET = process.env.LAB_SESSION_SECRET || crypto.randomBytes(32).toString('hex');
 setDirectorSigningKey(SESSION_SECRET);
 
 export interface AuthenticatedUser {
@@ -119,63 +121,8 @@ export interface AuthenticatedUser {
   expiresAt: number;
 }
 
-export interface StaffMember {
-  userId: string;
-  userName: string;
-  role: string;
-  credentialSalt?: string;
-  credentialHash?: string;
-}
-
-export const AUTHORIZED_MEMBERS: Record<string, StaffMember> = {
-  'usr-eng-dir-8841': {
-    userId: 'usr-eng-dir-8841',
-    userName: 'Chief Naval Architect & Systems Director',
-    role: 'ENGINEERING_DIRECTOR'
-  },
-  'usr-lead-sys-01': {
-    userId: 'usr-lead-sys-01',
-    userName: 'Lead Systems Architect',
-    role: 'LEAD_SYSTEMS_ENGINEER',
-    credentialSalt: 'a3b2ad0d27dbd0bb',
-    credentialHash: '08708e6c8b479a0fe35b327eb39b9689d9ee83d40c8dd7ab4a739431ff642ee4'
-  },
-  'usr-naval-arch-05': {
-    userId: 'usr-naval-arch-05',
-    userName: 'Senior Hydrodynamics Engineer',
-    role: 'NAVAL_ARCHITECT',
-    credentialSalt: '803ffaad82330eea',
-    credentialHash: 'b6515b0cc853084d8b0a6bac7e38e885952a239f6b21616a909e966383502c1b'
-  },
-  'usr-struct-eng-10': {
-    userId: 'usr-struct-eng-10',
-    userName: 'Hull Structural & Composites Engineer',
-    role: 'STRUCTURAL_ENGINEER',
-    credentialSalt: '1770de39aa4ea39b',
-    credentialHash: '6dff1ea2a2e8ad6dff546ed47970435f1f9feedbefa44f6dae52d0b5a9ca4f06'
-  },
-  'usr-prop-elec-14': {
-    userId: 'usr-prop-elec-14',
-    userName: 'Marine Electrical & Power Systems Engineer',
-    role: 'ELECTRICAL_ENGINEER',
-    credentialSalt: 'd81094eed02337bb',
-    credentialHash: 'f3cbf32f68bd85fb53c803c1bc9ed5af377faac2a5b61330b52d6251b19e6d3c'
-  },
-  'usr-vvt-qa-18': {
-    userId: 'usr-vvt-qa-18',
-    userName: 'Test & Verification Specialist',
-    role: 'VVT_SPECIALIST',
-    credentialSalt: 'afded8fe51d8feaa',
-    credentialHash: '80c47753fc046d9f218d5f25b8ad7947f1e040121ca8b6c17ed44d7369bb9580'
-  },
-  'usr-sec-analyst-20': {
-    userId: 'usr-sec-analyst-20',
-    userName: 'Cyber-Physical Security Analyst',
-    role: 'SECURITY_ANALYST',
-    credentialSalt: '7c6d33886432c37b',
-    credentialHash: '5f2080503fca6398b07c4d99e100b9fcad7ababc1840b47e0cec2c9864ce7c7c'
-  }
-};
+export { AUTHORIZED_MEMBERS };
+export type { StaffMember };
 
 export function createSessionToken(user: { userId: string; userName: string; role: string }, expiresInMs = 24 * 60 * 60 * 1000): string {
   const issuedAt = Date.now();
@@ -241,10 +188,6 @@ export const authMiddleware = (req: express.Request, res: express.Response, next
 // Protect data, export/import, AI assistant, and gate signing endpoints
 app.use(['/api/data', '/api/export', '/api/import', '/api/gemini/assist', '/api/auth/sign-gate', '/api/auth/session'], authMiddleware);
 
-// Secret passphrase required to claim Engineering Director credentials
-// Must be configured in runtime environment; no hardcoded fallback allowed
-const DIRECTOR_KEY = process.env.LAB_DIRECTOR_KEY;
-
 export function authenticateLoginRequest(body: { userId?: string; role?: string; passphrase?: string }): {
   statusCode: number;
   body: { success: boolean; user?: StaffMember; token?: string; error?: string };
@@ -284,18 +227,7 @@ export function authenticateLoginRequest(body: { userId?: string; role?: string;
     };
   }
 
-  // Privileged Engineering Director authority requires LAB_DIRECTOR_KEY configured in environment
-  if (authorizedMember.role === 'ENGINEERING_DIRECTOR' && !process.env.LAB_DIRECTOR_KEY) {
-    return {
-      statusCode: 503,
-      body: {
-        success: false,
-        error: "Authentication service unavailable: LAB_DIRECTOR_KEY is not configured in the server environment. Engineering Director sessions are disabled."
-      }
-    };
-  }
-
-  // Mandatory credential verification for all staff members to prevent identity impersonation
+  // Mandatory credential verification for every identity, including the Engineering Director
   if (!passphrase || typeof passphrase !== 'string') {
     return {
       statusCode: 401,
@@ -306,47 +238,36 @@ export function authenticateLoginRequest(body: { userId?: string; role?: string;
     };
   }
 
-  // Privileged Engineering Director authority strictly requires verified passphrase against LAB_DIRECTOR_KEY
-  if (authorizedMember.role === 'ENGINEERING_DIRECTOR') {
-    const directorKey = process.env.LAB_DIRECTOR_KEY!;
-    const bufProvided = Buffer.from(passphrase);
-    const bufExpected = Buffer.from(directorKey);
-    if (bufProvided.length !== bufExpected.length || !crypto.timingSafeEqual(bufProvided, bufExpected)) {
-      return {
-        statusCode: 401,
-        body: {
-          success: false,
-          error: "Authentication failed: Invalid Engineering Director passphrase."
-        }
-      };
-    }
-  } else {
-    // Non-director staff members verified via salted cryptographic hash or environment key
-    const envKeyName = `STAFF_KEY_${authorizedMember.userId.replace(/[^a-zA-Z0-9]/g, '_').toUpperCase()}`;
-    const envSecret = process.env[envKeyName];
-
-    let credentialValid = false;
-    if (envSecret) {
-      const bProv = Buffer.from(passphrase);
-      const bExp = Buffer.from(envSecret);
-      credentialValid = bProv.length === bExp.length && crypto.timingSafeEqual(bProv, bExp);
-    } else if (authorizedMember.credentialSalt && authorizedMember.credentialHash) {
-      const computedHash = crypto.createHash('sha256').update(`${authorizedMember.credentialSalt}:${passphrase}`).digest('hex');
-      const bProv = Buffer.from(computedHash, 'hex');
-      const bExp = Buffer.from(authorizedMember.credentialHash, 'hex');
-      credentialValid = bProv.length === bExp.length && crypto.timingSafeEqual(bProv, bExp);
-    }
-
-    if (!credentialValid) {
-      return {
-        statusCode: 401,
-        body: {
-          success: false,
-          error: `Authentication failed: Invalid credentials for staff member '${userId}'. Access denied.`
-        }
-      };
-    }
+  if (isLockedOut(userId)) {
+    return {
+      statusCode: 429,
+      body: { success: false, error: `Authentication temporarily locked for '${userId}' after repeated failures. Try again later.` }
+    };
   }
+
+  const check = verifyStaffCredential(userId, passphrase);
+  if (check === 'STORE_UNAVAILABLE' || check === 'NOT_PROVISIONED') {
+    return {
+      statusCode: 503,
+      body: {
+        success: false,
+        error: check === 'STORE_UNAVAILABLE'
+          ? 'Authentication service unavailable: staff credential store is not provisioned (STAFF_CREDENTIAL_STORE). Logins are disabled.'
+          : `Authentication unavailable: no credential has been provisioned for '${userId}'. Logins for this identity are disabled.`
+      }
+    };
+  }
+  if (check !== 'VALID') {
+    recordFailure(userId);
+    return {
+      statusCode: 401,
+      body: {
+        success: false,
+        error: `Authentication failed: Invalid credentials for staff member '${userId}'. Access denied.`
+      }
+    };
+  }
+  recordSuccess(userId);
 
   const token = createSessionToken(authorizedMember);
   return {

@@ -14,9 +14,12 @@ permissions:
 jobs:
   governance-verification:
     name: Deterministic Quality & Governance Gate
-    runs-on: ubuntu-latest
     env:
-      DIRECTOR_SIGNING_KEY: ${{ secrets.DIRECTOR_SIGNING_KEY }}
+      DIRECTOR_PUBLIC_KEY: ${{ vars.DIRECTOR_PUBLIC_KEY || secrets.DIRECTOR_PUBLIC_KEY }}
+      PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      CHATGPT_MODEL: ${{ vars.CHATGPT_MODEL || 'gpt-4o-mini' }}
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4

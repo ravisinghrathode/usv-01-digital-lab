@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import { ApproverIdentity } from '../types/safety.ts';
 
 // Dynamic runtime signing key; can be configured via environment variable or initialized securely
-let runtimeSigningKey = process.env.DIRECTOR_SIGNING_KEY || process.env.LAB_SESSION_SECRET || crypto.randomBytes(32).toString('hex');
+let runtimeSigningKey = process.env.LAB_SESSION_SECRET || crypto.randomBytes(32).toString('hex');
 
 export const getDirectorSigningKey = (): string => runtimeSigningKey;
 

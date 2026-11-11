@@ -1,9 +1,10 @@
 import fs from 'fs';
 import path from 'path';
-import { execSync } from 'child_process';
+import { execFileSync, execSync } from 'child_process';
 import dotenv from 'dotenv';
 import { generateClassificationReport } from './classify-change.ts';
-import { validateAllECRs, validateECRFile, verifyECRSignature } from './ecr-tool.ts';
+import { validateECRFile } from './ecr-tool.ts';
+import { computeBaselineDigest, loadApprovalRecords, resolveDirectorPublicKey, verifyApproval } from './ecr-approval.ts';
 
 dotenv.config();
 
@@ -15,138 +16,108 @@ export interface StageDResult {
   approverAuthority?: string;
   approverRole?: string;
   approverId?: string;
+  approvedChangeId?: string;
+  evaluatedRef: string;
+  baselineDigest: string;
   signatureVerified: boolean;
+  staleApproval: boolean;
   signatureError?: string;
   independentReviewStatus: 'APPROVED_BY_PEER' | 'ECR_DIRECTOR_SIGNED' | 'PENDING_HUMAN_SIGN_OFF';
   summary: string;
 }
 
-export function evaluateStageDHumanApproval(baseRef = 'origin/main', customSigningKey?: string): StageDResult {
+export interface StageDOptions {
+  /** Commit to evaluate. In CI this MUST be the PR head SHA, not the synthetic merge commit. */
+  headRef?: string;
+  /** PEM public key override (tests). Production reads DIRECTOR_PUBLIC_KEY only. */
+  publicKeyPem?: string;
+  rootDir?: string;
+}
+
+/**
+ * Stage D: verifies that a Director-signed approval covers EXACTLY the content of the PR head.
+ * The only files that may differ from the signed baseline are the approval records themselves.
+ */
+export function evaluateStageDHumanApproval(baseRef = 'origin/main', opts: StageDOptions = {}): StageDResult {
+  const rootDir = opts.rootDir || process.cwd();
+  const headRef = opts.headRef || process.env.PR_HEAD_SHA || 'HEAD';
+  const evaluatedRef = execFileSync('git', ['rev-parse', headRef], { cwd: rootDir, encoding: 'utf-8' }).trim();
+
   const diffReport = generateClassificationReport(baseRef);
   const highestRisk = diffReport.summary.overallRisk;
   const isCriticalOrHigh = highestRisk === 'CRITICAL' || highestRisk === 'HIGH';
 
-  const ecrDir = path.join(process.cwd(), 'governance', 'ecr');
-  const ecrCheck = validateAllECRs(ecrDir);
+  const baselineDigest = computeBaselineDigest(evaluatedRef, rootDir);
+  const publicKeyPem = opts.publicKeyPem ?? resolveDirectorPublicKey();
 
-  // Check if at least one approved ECR exists for this change
-  let approvedECR: any = null;
-  if (fs.existsSync(ecrDir)) {
-    const files = fs.readdirSync(ecrDir).filter(f => f.startsWith('ECR-') && f.endsWith('.md'));
-    for (const f of files) {
-      const res = validateECRFile(path.join(ecrDir, f));
-      if (res.valid && res.record?.approvalRecord?.decision === 'APPROVED') {
-        approvedECR = res.record;
-        break;
-      }
+  const approvals = loadApprovalRecords(rootDir);
+  let accepted: (typeof approvals)[number] | undefined;
+  let staleApproval = false;
+  const errors: string[] = [];
+
+  for (const a of approvals) {
+    if (!a.record) {
+      errors.push(`${a.file}: unparseable (${a.parseError})`);
+      continue;
     }
-  }
-
-  const hasApprovedECR = !!approvedECR;
-  const signingKey = customSigningKey || process.env.DIRECTOR_SIGNING_KEY;
-
-  let isCommitBound = false;
-  let commitBindingError = '';
-  if (hasApprovedECR) {
-    try {
-      const targetCommit = (approvedECR.implementationCommit || '').trim();
-      const headSha = execSync('git rev-parse HEAD', { encoding: 'utf-8' }).trim();
-      let commits: string[] = [];
-      try {
-        commits = execSync('git rev-list origin/main..HEAD 2>/dev/null', { encoding: 'utf-8' }).trim().split('\n').filter(Boolean);
-      } catch {
-        commits = [headSha];
+    const v = verifyApproval(a.record, { publicKeyPem, expectedDigest: baselineDigest });
+    if (v.verified) {
+      // The approval must reference a real, structurally valid ECR document in this baseline.
+      const ecrDir = path.join(rootDir, 'governance', 'ecr');
+      const ecrFile = fs.existsSync(ecrDir) ? fs.readdirSync(ecrDir).find(f => f.startsWith(String(a.record!.changeId)) && f.endsWith('.md')) : undefined;
+      const ecrCheck = ecrFile ? validateECRFile(path.join(ecrDir, ecrFile)) : { valid: false, errors: ['ECR document not found'] };
+      if (!ecrCheck.valid) {
+        errors.push(`${a.file}: signature valid but ECR document invalid (${ecrCheck.errors.join('; ')})`);
+        continue;
       }
-      if (commits.length === 0) commits = [headSha];
-
-      if (targetCommit.length < 7) {
-        commitBindingError = `ECR implementation commit SHA '${targetCommit}' is invalid (minimum 7 characters required).`;
-      } else if (headSha.startsWith(targetCommit) || targetCommit.startsWith(headSha)) {
-        // Direct match with HEAD commit
-        isCommitBound = true;
-      } else {
-        // Check if targetCommit is an ancestor commit in the branch change set
-        const isAncestor = commits.some(c => c.startsWith(targetCommit) || targetCommit.startsWith(c));
-        if (!isAncestor) {
-          commitBindingError = `ECR is bound to commit '${targetCommit}', which is not present in the branch change set (HEAD: ${headSha.substring(0, 7)}). Unrelated or unknown approvals are strictly rejected.`;
-        } else {
-          // Inspect all files modified between the approved commit and HEAD
-          const filesChangedAfterApproval = execSync(`git diff --name-only ${targetCommit}..HEAD`, { encoding: 'utf-8' })
-            .trim()
-            .split('\n')
-            .filter(Boolean);
-
-          // Any modification outside the ECR documentation itself invalidates the approval
-          const invalidatingChanges = filesChangedAfterApproval.filter(f =>
-            !f.startsWith('governance/ecr/') && f !== 'RELEASE_MANIFEST.json'
-          );
-
-          if (invalidatingChanges.length > 0) {
-            isCommitBound = false;
-            commitBindingError = `STALE APPROVAL REJECTED: ECR ${approvedECR.changeId} was approved for commit '${targetCommit.substring(0, 7)}', but subsequent commits modified ${invalidatingChanges.length} baseline file(s): [${invalidatingChanges.slice(0, 5).join(', ')}${invalidatingChanges.length > 5 ? '...' : ''}]. Under NAVAL-USV Configuration Management Policy (ECCP-001), any modification to baseline code, tests, or workflows after approval invalidates the ECR. Re-authorization by Engineering Director is mandatory.`;
-          } else {
-            isCommitBound = true;
-          }
-        }
-      }
-    } catch (err: any) {
-      commitBindingError = `Failed to verify commit binding in git: ${err?.message || err}`;
+      accepted = a;
+      break;
     }
+    if (v.stale) staleApproval = true;
+    errors.push(`${a.file}: ${v.error}`);
   }
 
-  const sigCheck = hasApprovedECR
-    ? (!signingKey
-        ? { verified: false, error: 'CRITICAL: No DIRECTOR_SIGNING_KEY securely provisioned in environment. Default key fallbacks are strictly prohibited.' }
-        : (!isCommitBound
-            ? { verified: false, error: commitBindingError }
-            : verifyECRSignature(approvedECR, signingKey)))
-    : { verified: false, error: 'No approved ECR found' };
+  const signatureVerified = !!accepted;
+  const signatureError = signatureVerified ? undefined : (errors.join(' | ') || 'No Director approval records found in governance/approvals/.');
 
-  const signatureVerified = sigCheck.verified;
-
-  let reviewStatus: StageDResult['independentReviewStatus'] = 'PENDING_HUMAN_SIGN_OFF';
-  if (hasApprovedECR && approvedECR.approvalRecord.authorityRole === 'ENGINEERING_DIRECTOR' && signatureVerified) {
-    reviewStatus = 'ECR_DIRECTOR_SIGNED';
-  }
-
-  // Check GitHub PR review state if gh CLI is available
+  let reviewStatus: StageDResult['independentReviewStatus'] = signatureVerified ? 'ECR_DIRECTOR_SIGNED' : 'PENDING_HUMAN_SIGN_OFF';
   try {
-    const prJson = execSync('gh pr view --json reviews,author,state 2>/dev/null', { encoding: 'utf-8' });
-    const prData = JSON.parse(prJson);
-    const peerApproved = prData.reviews?.some((r: any) => r.state === 'APPROVED' && r.author?.login !== prData.author?.login);
-    if (peerApproved) {
+    const prData = JSON.parse(execSync('gh pr view --json reviews,author 2>/dev/null', { encoding: 'utf-8' }));
+    if (prData.reviews?.some((r: any) => r.state === 'APPROVED' && r.author?.login !== prData.author?.login)) {
       reviewStatus = 'APPROVED_BY_PEER';
     }
   } catch {
-    // Local execution or PR not yet created
+    // Local execution or no PR context
   }
 
-  let summary = '';
-  if (isCriticalOrHigh) {
-    if (!hasApprovedECR) {
-      summary = `Stage D Gate Blocked: Change classified as ${highestRisk} risk requiring mandatory Engineering Director sign-off, but no approved ECR record was found in governance/ecr/.`;
-    } else if (!signingKey) {
-      summary = `Stage D Gate Blocked: Change classified as ${highestRisk} risk. Approved ECR ${approvedECR.changeId} found, but no DIRECTOR_SIGNING_KEY was provisioned in environment. Fallback keys are barred.`;
-    } else if (!isCommitBound) {
-      summary = `Stage D Gate Blocked: Change classified as ${highestRisk} risk. Approved ECR ${approvedECR.changeId} is not bound to current change: ${commitBindingError}`;
-    } else if (!signatureVerified) {
-      summary = `Stage D Gate Blocked: Change classified as ${highestRisk} risk. Approved ECR ${approvedECR.changeId} found, but cryptographic HMAC signature verification failed: ${sigCheck.error || 'Invalid HMAC signature'}.`;
-    } else {
-      summary = `Stage D Gate Passed: Change classified as ${highestRisk} risk. Verified Engineering Director closure recorded under ${approvedECR.changeId} (Authority: ${approvedECR.approvalRecord.authorityName} [${approvedECR.approvalRecord.authorityId}]) cryptographically bound to commit '${approvedECR.implementationCommit}'.`;
-    }
+  let summary: string;
+  if (!isCriticalOrHigh) {
+    summary = `Stage D not required: change classified as ${highestRisk} risk.`;
+  } else if (!publicKeyPem) {
+    summary = `Stage D Gate Blocked: ${highestRisk} risk change, but DIRECTOR_PUBLIC_KEY is not provisioned. There is no fallback trust anchor.`;
+  } else if (signatureVerified) {
+    const r = accepted!.record!;
+    summary = `Stage D Gate Passed: ${highestRisk} risk change. Director approval ${r.changeId} (${r.authorityName} [${r.authorityId}]) is Ed25519-verified and covers baseline ${baselineDigest} at ${evaluatedRef.substring(0, 7)}.`;
+  } else if (staleApproval) {
+    summary = `Stage D Gate Blocked: ${highestRisk} risk change. ${signatureError}`;
   } else {
-    summary = `Stage D Gate Bypassed: Change classified as ${highestRisk} risk. Standard developer sign-off permitted.`;
+    summary = `Stage D Gate Blocked: ${highestRisk} risk change requires a Director-signed approval covering baseline ${baselineDigest}. ${signatureError}`;
   }
 
   return {
     humanApprovalRequired: isCriticalOrHigh,
     highestRisk,
-    ecrRecordFound: hasApprovedECR,
-    ecrRecordValid: hasApprovedECR && signatureVerified,
-    approverAuthority: approvedECR?.approvalRecord?.authorityName,
-    approverRole: approvedECR?.approvalRecord?.authorityRole,
-    approverId: approvedECR?.approvalRecord?.authorityId,
+    ecrRecordFound: approvals.length > 0,
+    ecrRecordValid: signatureVerified,
+    approverAuthority: accepted?.record?.authorityName,
+    approverRole: accepted?.record?.authorityRole,
+    approverId: accepted?.record?.authorityId,
+    approvedChangeId: accepted?.record?.changeId,
+    evaluatedRef,
+    baselineDigest,
     signatureVerified,
+    staleApproval,
+    signatureError,
     independentReviewStatus: reviewStatus,
     summary
   };
@@ -157,19 +128,19 @@ if (process.argv[1] && process.argv[1].endsWith('stage-d-human-approval.ts')) {
   const baseRef = process.argv[2] || 'origin/main';
   const result = evaluateStageDHumanApproval(baseRef);
 
+  console.log(`Evaluated commit:            ${result.evaluatedRef}`);
+  console.log(`Baseline digest:             ${result.baselineDigest}`);
   console.log(`Risk Regime:                 ${result.highestRisk}`);
   console.log(`Human Authority Required:    ${result.humanApprovalRequired ? 'YES (MANDATORY)' : 'NO'}`);
-  console.log(`ECR Record Present:          ${result.ecrRecordFound ? '✅ YES' : '❌ NO'}`);
+  console.log(`Approval records present:    ${result.ecrRecordFound ? 'YES' : 'NO'}`);
   console.log(`Signatory Authority:         ${result.approverAuthority || 'None'} [${result.approverRole || 'N/A'}]`);
-  console.log(`Signatory ID:                ${result.approverId || 'None'}`);
-  console.log(`Cryptographic Signature:     ${result.signatureVerified ? '✅ VERIFIED' : '❌ UNVERIFIED'}`);
-  console.log(`Review / Dual-Key Status:    ${result.independentReviewStatus}\n`);
+  console.log(`Ed25519 Signature:           ${result.signatureVerified ? '✅ VERIFIED (exact baseline)' : result.staleApproval ? '❌ STALE' : '❌ UNVERIFIED'}`);
+  console.log(`Review Status:               ${result.independentReviewStatus}\n`);
   console.log(`Summary: ${result.summary}\n`);
 
-  if (result.humanApprovalRequired && (!result.ecrRecordFound || !result.signatureVerified)) {
-    console.error('❌ STAGE D REJECTED: Safety-critical changes require verified human Engineering Director approval.\n');
+  if (result.humanApprovalRequired && !result.signatureVerified) {
+    console.error('❌ STAGE D REJECTED: Safety-critical changes require a Director approval signed over this exact baseline.\n');
     process.exit(1);
   }
-
-  console.log('✅ STAGE D ACCEPTED: Human authority verification criteria satisfied.\n');
+  console.log('✅ STAGE D ACCEPTED.\n');
 }
