@@ -57,14 +57,37 @@ jobs:
       - name: Stage B — Production Bundle Verification
         run: npm run build
 
-      - name: Stage A & C — PR Change Classification and Independent Technical Review
+      - name: Stage A — PR Change Classification
         if: github.event_name == 'pull_request'
         run: |
           npx tsx scripts/governance/classify-change.ts origin/main >> $GITHUB_STEP_SUMMARY
+
+      - name: Stage C — Independent Technical Review
+        id: stage_c
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        run: |
           echo "" >> $GITHUB_STEP_SUMMARY
           npx tsx scripts/governance/independent-ai-review.ts origin/main >> $GITHUB_STEP_SUMMARY
 
       - name: Stage D — Human Authority & ECR Authorization Verification
+        id: stage_d
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          npx tsx scripts/governance/stage-d-human-approval.ts origin/main
+
+      - name: Stage E — Governance Gate Enforcement
         if: github.event_name == 'pull_request'
         run: |
-          npx tsx scripts/governance/stage-d-human-approval.ts origin/main
+          echo "### 🛡️ NAVAL-USV Gate Evaluation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Stage C (Independent Review):** ${{ steps.stage_c.outcome == 'success' && '✅ PASSED' || '❌ FAILED' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Stage D (Human Authority):** ${{ steps.stage_d.outcome == 'success' && '✅ PASSED' || '❌ FAILED' }}" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.stage_c.outcome }}" != "success" ] || [ "${{ steps.stage_d.outcome }}" != "success" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "🚫 **PR BLOCKED**: Both Stage C (Independent AI Review) and Stage D (Human Authority Approval) must pass before merging." >> $GITHUB_STEP_SUMMARY
+            echo "::error::Governance gate blocked: Both Stage C and Stage D must pass."
+            exit 1
+          fi

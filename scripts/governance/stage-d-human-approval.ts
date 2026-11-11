@@ -123,6 +123,26 @@ export function evaluateStageDHumanApproval(baseRef = 'origin/main', opts: Stage
   };
 }
 
+export function formatStageDMarkdown(result: StageDResult): string {
+  const statusBadge = result.signatureVerified
+    ? '🟢 APPROVED & VERIFIED (Ed25519)'
+    : result.staleApproval
+    ? '🔴 STALE APPROVAL'
+    : '🟡 PENDING HUMAN SIGN-OFF';
+
+  return `## 🏛️ NAVAL-USV Stage D: Human Authority & Baseline Verification
+
+- **Governance Verdict:** **${statusBadge}**
+- **Evaluated Commit:** \`${result.evaluatedRef}\`
+- **Baseline Content Digest:** \`${result.baselineDigest}\`
+- **Risk Classification:** \`${result.highestRisk}\`
+- **Human Authority Required:** \`${result.humanApprovalRequired ? 'YES (MANDATORY)' : 'NO'}\`
+- **Signatory Authority:** ${result.approverAuthority || 'None'} [${result.approverRole || 'N/A'}]
+- **Review / Signature Status:** \`${result.independentReviewStatus}\`
+- **Assessment Summary:** ${result.summary}
+`;
+}
+
 if (process.argv[1] && process.argv[1].endsWith('stage-d-human-approval.ts')) {
   console.log('🏛️  [Stage D: Governance Gate] Executing Human Authority & ECR Authorization Verification...\n');
   const baseRef = process.argv[2] || 'origin/main';
@@ -137,6 +157,14 @@ if (process.argv[1] && process.argv[1].endsWith('stage-d-human-approval.ts')) {
   console.log(`Ed25519 Signature:           ${result.signatureVerified ? '✅ VERIFIED (exact baseline)' : result.staleApproval ? '❌ STALE' : '❌ UNVERIFIED'}`);
   console.log(`Review Status:               ${result.independentReviewStatus}\n`);
   console.log(`Summary: ${result.summary}\n`);
+
+  if (process.env.GITHUB_STEP_SUMMARY) {
+    try {
+      fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, '\n' + formatStageDMarkdown(result) + '\n');
+    } catch {
+      // Ignore step summary write error
+    }
+  }
 
   if (result.humanApprovalRequired && !result.signatureVerified) {
     console.error('❌ STAGE D REJECTED: Safety-critical changes require a Director approval signed over this exact baseline.\n');
