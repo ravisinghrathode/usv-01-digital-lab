@@ -4,6 +4,7 @@ import { MASTER_AGENTS } from '../agents/definitions.ts';
 export class AgentRegistry {
   private static instance: AgentRegistry;
   private agents: Map<string, AgentSpec> = new Map();
+  private aliasMap: Map<string, string> = new Map();
 
   private constructor() {
     this.registerDefaults();
@@ -31,14 +32,24 @@ export class AgentRegistry {
       throw new Error(`Duplicate agent registration: Agent with ID '${spec.id}' already exists.`);
     }
     this.agents.set(spec.id, spec);
+    if (spec.canonicalId) {
+      this.aliasMap.set(spec.canonicalId, spec.id);
+    }
+    if (spec.aliases) {
+      for (const alias of spec.aliases) {
+        this.aliasMap.set(alias, spec.id);
+      }
+    }
   }
 
   public getAgent(id: string): AgentSpec | undefined {
-    return this.agents.get(id);
+    const resolvedId = this.aliasMap.get(id) || id;
+    return this.agents.get(resolvedId);
   }
 
   public requireAgent(id: string): AgentSpec {
-    const agent = this.agents.get(id);
+    const resolvedId = this.aliasMap.get(id) || id;
+    const agent = this.agents.get(resolvedId);
     if (!agent) {
       throw new Error(`Agent not found in registry: '${id}'`);
     }
@@ -77,6 +88,14 @@ export class AgentRegistry {
 
     if (this.agents.size < 25) {
       errors.push(`Registry underpopulated: expected at least 25 agents, found ${this.agents.size}`);
+    }
+
+    // Verify HMEA v0.2 canonical IDs (A01 - A25)
+    for (let i = 1; i <= 25; i++) {
+      const canonical = `A${i.toString().padStart(2, '0')}`;
+      if (!this.aliasMap.has(canonical)) {
+        errors.push(`HMEA v0.2 compliance error: Canonical agent '${canonical}' is not mapped.`);
+      }
     }
 
     // Check all dependencies point to valid agents

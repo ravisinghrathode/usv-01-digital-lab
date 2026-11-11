@@ -90,7 +90,11 @@ How can I assist your engineering evaluation today?`,
     try {
       const response = await fetch('/api/gemini/assist', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer usv01-auth-token-dir-8841',
+          'X-Project-Member-Id': 'usr-eng-dir-8841'
+        },
         body: JSON.stringify({
           prompt,
           currentWorkstream,

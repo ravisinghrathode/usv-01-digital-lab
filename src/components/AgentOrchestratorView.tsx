@@ -32,7 +32,7 @@ import { ApprovalGateManager } from '../core/safety/HumanApprovalGate.ts';
 import { AuditLogger } from '../core/safety/AuditLogger.ts';
 import { AgentSpec, AgentStatus } from '../core/types/agent.ts';
 import { EngineeringTask } from '../core/types/orchestrator.ts';
-import { HumanApprovalGate } from '../core/types/safety.ts';
+import { HumanApprovalGate, ApproverIdentity } from '../core/types/safety.ts';
 import { EngineeringParameter } from '../core/types/memory.ts';
 import { downloadCsv } from '../utils/engineeringUtils.ts';
 
@@ -81,6 +81,22 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
   // Approval Gate Director Notes
   const [directorNote, setDirectorNote] = useState<string>('Verified against USV-01 preliminary design criteria.');
 
+  // Exploratory Parametric Study Inputs (used strictly for exploratory DAG runs when vessel baseline is TBD)
+  const [studyLwl, setStudyLwl] = useState<number>(11.2);
+  const [studyBeam, setStudyBeam] = useState<number>(2.9);
+  const [studyDraft, setStudyDraft] = useState<number>(0.68);
+  const [studyDisplacement, setStudyDisplacement] = useState<number>(7.8);
+  const [studySpeed, setStudySpeed] = useState<number>(22.0);
+
+  // Authenticated Engineering Director Identity
+  const [approverIdentity] = useState<ApproverIdentity>({
+    userId: 'usr-eng-dir-8841',
+    userName: 'Chief Naval Architect & Systems Director',
+    role: 'ENGINEERING_DIRECTOR',
+    tokenOrSignature: 'SIG_AUTH_HMAC_ED25519_USV01',
+    authenticatedAt: new Date().toISOString()
+  });
+
   // Obsidian Export Modal State
   const [obsidianModalOpen, setObsidianModalOpen] = useState(false);
   const [exportedNotes, setExportedNotes] = useState<Record<string, string>>({});
@@ -98,24 +114,51 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
     refreshState();
   }, []);
 
-  // Run Baseline 3-Stage Topological Workflow
+  // Run Baseline or Exploratory Topological Workflow
   const handleRunSampleWorkflow = async () => {
     setIsExecutingWorkflow(true);
     orchestrator.clearTasks();
 
+    // Inspect baseline vessel particulars in SharedMemory
+    const lwlParam = sharedMemory.getParameter('USV-NA-001');
+    const beamParam = sharedMemory.getParameter('USV-NA-002');
+    const draftParam = sharedMemory.getParameter('USV-NA-003');
+
+    const hasCertifiedBaselines =
+      lwlParam && lwlParam.value !== 'TBD' && typeof lwlParam.value === 'number' &&
+      beamParam && beamParam.value !== 'TBD' && typeof beamParam.value === 'number' &&
+      draftParam && draftParam.value !== 'TBD' && typeof draftParam.value === 'number';
+
+    const lwlVal = hasCertifiedBaselines ? Number(lwlParam!.value) : studyLwl;
+    const beamVal = hasCertifiedBaselines ? Number(beamParam!.value) : studyBeam;
+    const draftVal = hasCertifiedBaselines ? Number(draftParam!.value) : studyDraft;
+    const displVal = studyDisplacement;
+    const speedVal = studySpeed;
+
+    const titlePrefix = hasCertifiedBaselines ? '[CERTIFIED BASELINE] ' : '[UNVERIFIED PARAMETRIC STUDY] ';
+    const studyNotice = hasCertifiedBaselines
+      ? 'Executing certified vessel baseline.'
+      : 'Executing exploratory sensitivity study. Dimensions are NOT approved project baseline.';
+
     // Stage 1: Hull Form & Parametric Geometry
     orchestrator.registerTask({
       id: `TASK-HULL-${Date.now().toString().slice(-4)}`,
-      title: 'Hull Geometry & Form Coefficients',
-      description: 'Compute parametric hull dimensions and waterplane parameters',
+      title: `${titlePrefix}Hull Geometry & Form Coefficients`,
+      description: `Compute parametric hull dimensions and waterplane parameters. (${studyNotice})`,
       assignedAgentId: 'HULL-GEO-05',
       discipline: 'NA',
       priority: 'HIGH',
       dependencies: [],
       input: {
         taskId: 'TASK-HULL-PARAM',
-        context: {},
-        parameters: { lwlMeters: 11.2, beamMeters: 2.9, draftMeters: 0.68 }
+        context: { isExploratoryStudy: !hasCertifiedBaselines },
+        parameters: {
+          isExploratoryStudy: !hasCertifiedBaselines,
+          baselineStatus: hasCertifiedBaselines ? 'CERTIFIED' : 'UNVERIFIED_PARAMETRIC_STUDY',
+          lwlMeters: lwlVal,
+          beamMeters: beamVal,
+          draftMeters: draftVal
+        }
       },
       status: 'PENDING',
       createdAt: new Date().toISOString(),
@@ -125,16 +168,16 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
     // Stage 2: Mass Balance & SWBS Tracking
     orchestrator.registerTask({
       id: `TASK-MASS-${Date.now().toString().slice(-4)}`,
-      title: 'SWBS Mass Breakdown & LCG Synthesis',
-      description: 'Sum weight groups and compute center of gravity',
+      title: `${titlePrefix}SWBS Mass Breakdown & LCG Synthesis`,
+      description: `Sum weight groups and compute center of gravity. (${studyNotice})`,
       assignedAgentId: 'WGT-BAL-09',
       discipline: 'NA',
       priority: 'HIGH',
       dependencies: [orchestrator.getAllTasks()[0]?.id || 'TASK-HULL-PARAM'],
       input: {
         taskId: 'TASK-MASS-EST',
-        context: {},
-        parameters: { components: [] }
+        context: { isExploratoryStudy: !hasCertifiedBaselines },
+        parameters: { components: [], isExploratoryStudy: !hasCertifiedBaselines }
       },
       status: 'PENDING',
       createdAt: new Date().toISOString(),
@@ -144,21 +187,23 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
     // Stage 3: Intact Stability Audit (Safety-Critical -> triggers Human Gate!)
     orchestrator.registerTask({
       id: `TASK-STAB-${Date.now().toString().slice(-4)}`,
-      title: 'Intact Stability & GMt IMO MSC.267(85) Audit',
-      description: 'Validate transverse metacentric height GMt and righting energy',
+      title: `${titlePrefix}Intact Stability & GMt IMO MSC.267(85) Audit`,
+      description: `Validate transverse metacentric height GMt and righting energy. (${studyNotice})`,
       assignedAgentId: 'STAB-HYD-06',
       discipline: 'NA',
       priority: 'CRITICAL',
       dependencies: [orchestrator.getAllTasks()[1]?.id || 'TASK-MASS-EST'],
       input: {
         taskId: 'TASK-STAB-AUDIT',
-        context: {},
+        context: { isExploratoryStudy: !hasCertifiedBaselines },
         parameters: {
-          lwlMeters: 11.2,
-          beamMeters: 2.9,
-          draftMeters: 0.68,
-          displacementTonnes: 7.8,
-          speedKnots: 22.0
+          isExploratoryStudy: !hasCertifiedBaselines,
+          baselineStatus: hasCertifiedBaselines ? 'CERTIFIED' : 'UNVERIFIED_PARAMETRIC_STUDY',
+          lwlMeters: lwlVal,
+          beamMeters: beamVal,
+          draftMeters: draftVal,
+          displacementTonnes: displVal,
+          speedKnots: speedVal
         }
       },
       status: 'PENDING',
@@ -178,10 +223,10 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
     }
   };
 
-  // Evaluate Approval Gate
+  // Evaluate Approval Gate with Authenticated Approver Identity
   const handleDecision = (gateId: string, decision: 'APPROVED' | 'REJECTED') => {
     try {
-      gateManager.evaluateDecision(gateId, decision, directorNote, 'ENGINEERING_DIRECTOR');
+      gateManager.evaluateDecision(gateId, decision, directorNote, approverIdentity);
       refreshState();
     } catch (err: any) {
       alert(err.message);
@@ -404,6 +449,76 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
               </button>
             </div>
 
+            {/* Governance & Parametric Study Configuration */}
+            <div className="p-3.5 rounded-lg bg-amber-950/20 border border-amber-800/40 text-xs space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-amber-300 flex items-center gap-1.5">
+                  <AlertTriangle className="w-4 h-4 text-amber-400" />
+                  Parametric Study Configuration & Governance Notice
+                </span>
+                <span className="text-[10px] font-mono text-amber-400/80 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800/40">
+                  BASELINE STATUS: UNVERIFIED / EXPLORATORY
+                </span>
+              </div>
+              <p className="text-amber-200/80 text-[11px]">
+                Principal vessel dimensions in SharedMemory are currently uncertified (TBD). Sizing workflows execute strictly under
+                explicit <code className="text-amber-300 font-mono">[UNVERIFIED PARAMETRIC STUDY]</code> tags and do NOT alter certified vessel baseline
+                without Engineering Director gate sign-off.
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-1 font-mono text-[11px]">
+                <div>
+                  <label className="text-slate-400 block text-[10px]">Study LWL (m):</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={studyLwl}
+                    onChange={(e) => setStudyLwl(parseFloat(e.target.value) || 0)}
+                    className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-slate-200 focus:outline-none focus:border-amber-500/50"
+                  />
+                </div>
+                <div>
+                  <label className="text-slate-400 block text-[10px]">Study Beam (m):</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={studyBeam}
+                    onChange={(e) => setStudyBeam(parseFloat(e.target.value) || 0)}
+                    className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-slate-200 focus:outline-none focus:border-amber-500/50"
+                  />
+                </div>
+                <div>
+                  <label className="text-slate-400 block text-[10px]">Study Draft (m):</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={studyDraft}
+                    onChange={(e) => setStudyDraft(parseFloat(e.target.value) || 0)}
+                    className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-slate-200 focus:outline-none focus:border-amber-500/50"
+                  />
+                </div>
+                <div>
+                  <label className="text-slate-400 block text-[10px]">Displ (t):</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={studyDisplacement}
+                    onChange={(e) => setStudyDisplacement(parseFloat(e.target.value) || 0)}
+                    className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-slate-200 focus:outline-none focus:border-amber-500/50"
+                  />
+                </div>
+                <div>
+                  <label className="text-slate-400 block text-[10px]">Speed (kn):</label>
+                  <input
+                    type="number"
+                    step="0.5"
+                    value={studySpeed}
+                    onChange={(e) => setStudySpeed(parseFloat(e.target.value) || 0)}
+                    className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-slate-200 focus:outline-none focus:border-amber-500/50"
+                  />
+                </div>
+              </div>
+            </div>
+
             {tasks.length === 0 ? (
               <div className="p-8 rounded-lg bg-slate-900/30 border border-slate-800 text-center space-y-3">
                 <Layers className="w-8 h-8 text-slate-600 mx-auto" />
@@ -537,6 +652,17 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
                 All changes touching intact stability, high voltage distribution, or hull scantlings require explicit human sign-off.
               </p>
             </div>
+          </div>
+
+          <div className="p-3 bg-purple-900/30 border border-purple-700/50 rounded-lg flex items-center justify-between text-xs">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <span className="font-semibold text-purple-200">Verified Approver Session:</span>
+              <span className="text-slate-200 font-mono">{approverIdentity.userName} ({approverIdentity.userId})</span>
+            </div>
+            <span className="font-mono text-[11px] text-cyan-300 bg-cyan-950/70 border border-cyan-800/50 px-2 py-0.5 rounded">
+              Role: {approverIdentity.role} [Token: {approverIdentity.tokenOrSignature?.slice(0, 16)}...]
+            </span>
           </div>
 
           {pendingGates.length === 0 ? (

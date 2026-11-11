@@ -135,6 +135,30 @@ export class CentralOrchestrator {
           stage.map(async taskId => {
             const task = this.tasks.get(taskId)!;
 
+            // Fail-closed dependency validation:
+            // Downstream tasks MUST NOT execute if any upstream dependency failed or is awaiting approval.
+            const unfulfilledDeps: string[] = [];
+            for (const depId of task.dependencies) {
+              const depTask = this.tasks.get(depId);
+              if (!depTask || depTask.status !== 'COMPLETED') {
+                unfulfilledDeps.push(`${depId} (${depTask?.status || 'NOT_FOUND'})`);
+              }
+            }
+
+            if (unfulfilledDeps.length > 0) {
+              task.status = 'BLOCKED';
+              task.error = `Upstream dependency not satisfied: [${unfulfilledDeps.join(', ')}]. Downstream task execution halted (fail-closed).`;
+              failed++;
+              this.auditLogger.log({
+                severity: 'SAFETY_CRITICAL',
+                agentId: task.assignedAgentId,
+                taskId: task.id,
+                action: 'TASK_BLOCKED_DEPENDENCY_FAILURE',
+                details: { unfulfilledDeps }
+              });
+              return;
+            }
+
             // Gather outputs of parent dependencies
             const priorOutputs: Record<string, any> = {};
             for (const depId of task.dependencies) {

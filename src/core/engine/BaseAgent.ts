@@ -63,14 +63,47 @@ export class BaseAgent {
     for (const toolId of this.spec.verificationCriteria.mandatoryDeterministicTools) {
       if (this.spec.permittedTools.includes(toolId)) {
         // Run tool with agent's permission set
-        const permissions = this.spec.executionPermissions;
-        const toolRes = await this.toolRegistry.executeTool(toolId, input.parameters, permissions);
+        const toolRes = await this.toolRegistry.executeTool(toolId, input.parameters, this.spec.executionPermissions);
         deterministicEvidence.push({
           toolName: toolId,
           inputs: toolRes.input,
           outputs: toolRes.output,
           verified: toolRes.success
         });
+
+        // Fail-closed: Mandatory calculation failure must halt synthesis
+        if (!toolRes.success) {
+          this.auditLogger.log({
+            severity: 'SAFETY_CRITICAL',
+            agentId: this.spec.id,
+            taskId,
+            action: 'MANDATORY_CALCULATION_FAILED',
+            details: {
+              toolId,
+              error: toolRes.error,
+              input: toolRes.input
+            }
+          });
+
+          return {
+            agentId: this.spec.id,
+            taskId,
+            timestamp: new Date().toISOString(),
+            status: 'FAILED',
+            data: {
+              error: `Mandatory deterministic calculation '${toolId}' failed: ${toolRes.error}. Synthesis halted to prevent unverified engineering claims.`,
+              failedToolId: toolId,
+              toolInput: toolRes.input
+            },
+            assumptions: [],
+            deterministicToolEvidence: deterministicEvidence,
+            openTbdItems: [`Mandatory tool ${toolId} calculation failure must be resolved by engineering authority`],
+            warnings: [`Calculation failure in mandatory tool ${toolId}`],
+            recommendations: ['Verify input physics parameters and rerun calculation'],
+            requiresDirectorApproval: true,
+            approvalRationale: `Mandatory calculation '${toolId}' failed.`
+          };
+        }
       }
     }
 

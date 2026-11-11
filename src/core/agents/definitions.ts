@@ -31,6 +31,8 @@ export const MASTER_AGENTS: AgentSpec[] = [
   // 1. Lead Systems Architect
   {
     id: 'LEAD-SYS-01',
+    canonicalId: 'A01',
+    aliases: ['LEAD-SYS-01', 'A01'],
     division: 'DIRECTORATE',
     name: 'Lead Systems Architect & Orchestrator',
     speciality: 'System-of-systems engineering, workflow orchestration, baseline synthesis',
@@ -65,6 +67,8 @@ Track all missing values as TBD rather than assuming defaults.`,
   // 2. Requirements & Traceability Engineer
   {
     id: 'REQ-TRC-02',
+    canonicalId: 'A02',
+    aliases: ['REQ-TRC-02', 'A02'],
     division: 'REQUIREMENTS_BASELINE',
     name: 'Requirements & Traceability Engineer',
     speciality: 'Requirements engineering, bidirectional traceability, compliance matrix',
@@ -96,6 +100,8 @@ Never allow untraced assumptions.`,
   // 3. Operational Profile & CONOPS Specialist
   {
     id: 'CONOPS-03',
+    canonicalId: 'A03',
+    aliases: ['CONOPS-03', 'A03'],
     division: 'REQUIREMENTS_BASELINE',
     name: 'Operational Profile & CONOPS Specialist',
     speciality: 'Concept of Operations, mission profile, environmental envelope, sea state limits',
@@ -126,6 +132,8 @@ Flag all unconfirmed environmental bounds (e.g. NATO Sea State 4 vs 5, operating
   // 4. Marine Regulatory & Class Standards Specialist
   {
     id: 'REG-STD-04',
+    canonicalId: 'A04',
+    aliases: ['REG-STD-04', 'A04'],
     division: 'REQUIREMENTS_BASELINE',
     name: 'Marine Regulatory & Class Standards Specialist',
     speciality: 'Classification society rules (DNV, Lloyd\'s Register), IMO MASS guidelines, COLREGS',
@@ -156,6 +164,8 @@ Map all vessel subsystems to relevant maritime codes and standards. Flag non-com
   // 5. Hull Form & Parametric Geometry Specialist
   {
     id: 'HULL-GEO-05',
+    canonicalId: 'A05',
+    aliases: ['HULL-GEO-05', 'A05'],
     division: 'NAVAL_ARCHITECTURE',
     name: 'Hull Form & Parametric Geometry Specialist',
     speciality: 'Hull lines, principal particulars (LOA, LWL, Beam, Draft, Depth), form coefficients',
@@ -187,6 +197,8 @@ Never fabricate dimensions if marked TBD.`,
   // 6. Hydrostatics & Intact Stability Engineer
   {
     id: 'STAB-HYD-06',
+    canonicalId: 'A06',
+    aliases: ['STAB-HYD-06', 'A06'],
     division: 'NAVAL_ARCHITECTURE',
     name: 'Hydrostatics & Intact Stability Engineer',
     speciality: 'Hydrostatics, transverse/longitudinal metacentric heights (GM, GML), GZ curve, intact stability',
@@ -218,6 +230,8 @@ GMt must be strictly positive (GMt > 0.35m minimum for small USVs). Any negative
   // 7. Hydrodynamic Resistance & Performance Engineer
   {
     id: 'RES-SEAK-07',
+    canonicalId: 'A07',
+    aliases: ['RES-SEAK-07', 'A07'],
     division: 'NAVAL_ARCHITECTURE',
     name: 'Hydrodynamic Resistance & Performance Engineer',
     speciality: 'Calm water resistance, wave-making resistance, Holtrop-Mennen/Savitsky methods, effective power (PE)',
@@ -250,6 +264,8 @@ Invoke TOOL-RESISTANCE-01.`,
   // 8. Seakeeping & Manoeuvring Dynamics Specialist
   {
     id: 'MAN-MOT-08',
+    canonicalId: 'A08',
+    aliases: ['MAN-MOT-08', 'A08'],
     division: 'NAVAL_ARCHITECTURE',
     name: 'Seakeeping & Manoeuvring Dynamics Specialist',
     speciality: '6-DOF vessel motions (pitch, roll, heave), RAOs, turning circle, directional stability',
@@ -280,6 +296,8 @@ Flag severe vertical accelerations at forward payload/sensor mast locations that
   // 9. Weight Distribution & Center of Gravity (Mass Balance) Engineer
   {
     id: 'WGT-BAL-09',
+    canonicalId: 'A09',
+    aliases: ['WGT-BAL-09', 'A09'],
     division: 'NAVAL_ARCHITECTURE',
     name: 'Weight Distribution & Mass Balance Engineer',
     speciality: 'Lightship weight breakdown, deadweight, centers of gravity (KG, LCG, TCG), mass moments of inertia',
@@ -311,6 +329,8 @@ Never invent component masses; if unknown, flag as TBD and apply design margin.`
   // 10. Hull Structural Scantlings & Composites Engineer
   {
     id: 'STR-MAT-10',
+    canonicalId: 'A10',
+    aliases: ['STR-MAT-10', 'A10'],
     division: 'STRUCTURES_MECHANICAL',
     name: 'Hull Structural Scantlings & Composites Engineer',
     speciality: 'Bottom slamming design pressure, plating thickness, stiffener section modulus, composite/aluminum materials',
@@ -341,6 +361,8 @@ Use DNV/ISO 12215-5 formulas. Verify safety factors against yield and ultimate t
   // 11. Marine Environmental, Thermal & Biofouling Specialist
   {
     id: 'ENV-ENV-11',
+    canonicalId: 'A11',
+    aliases: ['ENV-ENV-11', 'A11'],
     division: 'STRUCTURES_MECHANICAL',
     name: 'Marine Environmental & Thermal Specialist',
     speciality: 'Thermal dissipation in enclosed hull, marine corrosion, cathodic protection, biofouling mitigation',
@@ -371,6 +393,8 @@ Enforce marine grade materials (e.g. 5083/6061-T6 aluminum, 316L stainless, mari
   // 12. Mechanical Appendages, Deck Equipment & Rigging Engineer
   {
     id: 'MECH-APP-12',
+    canonicalId: 'A12',
+    aliases: ['MECH-APP-12', 'A12'],
     division: 'STRUCTURES_MECHANICAL',
     name: 'Mechanical Appendages & Deck Equipment Engineer',
     speciality: 'Rudders, waterjet steering nozzles, sensor masts, lifting lugs, towing bitts, payload hatches',
@@ -400,6 +424,8 @@ Enforce marine grade materials (e.g. 5083/6061-T6 aluminum, 316L stainless, mari
   // 13. Propulsion Plant & Drivetrain Engineer
   {
     id: 'PROP-ENG-13',
+    canonicalId: 'A13',
+    aliases: ['PROP-ENG-13', 'A13'],
     division: 'POWER_PROPULSION',
     name: 'Propulsion Plant & Drivetrain Engineer',
     speciality: 'Waterjets, propellers, electric motors / diesel outboards, shaft lines, thrust calculations',
@@ -430,6 +456,8 @@ Ensure thrust margin >= 20% in calm water to handle sea state resistance additio
   // 14. Electrical Power Architecture & Microgrid Engineer
   {
     id: 'ELEC-PWR-14',
+    canonicalId: 'A14',
+    aliases: ['ELEC-PWR-14', 'A14'],
     division: 'POWER_PROPULSION',
     name: 'Electrical Architecture & Microgrid Engineer',
     speciality: 'DC bus voltages (24V, 48V, High Voltage DC), electrical load balance, DC/DC converters, distribution protection',
@@ -461,6 +489,8 @@ Enforce circuit protection and cable ampacity standards (ABYC E-11 / IEC 60092).
   // 15. Energy Storage System (Battery/BMS) Safety Engineer
   {
     id: 'BATT-ESS-15',
+    canonicalId: 'A15',
+    aliases: ['BATT-ESS-15', 'A15'],
     division: 'POWER_PROPULSION',
     name: 'Energy Storage System & Battery Safety Engineer',
     speciality: 'Lithium chemistry (LFP, NMC), battery pack capacity, BMS telemetry, thermal runaway prevention, DNV maritime battery class',
@@ -492,6 +522,8 @@ Usable energy = Total Capacity * Depth of Discharge (typically 80%).`,
   // 16. Perception & Marine Sensor Suite Integration Specialist
   {
     id: 'SENS-PER-16',
+    canonicalId: 'A16',
+    aliases: ['SENS-PER-16', 'A16'],
     division: 'AUTONOMY_ELECTRONICS',
     name: 'Perception & Sensor Suite Integration Specialist',
     speciality: 'Marine radar (solid state pulse compression), 3D LiDAR, EO/IR cameras, AIS, sonar/depth sounder',
@@ -522,6 +554,8 @@ Calculate sensor line-of-sight horizon: HorizonNm = 1.17 * (sqrt(h_mast_ft) + sq
   // 17. Navigation, Guidance & COLREGS Collision Avoidance Specialist
   {
     id: 'NAV-COL-17',
+    canonicalId: 'A17',
+    aliases: ['NAV-COL-17', 'A17'],
     division: 'AUTONOMY_ELECTRONICS',
     name: 'Navigation & COLREGS Collision Avoidance Specialist',
     speciality: 'COLREGS 1972 rules (Rules 13, 14, 15, 16, 17, 18), CPA / TCPA calculations, trajectory planning',
@@ -553,6 +587,8 @@ Rule 16 requires give-way actions to be early and substantial. Never violate COL
   // 18. Autonomy State Executive & Mission Management Engineer
   {
     id: 'AUTO-EXEC-18',
+    canonicalId: 'A18',
+    aliases: ['AUTO-EXEC-18', 'A18'],
     division: 'AUTONOMY_ELECTRONICS',
     name: 'Autonomy State Executive Engineer',
     speciality: 'Finite state machine (FSM), mission modes (MANUAL, PILOT_ASSIST, FULL_AUTO, FAILSAFE), heartbeat monitoring',
@@ -583,6 +619,8 @@ Define state transitions formally: System cannot jump from MANUAL to FULL_AUTO w
   // 19. Comms, RF & Telemetry Specialist
   {
     id: 'COMM-RF-19',
+    canonicalId: 'A19',
+    aliases: ['COMM-RF-19', 'A19'],
     division: 'AUTONOMY_ELECTRONICS',
     name: 'Comms, RF & Telemetry Specialist',
     speciality: 'COMSAT (Starlink / Iridium), 4G/5G private cellular, line-of-sight COFDM RF mesh, link budget, latency',
@@ -613,6 +651,8 @@ RF link loss must trigger a deterministic Comms-Loss Timer prior to failsafe sta
   // 20. Cyber-Physical Security & Safe-State Failover Engineer
   {
     id: 'CYBER-SEC-20',
+    canonicalId: 'A20',
+    aliases: ['CYBER-SEC-20', 'A20'],
     division: 'AUTONOMY_ELECTRONICS',
     name: 'Cyber-Physical Marine Security & Safe-State Engineer',
     speciality: 'GNSS spoofing detection, secure boot, CAN/Ethernet bus isolation, safe-state failover, cryptographic auth',
@@ -644,6 +684,8 @@ Mandate hardware physical interlock E-stops.`,
   // 21. Interface Control Document (ICD) & Bus Schema Engineer
   {
     id: 'ICD-ENG-21',
+    canonicalId: 'A21',
+    aliases: ['ICD-ENG-21', 'A21'],
     division: 'SYSTEMS_VVT',
     name: 'Interface Control Document (ICD) Engineer',
     speciality: 'Hardware and software interface definitions, NMEA 0183/2000, ROS2 messages, JSON schemas, pinouts',
@@ -674,6 +716,8 @@ exact pinouts, voltage levels, data baud rates, and message definitions.`,
   // 22. FMEA, System Safety & Hazard Analysis Specialist
   {
     id: 'FMEA-RSK-22',
+    canonicalId: 'A22',
+    aliases: ['FMEA-RSK-22', 'A22'],
     division: 'SYSTEMS_VVT',
     name: 'FMEA & System Safety Specialist',
     speciality: 'Failure Modes and Effects Analysis (FMEA), hazard identification (HAZID), single-point-of-failure (SPOF) audit',
@@ -705,6 +749,8 @@ Any unmitigated RPN > 100 must be escalated to the Director.`,
   // 23. Independent Engineering Design Reviewer (Red Team)
   {
     id: 'INDEP-REV-23',
+    canonicalId: 'A23',
+    aliases: ['INDEP-REV-23', 'A23'],
     division: 'SYSTEMS_VVT',
     name: 'Independent Design Reviewer (Challenger / Red Team)',
     speciality: 'Independent design review, sanity checking, assumption challenge, cross-discipline contradiction detection',
@@ -741,6 +787,8 @@ Scrutinize every claim. Look for:
   // 24. Verification, Validation & Acceptance Test Specialist
   {
     id: 'VVT-VAL-24',
+    canonicalId: 'A24',
+    aliases: ['VVT-VAL-24', 'A24'],
     division: 'SYSTEMS_VVT',
     name: 'Verification, Validation & Test Specialist',
     speciality: 'Test matrix, verification procedures, acceptance criteria, physical basin/sea trial test planning',
@@ -771,6 +819,8 @@ Require explicit pass/fail tolerances, sensor instrumentation, test duration, an
   // 25. Technical Documentation, BOM & Obsidian Knowledge Specialist
   {
     id: 'DOC-OBS-25',
+    canonicalId: 'A25',
+    aliases: ['DOC-OBS-25', 'A25'],
     division: 'OPERATIONS_DELIVERABLES',
     name: 'Documentation, BOM & Obsidian Knowledge Specialist',
     speciality: 'Engineering documentation, Bill of Materials (BOM), Obsidian Markdown vault sync, Git versioning',

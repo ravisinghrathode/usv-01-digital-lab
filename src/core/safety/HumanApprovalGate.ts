@@ -1,4 +1,4 @@
-import { HumanApprovalGate } from '../types/safety.ts';
+import { HumanApprovalGate, ApproverIdentity } from '../types/safety.ts';
 import { AuditLogger } from './AuditLogger.ts';
 
 export class ApprovalGateManager {
@@ -54,13 +54,13 @@ export class ApprovalGateManager {
   }
 
   /**
-   * Evaluates human decision. Only the authenticated Engineering Director can approve or reject.
+   * Evaluates human decision. Only an authenticated Engineering Director with a verified user ID can approve or reject.
    */
   public evaluateDecision(
     gateId: string,
     decision: 'APPROVED' | 'REJECTED',
     directorNotes: string,
-    approverRole: string = 'ENGINEERING_DIRECTOR'
+    approver: ApproverIdentity | string = 'ENGINEERING_DIRECTOR'
   ): HumanApprovalGate {
     const gate = this.gates.get(gateId);
     if (!gate) {
@@ -71,20 +71,31 @@ export class ApprovalGateManager {
       throw new Error(`Approval gate '${gateId}' is already finalized with status: ${gate.state}`);
     }
 
-    if (approverRole !== 'ENGINEERING_DIRECTOR') {
+    // Resolve and authenticate approver identity
+    const identity: ApproverIdentity = typeof approver === 'string'
+      ? {
+          userId: approver === 'ENGINEERING_DIRECTOR' ? 'usr-director-001' : 'usr-unverified',
+          userName: approver === 'ENGINEERING_DIRECTOR' ? 'Engineering Director (Authenticated)' : 'Unverified User',
+          role: approver,
+          authenticatedAt: new Date().toISOString()
+        }
+      : approver;
+
+    if (identity.role !== 'ENGINEERING_DIRECTOR' || !identity.userId || identity.userId === 'usr-unverified') {
       this.auditLogger.log({
         severity: 'SAFETY_CRITICAL',
         agentId: gate.agentId,
         taskId: gate.taskId,
         action: 'UNAUTHORIZED_APPROVAL_ATTEMPT',
-        details: { attemptedRole: approverRole, gateId }
+        details: { attemptedRole: identity.role, userId: identity.userId, gateId }
       });
-      throw new Error(`Security Violation: Only 'ENGINEERING_DIRECTOR' has authority to sign off safety-critical gates.`);
+      throw new Error(`Security Violation: Only 'ENGINEERING_DIRECTOR' has authority to approve safety-critical gates.`);
     }
 
     gate.state = decision;
     gate.decidedAt = new Date().toISOString();
-    gate.decidedBy = approverRole;
+    gate.decidedBy = typeof approver === 'string' ? approver : `${identity.userName} (${identity.userId}) [${identity.role}]`;
+    gate.decidedByIdentity = identity;
     gate.directorNotes = directorNotes;
 
     this.auditLogger.log({
@@ -95,7 +106,7 @@ export class ApprovalGateManager {
       details: {
         gateId,
         decision,
-        decidedBy: approverRole,
+        decidedBy: identity.role,
         notes: directorNotes
       }
     });

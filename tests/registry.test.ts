@@ -49,4 +49,23 @@ describe('STAGE B: Agent Organization & Master Registry', () => {
     const elecAgents = registry.getAgentsByDivision('POWER_PROPULSION');
     expect(elecAgents.length).toBe(3); // PROP-ENG-13, ELEC-PWR-14, BATT-ESS-15
   });
+
+  it('should support HMEA v0.2 canonical IDs A01-A25 with backwards-compatible alias resolution', () => {
+    for (let i = 1; i <= 25; i++) {
+      const canonicalId = `A${i.toString().padStart(2, '0')}`;
+      const agentByCanonical = registry.getAgent(canonicalId);
+      expect(agentByCanonical).toBeDefined();
+      expect(agentByCanonical?.canonicalId).toBe(canonicalId);
+      expect(registry.requireAgent(canonicalId)).toBeDefined();
+    }
+
+    // Lead Systems Architect
+    expect(registry.getAgent('A01')?.id).toBe('LEAD-SYS-01');
+    // Hull Form & Parametric Geometry
+    expect(registry.getAgent('A05')?.id).toBe('HULL-GEO-05');
+    // Intact Stability & Hydrostatics
+    expect(registry.getAgent('A06')?.id).toBe('STAB-HYD-06');
+    // Documentation & Obsidian Vault
+    expect(registry.getAgent('A25')?.id).toBe('DOC-OBS-25');
+  });
 });

@@ -212,7 +212,7 @@ export const MassBalanceTool: EngineeringTool = {
     let sumVcgMoment = 0;
 
     for (const comp of components) {
-      const margin = (comp.designMarginPercent || 10) / 100;
+      const margin = (comp.designMarginPercent ?? 10) / 100;
       const totalCompMass = comp.massKg * (1 + margin);
 
       lightshipMassKg += comp.massKg;

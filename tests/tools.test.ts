@@ -138,4 +138,20 @@ describe('STAGE E: Deterministic Naval Engineering Tools', () => {
     expect(res.success).toBe(false);
     expect(res.error).toContain('Permission Denied');
   });
+
+  it('should preserve explicit 0% design margin and NOT convert it to 10%', async () => {
+    const input = {
+      components: [
+        { name: 'Certified Cast Keel Weight', massKg: 500, lcgMetersFromTransom: 3.0, tcgMetersFromCl: 0, vcgMetersFromKeel: 0.1, designMarginPercent: 0 }
+      ],
+      baselineLcbMetersFromTransom: 3.0
+    };
+
+    const res = await toolRegistry.executeTool('TOOL-MASS-BALANCE-01', input, ['CALCULATION_EXEC']);
+    expect(res.success).toBe(true);
+    // Explicit 0% margin means margin mass is 0, total displacement mass is exactly 500 kg
+    expect(res.output.designMarginMassKg).toBe(0);
+    expect(res.output.totalDisplacementKg).toBe(500);
+    expect(res.output.totalDisplacementTonnes).toBe(0.5);
+  });
 });

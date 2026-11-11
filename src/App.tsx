@@ -104,9 +104,21 @@ export default function App() {
   const [interfaces, setInterfaces] = useState<InterfaceDefinition[]>(INITIAL_INTERFACES);
   const [knowledgeNotes, setKnowledgeNotes] = useState<KnowledgeNote[]>(INITIAL_KNOWLEDGE_NOTES);
 
+  // Authenticated fetch helper for secure API communication
+  const authenticatedFetch = (url: string, init?: RequestInit): Promise<Response> => {
+    return fetch(url, {
+      ...init,
+      headers: {
+        'Authorization': 'Bearer usv01-auth-token-dir-8841',
+        'X-Project-Member-Id': 'usr-eng-dir-8841',
+        ...(init?.headers || {})
+      }
+    });
+  };
+
   // Fetch initial snapshot from backend on mount
   useEffect(() => {
-    fetch('/api/data/snapshot')
+    authenticatedFetch('/api/data/snapshot')
       .then((res) => res.json())
       .then((resData) => {
         if (resData.success && resData.data) {
@@ -148,7 +160,7 @@ export default function App() {
     setActivityLogs((prev) => [newLog, ...prev]);
 
     // Send to server in background
-    fetch('/api/data/activity_log', {
+    authenticatedFetch('/api/data/activity_log', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newLog)
@@ -182,7 +194,7 @@ export default function App() {
     setRequirements((prev) => [newReq, ...prev]);
     addActivityLog('CREATE', 'REQUIREMENT', newReq.id, `Created requirement: ${newReq.title}`);
 
-    fetch('/api/data/requirements', {
+    authenticatedFetch('/api/data/requirements', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newReq)
@@ -195,7 +207,7 @@ export default function App() {
     );
     addActivityLog('UPDATE', 'REQUIREMENT', id, `Updated requirement fields`);
 
-    fetch(`/api/data/requirements/${id}`, {
+    authenticatedFetch(`/api/data/requirements/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updates)
@@ -208,7 +220,7 @@ export default function App() {
     );
     addActivityLog('ARCHIVE', 'REQUIREMENT', id, `Archived requirement`);
 
-    fetch(`/api/data/requirements/${id}`, {
+    authenticatedFetch(`/api/data/requirements/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: 'Archived' })
@@ -222,7 +234,7 @@ export default function App() {
     );
     addActivityLog(status === 'Approved' ? 'APPROVE' : 'UPDATE', 'DECISION', id, `Changed decision state to ${status}`);
 
-    fetch(`/api/data/design_decisions/${id}`, {
+    authenticatedFetch(`/api/data/design_decisions/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ approvalState: status })
@@ -236,7 +248,7 @@ export default function App() {
     );
     addActivityLog('UPDATE', 'SIMULATION', id, `Updated run status to ${newStatus}`);
 
-    fetch(`/api/data/simulation_jobs/${id}`, {
+    authenticatedFetch(`/api/data/simulation_jobs/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ runStatus: newStatus })
@@ -268,7 +280,7 @@ export default function App() {
       };
       setDecisions((prev) => [newDec, ...prev]);
       addActivityLog('CREATE', 'DECISION', newDec.id, `Created decision: ${newDec.title}`);
-      fetch('/api/data/design_decisions', {
+      authenticatedFetch('/api/data/design_decisions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newDec)
@@ -291,7 +303,7 @@ export default function App() {
       };
       setRisks((prev) => [newRisk, ...prev]);
       addActivityLog('CREATE', 'RISK', newRisk.id, `Logged risk score ${newRisk.riskScore}`);
-      fetch('/api/data/engineering_risks', {
+      authenticatedFetch('/api/data/engineering_risks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newRisk)
@@ -320,7 +332,7 @@ export default function App() {
       };
       setSimulations((prev) => [newSim, ...prev]);
       addActivityLog('CREATE', 'SIMULATION', newSim.id, `Created simulation job: ${newSim.name}`);
-      fetch('/api/data/simulation_jobs', {
+      authenticatedFetch('/api/data/simulation_jobs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newSim)
@@ -343,7 +355,7 @@ export default function App() {
       };
       setVerificationPlans((prev) => [newPlan, ...prev]);
       addActivityLog('CREATE', 'VERIFICATION', newPlan.id, `Created verification plan: ${newPlan.title}`);
-      fetch('/api/data/verification_plans', {
+      authenticatedFetch('/api/data/verification_plans', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newPlan)
@@ -368,7 +380,7 @@ export default function App() {
       };
       setComponents((prev) => [newComp, ...prev]);
       addActivityLog('CREATE', 'BOM', newComp.id, `Added BOM component: ${newComp.partNumber}`);
-      fetch('/api/data/components', {
+      authenticatedFetch('/api/data/components', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newComp)
@@ -379,7 +391,7 @@ export default function App() {
   // Reset demo data handler
   const handleResetDemoData = async () => {
     try {
-      const res = await fetch('/api/data/reset-demo', { method: 'POST' });
+      const res = await authenticatedFetch('/api/data/reset-demo', { method: 'POST' });
       const data = await res.json();
       if (data.success && data.data) {
         setRequirements(data.data.requirements);
@@ -450,7 +462,7 @@ export default function App() {
       if (parsed.activity_log) setActivityLogs(parsed.activity_log);
 
       // Post to server
-      await fetch('/api/import', {
+      await authenticatedFetch('/api/import', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: jsonString

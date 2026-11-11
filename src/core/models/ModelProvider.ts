@@ -14,6 +14,8 @@ export interface ModelPromptResponse {
   providerUsed: string;
   modelUsed: string;
   tokenUsage?: { promptTokens: number; completionTokens: number; totalTokens: number };
+  isMock?: boolean;
+  evidenceValid?: boolean;
 }
 
 export interface IModelProvider {
@@ -40,28 +42,31 @@ export class MockDeterministicProvider implements IModelProvider {
     const isElectrical = userPrompt.includes('electrical') || systemInstructions.includes('Electrical');
 
     const resultData: Record<string, any> = {
-      disciplineSummary: `Engineering synthesis completed under deterministic protocol. Context: ${Object.keys(context).join(', ') || 'Standard Baseline'}.`,
+      disciplineSummary: `[UNVERIFIED SYNTHETIC MOCK] Offline simulation fallback. Context: ${Object.keys(context).join(', ') || 'Standard Baseline'}.`,
       keyMetrics: {
-        analysisMode: 'DETERMINISTIC_EVALUATION',
-        convergenceConfidence: 0.98,
-        baselineIntegrityVerified: true
+        analysisMode: 'SYNTHETIC_MOCK_FALLBACK',
+        isMockFallback: true,
+        evidenceValid: false,
+        convergenceConfidence: 0.0,
+        baselineIntegrityVerified: false,
+        auditWarning: 'UNVERIFIED MOCK OUTPUT — UNACCEPTABLE AS CERTIFIED ENGINEERING EVIDENCE'
       },
       designDecisions: [
-        'Applied DNV-RU-NAV safety factor margins',
-        'Maintained strictly immutable baseline; flagged unknowns as TBD'
+        'FLAGGED: Decision generated under mock fallback; requires live recalculation and human sign-off'
       ],
       assumptions: [
         {
-          id: 'ASSUMP-001',
+          id: 'ASSUMP-MOCK-001',
           category: 'ASSUMPTION',
-          description: 'Seawater density assumed standard 1025 kg/m^3 at 15 deg C.',
-          sourceReference: 'ITTC-1957 Standard Seawater',
-          impactIfViolated: 'Minor displacement variation (<0.5%)',
-          isBaseline: true
+          description: 'Offline mock model output. Physics evidence not confirmed by live LLM or solver.',
+          sourceReference: 'ModelProvider.MockDeterministicProvider',
+          impactIfViolated: 'Invalid engineering baseline if used for vessel certification.',
+          isBaseline: false
         }
       ],
-      openTbdItems: [],
-      requiresDirectorApproval: false
+      openTbdItems: ['Live engineering model validation required before design freeze'],
+      requiresDirectorApproval: true,
+      approvalRationale: 'Mock fallback execution used; unverified for engineering evidence.'
     };
 
     if (isHydrostatics || isStability) {
@@ -92,7 +97,9 @@ export class MockDeterministicProvider implements IModelProvider {
       parsedJson: resultData,
       providerUsed: 'mock_deterministic',
       modelUsed: config?.modelName || 'deterministic-marine-engine-v1',
-      tokenUsage: { promptTokens: 120, completionTokens: 180, totalTokens: 300 }
+      tokenUsage: { promptTokens: 120, completionTokens: 180, totalTokens: 300 },
+      isMock: true,
+      evidenceValid: false
     };
   }
 }
@@ -190,14 +197,22 @@ export class ModelProviderRouter {
         return await preferred.generateText(request, config);
       } catch (err) {
         if (!config.fallbackToMock) {
-          throw err;
+          throw new Error(`Preferred provider '${config.preferredProvider}' failed and fallbackToMock is disabled: ${err}`);
         }
-        console.warn(`Preferred provider '${config.preferredProvider}' failed, falling back to mock:`, err);
+        console.warn(`[SAFETY ALERT] Preferred provider '${config.preferredProvider}' failed. Falling back to UNVERIFIED mock simulation.`);
       }
+    } else if (config.preferredProvider !== 'mock_deterministic') {
+      if (!config.fallbackToMock) {
+        throw new Error(`Preferred provider '${config.preferredProvider}' is unavailable and fallbackToMock is disabled. Cannot synthesize unverified engineering evidence.`);
+      }
+      console.warn(`[SAFETY ALERT] Preferred provider '${config.preferredProvider}' is unavailable. Falling back to UNVERIFIED mock simulation.`);
     }
 
     // Fallback to Mock Provider
     const fallback = this.providers.get('mock_deterministic')!;
-    return await fallback.generateText(request, config);
+    const response = await fallback.generateText(request, config);
+    response.isMock = true;
+    response.evidenceValid = false;
+    return response;
   }
 }

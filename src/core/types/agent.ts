@@ -38,6 +38,8 @@ export interface AgentAuditRequirement {
 
 export interface AgentSpec {
   id: string; // e.g. 'LEAD-SYS-01'
+  canonicalId: string; // Canonical HMEA v0.2 ID: 'A01' - 'A25'
+  aliases?: string[]; // e.g. ['LEAD-SYS-01', 'A01']
   division: AgentDivision;
   name: string;
   speciality: string;

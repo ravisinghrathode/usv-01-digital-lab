@@ -7,6 +7,7 @@ export type TaskStatus =
   | 'WAITING_HUMAN_APPROVAL'
   | 'COMPLETED'
   | 'FAILED'
+  | 'BLOCKED'
   | 'SKIPPED';
 
 export interface EngineeringTask {

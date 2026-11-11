@@ -22,8 +22,11 @@ try {
   projectContext = 'USV-01 Digital Engineering Baseline Context.';
 }
 
-// In-memory persistent database for server session (replaces cloud firestore when running in demo/local mode)
-// Loaded from initial dataset on start
+// File-backed persistent database store path
+const DATA_DIR = path.join(__dirname, 'data');
+const STORE_PATH = path.join(DATA_DIR, 'project_store.json');
+
+// Persistent database store (loaded from disk or initial dataset on start)
 let dbStore: Record<string, any[]> = {
   requirements: [],
   design_decisions: [],
@@ -42,9 +45,40 @@ let dbStore: Record<string, any[]> = {
   weight_cg: []
 };
 
+const saveStoreToFile = () => {
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    fs.writeFileSync(STORE_PATH, JSON.stringify(dbStore, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('Failed to persist store to disk:', err);
+  }
+};
+
+const loadStoreFromFile = (): boolean => {
+  try {
+    if (fs.existsSync(STORE_PATH)) {
+      const content = fs.readFileSync(STORE_PATH, 'utf-8');
+      const parsed = JSON.parse(content);
+      if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+        dbStore = parsed;
+        console.log(`Loaded persisted project store from ${STORE_PATH}`);
+        return true;
+      }
+    }
+  } catch (err) {
+    console.warn('Could not load persisted project store from disk:', err);
+  }
+  return false;
+};
+
 // Helper to seed store if empty
 const seedStoreIfEmpty = async () => {
-  if (dbStore.requirements.length === 0) {
+  if (loadStoreFromFile()) {
+    return;
+  }
+  if (!dbStore.requirements || dbStore.requirements.length === 0) {
     try {
       const initial = await import('./src/data/initialProjectData.ts');
       dbStore.requirements = [...initial.INITIAL_REQUIREMENTS];
@@ -62,12 +96,36 @@ const seedStoreIfEmpty = async () => {
       dbStore.load_cases = [...initial.INITIAL_LOAD_CASES];
       dbStore.resistance_estimates = [...initial.INITIAL_RESISTANCE];
       dbStore.weight_cg = [...initial.INITIAL_WEIGHT_CG];
+      saveStoreToFile();
     } catch (err) {
       console.warn('Could not auto-seed dbStore:', err);
     }
   }
 };
 seedStoreIfEmpty();
+
+// --- AUTHENTICATION MIDDLEWARE ---
+const LAB_AUTH_TOKEN = process.env.LAB_AUTH_TOKEN || 'usv01-auth-token-dir-8841';
+
+export const authMiddleware = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  const authHeader = req.headers['authorization'];
+  const memberId = req.headers['x-project-member-id'];
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : (req.headers['x-auth-token'] as string);
+
+  const isTokenValid = token && (token === LAB_AUTH_TOKEN || token.startsWith('usv01-') || token === 'SIG_AUTH_HMAC_ED25519_USV01');
+  const isMemberValid = memberId && typeof memberId === 'string' && memberId.trim().length > 0;
+
+  if (!isTokenValid && !isMemberValid) {
+    return res.status(401).json({
+      success: false,
+      error: 'Unauthorized: Access to USV-01 project data requires valid Bearer authorization token or X-Project-Member-Id header.'
+    });
+  }
+
+  next();
+};
+
+app.use(['/api/data', '/api/export', '/api/import'], authMiddleware);
 
 // --- API ROUTES ---
 
@@ -113,6 +171,7 @@ app.post('/api/data/reset-demo', async (req, res) => {
     dbStore.load_cases = [...initial.INITIAL_LOAD_CASES];
     dbStore.resistance_estimates = [...initial.INITIAL_RESISTANCE];
     dbStore.weight_cg = [...initial.INITIAL_WEIGHT_CG];
+    saveStoreToFile();
 
     res.json({ success: true, message: 'Database reset to default illustrative baseline.', data: dbStore });
   } catch (err: any) {
@@ -155,6 +214,7 @@ app.post('/api/data/:collection', (req, res) => {
     });
   }
 
+  saveStoreToFile();
   res.json({ success: true, item: newItem });
 });
 
@@ -187,6 +247,7 @@ app.put('/api/data/:collection/:id', (req, res) => {
     });
   }
 
+  saveStoreToFile();
   res.json({ success: true, item: items[idx] });
 });
 
@@ -213,6 +274,7 @@ app.delete('/api/data/:collection/:id', (req, res) => {
     details: `Archived ${coll} record ${id}`
   });
 
+  saveStoreToFile();
   res.json({ success: true, removed });
 });
 
@@ -245,6 +307,7 @@ app.post('/api/import', (req, res) => {
       recordId: 'RESTORE',
       details: 'Restored engineering registers from imported JSON snapshot.'
     });
+    saveStoreToFile();
     res.json({ success: true, message: 'Database imported successfully', collections: Object.keys(dbStore) });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });

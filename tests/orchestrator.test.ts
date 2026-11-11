@@ -149,4 +149,49 @@ describe('STAGE D: Central Orchestrator & Task DAG Scheduler', () => {
     expect(inbox.length).toBeGreaterThanOrEqual(1);
     expect(inbox[0].payload.draftMeters).toBe(0.65);
   });
+
+  it('should fail-closed and block downstream tasks when upstream dependency fails or is uncompleted', async () => {
+    // Upstream task marked as FAILED
+    orchestrator.registerTask({
+      id: 'TASK-UPSTREAM-FAIL',
+      title: 'Structural Slamming Scantling',
+      description: 'Calculates bottom plating thickness',
+      assignedAgentId: 'STR-MAT-10',
+      discipline: 'STR',
+      priority: 'HIGH',
+      dependencies: [],
+      input: {
+        taskId: 'TASK-UPSTREAM-FAIL',
+        context: {},
+        parameters: {}
+      },
+      status: 'FAILED',
+      createdAt: new Date().toISOString(),
+      safetyCritical: false
+    });
+
+    // Downstream task dependent on failed upstream task
+    orchestrator.registerTask({
+      id: 'TASK-DOWNSTREAM-BLOCKED',
+      title: 'Downstream Propulsion Integration',
+      description: 'Must not execute if hull structure is unverified',
+      assignedAgentId: 'PROP-ENG-13',
+      discipline: 'PROP',
+      priority: 'HIGH',
+      dependencies: ['TASK-UPSTREAM-FAIL'],
+      input: {
+        taskId: 'TASK-DOWNSTREAM-BLOCKED',
+        context: {},
+        parameters: { speedKnots: 15 }
+      },
+      status: 'PENDING',
+      createdAt: new Date().toISOString(),
+      safetyCritical: false
+    });
+
+    await orchestrator.executeWorkflow();
+    const downstreamTask = orchestrator.getTask('TASK-DOWNSTREAM-BLOCKED')!;
+    expect(downstreamTask.status).toBe('BLOCKED');
+    expect(downstreamTask.error).toContain('Upstream dependency not satisfied: [TASK-UPSTREAM-FAIL (FAILED)]');
+  });
 });

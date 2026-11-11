@@ -1,5 +1,14 @@
 export type ApprovalState = 'PENDING' | 'APPROVED' | 'REJECTED';
 
+export interface ApproverIdentity {
+  userId: string;
+  userName: string;
+  role: 'ENGINEERING_DIRECTOR' | 'LEAD_SYSTEMS_ENGINEER' | 'ADMIN' | string;
+  tokenSignature?: string;
+  tokenOrSignature?: string;
+  authenticatedAt: string;
+}
+
 export interface HumanApprovalGate {
   id: string; // e.g. 'GATE-001'
   taskId: string;
@@ -11,7 +20,8 @@ export interface HumanApprovalGate {
   state: ApprovalState;
   requestedAt: string;
   decidedAt?: string;
-  decidedBy?: string; // Must be 'ENGINEERING_DIRECTOR'
+  decidedBy?: string; // Authenticated user ID & role
+  decidedByIdentity?: ApproverIdentity;
   directorNotes?: string;
 }
 

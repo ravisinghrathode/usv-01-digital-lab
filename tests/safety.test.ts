@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { ApprovalGateManager } from '../src/core/safety/HumanApprovalGate.ts';
 import { SharedMemory } from '../src/core/memory/SharedMemory.ts';
 import { AuditLogger } from '../src/core/safety/AuditLogger.ts';
+import { MockDeterministicProvider } from '../src/core/models/ModelProvider.ts';
 
 describe('STAGE F: Human Authority Gates & Safety Governance', () => {
   const gateManager = ApprovalGateManager.getInstance();
@@ -83,5 +84,53 @@ describe('STAGE F: Human Authority Gates & Safety Governance', () => {
     expect(vaultFiles['USV-01_Digital_Lab_Index.md']).toBeDefined();
     expect(vaultFiles['USV-01_Digital_Lab_Index.md']).toContain('[[Engineering Director]]');
     expect(vaultFiles['USV-01_Digital_Lab_Index.md']).toContain('[[USV-NA-001]]');
+  });
+
+  it('should enforce that MockDeterministicProvider reports 0.0 convergence confidence and unverified baseline', async () => {
+    const mock = new MockDeterministicProvider();
+    const res = await mock.generateText({
+      systemInstructions: 'Hydrostatics & Intact Stability',
+      userPrompt: 'Compute GMt',
+      context: {}
+    });
+    expect(res.isMock).toBe(true);
+    expect(res.evidenceValid).toBe(false);
+    expect(res.parsedJson?.keyMetrics.convergenceConfidence).toBe(0.0);
+    expect(res.parsedJson?.keyMetrics.baselineIntegrityVerified).toBe(false);
+    expect(res.parsedJson?.keyMetrics.analysisMode).toBe('SYNTHETIC_MOCK_FALLBACK');
+  });
+
+  it('should enforce verified ApproverIdentity object authentication and reject unverified users', () => {
+    const gate = gateManager.createGate({
+      taskId: 'TASK-IDENTITY-CHECK',
+      agentId: 'LEAD-SYS-01',
+      title: 'Gate With Identity Verification',
+      description: 'Signoff requiring full ApproverIdentity',
+      safetyImplication: 'High risk baseline change',
+      proposedChanges: {}
+    });
+
+    // Unverified user identity should be rejected
+    expect(() => {
+      gateManager.evaluateDecision(gate.id, 'APPROVED', 'Notes', {
+        userId: 'usr-unverified',
+        userName: 'Anonymous User',
+        role: 'ENGINEERING_DIRECTOR',
+        authenticatedAt: new Date().toISOString()
+      });
+    }).toThrow("Security Violation: Only 'ENGINEERING_DIRECTOR' has authority");
+
+    // Verified Director identity should succeed
+    const approved = gateManager.evaluateDecision(gate.id, 'APPROVED', 'Notes', {
+      userId: 'usr-eng-dir-8841',
+      userName: 'Chief Naval Architect',
+      role: 'ENGINEERING_DIRECTOR',
+      tokenSignature: 'SIG_AUTH_HMAC_ED25519_USV01',
+      authenticatedAt: new Date().toISOString()
+    });
+
+    expect(approved.state).toBe('APPROVED');
+    expect(approved.decidedByIdentity?.userId).toBe('usr-eng-dir-8841');
+    expect(approved.decidedByIdentity?.tokenSignature).toBe('SIG_AUTH_HMAC_ED25519_USV01');
   });
 });
