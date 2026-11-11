@@ -66,7 +66,7 @@ async function runChatGPTReview() {
     process.exit(1);
   }
 
-  const model = process.env.CHATGPT_MODEL || 'gpt-4o';
+  const model = process.env.CHATGPT_MODEL || 'gpt-4o-mini';
   console.log(`📡 Connecting to OpenAI (${model}) for engineering review...`);
 
   const systemInstructions = `
