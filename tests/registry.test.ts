@@ -47,7 +47,10 @@ describe('STAGE B: Agent Organization & Master Registry', () => {
     expect(naAgents.length).toBe(5); // HULL-GEO-05, STAB-HYD-06, RES-SEAK-07, MAN-MOT-08, WGT-BAL-09
 
     const elecAgents = registry.getAgentsByDivision('POWER_PROPULSION');
-    expect(elecAgents.length).toBe(3); // PROP-ENG-13, ELEC-PWR-14, BATT-ESS-15
+    expect(elecAgents.length).toBe(2); // PROP-ENG-13, ELEC-PWR-14
+
+    const vvtAgents = registry.getAgentsByDivision('SYSTEMS_VVT');
+    expect(vvtAgents.length).toBe(6); // INDEP-CRIT-15, TEST-DIR-18, ICD-ENG-21, FMEA-RSK-22, INDEP-REV-23, VVT-VAL-24
   });
 
   it('should support HMEA v0.2 canonical IDs A01-A25 with backwards-compatible alias resolution', () => {
@@ -65,6 +68,12 @@ describe('STAGE B: Agent Organization & Master Registry', () => {
     expect(registry.getAgent('A05')?.id).toBe('HULL-GEO-05');
     // Intact Stability & Hydrostatics
     expect(registry.getAgent('A06')?.id).toBe('STAB-HYD-06');
+    // Independent Technical Critic (A15)
+    expect(registry.getAgent('A15')?.name).toBe('Independent Technical Critic');
+    expect(registry.getAgent('A15')?.id).toBe('INDEP-CRIT-15');
+    // Test & Verification Director (A18)
+    expect(registry.getAgent('A18')?.name).toBe('Test & Verification Director');
+    expect(registry.getAgent('A18')?.id).toBe('TEST-DIR-18');
     // Documentation & Obsidian Vault
     expect(registry.getAgent('A25')?.id).toBe('DOC-OBS-25');
   });

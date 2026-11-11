@@ -1,8 +1,11 @@
 import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
+import dotenv from 'dotenv';
 import { generateClassificationReport } from './classify-change.ts';
-import { validateAllECRs, validateECRFile } from './ecr-tool.ts';
+import { validateAllECRs, validateECRFile, verifyECRSignature } from './ecr-tool.ts';
+
+dotenv.config();
 
 export interface StageDResult {
   humanApprovalRequired: boolean;
@@ -13,11 +16,12 @@ export interface StageDResult {
   approverRole?: string;
   approverId?: string;
   signatureVerified: boolean;
+  signatureError?: string;
   independentReviewStatus: 'APPROVED_BY_PEER' | 'ECR_DIRECTOR_SIGNED' | 'PENDING_HUMAN_SIGN_OFF';
   summary: string;
 }
 
-export function evaluateStageDHumanApproval(baseRef = 'origin/main'): StageDResult {
+export function evaluateStageDHumanApproval(baseRef = 'origin/main', customSigningKey?: string): StageDResult {
   const diffReport = generateClassificationReport(baseRef);
   const highestRisk = diffReport.summary.overallRisk;
   const isCriticalOrHigh = highestRisk === 'CRITICAL' || highestRisk === 'HIGH';
@@ -39,10 +43,12 @@ export function evaluateStageDHumanApproval(baseRef = 'origin/main'): StageDResu
   }
 
   const hasApprovedECR = !!approvedECR;
-  const signatureVerified = !!approvedECR?.approvalRecord?.signatureOrHash;
+  const signingKey = customSigningKey || process.env.DIRECTOR_SIGNING_KEY || process.env.LAB_SESSION_SECRET;
+  const sigCheck = hasApprovedECR ? verifyECRSignature(approvedECR, signingKey) : { verified: false, error: 'No approved ECR found' };
+  const signatureVerified = sigCheck.verified;
 
   let reviewStatus: StageDResult['independentReviewStatus'] = 'PENDING_HUMAN_SIGN_OFF';
-  if (hasApprovedECR && approvedECR.approvalRecord.authorityRole === 'ENGINEERING_DIRECTOR') {
+  if (hasApprovedECR && approvedECR.approvalRecord.authorityRole === 'ENGINEERING_DIRECTOR' && signatureVerified) {
     reviewStatus = 'ECR_DIRECTOR_SIGNED';
   }
 
@@ -58,11 +64,18 @@ export function evaluateStageDHumanApproval(baseRef = 'origin/main'): StageDResu
     // Local execution or PR not yet created
   }
 
-  const summary = isCriticalOrHigh
-    ? hasApprovedECR
-      ? `Stage D Gate Passed: Change classified as ${highestRisk} risk. Verified Engineering Director closure recorded under ${approvedECR.changeId} (Authority: ${approvedECR.approvalRecord.authorityName} [${approvedECR.approvalRecord.authorityId}]).`
-      : `Stage D Gate Blocked: Change classified as ${highestRisk} risk requiring mandatory Engineering Director sign-off, but no approved ECR record was found in governance/ecr/.`
-    : `Stage D Gate Bypassed: Change classified as ${highestRisk} risk. Standard developer sign-off permitted.`;
+  let summary = '';
+  if (isCriticalOrHigh) {
+    if (!hasApprovedECR) {
+      summary = `Stage D Gate Blocked: Change classified as ${highestRisk} risk requiring mandatory Engineering Director sign-off, but no approved ECR record was found in governance/ecr/.`;
+    } else if (!signatureVerified) {
+      summary = `Stage D Gate Blocked: Change classified as ${highestRisk} risk. Approved ECR ${approvedECR.changeId} found, but cryptographic HMAC signature verification failed: ${sigCheck.error || 'Invalid HMAC signature'}.`;
+    } else {
+      summary = `Stage D Gate Passed: Change classified as ${highestRisk} risk. Verified Engineering Director closure recorded under ${approvedECR.changeId} (Authority: ${approvedECR.approvalRecord.authorityName} [${approvedECR.approvalRecord.authorityId}]) with valid cryptographic HMAC-SHA256 signature.`;
+    }
+  } else {
+    summary = `Stage D Gate Bypassed: Change classified as ${highestRisk} risk. Standard developer sign-off permitted.`;
+  }
 
   return {
     humanApprovalRequired: isCriticalOrHigh,

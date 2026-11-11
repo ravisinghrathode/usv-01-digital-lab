@@ -101,7 +101,7 @@ export class AgentRegistry {
     // Check all dependencies point to valid agents
     for (const [id, agent] of this.agents.entries()) {
       for (const depId of agent.dependencies) {
-        if (!this.agents.has(depId)) {
+        if (!this.agents.has(depId) && !this.aliasMap.has(depId)) {
           errors.push(`Agent '${id}' has unresolved dependency on unknown agent '${depId}'`);
         }
       }

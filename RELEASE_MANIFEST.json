@@ -3,8 +3,8 @@
   "programme": "NAVAL-USV",
   "project": "USV-01 Digital Engineering Lab",
   "releaseVersion": "1.0.0",
-  "gitCommitSha": "a59c19920451ae88330a346602ee4be1133677ff",
-  "builtAt": "2026-11-11T21:28:55.176Z",
+  "gitCommitSha": "6117f5be581ce8aa2fa788d84e94e0c1c120075c",
+  "builtAt": "2026-11-11T21:45:48.906Z",
   "environment": {
     "nodeVersion": "v24.22.2",
     "osPlatform": "linux"
@@ -17,8 +17,8 @@
     },
     {
       "path": "server.ts",
-      "sha256": "e71892b013b76be68b20ba8f553c77aa4cd68cee96e03851b8d6547bf72ec327",
-      "sizeBytes": 24650
+      "sha256": "6c9b63d660b25863eccb886ceccbf9b4abab31e6ae440d88b815bc3ce3fa0034",
+      "sizeBytes": 24951
     },
     {
       "path": "USV01_PROJECT_CONTEXT.md",
@@ -137,8 +137,8 @@
     },
     {
       "path": "src/core/agents/definitions.ts",
-      "sha256": "72e9af718cc8611e9e777f65076ad5b1dbdc680e059127e6487c0e983d654e20",
-      "sizeBytes": 46011
+      "sha256": "b40b295fb6c5209aad3563b940feaa22a47463b23d9d34dddfe827efbd02f3f2",
+      "sizeBytes": 46651
     },
     {
       "path": "src/core/auth/authClient.ts",
@@ -177,8 +177,8 @@
     },
     {
       "path": "src/core/registry/AgentRegistry.ts",
-      "sha256": "6016afde182ebfe4abc7070553025451264ea9be5cc41a1a998e625c87eec8cc",
-      "sizeBytes": 4957
+      "sha256": "8d857188a31a02b5be3412856d724d653ae5603cfd60ee78df380fbfaad252db",
+      "sizeBytes": 4986
     },
     {
       "path": "src/core/safety/ApproverSigner.ts",
@@ -266,9 +266,9 @@
       "sizeBytes": 10104
     },
     {
-      "path": "dist/assets/index-CKOUPTOI.js",
-      "sha256": "56d2aec941aa65b157eae74b0ca70076c5c6c5a9caf0a9b76322226179c48e6f",
-      "sizeBytes": 1280744
+      "path": "dist/assets/index-BCKUVUoO.js",
+      "sha256": "173c4753d02b0df53538b3bcafa813a453e066e59c7b98debfff819ad387855f",
+      "sizeBytes": 1281438
     },
     {
       "path": "dist/assets/index-D9Yx8NXM.css",
@@ -277,7 +277,7 @@
     },
     {
       "path": "dist/index.html",
-      "sha256": "1dc1fcd8e075bd7d7c40d06dcd3cd0e79e8225928eed5966b20507022aefb628",
+      "sha256": "582d6470a6fa4f9e7f4ed5403b634283a47d36114f5a97186a3f0411e0910b1c",
       "sizeBytes": 1160
     }
   ],
@@ -287,5 +287,5 @@
     "auditVulnerabilities": 0,
     "staticAnalysisStatus": "PASS"
   },
-  "immutableManifestSha256": "78a890ceb1c6978c7123bec36415577d6c7d04aa0db0b95dcd84fa1f4a35462d"
+  "immutableManifestSha256": "c323ad08b2c650368775e7d334ae997a749d806af9a9ef3f8dea576bc1e381f8"
 }

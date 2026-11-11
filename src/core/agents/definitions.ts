@@ -486,34 +486,37 @@ Enforce circuit protection and cable ampacity standards (ABYC E-11 / IEC 60092).
     auditRequirement: { logLevel: 'AUDIT', retainExecutionTrace: true, recordAssumptions: true, traceableToRequirementIds: true }
   },
 
-  // 15. Energy Storage System (Battery/BMS) Safety Engineer
+  // 15. Independent Technical Critic
   {
-    id: 'BATT-ESS-15',
+    id: 'INDEP-CRIT-15',
     canonicalId: 'A15',
-    aliases: ['BATT-ESS-15', 'A15', 'ELEC-DIST-15', 'ESS-BATT-15', 'ELEC-ESS-15'],
-    division: 'POWER_PROPULSION',
-    name: 'Energy Storage System & Battery Safety Engineer',
-    speciality: 'Lithium chemistry (LFP, NMC), battery pack capacity, BMS telemetry, thermal runaway prevention, DNV maritime battery class',
+    aliases: ['INDEP-CRIT-15', 'A15', 'INDEP-TECH-CRIT-15', 'BATT-ESS-15', 'ELEC-DIST-15', 'ESS-BATT-15'],
+    division: 'SYSTEMS_VVT',
+    name: 'Independent Technical Critic',
+    speciality: 'Independent technical criticism, adversarial challenge of naval engineering assumptions, cross-discipline flaw detection, safety baseline auditing',
     responsibilities: [
-      'Size usable battery kWh for target mission endurance and speed profile',
-      'Implement cell thermal runaway propagation barriers and fire containment',
-      'Define state of charge (SoC) operating windows (15% - 90%) and C-rate limits'
+      'Subject all subsystem proposals and design claims to independent adversarial criticism',
+      'Identify unverified assumptions, hidden design margins, and unstated failure modes',
+      'Audit safety-critical calculations against maritime principles and issue formal challenge notices',
+      'Provide independent critique directly to the Human Engineering Director'
     ],
-    systemInstructions: `Battery safety is paramount. Follow DNV-RU-SHIP Pt.6 Ch.2 or equivalent maritime standard.
-Never allow single-cell failure to propagate into pack thermal runaway.
-Usable energy = Total Capacity * Depth of Discharge (typically 80%).`,
+    systemInstructions: `You are the Independent Technical Critic (A15).
+Your duty is relentless, constructive technical criticism.
+Never accept optimistic design assumptions without deterministic numerical verification.
+Challenge battery fire barriers, drag coefficients, weight margins, and autonomy fail-safe states.
+Report directly to the Human Engineering Director.`,
     inputSchema: genericInputSchema,
     outputSchema: genericOutputSchema,
-    requiredKnowledgeSources: ['DNV_CLASS_PROGRAMME_BATTERIES', 'UN38_3_TEST_STANDARDS'],
-    permittedTools: ['TOOL-ELECTRICAL-01', 'TOOL-MASS-BALANCE-01'],
-    modelConfig: { preferredProvider: 'gemini', modelName: 'gemini-1.5-pro', temperature: 0.0, maxTokens: 4096, fallbackToMock: true },
-    reportingTo: 'LEAD-SYS-01',
-    dependencies: ['ELEC-PWR-14', 'CONOPS-03'],
-    executionPermissions: ['CALCULATION_EXEC', 'PARAM_PROPOSAL', 'VVT_REVIEW'],
+    requiredKnowledgeSources: ['NAVAL_ENGINEERING_FAILURE_CASE_STUDIES', 'USV01_PROJECT_CONTEXT.md', 'SYSTEM_SAFETY_PRINCIPLES'],
+    permittedTools: ['TOOL-HYDROSTATICS-01', 'TOOL-RESISTANCE-01', 'TOOL-ELECTRICAL-01', 'TOOL-MASS-BALANCE-01', 'TOOL-BASELINE-QUERY'],
+    modelConfig: { preferredProvider: 'gemini', modelName: 'gemini-1.5-pro', temperature: 0.1, maxTokens: 4096, fallbackToMock: true },
+    reportingTo: 'HUMAN_DIRECTOR',
+    dependencies: ['CONOPS-03', 'REQ-TRC-02'],
+    executionPermissions: ['READ_ONLY', 'VVT_REVIEW'],
     verificationCriteria: {
-      requiredChecklist: ['Verify thermal runaway containment strategy', 'Confirm usable kWh supports CONOPS endurance'],
-      mandatoryDeterministicTools: ['TOOL-ELECTRICAL-01'],
-      acceptanceThresholds: { minDoDReservePercent: 15 },
+      requiredChecklist: ['Exhaustive challenge of unstated assumptions', 'Audit calculations with deterministic tools'],
+      mandatoryDeterministicTools: [],
+      acceptanceThresholds: {},
       independentReviewRequired: true
     },
     auditRequirement: { logLevel: 'SAFETY_CRITICAL', retainExecutionTrace: true, recordAssumptions: true, traceableToRequirementIds: true }
@@ -584,33 +587,37 @@ Rule 16 requires give-way actions to be early and substantial. Never violate COL
     auditRequirement: { logLevel: 'SAFETY_CRITICAL', retainExecutionTrace: true, recordAssumptions: true, traceableToRequirementIds: true }
   },
 
-  // 18. Autonomy State Executive & Mission Management Engineer
+  // 18. Test & Verification Director
   {
-    id: 'AUTO-EXEC-18',
+    id: 'TEST-DIR-18',
     canonicalId: 'A18',
-    aliases: ['AUTO-EXEC-18', 'A18', 'AUT-SENS-18', 'AUT-EXEC-18', 'SW-AUT-18', 'AUTO-SENS-18'],
-    division: 'AUTONOMY_ELECTRONICS',
-    name: 'Autonomy State Executive Engineer',
-    speciality: 'Finite state machine (FSM), mission modes (MANUAL, PILOT_ASSIST, FULL_AUTO, FAILSAFE), heartbeat monitoring',
+    aliases: ['TEST-DIR-18', 'A18', 'VVT-DIR-18', 'AUTO-EXEC-18', 'AUT-SENS-18', 'AUT-EXEC-18', 'SW-AUT-18'],
+    division: 'SYSTEMS_VVT',
+    name: 'Test & Verification Director',
+    speciality: 'System test governance, verification matrix authority, factory acceptance testing (FAT), basin/harbor trial direction, verification evidence closure',
     responsibilities: [
-      'Maintain system autonomy state machine and valid transition triggers',
-      'Handle mission abort, return-to-base (RTB), and station-keep contingencies',
-      'Enforce operator intervention overrides'
+      'Direct the comprehensive Test & Verification program across all USV-01 subsystems',
+      'Authorize verification and validation protocols (VVP) and test procedures',
+      'Audit physical test evidence, basin trial telemetry, and sea trial records against requirements',
+      'Certify compliance gates prior to submission to the Human Engineering Director'
     ],
-    systemInstructions: `The human operator must always retain override authority.
-Define state transitions formally: System cannot jump from MANUAL to FULL_AUTO without passing PRE_FLIGHT_CHECK and SENSOR_HEALTH_OK.`,
+    systemInstructions: `You are the Test & Verification Director (A18).
+You govern the testing and qualification baseline for USV-01.
+No requirement can be marked Verified without traceable, reproducible test evidence.
+Enforce strict physical trial instrumentation standards and numerical pass/fail tolerances.
+Report directly to the Human Engineering Director.`,
     inputSchema: genericInputSchema,
     outputSchema: genericOutputSchema,
-    requiredKnowledgeSources: ['AUTONOMY_LEVELS_SAE_J3016_ADAPTED_FOR_USV', 'SAFE_STATE_FSM_PATTERNS'],
+    requiredKnowledgeSources: ['ITTC_TESTING_PROCEDURES', 'ISO_15288_VERIFICATION', 'USV01_PROJECT_CONTEXT.md'],
     permittedTools: ['TOOL-BASELINE-QUERY'],
-    modelConfig: { preferredProvider: 'gemini', modelName: 'gemini-1.5-flash', temperature: 0.1, maxTokens: 4096, fallbackToMock: true },
-    reportingTo: 'LEAD-SYS-01',
-    dependencies: ['NAV-COL-17', 'SENS-PER-16'],
-    executionPermissions: ['PARAM_PROPOSAL', 'VVT_REVIEW'],
+    modelConfig: { preferredProvider: 'gemini', modelName: 'gemini-1.5-pro', temperature: 0.1, maxTokens: 4096, fallbackToMock: true },
+    reportingTo: 'HUMAN_DIRECTOR',
+    dependencies: ['REQ-TRC-02', 'REG-STD-04'],
+    executionPermissions: ['READ_ONLY', 'VVT_REVIEW'],
     verificationCriteria: {
-      requiredChecklist: ['State transitions verified exhaustive', 'Unrecoverable state leads to safe drifting/anchoring'],
+      requiredChecklist: ['Verify end-to-end requirement traceability to test cases', 'Confirm quantitative acceptance tolerances'],
       mandatoryDeterministicTools: [],
-      acceptanceThresholds: {},
+      acceptanceThresholds: { unverifiedRequirements: 0 },
       independentReviewRequired: true
     },
     auditRequirement: { logLevel: 'SAFETY_CRITICAL', retainExecutionTrace: true, recordAssumptions: true, traceableToRequirementIds: true }
@@ -670,7 +677,7 @@ Mandate hardware physical interlock E-stops.`,
     permittedTools: ['TOOL-BASELINE-QUERY'],
     modelConfig: { preferredProvider: 'gemini', modelName: 'gemini-1.5-pro', temperature: 0.1, maxTokens: 4096, fallbackToMock: true },
     reportingTo: 'LEAD-SYS-01',
-    dependencies: ['COMM-RF-19', 'AUTO-EXEC-18'],
+    dependencies: ['COMM-RF-19', 'TEST-DIR-18'],
     executionPermissions: ['VVT_REVIEW', 'BASELINE_DRAFT'],
     verificationCriteria: {
       requiredChecklist: ['Verify command authentication protocol', 'Anti-spoofing IMU validation scheme'],
@@ -702,7 +709,7 @@ exact pinouts, voltage levels, data baud rates, and message definitions.`,
     permittedTools: ['TOOL-BASELINE-QUERY'],
     modelConfig: { preferredProvider: 'gemini', modelName: 'gemini-1.5-flash', temperature: 0.0, maxTokens: 4096, fallbackToMock: true },
     reportingTo: 'LEAD-SYS-01',
-    dependencies: ['ELEC-PWR-14', 'AUTO-EXEC-18'],
+    dependencies: ['ELEC-PWR-14', 'TEST-DIR-18'],
     executionPermissions: ['READ_ONLY', 'BASELINE_DRAFT'],
     verificationCriteria: {
       requiredChecklist: ['Check all ICD endpoints have valid schemas', 'No unassigned interface pins/topics'],
@@ -735,7 +742,7 @@ Any unmitigated RPN > 100 must be escalated to the Director.`,
     permittedTools: ['TOOL-BASELINE-QUERY'],
     modelConfig: { preferredProvider: 'gemini', modelName: 'gemini-1.5-pro', temperature: 0.1, maxTokens: 4096, fallbackToMock: true },
     reportingTo: 'LEAD-SYS-01',
-    dependencies: ['STAB-HYD-06', 'ELEC-PWR-14', 'BATT-ESS-15', 'NAV-COL-17'],
+    dependencies: ['STAB-HYD-06', 'ELEC-PWR-14', 'INDEP-CRIT-15', 'NAV-COL-17'],
     executionPermissions: ['VVT_REVIEW', 'BASELINE_DRAFT'],
     verificationCriteria: {
       requiredChecklist: ['Verify all subsystems assessed in FMEA', 'Confirm zero unmitigated critical single points of failure'],

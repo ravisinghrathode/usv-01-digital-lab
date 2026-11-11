@@ -192,5 +192,11 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
       expect(res.approverRole).toBe('ENGINEERING_DIRECTOR');
       expect(res.signatureVerified).toBe(true);
     });
+
+    it('should strictly reject HMAC signature mismatch when wrong key is provided', () => {
+      const res = evaluateStageDHumanApproval('origin/main', 'invalid-signing-key-0000');
+      expect(res.signatureVerified).toBe(false);
+      expect(res.summary).toContain('cryptographic HMAC signature verification failed');
+    });
   });
 });

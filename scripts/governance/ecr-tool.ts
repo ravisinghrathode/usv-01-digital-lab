@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 
 export interface ECRRecord {
   changeId: string;
@@ -118,6 +119,63 @@ export function validateECRFile(filePath: string): { valid: boolean; errors: str
       }
     }
   };
+}
+
+export function computeECRPayload(record: { changeId?: string; approvalRecord?: { decision?: string; authorityId?: string; authorityRole?: string; signedAt?: string } }): string {
+  return `${record.changeId || ''}:${record.approvalRecord?.decision || ''}:${record.approvalRecord?.authorityId || ''}:${record.approvalRecord?.authorityRole || ''}:${record.approvalRecord?.signedAt || ''}`;
+}
+
+export function generateECRSignature(
+  changeId: string,
+  decision: string,
+  authorityId: string,
+  authorityRole: string,
+  signedAt: string,
+  signingKey: string
+): string {
+  const payload = `${changeId}:${decision}:${authorityId}:${authorityRole}:${signedAt}`;
+  const hmac = crypto.createHmac('sha256', signingKey).update(payload).digest('hex');
+  return `HMAC-SHA256:${hmac}`;
+}
+
+export function verifyECRSignature(
+  record: NonNullable<ReturnType<typeof validateECRFile>['record']>,
+  signingKey?: string
+): { verified: boolean; error?: string } {
+  if (!record || !record.approvalRecord) {
+    return { verified: false, error: 'Missing ECR approval record' };
+  }
+
+  const rawSig = record.approvalRecord.signatureOrHash;
+  if (!rawSig) {
+    return { verified: false, error: 'ECR has no cryptographic signature string' };
+  }
+
+  const key = signingKey || process.env.DIRECTOR_SIGNING_KEY || process.env.LAB_SESSION_SECRET;
+  if (!key) {
+    return { verified: false, error: 'No signing key configured in environment (DIRECTOR_SIGNING_KEY or LAB_SESSION_SECRET)' };
+  }
+
+  const payload = computeECRPayload(record);
+  const expectedHmacHex = crypto.createHmac('sha256', key).update(payload).digest('hex');
+
+  // Strip prefix like HMAC-SHA256: if present
+  const providedHex = rawSig.replace(/^HMAC-SHA256:/i, '').trim();
+
+  try {
+    const bufProvided = Buffer.from(providedHex, 'hex');
+    const bufExpected = Buffer.from(expectedHmacHex, 'hex');
+    if (bufProvided.length !== bufExpected.length) {
+      return { verified: false, error: `HMAC length mismatch (provided ${bufProvided.length} bytes, expected ${bufExpected.length} bytes)` };
+    }
+    const match = crypto.timingSafeEqual(bufProvided, bufExpected);
+    if (!match) {
+      return { verified: false, error: 'HMAC signature verification failed: signature does not match canonical payload' };
+    }
+    return { verified: true };
+  } catch (err: any) {
+    return { verified: false, error: `Cryptographic verification error: ${err?.message || err}` };
+  }
 }
 
 export function validateAllECRs(dirPath: string): { valid: boolean; results: Record<string, { valid: boolean; errors: string[] }> } {

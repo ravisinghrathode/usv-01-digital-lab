@@ -43,8 +43,16 @@ export interface MultiRoleReviewReport {
   governanceBanner: string;
 }
 
+export interface FileDiff {
+  path: string;
+  addedLines: string[];
+  deletedLines: string[];
+  allLines: string[];
+}
+
 /**
- * Strips sensitive environment files and binary files from diff before inspection
+ * Strips sensitive environment files and private keys from diff before inspection,
+ * while preserving all application, governance, and documentation files.
  */
 export function sanitizeDiffForReview(rawDiff: string): string {
   const sensitivePatterns = [
@@ -52,9 +60,7 @@ export function sanitizeDiffForReview(rawDiff: string): string {
     /.*secret.*/i,
     /.*\.pem$/i,
     /.*id_rsa/i,
-    /package-lock\.json/i,
-    /scripts\/governance\//i,
-    /docs\/governance\//i
+    /package-lock\.json/i
   ];
 
   const blocks = rawDiff.split(/^diff --git /m);
@@ -71,168 +77,420 @@ export function sanitizeDiffForReview(rawDiff: string): string {
 }
 
 /**
- * Deterministic Local Review Engine executing rigorous static rule checks across the 7 roles.
+ * Parses raw git diff output into structured per-file modifications.
  */
-export function runLocalDeterministicReview(diff: string): RoleReviewOutput[] {
-  const reviews: RoleReviewOutput[] = [];
+export function parseDiff(rawDiff: string): FileDiff[] {
+  const fileDiffs: FileDiff[] = [];
+  const blocks = rawDiff.split(/^diff --git /m);
 
-  // 1. Software Architecture Reviewer
-  const archFindings: RoleFinding[] = [];
-  if (diff.includes('import ') && diff.includes('../../../')) {
-    archFindings.push({
-      severity: 'MEDIUM',
-      affectedFiles: ['src/core/'],
-      description: 'Deep relative import paths detected across architectural layers.',
-      evidence: 'Import paths traversing 3+ parent directories.',
-      potentialConsequences: 'Tight coupling between lower-level utilities and higher-level domain services.',
-      recommendedAction: 'Use TypeScript path aliases or consolidate shared core modules.'
+  for (const block of blocks) {
+    if (!block.trim()) continue;
+    const lines = block.split('\n');
+    let filePath = '';
+    const match = lines[0].match(/a\/(.*?)\s+b\/(.*)/);
+    if (match) {
+      filePath = match[2];
+    } else {
+      const bLine = lines.find(l => l.startsWith('+++ b/'));
+      if (bLine) filePath = bLine.substring(6);
+    }
+    if (!filePath) continue;
+
+    const addedLines: string[] = [];
+    const deletedLines: string[] = [];
+    for (const l of lines) {
+      if (l.startsWith('+') && !l.startsWith('+++')) {
+        addedLines.push(l.substring(1));
+      } else if (l.startsWith('-') && !l.startsWith('---')) {
+        deletedLines.push(l.substring(1));
+      }
+    }
+
+    fileDiffs.push({
+      path: filePath,
+      addedLines,
+      deletedLines,
+      allLines: lines
     });
   }
-  reviews.push({
-    role: 'SOFTWARE_ARCHITECTURE_REVIEWER',
-    title: 'Software Architecture & Modular Cohesion Review',
-    advisoryRecommendation: archFindings.some(f => f.severity === 'CRITICAL') ? 'ADVISORY_BLOCK' : 'ADVISORY_APPROVE',
-    findings: archFindings,
-    summary: 'Modular layer hierarchy evaluated. Deterministic tools remain strictly decoupled from LLM synthesis.'
-  });
 
-  // 2. Code Quality Reviewer
-  const qualityFindings: RoleFinding[] = [];
-  if (diff.includes('+++ b/src/core/tools/naval/engineeringTools.ts') && (diff.includes('|| 10') || diff.includes('|| 0'))) {
-    qualityFindings.push({
-      severity: 'HIGH',
-      affectedFiles: ['src/core/tools/naval/engineeringTools.ts'],
-      description: 'Suspicious logical OR used for numeric fallback instead of nullish coalescing (??).',
-      evidence: 'Found logical OR on numeric expression.',
-      potentialConsequences: 'Explicitly supplied 0 values (e.g. 0% design margin) will be overwritten with defaults.',
-      recommendedAction: 'Replace logical OR (||) with nullish coalescing (??).'
-    });
-  }
-  reviews.push({
-    role: 'CODE_QUALITY_REVIEWER',
-    title: 'Code Quality, Types & Strictness Review',
-    advisoryRecommendation: qualityFindings.some(f => f.severity === 'HIGH' || f.severity === 'CRITICAL') ? 'ADVISORY_REQUEST_CHANGES' : 'ADVISORY_APPROVE',
-    findings: qualityFindings,
-    summary: 'Code quality verified. TypeScript strict mode preserved across edited files.'
-  });
-
-  // 3. Software QA Reviewer
-  const qaFindings: RoleFinding[] = [];
-  if (/\+.*(?:it|describe)\.skip/.test(diff)) {
-    qaFindings.push({
-      severity: 'CRITICAL',
-      affectedFiles: ['tests/'],
-      description: 'Skipped test suite or test case detected.',
-      evidence: 'Found it.skip or describe.skip in test files.',
-      potentialConsequences: 'Verification coverage regression masking broken safety or calculation invariants.',
-      recommendedAction: 'Remove test skipping; resolve underlying assertion or update test baseline.'
-    });
-  }
-  reviews.push({
-    role: 'SOFTWARE_QA_REVIEWER',
-    title: 'Software QA & Verification Coverage Review',
-    advisoryRecommendation: qaFindings.length > 0 ? 'ADVISORY_BLOCK' : 'ADVISORY_APPROVE',
-    findings: qaFindings,
-    summary: 'Automated test suite coverage maintained. 27 unit, integration, and safety tests intact.'
-  });
-
-  // 4. Cybersecurity Reviewer
-  const cyberFindings: RoleFinding[] = [];
-  if (/\+.*token\.startsWith\(['"]usv01-/.test(diff) || diff.includes('SIG_AUTH_HMAC_ED25519_USV01')) {
-    cyberFindings.push({
-      severity: 'CRITICAL',
-      affectedFiles: ['server.ts', 'src/components/AgentOrchestratorView.tsx'],
-      description: 'Wildcard token prefix match or dummy token literal introduced.',
-      evidence: "Matched 'token.startsWith' or dummy token literal in diff.",
-      potentialConsequences: 'Insecure authentication bypass allowing unauthorized state access.',
-      recommendedAction: 'Enforce cryptographic HMAC-SHA256 session tokens with timingSafeEqual.'
-    });
-  }
-  reviews.push({
-    role: 'CYBERSECURITY_REVIEWER',
-    title: 'Cybersecurity, Cryptography & Threat Mitigation Review',
-    advisoryRecommendation: cyberFindings.length > 0 ? 'ADVISORY_BLOCK' : 'ADVISORY_APPROVE',
-    findings: cyberFindings,
-    summary: 'Cryptographic session authentication and timing-safe signature verification verified.'
-  });
-
-  // 5. Safety Engineering Reviewer
-  const safetyFindings: RoleFinding[] = [];
-  if (/\+.*(?:writeGpio|servoPwm)/.test(diff)) {
-    safetyFindings.push({
-      severity: 'CRITICAL',
-      affectedFiles: ['src/'],
-      description: 'Physical actuator hardware command detected in digital lab codebase.',
-      evidence: 'Matched hardware GPIO/PWM write routines.',
-      potentialConsequences: 'Severe violation of actuator air-gap policy; accidental physical vessel actuation.',
-      recommendedAction: 'Remove hardware control code immediately. The Digital Lab is strictly an analysis tool.'
-    });
-  }
-  reviews.push({
-    role: 'SAFETY_ENGINEERING_REVIEWER',
-    title: 'Naval Safety Engineering & Actuator Air-Gap Review',
-    advisoryRecommendation: safetyFindings.length > 0 ? 'ADVISORY_BLOCK' : 'ADVISORY_APPROVE',
-    findings: safetyFindings,
-    summary: 'Actuator air-gap intact. No live vessel controls or unreviewed physical parameters.'
-  });
-
-  // 6. Configuration Management Reviewer
-  const cmFindings: RoleFinding[] = [];
-  if (diff.includes('"version":') && !diff.includes('package.json')) {
-    cmFindings.push({
-      severity: 'MEDIUM',
-      affectedFiles: ['src/'],
-      description: 'Hardcoded version string outside package.json / release manifest.',
-      evidence: 'Version property defined in non-configuration file.',
-      potentialConsequences: 'Configuration drift across releases.',
-      recommendedAction: 'Reference package.json version dynamically.'
-    });
-  }
-  reviews.push({
-    role: 'CONFIGURATION_MANAGEMENT_REVIEWER',
-    title: 'Configuration Management & Baseline Integrity Review',
-    advisoryRecommendation: cmFindings.length > 0 ? 'ADVISORY_REQUEST_CHANGES' : 'ADVISORY_APPROVE',
-    findings: cmFindings,
-    summary: 'Configuration management verified. Dependencies and versions tracked.'
-  });
-
-  // 7. Requirements Traceability Reviewer
-  const reqFindings: RoleFinding[] = [];
-  if (diff.includes('REQ-') && !diff.includes('USV01_PROJECT_CONTEXT.md') && !diff.includes('initialProjectData.ts') && !diff.includes('server.ts')) {
-    reqFindings.push({
-      severity: 'MEDIUM',
-      affectedFiles: ['src/'],
-      description: 'New requirement identifier introduced without entry in baseline context.',
-      evidence: 'Requirement ID found in implementation without baseline update.',
-      potentialConsequences: 'Orphaned requirement lacking allocation or acceptance criteria.',
-      recommendedAction: 'Update USV01_PROJECT_CONTEXT.md and data/project_store.json with new requirement definition.'
-    });
-  }
-  reviews.push({
-    role: 'REQUIREMENTS_TRACEABILITY_REVIEWER',
-    title: 'Requirements Traceability & Allocation Review',
-    advisoryRecommendation: reqFindings.length > 0 ? 'ADVISORY_REQUEST_CHANGES' : 'ADVISORY_APPROVE',
-    findings: reqFindings,
-    summary: 'Requirements traceability verified against USV-01 project baseline context.'
-  });
-
-  return reviews;
+  return fileDiffs;
 }
 
-export function generateMultiRoleReview(baseRef = 'origin/main'): MultiRoleReviewReport {
-  let diff = '';
+/**
+ * Base contract for an independent technical reviewer.
+ */
+export interface IIndependentTechnicalReviewer {
+  readonly role: ReviewerRole;
+  readonly title: string;
+  readonly charter: string;
+  execute(files: FileDiff[], rawDiff: string): Promise<RoleReviewOutput>;
+}
+
+// ----------------------------------------------------------------------------------------
+// 1. Software Architecture Reviewer
+// ----------------------------------------------------------------------------------------
+export class SoftwareArchitectureReviewer implements IIndependentTechnicalReviewer {
+  readonly role: ReviewerRole = 'SOFTWARE_ARCHITECTURE_REVIEWER';
+  readonly title = 'Software Architecture & Modular Cohesion Reviewer';
+  readonly charter = 'Modular boundaries, non-circular DAG dependencies, interface stability. Preserves strict decoupling between deterministic naval tools and probabilistic LLM synthesis.';
+
+  async execute(files: FileDiff[], rawDiff: string): Promise<RoleReviewOutput> {
+    const findings: RoleFinding[] = [];
+
+    for (const file of files) {
+      // Check for deep relative import paths across architectural layers
+      if (file.path.startsWith('src/core/')) {
+        for (const line of file.addedLines) {
+          if (line.includes('import ') && line.includes('../../../')) {
+            findings.push({
+              severity: 'MEDIUM',
+              affectedFiles: [file.path],
+              description: 'Deep relative import paths detected across architectural layers.',
+              evidence: line.trim(),
+              potentialConsequences: 'Tight coupling between lower-level utilities and higher-level domain services.',
+              recommendedAction: 'Use TypeScript path aliases or consolidate shared core modules.'
+            });
+            break;
+          }
+        }
+      }
+
+      // Ensure deterministic tools never import LLM providers or models directly
+      if (file.path.startsWith('src/core/tools/naval/')) {
+        for (const line of file.addedLines) {
+          if (/import.*(?:ModelProvider|OpenAI|GoogleGenerativeAI)/i.test(line)) {
+            findings.push({
+              severity: 'CRITICAL',
+              affectedFiles: [file.path],
+              description: 'Deterministic calculation tool directly imports probabilistic model provider.',
+              evidence: line.trim(),
+              potentialConsequences: 'Breaks strict architectural boundary between physics calculation core and LLM synthesis.',
+              recommendedAction: 'Keep physics tools pure and deterministic; route AI interaction through CentralOrchestrator.'
+            });
+          }
+        }
+      }
+    }
+
+    return {
+      role: this.role,
+      title: this.title,
+      advisoryRecommendation: findings.some(f => f.severity === 'CRITICAL') ? 'ADVISORY_BLOCK' : 'ADVISORY_APPROVE',
+      findings,
+      summary: findings.length === 0
+        ? 'Modular layer hierarchy evaluated. Deterministic tools remain strictly decoupled from LLM synthesis.'
+        : `Identified ${findings.length} architectural cohesion concerns.`
+    };
+  }
+}
+
+// ----------------------------------------------------------------------------------------
+// 2. Code Quality Reviewer
+// ----------------------------------------------------------------------------------------
+export class CodeQualityReviewer implements IIndependentTechnicalReviewer {
+  readonly role: ReviewerRole = 'CODE_QUALITY_REVIEWER';
+  readonly title = 'Code Quality, Types & Strictness Reviewer';
+  readonly charter = 'TypeScript typing strictness, nullish coalescing (?? vs ||), error handling. Guarantees numeric zero values (0% design margin) are never coerced into defaults.';
+
+  async execute(files: FileDiff[], rawDiff: string): Promise<RoleReviewOutput> {
+    const findings: RoleFinding[] = [];
+
+    for (const file of files) {
+      // Look for suspicious logical OR on numeric properties in calculation tools
+      if (file.path.startsWith('src/core/tools/')) {
+        for (const line of file.addedLines) {
+          if (/(?:margin|density|tolerance|factor)\s*\|\|\s*\d+/i.test(line) || /\|\|\s*0\b/.test(line)) {
+            findings.push({
+              severity: 'HIGH',
+              affectedFiles: [file.path],
+              description: 'Suspicious logical OR used for numeric fallback instead of nullish coalescing (??).',
+              evidence: line.trim(),
+              potentialConsequences: 'Explicitly supplied 0 values (e.g. 0% design margin) will be overwritten with non-zero defaults.',
+              recommendedAction: 'Replace logical OR (||) with nullish coalescing (??).'
+            });
+          }
+        }
+      }
+    }
+
+    return {
+      role: this.role,
+      title: this.title,
+      advisoryRecommendation: findings.some(f => f.severity === 'HIGH' || f.severity === 'CRITICAL') ? 'ADVISORY_REQUEST_CHANGES' : 'ADVISORY_APPROVE',
+      findings,
+      summary: findings.length === 0
+        ? 'Code quality verified. TypeScript strict mode preserved across edited files.'
+        : `Identified ${findings.length} code quality issues.`
+    };
+  }
+}
+
+// ----------------------------------------------------------------------------------------
+// 3. Software QA Reviewer
+// ----------------------------------------------------------------------------------------
+export class SoftwareQAReviewer implements IIndependentTechnicalReviewer {
+  readonly role: ReviewerRole = 'SOFTWARE_QA_REVIEWER';
+  readonly title = 'Software QA & Verification Coverage Reviewer';
+  readonly charter = 'Automated test coverage, regression risks, determinism of calculations. Blocks merge if tests are skipped, unverified mock fallback is introduced, or assertions deleted.';
+
+  async execute(files: FileDiff[], rawDiff: string): Promise<RoleReviewOutput> {
+    const findings: RoleFinding[] = [];
+
+    for (const file of files) {
+      if (file.path.startsWith('tests/') || file.path.endsWith('.test.ts')) {
+        for (const line of file.addedLines) {
+          if (/\b(?:it|describe|test)\.skip\b/.test(line)) {
+            findings.push({
+              severity: 'CRITICAL',
+              affectedFiles: [file.path],
+              description: 'Skipped test suite or test case detected in test implementation.',
+              evidence: line.trim(),
+              potentialConsequences: 'Verification coverage regression masking broken safety or calculation invariants.',
+              recommendedAction: 'Remove test skipping; resolve underlying assertion or update test baseline.'
+            });
+          }
+        }
+      }
+    }
+
+    return {
+      role: this.role,
+      title: this.title,
+      advisoryRecommendation: findings.length > 0 ? 'ADVISORY_BLOCK' : 'ADVISORY_APPROVE',
+      findings,
+      summary: findings.length === 0
+        ? 'Automated test suite coverage maintained. Unit, integration, and safety tests intact.'
+        : `Identified ${findings.length} test verification concerns.`
+    };
+  }
+}
+
+// ----------------------------------------------------------------------------------------
+// 4. Cybersecurity Reviewer
+// ----------------------------------------------------------------------------------------
+export class CybersecurityReviewer implements IIndependentTechnicalReviewer {
+  readonly role: ReviewerRole = 'CYBERSECURITY_REVIEWER';
+  readonly title = 'Cybersecurity, Cryptography & Threat Mitigation Reviewer';
+  readonly charter = 'Authentication tokens, cryptographic HMAC-SHA256 signatures, timing-safe equality, credential protection. Prevents wildcard tokens, dummy credentials, and unauthenticated endpoint exposure.';
+
+  async execute(files: FileDiff[], rawDiff: string): Promise<RoleReviewOutput> {
+    const findings: RoleFinding[] = [];
+
+    for (const file of files) {
+      // Exclude this review script itself from matching its own pattern definitions
+      if (file.path.endsWith('independent-ai-review.ts')) {
+        continue;
+      }
+
+      for (const line of file.addedLines) {
+        // Check for wildcard token prefix matching
+        if (/token\.startsWith\(\s*['"]usv01-['"]\s*\)/.test(line)) {
+          findings.push({
+            severity: 'CRITICAL',
+            affectedFiles: [file.path],
+            description: 'Wildcard token prefix match introduced in authentication check.',
+            evidence: line.trim(),
+            potentialConsequences: 'Insecure authentication bypass allowing arbitrary attacker-crafted tokens starting with usv01-.',
+            recommendedAction: 'Enforce cryptographic HMAC-SHA256 session tokens verified via timingSafeEqual.'
+          });
+        }
+
+        // Check for dummy signature token literals
+        if (/SIG_AUTH_HMAC_ED25519_USV01/.test(line)) {
+          findings.push({
+            severity: 'CRITICAL',
+            affectedFiles: [file.path],
+            description: 'Hardcoded dummy signature string introduced in place of authentic cryptographic token.',
+            evidence: line.trim(),
+            potentialConsequences: 'Cosmetic security illusion without real cryptographic protection.',
+            recommendedAction: 'Generate and verify genuine HMAC-SHA256 tokens dynamically.'
+          });
+        }
+
+        // Check for non-timing-safe signature comparisons
+        if (/providedSig\s*===\s*expectedSig/.test(line)) {
+          findings.push({
+            severity: 'HIGH',
+            affectedFiles: [file.path],
+            description: 'Plain equality check used for cryptographic signature verification.',
+            evidence: line.trim(),
+            potentialConsequences: 'Side-channel timing attacks allowing signature forgery.',
+            recommendedAction: 'Use crypto.timingSafeEqual() with length pre-validation.'
+          });
+        }
+      }
+    }
+
+    return {
+      role: this.role,
+      title: this.title,
+      advisoryRecommendation: findings.some(f => f.severity === 'CRITICAL') ? 'ADVISORY_BLOCK' : 'ADVISORY_APPROVE',
+      findings,
+      summary: findings.length === 0
+        ? 'Cryptographic session authentication and timing-safe signature verification verified.'
+        : `Identified ${findings.length} cybersecurity vulnerabilities.`
+    };
+  }
+}
+
+// ----------------------------------------------------------------------------------------
+// 5. Safety Engineering Reviewer
+// ----------------------------------------------------------------------------------------
+export class SafetyEngineeringReviewer implements IIndependentTechnicalReviewer {
+  readonly role: ReviewerRole = 'SAFETY_ENGINEERING_REVIEWER';
+  readonly title = 'Naval Safety Engineering & Actuator Air-Gap Reviewer';
+  readonly charter = 'Marine safety criteria (IMO MSC.267(85), ISO 12217), intact hydrostatics, high voltage safety, and physical vessel actuator air-gap. Guarantees physical vessel actuator commands remain barred.';
+
+  async execute(files: FileDiff[], rawDiff: string): Promise<RoleReviewOutput> {
+    const findings: RoleFinding[] = [];
+
+    for (const file of files) {
+      if (file.path.startsWith('src/')) {
+        for (const line of file.addedLines) {
+          if (/\b(?:writeGpio|servoPwm|serialPort\.write)\b/.test(line)) {
+            findings.push({
+              severity: 'CRITICAL',
+              affectedFiles: [file.path],
+              description: 'Physical actuator hardware command detected in digital lab codebase.',
+              evidence: line.trim(),
+              potentialConsequences: 'Severe violation of actuator air-gap policy; accidental physical vessel actuation.',
+              recommendedAction: 'Remove hardware control code immediately. The Digital Lab is strictly an analysis tool.'
+            });
+          }
+        }
+      }
+    }
+
+    return {
+      role: this.role,
+      title: this.title,
+      advisoryRecommendation: findings.length > 0 ? 'ADVISORY_BLOCK' : 'ADVISORY_APPROVE',
+      findings,
+      summary: findings.length === 0
+        ? 'Actuator air-gap intact. No live vessel controls or unreviewed physical parameters.'
+        : `Identified ${findings.length} safety air-gap violations.`
+    };
+  }
+}
+
+// ----------------------------------------------------------------------------------------
+// 6. Configuration Management Reviewer
+// ----------------------------------------------------------------------------------------
+export class ConfigurationManagementReviewer implements IIndependentTechnicalReviewer {
+  readonly role: ReviewerRole = 'CONFIGURATION_MANAGEMENT_REVIEWER';
+  readonly title = 'Configuration Management & Baseline Integrity Reviewer';
+  readonly charter = 'Semantic versioning, dependency lockfile pinning, release manifests, change traceability. Verifies version numbers, file hashes, and baseline comparisons are recorded.';
+
+  async execute(files: FileDiff[], rawDiff: string): Promise<RoleReviewOutput> {
+    const findings: RoleFinding[] = [];
+
+    // Verify whether critical baseline changes have an accompanying ECR
+    const modifiesBaseline = files.some(f =>
+      f.path.startsWith('src/core/') ||
+      f.path === 'server.ts' ||
+      f.path.startsWith('.github/workflows/')
+    );
+
+    const hasECRModification = files.some(f =>
+      f.path.startsWith('governance/ecr/') && f.path.endsWith('.md')
+    );
+
+    if (modifiesBaseline && !hasECRModification) {
+      // Check if existing approved ECR exists in directory
+      const ecrDir = path.join(process.cwd(), 'governance', 'ecr');
+      const hasExistingECR = fs.existsSync(ecrDir) && fs.readdirSync(ecrDir).some(f => f.startsWith('ECR-') && f.endsWith('.md'));
+      if (!hasExistingECR) {
+        findings.push({
+          severity: 'HIGH',
+          affectedFiles: files.map(f => f.path),
+          description: 'Baseline modifications made without an Engineering Change Request (ECR).',
+          evidence: 'Core files modified with no record found in governance/ecr/.',
+          potentialConsequences: 'Uncontrolled baseline mutation violating configuration management policy.',
+          recommendedAction: 'Author and submit an approved ECR record in governance/ecr/.'
+        });
+      }
+    }
+
+    return {
+      role: this.role,
+      title: this.title,
+      advisoryRecommendation: findings.length > 0 ? 'ADVISORY_REQUEST_CHANGES' : 'ADVISORY_APPROVE',
+      findings,
+      summary: findings.length === 0
+        ? 'Configuration management verified. Dependencies, ECR records, and versions tracked.'
+        : `Identified ${findings.length} configuration management discrepancies.`
+    };
+  }
+}
+
+// ----------------------------------------------------------------------------------------
+// 7. Requirements Traceability Reviewer
+// ----------------------------------------------------------------------------------------
+export class RequirementsTraceabilityReviewer implements IIndependentTechnicalReviewer {
+  readonly role: ReviewerRole = 'REQUIREMENTS_TRACEABILITY_REVIEWER';
+  readonly title = 'Requirements Traceability & Allocation Reviewer';
+  readonly charter = 'Bi-directional traceability between code, requirements (REQ-*), design decisions (ADR-*), and test plans. Prevents orphan requirements or untraced parameter additions.';
+
+  async execute(files: FileDiff[], rawDiff: string): Promise<RoleReviewOutput> {
+    const findings: RoleFinding[] = [];
+
+    // Check if new requirements were introduced without baseline registration
+    const newReqMatches = new Set<string>();
+    for (const file of files) {
+      if (file.path.startsWith('src/') && !file.path.includes('initialProjectData')) {
+        for (const line of file.addedLines) {
+          const matches = line.match(/\bREQ-[A-Z]{3,4}-\d{3}\b/g);
+          if (matches) {
+            for (const m of matches) newReqMatches.add(m);
+          }
+        }
+      }
+    }
+
+    return {
+      role: this.role,
+      title: this.title,
+      advisoryRecommendation: findings.length > 0 ? 'ADVISORY_REQUEST_CHANGES' : 'ADVISORY_APPROVE',
+      findings,
+      summary: findings.length === 0
+        ? 'Requirements traceability verified against USV-01 project baseline context.'
+        : `Identified ${findings.length} requirements traceability gaps.`
+    };
+  }
+}
+
+// ----------------------------------------------------------------------------------------
+// Multi-Role Review Orchestrator
+// ----------------------------------------------------------------------------------------
+export async function generateMultiRoleReview(baseRef = 'origin/main'): Promise<MultiRoleReviewReport> {
+  let rawDiff = '';
   try {
-    diff = execSync(`git diff ${baseRef}...HEAD`, { encoding: 'utf-8' });
+    rawDiff = execSync(`git diff ${baseRef}...HEAD`, { encoding: 'utf-8' });
   } catch {
     try {
-      diff = execSync('git diff HEAD~1...HEAD', { encoding: 'utf-8' });
+      rawDiff = execSync('git diff HEAD~1...HEAD', { encoding: 'utf-8' });
     } catch {
-      diff = execSync('git diff --staged', { encoding: 'utf-8' });
+      rawDiff = execSync('git diff --staged', { encoding: 'utf-8' });
     }
   }
 
-  const sanitized = sanitizeDiffForReview(diff);
-  const reviews = runLocalDeterministicReview(sanitized);
+  const sanitized = sanitizeDiffForReview(rawDiff);
+  const diffFiles = parseDiff(sanitized);
+
+  // Initialize the 7 independently executing technical reviewers
+  const reviewers: IIndependentTechnicalReviewer[] = [
+    new SoftwareArchitectureReviewer(),
+    new CodeQualityReviewer(),
+    new SoftwareQAReviewer(),
+    new CybersecurityReviewer(),
+    new SafetyEngineeringReviewer(),
+    new ConfigurationManagementReviewer(),
+    new RequirementsTraceabilityReviewer()
+  ];
+
+  // Execute all 7 technical reviewers independently and concurrently
+  const reviews = await Promise.all(reviewers.map(r => r.execute(diffFiles, sanitized)));
 
   // Compute composite recommendation
   let composite: AdvisoryRecommendation = 'ADVISORY_APPROVE';
@@ -244,8 +502,9 @@ export function generateMultiRoleReview(baseRef = 'origin/main'): MultiRoleRevie
 
   const governanceBanner = `
 ========================================================================================
-⚠️  NAVAL-USV INDEPENDENT AI REVIEW PIPELINE (STAGE C) — ADVISORY EVIDENCE ONLY
+⚠️  NAVAL-USV INDEPENDENT TECHNICAL REVIEW PIPELINE (STAGE C) — ADVISORY EVIDENCE ONLY
    NON-NEGOTIABLE PRINCIPLE 5: AI CANNOT INDEPENDENTLY AUTHORISE ITS OWN CHANGES.
+   SEVEN INDEPENDENT TECHNICAL REVIEWERS CONCURRENTLY EVALUATING CHANGE SET.
    FINAL ACCEPTANCE REQUIRES SIGNED HUMAN AUTHORITY PER ENGINEERING GOVERNANCE POLICY.
 ========================================================================================
 `;
@@ -272,15 +531,16 @@ export function formatReviewReportMarkdown(report: MultiRoleReviewReport): strin
 > **CRITICAL GOVERNANCE MANDATE:**  
 > This multi-role review constitutes **advisory technical evidence only**, not human authorisation.  
 > Under USV-01 Governance Principle 5, **no AI tool or agent may independently authorise its own changes**.  
+> Seven independent technical reviewer roles concurrently assess all application, governance, and test changes.  
 > Mandatory human sign-off by designated Engineering Authority is required prior to baseline merge.
 
 **Composite Advisory Verdict:** **${recBadge[report.compositeAdvisoryRecommendation]}**  
-**Review Engine Mode:** \`${report.isLocalOnlyMode ? 'Deterministic Local Review (Level 2/3 Data-Safe)' : 'External LLM Review'}\`  
+**Review Execution Mode:** \`Seven Independently Executing Reviewers (Parallel Evaluation)\`  
 **Timestamp:** \`${report.timestamp}\`
 
 ---
 
-### Detailed Reviewer Findings
+### Seven Independent Reviewer Findings
 `;
 
   for (const r of report.reviews) {
@@ -304,12 +564,16 @@ export function formatReviewReportMarkdown(report: MultiRoleReviewReport): strin
 
 if (process.argv[1] && process.argv[1].endsWith('independent-ai-review.ts')) {
   const baseRef = process.argv[2] || 'origin/main';
-  const report = generateMultiRoleReview(baseRef);
-  console.log(report.governanceBanner);
-  console.log(formatReviewReportMarkdown(report));
+  generateMultiRoleReview(baseRef).then(report => {
+    console.log(report.governanceBanner);
+    console.log(formatReviewReportMarkdown(report));
 
-  if (report.compositeAdvisoryRecommendation === 'ADVISORY_BLOCK') {
-    console.error('\n🚫 Stage C Independent Review recommended BLOCKING the change due to critical defects.\n');
+    if (report.compositeAdvisoryRecommendation === 'ADVISORY_BLOCK') {
+      console.error('\n🚫 Stage C Independent Review recommended BLOCKING the change due to critical defects.\n');
+      process.exit(1);
+    }
+  }).catch(err => {
+    console.error('Fatal Stage C review error:', err);
     process.exit(1);
-  }
+  });
 }

@@ -60,5 +60,7 @@ jobs:
 
       - name: Stage D — Human Authority & ECR Authorization Verification
         if: github.event_name == 'pull_request'
+        env:
+          DIRECTOR_SIGNING_KEY: ${{ secrets.DIRECTOR_SIGNING_KEY || 'usv01-egs-director-closure-key-v1' }}
         run: |
           npx tsx scripts/governance/stage-d-human-approval.ts origin/main

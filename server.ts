@@ -202,7 +202,8 @@ export const authMiddleware = (req: express.Request, res: express.Response, next
 app.use(['/api/data', '/api/export', '/api/import', '/api/gemini/assist', '/api/auth/sign-gate', '/api/auth/session'], authMiddleware);
 
 // Secret passphrase required to claim Engineering Director credentials
-const DIRECTOR_KEY = process.env.LAB_DIRECTOR_KEY || 'usv01-director-auth-8841-alpha';
+// Must be configured in runtime environment; no hardcoded fallback allowed
+const DIRECTOR_KEY = process.env.LAB_DIRECTOR_KEY;
 
 // --- AUTHENTICATION & GOVERNANCE SIGNING ENDPOINTS ---
 app.post('/api/auth/login', (req, res) => {
@@ -212,6 +213,13 @@ app.post('/api/auth/login', (req, res) => {
 
   // Privileged Engineering Director authority strictly requires verified passphrase
   if (requestedRole === 'ENGINEERING_DIRECTOR' || requestedUserId === 'usr-eng-dir-8841') {
+    if (!DIRECTOR_KEY) {
+      return res.status(503).json({
+        success: false,
+        error: "Authentication service unavailable: LAB_DIRECTOR_KEY is not configured in the server environment. Engineering Director sessions are disabled."
+      });
+    }
+
     if (!passphrase || typeof passphrase !== 'string') {
       return res.status(401).json({
         success: false,
