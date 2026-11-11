@@ -1,0 +1,141 @@
+import { describe, it, expect } from 'vitest';
+import { ToolRegistry } from '../src/core/tools/ToolRegistry.ts';
+
+describe('STAGE E: Deterministic Naval Engineering Tools', () => {
+  const toolRegistry = ToolRegistry.getInstance();
+
+  it('should register all 6 deterministic engineering tools', () => {
+    const tools = toolRegistry.getAllTools();
+    expect(tools.length).toBeGreaterThanOrEqual(6);
+  });
+
+  it('should execute hydrostatics calculation with mathematical accuracy', async () => {
+    // 10m USV, Beam 2.5m, Draft 0.6m, Cb 0.45, KG 0.8m
+    const input = {
+      lwlMeters: 10.0,
+      beamMeters: 2.5,
+      draftMeters: 0.6,
+      blockCoefficientCb: 0.45,
+      waterplaneCoefficientCwp: 0.65,
+      kgMeters: 0.8,
+      seawaterDensityKgM3: 1025
+    };
+
+    const res = await toolRegistry.executeTool('TOOL-HYDROSTATICS-01', input, ['CALCULATION_EXEC']);
+    expect(res.success).toBe(true);
+    expect(res.output.displacedVolumeM3).toBeCloseTo(10 * 2.5 * 0.6 * 0.45, 2);
+    expect(res.output.displacementTonnes).toBeGreaterThan(6.0);
+    expect(res.output.metacentricHeightGmtM).toBeGreaterThan(0.35);
+    expect(res.output.stabilityStatus).toBe('STABLE_COMPLIANT');
+  });
+
+  it('should calculate hydrodynamic resistance and identify regime', async () => {
+    const input = {
+      lwlMeters: 10.0,
+      beamMeters: 2.5,
+      draftMeters: 0.6,
+      displacementTonnes: 7.0,
+      speedKnots: 20.0,
+      propulsiveEfficiencyEtaD: 0.65
+    };
+
+    const res = await toolRegistry.executeTool('TOOL-RESISTANCE-01', input, ['CALCULATION_EXEC']);
+    expect(res.success).toBe(true);
+    expect(res.output.froudeNumberFn).toBeGreaterThan(1.0);
+    expect(res.output.hydrodynamicRegime).toBe('PLANING');
+    expect(res.output.totalResistanceKn).toBeGreaterThan(0);
+    expect(res.output.effectivePowerPeKw).toBeGreaterThan(0);
+    expect(res.output.shaftBrakePowerPbKw).toBeGreaterThan(res.output.effectivePowerPeKw);
+  });
+
+  it('should calculate mass properties and composite center of gravity', async () => {
+    const input = {
+      components: [
+        { name: 'Bare Hull Structure', massKg: 1800, lcgMetersFromTransom: 4.8, tcgMetersFromCl: 0, vcgMetersFromKeel: 0.6, designMarginPercent: 10 },
+        { name: 'Twin Electric Inboard Motors', massKg: 350, lcgMetersFromTransom: 1.5, tcgMetersFromCl: 0, vcgMetersFromKeel: 0.4, designMarginPercent: 5 },
+        { name: 'Main Battery ESS (120 kWh LFP)', massKg: 1100, lcgMetersFromTransom: 3.5, tcgMetersFromCl: 0, vcgMetersFromKeel: 0.35, designMarginPercent: 10 },
+        { name: 'Sensor Mast & Avionics', massKg: 120, lcgMetersFromTransom: 5.5, tcgMetersFromCl: 0, vcgMetersFromKeel: 2.1, designMarginPercent: 15 }
+      ],
+      baselineLcbMetersFromTransom: 4.0
+    };
+
+    const res = await toolRegistry.executeTool('TOOL-MASS-BALANCE-01', input, ['CALCULATION_EXEC']);
+    expect(res.success).toBe(true);
+    expect(res.output.lightshipMassKg).toBe(3370);
+    expect(res.output.totalDisplacementKg).toBeGreaterThan(3370);
+    expect(res.output.compositeKgMeters).toBeLessThan(1.0); // low CG ensured
+    expect(res.output.compositeTcgMeters).toBe(0); // symmetric
+  });
+
+  it('should calculate electrical load balance and battery endurance hours', async () => {
+    const input = {
+      busVoltageV: 48,
+      batteryTotalKwh: 100,
+      usableDepthOfDischarge: 0.8,
+      consumers: [
+        { name: 'Propulsion at 8 knot loiter', voltageV: 48, continuousPowerW: 8000, intermittentPowerW: 0, dutyCycle: 1, isEmergencyLoad: false },
+        { name: 'Radar + LiDAR + Cameras', voltageV: 48, continuousPowerW: 450, intermittentPowerW: 100, dutyCycle: 0.5, isEmergencyLoad: true },
+        { name: 'Autonomy Computer (NVIDIA Jetson / Orin)', voltageV: 48, continuousPowerW: 120, intermittentPowerW: 0, dutyCycle: 1, isEmergencyLoad: true },
+        { name: 'Satellite Comms Transceiver', voltageV: 48, continuousPowerW: 60, intermittentPowerW: 40, dutyCycle: 0.3, isEmergencyLoad: true }
+      ]
+    };
+
+    const res = await toolRegistry.executeTool('TOOL-ELECTRICAL-01', input, ['CALCULATION_EXEC']);
+    expect(res.success).toBe(true);
+    expect(res.output.usableBatteryKwh).toBe(80);
+    expect(res.output.estimatedEnduranceHours).toBeGreaterThan(8);
+    expect(res.output.emergencyEnduranceHours).toBeGreaterThan(100);
+  });
+
+  it('should calculate ISO/DNV slamming pressure and plating thickness', async () => {
+    const input = {
+      displacementTonnes: 6.5,
+      speedKnots: 25,
+      lwlMeters: 9.5,
+      deadriseAngleDeg: 18,
+      unsupportedPanelWidthMm: 350,
+      unsupportedPanelLengthMm: 700,
+      materialYieldStrengthMpa: 125,
+      safetyFactor: 2.0
+    };
+
+    const res = await toolRegistry.executeTool('TOOL-STRUCTURES-01', input, ['CALCULATION_EXEC']);
+    expect(res.success).toBe(true);
+    expect(res.output.designSlammingPressureKpa).toBeGreaterThan(40);
+    expect(res.output.minPlatingThicknessMm).toBeGreaterThan(2.0);
+    expect(res.output.recommendedNominalThicknessMm).toBeGreaterThanOrEqual(res.output.minPlatingThicknessMm);
+  });
+
+  it('should evaluate COLREGS encounter geometry and recommend give-way action', async () => {
+    // Own vessel heading 000 at 12 knots. Target at bearing 045 (Starboard Bow) range 2.0 nm, heading 270 at 10 knots.
+    const input = {
+      ownCourseDeg: 0,
+      ownSpeedKnots: 12,
+      targetBearingDeg: 45,
+      targetRangeNm: 2.0,
+      targetCourseDeg: 270,
+      targetSpeedKnots: 10
+    };
+
+    const res = await toolRegistry.executeTool('TOOL-COLREGS-01', input, ['CALCULATION_EXEC']);
+    expect(res.success).toBe(true);
+    expect(res.output.closestPointOfApproachCpaNm).toBeLessThan(1.0);
+    expect(res.output.timeToCpaMinutes).toBeGreaterThan(0);
+    expect(res.output.colregsRuleApplicable).toBe('RULE_15_CROSSING_GIVE_WAY');
+    expect(res.output.safeAlterationCourseDeg).toBeDefined();
+  });
+
+  it('should enforce permission rejection if calling agent lacks permission', async () => {
+    const input = {
+      lwlMeters: 10.0,
+      beamMeters: 2.5,
+      draftMeters: 0.6,
+      blockCoefficientCb: 0.45,
+      kgMeters: 0.8
+    };
+
+    const res = await toolRegistry.executeTool('TOOL-HYDROSTATICS-01', input, ['READ_ONLY']);
+    expect(res.success).toBe(false);
+    expect(res.error).toContain('Permission Denied');
+  });
+});

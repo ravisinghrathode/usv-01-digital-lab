@@ -1,0 +1,157 @@
+import { AgentSpec, AgentExecutionInput, AgentExecutionOutput, TraceableAssumption } from '../types/agent.ts';
+import { ToolRegistry } from '../tools/ToolRegistry.ts';
+import { ModelProviderRouter } from '../models/ModelProvider.ts';
+import { AuditLogger } from '../safety/AuditLogger.ts';
+
+export class BaseAgent {
+  public spec: AgentSpec;
+  protected toolRegistry = ToolRegistry.getInstance();
+  protected modelRouter = ModelProviderRouter.getInstance();
+  protected auditLogger = AuditLogger.getInstance();
+
+  constructor(spec: AgentSpec) {
+    this.spec = spec;
+  }
+
+  public async execute(input: AgentExecutionInput): Promise<AgentExecutionOutput> {
+    const startTime = performance.now();
+    const taskId = input.taskId || `TASK-${Date.now()}`;
+
+    this.auditLogger.log({
+      severity: this.spec.auditRequirement.logLevel === 'SAFETY_CRITICAL' ? 'SAFETY_CRITICAL' : 'INFO',
+      agentId: this.spec.id,
+      taskId,
+      action: 'AGENT_EXECUTION_STARTED',
+      details: { inputParams: Object.keys(input.parameters) }
+    });
+
+    // 1. Validate Input Schema
+    const inputParse = this.spec.inputSchema.safeParse(input);
+    if (!inputParse.success) {
+      const errorMsg = `Input schema validation failed: ${inputParse.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ')}`;
+      this.auditLogger.log({
+        severity: 'WARN',
+        agentId: this.spec.id,
+        taskId,
+        action: 'INPUT_VALIDATION_FAILED',
+        details: { errors: inputParse.error.errors }
+      });
+
+      return {
+        agentId: this.spec.id,
+        taskId,
+        timestamp: new Date().toISOString(),
+        status: 'FAILED',
+        data: { error: errorMsg },
+        assumptions: [],
+        deterministicToolEvidence: [],
+        openTbdItems: ['Input data schema error'],
+        warnings: [errorMsg],
+        recommendations: ['Correct input parameters to match agent schema'],
+        requiresDirectorApproval: false
+      };
+    }
+
+    // 2. Execute Mandatory Deterministic Tools if required & input has sufficient parameters
+    const deterministicEvidence: Array<{
+      toolName: string;
+      inputs: Record<string, any>;
+      outputs: Record<string, any>;
+      verified: boolean;
+    }> = [];
+
+    for (const toolId of this.spec.verificationCriteria.mandatoryDeterministicTools) {
+      if (this.spec.permittedTools.includes(toolId)) {
+        // Run tool with agent's permission set
+        const permissions = this.spec.executionPermissions;
+        const toolRes = await this.toolRegistry.executeTool(toolId, input.parameters, permissions);
+        deterministicEvidence.push({
+          toolName: toolId,
+          inputs: toolRes.input,
+          outputs: toolRes.output,
+          verified: toolRes.success
+        });
+      }
+    }
+
+    // 3. Synthesize via Model Provider Router
+    const promptRequest = {
+      systemInstructions: this.spec.systemInstructions,
+      userPrompt: `Execute task ${taskId} with parameters:\n${JSON.stringify(input.parameters, null, 2)}\n\nTool Evidence:\n${JSON.stringify(deterministicEvidence, null, 2)}`,
+      context: {
+        agentId: this.spec.id,
+        division: this.spec.division,
+        priorOutputs: input.priorAgentOutputs || {}
+      }
+    };
+
+    const modelResponse = await this.modelRouter.generate(promptRequest, this.spec.modelConfig);
+    const synthesized = modelResponse.parsedJson || {
+      disciplineSummary: modelResponse.content,
+      keyMetrics: {},
+      designDecisions: [],
+      assumptions: [],
+      openTbdItems: []
+    };
+
+    // 4. Traceable assumptions
+    const assumptions: TraceableAssumption[] = synthesized.assumptions || [];
+    if (this.spec.auditRequirement.recordAssumptions && assumptions.length === 0) {
+      assumptions.push({
+        id: `ASSUMP-${this.spec.id}-01`,
+        category: 'ASSUMPTION',
+        description: 'Standard marine environmental baseline operating conditions applied.',
+        sourceReference: 'USV01_PROJECT_CONTEXT.md',
+        impactIfViolated: 'Calculation margins would need recalculation under extreme sea states.',
+        isBaseline: true
+      });
+    }
+
+    // 5. Check if Director Approval is required
+    let requiresDirectorApproval = false;
+    let approvalRationale: string | undefined;
+
+    if (this.spec.verificationCriteria.independentReviewRequired) {
+      requiresDirectorApproval = true;
+      approvalRationale = `Agent ${this.spec.id} (${this.spec.name}) requires Independent Review and Director Sign-off per Verification Policy.`;
+    }
+
+    if (this.spec.auditRequirement.logLevel === 'SAFETY_CRITICAL') {
+      requiresDirectorApproval = true;
+      approvalRationale = `Safety-critical engineering output from ${this.spec.id} requires Engineering Director approval.`;
+    }
+
+    const output: AgentExecutionOutput = {
+      agentId: this.spec.id,
+      taskId,
+      timestamp: new Date().toISOString(),
+      status: requiresDirectorApproval ? 'NEEDS_HUMAN_APPROVAL' : 'SUCCESS',
+      data: {
+        ...synthesized,
+        executionTimeMs: performance.now() - startTime,
+        modelUsed: modelResponse.modelUsed
+      },
+      assumptions,
+      deterministicToolEvidence: deterministicEvidence,
+      openTbdItems: synthesized.openTbdItems || [],
+      warnings: synthesized.warnings || [],
+      recommendations: synthesized.recommendations || [],
+      requiresDirectorApproval,
+      approvalRationale
+    };
+
+    this.auditLogger.log({
+      severity: requiresDirectorApproval ? 'SAFETY_CRITICAL' : 'INFO',
+      agentId: this.spec.id,
+      taskId,
+      action: 'AGENT_EXECUTION_COMPLETED',
+      details: {
+        status: output.status,
+        requiresApproval: output.requiresDirectorApproval,
+        toolsRun: deterministicEvidence.length
+      }
+    });
+
+    return output;
+  }
+}

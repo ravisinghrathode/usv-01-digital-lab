@@ -1,34 +1,52 @@
-# USV-01 Digital Engineering Lab
+# NAVAL-USV | USV-01 — 25-Agent Digital Engineering Lab
 
-Private engineering workspace for the USV-01 unmanned surface vessel project.
+Private engineering workspace and deterministic multi-agent platform for the **USV-01 unmanned surface vessel project**.
 
-## Repository status
+---
 
-This first repository commit establishes the shared project context and AI Studio build specification. The complete React MVP and Obsidian vault package are available in the ChatGPT conversation as `USV-01_Digital_Engineering_Lab_MVP.zip`; they have **not** yet been committed to this repository. Add/extract that package into the repository before treating this repository as the live application source.
+## 1. System Overview
 
-## Project boundaries
+The USV-01 Digital Engineering Lab is an operational, modular multi-agent platform combining:
+- **25 Specialist Engineering Agents** across 7 naval engineering divisions.
+- **Central DAG Orchestrator** managing topological task execution, parallel computation, and message passing.
+- **Deterministic Naval Tools Suite** for hydrostatics ($KM_T, GM_T$), hydrodynamic resistance ($P_E, P_B$), mass balance ($KG, LCG, TCG$), DC electrical load sheets, bottom slamming scantlings, and COLREGS 1972 encounter kinematics.
+- **Human Authority Approval Gates** requiring explicit Engineering Director sign-off on safety-critical decisions.
+- **Shared Memory & Parameter Register** with strict `TBD` tracking and live Obsidian `[[wikilink]]` vault export.
+- **Interactive Command Dashboard** (Vite + React + Tailwind + Lucide).
 
-- GitHub: version-controlled source code, shared project context and schemas.
-- Google AI Studio: Gemini-powered application development.
-- ChatGPT: engineering analysis, research, independent design review and verification planning.
-- Obsidian: linked engineering knowledge graph and Markdown notes.
-- Google Drive: controlled documents, drawings, reports and large files.
-- Linear: issues, milestones and workstream execution.
+---
 
-## Build
-
-The application bundle is a Vite + React application. Once its files are present at the repository root:
+## 2. Quickstart & Commands
 
 ```bash
+# Install dependencies
 npm install
-npm run dev
+
+# Run automated verification test suite (22 unit & integration tests)
+npm test
+
+# Build production bundle
 npm run build
+
+# Launch interactive local development server
+npm run dev
 ```
 
-Import this repository into Google AI Studio Build mode and follow `AI_STUDIO_BUILD_PROMPT.md`. Use two-way GitHub synchronisation as the shared code workflow. This synchronises repository files, not private assistant chat histories.
+---
 
-## Engineering governance
+## 3. Engineering Documentation
 
-Use `USV01_PROJECT_CONTEXT.md` as the common baseline. Treat every unknown vessel parameter as `TBD`. Starter records are illustrative, not approved vessel design data. Human engineering review and independent verification are required for safety-critical decisions.
+- [Architecture Specification](docs/ARCHITECTURE.md)
+- [Verification & Acceptance Report](docs/VERIFICATION_REPORT.md)
+- [Project Baseline Context](USV01_PROJECT_CONTEXT.md)
+- [Safety & Engineering Governance](docs/SAFETY_AND_GOVERNANCE.md)
+- [Repository Synchronization](docs/REPOSITORY_SYNC.md)
 
-No live vessel control, actuator commands, weapon targeting or combat-payload features are in scope.
+---
+
+## 4. Engineering Governance & Safety Rules
+
+1. **Human Authority:** The user remains the Engineering Director. No agent may independently approve safety-critical baselines.
+2. **Actuator Air-Gap:** Non-operational digital lab environment. No physical vessel actuators, steering/throttle hardware commands, weapon targeting, or combat-payload features are in scope.
+3. **Unknowns as TBD:** Never fabricate vessel particulars. All open parameters are preserved as `TBD`.
+4. **Deterministic Separation:** Deterministic naval calculations are strictly separated from probabilistic LLM synthesis.
