@@ -59,14 +59,35 @@ export function evaluateStageDHumanApproval(baseRef = 'origin/main', customSigni
       }
       if (commits.length === 0) commits = [headSha];
 
-      // Verify the authorized commit is either the current HEAD or in the branch commit set
-      isCommitBound = targetCommit.length >= 7 && (
-        commits.some(c => c.startsWith(targetCommit) || targetCommit.startsWith(c)) ||
-        headSha.startsWith(targetCommit) || targetCommit.startsWith(headSha)
-      );
+      if (targetCommit.length < 7) {
+        commitBindingError = `ECR implementation commit SHA '${targetCommit}' is invalid (minimum 7 characters required).`;
+      } else if (headSha.startsWith(targetCommit) || targetCommit.startsWith(headSha)) {
+        // Direct match with HEAD commit
+        isCommitBound = true;
+      } else {
+        // Check if targetCommit is an ancestor commit in the branch change set
+        const isAncestor = commits.some(c => c.startsWith(targetCommit) || targetCommit.startsWith(c));
+        if (!isAncestor) {
+          commitBindingError = `ECR is bound to commit '${targetCommit}', which is not present in the branch change set (HEAD: ${headSha.substring(0, 7)}). Unrelated or unknown approvals are strictly rejected.`;
+        } else {
+          // Inspect all files modified between the approved commit and HEAD
+          const filesChangedAfterApproval = execSync(`git diff --name-only ${targetCommit}..HEAD`, { encoding: 'utf-8' })
+            .trim()
+            .split('\n')
+            .filter(Boolean);
 
-      if (!isCommitBound) {
-        commitBindingError = `ECR is bound to commit '${targetCommit}', which is not in this change set (HEAD: ${headSha.substring(0, 7)}). Stale or mismatched approvals are strictly rejected.`;
+          // Any modification outside the ECR documentation itself invalidates the approval
+          const invalidatingChanges = filesChangedAfterApproval.filter(f =>
+            !f.startsWith('governance/ecr/') && f !== 'RELEASE_MANIFEST.json'
+          );
+
+          if (invalidatingChanges.length > 0) {
+            isCommitBound = false;
+            commitBindingError = `STALE APPROVAL REJECTED: ECR ${approvedECR.changeId} was approved for commit '${targetCommit.substring(0, 7)}', but subsequent commits modified ${invalidatingChanges.length} baseline file(s): [${invalidatingChanges.slice(0, 5).join(', ')}${invalidatingChanges.length > 5 ? '...' : ''}]. Under NAVAL-USV Configuration Management Policy (ECCP-001), any modification to baseline code, tests, or workflows after approval invalidates the ECR. Re-authorization by Engineering Director is mandatory.`;
+          } else {
+            isCommitBound = true;
+          }
+        }
       }
     } catch (err: any) {
       commitBindingError = `Failed to verify commit binding in git: ${err?.message || err}`;

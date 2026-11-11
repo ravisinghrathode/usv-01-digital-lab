@@ -232,10 +232,8 @@ export class OpenAIProvider implements IModelProvider {
 }
 
 export function isTestExecutionEnvironment(): boolean {
-  return process.env.NODE_ENV === 'test' ||
-    process.env.ALLOW_TEST_MOCK === 'true' ||
-    process.env.VITEST === 'true' ||
-    process.env.CI === 'true';
+  return (process.env.NODE_ENV === 'test' && process.env.VITEST === 'true') ||
+    process.env.ALLOW_TEST_MOCK === 'true';
 }
 
 // 4. Model Provider Router / Dispatcher

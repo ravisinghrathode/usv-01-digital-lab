@@ -36,6 +36,7 @@ export interface RoleReviewOutput {
   provider: string;
   model: string;
   executionStatus: 'COMPLETED' | 'FAILED';
+  isMockFallback: boolean;
   rawOutput: string;
   deterministicFindings?: RoleFinding[];
 }
@@ -44,6 +45,7 @@ export interface MultiRoleReviewReport {
   timestamp: string;
   gitRef: string;
   executionMode: string;
+  hasMockFallback: boolean;
   reviews: RoleReviewOutput[];
   compositeAdvisoryRecommendation: AdvisoryRecommendation;
   governanceBanner: string;
@@ -179,6 +181,7 @@ Respond strictly in valid JSON matching this schema:
   let providerUsed = 'unknown';
   let modelUsed = 'unknown';
   let executionStatus: 'COMPLETED' | 'FAILED' = 'COMPLETED';
+  let isMockUsed = false;
   let rawOutput = '';
   let modelFindings: RoleFinding[] = [];
   let modelRecommendation: AdvisoryRecommendation = 'ADVISORY_APPROVE';
@@ -210,56 +213,49 @@ Respond strictly in valid JSON matching this schema:
     modelUsed = response.modelUsed;
     rawOutput = response.content;
 
-    if (response.parsedJson && response.parsedJson.recommendation) {
+    isMockUsed = !!(response.isMock || providerUsed === 'mock_deterministic' || providerUsed === 'test_autonomous_agent');
+
+    if (isMockUsed) {
+      modelRecommendation = 'ADVISORY_BLOCK';
+      executionStatus = 'FAILED';
+      summary = `MOCK EXECUTION REJECTED: Reviewer '${reviewer.role}' executed under synthetic mock fallback. Mock output is strictly barred from satisfying Stage C independent technical review under NAVAL-USV Governance Standards.`;
+      modelFindings = [{
+        severity: 'CRITICAL',
+        affectedFiles: files.map(f => f.path),
+        description: `Stage C Reviewer '${reviewer.role}' executed under synthetic mock fallback. Mock output cannot be accepted as certified Stage C independent technical review evidence.`,
+        evidence: `Provider: ${providerUsed}, Model: ${modelUsed}, isMock: true`,
+        potentialConsequences: 'Unreviewed baseline change entering engineering ecosystem with zero authentic independent AI verification.',
+        recommendedAction: 'Execute Stage C using an authenticated, operational model provider (OpenAI or Gemini) with active quota.'
+      }];
+    } else if (response.parsedJson && response.parsedJson.recommendation) {
       modelRecommendation = response.parsedJson.recommendation || 'ADVISORY_APPROVE';
       summary = response.parsedJson.summary || `Model evaluation completed by ${reviewer.role}.`;
       modelFindings = response.parsedJson.findings || [];
-    } else if (response.isMock) {
-      modelRecommendation = 'ADVISORY_APPROVE';
-      summary = `Automated model review completed for ${reviewer.title}. Baseline changes evaluated against ${reviewer.charter}.`;
-      modelFindings = [];
     } else {
       summary = `Evaluation completed by ${reviewer.role}. Output parsed as plain text.`;
     }
   } catch (err: any) {
-    if (!isTestMode) {
-      executionStatus = 'FAILED';
-      rawOutput = `Execution Error: ${err?.message || err}`;
-      return {
-        role: reviewer.role,
-        title: reviewer.title,
-        advisoryRecommendation: 'ADVISORY_BLOCK',
-        findings: [{
-          severity: 'CRITICAL',
-          affectedFiles: files.map(f => f.path),
-          description: `Mandatory independent AI reviewer '${reviewer.role}' failed to execute: ${err?.message || err}`,
-          evidence: `Model invocation against '${preferredProvider}' rejected.`,
-          potentialConsequences: 'Unreviewed baseline change entering engineering ecosystem due to reviewer execution failure.',
-          recommendedAction: 'Verify model credentials and connectivity, or re-run pipeline when service is restored.'
-        }],
-        summary: `CRITICAL: Reviewer execution failed: ${err?.message || err}`,
-        provider: preferredProvider,
-        model: process.env.CHATGPT_MODEL || 'gpt-4o-mini',
-        executionStatus: 'FAILED',
-        rawOutput
-      };
-    }
-
-    // In test/CI execution environment, simulate model evaluation
-    providerUsed = 'test_autonomous_agent';
-    modelUsed = 'naval-assurance-evaluator-v1';
-    executionStatus = 'COMPLETED';
-
-    const testEvaluation = {
-      recommendation: 'ADVISORY_APPROVE' as AdvisoryRecommendation,
-      summary: `Automated test evaluation completed for ${reviewer.title}. Baseline changes assessed against ${reviewer.charter}.`,
-      findings: [] as RoleFinding[]
+    executionStatus = 'FAILED';
+    rawOutput = `Execution Error: ${err?.message || err}`;
+    return {
+      role: reviewer.role,
+      title: reviewer.title,
+      advisoryRecommendation: 'ADVISORY_BLOCK',
+      findings: [{
+        severity: 'CRITICAL',
+        affectedFiles: files.map(f => f.path),
+        description: `Mandatory independent AI reviewer '${reviewer.role}' failed to execute: ${err?.message || err}`,
+        evidence: `Model invocation against '${preferredProvider}' failed.`,
+        potentialConsequences: 'Unreviewed baseline change entering engineering ecosystem due to reviewer execution failure.',
+        recommendedAction: 'Verify model credentials and connectivity, or re-run pipeline when service is restored.'
+      }],
+      summary: `CRITICAL: Reviewer execution failed: ${err?.message || err}`,
+      provider: preferredProvider,
+      model: process.env.CHATGPT_MODEL || 'gpt-4o-mini',
+      executionStatus: 'FAILED',
+      isMockFallback: true,
+      rawOutput
     };
-
-    rawOutput = JSON.stringify(testEvaluation, null, 2);
-    modelRecommendation = testEvaluation.recommendation;
-    summary = testEvaluation.summary;
-    modelFindings = testEvaluation.findings;
   }
 
   // Layer 2: Deterministic Rule Verification
@@ -290,6 +286,7 @@ Respond strictly in valid JSON matching this schema:
     provider: providerUsed,
     model: modelUsed,
     executionStatus,
+    isMockFallback: isMockUsed,
     rawOutput,
     deterministicFindings
   };
@@ -603,7 +600,9 @@ export async function generateMultiRoleReview(baseRef = 'origin/main'): Promise<
 
   // Compute composite recommendation
   let composite: AdvisoryRecommendation = 'ADVISORY_APPROVE';
-  if (reviews.some(r => r.executionStatus === 'FAILED')) {
+  const hasMockFallback = reviews.some(r => r.isMockFallback);
+
+  if (reviews.some(r => r.executionStatus === 'FAILED') || hasMockFallback) {
     composite = 'ADVISORY_BLOCK';
   } else if (reviews.some(r => r.advisoryRecommendation === 'ADVISORY_BLOCK')) {
     composite = 'ADVISORY_BLOCK';
@@ -624,6 +623,7 @@ export async function generateMultiRoleReview(baseRef = 'origin/main'): Promise<
     timestamp: new Date().toISOString(),
     gitRef: baseRef,
     executionMode: 'Seven Independent Model-Backed Reviewers (Concurrent Evaluation)',
+    hasMockFallback,
     reviews,
     compositeAdvisoryRecommendation: composite,
     governanceBanner: governanceBanner.trim()
@@ -684,8 +684,8 @@ if (process.argv[1] && process.argv[1].endsWith('independent-ai-review.ts')) {
     console.log(report.governanceBanner);
     console.log(formatReviewReportMarkdown(report));
 
-    if (report.compositeAdvisoryRecommendation === 'ADVISORY_BLOCK') {
-      console.error('\n🚫 Stage C Independent Review recommended BLOCKING the change due to critical defects.\n');
+    if (report.compositeAdvisoryRecommendation === 'ADVISORY_BLOCK' || report.hasMockFallback) {
+      console.error('\n🚫 Stage C Independent Review recommended BLOCKING the change due to critical defects or mock reviewer fallback.\n');
       process.exit(1);
     }
   }).catch(err => {

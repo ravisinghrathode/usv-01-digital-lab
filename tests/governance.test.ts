@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { classifyFile } from '../scripts/governance/classify-change.ts';
 import { scanContentForSecrets } from '../scripts/governance/secret-scanner.ts';
 import { validateRepositoryConfiguration } from '../scripts/governance/validate-config.ts';
-import { validateECRFile } from '../scripts/governance/ecr-tool.ts';
+import { validateECRFile, generateECRSignature } from '../scripts/governance/ecr-tool.ts';
 import { CryptographicAuditTrail } from '../src/core/safety/CryptographicAuditTrail.ts';
 import { AgentGovernanceBridge } from '../src/core/governance/AgentGovernanceBridge.ts';
 import { generateReleaseManifest } from '../scripts/governance/release-manifest.ts';
@@ -11,6 +11,8 @@ import { authenticateLoginRequest, AUTHORIZED_MEMBERS } from '../server.ts';
 import { ModelProviderRouter } from '../src/core/models/ModelProvider.ts';
 import { generateMultiRoleReview } from '../scripts/governance/independent-ai-review.ts';
 import path from 'path';
+import fs from 'fs';
+import { execSync } from 'child_process';
 
 describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
 
@@ -187,19 +189,76 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
   });
 
   describe('8. Stage D: Human Authority & Independent Review Verification', () => {
-    it('should verify human authority closure and ECR validity on critical baseline changes', () => {
-      const res = evaluateStageDHumanApproval('origin/main');
+    const testSigningKey = '3f3e07df0401f535dd1254d57accc68ed8171a5aa7055d3d22ae024bcb7cf04e';
+
+    it('should strictly detect and reject stale ECR approvals if code changed post-approval', () => {
+      // Current ECR was approved for commit 'fa2329e', but subsequent commits modified baseline files
+      const res = evaluateStageDHumanApproval('origin/main', testSigningKey);
       expect(res.humanApprovalRequired).toBe(true);
       expect(res.highestRisk).toBe('CRITICAL');
       expect(res.ecrRecordFound).toBe(true);
-      expect(res.approverRole).toBe('ENGINEERING_DIRECTOR');
-      expect(res.signatureVerified).toBe(true);
+      expect(res.signatureVerified).toBe(false);
+      expect(res.summary).toContain('STALE APPROVAL REJECTED');
     });
 
-    it('should strictly reject HMAC signature mismatch when wrong key is provided', () => {
-      const res = evaluateStageDHumanApproval('origin/main', 'invalid-signing-key-0000');
-      expect(res.signatureVerified).toBe(false);
-      expect(res.summary).toContain('cryptographic HMAC signature verification failed');
+    it('should verify human authority closure when ECR is bound to current commit SHA', () => {
+      const ecrPath = path.join(process.cwd(), 'governance', 'ecr', 'ECR-20261111-001_EGS_IMPLEMENTATION.md');
+      const origContent = fs.readFileSync(ecrPath, 'utf8');
+      try {
+        const headSha = execSync('git rev-parse HEAD', { encoding: 'utf-8' }).trim();
+        const signedAt = '2026-11-11T22:00:00.000Z';
+        const signature = generateECRSignature(
+          'ECR-20261111-001',
+          'APPROVED',
+          'usr-eng-dir-8841',
+          'ENGINEERING_DIRECTOR',
+          signedAt,
+          headSha,
+          testSigningKey
+        );
+        const updated = origContent
+          .replace(/Signed At:\*?\*?\s*[^\n\r]+/i, `Signed At: ${signedAt}`)
+          .replace(/Implementation Commit:\*?\*?\s*[^\n\r]+/i, `Implementation Commit: ${headSha}`)
+          .replace(/(?:Cryptographic Signature \/ Hash|Signature|Approval Hash):?\*?\*?\s*[^\n\r]+/i, `Cryptographic Signature / Hash: ${signature}`);
+        fs.writeFileSync(ecrPath, updated, 'utf8');
+
+        const res = evaluateStageDHumanApproval('origin/main', testSigningKey);
+        expect(res.humanApprovalRequired).toBe(true);
+        expect(res.ecrRecordFound).toBe(true);
+        expect(res.approverRole).toBe('ENGINEERING_DIRECTOR');
+        expect(res.signatureVerified).toBe(true);
+      } finally {
+        fs.writeFileSync(ecrPath, origContent, 'utf8');
+      }
+    });
+
+    it('should strictly reject HMAC signature mismatch when wrong key is provided for bound commit', () => {
+      const ecrPath = path.join(process.cwd(), 'governance', 'ecr', 'ECR-20261111-001_EGS_IMPLEMENTATION.md');
+      const origContent = fs.readFileSync(ecrPath, 'utf8');
+      try {
+        const headSha = execSync('git rev-parse HEAD', { encoding: 'utf-8' }).trim();
+        const signedAt = '2026-11-11T22:00:00.000Z';
+        const signature = generateECRSignature(
+          'ECR-20261111-001',
+          'APPROVED',
+          'usr-eng-dir-8841',
+          'ENGINEERING_DIRECTOR',
+          signedAt,
+          headSha,
+          testSigningKey
+        );
+        const updated = origContent
+          .replace(/Signed At:\*?\*?\s*[^\n\r]+/i, `Signed At: ${signedAt}`)
+          .replace(/Implementation Commit:\*?\*?\s*[^\n\r]+/i, `Implementation Commit: ${headSha}`)
+          .replace(/(?:Cryptographic Signature \/ Hash|Signature|Approval Hash):?\*?\*?\s*[^\n\r]+/i, `Cryptographic Signature / Hash: ${signature}`);
+        fs.writeFileSync(ecrPath, updated, 'utf8');
+
+        const res = evaluateStageDHumanApproval('origin/main', 'invalid-signing-key-0000');
+        expect(res.signatureVerified).toBe(false);
+        expect(res.summary).toContain('cryptographic HMAC signature verification failed');
+      } finally {
+        fs.writeFileSync(ecrPath, origContent, 'utf8');
+      }
     });
   });
 
@@ -271,12 +330,40 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
       expect(res.body.user?.role).toBe('ENGINEERING_DIRECTOR');
     });
 
-    it('should authenticate standard allowlisted engineering staff members', () => {
+    it('should reject staff login without passphrase (anonymous assertion prohibited)', () => {
       const res = authenticateLoginRequest({ userId: 'usr-naval-arch-05' });
+      expect(res.statusCode).toBe(401);
+      expect(res.body.success).toBe(false);
+      expect(res.body.error).toContain('Passphrase is required for staff member');
+    });
+
+    it('should reject staff login with incorrect passphrase', () => {
+      const res = authenticateLoginRequest({
+        userId: 'usr-naval-arch-05',
+        passphrase: 'wrong-staff-passphrase'
+      });
+      expect(res.statusCode).toBe(401);
+      expect(res.body.success).toBe(false);
+      expect(res.body.error).toContain('Invalid credentials');
+    });
+
+    it('should authenticate standard allowlisted engineering staff members with valid cryptographic passphrase', () => {
+      const res = authenticateLoginRequest({
+        userId: 'usr-naval-arch-05',
+        passphrase: 'usv01-naval-arch-3341'
+      });
       expect(res.statusCode).toBe(200);
       expect(res.body.success).toBe(true);
       expect(res.body.user?.userName).toBe('Senior Hydrodynamics Engineer');
       expect(res.body.user?.role).toBe('NAVAL_ARCHITECT');
+      expect(res.body.token).toBeDefined();
+
+      const res2 = authenticateLoginRequest({
+        userId: 'usr-lead-sys-01',
+        passphrase: 'usv01-sys-lead-9912'
+      });
+      expect(res2.statusCode).toBe(200);
+      expect(res2.body.user?.role).toBe('LEAD_SYSTEMS_ENGINEER');
     });
   });
 
@@ -349,7 +436,7 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
   });
 
   describe('11. Stage C: Seven Independent Model-Backed Reviewer Architecture', () => {
-    it('should execute all seven independent reviewer roles concurrently with recorded metadata', async () => {
+    it('should execute all seven independent reviewer roles concurrently and fail-closed on mock fallback', async () => {
       const report = await generateMultiRoleReview('origin/main');
       expect(report.reviews).toHaveLength(7);
 
@@ -366,11 +453,25 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
       for (const role of expectedRoles) {
         const rev = report.reviews.find(r => r.role === role);
         expect(rev).toBeDefined();
-        expect(rev?.executionStatus).toBe('COMPLETED');
         expect(rev?.provider).toBeDefined();
         expect(rev?.model).toBeDefined();
         expect(rev?.rawOutput.length).toBeGreaterThan(0);
         expect(rev?.advisoryRecommendation).toBeDefined();
+
+        // Control 3: In an environment where the live model is unavailable or has exhausted quota,
+        // mock fallback must fail closed (ADVISORY_BLOCK, executionStatus FAILED, isMockFallback true)
+        if (rev?.isMockFallback) {
+          expect(rev.advisoryRecommendation).toBe('ADVISORY_BLOCK');
+          expect(rev.executionStatus).toBe('FAILED');
+          expect(rev.summary).toContain('MOCK EXECUTION REJECTED');
+        } else {
+          expect(rev?.executionStatus).toBe('COMPLETED');
+        }
+      }
+
+      // If any reviewer fell back to mock, composite recommendation must strictly be ADVISORY_BLOCK
+      if (report.hasMockFallback) {
+        expect(report.compositeAdvisoryRecommendation).toBe('ADVISORY_BLOCK');
       }
     });
   });
