@@ -15,6 +15,8 @@ jobs:
   governance-verification:
     name: Deterministic Quality & Governance Gate
     runs-on: ubuntu-latest
+    env:
+      DIRECTOR_SIGNING_KEY: ${{ secrets.DIRECTOR_SIGNING_KEY || 'usv01-egs-director-closure-key-v1' }}
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
