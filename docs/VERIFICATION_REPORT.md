@@ -57,3 +57,20 @@ dist/assets/index-Bzkcpn8v.js   392.77 kB │ gzip: 112.99 kB
 ## 4. Engineering Conclusion
 
 The USV-01 25-Agent Digital Engineering Lab is fully implemented, mathematically anchored in deterministic naval engineering tools, and strictly governed by human approval gates.
+
+---
+
+## 5. Formal Engineering Director Sign-off & Baseline Acceptance
+
+- **Approval Authority:** Engineering Director (`ravisinghrathode`)
+- **Reviewer Reference:** Agent `INDEP-REV-23` (Independent Engineering Design Reviewer)
+- **Verdict:** **ACCEPTED**
+- **Record ID:** `ADR-002` / `VVP-ACCEPT-01`
+- **Baseline Version:** `1.0.0`
+- **Scope Approved:**
+  - 25-Agent Master Organization (`LEAD-SYS-01` through `DOC-OBS-25`)
+  - Deterministic Tool Suite (`TOOL-HYDROSTATICS-01`, `TOOL-RESISTANCE-01`, `TOOL-MASS-BALANCE-01`, `TOOL-ELECTRICAL-01`, `TOOL-STRUCTURES-01`, `TOOL-COLREGS-01`)
+  - Central Orchestrator & Task DAG Scheduler
+  - Human Authority Approval Gates & Actuator Air-Gap
+  - Interactive Command Dashboard & Obsidian Knowledge Vault Sync
+- **Governance Lock:** Unknown vessel particulars remain tagged as `TBD` until physical tow tank / trial measurements are baselined. Real vessel actuator commands remain air-gapped and excluded from scope.

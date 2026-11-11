@@ -119,7 +119,7 @@ export class SharedMemory {
       this.parameters.set(p.id, p);
     }
 
-    // Default ADR
+    // Default ADRs
     this.adrs.set('ADR-001', {
       id: 'ADR-001',
       title: 'Deterministic Engineering vs Probabilistic LLM Separation',
@@ -133,6 +133,23 @@ export class SharedMemory {
         'Direct human authority required for safety-critical state transitions'
       ],
       proposedByAgent: 'LEAD-SYS-01',
+      approvedBy: 'ENGINEERING_DIRECTOR',
+      date: '2026-11-11'
+    });
+
+    this.adrs.set('ADR-002', {
+      id: 'ADR-002',
+      title: 'Formal Acceptance of 25-Agent Digital Engineering Lab Architecture',
+      discipline: 'SYS',
+      status: 'APPROVED',
+      context: 'Independent design review (INDEP-REV-23) and director evaluation of the 25-agent platform, deterministic tools, DAG orchestrator, and human approval gates.',
+      decision: 'Formally accept the 25-agent architecture, verification test suite (22/22 pass), and baseline governance as the definitive USV-01 digital engineering lab.',
+      consequences: [
+        'All 25 agents locked to master registry baseline rev 1.0',
+        'Unknown vessel parameters preserved as TBD until physical test data baselined',
+        'Physical vessel actuator air-gap permanently enforced'
+      ],
+      proposedByAgent: 'INDEP-REV-23',
       approvedBy: 'ENGINEERING_DIRECTOR',
       date: '2026-11-11'
     });
