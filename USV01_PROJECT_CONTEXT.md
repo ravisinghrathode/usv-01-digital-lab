@@ -46,19 +46,20 @@ Develop an unmanned surface vessel (USV-01). Mission definition, operational des
 
 The local development Mac is Apple Silicon with 8 GB unified memory. Use it for documentation, browser research, VS Code, Git, light Python analysis, KiCad and modest CAD. Heavy CFD, FEA and simulation should run on a separately validated remote Linux compute host. Google Cloud TPU access is reported, but TPU generation, host CPU/RAM/disk and actual provisioned configuration are not yet confirmed. Do not assume the TPU accelerator is a drop-in CFD/FEA GPU.
 
-## Open baseline inputs
+## Approved Engineering Baseline (Revision 0.3)
 
-- Mission statement and CONOPS: TBD
-- Operating area and environmental envelope: TBD
-- Vessel type / hull concept: TBD
-- Principal dimensions and displacement: TBD
-- Speed, range and endurance: TBD
-- Payload and equipment envelope: TBD
-- Propulsion concept: TBD
-- Energy source / storage concept: TBD
-- Communications and navigation requirements: TBD
-- Autonomy level and operator intervention concept: TBD
-- Applicable rules, standards and flag / local authority basis: TBD
-- Verification and acceptance criteria: TBD
+- **Mission Statement & CONOPS:** Coastal & Harbor Security / Autonomous Patrol (surveillance, dynamic obstacle detection, perimeter patrol, intruder interception).
+- **Operating Area & Environmental Envelope:** Coastal littoral waters, fairways, harbor approaches (Operational up to Sea State 3-4).
+- **Vessel Scale & Hull Concept:** Medium Tactical Craft (LOA ~11.2m, LWL ~10.5m, Beam ~2.9m), Deep-V composite planing monohull (20° transom deadrise).
+- **Propulsion Architecture:** 100% Pure Electric twin steerable azimuth pod thrusters (Permanent Magnet Synchronous Motors - PMSM).
+- **Energy Storage System:** Lithium Iron Phosphate (LiFePO4) 48V/96V modular traction battery bank (target 45–60 kWh usable energy), zero emissions, IP67 sealed with thermal runaway containment.
+- **Speed, Range & Endurance:** Nominal cruise speed 12–16 knots; sprint speed 22–25 knots; 6–12 hour operational mission profile.
+- **Autonomy & Navigation Basis:** IMO COLREGs 1972 statutory rules (Rules 13, 14, 15), ROS 2 Humble executive stack, micro-ROS CAN FD motor controllers.
+
+## Remaining Open Inputs (Next Decision Gates)
+
+- Specific sensor payload complement (e.g. FMCW dome radar model, 3D LiDAR channel count, EO/IR thermal camera payload): TBD
+- RF / Telemetry primary and backup links (4G/5G private mesh vs. L-band SATCOM): TBD
+- Verification & Acceptance testing criteria for sea trials sign-off: TBD
 
 Use stable IDs such as `USV-NA-001`, `ADR-002`, `RSK-001`, `SIM-001` and `VVP-001`. Obsidian notes should use `[[wikilinks]]`; controlled Google Drive documents should be cited by stable URL and revision.
