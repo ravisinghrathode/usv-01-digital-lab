@@ -25,7 +25,15 @@ import { AiEngineeringAssistant } from './components/AiEngineeringAssistant';
 import { NewRecordModal } from './components/NewRecordModal';
 import { ExportImportModal } from './components/ExportImportModal';
 import { ContextGuideModal } from './components/ContextGuideModal';
-import { authenticatedFetch, ensureAuthenticatedSession } from './core/auth/authClient.ts';
+import { LoginModal } from './components/LoginModal';
+import {
+  authenticatedFetch,
+  getCurrentUser,
+  subscribeAuthState,
+  logout,
+  validateSession
+} from './core/auth/authClient.ts';
+import { ApproverIdentity } from './core/types/safety.ts';
 
 import {
   ProjectInfo,
@@ -83,6 +91,11 @@ export default function App() {
   const [isExportImportModalOpen, setIsExportImportModalOpen] = useState(false);
   const [isContextGuideOpen, setIsContextGuideOpen] = useState(false);
 
+  // Authentication & Access Control state
+  const [currentUser, setCurrentUser] = useState<ApproverIdentity | null>(getCurrentUser());
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [loginRequiredRole, setLoginRequiredRole] = useState<string | undefined>();
+
   // Application Data Stores
   const [project, setProject] = useState<ProjectInfo>(INITIAL_PROJECT);
   const [workstreams, setWorkstreams] = useState<WorkstreamSummary[]>(INITIAL_WORKSTREAMS);
@@ -105,11 +118,13 @@ export default function App() {
   const [interfaces, setInterfaces] = useState<InterfaceDefinition[]>(INITIAL_INTERFACES);
   const [knowledgeNotes, setKnowledgeNotes] = useState<KnowledgeNote[]>(INITIAL_KNOWLEDGE_NOTES);
 
-  // Authenticated session state and initial snapshot fetch on mount
-  useEffect(() => {
-    ensureAuthenticatedSession()
-      .then(() => authenticatedFetch('/api/data/snapshot'))
-      .then((res) => res.json())
+  // Sync snapshot from server when authenticated
+  const syncServerSnapshot = () => {
+    authenticatedFetch('/api/data/snapshot')
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
       .then((resData) => {
         if (resData.success && resData.data) {
           const d = resData.data;
@@ -131,8 +146,21 @@ export default function App() {
         }
       })
       .catch((err) => {
-        console.warn('Could not fetch snapshot from server, using local seed dataset:', err);
+        console.warn('Could not fetch server snapshot (read-only seed dataset active):', err.message);
       });
+  };
+
+  // Subscribe to authentication state changes & validate active session on mount
+  useEffect(() => {
+    const unsubscribe = subscribeAuthState((user) => {
+      setCurrentUser(user);
+      if (user) {
+        syncServerSnapshot();
+      }
+    });
+
+    validateSession().catch(() => {});
+    return () => unsubscribe();
   }, []);
 
   // Sync log helper
@@ -528,12 +556,30 @@ export default function App() {
           currentModuleName={currentModuleName}
           searchQuery={globalSearch}
           onSearchChange={setGlobalSearch}
+          currentUser={currentUser}
+          onOpenLogin={() => {
+            setLoginRequiredRole(undefined);
+            setIsLoginModalOpen(true);
+          }}
+          onLogout={logout}
           onOpenNewRecord={() => {
+            if (!currentUser) {
+              setLoginRequiredRole(undefined);
+              setIsLoginModalOpen(true);
+              return;
+            }
             setDefaultNewSubsystem('SYS');
             setIsNewRecordModalOpen(true);
           }}
           onOpenExportImport={() => setIsExportImportModalOpen(true)}
-          onResetDemo={handleResetDemoData}
+          onResetDemo={() => {
+            if (!currentUser) {
+              setLoginRequiredRole(undefined);
+              setIsLoginModalOpen(true);
+              return;
+            }
+            handleResetDemoData();
+          }}
           onToggleAiAssistant={() => setIsAiOpen(!isAiOpen)}
           isAiAssistantOpen={isAiOpen}
           onOpenContextGuide={() => setIsContextGuideOpen(true)}
@@ -730,6 +776,17 @@ export default function App() {
       <ContextGuideModal
         isOpen={isContextGuideOpen}
         onClose={() => setIsContextGuideOpen(false)}
+      />
+
+      {/* Staff Authentication Login Modal */}
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onLoginSuccess={(user) => {
+          setCurrentUser(user);
+          setIsLoginModalOpen(false);
+        }}
+        requiredRole={loginRequiredRole}
       />
     </div>
   );

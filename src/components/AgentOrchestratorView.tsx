@@ -35,7 +35,7 @@ import { EngineeringTask } from '../core/types/orchestrator.ts';
 import { HumanApprovalGate, ApproverIdentity } from '../core/types/safety.ts';
 import { EngineeringParameter } from '../core/types/memory.ts';
 import { downloadCsv } from '../utils/engineeringUtils.ts';
-import { signApprovalGate, ensureAuthenticatedSession, authenticateAsDirector } from '../core/auth/authClient.ts';
+import { signApprovalGate, authenticateAsDirector, subscribeAuthState } from '../core/auth/authClient.ts';
 
 interface AgentOrchestratorViewProps {
   onAskAi?: (prompt: string, record?: any) => void;
@@ -110,14 +110,11 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
 
   useEffect(() => {
     refreshState();
-    ensureAuthenticatedSession()
-      .then((session) => {
-        if (session.user) {
-          setApproverIdentity(session.user);
-          setIsDirectorAuthenticated(session.user.role === 'ENGINEERING_DIRECTOR');
-        }
-      })
-      .catch((err) => console.warn('Could not establish initial session:', err));
+    const unsubscribe = subscribeAuthState((user) => {
+      setApproverIdentity(user);
+      setIsDirectorAuthenticated(user?.role === 'ENGINEERING_DIRECTOR');
+    });
+    return () => unsubscribe();
   }, []);
 
   const handleDirectorLogin = async () => {

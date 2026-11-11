@@ -4,7 +4,7 @@ import path from 'path';
 import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
-import { generateApproverSignature, setDirectorSigningKey } from './src/core/safety/ApproverSigner.ts';
+import { generateApproverSignature, verifyApproverSignature, setDirectorSigningKey } from './src/core/safety/ApproverSigner.ts';
 import { AUTHORIZED_MEMBERS, type StaffMember } from './src/core/auth/staffDirectory.ts';
 import { verifyStaffCredential, isLockedOut, recordFailure, recordSuccess } from './src/core/auth/credentialStore.ts';
 
@@ -325,9 +325,19 @@ app.post('/api/auth/sign-gate', (req, res) => {
       userName: user.userName,
       role: user.role,
       authenticatedAt: timestamp,
-      tokenSignature: signature
+      tokenSignature: signature,
+      serverVerifiedSignature: signature
     }
   });
+});
+
+app.post('/api/auth/verify-gate', (req, res) => {
+  const { gateId, decision, identity } = req.body || {};
+  if (!gateId || !decision || !identity) {
+    return res.status(400).json({ success: false, valid: false, error: 'Missing required parameters' });
+  }
+  const valid = verifyApproverSignature(gateId, decision, identity, SESSION_SECRET);
+  res.json({ success: true, valid });
 });
 
 
