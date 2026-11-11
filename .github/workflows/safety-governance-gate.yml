@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
 jobs:
   governance-verification:
     name: Deterministic Quality & Governance Gate
@@ -13,8 +18,10 @@ jobs:
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Set up Node.js LTS
+      - name: Set up Node.js LTS (v22)
         uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -23,14 +30,30 @@ jobs:
       - name: Install Project Dependencies
         run: npm ci
 
-      - name: Dependency Security Audit
+      - name: Stage B — Dependency Security Audit
         run: npm audit --audit-level=high
 
-      - name: TypeScript Static Typecheck & Lint
+      - name: Stage B — DevSecOps Secret Scanning
+        run: npx tsx scripts/governance/secret-scanner.ts
+
+      - name: Stage B — Repository Governance Configuration Validation
+        run: npx tsx scripts/governance/validate-config.ts
+
+      - name: Stage B — Engineering Change Request (ECR) Integrity Validation
+        run: npx tsx scripts/governance/ecr-tool.ts
+
+      - name: Stage B — TypeScript Static Typecheck & Lint
         run: npm run lint
 
-      - name: Execute Deterministic & Safety Test Suite
+      - name: Stage B — Execute Deterministic & Safety Test Suite
         run: npm test
 
-      - name: Production Bundle Verification
+      - name: Stage B — Production Bundle Verification
         run: npm run build
+
+      - name: Stage A & C — PR Change Classification and Independent Technical Review
+        if: github.event_name == 'pull_request'
+        run: |
+          npx tsx scripts/governance/classify-change.ts origin/main >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          npx tsx scripts/governance/independent-ai-review.ts origin/main >> $GITHUB_STEP_SUMMARY

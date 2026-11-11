@@ -1,0 +1,181 @@
+import { describe, it, expect } from 'vitest';
+import { classifyFile } from '../scripts/governance/classify-change.ts';
+import { scanContentForSecrets } from '../scripts/governance/secret-scanner.ts';
+import { validateRepositoryConfiguration } from '../scripts/governance/validate-config.ts';
+import { validateECRFile } from '../scripts/governance/ecr-tool.ts';
+import { CryptographicAuditTrail } from '../src/core/safety/CryptographicAuditTrail.ts';
+import { AgentGovernanceBridge } from '../src/core/governance/AgentGovernanceBridge.ts';
+import { generateReleaseManifest } from '../scripts/governance/release-manifest.ts';
+import path from 'path';
+
+describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
+
+  describe('1. Change & Risk Classification Engine (Stage A)', () => {
+    it('should classify safety and security paths as CRITICAL risk', () => {
+      const safetyCheck = classifyFile('src/core/safety/HumanApprovalGate.ts');
+      expect(safetyCheck.categories).toContain('SAFETY');
+      expect(safetyCheck.risk).toBe('CRITICAL');
+
+      const authCheck = classifyFile('src/core/auth/authClient.ts');
+      expect(authCheck.categories).toContain('SECURITY');
+      expect(authCheck.risk).toBe('CRITICAL');
+
+      const workflowCheck = classifyFile('.github/workflows/safety-governance-gate.yml');
+      expect(workflowCheck.categories).toContain('CONFIGURATION');
+      expect(workflowCheck.risk).toBe('CRITICAL');
+    });
+
+    it('should classify core architecture as HIGH risk and documentation as LOW risk', () => {
+      const archCheck = classifyFile('src/core/orchestrator/CentralOrchestrator.ts');
+      expect(archCheck.categories).toContain('ARCHITECTURE');
+      expect(archCheck.risk).toBe('HIGH');
+
+      const docCheck = classifyFile('docs/ARCHITECTURE.md');
+      expect(docCheck.categories).toContain('DOCUMENTATION');
+      expect(docCheck.risk).toBe('LOW');
+    });
+  });
+
+  describe('2. DevSecOps Secret Scanner & Data Protection (Stage B)', () => {
+    it('should detect exposed private keys and API keys', () => {
+      const badContent = `
+        const key = "-----BEGIN RSA PRIVATE KEY-----\\nMIIEowIBAAKCAQEA...";
+        const openai = "sk-proj-1234567890abcdef1234567890abcdef";
+      `;
+      const findings = scanContentForSecrets(badContent, 'fake_secret.ts');
+      expect(findings.length).toBeGreaterThanOrEqual(2);
+      expect(findings.some(f => f.patternName.includes('Private Key'))).toBe(true);
+      expect(findings.some(f => f.patternName.includes('OpenAI'))).toBe(true);
+    });
+
+    it('should pass cleanly for standard engineering code without credentials', () => {
+      const cleanContent = `
+        export function computeDisplacement(lwl: number, beam: number, draft: number, cb: number): number {
+          return lwl * beam * draft * cb * 1.025;
+        }
+      `;
+      const findings = scanContentForSecrets(cleanContent, 'clean_code.ts');
+      expect(findings.length).toBe(0);
+    });
+  });
+
+  describe('3. Repository Configuration & CODEOWNERS Validation', () => {
+    it('should validate CODEOWNERS and required governance files', () => {
+      const res = validateRepositoryConfiguration(process.cwd());
+      expect(res.valid).toBe(true);
+      expect(res.errors).toHaveLength(0);
+    });
+  });
+
+  describe('4. Engineering Change Request (ECR) Validation', () => {
+    it('should validate compliant ECR baseline records', () => {
+      const ecrPath = path.join(process.cwd(), 'governance', 'ecr', 'ECR-20261111-001_EGS_IMPLEMENTATION.md');
+      const res = validateECRFile(ecrPath);
+      expect(res.valid).toBe(true);
+      expect(res.record?.changeId).toBe('ECR-20261111-001');
+      expect(res.record?.riskAssessment).toBe('CRITICAL');
+      expect(res.record?.approvalRecord?.decision).toBe('APPROVED');
+    });
+
+    it('should reject incomplete ECR records missing mandatory sections', () => {
+      const invalidPath = path.join(process.cwd(), 'governance', 'ecr', 'NON_EXISTENT_ECR.md');
+      const res = validateECRFile(invalidPath);
+      expect(res.valid).toBe(false);
+      expect(res.errors.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('5. Cryptographically Hash-Chained Append-Only Audit Trail', () => {
+    it('should create valid chained blocks and verify end-to-end cryptographic integrity', () => {
+      const trail = CryptographicAuditTrail.getInstance();
+      const entry1 = trail.appendEntry({
+        actor: 'usr-eng-dir-8841',
+        role: 'ENGINEERING_DIRECTOR',
+        action: 'CHANGE_REQUEST_CREATED',
+        changeId: 'ECR-TEST-001',
+        details: { scope: 'Baseline Hydrostatics' }
+      });
+
+      const entry2 = trail.appendEntry({
+        actor: 'usr-eng-dir-8841',
+        role: 'ENGINEERING_DIRECTOR',
+        action: 'HUMAN_APPROVAL_RECORDED',
+        changeId: 'ECR-TEST-001',
+        details: { decision: 'APPROVED' }
+      });
+
+      expect(entry2.previousHash).toBe(entry1.hash);
+      const integrity = trail.verifyIntegrity();
+      expect(integrity.valid).toBe(true);
+    });
+
+    it('should detect retroactive tampering or bit flips in historical records', () => {
+      const trail = CryptographicAuditTrail.getInstance();
+      const rawEntries = trail.getEntries();
+      expect(rawEntries.length).toBeGreaterThanOrEqual(2);
+
+      // Create a tampered copy of the audit chain
+      const tamperedChain = JSON.parse(JSON.stringify(rawEntries));
+      tamperedChain[0].details.tamperedField = 'MALICIOUS_OVERRIDE';
+
+      const check = CryptographicAuditTrail.verifyChain(tamperedChain);
+      expect(check.valid).toBe(false);
+      expect(check.error).toContain('Tamper detected');
+    });
+  });
+
+  describe('6. Multi-Agent Governance Authority Boundaries (HMEA v0.2)', () => {
+    const bridge = AgentGovernanceBridge.getInstance();
+
+    it('should permit canonical agents to submit engineering change proposals', () => {
+      const proposal = bridge.submitProposal({
+        agentId: 'STR-MAT-10',
+        targetSubsystem: 'STR',
+        proposedTitle: 'Hull Bottom Slamming Scantlings',
+        description: 'Calculated 4.82mm bottom plating per DNV-RU-HSLC',
+        reason: 'Resolve TBD scantling parameter',
+        affectedParameters: ['USV-STR-001'],
+        calculationEvidence: { minimumThicknessMm: 4.82 }
+      });
+
+      expect(proposal.success).toBe(true);
+      expect(proposal.actionTaken).toBe('PROPOSAL_QUEUED');
+      expect(proposal.changeId).toBeDefined();
+    });
+
+    it('should reject agent attempts to directly modify governance or security subsystems', () => {
+      const badProposal = bridge.submitProposal({
+        agentId: 'HULL-GEO-05',
+        targetSubsystem: 'GOV',
+        proposedTitle: 'Bypass Branch Protection',
+        description: 'Attempt to alter branch protection rules',
+        reason: 'Expedited deployment',
+        affectedParameters: []
+      });
+
+      expect(badProposal.success).toBe(false);
+      expect(badProposal.actionTaken).toBe('REJECTED_GOVERNANCE_VIOLATION');
+      expect(badProposal.message).toContain('Security Violation: Agents are barred from altering governance');
+    });
+
+    it('should fail-closed and block any agent attempt to authorise its own changes', () => {
+      expect(() => {
+        bridge.evaluateAgentAuthorizationAttempt('STAB-HYD-06', 'ECR-AGENT-001');
+      }).toThrow('Non-Negotiable Principle 5: AI cannot independently authorise its own engineering changes.');
+    });
+  });
+
+  describe('7. Configuration Management & Release Manifests', () => {
+    it('should generate a reproducible release manifest with SHA-256 asset checksums', () => {
+      const manifest = generateReleaseManifest();
+      expect(manifest.schemaVersion).toBe('1.0.0');
+      expect(manifest.programme).toBe('NAVAL-USV');
+      expect(manifest.checksums.length).toBeGreaterThan(10);
+      expect(manifest.immutableManifestSha256).toBeDefined();
+
+      const pkgChecksum = manifest.checksums.find(c => c.path === 'package.json');
+      expect(pkgChecksum).toBeDefined();
+      expect(pkgChecksum?.sha256).toMatch(/^[a-f0-9]{64}$/);
+    });
+  });
+});
