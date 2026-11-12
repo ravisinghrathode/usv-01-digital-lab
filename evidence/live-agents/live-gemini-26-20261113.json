@@ -1,21 +1,22 @@
 {
-  "schemaVersion": "1.0",
+  "schemaVersion": "1.1",
   "campaignId": "USV01-26-20261113",
   "sourceCommit": "854812812f02ab232a506957572c2944be63c7a5",
-  "generatedAtUtc": "2026-11-12T21:40:13.292766+00:00",
+  "generatedAtUtc": "2026-11-12T21:43:39.408397+00:00",
   "provider": "Google Gemini",
   "model": "gemini-3.8-flash",
-  "connection": "Connected Composio GEMINI_GENERATE_CONTENT, actual provider responseId per call",
+  "connection": "Connected Composio GEMINI_GENERATE_CONTENT; received modelVersion and responseId from actual provider calls",
   "executionContext": "EXTERNAL_LIVE_PROVIDER_ROLES_ONLY",
   "dataClassification": "SYNTHETIC_TEST_ONLY_NON_OPERATIONAL",
   "registeredRoleCount": 26,
   "realProviderResponsesObserved": 26,
   "strictJsonShapePass": 26,
+  "unsupportedToolExecutionClaimCount": 3,
   "internalExecutionEngineLiveRunVerified": false,
   "mandatoryDeterministicToolExecutionVerified": false,
   "independentEngineeringValidation": false,
   "engineeringReleaseApproved": false,
-  "limitation": "Actual Gemini model completions with source-registered role system instructions and representative synthetic input tasks. These calls did NOT run the local BaseAgent/ExecutionEngine or its mandated deterministic tools. Connector observations are not a cryptographic provider attestation.",
+  "limitation": "Actual Gemini completions with exact registered role system instructions and representative synthetic tasks. These direct connector calls DID NOT execute BaseAgent/ExecutionEngine or deterministic tools. Some model responses falsely implied tool execution, detected and flagged; NO tool-execution or engineering certification claim is made.",
   "cases": [
     {
       "canonicalId": "A01",
@@ -65,7 +66,9 @@
         "thoughtsTokenCount": 936,
         "totalTokenCount": 1551
       },
-      "registeredInstructionsSha256": "sha256:292f7bf4d608fe7c5397f800ead1c6d6068ea4993083c0456f125efe687b03de"
+      "registeredInstructionsSha256": "sha256:292f7bf4d608fe7c5397f800ead1c6d6068ea4993083c0456f125efe687b03de",
+      "unsupportedToolExecutionClaimDetected": false,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A02",
@@ -111,7 +114,9 @@
         "thoughtsTokenCount": 1380,
         "totalTokenCount": 1936
       },
-      "registeredInstructionsSha256": "sha256:7516bc2b2c38d35d4e336c1199c052d1476ffee75fe5c358a06485fa8d6db578"
+      "registeredInstructionsSha256": "sha256:7516bc2b2c38d35d4e336c1199c052d1476ffee75fe5c358a06485fa8d6db578",
+      "unsupportedToolExecutionClaimDetected": false,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A03",
@@ -163,7 +168,9 @@
         "thoughtsTokenCount": 723,
         "totalTokenCount": 1236
       },
-      "registeredInstructionsSha256": "sha256:c7509c341df6eed03cd537778287421783340ef933979e344c861cf4e6fd155f"
+      "registeredInstructionsSha256": "sha256:c7509c341df6eed03cd537778287421783340ef933979e344c861cf4e6fd155f",
+      "unsupportedToolExecutionClaimDetected": false,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A04",
@@ -213,7 +220,9 @@
         "thoughtsTokenCount": 908,
         "totalTokenCount": 1427
       },
-      "registeredInstructionsSha256": "sha256:ab5134315fd815e9d3985da09bb15c140dbdc71038f427f678beaba65fe9d8e9"
+      "registeredInstructionsSha256": "sha256:ab5134315fd815e9d3985da09bb15c140dbdc71038f427f678beaba65fe9d8e9",
+      "unsupportedToolExecutionClaimDetected": false,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A05",
@@ -262,7 +271,9 @@
         "thoughtsTokenCount": 1237,
         "totalTokenCount": 1816
       },
-      "registeredInstructionsSha256": "sha256:9d735ad3b04c1afc62759cab9587497409a0d19043cc3609d7132e39c163ab46"
+      "registeredInstructionsSha256": "sha256:9d735ad3b04c1afc62759cab9587497409a0d19043cc3609d7132e39c163ab46",
+      "unsupportedToolExecutionClaimDetected": false,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A06",
@@ -313,7 +324,9 @@
         "thoughtsTokenCount": 1192,
         "totalTokenCount": 1792
       },
-      "registeredInstructionsSha256": "sha256:5a7de22e9bf3620e50304e6a17c11224c1b994c202ea1ce816282dcb5fb545d4"
+      "registeredInstructionsSha256": "sha256:5a7de22e9bf3620e50304e6a17c11224c1b994c202ea1ce816282dcb5fb545d4",
+      "unsupportedToolExecutionClaimDetected": true,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A07",
@@ -361,7 +374,9 @@
         "thoughtsTokenCount": 1350,
         "totalTokenCount": 1923
       },
-      "registeredInstructionsSha256": "sha256:01b1e5093deac74db4eb9a2b6947b11c7098e2135e1618a0ae5a37e36054e78d"
+      "registeredInstructionsSha256": "sha256:01b1e5093deac74db4eb9a2b6947b11c7098e2135e1618a0ae5a37e36054e78d",
+      "unsupportedToolExecutionClaimDetected": true,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A08",
@@ -410,7 +425,9 @@
         "thoughtsTokenCount": 798,
         "totalTokenCount": 1313
       },
-      "registeredInstructionsSha256": "sha256:ef40e2e352ac7c04ccf8bc87032e575943d55a8cfc8e80195762d3bef54fcb0c"
+      "registeredInstructionsSha256": "sha256:ef40e2e352ac7c04ccf8bc87032e575943d55a8cfc8e80195762d3bef54fcb0c",
+      "unsupportedToolExecutionClaimDetected": false,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A09",
@@ -455,7 +472,9 @@
         "thoughtsTokenCount": 1114,
         "totalTokenCount": 1653
       },
-      "registeredInstructionsSha256": "sha256:bb21125d07bfa740f0055eb5e9b11ae913f8a84f29c07646fa5f3c4fd287e093"
+      "registeredInstructionsSha256": "sha256:bb21125d07bfa740f0055eb5e9b11ae913f8a84f29c07646fa5f3c4fd287e093",
+      "unsupportedToolExecutionClaimDetected": true,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A10",
@@ -503,7 +522,9 @@
         "thoughtsTokenCount": 845,
         "totalTokenCount": 1373
       },
-      "registeredInstructionsSha256": "sha256:792bb92b4b6e7073fff85f6fcda48c0d044a76052719d3e0633b3930fbc62a5d"
+      "registeredInstructionsSha256": "sha256:792bb92b4b6e7073fff85f6fcda48c0d044a76052719d3e0633b3930fbc62a5d",
+      "unsupportedToolExecutionClaimDetected": false,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A11",
@@ -549,7 +570,9 @@
         "thoughtsTokenCount": 1019,
         "totalTokenCount": 1527
       },
-      "registeredInstructionsSha256": "sha256:e10e2a63222320fe6c98af87917b56880d9087ec8d55b83820b9b2a82efe4ec8"
+      "registeredInstructionsSha256": "sha256:e10e2a63222320fe6c98af87917b56880d9087ec8d55b83820b9b2a82efe4ec8",
+      "unsupportedToolExecutionClaimDetected": false,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A12",
@@ -596,7 +619,9 @@
         "thoughtsTokenCount": 932,
         "totalTokenCount": 1409
       },
-      "registeredInstructionsSha256": "sha256:a9d3500aee43600558fa5f8b06ddbd1737eb1f338ef6a0ee3c2f662c141f6bde"
+      "registeredInstructionsSha256": "sha256:a9d3500aee43600558fa5f8b06ddbd1737eb1f338ef6a0ee3c2f662c141f6bde",
+      "unsupportedToolExecutionClaimDetected": false,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A13",
@@ -643,7 +668,9 @@
         "thoughtsTokenCount": 969,
         "totalTokenCount": 1468
       },
-      "registeredInstructionsSha256": "sha256:97b8d679b0c3e0a45c68a356a30f94a48c8ad47c689a5476e2bb91d9b988b67d"
+      "registeredInstructionsSha256": "sha256:97b8d679b0c3e0a45c68a356a30f94a48c8ad47c689a5476e2bb91d9b988b67d",
+      "unsupportedToolExecutionClaimDetected": false,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A14",
@@ -692,7 +719,9 @@
         "thoughtsTokenCount": 978,
         "totalTokenCount": 1610
       },
-      "registeredInstructionsSha256": "sha256:aed31868aa5731f72f8d3d0a8fa1400a4bf6a964199c80feafadfe428f4211ca"
+      "registeredInstructionsSha256": "sha256:aed31868aa5731f72f8d3d0a8fa1400a4bf6a964199c80feafadfe428f4211ca",
+      "unsupportedToolExecutionClaimDetected": false,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A15",
@@ -743,7 +772,9 @@
         "thoughtsTokenCount": 1044,
         "totalTokenCount": 1623
       },
-      "registeredInstructionsSha256": "sha256:33166d22d07da4ab6c027ab9f3eed96a0a2573158e7ba9a45430fe92cf676303"
+      "registeredInstructionsSha256": "sha256:33166d22d07da4ab6c027ab9f3eed96a0a2573158e7ba9a45430fe92cf676303",
+      "unsupportedToolExecutionClaimDetected": false,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A16",
@@ -790,7 +821,9 @@
         "thoughtsTokenCount": 1009,
         "totalTokenCount": 1541
       },
-      "registeredInstructionsSha256": "sha256:7ab21dd59fa9897df2f4a9b3f72eaac333a3f212a910e9e1d9687aa993222824"
+      "registeredInstructionsSha256": "sha256:7ab21dd59fa9897df2f4a9b3f72eaac333a3f212a910e9e1d9687aa993222824",
+      "unsupportedToolExecutionClaimDetected": false,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A17",
@@ -839,7 +872,9 @@
         "thoughtsTokenCount": 985,
         "totalTokenCount": 1517
       },
-      "registeredInstructionsSha256": "sha256:b5b1e5e4bc8d5b403d957260782c5c12a15644d798c1c43a773ed6e99e02d6f1"
+      "registeredInstructionsSha256": "sha256:b5b1e5e4bc8d5b403d957260782c5c12a15644d798c1c43a773ed6e99e02d6f1",
+      "unsupportedToolExecutionClaimDetected": false,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A18",
@@ -888,7 +923,9 @@
         "thoughtsTokenCount": 1132,
         "totalTokenCount": 1703
       },
-      "registeredInstructionsSha256": "sha256:99ddad2e8c585125987c1a5eea1c707a618cbd902db15589674d8b296a2a7d7a"
+      "registeredInstructionsSha256": "sha256:99ddad2e8c585125987c1a5eea1c707a618cbd902db15589674d8b296a2a7d7a",
+      "unsupportedToolExecutionClaimDetected": false,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A19",
@@ -938,7 +975,9 @@
         "thoughtsTokenCount": 1201,
         "totalTokenCount": 1745
       },
-      "registeredInstructionsSha256": "sha256:dc2121e1d4303d19d10695dde5637df45ecb2acf9689c1a3d5de55bf6cddd628"
+      "registeredInstructionsSha256": "sha256:dc2121e1d4303d19d10695dde5637df45ecb2acf9689c1a3d5de55bf6cddd628",
+      "unsupportedToolExecutionClaimDetected": false,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A20",
@@ -986,7 +1025,9 @@
         "thoughtsTokenCount": 824,
         "totalTokenCount": 1355
       },
-      "registeredInstructionsSha256": "sha256:74ca0530f28f10bb0ba6218359dbf11bc3311847e5d61b2ed8b41751b33efd86"
+      "registeredInstructionsSha256": "sha256:74ca0530f28f10bb0ba6218359dbf11bc3311847e5d61b2ed8b41751b33efd86",
+      "unsupportedToolExecutionClaimDetected": false,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A21",
@@ -1032,7 +1073,9 @@
         "thoughtsTokenCount": 1036,
         "totalTokenCount": 1605
       },
-      "registeredInstructionsSha256": "sha256:e5d7236d18ff56121271938daedbea0c80d53062c1192b09fe5ec3c2ecb2d05f"
+      "registeredInstructionsSha256": "sha256:e5d7236d18ff56121271938daedbea0c80d53062c1192b09fe5ec3c2ecb2d05f",
+      "unsupportedToolExecutionClaimDetected": false,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A22",
@@ -1081,7 +1124,9 @@
         "thoughtsTokenCount": 873,
         "totalTokenCount": 1427
       },
-      "registeredInstructionsSha256": "sha256:78aaded823bdc9ff2f4a959e11e041b9456943feb13a9d5e9bec01111827ec87"
+      "registeredInstructionsSha256": "sha256:78aaded823bdc9ff2f4a959e11e041b9456943feb13a9d5e9bec01111827ec87",
+      "unsupportedToolExecutionClaimDetected": false,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A23",
@@ -1132,7 +1177,9 @@
         "thoughtsTokenCount": 988,
         "totalTokenCount": 1589
       },
-      "registeredInstructionsSha256": "sha256:e9f83ea31e2574572055982d250c1702ada2a9c12165451f21bb889fe294f64e"
+      "registeredInstructionsSha256": "sha256:e9f83ea31e2574572055982d250c1702ada2a9c12165451f21bb889fe294f64e",
+      "unsupportedToolExecutionClaimDetected": false,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A24",
@@ -1183,7 +1230,9 @@
         "thoughtsTokenCount": 962,
         "totalTokenCount": 1577
       },
-      "registeredInstructionsSha256": "sha256:25c193e17fce6c9a44b7280b5171baccbe70dda7b018b09d51d06f875d4af5a7"
+      "registeredInstructionsSha256": "sha256:25c193e17fce6c9a44b7280b5171baccbe70dda7b018b09d51d06f875d4af5a7",
+      "unsupportedToolExecutionClaimDetected": false,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A25",
@@ -1234,7 +1283,9 @@
         "thoughtsTokenCount": 1053,
         "totalTokenCount": 1624
       },
-      "registeredInstructionsSha256": "sha256:080c1e2f59ecbd4993d9fc8caa4503cb764664065c806ded0edd5575d3760390"
+      "registeredInstructionsSha256": "sha256:080c1e2f59ecbd4993d9fc8caa4503cb764664065c806ded0edd5575d3760390",
+      "unsupportedToolExecutionClaimDetected": false,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     },
     {
       "canonicalId": "A26",
@@ -1284,7 +1335,9 @@
         "thoughtsTokenCount": 1098,
         "totalTokenCount": 1706
       },
-      "registeredInstructionsSha256": "sha256:0447200736a7443f67d43e0f2a1b133ca658db1905673397282803b7c7e05a40"
+      "registeredInstructionsSha256": "sha256:0447200736a7443f67d43e0f2a1b133ca658db1905673397282803b7c7e05a40",
+      "unsupportedToolExecutionClaimDetected": false,
+      "mandatoryDeterministicToolsActuallyExecutedInThisCall": false
     }
   ]
 }
