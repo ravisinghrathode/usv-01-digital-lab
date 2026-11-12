@@ -433,11 +433,11 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
     const scale = width / 1100; // meters to canvas pixels
 
     // Background & Water
-    ctx.fillStyle = '#060d17';
+    ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, width, height);
 
     // Subtle navigation grid
-    ctx.strokeStyle = '#0f2438';
+    ctx.strokeStyle = '#e2e8f0';
     ctx.lineWidth = 1;
     const gridSize = 50 * scale;
     for (let x = 0; x < width; x += gridSize) {
@@ -457,7 +457,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
     if (showRangeRings) {
       const rings = [100, 250, 450];
       for (const r of rings) {
-        ctx.strokeStyle = 'rgba(20, 184, 166, 0.18)';
+        ctx.strokeStyle = 'rgba(13, 148, 136, 0.25)';
         ctx.setLineDash([4, 4]);
         ctx.beginPath();
         ctx.arc(centerX + state.usv.x * scale, centerY - state.usv.y * scale, r * scale, 0, Math.PI * 2);
@@ -465,7 +465,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
         ctx.setLineDash([]);
 
         // Ring distance text
-        ctx.fillStyle = 'rgba(20, 184, 166, 0.4)';
+        ctx.fillStyle = '#0f766e';
         ctx.font = '9px monospace';
         ctx.fillText(`${r}m`, centerX + state.usv.x * scale + (r - 20) * scale, centerY - state.usv.y * scale - 4);
       }
@@ -596,7 +596,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
         }
 
         // AIS Tag Text
-        ctx.fillStyle = '#cbd5e1';
+        ctx.fillStyle = '#1e293b';
         ctx.font = '10px monospace';
         ctx.fillText(`${obs.name} [${obs.speedKnots.toFixed(0)}kt]`, ox + 10, oy - 6);
 
@@ -687,11 +687,11 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
     }
 
     // USV Name Tag
-    ctx.fillStyle = '#5eead4';
+    ctx.fillStyle = '#0f766e';
     ctx.font = 'bold 11px monospace';
     ctx.fillText('USV-01 (OWN SHIP)', ux + 14, uy - 10);
     ctx.font = '9px monospace';
-    ctx.fillStyle = '#94a3b8';
+    ctx.fillStyle = '#475569';
     ctx.fillText(`${state.usv.speed.toFixed(1)} kt • ${state.usv.heading.toFixed(0)}°`, ux + 14, uy + 4);
   };
 
@@ -750,7 +750,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
       const cy = h / 2 + 30;
 
       // Clear
-      ctx.fillStyle = '#08111e';
+      ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, w, h);
 
       // Hydrostatic physics calculation
@@ -887,7 +887,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
       ctx.restore();
 
       // Static Telemetry overlay on tank
-      ctx.fillStyle = '#f8fafc';
+      ctx.fillStyle = '#0f172a';
       ctx.font = '12px monospace';
       ctx.fillText(`Draft (T): ${draft.toFixed(2)} m`, 20, 30);
       ctx.fillText(`Displacement (Δ): ${hydroMass.toFixed(1)} t`, 20, 50);
@@ -896,7 +896,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
 
       // IMO Status
       const isCompliant = gmt >= 0.35;
-      ctx.fillStyle = isCompliant ? '#34d399' : '#f87171';
+      ctx.fillStyle = isCompliant ? '#059669' : '#dc2626';
       ctx.fillText(
         `IMO MSC.267(85) Status: ${isCompliant ? 'PASS (GMt >= 0.35m)' : 'FAIL / UNSTABLE'}`,
         20,
