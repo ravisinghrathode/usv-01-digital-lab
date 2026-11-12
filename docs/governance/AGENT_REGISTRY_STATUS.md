@@ -1,7 +1,7 @@
-# NAVAL-USV | USV-01 25-Agent Architecture Registry Status
+# NAVAL-USV | USV-01 26-Agent Architecture Registry Status
 ## Canonical HMEA v0.2 Architecture & Operational Readiness Classification
 
-This document records the authoritative implementation status of all 25 autonomous engineering agents (A01–A25) comprising the Hybrid Multi-Expert Architecture (HMEA v0.2) of the USV-01 Digital Engineering Lab.
+This document records the authoritative implementation status of all 26 autonomous engineering agents (A01–A26) comprising the Hybrid Multi-Expert Architecture (HMEA v0.2) of the USV-01 Digital Engineering Lab.
 
 ---
 
@@ -9,7 +9,7 @@ This document records the authoritative implementation status of all 25 autonomo
 
 To prevent cosmetic or synthetic claims of autonomy, every agent is categorized according to strict engineering verification definitions:
 
-1. **Defined:** Agent identity, role charter, system instructions, division, and canonical ID (A01–A25) are formally specified in `src/core/agents/definitions.ts`.
+1. **Defined:** Agent identity, role charter, system instructions, division, and canonical ID (A01–A26) are formally specified in `src/core/agents/definitions.ts`.
 2. **Configured:** Dependencies, execution permissions, tool bindings, and audit requirements are registered in `src/core/registry/AgentRegistry.ts`.
 3. **Integrated:** Connected to the central execution DAG, state management, and multi-agent coordination bridge (`src/core/orchestrator/CentralOrchestrator.ts`).
 4. **Executable:** Backed by real deterministic physics calculation engines, domain calculation scripts, or authenticated model providers (never unverified mock simulations).
@@ -47,6 +47,7 @@ To prevent cosmetic or synthetic claims of autonomy, every agent is categorized 
 | **A23** | `INDEP-REV-23` | Independent Reviewer & Cross-Checker | SYSTEMS_VVT | **Executable & Tested** | `scripts/governance/independent-ai-review.ts`, 7 Specialist Roles |
 | **A24** | `VVT-VAL-24` | Requirements Verification & Validation | SYSTEMS_VVT | **Defined & Configured** | `src/core/agents/definitions.ts`, Traceability Matrix |
 | **A25** | `DOC-OBS-25` | Documentation & Knowledge Architect | SYSTEMS_VVT | **Defined & Configured** | `src/core/agents/definitions.ts`, Markdown & Obsidian Vault |
+| **A26** | `INTEL-USV-26` | Global Navy USV Fleet Intelligence & Benchmark Analyst | SYSTEMS_VVT | **Executable & Tested** | `src/core/agents/GlobalUsvIntelligenceAgent.ts`, `tests/globalUsvIntel.test.ts` |
 
 ---
 
@@ -54,4 +55,4 @@ To prevent cosmetic or synthetic claims of autonomy, every agent is categorized 
 
 - **A15 is the Independent Technical Critic:** Exercises adversarial technical criticism, challenges unsupported design optimizations, and prevents confirmation bias during multi-agent synthesis.
 - **A18 is the Test & Verification Director:** Oversees automated testing baselines, enforces zero-regression test gates, and validates evidence packages across the verification lifecycle.
-- **Physical Safety Boundary:** None of the 25 software agents have autonomous authority to commit code to `main` without human approval, nor do they possess physical actuator control.
+- **Physical Safety Boundary:** None of the 26 software agents have autonomous authority to commit code to `main` without human approval, nor do they possess physical actuator control.

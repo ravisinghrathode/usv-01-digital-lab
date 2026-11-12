@@ -19,7 +19,7 @@ export interface ProjectInfo {
   code: string;
   description: string;
   status: 'Active' | 'Paused' | 'Archived';
-  governanceState: 'Draft' | 'In Review' | 'Approved Baseline' | 'Approved' | 'Superseded';
+  governanceState: 'Draft' | 'In Review' | 'Approved' | 'Approved Baseline' | 'Superseded';
   baselineRev: string;
   leadEngineer: string;
   securityClassification: string;
@@ -230,7 +230,7 @@ export interface WeightCGItem {
 export interface ResistanceEstimate {
   id: string;
   speedKnots: number | 'TBD';
-  method: 'Holtrop-Mennen' | 'Savitsky Planing' | 'CFD VOF' | 'Towing Tank' | 'TBD' | 'ITTC-57 Cruise Planing' | 'ITTC-57 Sprint Planing (Fn=1.115)' | string;
+  method: 'Holtrop-Mennen' | 'Savitsky Planing' | 'CFD VOF' | 'Towing Tank' | 'ITTC-57 Cruise Planing' | 'ITTC-57 Sprint Planing (Fn=1.115)' | 'TBD' | string;
   bareHullResistanceKN: number | 'TBD';
   appendageResistanceKN: number | 'TBD';
   effectivePowerKW: number | 'TBD';
@@ -258,7 +258,7 @@ export interface LoadCaseRecord {
   governingStandard: string;
   designPressureOrForce: string;
   safetyFactorTarget: number;
-  feaStatus: 'TBD' | 'Pending Meshing' | 'Solved - Criteria Met' | 'Failed Criteria' | 'Solved - Criteria Met (7.0mm Plating)' | string;
+  feaStatus: 'TBD' | 'Pending Meshing' | 'Solved - Criteria Met' | 'Solved - Criteria Met (7.0mm Plating)' | 'Failed Criteria' | string;
 }
 
 // Electrical and Power

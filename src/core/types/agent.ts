@@ -14,8 +14,8 @@ export type AgentStatus = 'IDLE' | 'EXECUTING' | 'WAITING_APPROVAL' | 'COMPLETED
 
 export type ExecutionPermission = 'READ_ONLY' | 'PARAM_PROPOSAL' | 'CALCULATION_EXEC' | 'BASELINE_DRAFT' | 'VVT_REVIEW';
 
-import type { ModelConfig } from '../models/ModelProvider.ts';
-export type { ModelConfig };
+import type { ModelConfig, ExecutionMode } from '../models/ModelProvider.ts';
+export type { ModelConfig, ExecutionMode };
 
 export interface AgentVerificationCriteria {
   requiredChecklist: string[];
@@ -33,7 +33,7 @@ export interface AgentAuditRequirement {
 
 export interface AgentSpec {
   id: string; // e.g. 'LEAD-SYS-01'
-  canonicalId: string; // Canonical HMEA v0.2 ID: 'A01' - 'A25'
+  canonicalId: string; // Canonical HMEA v0.2 ID: 'A01' - 'A26'
   aliases?: string[]; // e.g. ['LEAD-SYS-01', 'A01']
   division: AgentDivision;
   name: string;
@@ -58,6 +58,7 @@ export interface AgentExecutionInput {
   parameters: Record<string, any>;
   priorAgentOutputs?: Record<string, any>;
   userNotes?: string;
+  correlationId?: string;
 }
 
 export interface TraceableAssumption {
@@ -74,6 +75,12 @@ export interface AgentExecutionOutput {
   taskId: string;
   timestamp: string;
   status: 'SUCCESS' | 'PARTIAL' | 'FAILED' | 'NEEDS_HUMAN_APPROVAL';
+  executionMode?: ExecutionMode;
+  provider?: string;
+  modelIdentifier?: string;
+  correlationId?: string;
+  evidenceValid?: boolean;
+  verificationStatus?: 'UNVERIFIED' | 'CALCULATED_VERIFIED' | 'HUMAN_APPROVED' | 'SYNTHETIC_MOCK' | 'EXECUTION_FAILED';
   data: Record<string, any>;
   assumptions: TraceableAssumption[];
   deterministicToolEvidence: Array<{

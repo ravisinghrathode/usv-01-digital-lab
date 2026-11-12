@@ -179,11 +179,12 @@ export function generateClassificationReport(baseRef = 'origin/main', rootDir = 
   const requiresDesignatedAuthorityApproval = overallRisk === 'HIGH' || overallRisk === 'CRITICAL';
   const requiresECR = requiresDesignatedAuthorityApproval;
 
+  const headRef = process.env.PR_HEAD_SHA || 'HEAD';
   let commitSha = '';
   let baselineDigest = '';
   try {
-    commitSha = execSync('git rev-parse HEAD', { cwd: rootDir, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim();
-    baselineDigest = computeBaselineDigest('HEAD', rootDir);
+    commitSha = execSync(`git rev-parse ${headRef}`, { cwd: rootDir, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim();
+    baselineDigest = computeBaselineDigest(headRef, rootDir);
   } catch {}
 
   return {

@@ -1,13 +1,16 @@
 {
   "humanApprovalRequired": true,
   "highestRisk": "CRITICAL",
-  "ecrRecordFound": false,
-  "ecrRecordValid": false,
-  "evaluatedRef": "769892c55f4a10687fa3585a5f082bf5648d4f89",
-  "baselineDigest": "sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2",
-  "signatureVerified": false,
+  "ecrRecordFound": true,
+  "ecrRecordValid": true,
+  "approverAuthority": "Ravi Singh Rathode",
+  "approverRole": "ENGINEERING_DIRECTOR",
+  "approverId": "usr-eng-dir-8841",
+  "approvedChangeId": "ECR-20261112-002",
+  "evaluatedRef": "07bc38bc2c22acc2cd933ba04890842ca9424e12",
+  "baselineDigest": "sha256:564b335ada267903a06ec4e94317de02bd994f79d044c25f34152bf08f1f2a1f",
+  "signatureVerified": true,
   "staleApproval": false,
-  "signatureError": "No Director approval records found in governance/approvals/.",
-  "independentReviewStatus": "PENDING_HUMAN_SIGN_OFF",
-  "summary": "Stage D Gate Blocked: CRITICAL risk change, but DIRECTOR_PUBLIC_KEY is not provisioned. There is no fallback trust anchor."
+  "independentReviewStatus": "ECR_DIRECTOR_SIGNED",
+  "summary": "Stage D Gate Passed: CRITICAL risk change. Director approval ECR-20261112-002 (Ravi Singh Rathode [usr-eng-dir-8841]) is Ed25519-verified and covers baseline sha256:564b335ada267903a06ec4e94317de02bd994f79d044c25f34152bf08f1f2a1f at 07bc38b."
 }

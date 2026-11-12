@@ -3,8 +3,8 @@
   "programme": "NAVAL-USV",
   "project": "USV-01 Digital Engineering Lab",
   "releaseVersion": "1.0.0",
-  "gitCommitSha": "b1141d178fba46fd48fa6f3306977b096d781d9b",
-  "builtAt": "2026-11-12T12:52:38.310Z",
+  "gitCommitSha": "7c7831e7f81d23020c74611458e5440fd9c55b19",
+  "builtAt": "2026-11-12T18:20:54.981Z",
   "environment": {
     "nodeVersion": "v24.22.2",
     "osPlatform": "linux"
@@ -12,33 +12,33 @@
   "checksums": [
     {
       "path": "package.json",
-      "sha256": "d63a243db940c29becd382215592693833bbfaf508282aab669676ceccdcb9d3",
-      "sizeBytes": 2195
+      "sha256": "49987afc6a126559783154401b6c7dba6247748345220eb7b7317cd14709ca3b",
+      "sizeBytes": 2223
     },
     {
       "path": "server.ts",
-      "sha256": "bccee406017c2f0cf0ce05925b9799c24fda9f5c186387e005f93bc9dd609562",
-      "sizeBytes": 47662
+      "sha256": "02d4e4080f574ce944463d73b52b8a855ccf97791e2164dba76431e0552d284e",
+      "sizeBytes": 59009
     },
     {
       "path": "USV01_PROJECT_CONTEXT.md",
-      "sha256": "6c02ab8226ad0364672db625c5c8901f9b841a9dac16f5c82cdb8f5057c6edfd",
-      "sizeBytes": 4617
+      "sha256": "05be2d011313c7690b3afc76c87c7ce00a50c467883034b1b094b6b235b6fba7",
+      "sizeBytes": 5943
     },
     {
       "path": "src/App.tsx",
-      "sha256": "ec2f3499731cc5db6f803a68f7ca9cf32579ec078cbcacf2ecdbd57c64fea206",
-      "sizeBytes": 33257
+      "sha256": "f57713e21485f56ac4671848ff3a8336feeba7630aef4b4650e0e199ea1be0ad",
+      "sizeBytes": 35777
     },
     {
       "path": "src/components/AgentOrchestratorView.tsx",
-      "sha256": "e5207040c008ed49f85681248c5beaab1f105f528cb36675141ba2c75f111ac9",
-      "sizeBytes": 63459
+      "sha256": "7e76b9ca8c6ea3d1657f080c45cb76f709928380c47151291711af25387cf550",
+      "sizeBytes": 67501
     },
     {
       "path": "src/components/AiEngineeringAssistant.tsx",
-      "sha256": "b378a7f1ce3c58e0be3b31d039aeaf5baed15757258b518ae0222826155e25ad",
-      "sizeBytes": 11712
+      "sha256": "e54752d3384dc9f8528632a552c1c2f29ecca85f80e5ef6e5cc94eefe88c8120",
+      "sizeBytes": 20664
     },
     {
       "path": "src/components/ContextGuideModal.tsx",
@@ -57,18 +57,18 @@
     },
     {
       "path": "src/components/GenerativeOptimizerView.tsx",
-      "sha256": "f7c0bcec8950ab3721cd2e90b44ac60565cf74e4e82dfd6bfca52f4731b8d999",
-      "sizeBytes": 71206
+      "sha256": "a4a50eec0a2716008bd917c69cfc1d101fe3be77a35c1c72e5c8586eb885a05b",
+      "sizeBytes": 71594
     },
     {
       "path": "src/components/GlobalUsvFleetView.tsx",
-      "sha256": "47d23016d24e46f85d00c1f5f522b6965db750faeb465661265ce3f0509924e5",
-      "sizeBytes": 49208
+      "sha256": "b38250d1d744a669b8f6a798665844287483eb875f227f1fa27899c6d1b43e8f",
+      "sizeBytes": 49294
     },
     {
       "path": "src/components/HydrodynamicsView.tsx",
-      "sha256": "9d2194e0b832049e8c1c35720952483ffa12bca301d483ab7fa956c30c2f5c90",
-      "sizeBytes": 33561
+      "sha256": "5ef2fd3ccaffaac3615c4b5f77a48d725c9533e90e73017452b73be795140f0e",
+      "sizeBytes": 33593
     },
     {
       "path": "src/components/KnowledgeCentreView.tsx",
@@ -87,8 +87,8 @@
     },
     {
       "path": "src/components/NavalArchitectureView.tsx",
-      "sha256": "acf2a7f93e0b77bab8056e8d32c7b0365db65d37785ebe86cbc7726b3d45a3db",
-      "sizeBytes": 41455
+      "sha256": "f427acd50937419293c83f4e315cc8e5f86175bec78d3c07544ec8462e46f2b3",
+      "sizeBytes": 41474
     },
     {
       "path": "src/components/NavalNotebookLMView.tsx",
@@ -97,8 +97,8 @@
     },
     {
       "path": "src/components/NavigationSidebar.tsx",
-      "sha256": "3f4de74b66709b2bbd5103d0978bab36a54c24912806ab21a9c8e601c5fe3d8d",
-      "sizeBytes": 17094
+      "sha256": "a4801f222db1cbb66e8f1515d35e23e8787a8737104e80078bda80f041979c69",
+      "sizeBytes": 19136
     },
     {
       "path": "src/components/NewRecordModal.tsx",
@@ -112,8 +112,8 @@
     },
     {
       "path": "src/components/ProjectOverview.tsx",
-      "sha256": "63c0dc4f5544d360b73cdd64d475c584fb7a79dd7ec504d4fadbcc439920e8f6",
-      "sizeBytes": 25754
+      "sha256": "3a554f4fe827c8bc015a272b596e470ac8ffea7d9afdb323032a6c45eaace51e",
+      "sizeBytes": 40735
     },
     {
       "path": "src/components/PropulsionView.tsx",
@@ -122,8 +122,8 @@
     },
     {
       "path": "src/components/RealtimeSimulationView.tsx",
-      "sha256": "ad574f3cf76ddf25f99b402968324b78575022680fa1eb3f688fb7a13045e343",
-      "sizeBytes": 52872
+      "sha256": "5759ac0cb9ff67fcd2ea1c4df0d885fa3ad68687743a417dafc124ca9e0d27a3",
+      "sizeBytes": 59076
     },
     {
       "path": "src/components/RisksDecisionsView.tsx",
@@ -172,18 +172,18 @@
     },
     {
       "path": "src/components/Vessel3DVisualizer.tsx",
-      "sha256": "fc343417848e7d263faf5ed579fb14d3a8a72220517ddfee344aa8867eaeb57a",
-      "sizeBytes": 42388
+      "sha256": "34c297a17bc0afbb9116c94041aedbde7d94d86f42621941a919f5970a49d020",
+      "sizeBytes": 42392
     },
     {
       "path": "src/core/agents/GlobalUsvIntelligenceAgent.ts",
-      "sha256": "7f98979b798f7f89167c7b96e24e3bb7122721f12fcfd3747565a245d46f06ee",
-      "sizeBytes": 18026
+      "sha256": "77eba6e870e7436b4e8b64143343f0b6704d8d16ba44414b5ac8d42d8e0a035d",
+      "sizeBytes": 21230
     },
     {
       "path": "src/core/agents/definitions.ts",
-      "sha256": "15feb4ffa6fd1ba284dcfdd2dd1df422acc40d618bb23ea84b21d047ac95df2d",
-      "sizeBytes": 49407
+      "sha256": "3ee330dd4a91054b4c6978cb6b38338eb986784827c9286b4b613d635959a1d6",
+      "sizeBytes": 49427
     },
     {
       "path": "src/core/auth/authClient.ts",
@@ -202,13 +202,13 @@
     },
     {
       "path": "src/core/engine/BaseAgent.ts",
-      "sha256": "a091daaaa69058414b63e61d32426f103c762d8beb0a447567f60c63f55d9b1f",
-      "sizeBytes": 7767
+      "sha256": "4d2bf63d1793130425a44e3ef178299fb01d9b55b5e9df5de54eb2e49b16ffc9",
+      "sizeBytes": 13422
     },
     {
       "path": "src/core/engine/ExecutionEngine.ts",
-      "sha256": "729cf743bd1d03c13dde2ab8d8ad1cfa3b24815055f7892030e734e8c9ea17c1",
-      "sizeBytes": 3923
+      "sha256": "29cab0e28a9bca16f336a88a708e3b435896bced83b50fe99364433f4408aa78",
+      "sizeBytes": 5816
     },
     {
       "path": "src/core/governance/AgentGovernanceBridge.ts",
@@ -222,13 +222,13 @@
     },
     {
       "path": "src/core/memory/SharedMemory.ts",
-      "sha256": "9341068f1cef0f5f6a6873843f75c0c0b491c4fbf278ad2c96478dae10a10790",
-      "sizeBytes": 8854
+      "sha256": "fe34af778ebd015f8deccf1c3a5d747c4dd8845cc57a5ab3d1d1daffe6c5dcaa",
+      "sizeBytes": 11992
     },
     {
       "path": "src/core/models/ModelProvider.ts",
-      "sha256": "df9db9a89119ccf1c5fad32f59da4e8574307c7aab70b56208a37030ad26357f",
-      "sizeBytes": 19701
+      "sha256": "b37ec8b3484c1c118f7bbca2b3b72d4c7cc0cf44a7ed4d4de5d17a8fdd4f1496",
+      "sizeBytes": 21630
     },
     {
       "path": "src/core/optimizer/GenerativeDesignOptimizer.ts",
@@ -237,13 +237,13 @@
     },
     {
       "path": "src/core/orchestrator/CentralOrchestrator.ts",
-      "sha256": "a319953ee5c7c92a1601c158c45a4448884bf9d97d7bb451acdf1fc2ab44d944",
-      "sizeBytes": 8246
+      "sha256": "bbfa54545c7ee5dd8cfccc51de2f263a0643462dfba65d01b6a4548bf5d1f7fb",
+      "sizeBytes": 12595
     },
     {
       "path": "src/core/registry/AgentRegistry.ts",
-      "sha256": "edd1f7281a756d356ce7abe0deabd8317644ab15a4af62fcb20aa60790b31fac",
-      "sizeBytes": 4991
+      "sha256": "772ef949d4e0783cf4eed00a87780da7fc5801d989a65dcdea8eee3b210273db",
+      "sizeBytes": 4992
     },
     {
       "path": "src/core/safety/ApproverSigner.ts",
@@ -252,8 +252,8 @@
     },
     {
       "path": "src/core/safety/AuditLogger.ts",
-      "sha256": "f0367c1cc0f25c9913b101fa7a633c6c1efb42efd32a90b51a5ac6e05f8afbf5",
-      "sizeBytes": 1491
+      "sha256": "6490f24b0ef9160242a7c7c08e8258ade720730a306d5f2ed3a850133aafeac1",
+      "sizeBytes": 1490
     },
     {
       "path": "src/core/safety/CryptographicAuditTrail.ts",
@@ -262,8 +262,8 @@
     },
     {
       "path": "src/core/safety/HumanApprovalGate.ts",
-      "sha256": "fefc85c40fba7913d3748bb8802857613afc85d07b3bdfbc07b216c453354570",
-      "sizeBytes": 4563
+      "sha256": "b3fc56bdd8c0dac50d53d15d945d1bc3cf6ad703f6addc40d2f076ff00d99d8c",
+      "sizeBytes": 5068
     },
     {
       "path": "src/core/tools/ToolRegistry.ts",
@@ -272,18 +272,18 @@
     },
     {
       "path": "src/core/tools/naval/engineeringTools.ts",
-      "sha256": "356a751c9d5a4ea2b77c1a3e3e19813aba54f0736dbf238c92c98a4a255347e5",
-      "sizeBytes": 22430
+      "sha256": "f00f70b14e85bc9426453cff4b296763d5c78b917c9dac062e5d627350ec3e47",
+      "sizeBytes": 23118
     },
     {
       "path": "src/core/types/agent.ts",
-      "sha256": "c55cef817fdb3593a8e62d995734d9552a58c05b92b94f8ccc44949725e7e274",
-      "sizeBytes": 2713
+      "sha256": "21d5ffb5c0fac5617bd50a08a50d757ddcc517d7be5a29516e0e8da396f7d6ef",
+      "sizeBytes": 3024
     },
     {
       "path": "src/core/types/memory.ts",
-      "sha256": "20b813e28aa87546ba5982304e2db52ed5beed2777d02c44762eae41fcb227b6",
-      "sizeBytes": 1101
+      "sha256": "cffd8565f78b443e1422e70fcd9da7cbb8c1de9c54ecf5e6872834b32b21122f",
+      "sizeBytes": 1114
     },
     {
       "path": "src/core/types/orchestrator.ts",
@@ -307,8 +307,8 @@
     },
     {
       "path": "src/core/verification/VerifyUsv01Engine.ts",
-      "sha256": "aaf941d0c415d9a88f06c9e5325016e5a1189d62225601f4c3a8d5392512cc82",
-      "sizeBytes": 59481
+      "sha256": "bda8666ce2006c6288d09c3d85157eaf777eddcf8d795b416c0f2e422e434ba4",
+      "sizeBytes": 60151
     },
     {
       "path": "src/data/globalUsvFleetData.ts",
@@ -317,8 +317,8 @@
     },
     {
       "path": "src/data/initialProjectData.ts",
-      "sha256": "b1c96a5a4a8683f179541288f0f86c0310e8636c6c8638e50a60d24cac8d8ef4",
-      "sizeBytes": 37506
+      "sha256": "f3ea12cf812642eadbe9a4626e78f59b5fe1335ca9918fd32413654ec6c271a9",
+      "sizeBytes": 37827
     },
     {
       "path": "src/index.css",
@@ -331,9 +331,14 @@
       "sizeBytes": 240
     },
     {
+      "path": "src/server/geminiService.ts",
+      "sha256": "be881da63eba8c7de362254451cdcca4215e995d38f3b2aed00d6f431645833b",
+      "sizeBytes": 7136
+    },
+    {
       "path": "src/types/engineering.ts",
-      "sha256": "c33ee60360218c690fe5b206ab1f38350b67c2a4292e7330ccee10097c13a671",
-      "sizeBytes": 8637
+      "sha256": "651f9f33c5b912a83523f26db363d2516a96b88f823fd51a35cf49824d801c71",
+      "sizeBytes": 8841
     },
     {
       "path": "src/types/notebookLm.ts",
@@ -342,8 +347,13 @@
     },
     {
       "path": "src/types/usvIntelligence.ts",
-      "sha256": "171767c94061f1ea80690352eaa2c03a7383eb8fef9470c59f885ec40ea9ca54",
-      "sizeBytes": 5091
+      "sha256": "b8efcf31b41e22a965be2e6f3394fd8db9f08a30bcacccdec30e14613a8ba62f",
+      "sizeBytes": 5569
+    },
+    {
+      "path": "src/types/ws.d.ts",
+      "sha256": "2b1ba5300fc2c642b5be0d509810e7ee15d2805b5a213c0591383d5295af2c95",
+      "sizeBytes": 915
     },
     {
       "path": "src/utils/engineeringUtils.ts",
@@ -356,16 +366,41 @@
       "sizeBytes": 10928
     },
     {
+      "path": "dist/assets/index-C2xUXJfB.js",
+      "sha256": "0ce47005bde1729b19eb272b426d357023d3017209bb01a5883436f16edc6d24",
+      "sizeBytes": 766582
+    },
+    {
+      "path": "dist/assets/index-jBpFdISO.css",
+      "sha256": "a70257a7a0807e85061edd43c9fa572062d7840eb986c0206e1e473f67ef0944",
+      "sizeBytes": 47525
+    },
+    {
+      "path": "dist/assets/vendor-libs-E_n6JUh-.js",
+      "sha256": "6d8965af2beafbe9798241e3c30844fe1078d885ab2bd3b284478c00257b1f95",
+      "sizeBytes": 447880
+    },
+    {
+      "path": "dist/assets/vendor-react-YBty3pab.js",
+      "sha256": "b8bf37cd7b31d069f1a610c89dd575acd4e486e87275b5b5113bc756025ac33c",
+      "sizeBytes": 251352
+    },
+    {
+      "path": "dist/assets/vendor-zod-BpELgJAh.js",
+      "sha256": "c239780ef28847685e51cb01ac86c44c22b4dcd83a5c6e7cdde5cc7cd04c30d4",
+      "sizeBytes": 94585
+    },
+    {
       "path": "dist/index.html",
-      "sha256": "9c4933588b1a9ee29ef263f20ba05c14b5ea631bb94f36938242403587187b78",
-      "sizeBytes": 59
+      "sha256": "09cfa02b49d62d86b0e904712b6174a6a582b3cd9193a0e21571aa77906f2ae5",
+      "sizeBytes": 1406
     }
   ],
   "verificationEvidence": {
-    "testsPassed": 97,
-    "testSuiteTotal": 97,
+    "testsPassed": 328,
+    "testSuiteTotal": 328,
     "auditVulnerabilities": 0,
     "staticAnalysisStatus": "PASS"
   },
-  "immutableManifestSha256": "3fdd92a54a631f8811af9415493f995cc37e101f19502b0d06f36293136a1104"
+  "immutableManifestSha256": "22909ea7292395402a6c2e3c2029e2ccdaea263fab7f0af79b058558bc321724"
 }

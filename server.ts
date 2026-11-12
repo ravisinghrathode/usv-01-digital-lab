@@ -35,6 +35,10 @@ import { GlobalIntelligenceLearningBridge } from './src/core/intelligence/Global
 import http from 'http';
 import { WebSocketServer } from 'ws';
 import { VerifyUsv01Engine } from './src/core/verification/VerifyUsv01Engine.ts';
+import { AgentRegistry } from './src/core/registry/AgentRegistry.ts';
+import { BaseAgent } from './src/core/engine/BaseAgent.ts';
+import { CentralOrchestrator } from './src/core/orchestrator/CentralOrchestrator.ts';
+import { AuditLogger } from './src/core/safety/AuditLogger.ts';
 import {
   getGeminiClient,
   isGeminiAvailable,
@@ -395,10 +399,14 @@ app.get('/api/auth/setup-status', (req, res) => {
   });
 });
 
-// Browser-based first-time staff credential provisioning (only for identities not yet provisioned)
+const INITIAL_PROVISION_SECRET = process.env.INITIAL_PROVISION_SECRET || process.env.ADMIN_SETUP_TOKEN;
+
+// Secure staff credential provisioning:
+// Requires administrative authorization (Engineering Director session) or verified setupToken.
+// An unauthenticated external request cannot arbitrarily claim or provision privileged accounts.
 app.post('/api/auth/provision-initial', (req, res) => {
   try {
-    const { userId, passphrase } = req.body || {};
+    const { userId, passphrase, setupToken } = req.body || {};
     if (!userId || typeof userId !== 'string') {
       return res.status(400).json({ success: false, error: 'Missing userId.' });
     }
@@ -418,18 +426,155 @@ app.post('/api/auth/provision-initial', (req, res) => {
       });
     }
 
+    // Security Authorization Gate:
+    const authHeader = req.headers['authorization'];
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : (req.headers['x-auth-token'] as string);
+    const sessionUser = token ? verifySessionToken(token) : null;
+    const isDirectorSession = sessionUser?.role === 'ENGINEERING_DIRECTOR';
+
+    const hasValidSetupToken = INITIAL_PROVISION_SECRET && setupToken === INITIAL_PROVISION_SECRET;
+    const hasProvisionedUsers = !!store && Object.keys(store.credentials).length > 0;
+
+    // If accounts already exist, ONLY an authenticated Director or valid setupToken can provision
+    if (hasProvisionedUsers && !isDirectorSession && !hasValidSetupToken) {
+      AuditLogger.getInstance().log({
+        severity: 'SAFETY_CRITICAL',
+        action: 'UNAUTHORIZED_PROVISION_ATTEMPT',
+        details: { attemptedUserId: userId, ip: req.ip }
+      });
+      return res.status(403).json({
+        success: false,
+        error: 'Forbidden: Credential store is already initialized. Provisioning requires an authenticated Engineering Director session or valid setupToken.'
+      });
+    }
+
+    // If store is empty, but INITIAL_PROVISION_SECRET is configured, enforce setupToken
+    if (!hasProvisionedUsers && INITIAL_PROVISION_SECRET && !hasValidSetupToken && !isDirectorSession) {
+      AuditLogger.getInstance().log({
+        severity: 'SAFETY_CRITICAL',
+        action: 'UNAUTHORIZED_INITIAL_PROVISION_ATTEMPT',
+        details: { attemptedUserId: userId, ip: req.ip }
+      });
+      return res.status(403).json({
+        success: false,
+        error: 'Forbidden: Initial account provisioning requires valid setupToken matching INITIAL_PROVISION_SECRET.'
+      });
+    }
+
     const cred = hashCredential(passphrase);
     saveCredential(userId, cred, resolveCredentialStorePath());
-    const token = createSessionToken(member);
+    const sessionToken = createSessionToken(member);
+
+    AuditLogger.getInstance().log({
+      severity: 'SAFETY_CRITICAL',
+      action: 'STAFF_CREDENTIAL_PROVISIONED',
+      details: { userId, role: member.role, provisionedBy: sessionUser?.userId || 'INITIAL_SETUP' }
+    });
 
     res.json({
       success: true,
       message: `Passphrase provisioned for ${member.userName} (${member.role}).`,
-      token,
+      token: sessionToken,
       user: member
     });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// --- SECURE SERVER-SIDE AGENT EXECUTION INTERFACE ---
+app.post('/api/agents/execute', async (req, res) => {
+  const correlationId = req.body?.correlationId || `corr-srv-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
+  try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : (req.headers['x-auth-token'] as string);
+    const user = token ? verifySessionToken(token) : null;
+
+    const { agentId, taskId, parameters, context, priorAgentOutputs, userNotes } = req.body || {};
+
+    if (!agentId || typeof agentId !== 'string') {
+      return res.status(400).json({ success: false, error: "Missing required parameter 'agentId'." });
+    }
+
+    const registry = AgentRegistry.getInstance();
+    const spec = registry.getAgent(agentId);
+    if (!spec) {
+      return res.status(404).json({ success: false, error: `Agent '${agentId}' not found in authoritative AgentRegistry.` });
+    }
+
+    // Role-based authorization: Safety-critical agents require valid session
+    if (spec.auditRequirement.logLevel === 'SAFETY_CRITICAL' && !user) {
+      AuditLogger.getInstance().log({
+        severity: 'SAFETY_CRITICAL',
+        agentId,
+        action: 'UNAUTHORIZED_AGENT_EXECUTION_ATTEMPT',
+        details: { reason: 'Safety-critical agent execution requires verified session token', correlationId }
+      });
+      return res.status(401).json({
+        success: false,
+        error: `Unauthorized: Execution of safety-critical agent '${agentId}' requires an authenticated session.`
+      });
+    }
+
+    // Input size limit check (prevent buffer overflow / DoS)
+    if (JSON.stringify(req.body).length > 2_000_000) {
+      return res.status(413).json({ success: false, error: 'Payload too large: Max input size is 2MB.' });
+    }
+
+    // Server-controlled execution with timeout and correlation ID
+    const agent = new BaseAgent(spec);
+    const executionInput = {
+      taskId: taskId || `TASK-${Date.now()}`,
+      parameters: parameters || {},
+      context: { ...(context || {}), authenticatedUserId: user?.userId, authenticatedUserRole: user?.role },
+      priorAgentOutputs: priorAgentOutputs || {},
+      userNotes,
+      correlationId
+    };
+
+    const output = await Promise.race([
+      agent.execute(executionInput),
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error(`Agent execution timeout exceeded (30000ms) for '${agentId}'`)), 30000)
+      )
+    ]);
+
+    res.json({
+      success: true,
+      correlationId,
+      output
+    });
+  } catch (err: any) {
+    AuditLogger.getInstance().log({
+      severity: 'SAFETY_CRITICAL',
+      agentId: req.body?.agentId || 'UNKNOWN',
+      action: 'SERVER_AGENT_EXECUTION_ERROR',
+      details: { error: err.message || String(err), correlationId }
+    });
+    res.status(500).json({ success: false, correlationId, error: err.message || String(err) });
+  }
+});
+
+app.post('/api/orchestrator/execute-workflow', async (req, res) => {
+  try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : (req.headers['x-auth-token'] as string);
+    const user = token ? verifySessionToken(token) : null;
+
+    if (!user) {
+      return res.status(401).json({ success: false, error: 'Unauthorized: Workflow execution requires an authenticated session.' });
+    }
+
+    const orchestrator = CentralOrchestrator.getInstance();
+    const result = await orchestrator.executeWorkflow();
+
+    res.json({
+      success: true,
+      results: result,
+      tasks: orchestrator.getAllTasks()
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message || String(err) });
   }
 });
 

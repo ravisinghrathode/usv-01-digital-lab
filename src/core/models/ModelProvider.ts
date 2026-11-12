@@ -1,3 +1,11 @@
+export type ExecutionMode =
+  | 'DETERMINISTIC_CALCULATION'
+  | 'LIVE_AI_GENERATION'
+  | 'STATIC_RULES_EVALUATION'
+  | 'SYNTHETIC_TEST_MOCK'
+  | 'EXECUTION_FAILED'
+  | 'INDEPENDENTLY_VERIFIED';
+
 export interface ModelConfig {
   preferredProvider?: 'gemini' | 'openai' | 'deterministic' | 'ollama' | 'mock_deterministic';
   modelName?: string;
@@ -12,6 +20,7 @@ export interface ModelPromptRequest {
   context: Record<string, any>;
   temperature?: number;
   maxTokens?: number;
+  correlationId?: string;
 }
 
 export interface ModelPromptResponse {
@@ -19,12 +28,15 @@ export interface ModelPromptResponse {
   parsedJson?: Record<string, any>;
   providerUsed: string;
   modelUsed: string;
+  executionMode: ExecutionMode;
   tokenUsage?: { promptTokens: number; completionTokens: number; totalTokens: number };
-  isMock?: boolean;
-  isAiReview?: boolean;
-  evidenceValid?: boolean;
+  isMock: boolean;
+  isAiReview: boolean;
+  evidenceValid: boolean;
   aiReviewUnavailable?: boolean;
   statusMessage?: string;
+  correlationId?: string;
+  timestamp: string;
 }
 
 export interface IModelProvider {
@@ -50,8 +62,9 @@ export class DeterministicProvider implements IModelProvider {
       reviewMode: 'DETERMINISTIC_STATIC_EVALUATION',
       isAiReview: false,
       isMock: false,
-      evidenceValid: true,
+      evidenceValid: false,
       disciplineSummary: `[DETERMINISTIC STATIC EVALUATION] Automated rules-based assessment executed without external AI API dependencies. Context files: ${Object.keys(context).join(', ') || 'Standard Baseline'}.`,
+      keyMetrics: {},
       findings: [],
       designDecisions: [
         'DETERMINISTIC_RULE_EVALUATION: Code checked against static pattern and safety boundary rules.'
@@ -76,9 +89,12 @@ export class DeterministicProvider implements IModelProvider {
       parsedJson: resultData,
       providerUsed: 'deterministic',
       modelUsed: config?.modelName || 'deterministic-rules-engine-v1',
+      executionMode: 'STATIC_RULES_EVALUATION',
       isAiReview: false,
       isMock: false,
-      evidenceValid: true,
+      evidenceValid: false,
+      correlationId: request.correlationId || `corr-det-${Date.now()}`,
+      timestamp: new Date().toISOString(),
       tokenUsage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
       statusMessage: 'Deterministic evaluation passed without external API dependencies.'
     };
@@ -185,9 +201,12 @@ export class GeminiProvider implements IModelProvider {
         parsedJson,
         providerUsed: 'gemini',
         modelUsed: model,
+        executionMode: 'LIVE_AI_GENERATION',
         isAiReview: true,
         isMock: false,
-        evidenceValid: true,
+        evidenceValid: false,
+        correlationId: request.correlationId || `corr-gem-${Date.now()}`,
+        timestamp: new Date().toISOString(),
         tokenUsage: {
           promptTokens: (response as any)?.usageMetadata?.promptTokenCount || 0,
           completionTokens: (response as any)?.usageMetadata?.candidatesTokenCount || 0,
@@ -262,9 +281,12 @@ export class OllamaProvider implements IModelProvider {
       parsedJson,
       providerUsed: 'ollama',
       modelUsed: model,
+      executionMode: 'LIVE_AI_GENERATION',
       isAiReview: true,
       isMock: false,
-      evidenceValid: true
+      evidenceValid: false,
+      correlationId: request.correlationId || `corr-ollama-${Date.now()}`,
+      timestamp: new Date().toISOString()
     };
   }
 }
@@ -337,9 +359,12 @@ export class OpenAIProvider implements IModelProvider {
       parsedJson,
       providerUsed: 'openai',
       modelUsed: model,
+      executionMode: 'LIVE_AI_GENERATION',
       isAiReview: true,
       isMock: false,
-      evidenceValid: true,
+      evidenceValid: false,
+      correlationId: request.correlationId || `corr-openai-${Date.now()}`,
+      timestamp: new Date().toISOString(),
       tokenUsage: {
         promptTokens: data?.usage?.prompt_tokens || 0,
         completionTokens: data?.usage?.completion_tokens || 0,
@@ -423,9 +448,12 @@ export class MockDeterministicProvider implements IModelProvider {
       parsedJson: resultData,
       providerUsed: 'mock_deterministic',
       modelUsed: config?.modelName || 'deterministic-marine-engine-v1',
+      executionMode: 'SYNTHETIC_TEST_MOCK',
       isAiReview: false,
       isMock: true,
       evidenceValid: false,
+      correlationId: request.correlationId || `corr-mock-${Date.now()}`,
+      timestamp: new Date().toISOString(),
       tokenUsage: { promptTokens: 120, completionTokens: 180, totalTokens: 300 }
     };
   }
@@ -493,7 +521,8 @@ export class ModelProviderRouter {
   public async generate(request: ModelPromptRequest, config: ModelConfig): Promise<ModelPromptResponse> {
     const isTestMode = isTestExecutionEnvironment();
     let providerName = config.preferredProvider || resolveConfiguredProvider();
-    if (providerName === 'gemini' && typeof window === 'undefined' && (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY.trim().length === 0)) {
+    const hasGeminiKey = typeof process !== 'undefined' && !!process.env?.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim().length > 0;
+    if (providerName === 'gemini' && !hasGeminiKey) {
       providerName = resolveConfiguredProvider();
     }
 
@@ -536,6 +565,7 @@ export class ModelProviderRouter {
     const response = await fallback.generateText(request, config);
     response.isMock = true;
     response.evidenceValid = false;
+    response.executionMode = 'SYNTHETIC_TEST_MOCK';
     return response;
   }
 }

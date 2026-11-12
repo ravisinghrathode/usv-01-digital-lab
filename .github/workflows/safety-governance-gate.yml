@@ -19,7 +19,7 @@ jobs:
       run:
         shell: bash
     env:
-      DIRECTOR_PUBLIC_KEY: ${{ vars.DIRECTOR_PUBLIC_KEY || secrets.DIRECTOR_PUBLIC_KEY }}
+      DIRECTOR_PUBLIC_KEY: ${{ vars.DIRECTOR_PUBLIC_KEY || secrets.DIRECTOR_PUBLIC_KEY || secrets.DIRECTOR_SIGNING_KEY }}
       PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       AI_REVIEW_PROVIDER: ${{ vars.AI_REVIEW_PROVIDER || (secrets.GEMINI_API_KEY != '' && 'gemini' || 'deterministic') }}
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -29,6 +29,7 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
 
       - name: Set up Node.js LTS (v22)

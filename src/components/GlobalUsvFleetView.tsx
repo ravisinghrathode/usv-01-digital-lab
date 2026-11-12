@@ -89,14 +89,13 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
     return { total, countriesCount, combatProven, highSpeed, longEndurance, totalPapers };
   }, [vessels]);
 
-  // Trigger scraper agent simulation
+  // Trigger research intelligence pipeline
   const handleTriggerScraper = async () => {
     setIsScraping(true);
     setScrapeConsoleOpen(true);
     setScrapeLogs([
-      `[${new Date().toLocaleTimeString()}] INTEL-USV-26 Agent initializing search & scrape pipeline...`,
-      `[${new Date().toLocaleTimeString()}] Querying IEEE Oceanic Engineering, SNAME, DARPA ACTUV repository...`,
-      `[${new Date().toLocaleTimeString()}] Harvesting Jane's Unmanned Surface Systems & Naval News operational bulletins...`
+      `[${new Date().toLocaleTimeString()}] INTEL-USV-26 Agent initializing research data pipeline...`,
+      `[${new Date().toLocaleTimeString()}] Checking source repositories: IEEE, SNAME, arXiv, Jane's, Naval News...`
     ]);
 
     try {
@@ -112,29 +111,29 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
 
       if (res.ok) {
         const data = await res.json();
+        const report = data.report || {};
+        const isCached = report.refreshMode === 'CACHED_OFFLINE';
         setScrapeLogs((prev) => [
           ...prev,
-          `[${new Date().toLocaleTimeString()}] Successfully parsed ${data.totalVessels} operational USV hull models.`,
-          `[${new Date().toLocaleTimeString()}] Extracted 6 peer-reviewed academic papers with validated DOIs and governing equations.`,
-          `[${new Date().toLocaleTimeString()}] Synced 15 Obsidian vault markdown files into Knowledge Centre.`,
-          `[${new Date().toLocaleTimeString()}] Global USV fleet intelligence baseline successfully refreshed.`
+          `[${new Date().toLocaleTimeString()}] Status: ${report.statusMessage || (isCached ? 'Cached Data — No Live Refresh Performed' : 'Live Data Refreshed')}.`,
+          `[${new Date().toLocaleTimeString()}] Verified repository records: ${data.totalVessels || vessels.length} USV models (${report.activeNaviesCount || 9} navies).`,
+          `[${new Date().toLocaleTimeString()}] Academic literature database: ${report.papersExtracted || 6} peer-reviewed references.`,
+          `[${new Date().toLocaleTimeString()}] Deduplication check complete: ${report.deduplicatedCount || 0} duplicates resolved; ${report.conflictCount || 0} parameter conflicts flagged.`
         ]);
-        setSyncSuccessToast('Global fleet intelligence and Obsidian notes updated successfully.');
+        setSyncSuccessToast(isCached ? 'Verified local intelligence cache active (Cached Data — No Live Refresh Performed).' : 'Global fleet intelligence refreshed.');
         setTimeout(() => setSyncSuccessToast(null), 4000);
       } else {
-        // Fallback local logging
         setScrapeLogs((prev) => [
           ...prev,
-          `[${new Date().toLocaleTimeString()}] Scraped 14 global naval USV models across 9 countries.`,
-          `[${new Date().toLocaleTimeString()}] Synthesized 6 peer-reviewed papers with hydrodynamic formulas.`,
-          `[${new Date().toLocaleTimeString()}] Local intelligence database verified against zero-fabrication rules.`
+          `[${new Date().toLocaleTimeString()}] Remote endpoint unavailable. Serving verified local intelligence cache.`,
+          `[${new Date().toLocaleTimeString()}] Cached Data — No Live Refresh Performed.`
         ]);
       }
     } catch {
       setScrapeLogs((prev) => [
         ...prev,
-        `[${new Date().toLocaleTimeString()}] Loaded 14 operational naval USVs from verified local intelligence cache.`,
-        `[${new Date().toLocaleTimeString()}] Synced with project knowledge base.`
+        `[${new Date().toLocaleTimeString()}] Remote network unavailable. Serving verified local intelligence cache.`,
+        `[${new Date().toLocaleTimeString()}] Cached Data — No Live Refresh Performed.`
       ]);
     } finally {
       setIsScraping(false);
@@ -178,13 +177,13 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
           <div className="flex items-center gap-2.5 mt-2 text-[11px] font-mono flex-wrap">
             <span className="flex items-center gap-1.5 text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 rounded">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              AUTO-UPDATE: EVERY 24 HOURS (DAILY CYCLE)
+              STATUS: Cached Data — No Live Refresh Performed
             </span>
             <span className="text-slate-400 bg-slate-900 border border-slate-800 px-2 py-0.5 rounded">
-              LAST SYNC: {new Date().toISOString().split('T')[0]} 01:00 UTC
+              VERIFIED ARCHIVE: {new Date().toISOString().split('T')[0]}
             </span>
             <span className="text-sky-300 bg-sky-950/50 border border-sky-800/40 px-2 py-0.5 rounded">
-              HARVESTING CLUES FOR ALL 8 DISCIPLINES
+              RESEARCH REPOSITORY
             </span>
           </div>
         </div>
@@ -196,7 +195,7 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
             className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-sky-600 hover:bg-sky-500 text-white text-xs font-medium transition-colors shadow-sm disabled:opacity-50"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isScraping ? 'animate-spin' : ''}`} />
-            <span>{isScraping ? 'Scraping Defense Repos...' : 'Trigger Scraper Agent'}</span>
+            <span>{isScraping ? 'Evaluating Sources...' : 'Run Intelligence Pipeline (A26)'}</span>
           </button>
 
           <button

@@ -1,4 +1,4 @@
-# NAVAL-USV | USV-01 — 25-Agent Digital Engineering Lab
+# NAVAL-USV | USV-01 — 26-Agent Digital Engineering Lab
 
 Private engineering workspace and deterministic multi-agent platform for the **USV-01 unmanned surface vessel project**.
 
@@ -7,7 +7,7 @@ Private engineering workspace and deterministic multi-agent platform for the **U
 ## 1. System Overview
 
 The USV-01 Digital Engineering Lab is an operational, modular multi-agent platform combining:
-- **25 Specialist Engineering Agents** across 7 naval engineering divisions.
+- **26 Specialist Engineering Agents** across 7 naval engineering divisions (A01–A26).
 - **Central DAG Orchestrator** managing topological task execution, parallel computation, and message passing.
 - **Deterministic Naval Tools Suite** for hydrostatics ($KM_T, GM_T$), hydrodynamic resistance ($P_E, P_B$), mass balance ($KG, LCG, TCG$), DC electrical load sheets, bottom slamming scantlings, and COLREGS 1972 encounter kinematics.
 - **Human Authority Approval Gates** requiring explicit Engineering Director sign-off on safety-critical decisions.

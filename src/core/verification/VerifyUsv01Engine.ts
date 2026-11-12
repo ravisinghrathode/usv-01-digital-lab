@@ -4,7 +4,7 @@
  * Executes genuine, evidence-backed verification checks covering:
  * 1. Repository integrity, dependencies, build, lint and automated test suite.
  * 2. Governance Stages A–E, including commit/digest integrity and Director authorization.
- * 3. All 25 HMEA agents (A01 - A25 + A26), execution capability, routing, and readiness.
+ * 3. All 26 HMEA agents (A01 - A26), execution capability, routing, and readiness.
  * 4. Engineering data integrity, requirements traceability, configuration control, and safety gates.
  * 
  * Strict Zero-Fabrication Invariant:
@@ -727,7 +727,7 @@ export class VerifyUsv01Engine {
       : 'PASS';
 
     // =========================================================================
-    // PHASE 3: All 25 HMEA Agents Execution Capability & Readiness
+    // PHASE 3: All 26 HMEA Agents Execution Capability & Readiness
     // =========================================================================
     const phase3Checks: IndividualCheckResult[] = [];
     const agentRegistry = AgentRegistry.getInstance();
@@ -738,9 +738,9 @@ export class VerifyUsv01Engine {
     const registryValidation = agentRegistry.validateRegistry();
     const allAgents = agentRegistry.getAllAgents();
 
-    // Check 3.1: Canonical 25-Agent Completeness (A01 - A25)
+    // Check 3.1: Canonical 26-Agent Completeness (A01 - A26)
     const missingCanonical: string[] = [];
-    for (let i = 1; i <= 25; i++) {
+    for (let i = 1; i <= 26; i++) {
       const canon = `A${i.toString().padStart(2, '0')}`;
       if (!agentRegistry.getAgent(canon)) {
         missingCanonical.push(canon);
@@ -750,15 +750,15 @@ export class VerifyUsv01Engine {
     phase3Checks.push({
       id: 'CHK-AGT-01',
       category: 'HMEA_AGENTS',
-      title: 'HMEA v0.2 Canonical 25-Agent Population Coverage',
+      title: 'HMEA v0.2 Canonical 26-Agent Population Coverage',
       status: missingCanonical.length === 0 ? 'PASS' : 'FAIL',
       mandatory: true,
       summary: missingCanonical.length === 0
-        ? `All 25 canonical HMEA agents (A01–A25) registered (${allAgents.length} total active agents).`
+        ? `All 26 canonical HMEA agents (A01–A26) registered (${allAgents.length} total active agents).`
         : `Missing canonical agents: ${missingCanonical.join(', ')}`,
       evidence: {
         totalRegistered: allAgents.length,
-        canonicalCovered: 25 - missingCanonical.length,
+        canonicalCovered: 26 - missingCanonical.length,
         missing: missingCanonical
       },
       remediation: missingCanonical.length > 0 ? 'Register missing canonical agents in MASTER_AGENTS definitions' : undefined,
@@ -857,7 +857,7 @@ export class VerifyUsv01Engine {
       }
     };
 
-    // Evaluate each canonical agent A01 - A25 (and A26) through genuine execution
+    // Evaluate each canonical agent A01 - A26 through genuine execution
     for (const agent of allAgents) {
       const findings: string[] = [];
       let inputSchemaValid = false;
@@ -1153,7 +1153,7 @@ export class VerifyUsv01Engine {
     // RULE 4: PASS requires 100% of mandatory checks PASS AND Stage D Ed25519 Director signature verified AND Stage E APPROVED
     else if (stageDSignatureVerified && stageEVerdict === 'APPROVED' && mandatoryChecks.every(c => c.status === 'PASS')) {
       overallVerdict = 'PASS';
-      verdictRationale = 'Verification PASSED: 100% of repository, quality suite, 25-agent execution capability, requirements traceability, and cryptographic Director authorization verifications fully satisfied with authentic evidence.';
+      verdictRationale = 'Verification PASSED: 100% of repository, quality suite, 26-agent execution capability, requirements traceability, and cryptographic Director authorization verifications fully satisfied with authentic evidence.';
     }
     // RULE 5: Default fallback is fail-closed FAIL
     else {
@@ -1215,10 +1215,10 @@ export class VerifyUsv01Engine {
           checks: phase2Checks
         },
         phase3_hmeaAgents: {
-          title: 'Phase 3: 25 HMEA Canonical Agents Execution Capability & Readiness',
+          title: 'Phase 3: 26 HMEA Canonical Agents Execution Capability & Readiness',
           status: phase3Status,
           totalAgentsEvaluated: agentReports.length,
-          canonicalCoverage: `${25 - missingCanonical.length}/25`,
+          canonicalCoverage: `${26 - missingCanonical.length}/26`,
           checks: phase3Checks,
           agentReadiness: agentReports
         },
@@ -1326,7 +1326,7 @@ export class VerifyUsv01Engine {
 
 ---
 
-## 🤖 Phase 3: All 25 HMEA Canonical Agents Execution Capability
+## 🤖 Phase 3: All 26 HMEA Canonical Agents Execution Capability
 
 - **Canonical Coverage:** \`${r.phases.phase3_hmeaAgents.canonicalCoverage}\` Agents Registered & Mapped
 - **Execution Engine Status:** Genuine Task Invocation via ExecutionEngine (Zero Mock Fallback)
