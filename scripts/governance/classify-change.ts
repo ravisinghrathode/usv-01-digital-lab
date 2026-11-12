@@ -113,15 +113,15 @@ export function classifyFile(filePath: string): { categories: ChangeCategory[]; 
 export function generateClassificationReport(baseRef = 'origin/main', rootDir = process.cwd()): PRClassificationReport {
   let diffStat = '';
   try {
-    diffStat = execSync(`git diff --numstat ${baseRef}...HEAD`, { cwd: rootDir, encoding: 'utf-8' });
+    diffStat = execSync(`git diff --numstat ${baseRef}...HEAD`, { cwd: rootDir, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] });
   } catch {}
 
   if (!diffStat.trim()) {
     try {
-      diffStat = execSync('git diff --numstat HEAD~1...HEAD', { cwd: rootDir, encoding: 'utf-8' });
+      diffStat = execSync('git diff --numstat HEAD~1...HEAD', { cwd: rootDir, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] });
     } catch {
       try {
-        diffStat = execSync('git diff --numstat --staged', { cwd: rootDir, encoding: 'utf-8' });
+        diffStat = execSync('git diff --numstat --staged', { cwd: rootDir, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] });
       } catch {}
     }
   }

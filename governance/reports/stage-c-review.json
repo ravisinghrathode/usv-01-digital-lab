@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-11-12T00:30:31.560Z",
+  "timestamp": "2026-11-12T00:35:18.459Z",
   "gitRef": "origin/main",
-  "evaluatedCommitSha": "c931798a50472d0b86d93bc02f43e54b73f50d3a",
-  "baselineDigest": "sha256:e2db6ec50c387b3a898d7bea6016d901088c9d3cbaac497d70b452073515230b",
+  "evaluatedCommitSha": "faafa30c5ca759b25c904fa9ca2ce75428bbf1ce",
+  "baselineDigest": "sha256:d6c7681ee0641c967bf5d4d2bebfd51844b39d4377972aa6ebdd1aaf982093ac",
   "executionMode": "Deterministic Static Rule Engine (Zero External API)",
   "provider": "deterministic",
   "aiReviewStatus": "AI_REVIEW_UNAVAILABLE",
@@ -101,6 +101,6 @@
       "deterministicFindings": []
     }
   ],
-  "compositeAdvisoryRecommendation": "PENDING_HUMAN_REVIEW",
+  "compositeAdvisoryRecommendation": "ADVISORY_APPROVE",
   "governanceBanner": "========================================================================================\n⚠️  NAVAL-USV INDEPENDENT TECHNICAL REVIEW PIPELINE (STAGE C) — ADVISORY EVIDENCE ONLY\n   NON-NEGOTIABLE PRINCIPLE 5: AI CANNOT INDEPENDENTLY AUTHORISE ITS OWN CHANGES.\n   SEVEN INDEPENDENT MODEL-BACKED REVIEWERS CONCURRENTLY EVALUATING CHANGE SET.\n   FINAL ACCEPTANCE REQUIRES SIGNED HUMAN AUTHORITY PER ENGINEERING GOVERNANCE POLICY.\n========================================================================================"
 }
