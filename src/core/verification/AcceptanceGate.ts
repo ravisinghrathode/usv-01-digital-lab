@@ -74,8 +74,8 @@ export function evaluateAcceptance(
     baselineSha,
     baselineValid,
     requirements,
-    verifiedCount: requirements.filter(x => x.status === 'VERIFIED').length,
-    pendingCount: requirements.filter(x => x.status !== 'VERIFIED').length,
+    verifiedCount: 0,
+    pendingCount: requirements.length,
     engineeringReleaseAccepted: false,
     reason: 'Evidence submissions require independent source authentication, review and cryptographic Director approval; never auto-certify.'
   };
