@@ -23,6 +23,7 @@ import { KnowledgeCentreView } from './components/KnowledgeCentreView';
 import { AgentOrchestratorView } from './components/AgentOrchestratorView';
 import { RealtimeSimulationView } from './components/RealtimeSimulationView';
 import { ShipBuildingProcessView } from './components/ShipBuildingProcessView';
+import { GenerativeOptimizerView } from './components/GenerativeOptimizerView';
 import { AiEngineeringAssistant } from './components/AiEngineeringAssistant';
 import { NewRecordModal } from './components/NewRecordModal';
 import { ExportImportModal } from './components/ExportImportModal';
@@ -510,6 +511,8 @@ export default function App() {
         return 'Real-Time COLREGs Autonomous Simulation & Flotation Physics';
       case 'ship-building':
         return 'Physical Shipbuilding & Commissioning Lifecycle';
+      case 'generative-optimizer':
+        return 'Generative Multi-Agent Design Optimization & Executive Defense';
       default:
         return 'Digital Engineering Lab';
     }
@@ -710,6 +713,10 @@ export default function App() {
 
           {currentModule === 'ship-building' && (
             <ShipBuildingProcessView onAskAi={triggerAiQuery} />
+          )}
+
+          {currentModule === 'generative-optimizer' && (
+            <GenerativeOptimizerView onAskAi={triggerAiQuery} />
           )}
         </main>
       </div>
