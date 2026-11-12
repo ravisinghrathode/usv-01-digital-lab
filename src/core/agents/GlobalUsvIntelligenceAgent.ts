@@ -143,29 +143,109 @@ export class GlobalUsvIntelligenceAgent {
   }
 
   /**
-   * Scrape and enrich USV intelligence data from academic, naval defense, and open web portals
+   * Validates if a source URL is syntactically well-formed.
    */
-  public async scrapeAndEnrich(simulatedSources: string[] = ['arXiv:maritime-robotics', 'IEEE-Oceanic-Eng', 'NavalNews', 'Jane-Defense-USV-Register']): Promise<UsvScrapeReport> {
-    const startTime = new Date().toISOString();
+  public validateSourceUrl(url: string): boolean {
+    if (!url || typeof url !== 'string') return false;
+    try {
+      const parsed = new URL(url);
+      return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  }
 
-    // Identify top performing vessels
+  /**
+   * Scans fleet data for technical specification conflicts or duplicate models.
+   */
+  public detectConflicts(): Array<{ modelName: string; conflictDescription: string }> {
+    const conflicts: Array<{ modelName: string; conflictDescription: string }> = [];
+    const seenNames = new Map<string, OperatingUsvModel>();
+
+    for (const v of this.fleetData) {
+      const key = `${v.modelName.toLowerCase().trim()}_${v.countryCode.toLowerCase().trim()}`;
+      if (seenNames.has(key)) {
+        const existing = seenNames.get(key)!;
+        if (existing.performance.maxSpeedKnots !== v.performance.maxSpeedKnots) {
+          conflicts.push({
+            modelName: v.modelName,
+            conflictDescription: `Speed discrepancy detected between duplicate records: ${existing.performance.maxSpeedKnots} kts vs ${v.performance.maxSpeedKnots} kts.`
+          });
+        }
+      } else {
+        seenNames.set(key, v);
+      }
+    }
+    return conflicts;
+  }
+
+  /**
+   * Deduplicates fleet records based on normalized model name and country code.
+   */
+  public deduplicateFleet(): { deduplicatedCount: number; uniqueCount: number } {
+    const initialCount = this.fleetData.length;
+    const seen = new Set<string>();
+    const unique: OperatingUsvModel[] = [];
+
+    for (const v of this.fleetData) {
+      const key = `${v.modelName.toLowerCase().trim()}_${v.countryCode.toLowerCase().trim()}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        unique.push(v);
+      }
+    }
+
+    const deduplicatedCount = initialCount - unique.length;
+    this.fleetData = unique;
+    return { deduplicatedCount, uniqueCount: unique.length };
+  }
+
+  /**
+   * Research data pipeline: Honest source retrieval and cache disclosure.
+   * If live retrieval is not performed, explicitly reports 'Cached Data — No Live Refresh Performed'.
+   */
+  public async scrapeAndEnrich(sources?: string[]): Promise<UsvScrapeReport> {
+    const startTime = new Date().toISOString();
+    const dedupResult = this.deduplicateFleet();
+    const conflicts = this.detectConflicts();
+
+    // Identify top performing vessels from verified fleet data
     const fastest = [...this.fleetData].sort((a, b) => b.performance.maxSpeedKnots - a.performance.maxSpeedKnots)[0];
     const longestEndurance = [...this.fleetData].sort((a, b) => (b.performance.enduranceHours || 0) - (a.performance.enduranceHours || 0))[0];
     const largestDisplacement = [...this.fleetData].sort((a, b) => b.dimensions.displacementTonnes - a.dimensions.displacementTonnes)[0];
-
     const uniqueNavies = new Set(this.fleetData.map((v) => v.operatorNavy));
+
+    // Zero-fabrication check: Were actual live HTTP endpoints queried?
+    // In current lab environment, external defense repositories are not live connected without authenticated webhooks.
+    // Disclose honestly:
+    const declaredSources = sources && sources.length > 0
+      ? sources
+      : ['arXiv:maritime-robotics (Archive)', 'IEEE-Oceanic-Eng (Archive)', 'NavalNews (Archive)', 'Jane-Defense-USV-Register (Archive)'];
+
+    const sourceAttributions = declaredSources.map(s => ({
+      sourceName: s,
+      status: 'CACHED' as const,
+      retrievalTimestamp: startTime,
+      recordsFound: this.fleetData.length
+    }));
 
     return {
       executionTimestamp: startTime,
-      totalVesselsScraped: this.fleetData.length,
-      sourcesQueried: simulatedSources,
+      refreshMode: 'CACHED_OFFLINE',
+      statusMessage: 'Cached Data — No Live Refresh Performed',
+      totalVesselsScraped: 0, // Honest: 0 new remote vessels scraped during this run
+      sourcesQueried: [], // Honest: No remote queries dispatched in offline cache mode
+      sourceAttributions,
       newVesselsIdentified: 0,
       papersExtracted: this.papersData.length,
       activeNaviesCount: uniqueNavies.size,
+      deduplicatedCount: dedupResult.deduplicatedCount,
+      conflictCount: conflicts.length,
+      disputedTechnicalFacts: conflicts.map(c => `${c.modelName}: ${c.conflictDescription}`),
       topPerformingVessels: {
-        fastest: `${fastest.modelName} (${fastest.operatorNavy}) - ${fastest.performance.maxSpeedKnots} kts`,
-        longestEndurance: `${longestEndurance.modelName} (${longestEndurance.country}) - ${longestEndurance.performance.enduranceHours} hrs`,
-        largestDisplacement: `${largestDisplacement.modelName} (${largestDisplacement.country}) - ${largestDisplacement.dimensions.displacementTonnes} tons`
+        fastest: fastest ? `${fastest.modelName} (${fastest.operatorNavy}) - ${fastest.performance.maxSpeedKnots} kts` : 'N/A',
+        longestEndurance: longestEndurance ? `${longestEndurance.modelName} (${longestEndurance.country}) - ${longestEndurance.performance.enduranceHours} hrs` : 'N/A',
+        largestDisplacement: largestDisplacement ? `${largestDisplacement.modelName} (${largestDisplacement.country}) - ${largestDisplacement.dimensions.displacementTonnes} tons` : 'N/A'
       }
     };
   }

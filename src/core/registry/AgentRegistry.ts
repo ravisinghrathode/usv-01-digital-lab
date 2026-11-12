@@ -86,15 +86,15 @@ export class AgentRegistry {
   public validateRegistry(): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
 
-    if (this.agents.size < 25) {
-      errors.push(`Registry underpopulated: expected at least 25 agents, found ${this.agents.size}`);
+    if (this.agents.size < 26) {
+      errors.push(`Registry underpopulated: expected at least 26 agents, found ${this.agents.size}`);
     }
 
-    // Verify HMEA v0.2 canonical IDs (A01 - A25)
-    for (let i = 1; i <= 25; i++) {
+    // Verify HMEA canonical IDs (A01 - A26)
+    for (let i = 1; i <= 26; i++) {
       const canonical = `A${i.toString().padStart(2, '0')}`;
       if (!this.aliasMap.has(canonical)) {
-        errors.push(`HMEA v0.2 compliance error: Canonical agent '${canonical}' is not mapped.`);
+        errors.push(`Canonical agent compliance error: Canonical agent '${canonical}' is not mapped.`);
       }
     }
 

@@ -685,15 +685,15 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
       }
     }, 60000);
 
-    it('should evaluate all 25 canonical HMEA agents (A01 - A25) with non-fabricated readiness', async () => {
+    it('should evaluate all 26 canonical HMEA agents (A01 - A26) with non-fabricated readiness', async () => {
       const engine = VerifyUsv01Engine.getInstance(process.cwd());
       const report = await engine.executeVerification();
 
       const agents = report.phases.phase3_hmeaAgents.agentReadiness;
-      expect(agents.length).toBeGreaterThanOrEqual(25);
+      expect(agents.length).toBeGreaterThanOrEqual(26);
 
       const canonicalIds = agents.map(a => a.canonicalId);
-      for (let i = 1; i <= 25; i++) {
+      for (let i = 1; i <= 26; i++) {
         const expected = `A${i.toString().padStart(2, '0')}`;
         expect(canonicalIds).toContain(expected);
       }
@@ -743,7 +743,7 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
       expect(buildCheck?.evidence?.command).toBe('npm run build');
     }, 60000);
 
-    it('Defect 4: should verify genuine execution of all 25 canonical agents without static ID lookups', async () => {
+    it('Defect 4: should verify genuine execution of all 26 canonical agents without static ID lookups', async () => {
       const engineFile = fs.readFileSync(path.join(process.cwd(), 'src', 'core', 'verification', 'VerifyUsv01Engine.ts'), 'utf-8');
       // Must not contain hardcoded testedAgentIds list
       expect(engineFile).not.toContain('const testedAgentIds = [');
@@ -752,9 +752,9 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
       const engine = VerifyUsv01Engine.getInstance(process.cwd());
       const report = await engine.executeVerification();
       const agents = report.phases.phase3_hmeaAgents.agentReadiness;
-      expect(agents.length).toBeGreaterThanOrEqual(25);
+      expect(agents.length).toBeGreaterThanOrEqual(26);
 
-      for (const a of agents.slice(0, 25)) {
+      for (const a of agents.slice(0, 26)) {
         expect(['TESTED', 'SIMULATED', 'IMPLEMENTED', 'UNVERIFIED', 'FAILED']).toContain(a.capabilityStatus);
         expect(a.executionTestStatus).toBe('PASS');
       }

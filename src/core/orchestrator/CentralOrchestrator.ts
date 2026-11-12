@@ -159,7 +159,7 @@ export class CentralOrchestrator {
               return;
             }
 
-            // Gather outputs of parent dependencies
+            // Gather authentic outputs of parent dependencies
             const priorOutputs: Record<string, any> = {};
             for (const depId of task.dependencies) {
               const depTask = this.tasks.get(depId);
@@ -181,7 +181,21 @@ export class CentralOrchestrator {
             task.output = output;
             task.completedAt = new Date().toISOString();
 
-            if (output.status === 'NEEDS_HUMAN_APPROVAL' || task.safetyCritical) {
+            // Correct state machine:
+            // 1. A failed calculation or output MUST remain FAILED (even if safetyCritical)
+            if (output.status === 'FAILED') {
+              task.status = 'FAILED';
+              task.error = output.data?.error || 'Task execution failed';
+              failed++;
+              this.auditLogger.log({
+                severity: 'SAFETY_CRITICAL',
+                agentId: task.assignedAgentId,
+                taskId: task.id,
+                action: 'TASK_EXECUTION_FAILED',
+                details: { error: task.error }
+              });
+            } else if (output.status === 'NEEDS_HUMAN_APPROVAL' || task.safetyCritical) {
+              // 2. Needs approval or safety-critical with valid interim calculation
               task.status = 'WAITING_HUMAN_APPROVAL';
               waitingApproval++;
 
@@ -197,6 +211,7 @@ export class CentralOrchestrator {
 
               task.approvalGateId = gate.id;
             } else if (output.status === 'SUCCESS') {
+              // 3. Completed successfully without gate requirement
               task.status = 'COMPLETED';
               completed++;
             } else {
@@ -212,6 +227,61 @@ export class CentralOrchestrator {
     }
 
     return { completed, failed, waitingApproval };
+  }
+
+  /**
+   * Synchronizes human director approval decision back into task state.
+   */
+  public resolveGateDecision(gateId: string, decision: 'APPROVED' | 'REJECTED'): { taskId: string; newStatus: 'COMPLETED' | 'FAILED' } {
+    const gate = this.gateManager.getGate(gateId);
+    if (!gate) {
+      throw new Error(`Approval gate '${gateId}' not found.`);
+    }
+    const task = this.tasks.get(gate.taskId);
+    if (!task) {
+      throw new Error(`Task '${gate.taskId}' associated with gate '${gateId}' not found.`);
+    }
+
+    // Engineering invariant: Human approval CANNOT convert an invalid/failed calculation into a verified result!
+    if (task.output?.status === 'FAILED' || task.output?.data?.error) {
+      task.status = 'FAILED';
+      task.error = 'Engineering Safety Invariant: Human approval cannot certify an invalid calculation output.';
+      this.auditLogger.log({
+        severity: 'SAFETY_CRITICAL',
+        agentId: task.assignedAgentId,
+        taskId: task.id,
+        action: 'INVALID_APPROVAL_CONVERSION_BLOCKED',
+        details: { gateId, decision }
+      });
+      return { taskId: task.id, newStatus: 'FAILED' };
+    }
+
+    if (decision === 'APPROVED') {
+      task.status = 'COMPLETED';
+      if (task.output) {
+        task.output.status = 'SUCCESS';
+        task.output.verificationStatus = 'HUMAN_APPROVED';
+      }
+      this.auditLogger.log({
+        severity: 'INFO',
+        agentId: task.assignedAgentId,
+        taskId: task.id,
+        action: 'TASK_APPROVED_BY_DIRECTOR',
+        details: { gateId }
+      });
+      return { taskId: task.id, newStatus: 'COMPLETED' };
+    } else {
+      task.status = 'FAILED';
+      task.error = `Rejected at Human Authority Gate: ${gate.directorNotes || 'Director rejection'}`;
+      this.auditLogger.log({
+        severity: 'WARN',
+        agentId: task.assignedAgentId,
+        taskId: task.id,
+        action: 'TASK_REJECTED_BY_DIRECTOR',
+        details: { gateId, reason: gate.directorNotes }
+      });
+      return { taskId: task.id, newStatus: 'FAILED' };
+    }
   }
 
   // Inter-Agent Messaging
@@ -232,6 +302,23 @@ export class CentralOrchestrator {
     });
 
     return fullMsg;
+  }
+
+  public sendAgentOutputMessage(senderAgentId: string, recipientAgentId: string, taskId: string, output: any): InterAgentMessage {
+    return this.sendMessage({
+      senderAgentId,
+      recipientAgentId,
+      channel: 'DATA_EXCHANGE',
+      payload: {
+        taskId,
+        output: output?.data || output,
+        evidenceValid: !!output?.evidenceValid,
+        executionMode: output?.executionMode,
+        verificationStatus: output?.verificationStatus,
+        timestamp: new Date().toISOString()
+      },
+      correlationTaskId: taskId
+    });
   }
 
   public getMessages(filter?: { recipientAgentId?: string; channel?: string }): InterAgentMessage[] {

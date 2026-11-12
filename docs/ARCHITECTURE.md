@@ -2,13 +2,13 @@
 
 ## 1. Executive Summary
 
-The **USV-01 Digital Engineering Lab** is a modular, deterministic multi-agent platform designed for the unmanned surface vessel design, simulation, and verification lifecycle. It integrates **25 specialist engineering agents**, a **central DAG orchestrator**, a **deterministic computational tool suite**, **immutable parameter memory**, and **strict human authority approval gates**.
+The **USV-01 Digital Engineering Lab** is a modular, deterministic multi-agent platform designed for the unmanned surface vessel design, simulation, and verification lifecycle. It integrates **26 specialist engineering agents**, a **central DAG orchestrator**, a **deterministic computational tool suite**, **immutable parameter memory**, and **strict human authority approval gates**.
 
 ---
 
-## 2. Definitive 25-Agent Organization
+## 2. Definitive 26-Agent Organization
 
-The 25 agents are organized into 7 functional divisions:
+The 26 agents are organized into 7 functional divisions:
 
 | Agent ID | Agent Name | Division | Primary Speciality & Mandate | Reporting Supervisor |
 | :--- | :--- | :--- | :--- | :--- |
@@ -37,6 +37,7 @@ The 25 agents are organized into 7 functional divisions:
 | `INDEP-REV-23` | Independent Design Reviewer (Red Team) | SYSTEMS_VVT | Independent recalculation, assumption challenge, anomaly detection | Engineering Director |
 | `VVT-VAL-24` | Verification, Validation & Test Specialist | SYSTEMS_VVT | Test procedures (VVP-001...), sea trials, acceptance metrics | `LEAD-SYS-01` |
 | `DOC-OBS-25` | Documentation, BOM & Obsidian Knowledge Specialist | OPERATIONS_DELIVERABLES | Bill of materials, Obsidian [[wikilink]] graph exports, technical reports | `LEAD-SYS-01` |
+| `INTEL-USV-26` | Global Navy USV Fleet Intelligence & Benchmark Analyst | OPERATIONS_DELIVERABLES | Multi-source open-source scraping, fleet database, competitor benchmarking | `LEAD-SYS-01` |
 
 ---
 

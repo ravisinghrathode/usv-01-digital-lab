@@ -408,6 +408,7 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
       // Request cryptographic signature from backend signing authority
       const signedIdentity = await signApprovalGate(gateId, decision, directorNote);
       gateManager.evaluateDecision(gateId, decision, directorNote, signedIdentity);
+      orchestrator.resolveGateDecision(gateId, decision);
       refreshState();
     } catch (err: any) {
       alert(`Approval Gate Authorization Failed: ${err.message}`);
@@ -497,7 +498,7 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
             <span className="font-mono text-xs text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 px-2 py-0.5 rounded">
               MULTI-AGENT CORE
             </span>
-            <span className="text-xs text-slate-500 font-mono">25 SPECIALIST AGENTS & DAG ORCHESTRATOR</span>
+            <span className="text-xs text-slate-500 font-mono">26 SPECIALIST AGENTS & DAG ORCHESTRATOR</span>
           </div>
           <h2 className="text-xl font-bold text-slate-100 mt-1 flex items-center gap-2">
             <Cpu className="w-5 h-5 text-cyan-400" />
@@ -756,7 +757,7 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
         </div>
       )}
 
-      {/* TAB 2: 25 Agents Directory */}
+      {/* TAB 2: 26 Agents Directory */}
       {activeTab === 'agents' && (
         <div className="space-y-4">
           {/* Filter Bar */}

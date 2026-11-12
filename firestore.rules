@@ -1,97 +1,119 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Helper functions
+    // --- AUTHENTICATION & LEAST-PRIVILEGE RBAC HELPERS ---
     function isAuthenticated() {
-      return request.auth != null;
+      return request.auth != null && request.auth.uid != null;
     }
-    
-    function isProjectMember(projectId) {
+
+    function isDirector() {
       return isAuthenticated() && (
-        exists(/databases/$(database)/documents/project_members/$(projectId + '_' + request.auth.uid)) ||
-        request.auth.token.role == 'admin' ||
-        request.auth.token.role == 'engineer'
-      );
-    }
-    
-    function isLeadOrAdmin(projectId) {
-      return isAuthenticated() && (
-        request.auth.token.role == 'admin' ||
-        request.auth.token.role == 'lead_engineer'
+        request.auth.token.role == 'ENGINEERING_DIRECTOR' ||
+        request.auth.token.role == 'admin'
       );
     }
 
-    // Projects collection
+    function isLeadOrAdmin(projectId) {
+      return isAuthenticated() && (
+        isDirector() ||
+        request.auth.token.role == 'lead_engineer' ||
+        request.auth.token.role == 'LEAD_SYSTEMS_ARCHITECT'
+      );
+    }
+
+    function isProjectMember(projectId) {
+      return isAuthenticated() && (
+        isDirector() ||
+        isLeadOrAdmin(projectId) ||
+        request.auth.token.role == 'engineer' ||
+        exists(/databases/$(database)/documents/project_members/$(projectId + '_' + request.auth.uid))
+      );
+    }
+
+    // Projects collection: Read by project members; modification restricted to leads/directors
     match /projects/{projectId} {
-      allow read: if isAuthenticated();
-      allow create, update: if isAuthenticated();
-      allow delete: if isLeadOrAdmin(projectId);
+      allow read: if isProjectMember(projectId);
+      allow create: if isLeadOrAdmin(projectId);
+      allow update: if isLeadOrAdmin(projectId);
+      allow delete: if isDirector();
     }
 
     // Subsystems
     match /subsystems/{subsystemId} {
       allow read: if isAuthenticated();
-      allow write: if isAuthenticated();
+      allow write: if isLeadOrAdmin(request.resource.data.projectId);
     }
 
-    // Requirements register
+    // Requirements register: Bound to project membership; Baseline modification requires lead/director
     match /requirements/{reqId} {
-      allow read: if isAuthenticated();
-      allow create, update: if isAuthenticated();
+      allow read: if isAuthenticated() && (resource == null || isProjectMember(resource.data.projectId));
+      allow create: if isAuthenticated() && isProjectMember(request.resource.data.projectId);
+      allow update: if isAuthenticated() && isProjectMember(resource.data.projectId) && (
+        request.resource.data.status != 'Approved Baseline' || isLeadOrAdmin(resource.data.projectId)
+      );
       allow delete: if isLeadOrAdmin(resource.data.projectId);
     }
 
     // Interfaces / ICDs
     match /interfaces/{interfaceId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated();
+      allow read: if isAuthenticated() && (resource == null || isProjectMember(resource.data.projectId));
+      allow write: if isAuthenticated() && isProjectMember(request.resource.data.projectId);
     }
 
-    // Design Decisions
+    // Design Decisions: Formal baseline decisions require lead or director approval
     match /design_decisions/{decisionId} {
-      allow read: if isAuthenticated();
-      allow create: if isAuthenticated();
-      // Only approved through formal review
-      allow update: if isAuthenticated();
-      allow delete: if isLeadOrAdmin(resource.data.projectId);
+      allow read: if isAuthenticated() && (resource == null || isProjectMember(resource.data.projectId));
+      allow create: if isAuthenticated() && isProjectMember(request.resource.data.projectId);
+      allow update: if isAuthenticated() && isProjectMember(resource.data.projectId) && (
+        request.resource.data.status != 'Approved' || isLeadOrAdmin(resource.data.projectId)
+      );
+      allow delete: if isDirector();
     }
 
     // Engineering Risks
     match /engineering_risks/{riskId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated();
+      allow read: if isAuthenticated() && (resource == null || isProjectMember(resource.data.projectId));
+      allow write: if isAuthenticated() && isProjectMember(request.resource.data.projectId);
     }
 
     // Simulation Jobs
     match /simulation_jobs/{jobId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated();
+      allow read: if isAuthenticated() && (resource == null || isProjectMember(resource.data.projectId));
+      allow write: if isAuthenticated() && isProjectMember(request.resource.data.projectId);
     }
 
     // Verification Plans & Test Records
     match /verification_plans/{planId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated();
+      allow read: if isAuthenticated() && (resource == null || isProjectMember(resource.data.projectId));
+      allow write: if isAuthenticated() && isProjectMember(request.resource.data.projectId);
     }
 
     match /test_records/{recordId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated();
+      allow read: if isAuthenticated() && (resource == null || isProjectMember(resource.data.projectId));
+      allow write: if isAuthenticated() && isProjectMember(request.resource.data.projectId);
     }
 
     // Components & Bill of Materials
     match /components/{componentId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated();
+      allow read: if isAuthenticated() && (resource == null || isProjectMember(resource.data.projectId));
+      allow write: if isAuthenticated() && isProjectMember(request.resource.data.projectId);
     }
 
     // Controlled Documents
     match /documents/{docId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated();
+      allow read: if isAuthenticated() && (resource == null || isProjectMember(resource.data.projectId));
+      allow write: if isAuthenticated() && isLeadOrAdmin(request.resource.data.projectId);
     }
 
-    // Activity Log - append only
+    // Human Authority Safety Approval Gates: Final decision strictly restricted to ENGINEERING_DIRECTOR
+    match /approval_gates/{gateId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isDirector();
+      allow delete: if false; // Immutable safety ledger
+    }
+
+    // Activity Log - append only, immutable
     match /activity_log/{logId} {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated();
@@ -101,12 +123,12 @@ service cloud.firestore {
     // Users and Project Members
     match /users/{userId} {
       allow read: if isAuthenticated();
-      allow write: if isAuthenticated() && request.auth.uid == userId;
+      allow write: if isAuthenticated() && (request.auth.uid == userId || isDirector());
     }
 
     match /project_members/{memberId} {
       allow read: if isAuthenticated();
-      allow write: if isAuthenticated();
+      allow write: if isDirector();
     }
   }
 }

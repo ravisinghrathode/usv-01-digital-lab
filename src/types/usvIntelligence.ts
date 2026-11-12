@@ -161,13 +161,27 @@ export interface UsvScrapeQuery {
   keyword?: string;
 }
 
+export interface UsvSourceAttribution {
+  sourceName: string;
+  sourceUrl?: string;
+  status: 'SUCCESS' | 'UNAVAILABLE' | 'CACHED' | 'RATE_LIMITED' | 'NETWORK_ERROR';
+  retrievalTimestamp: string;
+  recordsFound: number;
+}
+
 export interface UsvScrapeReport {
   executionTimestamp: string;
+  refreshMode: 'LIVE_RETRIEVAL' | 'CACHED_OFFLINE' | 'PARTIAL_SUCCESS' | 'NETWORK_FAILURE';
+  statusMessage: string;
   totalVesselsScraped: number;
   sourcesQueried: string[];
+  sourceAttributions: UsvSourceAttribution[];
   newVesselsIdentified: number;
   papersExtracted: number;
   activeNaviesCount: number;
+  deduplicatedCount: number;
+  conflictCount: number;
+  disputedTechnicalFacts?: string[];
   topPerformingVessels: {
     fastest: string;
     longestEndurance: string;

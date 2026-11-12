@@ -44,6 +44,7 @@ export class ExecutionEngine {
 
   /**
    * Executes a registered agent with retry and error recovery.
+   * If running in browser environment, delegates execution to privileged backend.
    */
   public async executeAgent(
     agentId: string,
@@ -53,6 +54,49 @@ export class ExecutionEngine {
     const agent = this.agents.get(agentId);
     if (!agent) {
       throw new Error(`ExecutionEngine Error: Agent '${agentId}' is not loaded.`);
+    }
+
+    // In browser environment, dispatch to authenticated backend API
+    if (typeof window !== 'undefined') {
+      this.agentStatuses.set(agentId, 'EXECUTING');
+      try {
+        const { getSessionToken } = await import('../auth/authClient.ts');
+        const token = getSessionToken();
+        const res = await fetch('/api/agents/execute', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+          },
+          body: JSON.stringify({
+            agentId,
+            taskId: input.taskId,
+            parameters: input.parameters,
+            context: input.context,
+            priorAgentOutputs: input.priorAgentOutputs,
+            userNotes: input.userNotes,
+            correlationId: input.correlationId
+          })
+        });
+
+        if (res.ok) {
+          const payload = await res.json();
+          if (payload.success && payload.output) {
+            const output = payload.output as AgentExecutionOutput;
+            if (output.status === 'NEEDS_HUMAN_APPROVAL') {
+              this.agentStatuses.set(agentId, 'WAITING_APPROVAL');
+            } else if (output.status === 'SUCCESS') {
+              this.agentStatuses.set(agentId, 'COMPLETED');
+            } else {
+              this.agentStatuses.set(agentId, 'FAILED');
+            }
+            this.executionHistory.push(output);
+            return output;
+          }
+        }
+      } catch (browserErr) {
+        console.warn('Backend execution dispatch failed; falling back to local agent instance:', browserErr);
+      }
     }
 
     this.agentStatuses.set(agentId, 'EXECUTING');
@@ -99,6 +143,10 @@ export class ExecutionEngine {
       taskId: input.taskId,
       timestamp: new Date().toISOString(),
       status: 'FAILED',
+      executionMode: 'EXECUTION_FAILED',
+      correlationId: input.correlationId || `corr-err-${Date.now()}`,
+      evidenceValid: false,
+      verificationStatus: 'EXECUTION_FAILED',
       data: { error: `Failed after ${maxRetries} retries: ${lastError?.message || String(lastError)}` },
       assumptions: [],
       deterministicToolEvidence: [],

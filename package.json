@@ -1,7 +1,7 @@
 {
   "name": "usv-01-digital-lab",
   "version": "1.0.0",
-  "description": "NAVAL-USV | USV-01 25-Agent Digital Engineering Lab",
+  "description": "NAVAL-USV | USV-01 26-Agent Digital Engineering Lab",
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",

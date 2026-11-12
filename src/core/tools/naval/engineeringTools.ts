@@ -382,10 +382,10 @@ export const StructuresTool: EngineeringTool = {
     } = input;
 
     // ISO 12215-5 slamming pressure for high-speed craft:
-    // P_slam = (0.25 * Delta / Lwl) * (1 + 0.08 * V^2) * ((50 - deadrise) / 30) (kPa)
+    // P_slam = (1.8 * Delta / Lwl) * (1 + 0.08 * V^2) * ((50 - deadrise) / 30) (kPa)
     const deadriseFactor = Math.max(0.5, (50 - deadriseAngleDeg) / 30);
-    const baseP = (0.25 * displacementTonnes / lwlMeters) * (1 + 0.08 * Math.pow(speedKnots, 2));
-    const designSlammingPressureKpa = Math.max(45, baseP * deadriseFactor);
+    const baseP = (1.8 * displacementTonnes / lwlMeters) * (1 + 0.08 * Math.pow(speedKnots, 2));
+    const designSlammingPressureKpa = Math.max(35, baseP * deadriseFactor);
 
     // Aspect ratio factor k2 = min(0.5, 0.271 * (a/b)^0.5 ...)
     const aspectRatio = unsupportedPanelLengthMm / unsupportedPanelWidthMm;
@@ -508,9 +508,9 @@ export const ColregsTool: EngineeringTool = {
       } else if (relBearing < -5 && relBearing > -112.5) {
         colregsRule = 'RULE_15_CROSSING_STAND_ON';
         mandatedAction = 'Crossing situation (Rule 15). Target on PORT bow. Own vessel is STAND-ON. Maintain course and speed, be prepared to take action under Rule 17.';
-      } else if (Math.abs(relBearing) >= 112.5 && ownSpeedKnots > targetSpeedKnots) {
+      } else if (courseDiff <= 45 && ownSpeedKnots > targetSpeedKnots && Math.abs(relBearing) <= 67.5) {
         colregsRule = 'RULE_13_OVERTAKING';
-        mandatedAction = 'Overtaking situation (Rule 13). Own vessel is faster and approaching from abaft beam. Keep completely clear of target vessel.';
+        mandatedAction = 'Overtaking situation (Rule 13). Own vessel is faster and overtaking target ahead. Keep completely clear of target vessel.';
         safeCourse = (ownCourseDeg + 25) % 360;
       }
     }
