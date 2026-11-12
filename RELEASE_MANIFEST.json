@@ -3,8 +3,8 @@
   "programme": "NAVAL-USV",
   "project": "USV-01 Digital Engineering Lab",
   "releaseVersion": "1.0.0",
-  "gitCommitSha": "93bbfbbdf26d3e52e784055d46eb03b02b41965e",
-  "builtAt": "2026-11-12T11:38:00.204Z",
+  "gitCommitSha": "9d1dac42714f0403234541522b3242cfe69e1e93",
+  "builtAt": "2026-11-12T11:42:45.295Z",
   "environment": {
     "nodeVersion": "v24.22.2",
     "osPlatform": "linux"
@@ -357,5 +357,5 @@
     "auditVulnerabilities": 0,
     "staticAnalysisStatus": "PASS"
   },
-  "immutableManifestSha256": "fb4029e97a03d83db7e30da9342c677c52a5a74568a0a475439fd70fe10533c8"
+  "immutableManifestSha256": "06e47d1d5247163746f6146b15bdbc391d0d1d79c1474b82ccb3bbd570196f45"
 }

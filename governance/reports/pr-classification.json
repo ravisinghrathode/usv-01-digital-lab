@@ -1,58 +1,33 @@
 {
   "summary": {
-    "totalFilesChanged": 18,
-    "totalLinesAdded": 981,
-    "totalLinesDeleted": 510,
+    "totalFilesChanged": 33,
+    "totalLinesAdded": 3389,
+    "totalLinesDeleted": 89,
     "dominantCategories": [
       "SOFTWARE",
-      "CONFIGURATION",
+      "SECURITY",
+      "SAFETY",
+      "ARCHITECTURE",
       "RELEASE",
       "DOCUMENTATION",
-      "SECURITY",
-      "ARCHITECTURE"
+      "CONFIGURATION",
+      "REQUIREMENTS"
     ],
     "overallRisk": "CRITICAL",
     "requiresDesignatedAuthorityApproval": true,
     "requiresECR": true
   },
-  "commitSha": "93bbfbbdf26d3e52e784055d46eb03b02b41965e",
-  "baselineDigest": "sha256:c4b56ac37581f6ec754e9e2be4c3930219d23f6ef64baf8ed9d4b1bd94571a2a",
+  "commitSha": "9d1dac42714f0403234541522b3242cfe69e1e93",
+  "baselineDigest": "sha256:54ca7431badf7bfd051ff41e6764cf32dec92ae130766566992212845f864df9",
   "fileDetails": [
-    {
-      "file": ".env.example",
-      "categories": [
-        "SOFTWARE"
-      ],
-      "risk": "MEDIUM",
-      "linesAdded": 5,
-      "linesDeleted": 5
-    },
-    {
-      "file": ".github/workflows/safety-governance-gate.yml",
-      "categories": [
-        "CONFIGURATION"
-      ],
-      "risk": "CRITICAL",
-      "linesAdded": 1,
-      "linesDeleted": 3
-    },
     {
       "file": "RELEASE_MANIFEST.json",
       "categories": [
         "RELEASE"
       ],
       "risk": "LOW",
-      "linesAdded": 68,
-      "linesDeleted": 63
-    },
-    {
-      "file": "docs/governance/SOURCE_CODE_DATA_HANDLING_POLICY.md",
-      "categories": [
-        "DOCUMENTATION"
-      ],
-      "risk": "LOW",
-      "linesAdded": 5,
-      "linesDeleted": 5
+      "linesAdded": 53,
+      "linesDeleted": 43
     },
     {
       "file": "governance/reports/pr-classification.json",
@@ -60,8 +35,8 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 45,
-      "linesDeleted": 384
+      "linesAdded": 7,
+      "linesDeleted": 5
     },
     {
       "file": "governance/reports/stage-c-review.json",
@@ -69,8 +44,8 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 3,
-      "linesDeleted": 3
+      "linesAdded": 6,
+      "linesDeleted": 6
     },
     {
       "file": "governance/reports/stage-d-approval.json",
@@ -82,13 +57,40 @@
       "linesDeleted": 2
     },
     {
-      "file": "scripts/chatgpt-verify.ts",
+      "file": "governance/reports/verify-usv01-report.json",
       "categories": [
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 18,
-      "linesDeleted": 2
+      "linesAdded": 957,
+      "linesDeleted": 0
+    },
+    {
+      "file": "governance/reports/verify-usv01-report.md",
+      "categories": [
+        "DOCUMENTATION"
+      ],
+      "risk": "LOW",
+      "linesAdded": 112,
+      "linesDeleted": 0
+    },
+    {
+      "file": "package.json",
+      "categories": [
+        "CONFIGURATION"
+      ],
+      "risk": "HIGH",
+      "linesAdded": 1,
+      "linesDeleted": 0
+    },
+    {
+      "file": "scripts/governance/classify-change.ts",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 12,
+      "linesDeleted": 0
     },
     {
       "file": "scripts/governance/independent-ai-review.ts",
@@ -96,17 +98,8 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 16,
-      "linesDeleted": 2
-    },
-    {
-      "file": "scripts/governance/stage-d-human-approval.ts",
-      "categories": [
-        "SOFTWARE"
-      ],
-      "risk": "MEDIUM",
-      "linesAdded": 16,
-      "linesDeleted": 2
+      "linesAdded": 10,
+      "linesDeleted": 4
     },
     {
       "file": "scripts/governance/stage-e-enforce.ts",
@@ -114,8 +107,17 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 34,
-      "linesDeleted": 10
+      "linesAdded": 77,
+      "linesDeleted": 11
+    },
+    {
+      "file": "scripts/verify-usv01.ts",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 71,
+      "linesDeleted": 0
     },
     {
       "file": "server.ts",
@@ -123,26 +125,53 @@
         "SOFTWARE"
       ],
       "risk": "HIGH",
-      "linesAdded": 324,
-      "linesDeleted": 4
+      "linesAdded": 54,
+      "linesDeleted": 0
     },
     {
-      "file": "src/components/AgentOrchestratorView.tsx",
+      "file": "src/App.tsx",
       "categories": [
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 240,
-      "linesDeleted": 2
+      "linesAdded": 34,
+      "linesDeleted": 0
     },
     {
-      "file": "src/components/LoginModal.tsx",
+      "file": "src/components/TopBar.tsx",
       "categories": [
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 38,
-      "linesDeleted": 15
+      "linesAdded": 13,
+      "linesDeleted": 1
+    },
+    {
+      "file": "src/components/VerificationValidationView.tsx",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 13,
+      "linesDeleted": 1
+    },
+    {
+      "file": "src/components/VerifyUsv01Modal.tsx",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 625,
+      "linesDeleted": 0
+    },
+    {
+      "file": "src/core/agents/GlobalUsvIntelligenceAgent.ts",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 4,
+      "linesDeleted": 0
     },
     {
       "file": "src/core/auth/authClient.ts",
@@ -150,16 +179,91 @@
         "SECURITY"
       ],
       "risk": "CRITICAL",
-      "linesAdded": 86,
-      "linesDeleted": 0
+      "linesAdded": 1,
+      "linesDeleted": 1
     },
     {
-      "file": "src/core/models/ModelProvider.ts",
+      "file": "src/core/engine/BaseAgent.ts",
       "categories": [
         "ARCHITECTURE"
       ],
       "risk": "HIGH",
-      "linesAdded": 7,
+      "linesAdded": 1,
+      "linesDeleted": 1
+    },
+    {
+      "file": "src/core/engine/ExecutionEngine.ts",
+      "categories": [
+        "ARCHITECTURE"
+      ],
+      "risk": "HIGH",
+      "linesAdded": 1,
+      "linesDeleted": 1
+    },
+    {
+      "file": "src/core/governance/AgentGovernanceBridge.ts",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 2,
+      "linesDeleted": 2
+    },
+    {
+      "file": "src/core/memory/SharedMemory.ts",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 1,
+      "linesDeleted": 1
+    },
+    {
+      "file": "src/core/safety/ApproverSigner.ts",
+      "categories": [
+        "SECURITY",
+        "SAFETY"
+      ],
+      "risk": "CRITICAL",
+      "linesAdded": 1,
+      "linesDeleted": 1
+    },
+    {
+      "file": "src/core/safety/AuditLogger.ts",
+      "categories": [
+        "SECURITY",
+        "SAFETY"
+      ],
+      "risk": "CRITICAL",
+      "linesAdded": 1,
+      "linesDeleted": 1
+    },
+    {
+      "file": "src/core/safety/HumanApprovalGate.ts",
+      "categories": [
+        "SECURITY",
+        "SAFETY"
+      ],
+      "risk": "CRITICAL",
+      "linesAdded": 1,
+      "linesDeleted": 1
+    },
+    {
+      "file": "src/core/tools/ToolRegistry.ts",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 1,
+      "linesDeleted": 1
+    },
+    {
+      "file": "src/core/tools/naval/engineeringTools.ts",
+      "categories": [
+        "SAFETY"
+      ],
+      "risk": "CRITICAL",
+      "linesAdded": 1,
       "linesDeleted": 1
     },
     {
@@ -168,8 +272,45 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 1,
-      "linesDeleted": 7
+      "linesAdded": 2,
+      "linesDeleted": 1
+    },
+    {
+      "file": "src/core/verification/VerifyUsv01Engine.ts",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 1196,
+      "linesDeleted": 0
+    },
+    {
+      "file": "src/data/globalUsvFleetData.ts",
+      "categories": [
+        "REQUIREMENTS",
+        "SOFTWARE"
+      ],
+      "risk": "HIGH",
+      "linesAdded": 2,
+      "linesDeleted": 1
+    },
+    {
+      "file": "src/types/engineering.ts",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 8,
+      "linesDeleted": 1
+    },
+    {
+      "file": "src/types/usvIntelligence.ts",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 3,
+      "linesDeleted": 2
     },
     {
       "file": "tests/governance.test.ts",
@@ -177,9 +318,9 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 72,
+      "linesAdded": 116,
       "linesDeleted": 0
     }
   ],
-  "timestamp": "2026-11-12T11:38:04.030Z"
+  "timestamp": "2026-11-12T11:42:45.423Z"
 }
