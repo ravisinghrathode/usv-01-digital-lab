@@ -125,33 +125,23 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
 
   // Download CSV of trials
   const handleExportCsv = () => {
-    const rows = history.map((h) => ({
-      Trial_ID: h.id,
-      Generation: h.generation,
-      Philosophy: h.philosophy,
-      Status: h.status,
-      Fitness_Score: h.fitnessScore,
-      LWL_m: h.lwlMeters,
-      Beam_m: h.beamMeters,
-      Draft_m: h.draftMeters,
-      Deadrise_deg: h.deadriseDeg,
-      LCG_pct: h.lcgPercent,
-      Battery_kWh: h.batteryKwh,
-      Motor_kW: h.motorKwTotal,
-      Displacement_t: h.displacementTonnes,
-      KG_m: h.kgMeters,
-      GMt_m: h.gmtMeters,
-      Peak_Drag_kN: h.peakDragKn,
-      Cruise_Drag_kN: h.cruiseDragKn,
-      Cruise_Power_kW: h.cruisePowerKw,
-      Sprint_Speed_kts: h.sprintSpeedKnots,
-      Endurance_hrs: h.enduranceHours,
-      Range_nm: h.rangeNm,
-      Slamming_kPa: h.slammingPressureKpa,
-      Failed_Gate: h.failedGate || 'NONE',
-      Rejection_Reason: h.rejectionReason || 'PASSED'
-    }));
-    downloadCsv(rows, 'USV-01_Generative_Design_Exploration_Ledger.csv');
+    const headers = [
+      'Trial ID', 'Generation', 'Philosophy', 'Status', 'Fitness',
+      'LWL (m)', 'Beam (m)', 'Draft (m)', 'Deadrise (deg)', 'LCG (%)',
+      'Battery (kWh)', 'Motor (kW)', 'Disp (t)', 'KG (m)', 'GMt (m)',
+      'Peak Drag (kN)', 'Cruise Drag (kN)', 'Cruise Power (kW)',
+      'Sprint Speed (kt)', 'Endurance (h)', 'Range (nm)', 'Slamming (kPa)',
+      'Failed Gate', 'Rejection Reason'
+    ];
+    const rows = history.map((h) => [
+      h.id, h.generation, h.philosophy, h.status, h.fitnessScore,
+      h.lwlMeters, h.beamMeters, h.draftMeters, h.deadriseDeg, h.lcgPercent,
+      h.batteryKwh, h.motorKwTotal, h.displacementTonnes, h.kgMeters, h.gmtMeters,
+      h.peakDragKn, h.cruiseDragKn, h.cruisePowerKw,
+      h.sprintSpeedKnots, h.enduranceHours, h.rangeNm, h.slammingPressureKpa,
+      h.failedGate || 'NONE', h.rejectionReason || 'PASSED'
+    ]);
+    downloadCsv('USV-01_Generative_Design_Exploration_Ledger.csv', headers, rows);
   };
 
   // Download Executive Defense Dossier
