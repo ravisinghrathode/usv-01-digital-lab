@@ -1,43 +1,155 @@
 {
   "summary": {
-    "totalFilesChanged": 3,
-    "totalLinesAdded": 1355,
-    "totalLinesDeleted": 60,
+    "totalFilesChanged": 15,
+    "totalLinesAdded": 219,
+    "totalLinesDeleted": 584,
     "dominantCategories": [
-      "SOFTWARE"
+      "SOFTWARE",
+      "CONFIGURATION",
+      "RELEASE",
+      "DOCUMENTATION",
+      "ARCHITECTURE"
     ],
-    "overallRisk": "MEDIUM",
-    "requiresDesignatedAuthorityApproval": false,
-    "requiresECR": false
+    "overallRisk": "CRITICAL",
+    "requiresDesignatedAuthorityApproval": true,
+    "requiresECR": true
   },
   "fileDetails": [
     {
-      "file": "src/components/GenerativeOptimizerView.tsx",
+      "file": ".env.example",
       "categories": [
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 138,
-      "linesDeleted": 53
+      "linesAdded": 5,
+      "linesDeleted": 5
     },
     {
-      "file": "src/components/ShipBuildingProcessView.tsx",
+      "file": ".github/workflows/safety-governance-gate.yml",
+      "categories": [
+        "CONFIGURATION"
+      ],
+      "risk": "CRITICAL",
+      "linesAdded": 1,
+      "linesDeleted": 3
+    },
+    {
+      "file": "RELEASE_MANIFEST.json",
+      "categories": [
+        "RELEASE"
+      ],
+      "risk": "LOW",
+      "linesAdded": 18,
+      "linesDeleted": 43
+    },
+    {
+      "file": "docs/governance/SOURCE_CODE_DATA_HANDLING_POLICY.md",
+      "categories": [
+        "DOCUMENTATION"
+      ],
+      "risk": "LOW",
+      "linesAdded": 5,
+      "linesDeleted": 5
+    },
+    {
+      "file": "governance/reports/pr-classification.json",
       "categories": [
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 44,
+      "linesAdded": 15,
+      "linesDeleted": 494
+    },
+    {
+      "file": "governance/reports/stage-c-review.json",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 3,
+      "linesDeleted": 3
+    },
+    {
+      "file": "governance/reports/stage-d-approval.json",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 5,
+      "linesDeleted": 5
+    },
+    {
+      "file": "scripts/chatgpt-verify.ts",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 18,
+      "linesDeleted": 2
+    },
+    {
+      "file": "scripts/governance/independent-ai-review.ts",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 16,
+      "linesDeleted": 2
+    },
+    {
+      "file": "scripts/governance/stage-d-human-approval.ts",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 16,
+      "linesDeleted": 2
+    },
+    {
+      "file": "scripts/governance/stage-e-enforce.ts",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 34,
+      "linesDeleted": 10
+    },
+    {
+      "file": "server.ts",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "HIGH",
+      "linesAdded": 3,
+      "linesDeleted": 2
+    },
+    {
+      "file": "src/core/models/ModelProvider.ts",
+      "categories": [
+        "ARCHITECTURE"
+      ],
+      "risk": "HIGH",
+      "linesAdded": 7,
+      "linesDeleted": 1
+    },
+    {
+      "file": "src/core/types/agent.ts",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 1,
       "linesDeleted": 7
     },
     {
-      "file": "src/components/Vessel3DVisualizer.tsx",
+      "file": "tests/governance.test.ts",
       "categories": [
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 1173,
+      "linesAdded": 72,
       "linesDeleted": 0
     }
   ],
-  "timestamp": "2026-11-12T01:23:17.459Z"
+  "timestamp": "2026-11-12T01:23:51.826Z"
 }

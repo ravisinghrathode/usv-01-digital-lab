@@ -1,13 +1,13 @@
 {
-  "humanApprovalRequired": false,
-  "highestRisk": "MEDIUM",
+  "humanApprovalRequired": true,
+  "highestRisk": "CRITICAL",
   "ecrRecordFound": false,
   "ecrRecordValid": false,
-  "evaluatedRef": "0385270f88a1c1c8fca02a77313f922f4777bc40",
-  "baselineDigest": "sha256:75b08ffd9ac0906dcad7d05f6f6d94c2e04b557b39b3a550a0d5137103dfb1cf",
+  "evaluatedRef": "8e28dfe1e9da9bb46ebe8152702aad12bf09d475",
+  "baselineDigest": "sha256:1c6e1411327d33a11480dcabb33deac588fb72127bab7a9418c7b3e37fd4e7b9",
   "signatureVerified": false,
   "staleApproval": false,
   "signatureError": "No Director approval records found in governance/approvals/.",
   "independentReviewStatus": "PENDING_HUMAN_SIGN_OFF",
-  "summary": "Stage D not required: change classified as MEDIUM risk."
+  "summary": "Stage D Gate Blocked: CRITICAL risk change, but DIRECTOR_PUBLIC_KEY is not provisioned. There is no fallback trust anchor."
 }
