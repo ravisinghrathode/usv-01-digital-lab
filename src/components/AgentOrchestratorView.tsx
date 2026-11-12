@@ -78,12 +78,12 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
   // Tool Calculator State
   const [selectedToolId, setSelectedToolId] = useState<string>('TOOL-HYDROSTATICS-01');
   const [toolInputs, setToolInputs] = useState<Record<string, any>>({
-    lwlMeters: 10.5,
-    beamMeters: 2.8,
-    draftMeters: 0.65,
-    blockCoefficientCb: 0.44,
-    waterplaneCoefficientCwp: 0.65,
-    kgMeters: 0.85,
+    lwlMeters: 0,
+    beamMeters: 0,
+    draftMeters: 0,
+    blockCoefficientCb: 0,
+    waterplaneCoefficientCwp: 0,
+    kgMeters: 0,
     seawaterDensityKgM3: 1025
   });
   const [toolOutput, setToolOutput] = useState<any>(null);
@@ -91,12 +91,12 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
   // Approval Gate Director Notes
   const [directorNote, setDirectorNote] = useState<string>('Verified against USV-01 preliminary design criteria.');
 
-  // Exploratory Parametric Study Inputs (used strictly for exploratory DAG runs when vessel baseline is TBD)
-  const [studyLwl, setStudyLwl] = useState<number>(11.2);
-  const [studyBeam, setStudyBeam] = useState<number>(2.9);
-  const [studyDraft, setStudyDraft] = useState<number>(0.68);
-  const [studyDisplacement, setStudyDisplacement] = useState<number>(7.8);
-  const [studySpeed, setStudySpeed] = useState<number>(22.0);
+  // Exploratory Parametric Study Inputs (Defaults to 0 / TBD pending baseline inputs)
+  const [studyLwl, setStudyLwl] = useState<number>(0);
+  const [studyBeam, setStudyBeam] = useState<number>(0);
+  const [studyDraft, setStudyDraft] = useState<number>(0);
+  const [studyDisplacement, setStudyDisplacement] = useState<number>(0);
+  const [studySpeed, setStudySpeed] = useState<number>(0);
 
   // Authenticated User & Director Passphrase Verification State
   const [approverIdentity, setApproverIdentity] = useState<ApproverIdentity | null>(null);
@@ -216,6 +216,12 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
       beamParam && beamParam.value !== 'TBD' && typeof beamParam.value === 'number' &&
       draftParam && draftParam.value !== 'TBD' && typeof draftParam.value === 'number';
 
+    if (!hasCertifiedBaselines && (studyLwl <= 0 || studyBeam <= 0 || studyDraft <= 0 || studyDisplacement <= 0 || studySpeed <= 0)) {
+      alert('Vessel particulars are currently at 0 / TBD. Please enter non-zero study dimensions or certify baseline parameters before running calculation workflow.');
+      setIsExecutingWorkflow(false);
+      return;
+    }
+
     const lwlVal = hasCertifiedBaselines ? Number(lwlParam!.value) : studyLwl;
     const beamVal = hasCertifiedBaselines ? Number(beamParam!.value) : studyBeam;
     const draftVal = hasCertifiedBaselines ? Number(draftParam!.value) : studyDraft;
@@ -227,9 +233,14 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
       ? 'Executing certified vessel baseline.'
       : 'Executing exploratory sensitivity study. Dimensions are NOT approved project baseline.';
 
+    const timestampSuffix = Date.now().toString().slice(-4);
+    const hullTaskId = `TASK-HULL-${timestampSuffix}`;
+    const massTaskId = `TASK-MASS-${timestampSuffix}`;
+    const stabTaskId = `TASK-STAB-${timestampSuffix}`;
+
     // Stage 1: Hull Form & Parametric Geometry
     orchestrator.registerTask({
-      id: `TASK-HULL-${Date.now().toString().slice(-4)}`,
+      id: hullTaskId,
       title: `${titlePrefix}Hull Geometry & Form Coefficients`,
       description: `Compute parametric hull dimensions and waterplane parameters. (${studyNotice})`,
       assignedAgentId: 'HULL-GEO-05',
@@ -244,7 +255,12 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
           baselineStatus: hasCertifiedBaselines ? 'CERTIFIED' : 'UNVERIFIED_PARAMETRIC_STUDY',
           lwlMeters: lwlVal,
           beamMeters: beamVal,
-          draftMeters: draftVal
+          draftMeters: draftVal,
+          blockCoefficientCb: 0.44,
+          waterplaneCoefficientCwp: 0.66,
+          kgMeters: Number((draftVal * 1.15).toFixed(2)),
+          displacementTonnes: displVal,
+          speedKnots: speedVal
         }
       },
       status: 'PENDING',
@@ -254,17 +270,26 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
 
     // Stage 2: Mass Balance & SWBS Tracking
     orchestrator.registerTask({
-      id: `TASK-MASS-${Date.now().toString().slice(-4)}`,
+      id: massTaskId,
       title: `${titlePrefix}SWBS Mass Breakdown & LCG Synthesis`,
       description: `Sum weight groups and compute center of gravity. (${studyNotice})`,
       assignedAgentId: 'WGT-BAL-09',
       discipline: 'NA',
       priority: 'HIGH',
-      dependencies: [orchestrator.getAllTasks()[0]?.id || 'TASK-HULL-PARAM'],
+      dependencies: [hullTaskId],
       input: {
         taskId: 'TASK-MASS-EST',
         context: { isExploratoryStudy: !hasCertifiedBaselines },
-        parameters: { components: [], isExploratoryStudy: !hasCertifiedBaselines }
+        parameters: {
+          components: [
+            { name: 'Bare Hull Composite Structure', massKg: Math.round(displVal * 280), lcgMetersFromTransom: Number((lwlVal * 0.45).toFixed(2)), tcgMetersFromCl: 0, vcgMetersFromKeel: Number((draftVal * 0.9).toFixed(2)), designMarginPercent: 10 },
+            { name: 'Twin Electric Inboard Pod Motors', massKg: 380, lcgMetersFromTransom: 1.6, tcgMetersFromCl: 0, vcgMetersFromKeel: 0.4, designMarginPercent: 5 },
+            { name: 'Main Battery ESS (LiFePO4 Keel)', massKg: 720, lcgMetersFromTransom: Number((lwlVal * 0.38).toFixed(2)), tcgMetersFromCl: 0, vcgMetersFromKeel: 0.35, designMarginPercent: 10 },
+            { name: 'Avionics, Doppler Radar & Sensors', massKg: 180, lcgMetersFromTransom: Number((lwlVal * 0.55).toFixed(2)), tcgMetersFromCl: 0, vcgMetersFromKeel: 2.1, designMarginPercent: 15 }
+          ],
+          baselineLcbMetersFromTransom: Number((lwlVal * 0.42).toFixed(2)),
+          isExploratoryStudy: !hasCertifiedBaselines
+        }
       },
       status: 'PENDING',
       createdAt: new Date().toISOString(),
@@ -273,13 +298,13 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
 
     // Stage 3: Intact Stability Audit (Safety-Critical -> triggers Human Gate!)
     orchestrator.registerTask({
-      id: `TASK-STAB-${Date.now().toString().slice(-4)}`,
+      id: stabTaskId,
       title: `${titlePrefix}Intact Stability & GMt IMO MSC.267(85) Audit`,
       description: `Validate transverse metacentric height GMt and righting energy. (${studyNotice})`,
       assignedAgentId: 'STAB-HYD-06',
       discipline: 'NA',
       priority: 'CRITICAL',
-      dependencies: [orchestrator.getAllTasks()[1]?.id || 'TASK-MASS-EST'],
+      dependencies: [massTaskId],
       input: {
         taskId: 'TASK-STAB-AUDIT',
         context: { isExploratoryStudy: !hasCertifiedBaselines },
@@ -289,6 +314,9 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
           lwlMeters: lwlVal,
           beamMeters: beamVal,
           draftMeters: draftVal,
+          blockCoefficientCb: 0.44,
+          waterplaneCoefficientCwp: 0.66,
+          kgMeters: Number((draftVal * 1.15).toFixed(2)),
           displacementTonnes: displVal,
           speedKnots: speedVal
         }

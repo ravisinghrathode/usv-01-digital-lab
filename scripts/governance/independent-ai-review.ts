@@ -638,13 +638,19 @@ export async function generateMultiRoleReview(baseRef = 'origin/main'): Promise<
   const rootDir = process.cwd();
   let rawDiff = '';
   try {
-    rawDiff = execSync(`git diff ${baseRef}...HEAD`, { encoding: 'utf-8' });
-  } catch {
+    rawDiff = execSync(`git diff ${baseRef}...HEAD`, { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] });
+  } catch {}
+
+  if (!rawDiff.trim()) {
     try {
-      rawDiff = execSync('git diff HEAD~1...HEAD', { encoding: 'utf-8' });
-    } catch {
-      rawDiff = execSync('git diff --staged', { encoding: 'utf-8' });
-    }
+      rawDiff = execSync('git diff HEAD~1...HEAD', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] });
+    } catch {}
+  }
+
+  if (!rawDiff.trim()) {
+    try {
+      rawDiff = execSync('git diff --staged', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] });
+    } catch {}
   }
 
   const headRef = process.env.PR_HEAD_SHA || 'HEAD';

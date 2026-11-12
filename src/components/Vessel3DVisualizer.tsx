@@ -75,6 +75,13 @@ export const Vessel3DVisualizer: React.FC<Vessel3DVisualizerProps> = ({
   const [showPhotoRender, setShowPhotoRender] = useState<boolean>(false);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
+  // Synchronize dynamic morphing when candidate or prop changes
+  useEffect(() => {
+    if (initialHullType) {
+      setHullType(initialHullType);
+    }
+  }, [initialHullType, candidateId]);
+
   // Animation ticks for rotating radar & moving streamlines
   const [animTime, setAnimTime] = useState<number>(0);
   const animFrameRef = useRef<number | null>(null);
