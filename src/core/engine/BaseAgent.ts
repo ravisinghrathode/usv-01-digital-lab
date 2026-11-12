@@ -322,6 +322,7 @@ export class BaseAgent {
       timestamp: new Date().toISOString(),
       status: requiresDirectorApproval ? 'NEEDS_HUMAN_APPROVAL' : 'SUCCESS',
       executionMode,
+      providerExecutionMode: modelResponse.executionMode,
       provider: modelResponse.providerUsed,
       modelIdentifier: modelResponse.modelUsed,
       correlationId,
