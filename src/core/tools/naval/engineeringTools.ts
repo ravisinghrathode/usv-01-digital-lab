@@ -28,6 +28,7 @@ export const HydrostaticsTool: EngineeringTool = {
     metacentricHeightGmtM: z.number(),
     stabilityStatus: z.enum(['STABLE_COMPLIANT', 'MARGINAL', 'UNSTABLE_CRITICAL', 'UNVERIFIED_ESTIMATE']),
     isPreliminaryEstimate: z.boolean(),
+    engineeringComplianceValidated: z.literal(false),
     kgSource: z.enum(['USER_PROVIDED', 'ASSUMED_FOR_ESTIMATE']),
     complianceCheck: z.object({
       minGmMet: z.boolean(),
@@ -90,6 +91,7 @@ export const HydrostaticsTool: EngineeringTool = {
       metacentricHeightGmtM: Number(metacentricHeightGmtM.toFixed(3)),
       stabilityStatus,
       isPreliminaryEstimate: !hasVerifiedKgInput,
+      engineeringComplianceValidated: false,
       kgSource: hasVerifiedKgInput ? 'USER_PROVIDED' : 'ASSUMED_FOR_ESTIMATE',
       complianceCheck: {
         minGmMet: hasVerifiedKgInput && metacentricHeightGmtM >= 0.35,
@@ -113,8 +115,8 @@ export const ResistanceTool: EngineeringTool = {
     draftMeters: z.coerce.number().positive(),
     displacementTonnes: z.coerce.number().positive(),
     speedKnots: z.coerce.number().positive(),
-    propulsiveEfficiencyEtaD: z.coerce.number().default(0.65),
-    waterTempCelsius: z.coerce.number().default(15)
+    propulsiveEfficiencyEtaD: z.coerce.number().positive().max(1).default(0.65),
+    waterTempCelsius: z.coerce.number().min(-2).max(40).default(15)
   }).passthrough(),
   outputSchema: z.object({
     speedMps: z.number(),
@@ -125,7 +127,9 @@ export const ResistanceTool: EngineeringTool = {
     residualResistanceKn: z.number(),
     totalResistanceKn: z.number(),
     effectivePowerPeKw: z.number(),
-    shaftBrakePowerPbKw: z.number()
+    shaftBrakePowerPbKw: z.number(),
+    engineeringComplianceValidated: z.literal(false),
+    modelStatus: z.literal('PRELIMINARY_EMPIRICAL_ESTIMATE')
   }),
   execute: (input: any) => {
     const { lwlMeters, beamMeters, draftMeters, displacementTonnes, speedKnots, propulsiveEfficiencyEtaD = 0.65 } = input;
@@ -184,7 +188,9 @@ export const ResistanceTool: EngineeringTool = {
       residualResistanceKn: Number(residualResistanceKn.toFixed(3)),
       totalResistanceKn: Number(totalResistanceKn.toFixed(3)),
       effectivePowerPeKw: Number(effectivePowerPeKw.toFixed(2)),
-      shaftBrakePowerPbKw: Number(shaftBrakePowerPbKw.toFixed(2))
+      shaftBrakePowerPbKw: Number(shaftBrakePowerPbKw.toFixed(2)),
+      engineeringComplianceValidated: false,
+      modelStatus: 'PRELIMINARY_EMPIRICAL_ESTIMATE'
     };
   }
 };

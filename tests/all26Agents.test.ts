@@ -176,7 +176,13 @@ describe('26-Agent Individual Verification Matrix (A01 - A26, Tests A through H)
 
         const mandatoryTools = agent.verificationCriteria?.mandatoryDeterministicTools || [];
         if (mandatoryTools.length > 0) {
-          expect(result.evidenceValid).toBe(true);
+          const hasPreliminaryTool = result.deterministicToolEvidence.some(e =>
+            e.outputs?.isPreliminaryEstimate === true ||
+            e.outputs?.engineeringComplianceValidated === false ||
+            e.outputs?.modelStatus === 'PRELIMINARY_EMPIRICAL_ESTIMATE' ||
+            e.outputs?.stabilityStatus === 'UNVERIFIED_ESTIMATE'
+          );
+          expect(result.evidenceValid).toBe(!hasPreliminaryTool);
           expect(result.executionMode).toBe('DETERMINISTIC_CALCULATION');
         } else {
           // Agents without deterministic tools MUST NOT report evidenceValid: true from text synthesis alone
@@ -196,7 +202,13 @@ describe('26-Agent Individual Verification Matrix (A01 - A26, Tests A through H)
         const expectsApproval =
           agent.verificationCriteria?.independentReviewRequired ||
           agent.auditRequirement?.logLevel === 'SAFETY_CRITICAL' ||
-          result.executionMode === 'SYNTHETIC_TEST_MOCK';
+          result.executionMode === 'SYNTHETIC_TEST_MOCK' ||
+          result.deterministicToolEvidence.some(e =>
+            e.outputs?.isPreliminaryEstimate === true ||
+            e.outputs?.engineeringComplianceValidated === false ||
+            e.outputs?.modelStatus === 'PRELIMINARY_EMPIRICAL_ESTIMATE' ||
+            e.outputs?.stabilityStatus === 'UNVERIFIED_ESTIMATE'
+          );
 
         expect(result.requiresDirectorApproval).toBe(Boolean(expectsApproval));
       });

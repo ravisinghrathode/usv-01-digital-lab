@@ -266,6 +266,8 @@ export class BaseAgent {
     // resulting predictions are independently validated for design release.
     const hasPreliminaryTools = deterministicEvidence.some(e =>
       e.outputs?.isPreliminaryEstimate === true ||
+      e.outputs?.engineeringComplianceValidated === false ||
+      e.outputs?.modelStatus === 'PRELIMINARY_EMPIRICAL_ESTIMATE' ||
       e.outputs?.stabilityStatus === 'UNVERIFIED_ESTIMATE'
     );
     const evidenceValid = allToolsVerified && !hasPreliminaryTools;

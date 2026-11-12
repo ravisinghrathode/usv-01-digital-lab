@@ -131,7 +131,7 @@ export class VerifyUsv01Engine {
       const pkg = JSON.parse(pkgRaw);
       dependencyCount = Object.keys(pkg.dependencies || {}).length + Object.keys(pkg.devDependencies || {}).length;
       packageJsonValid = pkg.name === 'usv-01-digital-lab' && dependencyCount > 0;
-      lockfilePresent = fs.existsSync(path.join(this.rootDir, 'package-lock.json'));
+      lockfilePresent = fs.existsSync(path.join(this.rootDir, 'bun.lock'));
     } catch {}
 
     phase1Checks.push({
@@ -141,14 +141,14 @@ export class VerifyUsv01Engine {
       status: packageJsonValid && lockfilePresent ? 'PASS' : 'FAIL',
       mandatory: true,
       summary: packageJsonValid && lockfilePresent
-        ? `Package manifest validated (${dependencyCount} dependencies). package-lock.json present.`
+        ? `Package manifest validated (${dependencyCount} dependencies). bun.lock present.`
         : 'Package manifest or lockfile invalid or missing.',
       evidence: {
         packageJsonValid,
         lockfilePresent,
         dependencyCount
       },
-      remediation: !packageJsonValid || !lockfilePresent ? 'Restore valid package.json and run npm install to generate package-lock.json' : undefined,
+      remediation: !packageJsonValid || !lockfilePresent ? 'Restore valid package.json and committed bun.lock, then run bun install --frozen-lockfile' : undefined,
       timestamp: new Date().toISOString()
     });
 
