@@ -1,0 +1,13 @@
+{
+  "schema": "usv01-ecr-approval/v2-ed25519",
+  "changeId": "ECR-20261112-002",
+  "decision": "APPROVED",
+  "authorityId": "usr-eng-dir-8841",
+  "authorityName": "Ravi Singh Rathode",
+  "authorityRole": "ENGINEERING_DIRECTOR",
+  "baselineDigest": "sha256:564b335ada267903a06ec4e94317de02bd994f79d044c25f34152bf08f1f2a1f",
+  "headCommitAtSigning": "07bc38bc2c22acc2cd933ba04890842ca9424e12",
+  "signedAt": "2026-11-12T18:18:27.605Z",
+  "publicKeyFingerprint": "SHA256:55d8595a20e1ebf1dc87dc0254c2587c9854ff972b08009e99e8319d723f9437",
+  "signature": "TYutdUWP8jbA+e+MO2jOpsLU8RikKtRVrWVhaUupC2+qQ5fOyBFyLyv2ToE87KcxZkJ6v5mBbv7ODIwU7eCOAQ=="
+}

@@ -1,8 +1,8 @@
 {
   "summary": {
-    "totalFilesChanged": 34,
-    "totalLinesAdded": 1805,
-    "totalLinesDeleted": 586,
+    "totalFilesChanged": 35,
+    "totalLinesAdded": 1821,
+    "totalLinesDeleted": 581,
     "dominantCategories": [
       "SOFTWARE",
       "DOCUMENTATION",
@@ -15,8 +15,8 @@
     "requiresDesignatedAuthorityApproval": true,
     "requiresECR": true
   },
-  "commitSha": "eb1483fa8e71a329a7015afa20c73cb4f2d795de",
-  "baselineDigest": "sha256:0454ab070041f98815ad35f5d4ebbbf3b5b4a8f5fc05c0965e7de2bc6d8c1110",
+  "commitSha": "7c7831e7f81d23020c74611458e5440fd9c55b19",
+  "baselineDigest": "sha256:8b7c3decfce6fa8e772146eab1bd93b4c87466502797eb877e108f90e69ecd35",
   "fileDetails": [
     {
       "file": ".github/workflows/safety-governance-gate.yml",
@@ -87,8 +87,8 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 106,
-      "linesDeleted": 211
+      "linesAdded": 114,
+      "linesDeleted": 201
     },
     {
       "file": "governance/reports/stage-c-review.json",
@@ -96,8 +96,8 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 3,
-      "linesDeleted": 3
+      "linesAdded": 5,
+      "linesDeleted": 5
     },
     {
       "file": "governance/reports/test-results.json",
@@ -152,6 +152,15 @@
       "risk": "MEDIUM",
       "linesAdded": 3,
       "linesDeleted": 2
+    },
+    {
+      "file": "scripts/governance/stage-e-enforce.ts",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 6,
+      "linesDeleted": 3
     },
     {
       "file": "server.ts",
@@ -325,5 +334,5 @@
       "linesDeleted": 6
     }
   ],
-  "timestamp": "2026-11-12T18:17:14.319Z"
+  "timestamp": "2026-11-12T18:20:53.770Z"
 }
