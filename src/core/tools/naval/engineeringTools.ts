@@ -17,7 +17,7 @@ export const HydrostaticsTool: EngineeringTool = {
     waterplaneCoefficientCwp: z.coerce.number().min(0.4).max(0.95).optional().or(z.literal(0)).transform(v => v ? Number(v) : undefined),
     kgMeters: z.coerce.number().positive().optional().or(z.literal(0)).transform(v => v ? Number(v) : undefined),
     displacementTonnes: z.coerce.number().positive().optional().or(z.literal(0)).transform(v => v ? Number(v) : undefined),
-    seawaterDensityKgM3: z.coerce.number().default(1025)
+    seawaterDensityKgM3: z.coerce.number().min(900).max(1100).default(1025)
   }).passthrough(),
   outputSchema: z.object({
     displacedVolumeM3: z.number(),
@@ -117,7 +117,10 @@ export const ResistanceTool: EngineeringTool = {
     speedKnots: z.coerce.number().positive(),
     propulsiveEfficiencyEtaD: z.coerce.number().positive().max(1).default(0.65),
     waterTempCelsius: z.coerce.number().min(-2).max(40).default(15)
-  }).passthrough(),
+  }).passthrough().refine(data =>
+    data.displacementTonnes * 1000 <= 1025 * data.lwlMeters * data.beamMeters * data.draftMeters,
+    { message: 'Displacement exceeds the enclosing LWL × beam × draft prism; check dimensions and mass.' }
+  ),
   outputSchema: z.object({
     speedMps: z.number(),
     froudeNumberFn: z.number(),

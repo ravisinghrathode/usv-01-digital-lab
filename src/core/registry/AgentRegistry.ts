@@ -86,8 +86,8 @@ export class AgentRegistry {
   public validateRegistry(): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
 
-    if (this.agents.size < 26) {
-      errors.push(`Registry underpopulated: expected at least 26 agents, found ${this.agents.size}`);
+    if (this.agents.size !== 26) {
+      errors.push(`Registry count mismatch: expected exactly 26 agents, found ${this.agents.size}`);
     }
 
     // Verify HMEA canonical IDs (A01 - A26)
@@ -101,8 +101,13 @@ export class AgentRegistry {
     // Check all dependencies point to valid agents
     for (const [id, agent] of this.agents.entries()) {
       for (const depId of agent.dependencies) {
-        if (!this.agents.has(depId) && !this.aliasMap.has(depId)) {
+        if (!this.getAgent(depId)) {
           errors.push(`Agent '${id}' has unresolved dependency on unknown agent '${depId}'`);
+        }
+      }
+      for (const requiredTool of agent.verificationCriteria?.mandatoryDeterministicTools || []) {
+        if (!agent.permittedTools.includes(requiredTool)) {
+          errors.push(`Agent '${id}' requires tool '${requiredTool}' but lacks permittedTools authorization`);
         }
       }
 
@@ -133,11 +138,14 @@ export class AgentRegistry {
 
       const agent = this.agents.get(currId);
       if (agent) {
-        for (const depId of agent.dependencies) {
+        for (const depAlias of agent.dependencies) {
+          const dependency = this.getAgent(depAlias);
+          if (!dependency) continue;
+          const depId = dependency.id;
           if (!visited.has(depId)) {
             if (checkCycle(depId, [...path, depId])) return true;
           } else if (recStack.has(depId)) {
-            errors.push(`Circular dependency detected: ${path.join(' -> ')} -> ${depId}`);
+            errors.push(`Circular dependency detected: ${[...path, depId].join(' -> ')}`);
             return true;
           }
         }
