@@ -660,11 +660,11 @@ export const INITIAL_LOAD_CASES: LoadCaseRecord[] = [
 ];
 
 export const INITIAL_POWER_LOADS: PowerLoadItem[] = [
-  { id: 'PWR-01', consumerName: 'Propulsion Motors (Cruise Speed)', subsystem: 'PRP', voltageV: '48V DC', nominalPowerW: 'TBD', dutyCyclePercent: 80, averageContinuousPowerW: 'TBD', peakPowerW: 'TBD', isEssential: true },
-  { id: 'PWR-02', consumerName: 'Mission Autonomy Computer (Jetson AGX Orin)', subsystem: 'AUT', voltageV: '24V DC', nominalPowerW: 65, dutyCyclePercent: 100, averageContinuousPowerW: 65, peakPowerW: 85, isEssential: true },
-  { id: 'PWR-03', consumerName: 'FMCW 4G Marine Radar', subsystem: 'AUT', voltageV: '24V DC', nominalPowerW: 45, dutyCyclePercent: 100, averageContinuousPowerW: 45, peakPowerW: 60, isEssential: true },
-  { id: 'PWR-04', consumerName: '3D LiDAR & EO/IR Camera Gimbal', subsystem: 'AUT', voltageV: '24V DC', nominalPowerW: 90, dutyCyclePercent: 75, averageContinuousPowerW: 67.5, peakPowerW: 140, isEssential: false },
-  { id: 'PWR-05', consumerName: 'Navigation Lighting & Bilge Pumps (Standby)', subsystem: 'ELE', voltageV: '24V DC', nominalPowerW: 30, dutyCyclePercent: 20, averageContinuousPowerW: 6, peakPowerW: 180, isEssential: true }
+  { id: 'PWR-01', consumerName: 'Propulsion Motors (Cruise Speed)', subsystem: 'PRP', voltageV: '48V DC', nominalPowerW: 'TBD', dutyCyclePercent: 'TBD', averageContinuousPowerW: 'TBD', peakPowerW: 'TBD', isEssential: true },
+  { id: 'PWR-02', consumerName: 'Mission Autonomy Computer (Jetson AGX Orin)', subsystem: 'AUT', voltageV: '24V DC', nominalPowerW: 'TBD', dutyCyclePercent: 'TBD', averageContinuousPowerW: 'TBD', peakPowerW: 'TBD', isEssential: true },
+  { id: 'PWR-03', consumerName: 'FMCW 4G Marine Radar', subsystem: 'AUT', voltageV: '24V DC', nominalPowerW: 'TBD', dutyCyclePercent: 'TBD', averageContinuousPowerW: 'TBD', peakPowerW: 'TBD', isEssential: true },
+  { id: 'PWR-04', consumerName: '3D LiDAR & EO/IR Camera Gimbal', subsystem: 'AUT', voltageV: '24V DC', nominalPowerW: 'TBD', dutyCyclePercent: 'TBD', averageContinuousPowerW: 'TBD', peakPowerW: 'TBD', isEssential: false },
+  { id: 'PWR-05', consumerName: 'Navigation Lighting & Bilge Pumps (Standby)', subsystem: 'ELE', voltageV: '24V DC', nominalPowerW: 'TBD', dutyCyclePercent: 'TBD', averageContinuousPowerW: 'TBD', peakPowerW: 'TBD', isEssential: true }
 ];
 
 export const INITIAL_INTERFACES: InterfaceDefinition[] = [

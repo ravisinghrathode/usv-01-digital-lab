@@ -3,8 +3,8 @@
   "programme": "NAVAL-USV",
   "project": "USV-01 Digital Engineering Lab",
   "releaseVersion": "1.0.0",
-  "gitCommitSha": "489ebc685226e3773d021c5c534a26403400a494",
-  "builtAt": "2026-11-12T00:49:45.009Z",
+  "gitCommitSha": "e2aa011384a37c8efdc1ecdfb7f4d56a68d0bcd7",
+  "builtAt": "2026-11-12T01:13:52.562Z",
   "environment": {
     "nodeVersion": "v24.22.2",
     "osPlatform": "linux"
@@ -32,8 +32,8 @@
     },
     {
       "path": "src/components/AgentOrchestratorView.tsx",
-      "sha256": "7a3b93eb7be9ac9e1899b7599c71cc8adbac05384814714d4be61396e00569e4",
-      "sizeBytes": 49468
+      "sha256": "853846df68dd1ae8bfd43940257391d78604e19f1aeddafe56a9cf3f354804b7",
+      "sizeBytes": 49776
     },
     {
       "path": "src/components/AiEngineeringAssistant.tsx",
@@ -82,8 +82,8 @@
     },
     {
       "path": "src/components/NavalArchitectureView.tsx",
-      "sha256": "b73dc7f67dd367c477620b28a7f919842b74ddf2185b0404c787b1f65c793a09",
-      "sizeBytes": 40159
+      "sha256": "acf2a7f93e0b77bab8056e8d32c7b0365db65d37785ebe86cbc7726b3d45a3db",
+      "sizeBytes": 41455
     },
     {
       "path": "src/components/NavigationSidebar.tsx",
@@ -112,8 +112,8 @@
     },
     {
       "path": "src/components/RealtimeSimulationView.tsx",
-      "sha256": "99a85cab73484c21048378837fb17821cc8f11db4f07328f81b16810bda8c37a",
-      "sizeBytes": 52081
+      "sha256": "ad574f3cf76ddf25f99b402968324b78575022680fa1eb3f688fb7a13045e343",
+      "sizeBytes": 52872
     },
     {
       "path": "src/components/RisksDecisionsView.tsx",
@@ -272,8 +272,8 @@
     },
     {
       "path": "src/data/initialProjectData.ts",
-      "sha256": "594adc3afd4e9671c8af4a22e8c913cdcb240ecffac6aaf3cef55196c02059ee",
-      "sizeBytes": 37460
+      "sha256": "b1c96a5a4a8683f179541288f0f86c0310e8636c6c8638e50a60d24cac8d8ef4",
+      "sizeBytes": 37506
     },
     {
       "path": "src/index.css",
@@ -297,18 +297,18 @@
     },
     {
       "path": "src/utils/navalCalculators.ts",
-      "sha256": "a251380f5d79da013eb291eb18ddec28f54e57d51475b05712acb7f9446da57e",
-      "sizeBytes": 10104
+      "sha256": "cb47806fd9bb5de62125761ed46b4cf9ee78f40e8977986c58aac29d6df8c576",
+      "sizeBytes": 10928
     },
     {
-      "path": "dist/assets/index-D2fJP_Ct.js",
-      "sha256": "43697970e718bbc11ab98259a9c9ac0bdd8ce08767ae4293e09072133de5bd36",
-      "sizeBytes": 1018862
+      "path": "dist/assets/index-DXSCPDnV.js",
+      "sha256": "b8a618224cf9f4934b9d860cd9c70698ba0074062fd383607c2399ea899aaa93",
+      "sizeBytes": 1021234
     },
     {
-      "path": "dist/assets/index-lOGYyy89.css",
-      "sha256": "8bd52feaf0625abf214fe64dc81931c4c0142e46fe0687e4da9a446be14610e0",
-      "sizeBytes": 41187
+      "path": "dist/assets/index-aapMnn2K.css",
+      "sha256": "bf831a4558399b354739fe604d01dd18c354bd315a607c7fe5ba4b96a6aa481a",
+      "sizeBytes": 41244
     },
     {
       "path": "dist/assets/vendor-libs-BTFXSzXW.js",
@@ -327,7 +327,7 @@
     },
     {
       "path": "dist/index.html",
-      "sha256": "69db7025deba1f2769a25d88dd26e3269669eb465866813e18613afe5c4a6f59",
+      "sha256": "ae610db508178f830fc2cf35082997a7c33ad0b3e75f74fa4c0443657089d5e3",
       "sizeBytes": 1406
     }
   ],
@@ -337,5 +337,5 @@
     "auditVulnerabilities": 0,
     "staticAnalysisStatus": "PASS"
   },
-  "immutableManifestSha256": "905d984f9517a8dd3c226777593fc4286554a517dbc95796bf328aadfbd46c57"
+  "immutableManifestSha256": "a347c27fb7ebafd1f2ae3a8dff6d48bd616e82ae3cd035eb57db845c41da1de8"
 }
