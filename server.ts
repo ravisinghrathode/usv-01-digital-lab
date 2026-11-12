@@ -611,8 +611,9 @@ ACTION REQUESTED: ${actionType || 'General Engineering Query'}
 
     const userPrompt = prompt || `Perform an engineering review for the active workstream ${currentWorkstream} and active record. Highlight missing inputs, traceability gaps, and standard compliance.`;
 
+    const geminiModel = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
     const response = await ai.models.generateContent({
-      model: 'gemini-3.8-flash',
+      model: geminiModel,
       contents: userPrompt,
       config: {
         systemInstruction
@@ -623,7 +624,7 @@ ACTION REQUESTED: ${actionType || 'General Engineering Query'}
 
     res.json({
       success: true,
-      modelUsed: 'gemini-3.8-flash',
+      modelUsed: geminiModel,
       text
     });
   } catch (err: any) {

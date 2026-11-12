@@ -14,6 +14,7 @@ import { evaluateStageDHumanApproval } from '../scripts/governance/stage-d-human
 import { authenticateLoginRequest, AUTHORIZED_MEMBERS } from '../server.ts';
 import { ModelProviderRouter } from '../src/core/models/ModelProvider.ts';
 import { generateMultiRoleReview } from '../scripts/governance/independent-ai-review.ts';
+import { evaluateGovernanceGate } from '../scripts/governance/stage-e-enforce.ts';
 import path from 'path';
 import fs from 'fs';
 import { execSync } from 'child_process';
@@ -514,6 +515,77 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
       // If any reviewer fell back to mock, composite recommendation must strictly be ADVISORY_BLOCK
       if (report.hasMockFallback) {
         expect(report.compositeAdvisoryRecommendation).toBe('ADVISORY_BLOCK');
+      }
+    });
+  });
+
+  describe('12. Stage E: Governance Gate Enforcement & Fail-Closed Integrity', () => {
+    it('should evaluate governance gate with fail-closed verdict when critical change lacks human approval', () => {
+      const evalRes = evaluateGovernanceGate(process.cwd(), 'origin/main');
+      expect(evalRes).toBeDefined();
+      expect(evalRes.stageAResult).toBeDefined();
+      expect(evalRes.stageCResult).toBeDefined();
+      expect(evalRes.stageDResult).toBeDefined();
+
+      // If Stage A is CRITICAL or HIGH and Stage D has no verified signature, overallVerdict cannot be APPROVED
+      if (evalRes.stageDResult.required && !evalRes.stageDResult.signatureVerified) {
+        expect(evalRes.passed).toBe(false);
+        expect(['PENDING_HUMAN_AUTHORITY', 'BLOCKED']).toContain(evalRes.overallVerdict);
+        expect(evalRes.blockingReasons.length).toBeGreaterThan(0);
+      }
+    });
+
+    it('should block merge and reject PENDING_HUMAN_REVIEW as acceptable Stage C result on critical changes', () => {
+      // Simulate reports with PENDING_HUMAN_REVIEW in a temporary directory
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'egs-stage-e-'));
+      const reportsDir = path.join(tmpDir, 'governance', 'reports');
+      fs.mkdirSync(reportsDir, { recursive: true });
+
+      try {
+        fs.writeFileSync(
+          path.join(reportsDir, 'pr-classification.json'),
+          JSON.stringify({
+            summary: {
+              overallRisk: 'CRITICAL',
+              requiresDesignatedAuthorityApproval: true,
+              totalFilesChanged: 2,
+              totalLinesAdded: 50,
+              totalLinesDeleted: 0,
+              dominantCategories: ['SAFETY'],
+              requiresECR: true
+            },
+            fileDetails: [],
+            timestamp: new Date().toISOString()
+          })
+        );
+
+        fs.writeFileSync(
+          path.join(reportsDir, 'stage-c-review.json'),
+          JSON.stringify({
+            compositeAdvisoryRecommendation: 'PENDING_HUMAN_REVIEW',
+            provider: 'deterministic',
+            aiReviewStatus: 'AI_REVIEW_UNAVAILABLE',
+            deterministicStatus: 'PASS',
+            hasMockFallback: false
+          })
+        );
+
+        fs.writeFileSync(
+          path.join(reportsDir, 'stage-d-approval.json'),
+          JSON.stringify({
+            humanApprovalRequired: true,
+            highestRisk: 'CRITICAL',
+            signatureVerified: false,
+            staleApproval: false
+          })
+        );
+
+        const evalRes = evaluateGovernanceGate(tmpDir, 'origin/main');
+        expect(evalRes.passed).toBe(false);
+        expect(evalRes.overallVerdict).toBe('BLOCKED');
+        expect(evalRes.blockingReasons.some(r => r.includes('PENDING_HUMAN_REVIEW'))).toBe(true);
+      } finally {
+        fs.rmSync(tmpDir, { recursive: true, force: true });
       }
     });
   });

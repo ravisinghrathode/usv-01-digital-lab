@@ -27,8 +27,8 @@ Every repository artifact, file, and data stream is classified into one of three
 
 #### LEVEL 2 — Internal (General Digital Lab Source Code)
 * **Scope:** React UI dashboard components, DAG orchestrator engine, deterministic calculation libraries, general TypeScript interfaces.
-* **External AI Processing:** Permitted only when explicit user consent is configured (`OPENAI_API_KEY` present and `LOCAL_MODE=0`). Must be processed with diff truncation and privacy filters.
-* **Default Mode:** Local Deterministic Review mode (`LOCAL_MODE=1`) is preferred to prevent external leakage.
+* **External AI Processing:** Permitted only when explicit user consent is configured (`GEMINI_API_KEY` present and `AI_REVIEW_PROVIDER=gemini`). Must be processed with diff truncation and privacy filters.
+* **Default Mode:** Local Deterministic Review mode (`AI_REVIEW_PROVIDER=deterministic`) is preferred and active by default to prevent external leakage.
 
 #### LEVEL 3 — Sensitive (Classified Engineering Baselines & Security Assets)
 * **Scope:** Cryptographic session secrets, `.env*` environment configurations, physical vessel structural drawings, hydrodynamic towing tank data, private keys (`.pem`, `id_rsa`), security audit findings, and proprietary naval scantlings.
@@ -46,8 +46,8 @@ Every repository artifact, file, and data stream is classified into one of three
    - Any private key file (`*.pem`, `id_rsa`)
    - Large package lockfiles (`package-lock.json`)
 2. **Local-Only Review Mode:**  
-   When `OPENAI_API_KEY` is absent or `LOCAL_MODE=1` is specified, the review pipeline executes 100% locally using deterministic static analysis rules, AST inspection, and heuristic checks. No network packets leave the machine.
+   When external API credentials are absent or `AI_REVIEW_PROVIDER=deterministic` is specified, the review pipeline executes 100% locally using deterministic static analysis rules, AST inspection, and heuristic checks. No network packets leave the machine. No paid OpenAI API key is required.
 3. **Fail-Safe Operation:**  
-   If an external API experiences rate limits, credit balance exhaustion, or network disconnects, the system fails closed or falls back cleanly to local verification without exposing source files.
+   If an external API experiences rate limits, quota exhaustion, or network disconnects, the system fails closed or falls back cleanly to local verification without exposing source files.
 4. **Credential Isolation:**  
-   API credentials (`OPENAI_API_KEY`, `GEMINI_API_KEY`, `LAB_SESSION_SECRET`) must never be hardcoded in repository source files or committed to git. They are read dynamically from runtime environment variables.
+   API credentials (`GEMINI_API_KEY`, `LAB_SESSION_SECRET`) must never be hardcoded in repository source files or committed to git. They are read dynamically from runtime environment variables.

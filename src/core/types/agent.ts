@@ -14,13 +14,7 @@ export type AgentStatus = 'IDLE' | 'EXECUTING' | 'WAITING_APPROVAL' | 'COMPLETED
 
 export type ExecutionPermission = 'READ_ONLY' | 'PARAM_PROPOSAL' | 'CALCULATION_EXEC' | 'BASELINE_DRAFT' | 'VVT_REVIEW';
 
-export interface ModelConfig {
-  preferredProvider: 'gemini' | 'openai' | 'deterministic' | 'ollama' | 'mock_deterministic';
-  modelName: string;
-  temperature: number;
-  maxTokens: number;
-  fallbackToMock: boolean;
-}
+export type { ModelConfig } from '../models/ModelProvider.ts';
 
 export interface AgentVerificationCriteria {
   requiredChecklist: string[];

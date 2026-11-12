@@ -3,8 +3,8 @@
   "programme": "NAVAL-USV",
   "project": "USV-01 Digital Engineering Lab",
   "releaseVersion": "1.0.0",
-  "gitCommitSha": "489ebc685226e3773d021c5c534a26403400a494",
-  "builtAt": "2026-11-12T00:49:45.009Z",
+  "gitCommitSha": "0385270f88a1c1c8fca02a77313f922f4777bc40",
+  "builtAt": "2026-11-12T01:23:19.085Z",
   "environment": {
     "nodeVersion": "v24.22.2",
     "osPlatform": "linux"
@@ -17,8 +17,8 @@
     },
     {
       "path": "server.ts",
-      "sha256": "769d930fe7bbff5fdaf19e86f87604fbc66442f3d5094554f015ff6065365caa",
-      "sizeBytes": 26191
+      "sha256": "97346adad0309c8367ec8f337d3ab44e19786119a9787ad465539a43532822ed",
+      "sizeBytes": 26249
     },
     {
       "path": "USV01_PROJECT_CONTEXT.md",
@@ -57,8 +57,8 @@
     },
     {
       "path": "src/components/GenerativeOptimizerView.tsx",
-      "sha256": "c7f1a760ae9c3a2d5a48cddeaee1aeaf7cb12d0a0b6f51d4bbfe7651b848dec4",
-      "sizeBytes": 62985
+      "sha256": "6551cc99c5a63c45ce58dfa254730a9c5e72f4a1c03fbd031bbeded26b770b50",
+      "sizeBytes": 67328
     },
     {
       "path": "src/components/HydrodynamicsView.tsx",
@@ -122,8 +122,8 @@
     },
     {
       "path": "src/components/ShipBuildingProcessView.tsx",
-      "sha256": "b6bd259e6883d9703c8bd5aa7101db6ce77661ea5ef0f1f4a0f68eea4d43cea8",
-      "sizeBytes": 39919
+      "sha256": "e5c55b86fbaab10cb5e2f23fc94887c7ae46efb5894b5cbb616d3cbc8896e3dd",
+      "sizeBytes": 41422
     },
     {
       "path": "src/components/SimulationCentreView.tsx",
@@ -154,6 +154,11 @@
       "path": "src/components/VerificationValidationView.tsx",
       "sha256": "a31371c75929903b953047c894de2f2e5f287a0ee2aa96471ca5e6a6698f5b65",
       "sizeBytes": 10612
+    },
+    {
+      "path": "src/components/Vessel3DVisualizer.tsx",
+      "sha256": "5dc974d4070c7635564b585fc48b17d8d75bfde8c50cac95aeede7904705042c",
+      "sizeBytes": 42195
     },
     {
       "path": "src/core/agents/definitions.ts",
@@ -197,8 +202,8 @@
     },
     {
       "path": "src/core/models/ModelProvider.ts",
-      "sha256": "75e746a376a1e1f75b2b2ec0ba761c41a8afa330b09ceadb339f375dd0a7858a",
-      "sizeBytes": 19352
+      "sha256": "21e3b68c8b47a4f7818476df928d015d50b3d16ee68046d0a9526a879e72e350",
+      "sizeBytes": 19527
     },
     {
       "path": "src/core/optimizer/GenerativeDesignOptimizer.ts",
@@ -247,8 +252,8 @@
     },
     {
       "path": "src/core/types/agent.ts",
-      "sha256": "b0642dea402641c004e8f62cb6b5cbef11ee7d7d6a37278f5ac0f54cd48fe43f",
-      "sizeBytes": 2840
+      "sha256": "c1bc655841303689172ffee1aafaf9b108d886ae740643f35f13c6c1e684e631",
+      "sizeBytes": 2684
     },
     {
       "path": "src/core/types/memory.ts",
@@ -299,36 +304,6 @@
       "path": "src/utils/navalCalculators.ts",
       "sha256": "a251380f5d79da013eb291eb18ddec28f54e57d51475b05712acb7f9446da57e",
       "sizeBytes": 10104
-    },
-    {
-      "path": "dist/assets/index-D2fJP_Ct.js",
-      "sha256": "43697970e718bbc11ab98259a9c9ac0bdd8ce08767ae4293e09072133de5bd36",
-      "sizeBytes": 1018862
-    },
-    {
-      "path": "dist/assets/index-lOGYyy89.css",
-      "sha256": "8bd52feaf0625abf214fe64dc81931c4c0142e46fe0687e4da9a446be14610e0",
-      "sizeBytes": 41187
-    },
-    {
-      "path": "dist/assets/vendor-libs-BTFXSzXW.js",
-      "sha256": "3a6116fba8ad39a4d2fecb7c135d11f45d4605dc8f2509b5104096cecde9d7aa",
-      "sizeBytes": 4236
-    },
-    {
-      "path": "dist/assets/vendor-react-C-NPPq7d.js",
-      "sha256": "3a5054f0817371297ab28836611713628b4cbfe5cec81e84dd408851fe2966ba",
-      "sizeBytes": 453399
-    },
-    {
-      "path": "dist/assets/vendor-zod-DI3SlkSS.js",
-      "sha256": "b80c254796197e70618b79c55e7a98ad9cd932a73116cf3062099cee58ff83b1",
-      "sizeBytes": 92996
-    },
-    {
-      "path": "dist/index.html",
-      "sha256": "69db7025deba1f2769a25d88dd26e3269669eb465866813e18613afe5c4a6f59",
-      "sizeBytes": 1406
     }
   ],
   "verificationEvidence": {
@@ -337,5 +312,5 @@
     "auditVulnerabilities": 0,
     "staticAnalysisStatus": "PASS"
   },
-  "immutableManifestSha256": "905d984f9517a8dd3c226777593fc4286554a517dbc95796bf328aadfbd46c57"
+  "immutableManifestSha256": "62cf3ad8b07f6976326d00ab26f415d5f616e5a6e8a14e3d3ed10db50f0803b1"
 }
