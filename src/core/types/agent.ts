@@ -76,6 +76,7 @@ export interface AgentExecutionOutput {
   timestamp: string;
   status: 'SUCCESS' | 'PARTIAL' | 'FAILED' | 'NEEDS_HUMAN_APPROVAL';
   executionMode?: ExecutionMode;
+  providerExecutionMode?: ExecutionMode; // Raw model-provider mode, distinct from deterministic tool execution.
   provider?: string;
   modelIdentifier?: string;
   correlationId?: string;

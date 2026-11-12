@@ -37,6 +37,7 @@ import http from 'http';
 import { WebSocketServer } from 'ws';
 import { VerifyUsv01Engine } from './src/core/verification/VerifyUsv01Engine.ts';
 import { getLabReadinessSnapshot } from './src/core/verification/LabReadiness.ts';
+import { loadProjectStore, saveProjectStore } from './src/core/storage/ProjectStorePersistence.ts';
 import { AgentRegistry } from './src/core/registry/AgentRegistry.ts';
 import { BaseAgent } from './src/core/engine/BaseAgent.ts';
 import { CentralOrchestrator } from './src/core/orchestrator/CentralOrchestrator.ts';
@@ -111,31 +112,18 @@ const validateDataCollection = (req: express.Request, res: express.Response, nex
 };
 
 const saveStoreToFile = () => {
-  try {
-    if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
-    }
-    fs.writeFileSync(STORE_PATH, JSON.stringify(dbStore, null, 2), 'utf-8');
-  } catch (err) {
-    console.error('Failed to persist store to disk:', err);
-  }
+  // Never acknowledge a persisted change if atomic writing failed.
+  saveProjectStore(dbStore, STORE_PATH);
 };
 
 const loadStoreFromFile = (): boolean => {
-  try {
-    if (fs.existsSync(STORE_PATH)) {
-      const content = fs.readFileSync(STORE_PATH, 'utf-8');
-      const parsed = JSON.parse(content);
-      if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
-        dbStore = parsed;
-        console.log(`Loaded persisted project store from ${STORE_PATH}`);
-        return true;
-      }
-    }
-  } catch (err) {
-    console.warn('Could not load persisted project store from disk:', err);
-  }
-  return false;
+  // An existing corrupt store is a critical blocker, NOT a reason to silently
+  // seed demonstration data and overwrite an engineering baseline.
+  const stored = loadProjectStore(STORE_PATH);
+  if (!stored) return false;
+  dbStore = stored;
+  console.log('Loaded validated persisted USV-01 project store');
+  return true;
 };
 
 // Helper to seed store if empty

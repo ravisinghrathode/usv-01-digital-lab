@@ -123,9 +123,11 @@ export class GeminiProvider implements IModelProvider {
   }
 
   async generateText(request: ModelPromptRequest, config?: ModelConfig): Promise<ModelPromptResponse> {
+    // Deployment override takes precedence over agent specs; enables coordinated
+    // model migrations without editing all 26 agent definitions.
     const model =
-      config?.modelName ||
       (typeof process !== 'undefined' && process.env?.GEMINI_MODEL) ||
+      config?.modelName ||
       'gemini-3.8-flash';
 
     // In browser environments, proxy all Gemini calls to server-side endpoint

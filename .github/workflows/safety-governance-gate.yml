@@ -113,6 +113,21 @@ jobs:
             governance/reports/acceptance-campaign.md
           if-no-files-found: ignore
 
+      - name: Stage B — Offline Commissioning Preconditions (External Evidence Pending)
+        run: |
+          set -euo pipefail
+          npm run acceptance:commission -- --baseline-sha "$PR_HEAD_SHA"
+
+      - name: Upload Commissioning Readiness Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: usv01-commissioning-readiness
+          path: |
+            governance/reports/commissioning-suite.json
+            governance/reports/commissioning-suite.md
+          if-no-files-found: ignore
+
       - name: Stage B — Production Bundle Verification
         run: |
           set -euo pipefail
