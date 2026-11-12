@@ -769,6 +769,7 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
           status: 'UNVERIFIED',
           mandatory: true,
           summary: 'Unverified test',
+          evidence: { simulated: true },
           timestamp: new Date().toISOString()
         }
       ];

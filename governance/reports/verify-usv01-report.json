@@ -1,11 +1,11 @@
 {
-  "reportId": "USV01-VRFY-20261112125053",
-  "timestamp": "2026-11-12T12:50:53.517Z",
-  "executionDurationMs": 11711,
+  "reportId": "USV01-VRFY-20261112125238",
+  "timestamp": "2026-11-12T12:52:38.848Z",
+  "executionDurationMs": 10750,
   "system": "NAVAL-USV / USV-01 Digital Engineering Lab",
   "systemVersion": "1.0.0",
-  "evaluatedCommitSha": "61ce6ed6470d7dbdee4920a6a83db8b5b560ee67",
-  "baselineDigest": "sha256:bd5536b456cb4ad9ee473d9c8a094f7904e0b8d82e9cc5b190b7ad47e32741ef",
+  "evaluatedCommitSha": "b1141d178fba46fd48fa6f3306977b096d781d9b",
+  "baselineDigest": "sha256:c440c5fad52a9c4eaca566c9bcba454daf2d6d9485fcba372c70aa88121ef600",
   "branch": "feat/verify-usv01-system",
   "overallVerdict": "FAIL",
   "verdictRationale": "Verification FAILED: 1 mandatory checks failed (CHK-GOV-05). Under USV-01 governance policy, a failed, skipped, unverified, or missing mandatory verification strictly halts release.",
@@ -32,21 +32,19 @@
           "mandatory": false,
           "summary": "Uncommitted changes present in local working tree; evaluating committed HEAD baseline.",
           "evidence": {
-            "commitSha": "61ce6ed6470d7dbdee4920a6a83db8b5b560ee67",
+            "commitSha": "b1141d178fba46fd48fa6f3306977b096d781d9b",
             "branch": "feat/verify-usv01-system",
-            "baselineDigest": "sha256:bd5536b456cb4ad9ee473d9c8a094f7904e0b8d82e9cc5b190b7ad47e32741ef",
+            "baselineDigest": "sha256:c440c5fad52a9c4eaca566c9bcba454daf2d6d9485fcba372c70aa88121ef600",
             "dirty": true,
             "modifiedFiles": [
-              "M .github/workflows/safety-governance-gate.yml",
-              " M RELEASE_MANIFEST.json",
+              "M RELEASE_MANIFEST.json",
               " M governance/reports/pr-classification.json",
               " M governance/reports/stage-c-review.json",
-              " M src/core/verification/VerifyUsv01Engine.ts",
               " M tests/governance.test.ts"
             ]
           },
           "remediation": "Commit or stash local modifications before final merge",
-          "timestamp": "2026-11-12T12:50:53.541Z"
+          "timestamp": "2026-11-12T12:52:38.868Z"
         },
         {
           "id": "CHK-REPO-02",
@@ -60,7 +58,7 @@
             "lockfilePresent": true,
             "dependencyCount": 22
           },
-          "timestamp": "2026-11-12T12:50:53.542Z"
+          "timestamp": "2026-11-12T12:52:38.868Z"
         },
         {
           "id": "CHK-REPO-03",
@@ -72,9 +70,9 @@
           "evidence": {
             "manifestValid": true,
             "manifestAssetsTracked": 70,
-            "manifestChecksum": "c3895a16b43a7f0d5451d9737f5339f4bbfd71a8922c6caad4d28a00ad5a357c"
+            "manifestChecksum": "3fdd92a54a631f8811af9415493f995cc37e101f19502b0d06f36293136a1104"
           },
-          "timestamp": "2026-11-12T12:50:53.542Z"
+          "timestamp": "2026-11-12T12:52:38.869Z"
         },
         {
           "id": "CHK-REPO-04",
@@ -87,7 +85,7 @@
             "secretsFound": 0,
             "findings": []
           },
-          "timestamp": "2026-11-12T12:50:53.574Z"
+          "timestamp": "2026-11-12T12:52:38.898Z"
         },
         {
           "id": "CHK-REPO-05",
@@ -100,7 +98,7 @@
             "valid": true,
             "errors": []
           },
-          "timestamp": "2026-11-12T12:50:53.575Z"
+          "timestamp": "2026-11-12T12:52:38.898Z"
         },
         {
           "id": "CHK-REPO-06",
@@ -114,7 +112,7 @@
             "valid": true,
             "errors": []
           },
-          "timestamp": "2026-11-12T12:50:53.576Z"
+          "timestamp": "2026-11-12T12:52:38.899Z"
         },
         {
           "id": "CHK-REPO-07",
@@ -122,14 +120,14 @@
           "title": "TypeScript Static Typecheck & Lint Execution",
           "status": "PASS",
           "mandatory": true,
-          "summary": "Static typecheck & lint completed cleanly with 0 errors (227ms).",
+          "summary": "Static typecheck & lint completed cleanly with 0 errors (205ms).",
           "evidence": {
             "command": "npm run lint",
             "passed": true,
-            "durationMs": 227,
+            "durationMs": 205,
             "outputSummary": "\n> usv-01-digital-lab@1.0.0 lint\n> tsc --noEmit\n\nTypeScript static analysis: 0 type errors detected.\n"
           },
-          "timestamp": "2026-11-12T12:50:53.803Z"
+          "timestamp": "2026-11-12T12:52:39.104Z"
         },
         {
           "id": "CHK-REPO-08",
@@ -137,7 +135,7 @@
           "title": "Automated Deterministic & Safety Test Suite Execution",
           "status": "PASS",
           "mandatory": true,
-          "summary": "Deterministic test suite executed: 97/97 tests passed across 8 test suites with 0 failures (10038ms).",
+          "summary": "Deterministic test suite executed: 97/97 tests passed across 8 test suites with 0 failures (9219ms).",
           "evidence": {
             "command": "npm test",
             "executedInRunner": false,
@@ -146,10 +144,10 @@
             "passedTests": 97,
             "failedTests": 0,
             "testSuitesCount": 8,
-            "durationMs": 10038,
+            "durationMs": 9219,
             "outputSummary": "nd battery endurance hours\n  ✓ should calculate ISO/DNV slamming pressure and plating thickness\n  ✓ should evaluate COLREGS encounter geometry and recommend give-way action\n  ✓ should enforce permission rejection if calling agent lacks permission\n  ✓ should preserve explicit 0% design margin and NOT convert it to 10%\n\nTest results saved to governance/reports/test-results.json\n\n========================================\nTests: 97 passed, 0 failed, 97 total\n========================================\n\n"
           },
-          "timestamp": "2026-11-12T12:51:03.841Z"
+          "timestamp": "2026-11-12T12:52:48.323Z"
         },
         {
           "id": "CHK-REPO-09",
@@ -157,14 +155,14 @@
           "title": "Production Client Bundle Build Verification",
           "status": "PASS",
           "mandatory": true,
-          "summary": "Production bundle built successfully without external Node shimming errors (307ms).",
+          "summary": "Production bundle built successfully without external Node shimming errors (286ms).",
           "evidence": {
             "command": "npm run build",
             "passed": true,
-            "durationMs": 307,
+            "durationMs": 286,
             "outputSummary": "\n> usv-01-digital-lab@1.0.0 build\n> tsc && vite build\n\nTypeScript static analysis: 0 type errors detected.\n✓ built in 450ms\n"
           },
-          "timestamp": "2026-11-12T12:51:04.148Z"
+          "timestamp": "2026-11-12T12:52:48.609Z"
         }
       ]
     },
@@ -183,12 +181,12 @@
             "overallRisk": "CRITICAL",
             "requiresDirector": true,
             "filesChanged": 43,
-            "linesAdded": 5001,
-            "linesDeleted": 287,
+            "linesAdded": 5018,
+            "linesDeleted": 280,
             "digestMatches": true,
             "commitMatches": true
           },
-          "timestamp": "2026-11-12T12:51:04.184Z"
+          "timestamp": "2026-11-12T12:52:48.640Z"
         },
         {
           "id": "CHK-GOV-02",
@@ -206,7 +204,7 @@
             "commitMatches": true,
             "compositeRecommendation": "PENDING_HUMAN_REVIEW"
           },
-          "timestamp": "2026-11-12T12:51:04.184Z"
+          "timestamp": "2026-11-12T12:52:48.640Z"
         },
         {
           "id": "CHK-GOV-03",
@@ -220,7 +218,7 @@
             "isDeterministicOnly": true,
             "transparencyHonored": true
           },
-          "timestamp": "2026-11-12T12:51:04.184Z"
+          "timestamp": "2026-11-12T12:52:48.640Z"
         },
         {
           "id": "CHK-GOV-04",
@@ -234,12 +232,12 @@
             "signatureVerified": false,
             "staleApproval": false,
             "digestMatches": true,
-            "evaluatedBaselineDigest": "sha256:bd5536b456cb4ad9ee473d9c8a094f7904e0b8d82e9cc5b190b7ad47e32741ef",
-            "currentBaselineDigest": "sha256:bd5536b456cb4ad9ee473d9c8a094f7904e0b8d82e9cc5b190b7ad47e32741ef",
+            "evaluatedBaselineDigest": "sha256:c440c5fad52a9c4eaca566c9bcba454daf2d6d9485fcba372c70aa88121ef600",
+            "currentBaselineDigest": "sha256:c440c5fad52a9c4eaca566c9bcba454daf2d6d9485fcba372c70aa88121ef600",
             "error": "No Director approval records found in governance/approvals/."
           },
           "remediation": "Engineering Director must authenticate on secure TTY and sign ECR over current baseline digest (`npm run governance:sign`)",
-          "timestamp": "2026-11-12T12:51:05.204Z"
+          "timestamp": "2026-11-12T12:52:49.577Z"
         },
         {
           "id": "CHK-GOV-05",
@@ -247,13 +245,13 @@
           "title": "Stage E: Governance Gate Enforcement & Fail-Closed Multi-Stage Gate",
           "status": "FAIL",
           "mandatory": true,
-          "summary": "Stage E Gate BLOCKED: Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.; Stage D approval evidence does not correspond to the exact baseline digest being verified (expected sha256:bd5536b456cb4ad9ee473d9c8a094f7904e0b8d82e9cc5b190b7ad47e32741ef, report had sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2).; Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2.",
+          "summary": "Stage E Gate BLOCKED: Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.; Stage D approval evidence does not correspond to the exact baseline digest being verified (expected sha256:c440c5fad52a9c4eaca566c9bcba454daf2d6d9485fcba372c70aa88121ef600, report had sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2).; Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2.",
           "evidence": {
             "passed": false,
             "overallVerdict": "BLOCKED",
             "blockingReasons": [
               "Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.",
-              "Stage D approval evidence does not correspond to the exact baseline digest being verified (expected sha256:bd5536b456cb4ad9ee473d9c8a094f7904e0b8d82e9cc5b190b7ad47e32741ef, report had sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2).",
+              "Stage D approval evidence does not correspond to the exact baseline digest being verified (expected sha256:c440c5fad52a9c4eaca566c9bcba454daf2d6d9485fcba372c70aa88121ef600, report had sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2).",
               "Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2."
             ],
             "stageAResult": {
@@ -281,7 +279,7 @@
             }
           },
           "remediation": "Resolve all listed blocking reasons to satisfy Stage E criteria",
-          "timestamp": "2026-11-12T12:51:05.217Z"
+          "timestamp": "2026-11-12T12:52:49.587Z"
         }
       ]
     },
@@ -303,7 +301,7 @@
             "canonicalCovered": 25,
             "missing": []
           },
-          "timestamp": "2026-11-12T12:51:05.218Z"
+          "timestamp": "2026-11-12T12:52:49.588Z"
         },
         {
           "id": "CHK-AGT-02",
@@ -316,7 +314,7 @@
             "valid": true,
             "errors": []
           },
-          "timestamp": "2026-11-12T12:51:05.219Z"
+          "timestamp": "2026-11-12T12:52:49.588Z"
         },
         {
           "id": "CHK-AGT-03",
@@ -330,7 +328,7 @@
             "unverifiedCount": 0,
             "unverifiedList": []
           },
-          "timestamp": "2026-11-12T12:51:05.226Z"
+          "timestamp": "2026-11-12T12:52:49.597Z"
         }
       ],
       "agentReadiness": [
@@ -864,7 +862,7 @@
             "unverifiedPlansCount": 2
           },
           "remediation": "Create verification plans in VNV-08 for unmapped requirements",
-          "timestamp": "2026-11-12T12:51:05.226Z"
+          "timestamp": "2026-11-12T12:52:49.597Z"
         },
         {
           "id": "CHK-ENG-02",
@@ -884,7 +882,7 @@
               "REQ-AUT-001: [SAMPLE] COLREGs Collision Avoidance Autonomous Maneuver"
             ]
           },
-          "timestamp": "2026-11-12T12:51:05.226Z"
+          "timestamp": "2026-11-12T12:52:49.597Z"
         },
         {
           "id": "CHK-ENG-03",
@@ -892,12 +890,12 @@
           "title": "Cryptographic Hash-Chained Audit Trail Integrity",
           "status": "PASS",
           "mandatory": true,
-          "summary": "Audit ledger integrity verified across 120 SHA-256 chained events with zero tampering.",
+          "summary": "Audit ledger integrity verified across 125 SHA-256 chained events with zero tampering.",
           "evidence": {
             "valid": true,
-            "totalEntries": 120
+            "totalEntries": 125
           },
-          "timestamp": "2026-11-12T12:51:05.228Z"
+          "timestamp": "2026-11-12T12:52:49.598Z"
         },
         {
           "id": "CHK-ENG-04",
@@ -911,7 +909,7 @@
             "pendingGates": 0,
             "gateDetails": []
           },
-          "timestamp": "2026-11-12T12:51:05.228Z"
+          "timestamp": "2026-11-12T12:52:49.598Z"
         }
       ]
     }
@@ -952,13 +950,13 @@
       "passed": false,
       "blockingReasons": [
         "Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.",
-        "Stage D approval evidence does not correspond to the exact baseline digest being verified (expected sha256:bd5536b456cb4ad9ee473d9c8a094f7904e0b8d82e9cc5b190b7ad47e32741ef, report had sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2).",
+        "Stage D approval evidence does not correspond to the exact baseline digest being verified (expected sha256:c440c5fad52a9c4eaca566c9bcba454daf2d6d9485fcba372c70aa88121ef600, report had sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2).",
         "Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2."
       ]
     }
   },
   "unresolvedBlockers": [
-    "CHK-GOV-05 (Stage E: Governance Gate Enforcement & Fail-Closed Multi-Stage Gate): Stage E Gate BLOCKED: Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.; Stage D approval evidence does not correspond to the exact baseline digest being verified (expected sha256:bd5536b456cb4ad9ee473d9c8a094f7904e0b8d82e9cc5b190b7ad47e32741ef, report had sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2).; Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2.",
+    "CHK-GOV-05 (Stage E: Governance Gate Enforcement & Fail-Closed Multi-Stage Gate): Stage E Gate BLOCKED: Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.; Stage D approval evidence does not correspond to the exact baseline digest being verified (expected sha256:c440c5fad52a9c4eaca566c9bcba454daf2d6d9485fcba372c70aa88121ef600, report had sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2).; Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2.",
     "CHK-GOV-04 (Stage D: Human Authority & Cryptographic Director Authorization): PENDING: Safety-critical / High-risk change requires Director Ed25519 signature over exact baseline digest."
   ],
   "remainingLimitations": [
@@ -966,5 +964,5 @@
     "Local working tree has uncommitted modifications; verification report is bound to committed HEAD baseline.",
     "2 engineering requirements lack associated verification plans."
   ],
-  "reportMarkdown": "# 🛡️ USV-01 DIGITAL ENGINEERING LAB — COMPREHENSIVE VERIFICATION REPORT\n**Document ID:** `USV01-VRFY-20261112125053`  \n**Execution Timestamp:** `2026-11-12T12:50:53.517Z`  \n**Evaluated Commit SHA:** `61ce6ed6470d7dbdee4920a6a83db8b5b560ee67` (`feat/verify-usv01-system`)  \n**Baseline Content Digest:** `sha256:bd5536b456cb4ad9ee473d9c8a094f7904e0b8d82e9cc5b190b7ad47e32741ef`  \n**Total Verification Time:** `11711 ms`  \n\n---\n\n## 🏛️ Executive Summary & Overall Release Verdict\n\n### **Overall Result:** **🔴 VERIFICATION FAILED**\n\n> **Verdict Rationale:**  \n> Verification FAILED: 1 mandatory checks failed (CHK-GOV-05). Under USV-01 governance policy, a failed, skipped, unverified, or missing mandatory verification strictly halts release.\n\n### Summary Statistics\n| Metric | Count | Status Description |\n|---|---|---|\n| **Total Automated Checks** | `21` | Comprehensive 4-Phase System Verifications |\n| **Checks Passed** | `17` | Verifiably Satisfied Criteria |\n| **Conditional / Advisory** | `2` | Quality Advisory Non-Blockers |\n| **Blocked / Pending Authority** | `1` | Awaiting Human Engineering Director Authorization |\n| **Checks Failed** | `1` | Defects Requiring Remediation |\n| **Mandatory Failed / Blocked** | `2` | Fail-Closed Policy Enforcement |\n\n---\n\n## 🛡️ Governance Gate Pipeline Findings (Stages A–E)\n\n| Governance Stage | Verification Standard | Outcome | Status |\n|---|---|---|---|\n| **Stage A: Classification** | PR Diff Risk Regime & Impact Analysis | `CRITICAL` Risk | ℹ️ EVALUATED |\n| **Stage B: Quality Suite** | Deterministic Tests, Secrets, Config, ECR | Zero Secrets, Clean Tests, Valid Config | ✅ PASSED |\n| **Stage C: Independent Review** | Multi-Role Peer Review (Mock Fallback Ban) | 🟡 DETERMINISTIC STATIC RULES (PASS) | ℹ️ REVIEWED |\n| **Stage D: Human Authority** | Ed25519 Director Signature over Exact Baseline | 🟡 PENDING DIRECTOR AUTHORIZATION | 🟡 PENDING |\n| **Stage E: Enforcement Gate** | Fail-Closed Multi-Stage Governance Policy | **BLOCKED** | **🚫 BLOCKED** |\n\n---\n\n## 🤖 Phase 3: All 25 HMEA Canonical Agents Execution Capability\n\n- **Canonical Coverage:** `25/25` Agents Registered & Mapped\n- **Execution Engine Status:** Genuine Task Invocation via ExecutionEngine (Zero Mock Fallback)\n\n| Canonical ID | Agent ID | Agent Role | Capability Status | Test Status | Mandatory Tools | Readiness |\n|---|---|---|---|---|---|---|\n| **A01** | `LEAD-SYS-01` | Lead Systems Architect & Orchestrator | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A02** | `REQ-TRC-02` | Requirements & Traceability Engineer | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A03** | `CONOPS-03` | Operational Profile & CONOPS Specialist | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A04** | `REG-STD-04` | Marine Regulatory & Class Standards Specialist | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A05** | `HULL-GEO-05` | Hull Form & Parametric Geometry Specialist | ✅ TESTED | ✅ PASS | `TOOL-HYDROSTATICS-01` | `100%` |\n| **A06** | `STAB-HYD-06` | Hydrostatics & Intact Stability Engineer | ✅ TESTED | ✅ PASS | `TOOL-HYDROSTATICS-01` | `100%` |\n| **A07** | `RES-SEAK-07` | Hydrodynamic Resistance & Performance Engineer | ✅ TESTED | ✅ PASS | `TOOL-RESISTANCE-01` | `100%` |\n| **A08** | `MAN-MOT-08` | Seakeeping & Manoeuvring Dynamics Specialist | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A09** | `WGT-BAL-09` | Weight Distribution & Mass Balance Engineer | ✅ TESTED | ✅ PASS | `TOOL-MASS-BALANCE-01` | `100%` |\n| **A10** | `STR-MAT-10` | Hull Structural Scantlings & Composites Engineer | ✅ TESTED | ✅ PASS | `TOOL-STRUCTURES-01` | `100%` |\n| **A11** | `ENV-ENV-11` | Marine Environmental & Thermal Specialist | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A12** | `MECH-APP-12` | Mechanical Appendages & Deck Equipment Engineer | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A13** | `PROP-ENG-13` | Propulsion Plant & Drivetrain Engineer | ✅ TESTED | ✅ PASS | `TOOL-RESISTANCE-01` | `100%` |\n| **A14** | `ELEC-PWR-14` | Electrical Architecture & Microgrid Engineer | ✅ TESTED | ✅ PASS | `TOOL-ELECTRICAL-01` | `100%` |\n| **A15** | `INDEP-CRIT-15` | Independent Technical Critic | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A16** | `SENS-PER-16` | Perception & Sensor Suite Integration Specialist | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A17** | `NAV-COL-17` | Navigation & COLREGS Collision Avoidance Specialist | ✅ TESTED | ✅ PASS | `TOOL-COLREGS-01` | `100%` |\n| **A18** | `TEST-DIR-18` | Test & Verification Director | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A19** | `COMM-RF-19` | Comms, RF & Telemetry Specialist | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A20** | `CYBER-SEC-20` | Cyber-Physical Marine Security & Safe-State Engineer | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A21** | `ICD-ENG-21` | Interface Control Document (ICD) Engineer | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A22** | `FMEA-RSK-22` | FMEA & System Safety Specialist | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A23** | `INDEP-REV-23` | Independent Design Reviewer (Challenger / Red Team) | ✅ TESTED | ✅ PASS | `TOOL-HYDROSTATICS-01, TOOL-RESISTANCE-01` | `100%` |\n| **A24** | `VVT-VAL-24` | Verification, Validation & Test Specialist | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A25** | `DOC-OBS-25` | Documentation, BOM & Obsidian Knowledge Specialist | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A26** | `INTEL-USV-26` | Global Navy USV Fleet Intelligence & Benchmark Analyst | ✅ TESTED | ✅ PASS | `None` | `100%` |\n\n---\n\n## 📋 Comprehensive Individual Check Findings\n\n### Phase 1: Repository Integrity, Dependencies, Build, Lint & Automated Tests (Status: **CONDITIONAL**)\n\n| Check ID | Verification Standard | Status | Mandatory | Summary |\n|---|---|---|---|---|\n| `CHK-REPO-01` | Git Repository Commit & Working Tree Integrity | 🟡 COND | `NO` | Uncommitted changes present in local working tree; evaluating committed HEAD baseline. |\n| `CHK-REPO-02` | Package Manifest & Dependency Lockfile Integrity | ✅ PASS | `YES` | Package manifest validated (22 dependencies). package-lock.json present. |\n| `CHK-REPO-03` | Release Baseline Manifest & Checksum Audit | ✅ PASS | `YES` | RELEASE_MANIFEST.json valid with 70 tracked assets. |\n| `CHK-REPO-04` | DevSecOps Secret Scanning & Cryptographic Key Protection | ✅ PASS | `YES` | Zero unredacted secrets, credentials, or private keys detected in repository diff. |\n| `CHK-REPO-05` | Repository Governance Configuration & CODEOWNERS Validation | ✅ PASS | `YES` | Governance workflows, CODEOWNERS, and branch protection configurations verified. |\n| `CHK-REPO-06` | Engineering Change Request (ECR) Document Integrity | ✅ PASS | `YES` | 1 formal ECR baseline records verified with complete frontmatter & safety schema. |\n| `CHK-REPO-07` | TypeScript Static Typecheck & Lint Execution | ✅ PASS | `YES` | Static typecheck & lint completed cleanly with 0 errors (227ms). |\n| `CHK-REPO-08` | Automated Deterministic & Safety Test Suite Execution | ✅ PASS | `YES` | Deterministic test suite executed: 97/97 tests passed across 8 test suites with 0 failures (10038ms). |\n| `CHK-REPO-09` | Production Client Bundle Build Verification | ✅ PASS | `YES` | Production bundle built successfully without external Node shimming errors (307ms). |\n\n### Phase 2: Governance Stages A–E, Baseline Digest & Cryptographic Authority (Status: **FAIL**)\n\n| Check ID | Verification Standard | Status | Mandatory | Summary |\n|---|---|---|---|---|\n| `CHK-GOV-01` | Stage A: Change & Risk Classification | ✅ PASS | `YES` | Change risk classified as CRITICAL. Director approval required: YES. Categories: SOFTWARE, SECURITY, ARCHITECTURE, SAFETY, CONFIGURATION, RELEASE, DOCUMENTATION, REQUIREMENTS. |\n| `CHK-GOV-02` | Stage C: Independent Multi-Role Technical Review | ✅ PASS | `YES` | Deterministic rule verification: PASS. Independent AI model review was UNAVAILABLE. |\n| `CHK-GOV-03` | Stage C: Model Transparency & Deterministic Review Disclosure | ✅ PASS | `YES` | CONFIRMED: Deterministic static analysis is accurately disclosed; no false claims of independent model review. |\n| `CHK-GOV-04` | Stage D: Human Authority & Cryptographic Director Authorization | ⏸️ BLOCKED | `YES` | PENDING: Safety-critical / High-risk change requires Director Ed25519 signature over exact baseline digest. |\n| `CHK-GOV-05` | Stage E: Governance Gate Enforcement & Fail-Closed Multi-Stage Gate | ❌ FAIL | `YES` | Stage E Gate BLOCKED: Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.; Stage D approval evidence does not correspond to the exact baseline digest being verified (expected sha256:bd5536b456cb4ad9ee473d9c8a094f7904e0b8d82e9cc5b190b7ad47e32741ef, report had sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2).; Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2. |\n\n### Phase 3: 25 HMEA Canonical Agents Execution Capability & Readiness (Status: **PASS**)\n\n| Check ID | Verification Standard | Status | Mandatory | Summary |\n|---|---|---|---|---|\n| `CHK-AGT-01` | HMEA v0.2 Canonical 25-Agent Population Coverage | ✅ PASS | `YES` | All 25 canonical HMEA agents (A01–A25) registered (26 total active agents). |\n| `CHK-AGT-02` | Agent DAG Routing & Inter-Agent Dependency Topology | ✅ PASS | `YES` | Acyclic dependency DAG confirmed; all upstream-downstream agent routings valid. |\n| `CHK-AGT-03` | Agent Execution Readiness & Actual Execution Validation | ✅ PASS | `YES` | All 26 agents genuinely executed: valid schemas, deterministic tools, and verified outputs. |\n\n### Phase 4: Engineering Data Integrity, Requirements Traceability & Safety Gates (Status: **CONDITIONAL**)\n\n| Check ID | Verification Standard | Status | Mandatory | Summary |\n|---|---|---|---|---|\n| `CHK-ENG-01` | Bidirectional Requirements Traceability (REQ → VNV → TEST) | 🟡 COND | `NO` | 2 requirements lack associated verification plans (REQ-NAV-002, REQ-MEC-001). |\n| `CHK-ENG-02` | TBD Parameter Tracking & Zero-Fabrication Assumption Audit | ✅ PASS | `YES` | 6 design parameters explicitly tracked as TBD without synthetic or fabricated values. |\n| `CHK-ENG-03` | Cryptographic Hash-Chained Audit Trail Integrity | ✅ PASS | `YES` | Audit ledger integrity verified across 120 SHA-256 chained events with zero tampering. |\n| `CHK-ENG-04` | Human Authority Gate State & Policy Enforcement | ✅ PASS | `YES` | 0 safety gates tracked (0 pending Director decision). Non-Negotiable Principle 5 enforced. |\n\n---\n\n## 🚫 Unresolved Blockers & Disqualifying Conditions\n\n- ❌ **CHK-GOV-05 (Stage E: Governance Gate Enforcement & Fail-Closed Multi-Stage Gate): Stage E Gate BLOCKED: Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.; Stage D approval evidence does not correspond to the exact baseline digest being verified (expected sha256:bd5536b456cb4ad9ee473d9c8a094f7904e0b8d82e9cc5b190b7ad47e32741ef, report had sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2).; Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2.**\n- ❌ **CHK-GOV-04 (Stage D: Human Authority & Cryptographic Director Authorization): PENDING: Safety-critical / High-risk change requires Director Ed25519 signature over exact baseline digest.**\n\n---\n\n## ℹ️ Remaining Limitations & Environment Disclosures\n\n- ℹ️ Stage C review executed in deterministic static analysis mode (independent model-backed review unavailable due to external API configuration).\n- ℹ️ Local working tree has uncommitted modifications; verification report is bound to committed HEAD baseline.\n- ℹ️ 2 engineering requirements lack associated verification plans.\n\n---\n*Report cryptographically certified by NAVAL-USV / USV-01 Single-Press Verification Engine at 2026-11-12T12:50:53.517Z*\n"
+  "reportMarkdown": "# 🛡️ USV-01 DIGITAL ENGINEERING LAB — COMPREHENSIVE VERIFICATION REPORT\n**Document ID:** `USV01-VRFY-20261112125238`  \n**Execution Timestamp:** `2026-11-12T12:52:38.848Z`  \n**Evaluated Commit SHA:** `b1141d178fba46fd48fa6f3306977b096d781d9b` (`feat/verify-usv01-system`)  \n**Baseline Content Digest:** `sha256:c440c5fad52a9c4eaca566c9bcba454daf2d6d9485fcba372c70aa88121ef600`  \n**Total Verification Time:** `10750 ms`  \n\n---\n\n## 🏛️ Executive Summary & Overall Release Verdict\n\n### **Overall Result:** **🔴 VERIFICATION FAILED**\n\n> **Verdict Rationale:**  \n> Verification FAILED: 1 mandatory checks failed (CHK-GOV-05). Under USV-01 governance policy, a failed, skipped, unverified, or missing mandatory verification strictly halts release.\n\n### Summary Statistics\n| Metric | Count | Status Description |\n|---|---|---|\n| **Total Automated Checks** | `21` | Comprehensive 4-Phase System Verifications |\n| **Checks Passed** | `17` | Verifiably Satisfied Criteria |\n| **Conditional / Advisory** | `2` | Quality Advisory Non-Blockers |\n| **Blocked / Pending Authority** | `1` | Awaiting Human Engineering Director Authorization |\n| **Checks Failed** | `1` | Defects Requiring Remediation |\n| **Mandatory Failed / Blocked** | `2` | Fail-Closed Policy Enforcement |\n\n---\n\n## 🛡️ Governance Gate Pipeline Findings (Stages A–E)\n\n| Governance Stage | Verification Standard | Outcome | Status |\n|---|---|---|---|\n| **Stage A: Classification** | PR Diff Risk Regime & Impact Analysis | `CRITICAL` Risk | ℹ️ EVALUATED |\n| **Stage B: Quality Suite** | Deterministic Tests, Secrets, Config, ECR | Zero Secrets, Clean Tests, Valid Config | ✅ PASSED |\n| **Stage C: Independent Review** | Multi-Role Peer Review (Mock Fallback Ban) | 🟡 DETERMINISTIC STATIC RULES (PASS) | ℹ️ REVIEWED |\n| **Stage D: Human Authority** | Ed25519 Director Signature over Exact Baseline | 🟡 PENDING DIRECTOR AUTHORIZATION | 🟡 PENDING |\n| **Stage E: Enforcement Gate** | Fail-Closed Multi-Stage Governance Policy | **BLOCKED** | **🚫 BLOCKED** |\n\n---\n\n## 🤖 Phase 3: All 25 HMEA Canonical Agents Execution Capability\n\n- **Canonical Coverage:** `25/25` Agents Registered & Mapped\n- **Execution Engine Status:** Genuine Task Invocation via ExecutionEngine (Zero Mock Fallback)\n\n| Canonical ID | Agent ID | Agent Role | Capability Status | Test Status | Mandatory Tools | Readiness |\n|---|---|---|---|---|---|---|\n| **A01** | `LEAD-SYS-01` | Lead Systems Architect & Orchestrator | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A02** | `REQ-TRC-02` | Requirements & Traceability Engineer | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A03** | `CONOPS-03` | Operational Profile & CONOPS Specialist | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A04** | `REG-STD-04` | Marine Regulatory & Class Standards Specialist | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A05** | `HULL-GEO-05` | Hull Form & Parametric Geometry Specialist | ✅ TESTED | ✅ PASS | `TOOL-HYDROSTATICS-01` | `100%` |\n| **A06** | `STAB-HYD-06` | Hydrostatics & Intact Stability Engineer | ✅ TESTED | ✅ PASS | `TOOL-HYDROSTATICS-01` | `100%` |\n| **A07** | `RES-SEAK-07` | Hydrodynamic Resistance & Performance Engineer | ✅ TESTED | ✅ PASS | `TOOL-RESISTANCE-01` | `100%` |\n| **A08** | `MAN-MOT-08` | Seakeeping & Manoeuvring Dynamics Specialist | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A09** | `WGT-BAL-09` | Weight Distribution & Mass Balance Engineer | ✅ TESTED | ✅ PASS | `TOOL-MASS-BALANCE-01` | `100%` |\n| **A10** | `STR-MAT-10` | Hull Structural Scantlings & Composites Engineer | ✅ TESTED | ✅ PASS | `TOOL-STRUCTURES-01` | `100%` |\n| **A11** | `ENV-ENV-11` | Marine Environmental & Thermal Specialist | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A12** | `MECH-APP-12` | Mechanical Appendages & Deck Equipment Engineer | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A13** | `PROP-ENG-13` | Propulsion Plant & Drivetrain Engineer | ✅ TESTED | ✅ PASS | `TOOL-RESISTANCE-01` | `100%` |\n| **A14** | `ELEC-PWR-14` | Electrical Architecture & Microgrid Engineer | ✅ TESTED | ✅ PASS | `TOOL-ELECTRICAL-01` | `100%` |\n| **A15** | `INDEP-CRIT-15` | Independent Technical Critic | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A16** | `SENS-PER-16` | Perception & Sensor Suite Integration Specialist | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A17** | `NAV-COL-17` | Navigation & COLREGS Collision Avoidance Specialist | ✅ TESTED | ✅ PASS | `TOOL-COLREGS-01` | `100%` |\n| **A18** | `TEST-DIR-18` | Test & Verification Director | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A19** | `COMM-RF-19` | Comms, RF & Telemetry Specialist | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A20** | `CYBER-SEC-20` | Cyber-Physical Marine Security & Safe-State Engineer | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A21** | `ICD-ENG-21` | Interface Control Document (ICD) Engineer | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A22** | `FMEA-RSK-22` | FMEA & System Safety Specialist | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A23** | `INDEP-REV-23` | Independent Design Reviewer (Challenger / Red Team) | ✅ TESTED | ✅ PASS | `TOOL-HYDROSTATICS-01, TOOL-RESISTANCE-01` | `100%` |\n| **A24** | `VVT-VAL-24` | Verification, Validation & Test Specialist | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A25** | `DOC-OBS-25` | Documentation, BOM & Obsidian Knowledge Specialist | ✅ TESTED | ✅ PASS | `None` | `100%` |\n| **A26** | `INTEL-USV-26` | Global Navy USV Fleet Intelligence & Benchmark Analyst | ✅ TESTED | ✅ PASS | `None` | `100%` |\n\n---\n\n## 📋 Comprehensive Individual Check Findings\n\n### Phase 1: Repository Integrity, Dependencies, Build, Lint & Automated Tests (Status: **CONDITIONAL**)\n\n| Check ID | Verification Standard | Status | Mandatory | Summary |\n|---|---|---|---|---|\n| `CHK-REPO-01` | Git Repository Commit & Working Tree Integrity | 🟡 COND | `NO` | Uncommitted changes present in local working tree; evaluating committed HEAD baseline. |\n| `CHK-REPO-02` | Package Manifest & Dependency Lockfile Integrity | ✅ PASS | `YES` | Package manifest validated (22 dependencies). package-lock.json present. |\n| `CHK-REPO-03` | Release Baseline Manifest & Checksum Audit | ✅ PASS | `YES` | RELEASE_MANIFEST.json valid with 70 tracked assets. |\n| `CHK-REPO-04` | DevSecOps Secret Scanning & Cryptographic Key Protection | ✅ PASS | `YES` | Zero unredacted secrets, credentials, or private keys detected in repository diff. |\n| `CHK-REPO-05` | Repository Governance Configuration & CODEOWNERS Validation | ✅ PASS | `YES` | Governance workflows, CODEOWNERS, and branch protection configurations verified. |\n| `CHK-REPO-06` | Engineering Change Request (ECR) Document Integrity | ✅ PASS | `YES` | 1 formal ECR baseline records verified with complete frontmatter & safety schema. |\n| `CHK-REPO-07` | TypeScript Static Typecheck & Lint Execution | ✅ PASS | `YES` | Static typecheck & lint completed cleanly with 0 errors (205ms). |\n| `CHK-REPO-08` | Automated Deterministic & Safety Test Suite Execution | ✅ PASS | `YES` | Deterministic test suite executed: 97/97 tests passed across 8 test suites with 0 failures (9219ms). |\n| `CHK-REPO-09` | Production Client Bundle Build Verification | ✅ PASS | `YES` | Production bundle built successfully without external Node shimming errors (286ms). |\n\n### Phase 2: Governance Stages A–E, Baseline Digest & Cryptographic Authority (Status: **FAIL**)\n\n| Check ID | Verification Standard | Status | Mandatory | Summary |\n|---|---|---|---|---|\n| `CHK-GOV-01` | Stage A: Change & Risk Classification | ✅ PASS | `YES` | Change risk classified as CRITICAL. Director approval required: YES. Categories: SOFTWARE, SECURITY, ARCHITECTURE, SAFETY, CONFIGURATION, RELEASE, DOCUMENTATION, REQUIREMENTS. |\n| `CHK-GOV-02` | Stage C: Independent Multi-Role Technical Review | ✅ PASS | `YES` | Deterministic rule verification: PASS. Independent AI model review was UNAVAILABLE. |\n| `CHK-GOV-03` | Stage C: Model Transparency & Deterministic Review Disclosure | ✅ PASS | `YES` | CONFIRMED: Deterministic static analysis is accurately disclosed; no false claims of independent model review. |\n| `CHK-GOV-04` | Stage D: Human Authority & Cryptographic Director Authorization | ⏸️ BLOCKED | `YES` | PENDING: Safety-critical / High-risk change requires Director Ed25519 signature over exact baseline digest. |\n| `CHK-GOV-05` | Stage E: Governance Gate Enforcement & Fail-Closed Multi-Stage Gate | ❌ FAIL | `YES` | Stage E Gate BLOCKED: Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.; Stage D approval evidence does not correspond to the exact baseline digest being verified (expected sha256:c440c5fad52a9c4eaca566c9bcba454daf2d6d9485fcba372c70aa88121ef600, report had sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2).; Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2. |\n\n### Phase 3: 25 HMEA Canonical Agents Execution Capability & Readiness (Status: **PASS**)\n\n| Check ID | Verification Standard | Status | Mandatory | Summary |\n|---|---|---|---|---|\n| `CHK-AGT-01` | HMEA v0.2 Canonical 25-Agent Population Coverage | ✅ PASS | `YES` | All 25 canonical HMEA agents (A01–A25) registered (26 total active agents). |\n| `CHK-AGT-02` | Agent DAG Routing & Inter-Agent Dependency Topology | ✅ PASS | `YES` | Acyclic dependency DAG confirmed; all upstream-downstream agent routings valid. |\n| `CHK-AGT-03` | Agent Execution Readiness & Actual Execution Validation | ✅ PASS | `YES` | All 26 agents genuinely executed: valid schemas, deterministic tools, and verified outputs. |\n\n### Phase 4: Engineering Data Integrity, Requirements Traceability & Safety Gates (Status: **CONDITIONAL**)\n\n| Check ID | Verification Standard | Status | Mandatory | Summary |\n|---|---|---|---|---|\n| `CHK-ENG-01` | Bidirectional Requirements Traceability (REQ → VNV → TEST) | 🟡 COND | `NO` | 2 requirements lack associated verification plans (REQ-NAV-002, REQ-MEC-001). |\n| `CHK-ENG-02` | TBD Parameter Tracking & Zero-Fabrication Assumption Audit | ✅ PASS | `YES` | 6 design parameters explicitly tracked as TBD without synthetic or fabricated values. |\n| `CHK-ENG-03` | Cryptographic Hash-Chained Audit Trail Integrity | ✅ PASS | `YES` | Audit ledger integrity verified across 125 SHA-256 chained events with zero tampering. |\n| `CHK-ENG-04` | Human Authority Gate State & Policy Enforcement | ✅ PASS | `YES` | 0 safety gates tracked (0 pending Director decision). Non-Negotiable Principle 5 enforced. |\n\n---\n\n## 🚫 Unresolved Blockers & Disqualifying Conditions\n\n- ❌ **CHK-GOV-05 (Stage E: Governance Gate Enforcement & Fail-Closed Multi-Stage Gate): Stage E Gate BLOCKED: Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.; Stage D approval evidence does not correspond to the exact baseline digest being verified (expected sha256:c440c5fad52a9c4eaca566c9bcba454daf2d6d9485fcba372c70aa88121ef600, report had sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2).; Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2.**\n- ❌ **CHK-GOV-04 (Stage D: Human Authority & Cryptographic Director Authorization): PENDING: Safety-critical / High-risk change requires Director Ed25519 signature over exact baseline digest.**\n\n---\n\n## ℹ️ Remaining Limitations & Environment Disclosures\n\n- ℹ️ Stage C review executed in deterministic static analysis mode (independent model-backed review unavailable due to external API configuration).\n- ℹ️ Local working tree has uncommitted modifications; verification report is bound to committed HEAD baseline.\n- ℹ️ 2 engineering requirements lack associated verification plans.\n\n---\n*Report cryptographically certified by NAVAL-USV / USV-01 Single-Press Verification Engine at 2026-11-12T12:52:38.848Z*\n"
 }

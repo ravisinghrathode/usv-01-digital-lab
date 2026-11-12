@@ -1,8 +1,8 @@
 {
   "summary": {
     "totalFilesChanged": 43,
-    "totalLinesAdded": 5001,
-    "totalLinesDeleted": 287,
+    "totalLinesAdded": 5018,
+    "totalLinesDeleted": 280,
     "dominantCategories": [
       "SOFTWARE",
       "SECURITY",
@@ -17,8 +17,8 @@
     "requiresDesignatedAuthorityApproval": true,
     "requiresECR": true
   },
-  "commitSha": "61ce6ed6470d7dbdee4920a6a83db8b5b560ee67",
-  "baselineDigest": "sha256:bd5536b456cb4ad9ee473d9c8a094f7904e0b8d82e9cc5b190b7ad47e32741ef",
+  "commitSha": "b1141d178fba46fd48fa6f3306977b096d781d9b",
+  "baselineDigest": "sha256:c440c5fad52a9c4eaca566c9bcba454daf2d6d9485fcba372c70aa88121ef600",
   "fileDetails": [
     {
       "file": ".github/workflows/safety-governance-gate.yml",
@@ -26,7 +26,7 @@
         "CONFIGURATION"
       ],
       "risk": "CRITICAL",
-      "linesAdded": 43,
+      "linesAdded": 49,
       "linesDeleted": 10
     },
     {
@@ -44,8 +44,8 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 219,
-      "linesDeleted": 58
+      "linesAdded": 288,
+      "linesDeleted": 55
     },
     {
       "file": "governance/reports/stage-c-review.json",
@@ -53,8 +53,8 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 52,
-      "linesDeleted": 10
+      "linesAdded": 6,
+      "linesDeleted": 6
     },
     {
       "file": "governance/reports/stage-d-approval.json",
@@ -80,7 +80,7 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 982,
+      "linesAdded": 970,
       "linesDeleted": 0
     },
     {
@@ -344,7 +344,7 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 1386,
+      "linesAdded": 1385,
       "linesDeleted": 0
     },
     {
@@ -399,7 +399,7 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 245,
+      "linesAdded": 246,
       "linesDeleted": 0
     },
     {
@@ -412,5 +412,5 @@
       "linesDeleted": 33
     }
   ],
-  "timestamp": "2026-11-12T12:50:53.096Z"
+  "timestamp": "2026-11-12T12:52:38.458Z"
 }
