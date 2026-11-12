@@ -144,9 +144,12 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
       blockingReasons.push('Stage C advisory verdict is ADVISORY_BLOCK.');
     }
     if (stageCVerdict === 'PENDING_HUMAN_REVIEW') {
-      blockingReasons.push(
-        'Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.'
-      );
+      const isHumanAuthorized = stageD?.signatureVerified || stageD?.independentReviewStatus === 'APPROVED_BY_PEER' || stageD?.independentReviewStatus === 'ECR_DIRECTOR_SIGNED';
+      if (!isHumanAuthorized) {
+        blockingReasons.push(
+          'Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review or Director sign-off must be completed prior to approval.'
+        );
+      }
     }
   }
 
