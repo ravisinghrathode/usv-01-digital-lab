@@ -600,59 +600,59 @@ export const ShipBuildingProcessView: React.FC<ShipBuildingProcessViewProps> = (
             <div className="p-3 bg-slate-950 rounded border border-slate-800 flex items-center justify-center">
               <svg viewBox="0 0 500 240" className="w-full h-auto">
                 {/* Waterline */}
-                <line x1="20" y1="150" x2="480" y2="150" stroke="#0ea5e9" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.6" />
-                <text x="25" y="145" fill="#38bdf8" fontSize="9" fontFamily="monospace">DESIGN WATERLINE (DWL 0.65m)</text>
+                <line x1="20" y1="150" x2="480" y2="150" stroke="#0284c7" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.6" />
+                <text x="25" y="145" fill="#0284c7" fontSize="9" fontFamily="monospace">DESIGN WATERLINE (DWL 0.65m)</text>
 
                 {/* Monohull Profile Outline */}
                 <path
                   d="M 60,60 L 440,60 L 420,170 L 140,170 L 60,60 Z"
-                  fill="#0f172a"
-                  stroke="#38bdf8"
+                  fill="#f1f5f9"
+                  stroke="#0284c7"
                   strokeWidth="2"
                 />
 
                 {/* Watertight Bulkheads */}
                 {/* Bulkhead 1: Collision Zone (Station 2) */}
-                <line x1="160" y1="60" x2="160" y2="170" stroke="#f43f5e" strokeWidth="2.5" />
-                <text x="163" y="80" fill="#f43f5e" fontSize="8" fontFamily="monospace" transform="rotate(90,163,80)">COLLISION BULKHEAD</text>
+                <line x1="160" y1="60" x2="160" y2="170" stroke="#e11d48" strokeWidth="2.5" />
+                <text x="163" y="80" fill="#e11d48" fontSize="8" fontFamily="monospace" transform="rotate(90,163,80)">COLLISION BULKHEAD</text>
 
                 {/* Bulkhead 2: Avionics/Aft Partition (Station 7) */}
-                <line x1="330" y1="60" x2="330" y2="170" stroke="#f43f5e" strokeWidth="2.5" />
-                <text x="333" y="80" fill="#f43f5e" fontSize="8" fontFamily="monospace" transform="rotate(90,333,80)">POWERTRAIN BULKHEAD</text>
+                <line x1="330" y1="60" x2="330" y2="170" stroke="#e11d48" strokeWidth="2.5" />
+                <text x="333" y="80" fill="#e11d48" fontSize="8" fontFamily="monospace" transform="rotate(90,333,80)">POWERTRAIN BULKHEAD</text>
 
                 {/* Subsystem Zones */}
                 {/* Zone 1: Bow Collision Buoyancy Compartment */}
-                <rect x="70" y="70" width="80" height="90" fill="#f43f5e" fillOpacity="0.1" rx="4" />
-                <text x="110" y="115" fill="#fda4af" fontSize="9" fontFamily="monospace" textAnchor="middle">CRASH BOX</text>
-                <text x="110" y="128" fill="#94a3b8" fontSize="7" fontFamily="monospace" textAnchor="middle">FOAM FILLED</text>
+                <rect x="70" y="70" width="80" height="90" fill="#ffe4e6" stroke="#f43f5e" strokeWidth="1" rx="4" />
+                <text x="110" y="115" fill="#be123c" fontSize="9" fontFamily="monospace" textAnchor="middle" fontWeight="bold">CRASH BOX</text>
+                <text x="110" y="128" fill="#475569" fontSize="7" fontFamily="monospace" textAnchor="middle">FOAM FILLED</text>
 
                 {/* Zone 2: Midships Battery & Avionics Compartment */}
-                <rect x="170" y="90" width="150" height="70" fill="#38bdf8" fillOpacity="0.12" rx="4" />
+                <rect x="170" y="90" width="150" height="70" fill="#e0f2fe" stroke="#38bdf8" strokeWidth="1" rx="4" />
                 {/* 45kWh Battery Packs */}
-                <rect x="180" y="125" width="130" height="30" fill="#10b981" fillOpacity="0.3" stroke="#34d399" strokeWidth="1" rx="2" />
-                <text x="245" y="144" fill="#a7f3d0" fontSize="8" fontFamily="monospace" textAnchor="middle">45kWh LiFePO4 BATTERY (KEEL)</text>
+                <rect x="180" y="125" width="130" height="30" fill="#d1fae5" stroke="#059669" strokeWidth="1" rx="2" />
+                <text x="245" y="144" fill="#065f46" fontSize="8" fontFamily="monospace" textAnchor="middle" fontWeight="bold">45kWh LiFePO4 BATTERY (KEEL)</text>
                 {/* Autonomy Compute Box */}
-                <rect x="200" y="95" width="90" height="22" fill="#818cf8" fillOpacity="0.3" stroke="#a5b4fc" strokeWidth="1" rx="2" />
-                <text x="245" y="110" fill="#c7d2fe" fontSize="8" fontFamily="monospace" textAnchor="middle">JETSON ORIN AVIONICS</text>
+                <rect x="200" y="95" width="90" height="22" fill="#e0e7ff" stroke="#6366f1" strokeWidth="1" rx="2" />
+                <text x="245" y="110" fill="#3730a3" fontSize="8" fontFamily="monospace" textAnchor="middle" fontWeight="bold">JETSON ORIN AVIONICS</text>
 
                 {/* Zone 3: Aft Thrusters Compartment */}
-                <rect x="340" y="85" width="70" height="75" fill="#f59e0b" fillOpacity="0.12" rx="4" />
-                <text x="375" y="125" fill="#fde68a" fontSize="8" fontFamily="monospace" textAnchor="middle">ELECTRIC PODS</text>
+                <rect x="340" y="85" width="70" height="75" fill="#fef3c7" stroke="#d97706" strokeWidth="1" rx="4" />
+                <text x="375" y="125" fill="#92400e" fontSize="8" fontFamily="monospace" textAnchor="middle" fontWeight="bold">ELECTRIC PODS</text>
 
                 {/* Perception Mast */}
-                <line x1="210" y1="60" x2="210" y2="15" stroke="#94a3b8" strokeWidth="3" />
+                <line x1="210" y1="60" x2="210" y2="15" stroke="#64748b" strokeWidth="3" />
                 {/* FMCW Radar Dome */}
-                <circle cx="210" cy="15" r="9" fill="#0284c7" stroke="#38bdf8" strokeWidth="1.5" />
-                <text x="225" y="18" fill="#38bdf8" fontSize="8" fontFamily="monospace">FMCW RADAR (2.4m)</text>
+                <circle cx="210" cy="15" r="9" fill="#0284c7" stroke="#0369a1" strokeWidth="1.5" />
+                <text x="225" y="18" fill="#0284c7" fontSize="8" fontFamily="monospace" fontWeight="bold">FMCW RADAR (2.4m)</text>
                 {/* LiDAR */}
-                <rect x="204" y="26" width="12" height="7" fill="#ec4899" rx="1" />
-                <text x="225" y="32" fill="#f472b6" fontSize="8" fontFamily="monospace">3D LiDAR</text>
+                <rect x="204" y="26" width="12" height="7" fill="#db2777" rx="1" />
+                <text x="225" y="32" fill="#be185d" fontSize="8" fontFamily="monospace" fontWeight="bold">3D LiDAR</text>
 
                 {/* Twin Pod Thrusters below transom */}
-                <rect x="405" y="170" width="14" height="28" fill="#0d9488" stroke="#2dd4bf" strokeWidth="1" rx="2" />
+                <rect x="405" y="170" width="14" height="28" fill="#0d9488" stroke="#0f766e" strokeWidth="1" rx="2" />
                 {/* Propeller Blade */}
-                <polygon points="419,180 432,175 432,193" fill="#5eead4" />
-                <text x="390" y="215" fill="#2dd4bf" fontSize="8" fontFamily="monospace">TWIN PMSM PODS</text>
+                <polygon points="419,180 432,175 432,193" fill="#14b8a6" />
+                <text x="390" y="215" fill="#0f766e" fontSize="8" fontFamily="monospace" fontWeight="bold">TWIN PMSM PODS</text>
               </svg>
             </div>
 

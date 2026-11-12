@@ -169,13 +169,13 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
     const cx = w / 2;
     const cy = h / 2 + 10;
 
-    ctx.fillStyle = '#060d17';
+    ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, w, h);
 
     // Water Surface
-    ctx.fillStyle = 'rgba(14, 116, 144, 0.4)';
+    ctx.fillStyle = 'rgba(14, 165, 233, 0.25)';
     ctx.fillRect(0, cy, w, h - cy);
-    ctx.strokeStyle = '#38bdf8';
+    ctx.strokeStyle = '#0284c7';
     ctx.lineWidth = 1.5;
     ctx.setLineDash([4, 4]);
     ctx.beginPath();
@@ -193,8 +193,8 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
     ctx.save();
     ctx.translate(cx, cy);
 
-    ctx.fillStyle = activeCandidate.status === 'SURVIVED' ? '#0f766e' : '#881337';
-    ctx.strokeStyle = activeCandidate.status === 'SURVIVED' ? '#2dd4bf' : '#f43f5e';
+    ctx.fillStyle = activeCandidate.status === 'SURVIVED' ? '#0d9488' : '#e11d48';
+    ctx.strokeStyle = activeCandidate.status === 'SURVIVED' ? '#0f766e' : '#be123c';
     ctx.lineWidth = 2.5;
 
     ctx.beginPath();
@@ -216,13 +216,13 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
     ctx.stroke();
 
     const kgPx = dPx - activeCandidate.kgMeters * scale;
-    ctx.fillStyle = '#f59e0b';
+    ctx.fillStyle = '#d97706';
     ctx.beginPath();
     ctx.arc(0, kgPx, 4, 0, Math.PI * 2);
     ctx.fill();
 
     const kmPx = dPx - activeCandidate.kmtMeters * scale;
-    ctx.fillStyle = '#38bdf8';
+    ctx.fillStyle = '#0284c7';
     ctx.beginPath();
     ctx.arc(0, kmPx, 4, 0, Math.PI * 2);
     ctx.fill();
@@ -230,11 +230,11 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
     ctx.restore();
 
     ctx.font = '10px monospace';
-    ctx.fillStyle = '#f59e0b';
+    ctx.fillStyle = '#b45309';
     ctx.fillText(`• KG: ${activeCandidate.kgMeters}m`, 10, 20);
-    ctx.fillStyle = '#38bdf8';
+    ctx.fillStyle = '#0369a1';
     ctx.fillText(`• KMt: ${activeCandidate.kmtMeters}m`, 10, 35);
-    ctx.fillStyle = activeCandidate.gmtMeters >= 0.35 ? '#34d399' : '#f87171';
+    ctx.fillStyle = activeCandidate.gmtMeters >= 0.35 ? '#059669' : '#dc2626';
     ctx.fillText(`• GMt: ${activeCandidate.gmtMeters}m (${activeCandidate.gmtMeters >= 0.35 ? 'PASS' : 'FAIL'})`, 10, 50);
   }, [activeCandidate]);
 
@@ -250,13 +250,13 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
     const cx = w / 2;
     const cy = h / 2 + 10;
 
-    ctx.fillStyle = '#060d17';
+    ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, w, h);
 
     // Water
-    ctx.fillStyle = 'rgba(14, 116, 144, 0.4)';
+    ctx.fillStyle = 'rgba(14, 165, 233, 0.25)';
     ctx.fillRect(0, cy, w, h - cy);
-    ctx.strokeStyle = '#38bdf8';
+    ctx.strokeStyle = '#0284c7';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.moveTo(0, cy);
@@ -272,8 +272,8 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
     ctx.save();
     ctx.translate(cx, cy);
 
-    ctx.fillStyle = studioCandidate.status === 'SURVIVED' ? '#065f46' : '#7f1d1d';
-    ctx.strokeStyle = studioCandidate.status === 'SURVIVED' ? '#34d399' : '#f87171';
+    ctx.fillStyle = studioCandidate.status === 'SURVIVED' ? '#0d9488' : '#be123c';
+    ctx.strokeStyle = studioCandidate.status === 'SURVIVED' ? '#059669' : '#e11d48';
     ctx.lineWidth = 2.5;
 
     ctx.beginPath();
@@ -289,9 +289,9 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
     ctx.restore();
 
     ctx.font = '10px monospace';
-    ctx.fillStyle = studioCandidate.gmtMeters >= 0.35 ? '#34d399' : '#f87171';
+    ctx.fillStyle = studioCandidate.gmtMeters >= 0.35 ? '#059669' : '#dc2626';
     ctx.fillText(`GMt: ${studioCandidate.gmtMeters}m (${studioCandidate.status})`, 10, 20);
-    ctx.fillStyle = '#cbd5e1';
+    ctx.fillStyle = '#334155';
     ctx.fillText(`Disp: ${studioCandidate.displacementTonnes}t | Draft: ${studioCandidate.draftMeters}m`, 10, 35);
   }, [studioCandidate]);
 
@@ -488,7 +488,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                   ref={canvasRef}
                   width={380}
                   height={150}
-                  className="rounded border border-slate-800 bg-[#060d17] w-full max-w-[380px]"
+                  className="rounded border border-slate-800 bg-white shadow-inner w-full max-w-[380px]"
                 />
               </div>
             </div>
@@ -937,7 +937,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                     ref={studioCanvasRef}
                     width={320}
                     height={130}
-                    className="rounded border border-slate-800 bg-[#060d17] w-full max-w-[320px]"
+                    className="rounded border border-slate-800 bg-white shadow-inner w-full max-w-[320px]"
                   />
                 </div>
 
