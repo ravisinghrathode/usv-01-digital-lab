@@ -431,19 +431,27 @@ export const ColregsTool: EngineeringTool = {
     targetBearingDeg: z.coerce.number().min(0).max(360),
     targetRangeNm: z.coerce.number().positive(),
     targetCourseDeg: z.coerce.number().min(0).max(360),
-    targetSpeedKnots: z.coerce.number().nonnegative()
+    targetSpeedKnots: z.coerce.number().nonnegative(),
+    visibilityMode: z.enum(['IN_SIGHT', 'RESTRICTED', 'UNKNOWN']).default('UNKNOWN'),
+    ownVesselType: z.enum(['POWER_DRIVEN', 'OTHER', 'UNKNOWN']).default('UNKNOWN'),
+    targetVesselType: z.enum(['POWER_DRIVEN', 'OTHER', 'UNKNOWN']).default('UNKNOWN')
   }).passthrough(),
   outputSchema: z.object({
     relativeSpeedKnots: z.number(),
     closestPointOfApproachCpaNm: z.number(),
     timeToCpaMinutes: z.number(),
     relativeBearingDeg: z.number(),
-    colregsRuleApplicable: z.enum(['RULE_14_HEAD_ON', 'RULE_15_CROSSING_GIVE_WAY', 'RULE_15_CROSSING_STAND_ON', 'RULE_13_OVERTAKING', 'SAFE_PASSING']),
+    colregsRuleApplicable: z.enum(['RULE_14_HEAD_ON', 'RULE_15_CROSSING_GIVE_WAY', 'RULE_15_CROSSING_STAND_ON', 'RULE_13_OVERTAKING', 'SAFE_PASSING', 'RULE_19_RESTRICTED_VISIBILITY', 'LEGAL_APPLICABILITY_UNDETERMINED', 'OTHER_VESSEL_PRIORITY_UNASSESSED']),
     mandatedAction: z.string(),
-    safeAlterationCourseDeg: z.number().optional()
+    safeAlterationCourseDeg: z.number().optional(),
+    visibilityMode: z.enum(['IN_SIGHT', 'RESTRICTED', 'UNKNOWN']),
+    legalApplicabilityValidated: z.literal(false),
+    maneuverValidated: z.literal(false)
   }),
   execute: (input: any) => {
-    const { ownCourseDeg, ownSpeedKnots, targetBearingDeg, targetRangeNm, targetCourseDeg, targetSpeedKnots } = input;
+    const { ownCourseDeg, ownSpeedKnots, targetBearingDeg, targetRangeNm,
+      targetCourseDeg, targetSpeedKnots, visibilityMode = 'UNKNOWN',
+      ownVesselType = 'UNKNOWN', targetVesselType = 'UNKNOWN' } = input;
 
     const toRad = Math.PI / 180;
 
@@ -495,12 +503,29 @@ export const ColregsTool: EngineeringTool = {
     let courseDiff = Math.abs(ownCourseDeg - targetCourseDeg);
     if (courseDiff > 180) courseDiff = 360 - courseDiff;
 
-    let colregsRule: 'RULE_14_HEAD_ON' | 'RULE_15_CROSSING_GIVE_WAY' | 'RULE_15_CROSSING_STAND_ON' | 'RULE_13_OVERTAKING' | 'SAFE_PASSING' = 'SAFE_PASSING';
+    let colregsRule: 'RULE_14_HEAD_ON' | 'RULE_15_CROSSING_GIVE_WAY' | 'RULE_15_CROSSING_STAND_ON' |
+      'RULE_13_OVERTAKING' | 'SAFE_PASSING' | 'RULE_19_RESTRICTED_VISIBILITY' |
+      'LEGAL_APPLICABILITY_UNDETERMINED' | 'OTHER_VESSEL_PRIORITY_UNASSESSED' = 'LEGAL_APPLICABILITY_UNDETERMINED';
     let mandatedAction = 'Geometry screening only: assess sensor uncertainty; no certified maneuver.';
     const safeCourse: number | undefined = undefined; // Never propose unvalidated helm setpoints.
 
-    if (cpaNm < 1.0 && timeToCpaMinutes > 0) {
-      // Risk of collision exists
+    // COLREG 13–17 only apply to vessels IN SIGHT of one another;
+    // crossing/head-on screening assumes BOTH vessels are POWER DRIVEN.
+    // Neither circumstance can be assumed from GPS courses alone.
+    if (visibilityMode === 'RESTRICTED') {
+      colregsRule = 'RULE_19_RESTRICTED_VISIBILITY';
+      mandatedAction = 'Restricted visibility: screen Rule 19, safe speed and lookout. Do not apply in-sight Rule 13–17 classifier.';
+    } else if (visibilityMode !== 'IN_SIGHT') {
+      colregsRule = 'LEGAL_APPLICABILITY_UNDETERMINED';
+      mandatedAction = 'Visibility not established. Determine in-sight status before choosing COLREG encounter obligations.';
+    } else if (ownVesselType !== 'POWER_DRIVEN' || targetVesselType !== 'POWER_DRIVEN') {
+      colregsRule = 'OTHER_VESSEL_PRIORITY_UNASSESSED';
+      mandatedAction = 'Vessel types not both confirmed as power-driven. Screen special-status priorities before maneuvering.';
+    } else if (cpaNm >= 1.0 || timeToCpaMinutes <= 0) {
+      colregsRule = 'SAFE_PASSING';
+      mandatedAction = 'No close-approach risk identified by this single-contact geometry screen. NOT proof of safe passage.';
+    } else if (cpaNm < 1.0 && timeToCpaMinutes > 0) {
+      // One-contact geometry threshold is arbitrary, not a legal collision-risk limit.
       if (Math.abs(relBearing) <= 6 && courseDiff >= 170) {
         colregsRule = 'RULE_14_HEAD_ON';
         mandatedAction = 'Head-on candidate (Rule 14): STARBOARD action may apply; no verified helm command.';
@@ -525,7 +550,10 @@ export const ColregsTool: EngineeringTool = {
       relativeBearingDeg: Number(relBearing.toFixed(1)),
       colregsRuleApplicable: colregsRule,
       mandatedAction,
-      safeAlterationCourseDeg: safeCourse
+      safeAlterationCourseDeg: safeCourse,
+      visibilityMode,
+      legalApplicabilityValidated: false,
+      maneuverValidated: false
     };
   }
 };

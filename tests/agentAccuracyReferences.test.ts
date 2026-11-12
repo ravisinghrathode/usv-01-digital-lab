@@ -98,7 +98,7 @@ describe('AGT-02 reproducible first-principles worked-example checks', () => {
   it('checks head-on CPA geometry without issuing a purported safe helm course', async () => {
     const r = await calc('TOOL-COLREGS-01', {
       ownCourseDeg:0,ownSpeedKnots:12,targetBearingDeg:0,targetRangeNm:2,
-      targetCourseDeg:180,targetSpeedKnots:12
+      targetCourseDeg:180,targetSpeedKnots:12, visibilityMode: 'IN_SIGHT', ownVesselType: 'POWER_DRIVEN', targetVesselType: 'POWER_DRIVEN'
     });
     expect(r.success).toBe(true);
     expect(r.output.relativeSpeedKnots).toBeCloseTo(24,1);

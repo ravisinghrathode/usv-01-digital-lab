@@ -261,7 +261,7 @@ describe('Deterministic Naval Engineering Tools: Physics Benchmarks & Analytical
         targetBearingDeg: 0,
         targetRangeNm: 2.0,
         targetCourseDeg: 180,
-        targetSpeedKnots: 12
+        targetSpeedKnots: 12, visibilityMode: 'IN_SIGHT', ownVesselType: 'POWER_DRIVEN', targetVesselType: 'POWER_DRIVEN'
       };
 
       const res = await toolRegistry.executeTool('TOOL-COLREGS-01', input, ['CALCULATION_EXEC']);
@@ -280,7 +280,7 @@ describe('Deterministic Naval Engineering Tools: Physics Benchmarks & Analytical
         targetBearingDeg: 45,
         targetRangeNm: 2.0,
         targetCourseDeg: 270,
-        targetSpeedKnots: 10
+        targetSpeedKnots: 10, visibilityMode: 'IN_SIGHT', ownVesselType: 'POWER_DRIVEN', targetVesselType: 'POWER_DRIVEN'
       };
 
       const res = await toolRegistry.executeTool('TOOL-COLREGS-01', input, ['CALCULATION_EXEC']);
@@ -297,7 +297,7 @@ describe('Deterministic Naval Engineering Tools: Physics Benchmarks & Analytical
         targetBearingDeg: 5,
         targetRangeNm: 1.0,
         targetCourseDeg: 0,
-        targetSpeedKnots: 8
+        targetSpeedKnots: 8, visibilityMode: 'IN_SIGHT', ownVesselType: 'POWER_DRIVEN', targetVesselType: 'POWER_DRIVEN'
       };
 
       const res = await toolRegistry.executeTool('TOOL-COLREGS-01', input, ['CALCULATION_EXEC']);
@@ -314,7 +314,7 @@ describe('Deterministic Naval Engineering Tools: Physics Benchmarks & Analytical
         targetBearingDeg: 180,
         targetRangeNm: 8.0,
         targetCourseDeg: 180,
-        targetSpeedKnots: 12
+        targetSpeedKnots: 12, visibilityMode: 'IN_SIGHT', ownVesselType: 'POWER_DRIVEN', targetVesselType: 'POWER_DRIVEN'
       };
 
       const res = await toolRegistry.executeTool('TOOL-COLREGS-01', input, ['CALCULATION_EXEC']);

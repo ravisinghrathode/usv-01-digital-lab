@@ -115,7 +115,7 @@ describe('STAGE E: Deterministic Naval Engineering Tools', () => {
       targetBearingDeg: 45,
       targetRangeNm: 2.0,
       targetCourseDeg: 270,
-      targetSpeedKnots: 10
+      targetSpeedKnots: 10, visibilityMode: 'IN_SIGHT', ownVesselType: 'POWER_DRIVEN', targetVesselType: 'POWER_DRIVEN'
     };
 
     const res = await toolRegistry.executeTool('TOOL-COLREGS-01', input, ['CALCULATION_EXEC']);
