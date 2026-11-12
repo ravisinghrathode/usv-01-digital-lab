@@ -38,6 +38,8 @@ import { VerifyUsv01Engine } from './src/core/verification/VerifyUsv01Engine.ts'
 import { AgentRegistry } from './src/core/registry/AgentRegistry.ts';
 import { BaseAgent } from './src/core/engine/BaseAgent.ts';
 import { CentralOrchestrator } from './src/core/orchestrator/CentralOrchestrator.ts';
+import { ApprovalGateManager } from './src/core/safety/HumanApprovalGate.ts';
+import type { EngineeringTask } from './src/core/types/orchestrator.ts';
 import { AuditLogger } from './src/core/safety/AuditLogger.ts';
 import {
   getGeminiClient,
@@ -53,7 +55,7 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = express();
+export const app = express();
 const port = parseInt(process.env.PORT || '3000', 10);
 
 app.use(express.json({ limit: '25mb' }));
@@ -232,6 +234,10 @@ app.use([
   '/api/import',
   '/api/auth/sign-gate',
   '/api/auth/session',
+  '/api/gemini/generate',
+  '/api/gemini/stream',
+  '/api/gemini/assist',
+  '/api/usv-intel/scrape',
   '/api/governance/keygen',
   '/api/governance/sign-ecr'
 ], authMiddleware);
@@ -449,7 +455,7 @@ app.post('/api/auth/provision-initial', (req, res) => {
     }
 
     // If store is empty, but INITIAL_PROVISION_SECRET is configured, enforce setupToken
-    if (!hasProvisionedUsers && INITIAL_PROVISION_SECRET && !hasValidSetupToken && !isDirectorSession) {
+    if (!hasProvisionedUsers && !isDirectorSession && !hasValidSetupToken) {
       AuditLogger.getInstance().log({
         severity: 'SAFETY_CRITICAL',
         action: 'UNAUTHORIZED_INITIAL_PROVISION_ATTEMPT',
@@ -457,7 +463,7 @@ app.post('/api/auth/provision-initial', (req, res) => {
       });
       return res.status(403).json({
         success: false,
-        error: 'Forbidden: Initial account provisioning requires valid setupToken matching INITIAL_PROVISION_SECRET.'
+        error: 'Forbidden: Initial account provisioning requires an explicitly configured setup secret or an authenticated Engineering Director.'
       });
     }
 
@@ -502,8 +508,8 @@ app.post('/api/agents/execute', async (req, res) => {
       return res.status(404).json({ success: false, error: `Agent '${agentId}' not found in authoritative AgentRegistry.` });
     }
 
-    // Role-based authorization: Safety-critical agents require valid session
-    if (spec.auditRequirement.logLevel === 'SAFETY_CRITICAL' && !user) {
+    // Every agent runs exclusively with a verified server session.
+    if (!user) {
       AuditLogger.getInstance().log({
         severity: 'SAFETY_CRITICAL',
         agentId,
@@ -512,7 +518,7 @@ app.post('/api/agents/execute', async (req, res) => {
       });
       return res.status(401).json({
         success: false,
-        error: `Unauthorized: Execution of safety-critical agent '${agentId}' requires an authenticated session.`
+        error: `Unauthorized: Execution of agent '${agentId}' requires an authenticated session.`
       });
     }
 
@@ -526,7 +532,7 @@ app.post('/api/agents/execute', async (req, res) => {
     const executionInput = {
       taskId: taskId || `TASK-${Date.now()}`,
       parameters: parameters || {},
-      context: { ...(context || {}), authenticatedUserId: user?.userId, authenticatedUserRole: user?.role },
+      context: { ...(context || {}), isExploratoryStudy: undefined, safetyCritical: undefined, authenticatedUserId: user.userId, authenticatedUserRole: user.role },
       priorAgentOutputs: priorAgentOutputs || {},
       userNotes,
       correlationId
@@ -540,7 +546,7 @@ app.post('/api/agents/execute', async (req, res) => {
     ]);
 
     res.json({
-      success: true,
+      success: output.status !== 'FAILED',
       correlationId,
       output
     });
@@ -555,6 +561,9 @@ app.post('/api/agents/execute', async (req, res) => {
   }
 });
 
+let workflowInProgress = false;
+
+// The dashboard submits task definitions; execution and safety policy remain on the server.
 app.post('/api/orchestrator/execute-workflow', async (req, res) => {
   try {
     const authHeader = req.headers['authorization'];
@@ -565,16 +574,93 @@ app.post('/api/orchestrator/execute-workflow', async (req, res) => {
       return res.status(401).json({ success: false, error: 'Unauthorized: Workflow execution requires an authenticated session.' });
     }
 
-    const orchestrator = CentralOrchestrator.getInstance();
-    const result = await orchestrator.executeWorkflow();
+    if (workflowInProgress) {
+      return res.status(409).json({ success: false, error: 'A server workflow is already executing.' });
+    }
 
-    res.json({
-      success: true,
-      results: result,
-      tasks: orchestrator.getAllTasks()
-    });
+    const submitted = req.body?.tasks;
+    if (!Array.isArray(submitted) || submitted.length < 1 || submitted.length > 25) {
+      return res.status(400).json({ success: false, error: 'Provide between 1 and 25 workflow tasks.' });
+    }
+    const registry = AgentRegistry.getInstance();
+    const prepared: EngineeringTask[] = [];
+    for (const item of submitted) {
+      if (!item || typeof item.id !== 'string' || !/^[a-zA-Z0-9_-]{1,100}$/.test(item.id) ||
+          typeof item.assignedAgentId !== 'string' || !Array.isArray(item.dependencies) ||
+          item.dependencies.length > 25 || item.dependencies.some((d: unknown) => typeof d !== 'string') ||
+          !item.input || typeof item.input.parameters !== 'object' || Array.isArray(item.input.parameters)) {
+        return res.status(400).json({ success: false, error: 'Invalid workflow task definition.' });
+      }
+      const spec = registry.getAgent(item.assignedAgentId);
+      if (!spec) return res.status(400).json({ success: false, error: 'Unknown workflow agent.' });
+      const context = item.input.context && typeof item.input.context === 'object' ? item.input.context : {};
+      const { isExploratoryStudy: _flag, safetyCritical: _clientSafety, ...safeContext } = context;
+      const { isExploratoryStudy: _parameterFlag, ...safeParameters } = item.input.parameters;
+      prepared.push({
+        id: item.id,
+        title: String(item.title || item.id).slice(0, 150),
+        description: String(item.description || '').slice(0, 500),
+        assignedAgentId: spec.id,
+        discipline: spec.division,
+        priority: spec.auditRequirement.logLevel === 'SAFETY_CRITICAL' ? 'CRITICAL' : 'HIGH',
+        dependencies: item.dependencies,
+        input: {
+          taskId: item.id,
+          context: { ...safeContext, authenticatedUserId: user.userId },
+          parameters: safeParameters
+        },
+        status: 'PENDING',
+        createdAt: new Date().toISOString(),
+        safetyCritical: spec.auditRequirement.logLevel === 'SAFETY_CRITICAL' ||
+          spec.verificationCriteria.independentReviewRequired
+      });
+    }
+
+    workflowInProgress = true;
+    try {
+      const orchestrator = CentralOrchestrator.getInstance();
+      // A single workflow owns the in-memory state during execution.
+      orchestrator.clearTasks();
+      for (const task of prepared) orchestrator.registerTask(task);
+      orchestrator.getExecutionPlan(); // Reject missing or cyclic dependencies before execution.
+      const result = await orchestrator.executeWorkflow();
+      return res.json({
+        success: result.failed === 0,
+        results: result,
+        tasks: orchestrator.getAllTasks(),
+        pendingGates: ApprovalGateManager.getInstance().getPendingGates()
+      });
+    } finally {
+      workflowInProgress = false;
+    }
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message || String(err) });
+  }
+});
+
+// Approval decisions execute against the server-owned gate and workflow states.
+app.post('/api/orchestrator/decide-gate', authMiddleware, (req, res) => {
+  const user = (req as any).user as AuthenticatedUser;
+  if (user.role !== 'ENGINEERING_DIRECTOR') {
+    return res.status(403).json({ success: false, error: 'Engineering Director authority required.' });
+  }
+  const { gateId, decision, directorNotes } = req.body || {};
+  if (typeof gateId !== 'string' || !['APPROVED', 'REJECTED'].includes(decision)) {
+    return res.status(400).json({ success: false, error: 'Invalid gate decision.' });
+  }
+  try {
+    const timestamp = new Date().toISOString();
+    const signature = generateApproverSignature(gateId, decision, user.userId, user.role, timestamp, SESSION_SECRET);
+    const gate = ApprovalGateManager.getInstance().evaluateDecision(gateId, decision, String(directorNotes || ''), {
+      userId: user.userId, userName: user.userName, role: user.role,
+      authenticatedAt: timestamp, tokenSignature: signature, serverVerifiedSignature: signature
+    });
+    const orchestrator = CentralOrchestrator.getInstance();
+    const result = orchestrator.resolveGateDecision(gateId, decision);
+    return res.json({ success: true, gate, result, tasks: orchestrator.getAllTasks(),
+      pendingGates: ApprovalGateManager.getInstance().getPendingGates() });
+  } catch (err: any) {
+    return res.status(400).json({ success: false, error: err.message || String(err) });
   }
 });
 
@@ -1329,17 +1415,7 @@ app.post('/api/gemini/generate', async (req, res) => {
     const model = config?.modelName || req.body.model;
 
     if (!isGeminiAvailable()) {
-      // Fallback to deterministic provider response so it always returns valid JSON and succeeds
-      const { DeterministicProvider } = await import('./src/core/models/ModelProvider.ts');
-      const detProvider = new DeterministicProvider();
-      const detResult = await detProvider.generateText(
-        request || {
-          systemInstructions: systemInstruction || '',
-          userPrompt: prompt || '',
-          context
-        }
-      );
-      return res.json(detResult);
+      return res.status(503).json({ success: false, error: 'Gemini provider unavailable. No AI analysis was performed.' });
     }
 
     try {
@@ -1363,24 +1439,19 @@ app.post('/api/gemini/generate', async (req, res) => {
         modelUsed: result.modelUsed,
         isAiReview: true,
         isMock: false,
-        evidenceValid: true,
+        evidenceValid: false, // AI narrative is not independently verified engineering evidence.
         tokenUsage: {
           promptTokens: result.usageMetadata?.promptTokenCount || 0,
           completionTokens: result.usageMetadata?.candidatesTokenCount || 0,
           totalTokens: result.usageMetadata?.totalTokenCount || 0
         }
       });
-    } catch (_geminiErr: any) {
-      const { DeterministicProvider } = await import('./src/core/models/ModelProvider.ts');
-      const detProvider = new DeterministicProvider();
-      const detResult = await detProvider.generateText(
-        request || {
-          systemInstructions: systemInstruction || '',
-          userPrompt: prompt || '',
-          context
-        }
-      );
-      return res.json(detResult);
+    } catch (providerErr: any) {
+      return res.status(502).json({
+        success: false,
+        evidenceValid: false,
+        error: 'Gemini generation failed; no independent engineering analysis was completed.'
+      });
     }
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
@@ -1414,7 +1485,7 @@ app.post('/api/gemini/stream', async (req, res) => {
     res.write('data: [DONE]\n\n');
     res.end();
   } catch (_err: any) {
-    res.write(`data: ${JSON.stringify({ text: 'Deterministic telemetry stream active.' })}\n\n`);
+    res.write(`data: ${JSON.stringify({ error: 'Gemini streaming failed. No AI output was generated.' })}\n\n`);
     res.write('data: [DONE]\n\n');
     res.end();
   }
@@ -1579,6 +1650,20 @@ async function startServer() {
       const host = request.headers.host || 'localhost';
       const pathname = request.url ? new URL(request.url, `http://${host}`).pathname : '';
       if (pathname === '/api/gemini/live' || pathname === '/live') {
+        // WebSockets bypass Express middleware. Verify the session before allocating
+        // an upstream paid Live API connection. Browsers send token in the second
+        // subprotocol after the fixed public protocol, which is the only protocol echoed.
+        const header = request.headers.authorization;
+        const bearer = typeof header === 'string' && header.startsWith('Bearer ')
+          ? header.slice(7) : '';
+        const protocols = String(request.headers['sec-websocket-protocol'] || '').split(',').map(s => s.trim());
+        const boundToken = protocols[0] === 'usv01-v1'
+          ? protocols.find(s => s.startsWith('auth.'))?.slice(5) : undefined;
+        if (!verifySessionToken(bearer || boundToken || '')) {
+          socket.write('HTTP/1.1 401 Unauthorized\r\nConnection: close\r\n\r\n');
+          socket.destroy();
+          return;
+        }
         wss.handleUpgrade(request, socket, head, (ws: any) => {
           wss.emit('connection', ws, request);
         });

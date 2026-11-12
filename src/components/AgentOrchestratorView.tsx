@@ -43,7 +43,8 @@ import {
   provisionInitialCredential,
   fetchGovernanceStatus,
   generateDirectorKeypairWeb,
-  signEcrWeb
+  signEcrWeb,
+  authenticatedFetch
 } from '../core/auth/authClient.ts';
 
 interface AgentOrchestratorViewProps {
@@ -81,6 +82,9 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
   const [parameters, setParameters] = useState<EngineeringParameter[]>([]);
   const [logs, setLogs] = useState<any[]>([]);
   const [isExecutingWorkflow, setIsExecutingWorkflow] = useState(false);
+  const [serverWorkflowError, setServerWorkflowError] = useState<string | null>(null);
+  const [serverTasks, setServerTasks] = useState<EngineeringTask[] | null>(null);
+  const [serverPendingGates, setServerPendingGates] = useState<HumanApprovalGate[] | null>(null);
 
   // Tool Calculator Nominal Presets
   const DEFAULT_TOOL_INPUTS: Record<string, Record<string, any>> = {
@@ -165,6 +169,7 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
   // Authenticated User & Director Passphrase Verification State
   const [approverIdentity, setApproverIdentity] = useState<ApproverIdentity | null>(null);
   const [directorPassphrase, setDirectorPassphrase] = useState<string>('');
+  const [initialSetupSecret, setInitialSetupSecret] = useState<string>('');
   const [directorAuthError, setDirectorAuthError] = useState<string | null>(null);
   const [isDirectorAuthenticated, setIsDirectorAuthenticated] = useState<boolean>(false);
 
@@ -182,8 +187,8 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
   const refreshState = () => {
     setAgents(registry.getAllAgents());
     setAgentStatuses(executionEngine.getAllStatuses());
-    setTasks(orchestrator.getAllTasks());
-    setPendingGates(gateManager.getPendingGates());
+    setTasks(serverTasks ?? orchestrator.getAllTasks());
+    setPendingGates(serverPendingGates ?? gateManager.getPendingGates());
     setParameters(sharedMemory.getAllParameters());
     setLogs(auditLogger.getLogs().slice(-30).reverse());
     fetchGovernanceStatus().then(setGovStatus).catch(() => {});
@@ -207,7 +212,7 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
       const setup = await fetchSetupStatus();
       let user: ApproverIdentity;
       if (!setup.provisionedUsers.includes('usr-eng-dir-8841')) {
-        user = await provisionInitialCredential('usr-eng-dir-8841', directorPassphrase);
+        user = await provisionInitialCredential('usr-eng-dir-8841', directorPassphrase, initialSetupSecret);
       } else {
         user = await authenticateAsDirector(directorPassphrase);
       }
@@ -215,6 +220,7 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
       setIsDirectorAuthenticated(true);
       setEcrSigningPassphrase(directorPassphrase);
       setDirectorPassphrase('');
+      setInitialSetupSecret('');
       refreshState();
     } catch (err: any) {
       setDirectorAuthError(err.message);
@@ -268,6 +274,9 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
   // Run Baseline or Exploratory Topological Workflow
   const handleRunSampleWorkflow = async () => {
     setIsExecutingWorkflow(true);
+    setServerWorkflowError(null);
+    setServerTasks(null);
+    setServerPendingGates(null);
     orchestrator.clearTasks();
 
     // Inspect baseline vessel particulars in SharedMemory
@@ -390,12 +399,22 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
     refreshState();
 
     try {
-      await orchestrator.executeWorkflow();
-    } catch (e) {
-      console.error('Workflow error:', e);
+      const response = await authenticatedFetch('/api/orchestrator/execute-workflow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tasks: orchestrator.getAllTasks() })
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !Array.isArray(data.tasks)) {
+        throw new Error(data.error || `Server workflow rejected (HTTP ${response.status})`);
+      }
+      setServerTasks(data.tasks);
+      setServerPendingGates(Array.isArray(data.pendingGates) ? data.pendingGates : []);
+      if (!data.success) setServerWorkflowError('One or more workflow tasks failed. See task results.');
+    } catch (e: any) {
+      setServerWorkflowError(e?.message || 'Workflow execution failed.');
     } finally {
       setIsExecutingWorkflow(false);
-      refreshState();
     }
   };
 
@@ -403,10 +422,16 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
   const handleDecision = async (gateId: string, decision: 'APPROVED' | 'REJECTED') => {
     try {
       // Request cryptographic signature from backend signing authority
-      const signedIdentity = await signApprovalGate(gateId, decision, directorNote);
-      gateManager.evaluateDecision(gateId, decision, directorNote, signedIdentity);
-      orchestrator.resolveGateDecision(gateId, decision);
-      refreshState();
+      const response = await authenticatedFetch('/api/orchestrator/decide-gate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ gateId, decision, directorNotes: directorNote })
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.success) throw new Error(data.error || 'Approval decision failed.');
+      setServerTasks(data.tasks);
+      setServerPendingGates(data.pendingGates);
+      setServerWorkflowError(null);
     } catch (err: any) {
       alert(`Approval Gate Authorization Failed: ${err.message}`);
     }
@@ -536,6 +561,7 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
         </div>
       </div>
 
+      {serverWorkflowError && <div role="alert" className="p-3 rounded border border-red-600 text-red-300 bg-red-950/50 text-xs">{serverWorkflowError}</div>}
       {/* Navigation Sub-Tabs */}
       <div className="flex items-center gap-2 border-b border-slate-800 pb-2 overflow-x-auto font-mono text-xs">
         <button
@@ -878,6 +904,15 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
                   <ShieldCheck className="w-3.5 h-3.5" /> Authenticate Authority
                 </button>
               </div>
+              <input
+                type="password"
+                autoComplete="off"
+                aria-label="One-time initial setup secret (only needed for first provisioning)"
+                placeholder="Initial setup secret (required on first provisioning only)"
+                value={initialSetupSecret}
+                onChange={(e) => setInitialSetupSecret(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-700 rounded px-3 py-1.5 text-xs text-slate-100 placeholder-slate-500"
+              />
               {directorAuthError && (
                 <p className="text-[11px] text-rose-400 font-mono">❌ {directorAuthError}</p>
               )}

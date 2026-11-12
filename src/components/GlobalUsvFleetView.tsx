@@ -116,11 +116,11 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
         setScrapeLogs((prev) => [
           ...prev,
           `[${new Date().toLocaleTimeString()}] Status: ${report.statusMessage || (isCached ? 'Cached Data — No Live Refresh Performed' : 'Live Data Refreshed')}.`,
-          `[${new Date().toLocaleTimeString()}] Verified repository records: ${data.totalVessels || vessels.length} USV models (${report.activeNaviesCount || 9} navies).`,
-          `[${new Date().toLocaleTimeString()}] Academic literature database: ${report.papersExtracted || 6} peer-reviewed references.`,
+          `[${new Date().toLocaleTimeString()}] Cached fleet records: ${data.totalVessels ?? vessels.length} USV models (${report.activeNaviesCount ?? 0} navies); independent verification still required.`,
+          `[${new Date().toLocaleTimeString()}] New academic references parsed in this run: ${report.papersExtracted ?? 0}.`,
           `[${new Date().toLocaleTimeString()}] Deduplication check complete: ${report.deduplicatedCount || 0} duplicates resolved; ${report.conflictCount || 0} parameter conflicts flagged.`
         ]);
-        setSyncSuccessToast(isCached ? 'Verified local intelligence cache active (Cached Data — No Live Refresh Performed).' : 'Global fleet intelligence refreshed.');
+        setSyncSuccessToast(isCached ? 'Local intelligence cache active — No Live Refresh Performed.' : 'Public research feed checked; no new vessel specifications independently validated.');
         setTimeout(() => setSyncSuccessToast(null), 4000);
       } else {
         setScrapeLogs((prev) => [

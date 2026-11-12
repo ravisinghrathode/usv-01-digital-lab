@@ -282,7 +282,8 @@ export class BaseAgent {
       warnings.push('CRITICAL: Output generated via synthetic mock fallback. Not certified as verified engineering evidence.');
     }
 
-    const isExplicitlyNonCritical = (input as any).safetyCritical === false || input.context?.isExploratoryStudy === true || input.parameters?.isExploratoryStudy === true;
+    // Client-supplied exploratory flags never override registered safety and independent-review policy.
+    const isExplicitlyNonCritical = false;
 
     if (!isExplicitlyNonCritical && this.spec.verificationCriteria.independentReviewRequired) {
       requiresDirectorApproval = true;

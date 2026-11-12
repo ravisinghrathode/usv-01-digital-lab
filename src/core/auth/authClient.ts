@@ -270,11 +270,11 @@ export async function fetchSetupStatus(): Promise<{ storeAvailable: boolean; pro
 /**
  * Provisions an initial staff credential directly from the browser UI (first-time setup).
  */
-export async function provisionInitialCredential(userId: string, passphrase: string): Promise<ApproverIdentity> {
+export async function provisionInitialCredential(userId: string, passphrase: string, setupToken?: string): Promise<ApproverIdentity> {
   const res = await fetch('/api/auth/provision-initial', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userId, passphrase })
+    body: JSON.stringify({ userId, passphrase, ...(setupToken ? { setupToken } : {}) })
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok || !data.success || !data.token) {

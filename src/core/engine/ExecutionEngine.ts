@@ -94,8 +94,24 @@ export class ExecutionEngine {
             return output;
           }
         }
+        throw new Error(`Backend refused agent execution (HTTP ${res.status}).`);
       } catch (browserErr) {
-        console.warn('Backend execution dispatch failed; falling back to local agent instance:', browserErr);
+        // Fail closed: never run an unprivileged local agent when server authorization fails.
+        this.agentStatuses.set(agentId, 'FAILED');
+        const error = browserErr instanceof Error ? browserErr.message : String(browserErr);
+        const failureOutput: AgentExecutionOutput = {
+          agentId, taskId: input.taskId, timestamp: new Date().toISOString(),
+          status: 'FAILED', executionMode: 'EXECUTION_FAILED',
+          correlationId: input.correlationId || `corr-browser-${Date.now()}`,
+          evidenceValid: false, verificationStatus: 'EXECUTION_FAILED',
+          data: { error: `Authenticated backend execution unavailable: ${error}` },
+          assumptions: [], deterministicToolEvidence: [],
+          openTbdItems: ['Backend execution not completed'], warnings: [error],
+          recommendations: ['Restore authorized server connectivity and retry.'],
+          requiresDirectorApproval: false
+        };
+        this.executionHistory.push(failureOutput);
+        return failureOutput;
       }
     }
 

@@ -36,7 +36,7 @@ describe('Firestore Security Rules & RBAC Specification Audit', () => {
       rulesContent.indexOf('match /activity_log/{logId}'),
       rulesContent.indexOf('match /users/{userId}')
     );
-    expect(activityLogBlock).toContain('allow create: if isAuthenticated();');
+    expect(activityLogBlock).toContain('request.resource.data.userId == request.auth.uid');
     expect(activityLogBlock).toContain('allow update, delete: if false;');
   });
 
@@ -47,6 +47,8 @@ describe('Firestore Security Rules & RBAC Specification Audit', () => {
     );
     expect(projectBlock).toContain('allow delete: if isDirector();');
     expect(projectBlock).toContain('allow read: if isProjectMember(projectId);');
+    expect(rulesContent).not.toContain("request.auth.token.role == 'engineer'");
+    expect(rulesContent).toContain('exists(memberPath(projectId))');
   });
 
   it('should enforce project membership check on requirements, design decisions, and simulation jobs', () => {

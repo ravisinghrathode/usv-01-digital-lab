@@ -13,20 +13,22 @@ service cloud.firestore {
       );
     }
 
-    function isLeadOrAdmin(projectId) {
-      return isAuthenticated() && (
-        isDirector() ||
-        request.auth.token.role == 'lead_engineer' ||
-        request.auth.token.role == 'LEAD_SYSTEMS_ARCHITECT'
-      );
+    function memberPath(projectId) {
+      return /databases/$(database)/documents/project_members/$(projectId + '_' + request.auth.uid);
     }
 
     function isProjectMember(projectId) {
+      return isAuthenticated() && projectId is string && (
+        isDirector() ||
+        exists(memberPath(projectId))
+      );
+    }
+
+    function isLeadOrAdmin(projectId) {
       return isAuthenticated() && (
         isDirector() ||
-        isLeadOrAdmin(projectId) ||
-        request.auth.token.role == 'engineer' ||
-        exists(/databases/$(database)/documents/project_members/$(projectId + '_' + request.auth.uid))
+        (isProjectMember(projectId) &&
+          get(memberPath(projectId)).data.role in ['lead_engineer', 'LEAD_SYSTEMS_ARCHITECT'])
       );
     }
 
@@ -40,17 +42,21 @@ service cloud.firestore {
 
     // Subsystems
     match /subsystems/{subsystemId} {
-      allow read: if isAuthenticated();
-      allow write: if isLeadOrAdmin(request.resource.data.projectId);
+      allow read: if isAuthenticated() && isProjectMember(resource.data.projectId);
+      allow create: if isLeadOrAdmin(request.resource.data.projectId);
+      allow update: if isLeadOrAdmin(resource.data.projectId) && request.resource.data.projectId == resource.data.projectId;
+      allow delete: if isLeadOrAdmin(resource.data.projectId);
     }
 
     // Requirements register: Bound to project membership; Baseline modification requires lead/director
     match /requirements/{reqId} {
       allow read: if isAuthenticated() && (resource == null || isProjectMember(resource.data.projectId));
-      allow create: if isAuthenticated() && isProjectMember(request.resource.data.projectId);
-      allow update: if isAuthenticated() && isProjectMember(resource.data.projectId) && (
-        request.resource.data.status != 'Approved Baseline' || isLeadOrAdmin(resource.data.projectId)
-      );
+      allow create: if isAuthenticated() && isProjectMember(request.resource.data.projectId) &&
+        (request.resource.data.status != 'Approved Baseline' || isLeadOrAdmin(request.resource.data.projectId));
+      allow update: if isAuthenticated() && isProjectMember(resource.data.projectId) &&
+        request.resource.data.projectId == resource.data.projectId &&
+        (resource.data.status != 'Approved Baseline' && request.resource.data.status != 'Approved Baseline' ||
+        isLeadOrAdmin(resource.data.projectId));
       allow delete: if isLeadOrAdmin(resource.data.projectId);
     }
 
@@ -63,10 +69,12 @@ service cloud.firestore {
     // Design Decisions: Formal baseline decisions require lead or director approval
     match /design_decisions/{decisionId} {
       allow read: if isAuthenticated() && (resource == null || isProjectMember(resource.data.projectId));
-      allow create: if isAuthenticated() && isProjectMember(request.resource.data.projectId);
-      allow update: if isAuthenticated() && isProjectMember(resource.data.projectId) && (
-        request.resource.data.status != 'Approved' || isLeadOrAdmin(resource.data.projectId)
-      );
+      allow create: if isAuthenticated() && isProjectMember(request.resource.data.projectId) &&
+        (request.resource.data.status != 'Approved' || isLeadOrAdmin(request.resource.data.projectId));
+      allow update: if isAuthenticated() && isProjectMember(resource.data.projectId) &&
+        request.resource.data.projectId == resource.data.projectId &&
+        (resource.data.status != 'Approved' && request.resource.data.status != 'Approved' ||
+        isLeadOrAdmin(resource.data.projectId));
       allow delete: if isDirector();
     }
 
@@ -108,7 +116,7 @@ service cloud.firestore {
     // Human Authority Safety Approval Gates: Final decision strictly restricted to ENGINEERING_DIRECTOR
     match /approval_gates/{gateId} {
       allow read: if isAuthenticated();
-      allow create: if isAuthenticated();
+      allow create: if isLeadOrAdmin(request.resource.data.projectId);
       allow update: if isDirector();
       allow delete: if false; // Immutable safety ledger
     }
@@ -116,7 +124,8 @@ service cloud.firestore {
     // Activity Log - append only, immutable
     match /activity_log/{logId} {
       allow read: if isAuthenticated();
-      allow create: if isAuthenticated();
+      allow create: if isAuthenticated() &&
+        (request.resource.data.userId == request.auth.uid || isDirector());
       allow update, delete: if false;
     }
 
