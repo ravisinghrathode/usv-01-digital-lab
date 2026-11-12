@@ -193,6 +193,43 @@ export interface StabilityResult {
  * Solve Hydrostatic Stability, Righting Arm Curve GZ(theta), and IMO MSC.267(85) audit
  */
 export function calculateGZStability(inputs: StabilityInputs): StabilityResult {
+  if (!inputs.beamM || !inputs.draftM || !inputs.displacementKg) {
+    const curve: GZPoint[] = [];
+    for (let deg = 0; deg <= 60; deg += 2) {
+      curve.push({
+        heelDeg: deg,
+        heelRad: (deg * Math.PI) / 180,
+        gzM: 0,
+        rightingMomentKNm: 0,
+        isDeckImmersed: false
+      });
+    }
+    return {
+      inputs,
+      curve,
+      audit: {
+        area0To30DegMrad: 0,
+        area0To40DegMrad: 0,
+        area30To40DegMrad: 0,
+        gm0M: 0,
+        gzMaxM: 0,
+        gzMaxAngleDeg: 0,
+        deckEdgeAngleDeg: 0,
+        criteria: {
+          area0To30Pass: false,
+          area0To40Pass: false,
+          area30To40Pass: false,
+          gm0Pass: false,
+          gzMaxPass: false,
+          overallPass: false
+        }
+      },
+      kmM: 0,
+      bmM: 0,
+      kbM: 0
+    };
+  }
+
   const g = 9.80665;
   const deltaKN = (inputs.displacementKg * g) / 1000;
   const B = inputs.beamM;

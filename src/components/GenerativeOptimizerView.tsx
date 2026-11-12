@@ -56,7 +56,16 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
   const [agentSearch, setAgentSearch] = useState<string>('');
 
   // Interactive What-If Studio Sliders
-  const [studioParams, setStudioParams] = useState({
+  const [studioParams, setStudioParams] = useState<{
+    hullType: 'CATAMARAN' | 'MONOHULL';
+    lwlMeters: number;
+    beamMeters: number;
+    deadriseDeg: number;
+    batteryKwh: number;
+    motorKwTotal: number;
+    lcgPercent: number;
+  }>({
+    hullType: 'CATAMARAN',
     lwlMeters: 10.8,
     beamMeters: 2.85,
     deadriseDeg: 19.5,
@@ -130,7 +139,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
   // Download CSV of trials
   const handleExportCsv = () => {
     const headers = [
-      'Trial ID', 'Generation', 'Philosophy', 'Status', 'Fitness',
+      'Trial ID', 'Generation', 'Topology', 'Philosophy', 'Status', 'Fitness',
       'LWL (m)', 'Beam (m)', 'Draft (m)', 'Deadrise (deg)', 'LCG (%)',
       'Battery (kWh)', 'Motor (kW)', 'Disp (t)', 'KG (m)', 'GMt (m)',
       'Peak Drag (kN)', 'Cruise Drag (kN)', 'Cruise Power (kW)',
@@ -138,7 +147,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
       'Failed Gate', 'Rejection Reason'
     ];
     const rows = history.map((h) => [
-      h.id, h.generation, h.philosophy, h.status, h.fitnessScore,
+      h.id, h.generation, h.hullType, h.philosophy, h.status, h.fitnessScore,
       h.lwlMeters, h.beamMeters, h.draftMeters, h.deadriseDeg, h.lcgPercent,
       h.batteryKwh, h.motorKwTotal, h.displacementTonnes, h.kgMeters, h.gmtMeters,
       h.peakDragKn, h.cruiseDragKn, h.cruisePowerKw,
@@ -303,6 +312,8 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
     if (statusFilter === 'ALL') return true;
     if (statusFilter === 'SURVIVED') return h.status === 'SURVIVED';
     if (statusFilter === 'REJECTED') return h.status !== 'SURVIVED';
+    if (statusFilter === 'CATAMARAN') return h.hullType === 'CATAMARAN';
+    if (statusFilter === 'MONOHULL') return h.hullType === 'MONOHULL';
     return h.status === statusFilter;
   });
 
@@ -479,6 +490,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                 displacementTonnes={activeCandidate.displacementTonnes}
                 candidateId={activeCandidate.id}
                 status={activeCandidate.status}
+                initialHullType={activeCandidate.hullType}
                 className="h-full"
               />
             ) : (
@@ -568,6 +580,13 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-mono font-bold text-slate-200">
                     MULTI-AGENT CONSENSUS & DEBATE FEED
+                  </span>
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
+                    activeCandidate.hullType === 'CATAMARAN'
+                      ? 'bg-teal-500/20 text-teal-300 border border-teal-500/40'
+                      : 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40'
+                  }`}>
+                    {activeCandidate.hullType === 'CATAMARAN' ? 'TWIN CATAMARAN' : 'DEEP-V MONOHULL'}
                   </span>
                   {activeCandidate.id === champion?.id && (
                     <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
@@ -756,6 +775,8 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
               >
                 <option value="ALL">Show All Iterations</option>
                 <option value="SURVIVED">Survived Only (Passed All Gates)</option>
+                <option value="CATAMARAN">Catamaran Hulls Only</option>
+                <option value="MONOHULL">Monohull Hulls Only</option>
                 <option value="REJECTED">Rejected Only</option>
                 <option value="REJECTED_STABILITY">Rejected by Stability (GMt)</option>
                 <option value="REJECTED_DRAG">Rejected by Drag (Savitsky)</option>
@@ -770,6 +791,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
               <thead>
                 <tr className="border-b border-slate-800 text-slate-400 text-[11px] bg-slate-950/60">
                   <th className="p-3">Trial ID</th>
+                  <th className="p-3">Topology</th>
                   <th className="p-3">Verdict</th>
                   <th className="p-3">Fitness</th>
                   <th className="p-3">LWL x Beam</th>
@@ -801,6 +823,15 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                       <td className="p-3 font-bold flex items-center gap-1.5">
                         {isChamp && <span className="text-amber-400 font-bold" title="Current Champion">★</span>}
                         <span>{item.id}</span>
+                      </td>
+                      <td className="p-3">
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                          item.hullType === 'CATAMARAN'
+                            ? 'bg-teal-500/15 text-teal-300 border border-teal-500/30'
+                            : 'bg-indigo-500/15 text-indigo-300 border border-indigo-500/30'
+                        }`}>
+                          {item.hullType === 'CATAMARAN' ? 'Catamaran' : 'Monohull'}
+                        </span>
                       </td>
                       <td className="p-3">
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
@@ -850,7 +881,41 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
             <div className="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-lg p-5 space-y-4 font-mono text-xs">
               <div className="flex items-center justify-between pb-2 border-b border-slate-800">
                 <span className="font-bold text-slate-200">FREE DESIGN PARAMETERS</span>
-                <span className="text-[11px] text-slate-400">6 DEGREES OF FREEDOM</span>
+                <span className="text-[11px] text-slate-400">7 DEGREES OF FREEDOM</span>
+              </div>
+
+              {/* Hull Topology Architecture Selector */}
+              <div className="space-y-1.5 p-2.5 bg-slate-950/80 rounded border border-slate-800">
+                <div className="flex justify-between items-center text-slate-300">
+                  <span className="font-bold">Hull Topology Architecture:</span>
+                  <span className="text-[10px] text-teal-400 font-bold px-1.5 py-0.5 rounded bg-teal-500/10 border border-teal-500/30">
+                    {studioParams.hullType === 'CATAMARAN' ? 'TWIN SLENDER DEMI-HULLS' : 'DEEP-V MONOHULL'}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setStudioParams({ ...studioParams, hullType: 'CATAMARAN', beamMeters: Math.max(studioParams.beamMeters, 2.7) })}
+                    className={`py-1.5 px-3 rounded text-xs font-mono font-bold border transition-colors flex items-center justify-center gap-1.5 ${
+                      studioParams.hullType === 'CATAMARAN'
+                        ? 'bg-teal-500/20 text-teal-300 border-teal-500/50 shadow-sm'
+                        : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
+                    }`}
+                  >
+                    <span>Catamaran (Twin Hull)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStudioParams({ ...studioParams, hullType: 'MONOHULL', beamMeters: Math.min(studioParams.beamMeters, 2.8) })}
+                    className={`py-1.5 px-3 rounded text-xs font-mono font-bold border transition-colors flex items-center justify-center gap-1.5 ${
+                      studioParams.hullType === 'MONOHULL'
+                        ? 'bg-teal-500/20 text-teal-300 border-teal-500/50 shadow-sm'
+                        : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
+                    }`}
+                  >
+                    <span>Monohull (Deep-V)</span>
+                  </button>
+                </div>
               </div>
 
               {/* Slider 1: LWL */}
@@ -1012,6 +1077,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                       displacementTonnes={studioCandidate.displacementTonnes}
                       candidateId="WHAT-IF-STUDIO"
                       status={studioCandidate.status}
+                      initialHullType={studioParams.hullType}
                       showPhotoRenderToggle={false}
                     />
                   </div>

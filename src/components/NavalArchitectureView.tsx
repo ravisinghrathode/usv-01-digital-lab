@@ -37,14 +37,40 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'solver' | 'particulars' | 'stability' | 'weight_cg' | 'subdivision'>('solver');
 
-  // Interactive Sizing & Stability Solver State
-  const [displacementKg, setDisplacementKg] = useState<number>(2450);
-  const [beamM, setBeamM] = useState<number>(2.20);
-  const [draftM, setDraftM] = useState<number>(0.52);
-  const [depthM, setDepthM] = useState<number>(1.25);
-  const [vcgM, setVcgM] = useState<number>(0.68);
-  const [blockCoeffCb, setBlockCoeffCb] = useState<number>(0.46);
+  // Interactive Sizing & Stability Solver State (Defaults to 0 / TBD pending baseline inputs)
+  const [displacementKg, setDisplacementKg] = useState<number>(0);
+  const [beamM, setBeamM] = useState<number>(0);
+  const [draftM, setDraftM] = useState<number>(0);
+  const [depthM, setDepthM] = useState<number>(0);
+  const [vcgM, setVcgM] = useState<number>(0);
+  const [blockCoeffCb, setBlockCoeffCb] = useState<number>(0);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState(false);
+
+  const handleResetToZero = () => {
+    setDisplacementKg(0);
+    setBeamM(0);
+    setDraftM(0);
+    setDepthM(0);
+    setVcgM(0);
+    setBlockCoeffCb(0);
+    if (onUpdateParticulars) {
+      onUpdateParticulars({
+        loa: 'TBD',
+        lwl: 'TBD',
+        beamOverall: 'TBD',
+        beamWaterline: 'TBD',
+        depthMolded: 'TBD',
+        draftDesign: 'TBD',
+        draftScantling: 'TBD',
+        freeboardDesign: 'TBD',
+        blockCoefficientCb: 'TBD',
+        prismaticCoefficientCp: 'TBD',
+        displacementMolded: 'TBD',
+        deadweightCapacity: 'TBD',
+        validationState: 'Unverified / TBD'
+      });
+    }
+  };
 
   // Compute live GZ stability results
   const stabilityResult = useMemo(() => {
@@ -219,7 +245,7 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
                 </div>
                 <input
                   type="range"
-                  min="800"
+                  min="0"
                   max="8000"
                   step="50"
                   value={displacementKg}
@@ -236,7 +262,7 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
                 </div>
                 <input
                   type="range"
-                  min="1.20"
+                  min="0"
                   max="3.60"
                   step="0.05"
                   value={beamM}
@@ -253,7 +279,7 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
                 </div>
                 <input
                   type="range"
-                  min="0.25"
+                  min="0"
                   max="1.20"
                   step="0.02"
                   value={draftM}
@@ -270,7 +296,7 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
                 </div>
                 <input
                   type="range"
-                  min="0.70"
+                  min="0"
                   max="2.00"
                   step="0.05"
                   value={depthM}
@@ -287,7 +313,7 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
                 </div>
                 <input
                   type="range"
-                  min="0.30"
+                  min="0"
                   max="1.40"
                   step="0.02"
                   value={vcgM}
@@ -305,7 +331,7 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
                 </div>
                 <input
                   type="range"
-                  min="0.35"
+                  min="0"
                   max="0.65"
                   step="0.01"
                   value={blockCoeffCb}
@@ -321,6 +347,13 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
                   className="flex-1 py-1.5 px-3 rounded bg-teal-500/20 hover:bg-teal-500/30 border border-teal-500/40 text-teal-300 text-xs font-mono font-medium transition-colors"
                 >
                   {saveSuccessMsg ? 'Committed to Baseline!' : 'Stage to Particulars'}
+                </button>
+                <button
+                  onClick={handleResetToZero}
+                  className="py-1.5 px-3 rounded bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/30 text-rose-300 text-xs font-mono transition-colors"
+                  title="Reset all numerical parameters to zero / TBD"
+                >
+                  Reset to 0 / TBD
                 </button>
                 <button
                   onClick={handleExportGzCsv}
@@ -340,11 +373,17 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
                     <span>Righting Arm GZ(θ) Curve (0° to 60° Heel)</span>
                   </h3>
                   <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
-                    stabilityResult.audit.criteria.overallPass
+                    displacementKg === 0
+                      ? 'bg-slate-500/10 text-slate-400 border-slate-500/30'
+                      : stabilityResult.audit.criteria.overallPass
                       ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
                       : 'bg-rose-500/10 text-rose-400 border-rose-500/30'
                   }`}>
-                    {stabilityResult.audit.criteria.overallPass ? 'IMO 2008 IS COMPLIANT' : 'STABILITY CRITERIA FAILED'}
+                    {displacementKg === 0
+                      ? 'PENDING INPUTS (0 / TBD)'
+                      : stabilityResult.audit.criteria.overallPass
+                      ? 'IMO 2008 IS COMPLIANT'
+                      : 'STABILITY CRITERIA FAILED'}
                   </span>
                 </div>
 
