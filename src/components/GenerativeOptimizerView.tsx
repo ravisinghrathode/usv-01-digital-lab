@@ -957,7 +957,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                     <span className={`font-bold ${studioCandidate.gmtMeters >= 0.35 ? 'text-emerald-400' : 'text-rose-400'}`}>
                       {studioCandidate.gmtMeters} m
                     </span>
-                    <span className="text-[10px] text-slate-500 block">IMO Limit: >= 0.35m</span>
+                    <span className="text-[10px] text-slate-500 block">IMO Limit: &gt;= 0.35m</span>
                   </div>
 
                   <div className="p-2 bg-slate-950 rounded border border-slate-800">
