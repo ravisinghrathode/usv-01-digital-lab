@@ -18,13 +18,29 @@ export class CentralOrchestrator {
   private messageBus: InterAgentMessage[] = [];
   private isRunning: boolean = false;
 
-  private constructor() {}
+  private constructor() {
+    this.gateManager.onDecision((gate) => {
+      this.handleGateDecision(gate.id, gate.state as 'APPROVED' | 'REJECTED');
+    });
+  }
 
   public static getInstance(): CentralOrchestrator {
     if (!CentralOrchestrator.instance) {
       CentralOrchestrator.instance = new CentralOrchestrator();
     }
     return CentralOrchestrator.instance;
+  }
+
+  public handleGateDecision(gateId: string, decision: 'APPROVED' | 'REJECTED'): void {
+    for (const task of this.tasks.values()) {
+      if (task.approvalGateId === gateId || task.id === gateId) {
+        if (decision === 'APPROVED') {
+          task.status = 'COMPLETED';
+        } else if (decision === 'REJECTED') {
+          task.status = 'FAILED';
+        }
+      }
+    }
   }
 
   public registerTask(task: EngineeringTask): void {
@@ -140,6 +156,13 @@ export class CentralOrchestrator {
             const unfulfilledDeps: string[] = [];
             for (const depId of task.dependencies) {
               const depTask = this.tasks.get(depId);
+              // Check if dependency was awaiting approval and its gate has since been approved
+              if (depTask && depTask.status === 'WAITING_HUMAN_APPROVAL' && depTask.approvalGateId) {
+                const gate = this.gateManager.getGate(depTask.approvalGateId);
+                if (gate && gate.state === 'APPROVED') {
+                  depTask.status = 'COMPLETED';
+                }
+              }
               if (!depTask || depTask.status !== 'COMPLETED') {
                 unfulfilledDeps.push(`${depId} (${depTask?.status || 'NOT_FOUND'})`);
               }
@@ -174,7 +197,8 @@ export class CentralOrchestrator {
             const input = {
               ...task.input,
               taskId: task.id,
-              priorAgentOutputs: priorOutputs
+              priorAgentOutputs: priorOutputs,
+              safetyCritical: task.safetyCritical
             };
 
             const output = await this.executionEngine.executeAgent(task.assignedAgentId, input);

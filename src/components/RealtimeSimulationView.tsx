@@ -99,6 +99,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
   const [hydroMass, setHydroMass] = useState<number>(initialMass); // 6.2 tonnes
   const [hydroKg, setHydroKg] = useState<number>(initialKg); // 0.66 meters VCG
   const [waveAmp, setWaveAmp] = useState<number>(0.4); // meters
+  const [waveFreq, setWaveFreq] = useState<number>(1.2); // rad/s
   const [heelAngle, setHeelAngle] = useState<number>(0); // dynamic heel deg
 
   // Reactive subscription: auto-update simulation whenever any agent writes to SharedMemory

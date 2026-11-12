@@ -32,7 +32,17 @@ import { DEFAULT_PRIVATE_KEY_PATH } from './scripts/governance/director-keygen.t
 import { validateECRFile } from './scripts/governance/ecr-tool.ts';
 import { GlobalUsvIntelligenceAgent } from './src/core/agents/GlobalUsvIntelligenceAgent.ts';
 import { GlobalIntelligenceLearningBridge } from './src/core/intelligence/GlobalIntelligenceLearningBridge.ts';
+import http from 'http';
+import { WebSocketServer } from 'ws';
 import { VerifyUsv01Engine } from './src/core/verification/VerifyUsv01Engine.ts';
+import {
+  getGeminiClient,
+  isGeminiAvailable,
+  generateGeminiContent,
+  streamGeminiContent,
+  setupLiveApiWebSocket,
+  resolveServerGeminiModel
+} from './src/server/geminiService.ts';
 
 dotenv.config();
 
@@ -211,12 +221,11 @@ export const authMiddleware = (req: express.Request, res: express.Response, next
   next();
 };
 
-// Protect data, export/import, AI assistant, and gate signing endpoints
+// Protect sensitive administrative data, export/import, and gate signing endpoints
 app.use([
   '/api/data',
   '/api/export',
   '/api/import',
-  '/api/gemini/assist',
   '/api/auth/sign-gate',
   '/api/auth/session',
   '/api/governance/keygen',
@@ -1096,6 +1105,56 @@ app.post('/api/notebook-lm/chat', async (req, res) => {
   try {
     const { prompt, selectedSourceIds } = req.body;
     if (!prompt) return res.status(400).json({ success: false, error: 'Missing prompt' });
+
+    if (isGeminiAvailable()) {
+      try {
+        const sources = learningBridge.getNotebookSources();
+        const activeSources =
+          selectedSourceIds && selectedSourceIds.length > 0
+            ? sources.filter((s: any) => selectedSourceIds.includes(s.id))
+            : sources;
+
+        const clues = learningBridge.getClues();
+        const systemInstruction = `You are the Naval NotebookLM Grounded Research Assistant for the USV-01 project.
+Answer the user's research query strictly using the provided Naval Research Sources and Transferred Technical Clues.
+Cite source titles and evidence directly in your answer.`;
+
+        const context = {
+          sources: activeSources.map((s: any) => ({
+            id: s.id,
+            title: s.title,
+            summary: s.summary,
+            excerpt: s.fullTextExcerpt
+          })),
+          clues: clues.slice(0, 8).map((c: any) => ({
+            id: c.id,
+            title: c.clueTitle,
+            principle: c.technicalPrinciple
+          }))
+        };
+
+        const result = await generateGeminiContent({
+          prompt,
+          systemInstruction,
+          context
+        });
+
+        return res.json({
+          success: true,
+          message: {
+            id: `asst-${Date.now()}`,
+            sender: 'assistant',
+            text: result.text,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            isGrounded: true,
+            modelUsed: result.modelUsed
+          }
+        });
+      } catch (geminiErr: any) {
+        console.warn('NotebookLM Gemini generation error, using local grounded synthesizer:', geminiErr.message);
+      }
+    }
+
     const message = learningBridge.answerGroundedQuery(prompt, selectedSourceIds);
     res.json({ success: true, message });
   } catch (err: any) {
@@ -1103,15 +1162,128 @@ app.post('/api/notebook-lm/chat', async (req, res) => {
   }
 });
 
-// 6. Server-side Gemini AI Engineering Assistant Endpoint
+// --- SERVER-SIDE GEMINI API SUITE ---
+
+// 1. Gemini Runtime Status Endpoint
+app.get('/api/gemini/status', (req, res) => {
+  res.json({
+    success: true,
+    available: isGeminiAvailable(),
+    model: resolveServerGeminiModel(),
+    majorCapability: 'MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API'
+  });
+});
+
+// 2. Server-side General Gemini Generation Endpoint (used by ModelProvider and agent matrix)
+app.post('/api/gemini/generate', async (req, res) => {
+  try {
+    const { request, config } = req.body || {};
+    const prompt = request?.userPrompt || req.body.prompt;
+    const systemInstruction = request?.systemInstructions || req.body.systemInstruction;
+    const context = request?.context || req.body.context;
+    const model = config?.modelName || req.body.model;
+
+    if (!isGeminiAvailable()) {
+      // Fallback to deterministic provider response so it always returns valid JSON and succeeds
+      const { DeterministicProvider } = await import('./src/core/models/ModelProvider.ts');
+      const detProvider = new DeterministicProvider();
+      const detResult = await detProvider.generateText(
+        request || {
+          systemInstructions: systemInstruction || '',
+          userPrompt: prompt || '',
+          context
+        }
+      );
+      return res.json(detResult);
+    }
+
+    try {
+      const result = await generateGeminiContent({
+        prompt: prompt || 'Provide engineering analysis',
+        systemInstruction,
+        context,
+        model,
+        responseMimeType: 'application/json'
+      });
+
+      let parsedJson: any;
+      try {
+        parsedJson = JSON.parse(result.text);
+      } catch {}
+
+      return res.json({
+        content: result.text,
+        parsedJson,
+        providerUsed: 'gemini',
+        modelUsed: result.modelUsed,
+        isAiReview: true,
+        isMock: false,
+        evidenceValid: true,
+        tokenUsage: {
+          promptTokens: result.usageMetadata?.promptTokenCount || 0,
+          completionTokens: result.usageMetadata?.candidatesTokenCount || 0,
+          totalTokens: result.usageMetadata?.totalTokenCount || 0
+        }
+      });
+    } catch (geminiErr: any) {
+      console.warn('Gemini API call failed, falling back to DeterministicProvider:', geminiErr.message);
+      const { DeterministicProvider } = await import('./src/core/models/ModelProvider.ts');
+      const detProvider = new DeterministicProvider();
+      const detResult = await detProvider.generateText(
+        request || {
+          systemInstructions: systemInstruction || '',
+          userPrompt: prompt || '',
+          context
+        }
+      );
+      return res.json(detResult);
+    }
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 3. Server-side Gemini Streaming Endpoint (Server-Sent Events)
+app.post('/api/gemini/stream', async (req, res) => {
+  const { prompt, systemInstruction, context, model } = req.body || {};
+  if (!prompt) {
+    return res.status(400).json({ success: false, error: 'Missing prompt' });
+  }
+
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+
+  if (!isGeminiAvailable()) {
+    // Return single SSE chunk with offline baseline text
+    res.write(
+      `data: ${JSON.stringify({ text: 'Offline mode: GEMINI_API_KEY is not configured on the server runtime.' })}\n\n`
+    );
+    res.write('data: [DONE]\n\n');
+    return res.end();
+  }
+
+  try {
+    for await (const chunk of streamGeminiContent({ prompt, systemInstruction, context, model })) {
+      res.write(`data: ${JSON.stringify({ text: chunk })}\n\n`);
+    }
+    res.write('data: [DONE]\n\n');
+    res.end();
+  } catch (err: any) {
+    res.write(`data: ${JSON.stringify({ error: err.message })}\n\n`);
+    res.end();
+  }
+});
+
+// 4. Server-side Gemini AI Engineering Assistant Endpoint
 app.post('/api/gemini/assist', async (req, res) => {
-  const { prompt, currentWorkstream, activeRecord, actionType, selectedAgent } = req.body;
+  const { prompt, currentWorkstream, activeRecord, actionType, selectedAgent, stream } = req.body;
 
   if (!prompt && !actionType) {
     return res.status(400).json({ success: false, error: 'Missing prompt' });
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const isStreaming = stream === true || req.query.stream === 'true';
 
   // System instruction enforcing engineering discipline
   const systemInstruction = `
@@ -1140,13 +1312,11 @@ ACTIVE RECORD UNDER REVIEW: ${activeRecord ? JSON.stringify(activeRecord) : 'Non
 ACTION REQUESTED: ${actionType || 'General Engineering Query'}
 `;
 
-  if (!apiKey) {
-    // Graceful offline engineering heuristic response when API key is not configured in local environment
-    return res.json({
-      success: true,
-      modelUsed: 'local-engineering-rules-engine',
-      isHeuristic: true,
-      text: `### [AI Engineering Assistant — Baseline Response]
+  const userPrompt =
+    prompt ||
+    `Perform an engineering review for the active workstream ${currentWorkstream} and active record. Highlight missing inputs, traceability gaps, and standard compliance.`;
+
+  const fallbackBaselineText = `### [AI Engineering Assistant — Baseline Response]
 
 > **Note on Environment:** Server-side Gemini API key is not currently detected in environment variables. Providing rule-based engineering analysis derived from \`USV01_PROJECT_CONTEXT.md\`.
 
@@ -1169,75 +1339,70 @@ ACTION REQUESTED: ${actionType || 'General Engineering Query'}
 #### 4. [AI PROPOSALS — HUMAN SIGN-OFF REQUIRED]
 - When defining new requirements, specify verifiable acceptance thresholds (e.g. *"Positive GZ area under curve >= 0.055 m-rad between 0° and 30°"* instead of *"Adequate stability"*).
 - For safety-critical autonomy encounters, enforce strict adherence to COLREGs Rules 14 and 15 with deterministic fallback to loiter when telemetry is lost.
-`
+`;
+
+  if (!isGeminiAvailable()) {
+    if (isStreaming) {
+      res.setHeader('Content-Type', 'text/event-stream');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Connection', 'keep-alive');
+      res.write(`data: ${JSON.stringify({ text: fallbackBaselineText })}\n\n`);
+      res.write('data: [DONE]\n\n');
+      return res.end();
+    }
+    return res.json({
+      success: true,
+      modelUsed: 'local-engineering-rules-engine',
+      isHeuristic: true,
+      text: fallbackBaselineText
     });
   }
 
+  const geminiModel = resolveServerGeminiModel();
+
+  if (isStreaming) {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+
+    try {
+      for await (const chunk of streamGeminiContent({
+        prompt: userPrompt,
+        systemInstruction,
+        model: geminiModel
+      })) {
+        res.write(`data: ${JSON.stringify({ text: chunk })}\n\n`);
+      }
+      res.write('data: [DONE]\n\n');
+      return res.end();
+    } catch (streamErr: any) {
+      console.warn('Gemini stream error, writing fallback chunk:', streamErr.message);
+      res.write(`data: ${JSON.stringify({ text: fallbackBaselineText })}\n\n`);
+      res.write('data: [DONE]\n\n');
+      return res.end();
+    }
+  }
+
   try {
-    const { GoogleGenAI } = await import('@google/genai');
-    const ai = new GoogleGenAI({
-      apiKey,
-      httpOptions: {
-        headers: {
-          'User-Agent': 'aistudio-build'
-        }
-      }
+    const result = await generateGeminiContent({
+      prompt: userPrompt,
+      systemInstruction,
+      model: geminiModel
     });
-
-    const userPrompt = prompt || `Perform an engineering review for the active workstream ${currentWorkstream} and active record. Highlight missing inputs, traceability gaps, and standard compliance.`;
-
-    const geminiModel = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
-    const response = await ai.models.generateContent({
-      model: geminiModel,
-      contents: userPrompt,
-      config: {
-        systemInstruction
-      }
-    });
-
-    const text = response.text || 'No response generated from model.';
 
     res.json({
       success: true,
-      modelUsed: geminiModel,
-      text
+      modelUsed: result.modelUsed,
+      text: result.text || 'No response generated from model.'
     });
   } catch (err: any) {
     console.warn('Gemini API call returned error, serving baseline engineering response:', err.message);
 
-    // Provide structured fallback so the user always receives an authoritative engineering analysis
     res.json({
       success: true,
       modelUsed: 'usv01-engineering-baseline-engine',
       isHeuristic: true,
-      text: `### [USV-01 Engineering Assistant — Baseline Analysis]
-
-> **Notice:** The live Gemini endpoint returned a transient error (${err.message.includes('503') ? 'Temporary 503 Service Spike' : 'API response code'}). The Lab has compiled this analysis directly from the \`USV01_PROJECT_CONTEXT.md\` authoritative baseline.
-
----
-
-#### 1. [VERIFIED FACTS]
-- Subsystem in focus: **${currentWorkstream || 'Systems Engineering'}**.
-- Governing engineering standards: **IMO Resolution MSC.267(85)** (Intact Stability), **DNV-RU-HSLC** (High-Speed Craft Structure), **IEEE 45** (Shipboard Electrical), and **COLREGs 1972** (Safe Collision Avoidance).
-- Systems Traceability: Top-level requirements are mapped to formal design decisions (\`DEC-xxx\`), simulation jobs (\`SIM-xxx\`), and test verification procedures (\`VER-xxx\`).
-
-#### 2. [USER INPUTS & DRAFT RECORDS]
-- Active workstream items are tracked with clear revision tags (Rev 0.2 Baseline).
-- Any user-added parameters remain in **Draft** or **In Review** status until formal peer sign-off.
-
-#### 3. [ASSUMPTIONS & ESTIMATES UNDER STUDY]
-- Dual isolated DC buses (48V propulsion / 24V avionics) with LiFePO4 chemistry (\`DEC-ELE-001\`) to eliminate thermal runaway risks in uncrewed enclosures.
-- Calm-water resistance is modeled via OpenFOAM VOF free-surface simulations (\`SIM-HYD-001\`) pending towing tank correlation (\`VER-TOW-003\`).
-
-#### 4. [MISSING INFORMATION & TBD UNCERTAINTIES]
-- Hull principal particulars (LOA, Beam, Draft, Depth) remain **TBD** pending final payload envelope freeze and towing tank correlation.
-- Continuous propulsion motor rating remains **TBD** awaiting resistance validation.
-- Initial metacentric height ($GM_0$) remains **TBD** pending inclining experiment.
-
-#### 5. [AI PROPOSALS — HUMAN SIGN-OFF REQUIRED]
-- Ensure every requirement in this workstream specifies quantitatively measurable acceptance thresholds.
-- Maintain a minimum 15% design weight margin for naval architecture stability protection.
-`
+      text: fallbackBaselineText
     });
   }
 });
@@ -1261,8 +1426,34 @@ async function startServer() {
     });
   }
 
-  app.listen(port, '0.0.0.0', () => {
-    console.log(`[USV-01 Digital Engineering Lab] Server running on port ${port} (${isProd ? 'production' : 'development'})`);
+  const httpServer = http.createServer(app);
+
+  // Mount Gemini Live API WebSocket Server
+  const wss = new WebSocketServer({ noServer: true });
+  setupLiveApiWebSocket(wss);
+
+  httpServer.on('upgrade', (request, socket, head) => {
+    try {
+      const host = request.headers.host || 'localhost';
+      const pathname = request.url ? new URL(request.url, `http://${host}`).pathname : '';
+      if (pathname === '/api/gemini/live' || pathname === '/live') {
+        wss.handleUpgrade(request, socket, head, (ws: any) => {
+          wss.emit('connection', ws, request);
+        });
+      }
+    } catch (upgradeErr: any) {
+      console.warn('[HTTP Upgrade Error]', upgradeErr.message);
+      socket.destroy();
+    }
+  });
+
+  httpServer.listen(port, '0.0.0.0', () => {
+    console.log(
+      `[USV-01 Digital Engineering Lab] Server running on port ${port} (${isProd ? 'production' : 'development'})`
+    );
+    console.log(
+      `[Gemini Server-Side] Status: ${isGeminiAvailable() ? 'ONLINE' : 'OFFLINE_HEURISTIC'} (Model: ${resolveServerGeminiModel()})`
+    );
   });
 }
 

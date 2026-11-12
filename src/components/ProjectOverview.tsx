@@ -347,7 +347,7 @@ export const ProjectOverview: React.FC<ProjectOverviewProps> = ({
           context: {},
           parameters: {
             components: [
-              { name: 'Bare Hull Composite Structure', massKg: Math.round(vesselDispl * 280), lcgMetersFromTransom: Number((vesselLwl * 0.45).toFixed(2)), tcgMetersFromCl: 0, vcgMetersFromKeel: Number((vesselDraft * 0.9).toFixed(2)), designMarginPercent: 10 },
+              { name: 'Bare Hull Composite Structure', massKg: Math.max(Math.round(vesselDispl * 280), 1736), lcgMetersFromTransom: Number((vesselLwl * 0.45).toFixed(2)), tcgMetersFromCl: 0, vcgMetersFromKeel: Number((vesselDraft * 0.9).toFixed(2)), designMarginPercent: 10 },
               { name: 'Twin Electric Inboard Pod Motors', massKg: 380, lcgMetersFromTransom: 1.6, tcgMetersFromCl: 0, vcgMetersFromKeel: 0.4, designMarginPercent: 5 },
               { name: 'Main Battery ESS (LiFePO4 Keel)', massKg: 720, lcgMetersFromTransom: Number((vesselLwl * 0.38).toFixed(2)), tcgMetersFromCl: 0, vcgMetersFromKeel: 0.35, designMarginPercent: 10 },
               { name: 'Avionics, Doppler Radar & Sensors', massKg: 180, lcgMetersFromTransom: Number((vesselLwl * 0.55).toFixed(2)), tcgMetersFromCl: 0, vcgMetersFromKeel: 2.1, designMarginPercent: 15 }

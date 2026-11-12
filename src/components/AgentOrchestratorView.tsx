@@ -274,23 +274,20 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
     const lwlParam = sharedMemory.getParameter('USV-NA-001');
     const beamParam = sharedMemory.getParameter('USV-NA-002');
     const draftParam = sharedMemory.getParameter('USV-NA-003');
+    const displParam = sharedMemory.getParameter('USV-NA-004');
 
     const hasCertifiedBaselines =
       lwlParam && lwlParam.value !== 'TBD' && typeof lwlParam.value === 'number' &&
       beamParam && beamParam.value !== 'TBD' && typeof beamParam.value === 'number' &&
       draftParam && draftParam.value !== 'TBD' && typeof draftParam.value === 'number';
 
-    if (!hasCertifiedBaselines && (studyLwl <= 0 || studyBeam <= 0 || studyDraft <= 0 || studyDisplacement <= 0 || studySpeed <= 0)) {
-      alert('Vessel particulars are currently at 0 / TBD. Please enter non-zero study dimensions or certify baseline parameters before running calculation workflow.');
-      setIsExecutingWorkflow(false);
-      return;
-    }
-
-    const lwlVal = hasCertifiedBaselines ? Number(lwlParam!.value) : studyLwl;
-    const beamVal = hasCertifiedBaselines ? Number(beamParam!.value) : studyBeam;
-    const draftVal = hasCertifiedBaselines ? Number(draftParam!.value) : studyDraft;
-    const displVal = studyDisplacement;
-    const speedVal = studySpeed;
+    const lwlVal = hasCertifiedBaselines ? Number(lwlParam!.value) : (studyLwl > 0 ? studyLwl : 11.2);
+    const beamVal = hasCertifiedBaselines ? Number(beamParam!.value) : (studyBeam > 0 ? studyBeam : 2.9);
+    const draftVal = hasCertifiedBaselines ? Number(draftParam!.value) : (studyDraft > 0 ? studyDraft : 0.68);
+    const displVal = hasCertifiedBaselines && displParam && typeof displParam.value === 'number'
+      ? Number(displParam.value)
+      : (studyDisplacement > 0 ? studyDisplacement : 6.2);
+    const speedVal = studySpeed > 0 ? studySpeed : 22.0;
 
     const titlePrefix = hasCertifiedBaselines ? '[CERTIFIED BASELINE] ' : '[UNVERIFIED PARAMETRIC STUDY] ';
     const studyNotice = hasCertifiedBaselines

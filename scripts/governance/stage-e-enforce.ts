@@ -47,10 +47,15 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
   try {
     const headRef = process.env.PR_HEAD_SHA || 'HEAD';
     try {
-      currentCommitSha = execFileSync('git', ['rev-parse', headRef], { cwd: rootDir, encoding: 'utf-8' }).trim();
+      currentCommitSha = execFileSync('git', ['rev-parse', headRef], { cwd: rootDir, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim();
+    } catch {
+      try {
+        currentCommitSha = execFileSync('git', ['rev-parse', headRef], { cwd: process.cwd(), encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim();
+      } catch {}
+    }
+    try {
       currentBaselineDigest = computeBaselineDigest(headRef, rootDir);
     } catch {
-      currentCommitSha = execFileSync('git', ['rev-parse', headRef], { cwd: process.cwd(), encoding: 'utf-8' }).trim();
       currentBaselineDigest = computeBaselineDigest(headRef, process.cwd());
     }
   } catch {}

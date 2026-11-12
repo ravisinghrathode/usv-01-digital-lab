@@ -1,4 +1,4 @@
-export type ParameterStatus = 'TBD' | 'ESTIMATE' | 'ASSUMED' | 'CALCULATED' | 'DIRECTOR_APPROVED';
+export type ParameterStatus = 'TBD' | 'ESTIMATE' | 'ASSUMED' | 'CALCULATED' | 'DIRECTOR_APPROVED' | 'APPROVED';
 
 export interface EngineeringParameter {
   id: string; // e.g. 'PARAM-LOA', 'PARAM-DISPL'
