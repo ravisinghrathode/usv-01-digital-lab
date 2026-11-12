@@ -7,6 +7,8 @@ import dotenv from 'dotenv';
 import { generateApproverSignature, verifyApproverSignature, setDirectorSigningKey } from './src/core/safety/ApproverSigner.ts';
 import { AUTHORIZED_MEMBERS, type StaffMember } from './src/core/auth/staffDirectory.ts';
 import { verifyStaffCredential, isLockedOut, recordFailure, recordSuccess } from './src/core/auth/credentialStore.ts';
+import { GlobalUsvIntelligenceAgent } from './src/core/agents/GlobalUsvIntelligenceAgent.ts';
+import { GlobalIntelligenceLearningBridge } from './src/core/intelligence/GlobalIntelligenceLearningBridge.ts';
 
 dotenv.config();
 
@@ -523,6 +525,206 @@ app.post('/api/import', (req, res) => {
     });
     saveStoreToFile();
     res.json({ success: true, message: 'Database imported successfully', collections: Object.keys(dbStore) });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 5b. Global Naval USV Intelligence & Scraper Endpoints
+const usvIntelAgent = new GlobalUsvIntelligenceAgent();
+
+// Automated background intelligence update scheduler (Default: Every 24 hours / Daily)
+let intelLastUpdated = new Date().toISOString();
+const updateIntervalHours = parseInt(process.env.USV_INTEL_AUTO_UPDATE_HOURS || '24', 10);
+let nextScheduledUpdate = new Date(Date.now() + updateIntervalHours * 3600 * 1000).toISOString();
+
+const runPeriodicIntelUpdate = async () => {
+  try {
+    const report = await usvIntelAgent.scrapeAndEnrich();
+    intelLastUpdated = new Date().toISOString();
+    nextScheduledUpdate = new Date(Date.now() + updateIntervalHours * 3600 * 1000).toISOString();
+    console.log(`[INTEL-USV-26] Auto-update completed at ${intelLastUpdated}. Next scheduled cycle: ${nextScheduledUpdate}`);
+  } catch (err: any) {
+    console.warn(`[INTEL-USV-26] Auto-update warning:`, err.message);
+  }
+};
+
+const intelIntervalTimer = setInterval(runPeriodicIntelUpdate, updateIntervalHours * 3600 * 1000);
+if (intelIntervalTimer.unref) intelIntervalTimer.unref();
+
+app.get('/api/usv-intel/status', (req, res) => {
+  res.json({
+    success: true,
+    agentId: 'INTEL-USV-26',
+    canonicalId: 'A26',
+    autoUpdateSchedule: {
+      enabled: true,
+      frequencyHours: updateIntervalHours,
+      humanReadableFrequency: `Every ${updateIntervalHours} Hours (Daily Cycle)`,
+      lastUpdated: intelLastUpdated,
+      nextScheduledUpdate: nextScheduledUpdate
+    },
+    metrics: {
+      operatingUsvsCataloged: usvIntelAgent.searchOperatingUsvs().length,
+      peerReviewedPapers: usvIntelAgent.fetchAcademicPapers().length,
+      activeNaviesCount: new Set(usvIntelAgent.searchOperatingUsvs().map((v) => v.country)).size,
+      disciplineCluesHarvested: GlobalIntelligenceLearningBridge.getInstance().getClues().length
+    }
+  });
+});
+
+app.get('/api/usv-intel/fleet', (req, res) => {
+  try {
+    const { keyword, country, operatorNavy, mission, hullForm, minSpeed, maxDisplacement, autonomyLevel } = req.query;
+    const vessels = usvIntelAgent.searchOperatingUsvs({
+      keyword: keyword as string,
+      country: country as string,
+      operatorNavy: operatorNavy as string,
+      mission: mission as any,
+      hullForm: hullForm as string,
+      minSpeedKnots: minSpeed ? parseFloat(minSpeed as string) : undefined,
+      maxDisplacementTonnes: maxDisplacement ? parseFloat(maxDisplacement as string) : undefined,
+      autonomyLevel: autonomyLevel as string
+    });
+    res.json({ success: true, count: vessels.length, vessels });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get('/api/usv-intel/fleet/:id', (req, res) => {
+  try {
+    const vessel = usvIntelAgent.getUsvDetails(req.params.id);
+    if (!vessel) return res.status(404).json({ success: false, error: 'USV model not found' });
+    res.json({ success: true, vessel });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get('/api/usv-intel/papers', (req, res) => {
+  try {
+    const papers = usvIntelAgent.fetchAcademicPapers(req.query.q as string);
+    res.json({ success: true, count: papers.length, papers });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get('/api/usv-intel/benchmark/:id', (req, res) => {
+  try {
+    const benchmark = usvIntelAgent.benchmarkAgainstUsv01(req.params.id);
+    res.json({ success: true, benchmark });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/usv-intel/scrape', async (req, res) => {
+  try {
+    const { sources, syncToKnowledgeNotes } = req.body || {};
+    const report = await usvIntelAgent.scrapeAndEnrich(sources);
+
+    if (syncToKnowledgeNotes !== false) {
+      const newNotes = usvIntelAgent.generateKnowledgeNotes();
+      let added = 0;
+      if (!Array.isArray(dbStore.knowledge_notes)) dbStore.knowledge_notes = [];
+      for (const note of newNotes) {
+        const idx = dbStore.knowledge_notes.findIndex((n: any) => n.id === note.id);
+        if (idx >= 0) {
+          dbStore.knowledge_notes[idx] = note;
+        } else {
+          dbStore.knowledge_notes.push(note);
+          added++;
+        }
+      }
+      dbStore.activity_log.unshift({
+        id: `LOG-${Date.now()}`,
+        timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+        userId: 'INTEL-USV-26',
+        userName: 'Global USV Intelligence Agent',
+        action: 'SCRAPE_SYNC',
+        recordType: 'KNOWLEDGE_NOTES',
+        recordId: 'USV-FLEET-INTEL',
+        details: `Scraped ${report.totalVesselsScraped} operating USVs globally across ${report.activeNaviesCount} navies; synced ${newNotes.length} Obsidian notes into Knowledge Centre.`
+      });
+      saveStoreToFile();
+    }
+
+    res.json({ success: true, report, totalVessels: usvIntelAgent.searchOperatingUsvs().length });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get('/api/usv-intel/export-obsidian/:id?', (req, res) => {
+  try {
+    const targetId = req.params.id;
+    if (targetId) {
+      const v = usvIntelAgent.getUsvDetails(targetId);
+      if (!v) return res.status(404).json({ success: false, error: 'USV model not found' });
+      const md = usvIntelAgent.generateObsidianVaultExport(v);
+      res.setHeader('Content-Type', 'text/markdown');
+      res.setHeader('Content-Disposition', `attachment; filename="${v.modelName.replace(/[^a-zA-Z0-9_-]/g, '_')}.md"`);
+      return res.send(md);
+    }
+    const allNotes = usvIntelAgent.generateKnowledgeNotes();
+    res.json({ success: true, count: allNotes.length, notes: allNotes });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 5c. Naval NotebookLM & Agent Learning Bridge Endpoints
+const learningBridge = GlobalIntelligenceLearningBridge.getInstance();
+
+app.get('/api/notebook-lm/sources', (req, res) => {
+  try {
+    const sources = learningBridge.getNotebookSources();
+    res.json({ success: true, count: sources.length, sources });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get('/api/notebook-lm/clues', (req, res) => {
+  try {
+    const discipline = req.query.discipline as any;
+    const clues = learningBridge.getClues(discipline);
+    const summaries = learningBridge.generateDisciplineLearningSummaries();
+    res.json({ success: true, count: clues.length, clues, summaries });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/notebook-lm/clues/:id/adopt', (req, res) => {
+  try {
+    const clueId = req.params.id;
+    const updated = learningBridge.updateClueStatus(clueId, 'ADOPTED');
+    dbStore.activity_log.unshift({
+      id: `LOG-${Date.now()}`,
+      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+      userId: 'Lead Engineer',
+      userName: 'Lead Engineer',
+      action: 'CLUE_ADOPTED',
+      recordType: 'TRIAL_PROPOSAL',
+      recordId: clueId,
+      details: `Adopted global USV clue [${updated.clueTitle}] into ${updated.targetDiscipline} discipline design trials.`
+    });
+    saveStoreToFile();
+    res.json({ success: true, clue: updated });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/notebook-lm/chat', async (req, res) => {
+  try {
+    const { prompt, selectedSourceIds } = req.body;
+    if (!prompt) return res.status(400).json({ success: false, error: 'Missing prompt' });
+    const message = learningBridge.answerGroundedQuery(prompt, selectedSourceIds);
+    res.json({ success: true, message });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
   }

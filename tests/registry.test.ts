@@ -4,8 +4,8 @@ import { AgentRegistry } from '../src/core/registry/AgentRegistry.ts';
 describe('STAGE B: Agent Organization & Master Registry', () => {
   const registry = AgentRegistry.getInstance();
 
-  it('should register exactly 25 agents', () => {
-    expect(registry.getCount()).toBe(25);
+  it('should register all 26 directorate and specialist agents', () => {
+    expect(registry.getCount()).toBe(26);
   });
 
   it('should pass complete structural and dependency validation without errors', () => {
@@ -53,8 +53,8 @@ describe('STAGE B: Agent Organization & Master Registry', () => {
     expect(vvtAgents.length).toBe(6); // INDEP-CRIT-15, TEST-DIR-18, ICD-ENG-21, FMEA-RSK-22, INDEP-REV-23, VVT-VAL-24
   });
 
-  it('should support HMEA v0.2 canonical IDs A01-A25 with backwards-compatible alias resolution', () => {
-    for (let i = 1; i <= 25; i++) {
+  it('should support HMEA v0.2 canonical IDs A01-A26 with backwards-compatible alias resolution', () => {
+    for (let i = 1; i <= 26; i++) {
       const canonicalId = `A${i.toString().padStart(2, '0')}`;
       const agentByCanonical = registry.getAgent(canonicalId);
       expect(agentByCanonical).toBeDefined();
@@ -76,5 +76,7 @@ describe('STAGE B: Agent Organization & Master Registry', () => {
     expect(registry.getAgent('A18')?.id).toBe('TEST-DIR-18');
     // Documentation & Obsidian Vault
     expect(registry.getAgent('A25')?.id).toBe('DOC-OBS-25');
+    // Global Navy USV Fleet Intelligence & Benchmark Analyst
+    expect(registry.getAgent('A26')?.id).toBe('INTEL-USV-26');
   });
 });

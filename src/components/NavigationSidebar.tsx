@@ -18,13 +18,15 @@ import {
   ChevronRight,
   Database,
   Compass,
-  Radio
+  Radio,
+  Globe
 } from 'lucide-react';
 import { WorkstreamCode } from '../types/engineering';
 
 export type NavigationModule = 
   | 'overview'
   | 'agent-orchestrator'
+  | 'global-usv-fleet'
   | 'workstream-SYS'
   | 'workstream-NAV'
   | 'workstream-HYD'
@@ -40,7 +42,8 @@ export type NavigationModule =
   | 'knowledge-centre'
   | 'realtime-sim'
   | 'ship-building'
-  | 'generative-optimizer';
+  | 'generative-optimizer'
+  | 'notebook-lm';
 
 interface NavigationSidebarProps {
   currentModule: NavigationModule;
@@ -120,7 +123,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
             <div className="flex items-center gap-2.5">
               <Cpu className="w-4 h-4 text-cyan-400" />
               <div className="flex items-center gap-1.5">
-                <span>25-Agent Directorate</span>
+                <span>26-Agent Directorate</span>
                 <span className="text-[10px] px-1 py-0.2 rounded bg-cyan-950/80 text-cyan-400 border border-cyan-800/40 font-mono">DAG</span>
               </div>
             </div>
@@ -179,6 +182,24 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
               </div>
             </div>
             {currentModule === 'generative-optimizer' && <ChevronRight className="w-3.5 h-3.5 text-purple-400" />}
+          </button>
+
+          <button
+            onClick={() => onSelectModule('global-usv-fleet')}
+            className={`w-full flex items-center justify-between px-2.5 py-2 rounded transition-colors ${
+              currentModule === 'global-usv-fleet'
+                ? 'bg-sky-500/15 text-sky-300 border border-sky-500/30 font-medium'
+                : 'text-slate-300 hover:bg-slate-900/80 hover:text-slate-100'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <Globe className="w-4 h-4 text-sky-400" />
+              <div className="flex items-center gap-1.5">
+                <span>Global USV Fleet Intel</span>
+                <span className="text-[10px] px-1 py-0.2 rounded bg-sky-950/80 text-sky-400 border border-sky-800/40 font-mono">INTEL</span>
+              </div>
+            </div>
+            {currentModule === 'global-usv-fleet' && <ChevronRight className="w-3.5 h-3.5 text-sky-400" />}
           </button>
         </div>
 
@@ -296,6 +317,14 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
               badge="Obsidian"
               badgeType="purple"
               onClick={() => onSelectModule('knowledge-centre')}
+            />
+            <RegisterNavItem
+              label="Naval NotebookLM"
+              icon={BookOpen}
+              active={currentModule === 'notebook-lm'}
+              badge="STUDY"
+              badgeType="purple"
+              onClick={() => onSelectModule('notebook-lm')}
             />
           </div>
         </div>
