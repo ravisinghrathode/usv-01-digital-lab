@@ -14,6 +14,7 @@
     "verify": "tsx scripts/verify-usv01.ts",
     "chatgpt:verify": "tsx scripts/chatgpt-verify.ts",
     "acceptance:campaign": "tsx scripts/run-acceptance-campaign.ts",
+    "acceptance:accuracy": "tsx scripts/assess-agent-accuracy.ts",
     "acceptance:commission": "tsx scripts/run-commissioning-suite.ts",
     "acceptance:live-agents": "tsx scripts/run-live-agent-matrix.ts",
     "acceptance:live-integrations": "tsx scripts/run-live-commissioning.ts",

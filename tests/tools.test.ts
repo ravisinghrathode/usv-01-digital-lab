@@ -26,7 +26,8 @@ describe('STAGE E: Deterministic Naval Engineering Tools', () => {
     expect(res.output.displacedVolumeM3).toBeCloseTo(10 * 2.5 * 0.6 * 0.45, 2);
     expect(res.output.displacementTonnes).toBeGreaterThan(6.0);
     expect(res.output.metacentricHeightGmtM).toBeGreaterThan(0.35);
-    expect(res.output.stabilityStatus).toBe('STABLE_COMPLIANT');
+    expect(res.output.stabilityStatus).toBe('UNVERIFIED_ESTIMATE');
+      expect(res.output.engineeringComplianceValidated).toBe(false);
   });
 
   it('should calculate hydrodynamic resistance and identify regime', async () => {
@@ -122,7 +123,7 @@ describe('STAGE E: Deterministic Naval Engineering Tools', () => {
     expect(res.output.closestPointOfApproachCpaNm).toBeLessThan(1.0);
     expect(res.output.timeToCpaMinutes).toBeGreaterThan(0);
     expect(res.output.colregsRuleApplicable).toBe('RULE_15_CROSSING_GIVE_WAY');
-    expect(res.output.safeAlterationCourseDeg).toBeDefined();
+    expect(res.output.safeAlterationCourseDeg).toBeUndefined();
   });
 
   it('should enforce permission rejection if calling agent lacks permission', async () => {

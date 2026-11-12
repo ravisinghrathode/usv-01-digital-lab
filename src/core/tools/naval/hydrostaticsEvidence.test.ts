@@ -14,7 +14,8 @@ describe('Hydrostatics evidence integrity', () => {
     const input = HydrostaticsTool.inputSchema.parse(hull);
     const output = await HydrostaticsTool.execute(input);
     expect(output.stabilityStatus).toBe('UNVERIFIED_ESTIMATE');
-    expect(output.kgSource).toBe('ASSUMED_FOR_ESTIMATE');
+    expect(output.kgSource).toBe('NOT_PROVIDED');
+    expect(output.metacentricHeightGmtM).toBe(null);
     expect(output.isPreliminaryEstimate).toBe(true);
     expect(output.complianceCheck.minGmMet).toBe(false);
     expect(HydrostaticsTool.outputSchema.safeParse(output).success).toBe(true);
@@ -24,8 +25,8 @@ describe('Hydrostatics evidence integrity', () => {
     const input = HydrostaticsTool.inputSchema.parse({ ...hull, kgMeters: 0.3 });
     const output = await HydrostaticsTool.execute(input);
     expect(output.kgSource).toBe('USER_PROVIDED');
-    expect(output.isPreliminaryEstimate).toBe(false);
-    expect(output.stabilityStatus).not.toBe('UNVERIFIED_ESTIMATE');
+    expect(output.isPreliminaryEstimate).toBe(true);
+    expect(output.stabilityStatus).toBe('UNVERIFIED_ESTIMATE');
     expect(HydrostaticsTool.outputSchema.safeParse(output).success).toBe(true);
   });
 });

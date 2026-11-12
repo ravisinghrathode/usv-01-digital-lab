@@ -13,23 +13,38 @@ export const HydrostaticsTool: EngineeringTool = {
     lwlMeters: z.coerce.number().positive(),
     beamMeters: z.coerce.number().positive(),
     draftMeters: z.coerce.number().positive(),
-    blockCoefficientCb: z.coerce.number().min(0.30).max(0.95).optional().or(z.literal(0)).transform(v => v ? Number(v) : 0.44),
-    waterplaneCoefficientCwp: z.coerce.number().min(0.4).max(0.95).optional().or(z.literal(0)).transform(v => v ? Number(v) : undefined),
-    kgMeters: z.coerce.number().positive().optional().or(z.literal(0)).transform(v => v ? Number(v) : undefined),
-    displacementTonnes: z.coerce.number().positive().optional().or(z.literal(0)).transform(v => v ? Number(v) : undefined),
+    blockCoefficientCb: z.coerce.number().min(0.30).max(0.95).optional(),
+    waterplaneCoefficientCwp: z.coerce.number().min(0.4).max(0.95).optional(),
+    kgMeters: z.coerce.number().nonnegative().optional(),
+    displacementTonnes: z.coerce.number().positive().optional(),
     seawaterDensityKgM3: z.coerce.number().min(900).max(1100).default(1025)
-  }).passthrough(),
+  }).passthrough().superRefine((data, ctx) => {
+    if (data.blockCoefficientCb === undefined && data.displacementTonnes === undefined) {
+      ctx.addIssue({ code: 'custom', message: 'An explicit Cb or measured displacement is required; arbitrary hull fullness is prohibited.' });
+      return;
+    }
+    const prism = data.lwlMeters * data.beamMeters * data.draftMeters;
+    const inferredCb = data.displacementTonnes === undefined ? undefined :
+      (data.displacementTonnes * 1000) / (data.seawaterDensityKgM3 * prism);
+    if (inferredCb !== undefined && (inferredCb < 0.30 || inferredCb > 0.95)) {
+      ctx.addIssue({ code: 'custom', message: 'Mass implies Cb outside supported hull envelope.' });
+    }
+    if (inferredCb !== undefined && data.blockCoefficientCb !== undefined &&
+        Math.abs(inferredCb - data.blockCoefficientCb) > 0.01 * data.blockCoefficientCb) {
+      ctx.addIssue({ code: 'custom', message: 'Displacement, Cb and hull prism contradict mass conservation.' });
+    }
+  }),
   outputSchema: z.object({
     displacedVolumeM3: z.number(),
     displacementTonnes: z.number(),
     centerOfBuoyancyKbM: z.number(),
     transverseMetacentricRadiusBmtM: z.number(),
     transverseMetacenterKmtM: z.number(),
-    metacentricHeightGmtM: z.number(),
+    metacentricHeightGmtM: z.number().nullable(),
     stabilityStatus: z.enum(['STABLE_COMPLIANT', 'MARGINAL', 'UNSTABLE_CRITICAL', 'UNVERIFIED_ESTIMATE']),
     isPreliminaryEstimate: z.boolean(),
     engineeringComplianceValidated: z.literal(false),
-    kgSource: z.enum(['USER_PROVIDED', 'ASSUMED_FOR_ESTIMATE']),
+    kgSource: z.enum(['USER_PROVIDED', 'NOT_PROVIDED']),
     complianceCheck: z.object({
       minGmMet: z.boolean(),
       morrishKbApproximationM: z.number()
@@ -37,65 +52,32 @@ export const HydrostaticsTool: EngineeringTool = {
   }),
   execute: (input: any) => {
     const { lwlMeters, beamMeters, draftMeters, seawaterDensityKgM3 = 1025 } = input;
-    let blockCoefficientCb = input.blockCoefficientCb ?? 0.44;
-    if (input.displacementTonnes && !input.blockCoefficientCb) {
-      const vol = (input.displacementTonnes * 1000) / seawaterDensityKgM3;
-      blockCoefficientCb = Math.min(0.85, Math.max(0.35, vol / (lwlMeters * beamMeters * draftMeters)));
-    }
-    const cwp = input.waterplaneCoefficientCwp || Number((blockCoefficientCb + 0.18).toFixed(3));
-
-    // Underwater volume (m^3)
-    const displacedVolumeM3 = lwlMeters * beamMeters * draftMeters * blockCoefficientCb;
-    
-    // Displacement (metric tonnes)
-    const displacementTonnes = (displacedVolumeM3 * seawaterDensityKgM3) / 1000;
-
-    // Center of buoyancy KB (m) via Normand formula:
-    // KB = draft * (5/6 - Cb / (3 * Cwp))
-    const centerOfBuoyancyKbM = draftMeters * (5 / 6 - blockCoefficientCb / (3 * cwp));
-
-    // Waterplane moment of inertia IT = (1/12) * Cwp * L * B^3 (approximate for typical hull)
-    const it = (1 / 12) * cwp * lwlMeters * Math.pow(beamMeters, 3);
-
-    // Transverse metacentric radius BMt = IT / Volume
-    const transverseMetacentricRadiusBmtM = it / displacedVolumeM3;
-
-    // KMt = KB + BMt
-    const transverseMetacenterKmtM = centerOfBuoyancyKbM + transverseMetacentricRadiusBmtM;
-
-    // If KG is not explicitly supplied, estimate typical USV KG based on draft:
-    // KG ~ draft * 1.15 for low-profile planing USV (battery in keel)
-    const kgMeters = input.kgMeters ?? Number((draftMeters * 1.15).toFixed(3));
-
-    // GMt = KMt - KG
-    const metacentricHeightGmtM = transverseMetacenterKmtM - kgMeters;
-
-    const hasVerifiedKgInput = typeof input.kgMeters === 'number' && Number.isFinite(input.kgMeters) && input.kgMeters > 0;
-    let stabilityStatus: 'STABLE_COMPLIANT' | 'MARGINAL' | 'UNSTABLE_CRITICAL' | 'UNVERIFIED_ESTIMATE' = 'STABLE_COMPLIANT';
-    if (metacentricHeightGmtM < 0.15) {
-      stabilityStatus = 'UNSTABLE_CRITICAL';
-    } else if (metacentricHeightGmtM < 0.35) {
-      stabilityStatus = 'MARGINAL';
-    }
-
-    // A guessed KG cannot establish stability compliance; keep the numeric result
-    // only as a transparent preliminary estimate, never a release criterion.
-    if (!hasVerifiedKgInput) stabilityStatus = 'UNVERIFIED_ESTIMATE';
-
+    const prism = lwlMeters * beamMeters * draftMeters;
+    const cb = input.blockCoefficientCb ??
+      ((input.displacementTonnes * 1000) / (seawaterDensityKgM3 * prism));
+    const cwp = input.waterplaneCoefficientCwp ?? Math.min(0.95, Math.max(0.4, cb + 0.18));
+    const volume = prism * cb;
+    const massT = volume * seawaterDensityKgM3 / 1000;
+    // Parametric screening, NOT offset-integrated hydrostatics or GZ compliance.
+    const kb = draftMeters * (5 / 6 - cb / (3 * cwp));
+    const bmt = (cwp * lwlMeters * Math.pow(beamMeters, 3) / 12) / volume;
+    const kmt = kb + bmt;
+    const hasKg = input.kgMeters !== undefined;
+    const gm = hasKg ? kmt - input.kgMeters : null;
     return {
-      displacedVolumeM3: Number(displacedVolumeM3.toFixed(3)),
-      displacementTonnes: Number(displacementTonnes.toFixed(3)),
-      centerOfBuoyancyKbM: Number(centerOfBuoyancyKbM.toFixed(3)),
-      transverseMetacentricRadiusBmtM: Number(transverseMetacentricRadiusBmtM.toFixed(3)),
-      transverseMetacenterKmtM: Number(transverseMetacenterKmtM.toFixed(3)),
-      metacentricHeightGmtM: Number(metacentricHeightGmtM.toFixed(3)),
-      stabilityStatus,
-      isPreliminaryEstimate: !hasVerifiedKgInput,
+      displacedVolumeM3: Number(volume.toFixed(3)),
+      displacementTonnes: Number(massT.toFixed(3)),
+      centerOfBuoyancyKbM: Number(kb.toFixed(3)),
+      transverseMetacentricRadiusBmtM: Number(bmt.toFixed(3)),
+      transverseMetacenterKmtM: Number(kmt.toFixed(3)),
+      metacentricHeightGmtM: gm === null ? null : Number(gm.toFixed(3)),
+      stabilityStatus: gm !== null && gm < 0 ? 'UNSTABLE_CRITICAL' : 'UNVERIFIED_ESTIMATE',
+      isPreliminaryEstimate: true,
       engineeringComplianceValidated: false,
-      kgSource: hasVerifiedKgInput ? 'USER_PROVIDED' : 'ASSUMED_FOR_ESTIMATE',
+      kgSource: hasKg ? 'USER_PROVIDED' : 'NOT_PROVIDED',
       complianceCheck: {
-        minGmMet: hasVerifiedKgInput && metacentricHeightGmtM >= 0.35,
-        morrishKbApproximationM: Number(centerOfBuoyancyKbM.toFixed(3))
+        minGmMet: gm !== null && gm >= 0.35,
+        morrishKbApproximationM: Number(kb.toFixed(3))
       }
     };
   }
@@ -214,7 +196,7 @@ export const MassBalanceTool: EngineeringTool = {
       tcgMetersFromCl: z.coerce.number(),
       vcgMetersFromKeel: z.coerce.number().nonnegative(),
       designMarginPercent: z.coerce.number().min(0).max(50).default(10)
-    })).default([]),
+    })).min(1, 'Mass ledger cannot be empty'),
     baselineLcbMetersFromTransom: z.coerce.number().optional()
   }).passthrough(),
   outputSchema: z.object({
@@ -295,7 +277,7 @@ export const ElectricalLoadTool: EngineeringTool = {
   deterministic: true,
   requiredPermissions: ['CALCULATION_EXEC'],
   inputSchema: z.object({
-    busVoltageV: z.coerce.number().default(48),
+    busVoltageV: z.coerce.number().positive().default(48),
     batteryTotalKwh: z.coerce.number().positive().default(120),
     usableDepthOfDischarge: z.coerce.number().min(0.1).max(1.0).default(0.8),
     consumers: z.array(z.object({
@@ -364,9 +346,9 @@ export const ElectricalLoadTool: EngineeringTool = {
 // 5. Structural Scantlings Calculator
 export const StructuresTool: EngineeringTool = {
   id: 'TOOL-STRUCTURES-01',
-  name: 'Hull Bottom Slamming & Plating Scantling Calculator',
+  name: 'Preliminary Hull Bottom Slamming & Plating Estimator',
   category: 'STRUCTURES',
-  description: 'Calculates bottom slamming pressure and minimum plating thickness according to DNV-RU-HSLC / ISO 12215-5.',
+  description: 'Uncorrelated empirical screening estimates only; NOT a validated ISO/DNV class-rule implementation.',
   deterministic: true,
   requiredPermissions: ['CALCULATION_EXEC'],
   inputSchema: z.object({
@@ -376,8 +358,8 @@ export const StructuresTool: EngineeringTool = {
     deadriseAngleDeg: z.coerce.number().min(5).max(45).default(18),
     unsupportedPanelWidthMm: z.coerce.number().positive().default(450),
     unsupportedPanelLengthMm: z.coerce.number().positive().default(900),
-    materialYieldStrengthMpa: z.coerce.number().default(125), // 5083-H111 default
-    safetyFactor: z.coerce.number().default(2.0)
+    materialYieldStrengthMpa: z.coerce.number().positive().default(125), // 5083-H111 default
+    safetyFactor: z.coerce.number().min(1).default(2.0)
   }).passthrough(),
   outputSchema: z.object({
     designSlammingPressureKpa: z.number(),
@@ -385,7 +367,9 @@ export const StructuresTool: EngineeringTool = {
     aspectRatioCorrectionFactorK2: z.number(),
     minPlatingThicknessMm: z.number(),
     recommendedNominalThicknessMm: z.number(),
-    stiffenerSectionModulusCm3: z.number()
+    stiffenerSectionModulusCm3: z.number(),
+    engineeringComplianceValidated: z.literal(false),
+    modelStatus: z.literal('UNVALIDATED_SCANTLING_SCREEN')
   }),
   execute: (input: any) => {
     const {
@@ -426,7 +410,9 @@ export const StructuresTool: EngineeringTool = {
       aspectRatioCorrectionFactorK2: Number(k2.toFixed(3)),
       minPlatingThicknessMm: Number(minPlatingThicknessMm.toFixed(2)),
       recommendedNominalThicknessMm,
-      stiffenerSectionModulusCm3: Number(stiffenerSectionModulusCm3.toFixed(2))
+      stiffenerSectionModulusCm3: Number(stiffenerSectionModulusCm3.toFixed(2)),
+      engineeringComplianceValidated: false,
+      modelStatus: 'UNVALIDATED_SCANTLING_SCREEN'
     };
   }
 };
@@ -434,7 +420,7 @@ export const StructuresTool: EngineeringTool = {
 // 6. COLREGS Collision Avoidance Vector Tool
 export const ColregsTool: EngineeringTool = {
   id: 'TOOL-COLREGS-01',
-  name: 'COLREGS 1972 Collision Geometry & Encounter Solver',
+  name: 'COLREG Screening Geometry (Non-Actuating)',
   category: 'AUTONOMY_COLREGS',
   description: 'Deterministic calculation of Range, Bearing, Relative Velocity, CPA, TCPA, and COLREGS encounter classification.',
   deterministic: true,
@@ -510,26 +496,25 @@ export const ColregsTool: EngineeringTool = {
     if (courseDiff > 180) courseDiff = 360 - courseDiff;
 
     let colregsRule: 'RULE_14_HEAD_ON' | 'RULE_15_CROSSING_GIVE_WAY' | 'RULE_15_CROSSING_STAND_ON' | 'RULE_13_OVERTAKING' | 'SAFE_PASSING' = 'SAFE_PASSING';
-    let mandatedAction = 'Maintain course and speed; monitor contact.';
-    let safeCourse: number | undefined;
+    let mandatedAction = 'Geometry screening only: assess sensor uncertainty; no certified maneuver.';
+    const safeCourse: number | undefined = undefined; // Never propose unvalidated helm setpoints.
 
     if (cpaNm < 1.0 && timeToCpaMinutes > 0) {
       // Risk of collision exists
       if (Math.abs(relBearing) <= 6 && courseDiff >= 170) {
         colregsRule = 'RULE_14_HEAD_ON';
-        mandatedAction = 'Head-on encounter (Rule 14). Both vessels shall alter course to STARBOARD to pass port-to-port.';
-        safeCourse = (ownCourseDeg + 30) % 360;
-      } else if (relBearing > 5 && relBearing < 112.5) {
-        colregsRule = 'RULE_15_CROSSING_GIVE_WAY';
-        mandatedAction = 'Crossing situation (Rule 15). Target on STARBOARD bow. Own vessel is GIVE-WAY. Make early and substantial turn to STARBOARD.';
-        safeCourse = (ownCourseDeg + 40) % 360;
-      } else if (relBearing < -5 && relBearing > -112.5) {
-        colregsRule = 'RULE_15_CROSSING_STAND_ON';
-        mandatedAction = 'Crossing situation (Rule 15). Target on PORT bow. Own vessel is STAND-ON. Maintain course and speed, be prepared to take action under Rule 17.';
+        mandatedAction = 'Head-on candidate (Rule 14): STARBOARD action may apply; no verified helm command.';
+        // No fixed-angle course command: projected CPA has not been validated.
       } else if (courseDiff <= 45 && ownSpeedKnots > targetSpeedKnots && Math.abs(relBearing) <= 67.5) {
         colregsRule = 'RULE_13_OVERTAKING';
-        mandatedAction = 'Overtaking situation (Rule 13). Own vessel is faster and overtaking target ahead. Keep completely clear of target vessel.';
-        safeCourse = (ownCourseDeg + 25) % 360;
+        mandatedAction = 'Overtaking candidate (Rule 13): keep clear; verify aspect and maneuver independently.';
+      } else if (relBearing > 5 && relBearing < 112.5) {
+        colregsRule = 'RULE_15_CROSSING_GIVE_WAY';
+        mandatedAction = 'Crossing candidate (Rule 15): target on STARBOARD side; evaluate GIVE-WAY actions with verified CPA.';
+        // No certified evasive course in this screening model.
+      } else if (relBearing < -5 && relBearing > -112.5) {
+        colregsRule = 'RULE_15_CROSSING_STAND_ON';
+        mandatedAction = 'Crossing candidate (Rule 15): possible STAND-ON obligations; assess Rule 17 and uncertainties.';
       }
     }
 
