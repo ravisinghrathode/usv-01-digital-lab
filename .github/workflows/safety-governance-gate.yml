@@ -98,6 +98,21 @@ jobs:
           if-no-files-found: ignore
 
 
+      - name: Stage B — Consolidated 13-Workstream Acceptance Campaign
+        run: |
+          set -euo pipefail
+          npx tsx scripts/run-acceptance-campaign.ts
+
+      - name: Upload Integrated Acceptance Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: usv01-acceptance-campaign
+          path: |
+            governance/reports/acceptance-campaign.json
+            governance/reports/acceptance-campaign.md
+          if-no-files-found: ignore
+
       - name: Stage B — Production Bundle Verification
         run: |
           set -euo pipefail
