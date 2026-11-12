@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { X, Lock, Key, Shield, AlertTriangle, CheckCircle, Info } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Lock, Key, Shield, AlertTriangle, CheckCircle, Info, Sparkles } from 'lucide-react';
 import { AUTHORIZED_MEMBERS, StaffMember } from '../core/auth/staffDirectory.ts';
-import { login } from '../core/auth/authClient.ts';
+import { login, fetchSetupStatus, provisionInitialCredential } from '../core/auth/authClient.ts';
 import { ApproverIdentity } from '../core/types/safety.ts';
 
 interface LoginModalProps {
@@ -16,7 +16,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   isOpen,
   onClose,
   onLoginSuccess,
-  initialUserId = 'usr-lead-sys-01',
+  initialUserId = 'usr-eng-dir-8841',
   requiredRole
 }) => {
   const members = Object.values(AUTHORIZED_MEMBERS);
@@ -25,11 +25,19 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   const [showPassphrase, setShowPassphrase] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [provisionedUsers, setProvisionedUsers] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchSetupStatus().then((s) => setProvisionedUsers(s.provisionedUsers));
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
   const selectedMember: StaffMember | undefined = AUTHORIZED_MEMBERS[selectedUserId] || members[0];
   const isDirector = selectedMember?.role === 'ENGINEERING_DIRECTOR';
+  const isProvisioned = provisionedUsers.includes(selectedUserId);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +60,15 @@ export const LoginModal: React.FC<LoginModalProps> = ({
 
     setIsLoading(true);
     try {
-      const user = await login(selectedUserId, passphrase, selectedMember?.role);
+      let user: ApproverIdentity;
+      if (!isProvisioned) {
+        if (passphrase.trim().length < 12) {
+          throw new Error('For first-time setup, please choose a passphrase of at least 12 characters.');
+        }
+        user = await provisionInitialCredential(selectedUserId, passphrase);
+      } else {
+        user = await login(selectedUserId, passphrase, selectedMember?.role);
+      }
       setPassphrase('');
       onLoginSuccess(user);
       onClose();
@@ -102,7 +118,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
             <div className="p-3 rounded bg-rose-950/40 border border-rose-800/60 text-rose-300 text-xs flex items-start gap-2.5 animate-in shake duration-200">
               <AlertTriangle className="w-4 h-4 shrink-0 text-rose-400 mt-0.5" />
               <div>
-                <p className="font-semibold">Authentication Denied</p>
+                <p className="font-semibold">Authentication Notice</p>
                 <p className="text-[11px] text-rose-200 mt-0.5 leading-relaxed">{errorMessage}</p>
               </div>
             </div>
@@ -142,6 +158,12 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                   {isDirector ? 'Level 4: Safety-Critical Gate Sign-off' : 'Level 2: Digital Lab Engineering Operations'}
                 </span>
               </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500 font-mono">Account Status:</span>
+                <span className={isProvisioned ? 'text-emerald-400 font-mono' : 'text-sky-400 font-mono'}>
+                  {isProvisioned ? 'PROVISIONED (Ready to Sign In)' : 'FIRST-TIME SETUP (Create Passphrase)'}
+                </span>
+              </div>
             </div>
           )}
 
@@ -149,7 +171,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           <div>
             <div className="flex justify-between items-center mb-1.5">
               <label className="block text-xs font-medium text-slate-300">
-                Staff Passphrase <span className="text-rose-400">*</span>
+                {isProvisioned ? 'Staff Passphrase' : 'Create New Passphrase (min 12 chars)'} <span className="text-rose-400">*</span>
               </label>
               <button
                 type="button"
@@ -168,19 +190,20 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                   setPassphrase(e.target.value);
                   setErrorMessage(null);
                 }}
-                placeholder="Enter provisioned passphrase..."
+                placeholder={isProvisioned ? 'Enter your passphrase...' : 'Choose a passphrase (12+ characters)...'}
                 className="w-full bg-slate-950 border border-slate-800 rounded pl-9 pr-3 py-2 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 font-mono"
                 autoFocus
               />
             </div>
           </div>
 
-          {/* Offline Scrypt Provisioning Notice */}
+          {/* Friendly Setup Notice */}
           <div className="p-2.5 rounded bg-slate-950/50 border border-slate-800/60 text-[10px] text-slate-400 flex items-start gap-2">
-            <Info className="w-3.5 h-3.5 shrink-0 text-slate-500 mt-0.5" />
+            <Info className="w-3.5 h-3.5 shrink-0 text-teal-400 mt-0.5" />
             <p className="leading-relaxed">
-              Passphrases are verified against the external scrypt credential store. To provision or rotate a staff credential, use terminal CLI:{' '}
-              <code className="text-slate-300 font-mono">npx tsx scripts/admin/provision-staff-credential.ts &lt;userId&gt;</code>
+              {isProvisioned
+                ? 'Your passphrase is encrypted with salted scrypt in the local credential store.'
+                : 'First-time login: Type any passphrase of 12+ characters and click the button below to set up and sign in immediately—no terminal needed!'}
             </p>
           </div>
 
@@ -206,12 +229,12 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               {isLoading ? (
                 <>
                   <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Verifying...</span>
+                  <span>{isProvisioned ? 'Verifying...' : 'Provisioning...'}</span>
                 </>
               ) : (
                 <>
-                  <CheckCircle className="w-3.5 h-3.5" />
-                  <span>Authenticate</span>
+                  {isProvisioned ? <CheckCircle className="w-3.5 h-3.5" /> : <Sparkles className="w-3.5 h-3.5" />}
+                  <span>{isProvisioned ? 'Authenticate' : '1-Click Set Passphrase & Sign In'}</span>
                 </>
               )}
             </button>

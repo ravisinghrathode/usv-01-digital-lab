@@ -35,7 +35,16 @@ import { EngineeringTask } from '../core/types/orchestrator.ts';
 import { HumanApprovalGate, ApproverIdentity } from '../core/types/safety.ts';
 import { EngineeringParameter } from '../core/types/memory.ts';
 import { downloadCsv } from '../utils/engineeringUtils.ts';
-import { signApprovalGate, authenticateAsDirector, subscribeAuthState } from '../core/auth/authClient.ts';
+import {
+  signApprovalGate,
+  authenticateAsDirector,
+  subscribeAuthState,
+  fetchSetupStatus,
+  provisionInitialCredential,
+  fetchGovernanceStatus,
+  generateDirectorKeypairWeb,
+  signEcrWeb
+} from '../core/auth/authClient.ts';
 
 interface AgentOrchestratorViewProps {
   onAskAi?: (prompt: string, record?: any) => void;
@@ -95,6 +104,13 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
   const [directorAuthError, setDirectorAuthError] = useState<string | null>(null);
   const [isDirectorAuthenticated, setIsDirectorAuthenticated] = useState<boolean>(false);
 
+  // 1-Click Web ECR Governance State
+  const [govStatus, setGovStatus] = useState<any>(null);
+  const [ecrSigningPassphrase, setEcrSigningPassphrase] = useState<string>('');
+  const [ecrActionStatus, setEcrActionStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [isSigningEcr, setIsSigningEcr] = useState<boolean>(false);
+  const [copiedPublicKey, setCopiedPublicKey] = useState<boolean>(false);
+
   // Obsidian Export Modal State
   const [obsidianModalOpen, setObsidianModalOpen] = useState(false);
   const [exportedNotes, setExportedNotes] = useState<Record<string, string>>({});
@@ -106,6 +122,7 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
     setPendingGates(gateManager.getPendingGates());
     setParameters(sharedMemory.getAllParameters());
     setLogs(auditLogger.getLogs().slice(-30).reverse());
+    fetchGovernanceStatus().then(setGovStatus).catch(() => {});
   };
 
   useEffect(() => {
@@ -120,13 +137,67 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
   const handleDirectorLogin = async () => {
     try {
       setDirectorAuthError(null);
-      const user = await authenticateAsDirector(directorPassphrase);
+      if (directorPassphrase.trim().length < 12) {
+        throw new Error('Passphrase must be at least 12 characters.');
+      }
+      const setup = await fetchSetupStatus();
+      let user: ApproverIdentity;
+      if (!setup.provisionedUsers.includes('usr-eng-dir-8841')) {
+        user = await provisionInitialCredential('usr-eng-dir-8841', directorPassphrase);
+      } else {
+        user = await authenticateAsDirector(directorPassphrase);
+      }
       setApproverIdentity(user);
       setIsDirectorAuthenticated(true);
+      setEcrSigningPassphrase(directorPassphrase);
       setDirectorPassphrase('');
+      refreshState();
     } catch (err: any) {
       setDirectorAuthError(err.message);
       setIsDirectorAuthenticated(false);
+    }
+  };
+
+  const handleOneClickKeygen = async () => {
+    try {
+      setIsSigningEcr(true);
+      setEcrActionStatus(null);
+      const pw = ecrSigningPassphrase.trim() || 'usv01-director-ed25519-key';
+      if (pw.length < 16) {
+        throw new Error('Signing passphrase must be at least 16 characters.');
+      }
+      const res = await generateDirectorKeypairWeb(pw, false);
+      setEcrActionStatus({ type: 'success', message: res.message || 'Director Ed25519 keypair ready!' });
+      refreshState();
+    } catch (err: any) {
+      setEcrActionStatus({ type: 'error', message: err.message });
+    } finally {
+      setIsSigningEcr(false);
+    }
+  };
+
+  const handleOneClickSignEcr = async (changeId: string, decision: 'APPROVED' | 'REJECTED') => {
+    try {
+      setIsSigningEcr(true);
+      setEcrActionStatus(null);
+      const pw = ecrSigningPassphrase.trim() || 'usv01-director-ed25519-key';
+      if (pw.length < 16) {
+        throw new Error('Please enter your 16+ character Director signing passphrase.');
+      }
+      // If private key hasn't been generated yet, auto-generate it in 1 click first!
+      if (!govStatus?.directorKey?.hasPrivateKey) {
+        await generateDirectorKeypairWeb(pw, false);
+      }
+      const res = await signEcrWeb(changeId, decision, pw);
+      setEcrActionStatus({
+        type: 'success',
+        message: `${res.message} Saved to ${res.filePath}`
+      });
+      refreshState();
+    } catch (err: any) {
+      setEcrActionStatus({ type: 'error', message: err.message });
+    } finally {
+      setIsSigningEcr(false);
     }
   };
 
@@ -722,6 +793,173 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
               )}
             </div>
           )}
+
+          {/* 1-CLICK ENGINEERING CHANGE REQUEST (ECR) & BASELINE SIGN-OFF PANEL */}
+          <div className="p-4 rounded-lg bg-slate-900 border border-teal-500/40 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-800">
+              <div>
+                <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-teal-400" />
+                  1-Click Engineering Change Request (ECR) & Baseline Sign-Off
+                </h3>
+                <p className="text-[11px] text-slate-400 mt-0.5">
+                  No terminal commands required. Generate your Ed25519 keypair and cryptographically sign safety-critical ECRs in one click.
+                </p>
+              </div>
+              <div className="flex items-center gap-2 text-[11px] font-mono">
+                <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-400">
+                  HEAD: <strong className="text-teal-300">{govStatus?.headCommit?.substring(0, 7) || '---'}</strong>
+                </span>
+                <span className={`px-2 py-0.5 rounded border ${
+                  govStatus?.directorKey?.hasPrivateKey
+                    ? 'bg-emerald-950/60 border-emerald-700/50 text-emerald-300'
+                    : 'bg-amber-950/60 border-amber-700/50 text-amber-300'
+                }`}>
+                  {govStatus?.directorKey?.hasPrivateKey ? 'Ed25519 Key: READY' : 'Ed25519 Key: NOT CREATED'}
+                </span>
+              </div>
+            </div>
+
+            {ecrActionStatus && (
+              <div className={`p-3 rounded border text-xs flex items-center justify-between ${
+                ecrActionStatus.type === 'success'
+                  ? 'bg-emerald-950/40 border-emerald-700/60 text-emerald-200'
+                  : 'bg-rose-950/40 border-rose-700/60 text-rose-200'
+              }`}>
+                <div className="flex items-center gap-2">
+                  {ecrActionStatus.type === 'success' ? (
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  ) : (
+                    <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+                  )}
+                  <span>{ecrActionStatus.message}</span>
+                </div>
+                <button
+                  onClick={() => setEcrActionStatus(null)}
+                  className="text-[10px] underline opacity-75 hover:opacity-100"
+                >
+                  Dismiss
+                </button>
+              </div>
+            )}
+
+            {/* Signing Passphrase & 1-Click Key Setup Bar */}
+            <div className="p-3 rounded bg-slate-950 border border-slate-800 space-y-2.5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <label className="text-xs font-medium text-slate-300">
+                  Director Signing Key Passphrase (16+ chars — auto-creates key if needed):
+                </label>
+                {govStatus?.directorKey?.publicKeyPem && (
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(govStatus.directorKey.publicKeyPem);
+                      setCopiedPublicKey(true);
+                      setTimeout(() => setCopiedPublicKey(false), 2500);
+                    }}
+                    className="text-[11px] font-mono text-teal-400 hover:text-teal-300 flex items-center gap-1"
+                  >
+                    <Download className="w-3 h-3" />
+                    {copiedPublicKey ? '✅ Copied Public Key PEM!' : 'Copy Public Key (DIRECTOR_PUBLIC_KEY)'}
+                  </button>
+                )}
+              </div>
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                <input
+                  type="password"
+                  placeholder="Enter a 16+ char passphrase (or leave blank to use default workstation key)..."
+                  value={ecrSigningPassphrase}
+                  onChange={(e) => setEcrSigningPassphrase(e.target.value)}
+                  disabled={!isDirectorAuthenticated}
+                  className="flex-1 bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-teal-500 font-mono"
+                />
+                {!govStatus?.directorKey?.hasPrivateKey && (
+                  <button
+                    onClick={handleOneClickKeygen}
+                    disabled={!isDirectorAuthenticated || isSigningEcr}
+                    className="px-3.5 py-1.5 rounded bg-teal-600 hover:bg-teal-500 disabled:bg-slate-800 disabled:text-slate-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-colors"
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5" /> 1-Click Generate Signing Key
+                  </button>
+                )}
+              </div>
+              {govStatus?.baselineDigest && (
+                <div className="text-[10px] font-mono text-slate-500 truncate">
+                  Current Baseline Digest: <span className="text-slate-400">{govStatus.baselineDigest}</span>
+                </div>
+              )}
+            </div>
+
+            {/* ECR Records List with 1-Click Approve & Sign Button */}
+            <div className="space-y-2.5">
+              {(govStatus?.ecrRecords || []).map((ecrItem: any) => {
+                const changeId = ecrItem.record?.changeId || ecrItem.file.split('_')[0];
+                const matchingApproval = (govStatus?.approvals || []).find(
+                  (a: any) => a.record?.changeId === changeId
+                );
+                const isVerified = matchingApproval?.verified;
+                const isStale = matchingApproval?.stale;
+
+                return (
+                  <div
+                    key={ecrItem.file}
+                    className={`p-3.5 rounded-lg border flex flex-col md:flex-row md:items-center justify-between gap-3 ${
+                      isVerified
+                        ? 'bg-emerald-950/15 border-emerald-700/50'
+                        : 'bg-slate-950/90 border-slate-800'
+                    }`}
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-mono text-xs font-bold text-teal-300 bg-teal-950/60 border border-teal-800/60 px-2 py-0.5 rounded">
+                          {changeId}
+                        </span>
+                        <span className="text-xs font-bold text-slate-100">
+                          {ecrItem.record?.title || ecrItem.file}
+                        </span>
+                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-rose-950/70 border border-rose-800/50 text-rose-300">
+                          {ecrItem.record?.riskAssessment || 'CRITICAL'} RISK
+                        </span>
+                        {isVerified ? (
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-700 text-emerald-300 flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3" /> SIGNED & VERIFIED (Ed25519)
+                          </span>
+                        ) : isStale ? (
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-950/80 border border-amber-700 text-amber-300">
+                            ⚠️ STALE SIGNATURE — RE-SIGN NEEDED
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-amber-300">
+                            ⏳ PENDING DIRECTOR SIGN-OFF
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-slate-400">
+                        {matchingApproval?.record
+                          ? `Last signed by ${matchingApproval.record.authorityName} at ${matchingApproval.record.signedAt} (Commit ${matchingApproval.record.headCommitAtSigning?.substring(0, 7)})`
+                          : 'Click "1-Click Approve & Sign" to cryptographically authorize this Engineering Change Request.'}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        onClick={() => handleOneClickSignEcr(changeId, 'APPROVED')}
+                        disabled={!isDirectorAuthenticated || isSigningEcr}
+                        title={!isDirectorAuthenticated ? 'Authenticate as Engineering Director above first' : 'Cryptographically sign this ECR with Ed25519'}
+                        className={`px-4 py-2 rounded font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all ${
+                          isDirectorAuthenticated
+                            ? 'bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer active:scale-95'
+                            : 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700'
+                        }`}
+                      >
+                        <Check className="w-4 h-4" />
+                        {isSigningEcr ? 'Signing...' : isVerified ? 'Re-Sign Baseline' : '1-Click Approve & Sign'}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
 
           {pendingGates.length === 0 ? (
             <div className="p-8 rounded-lg bg-slate-900/40 border border-slate-800 text-center space-y-2">

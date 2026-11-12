@@ -1,12 +1,35 @@
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 import crypto from 'crypto';
+import { execFileSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { generateApproverSignature, verifyApproverSignature, setDirectorSigningKey } from './src/core/safety/ApproverSigner.ts';
 import { AUTHORIZED_MEMBERS, type StaffMember } from './src/core/auth/staffDirectory.ts';
-import { verifyStaffCredential, isLockedOut, recordFailure, recordSuccess } from './src/core/auth/credentialStore.ts';
+import {
+  verifyStaffCredential,
+  isLockedOut,
+  recordFailure,
+  recordSuccess,
+  loadCredentialStore,
+  hashCredential,
+  saveCredential,
+  resolveCredentialStorePath
+} from './src/core/auth/credentialStore.ts';
+import {
+  APPROVALS_DIR,
+  APPROVAL_SCHEMA,
+  computeBaselineDigest,
+  publicKeyFingerprint,
+  signApproval,
+  verifyApproval,
+  loadApprovalRecords,
+  resolveDirectorPublicKey
+} from './scripts/governance/ecr-approval.ts';
+import { DEFAULT_PRIVATE_KEY_PATH } from './scripts/governance/director-keygen.ts';
+import { validateECRFile } from './scripts/governance/ecr-tool.ts';
 
 dotenv.config();
 
@@ -186,7 +209,16 @@ export const authMiddleware = (req: express.Request, res: express.Response, next
 };
 
 // Protect data, export/import, AI assistant, and gate signing endpoints
-app.use(['/api/data', '/api/export', '/api/import', '/api/gemini/assist', '/api/auth/sign-gate', '/api/auth/session'], authMiddleware);
+app.use([
+  '/api/data',
+  '/api/export',
+  '/api/import',
+  '/api/gemini/assist',
+  '/api/auth/sign-gate',
+  '/api/auth/session',
+  '/api/governance/keygen',
+  '/api/governance/sign-ecr'
+], authMiddleware);
 
 export function authenticateLoginRequest(body: { userId?: string; role?: string; passphrase?: string }): {
   statusCode: number;
@@ -339,6 +371,293 @@ app.post('/api/auth/verify-gate', (req, res) => {
   const valid = verifyApproverSignature(gateId, decision, identity, SESSION_SECRET);
   res.json({ success: true, valid });
 });
+
+// Check credential store status for browser-based first-time setup
+app.get('/api/auth/setup-status', (req, res) => {
+  const store = loadCredentialStore();
+  const provisionedUsers = store ? Object.keys(store.credentials) : [];
+  res.json({
+    success: true,
+    storeAvailable: !!store && provisionedUsers.length > 0,
+    provisionedUsers
+  });
+});
+
+// Browser-based first-time staff credential provisioning (only for identities not yet provisioned)
+app.post('/api/auth/provision-initial', (req, res) => {
+  try {
+    const { userId, passphrase } = req.body || {};
+    if (!userId || typeof userId !== 'string') {
+      return res.status(400).json({ success: false, error: 'Missing userId.' });
+    }
+    const member = AUTHORIZED_MEMBERS[userId];
+    if (!member) {
+      return res.status(403).json({ success: false, error: `Unknown identity '${userId}'.` });
+    }
+    if (!passphrase || typeof passphrase !== 'string' || passphrase.length < 12) {
+      return res.status(400).json({ success: false, error: 'Passphrase must be at least 12 characters.' });
+    }
+
+    const store = loadCredentialStore();
+    if (store?.credentials?.[userId]) {
+      return res.status(409).json({
+        success: false,
+        error: `Credential already provisioned for '${userId}'. Sign in with your existing passphrase.`
+      });
+    }
+
+    const cred = hashCredential(passphrase);
+    saveCredential(userId, cred, resolveCredentialStorePath());
+    const token = createSessionToken(member);
+
+    res.json({
+      success: true,
+      message: `Passphrase provisioned for ${member.userName} (${member.role}).`,
+      token,
+      user: member
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// --- 1-CLICK WEB GOVERNANCE & ECR SIGN-OFF ENDPOINTS ---
+app.get('/api/governance/status', (req, res) => {
+  try {
+    const keyPath = process.env.DIRECTOR_PRIVATE_KEY_FILE || DEFAULT_PRIVATE_KEY_PATH;
+    const pubPath = keyPath.replace(/\.pem$/, '') + '.pub.pem';
+    const hasPrivateKey = fs.existsSync(keyPath);
+    let publicKeyPem = resolveDirectorPublicKey();
+    if (!publicKeyPem && fs.existsSync(pubPath)) {
+      publicKeyPem = fs.readFileSync(pubPath, 'utf-8').trim();
+    }
+
+    let headCommit = 'unknown';
+    let baselineDigest = 'unknown';
+    try {
+      headCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf-8' }).trim();
+      baselineDigest = computeBaselineDigest('HEAD');
+    } catch {}
+
+    // Load ECR records
+    const ecrDir = path.join(__dirname, 'governance', 'ecr');
+    const ecrRecords: any[] = [];
+    if (fs.existsSync(ecrDir)) {
+      const files = fs.readdirSync(ecrDir).filter(f => f.startsWith('ECR-') && f.endsWith('.md'));
+      for (const file of files) {
+        const validation = validateECRFile(path.join(ecrDir, file));
+        ecrRecords.push({
+          file,
+          valid: validation.valid,
+          errors: validation.errors,
+          record: validation.record
+        });
+      }
+    }
+
+    // Load approval records and verify against current baseline
+    const approvals = loadApprovalRecords(__dirname).map(a => {
+      if (!a.record) return { file: a.file, record: null, verified: false, stale: false, error: a.parseError };
+      const v = verifyApproval(a.record, { publicKeyPem, expectedDigest: baselineDigest });
+      return {
+        file: a.file,
+        record: a.record,
+        verified: v.verified,
+        stale: v.stale,
+        error: v.error
+      };
+    });
+
+    // Load Stage A, C, D reports if present
+    const reportsDir = path.join(__dirname, 'governance', 'reports');
+    const readReport = (name: string) => {
+      const p = path.join(reportsDir, name);
+      if (fs.existsSync(p)) {
+        try { return JSON.parse(fs.readFileSync(p, 'utf-8')); } catch {}
+      }
+      return null;
+    };
+
+    res.json({
+      success: true,
+      headCommit,
+      baselineDigest,
+      directorKey: {
+        hasPrivateKey,
+        keyPath,
+        publicKeyPem: publicKeyPem || null,
+        fingerprint: publicKeyPem ? publicKeyFingerprint(publicKeyPem) : null
+      },
+      ecrRecords,
+      approvals,
+      reports: {
+        stageA: readReport('pr-classification.json'),
+        stageC: readReport('stage-c-review.json'),
+        stageD: readReport('stage-d-approval.json')
+      }
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 1-Click Web Ed25519 Keypair Generator for Engineering Director
+app.post('/api/governance/keygen', (req, res) => {
+  try {
+    const user = (req as any).user as AuthenticatedUser;
+    if (user.role !== 'ENGINEERING_DIRECTOR') {
+      return res.status(403).json({
+        success: false,
+        error: 'Forbidden: Only the Engineering Director may generate the Ed25519 signing keypair.'
+      });
+    }
+
+    const { passphrase, overwrite } = req.body || {};
+    if (!passphrase || typeof passphrase !== 'string' || passphrase.length < 16) {
+      return res.status(400).json({
+        success: false,
+        error: 'Director signing passphrase must be at least 16 characters.'
+      });
+    }
+
+    const keyPath = process.env.DIRECTOR_PRIVATE_KEY_FILE || DEFAULT_PRIVATE_KEY_PATH;
+    if (fs.existsSync(keyPath) && !overwrite) {
+      const pubPath = keyPath.replace(/\.pem$/, '') + '.pub.pem';
+      const pubPem = fs.existsSync(pubPath) ? fs.readFileSync(pubPath, 'utf-8').trim() : '';
+      return res.json({
+        success: true,
+        alreadyExists: true,
+        message: 'Director Ed25519 keypair already exists on this workstation.',
+        publicKeyPem: pubPem,
+        fingerprint: pubPem ? publicKeyFingerprint(pubPem) : null
+      });
+    }
+
+    const { publicKey, privateKey } = crypto.generateKeyPairSync('ed25519', {
+      publicKeyEncoding: { type: 'spki', format: 'pem' },
+      privateKeyEncoding: { type: 'pkcs8', format: 'pem', cipher: 'aes-256-cbc', passphrase }
+    });
+
+    fs.mkdirSync(path.dirname(keyPath), { recursive: true, mode: 0o700 });
+    fs.writeFileSync(keyPath, privateKey, { mode: 0o600 });
+    const pubPath = keyPath.replace(/\.pem$/, '') + '.pub.pem';
+    fs.writeFileSync(pubPath, publicKey, { mode: 0o644 });
+
+    // Also set in current runtime environment so local verification immediately works
+    process.env.DIRECTOR_PUBLIC_KEY = publicKey.trim();
+
+    res.json({
+      success: true,
+      message: 'Director Ed25519 keypair generated and encrypted successfully.',
+      keyPath,
+      publicKeyPem: publicKey.trim(),
+      fingerprint: publicKeyFingerprint(publicKey)
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 1-Click Web ECR Ed25519 Sign-Off for Engineering Director
+app.post('/api/governance/sign-ecr', (req, res) => {
+  try {
+    const user = (req as any).user as AuthenticatedUser;
+    if (user.role !== 'ENGINEERING_DIRECTOR') {
+      return res.status(403).json({
+        success: false,
+        error: 'Forbidden: Only the Engineering Director may sign Engineering Change Requests.'
+      });
+    }
+
+    const { changeId, decision = 'APPROVED', passphrase } = req.body || {};
+    if (!changeId || !/^ECR-\d{8}-\d{3}$/.test(changeId)) {
+      return res.status(400).json({ success: false, error: 'Valid Change ID (e.g. ECR-20261111-001) is required.' });
+    }
+    const decisionNorm = String(decision).toUpperCase();
+    if (decisionNorm !== 'APPROVED' && decisionNorm !== 'REJECTED') {
+      return res.status(400).json({ success: false, error: 'Decision must be APPROVED or REJECTED.' });
+    }
+    if (!passphrase || typeof passphrase !== 'string') {
+      return res.status(400).json({ success: false, error: 'Director key passphrase is required to unlock signing key.' });
+    }
+
+    const keyPath = process.env.DIRECTOR_PRIVATE_KEY_FILE || DEFAULT_PRIVATE_KEY_PATH;
+    if (!fs.existsSync(keyPath)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Director Ed25519 private key not found. Click "1-Click Setup Signing Key" first.'
+      });
+    }
+
+    let privateKey: crypto.KeyObject;
+    try {
+      privateKey = crypto.createPrivateKey({
+        key: fs.readFileSync(keyPath, 'utf-8'),
+        format: 'pem',
+        passphrase
+      });
+    } catch {
+      return res.status(401).json({
+        success: false,
+        error: 'Unable to decrypt Director private key: incorrect passphrase.'
+      });
+    }
+
+    const publicKeyPem = crypto.createPublicKey(privateKey).export({ type: 'spki', format: 'pem' }).toString();
+    process.env.DIRECTOR_PUBLIC_KEY = publicKeyPem.trim();
+
+    const head = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf-8' }).trim();
+    const digest = computeBaselineDigest('HEAD');
+
+    const record = signApproval(
+      {
+        schema: APPROVAL_SCHEMA,
+        changeId,
+        decision: decisionNorm as 'APPROVED' | 'REJECTED',
+        authorityId: 'usr-eng-dir-8841',
+        authorityName: 'Ravi Singh Rathode',
+        authorityRole: 'ENGINEERING_DIRECTOR',
+        baselineDigest: digest,
+        headCommitAtSigning: head,
+        signedAt: new Date().toISOString(),
+        publicKeyFingerprint: publicKeyFingerprint(publicKeyPem)
+      },
+      privateKey
+    );
+
+    const self = verifyApproval(record, { publicKeyPem, expectedDigest: digest });
+    if (decisionNorm === 'APPROVED' && !self.verified) {
+      return res.status(500).json({ success: false, error: `Self-verification failed: ${self.error}` });
+    }
+
+    const outDir = path.join(__dirname, APPROVALS_DIR);
+    fs.mkdirSync(outDir, { recursive: true });
+    const outFile = path.join(outDir, `${changeId}.approval.json`);
+    fs.writeFileSync(outFile, JSON.stringify(record, null, 2) + '\n', 'utf-8');
+
+    dbStore.activity_log.unshift({
+      id: `LOG-${Date.now()}`,
+      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+      userId: user.userId,
+      userName: 'Ravi Singh Rathode',
+      action: 'APPROVE',
+      recordType: 'ECR',
+      recordId: changeId,
+      details: `Director Ed25519 cryptographic sign-off (${decisionNorm}) over baseline digest ${digest.substring(0, 22)}...`
+    });
+    saveStoreToFile();
+
+    res.json({
+      success: true,
+      message: `ECR ${changeId} cryptographically signed (${decisionNorm}) with Ed25519.`,
+      record,
+      filePath: `${APPROVALS_DIR}/${changeId}.approval.json`
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 
 
 // --- API ROUTES ---

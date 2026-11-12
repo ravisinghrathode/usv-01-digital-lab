@@ -250,3 +250,89 @@ export async function signApprovalGate(
 
   return data.identity;
 }
+
+/**
+ * Checks whether staff credentials have been provisioned on the server.
+ */
+export async function fetchSetupStatus(): Promise<{ storeAvailable: boolean; provisionedUsers: string[] }> {
+  try {
+    const res = await fetch('/api/auth/setup-status');
+    const data = await res.json();
+    return {
+      storeAvailable: !!data.storeAvailable,
+      provisionedUsers: Array.isArray(data.provisionedUsers) ? data.provisionedUsers : []
+    };
+  } catch {
+    return { storeAvailable: false, provisionedUsers: [] };
+  }
+}
+
+/**
+ * Provisions an initial staff credential directly from the browser UI (first-time setup).
+ */
+export async function provisionInitialCredential(userId: string, passphrase: string): Promise<ApproverIdentity> {
+  const res = await fetch('/api/auth/provision-initial', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId, passphrase })
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || !data.success || !data.token) {
+    throw new Error(data.error || `Credential provisioning failed (HTTP ${res.status})`);
+  }
+  const identity: ApproverIdentity = {
+    userId: data.user.userId,
+    userName: data.user.userName,
+    role: data.user.role,
+    authenticatedAt: new Date().toISOString()
+  };
+  setSession(data.token, identity);
+  return identity;
+}
+
+/**
+ * Fetches the current EGS governance status, ECR records, Ed25519 key status, and approval records.
+ */
+export async function fetchGovernanceStatus(): Promise<any> {
+  const res = await fetch('/api/governance/status');
+  if (!res.ok) {
+    throw new Error(`Failed to load governance status (HTTP ${res.status})`);
+  }
+  return res.json();
+}
+
+/**
+ * 1-Click Web Ed25519 Keypair Generator for the Engineering Director.
+ */
+export async function generateDirectorKeypairWeb(passphrase: string, overwrite = false): Promise<any> {
+  const res = await authenticatedFetch('/api/governance/keygen', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ passphrase, overwrite })
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || !data.success) {
+    throw new Error(data.error || `Key generation failed (HTTP ${res.status})`);
+  }
+  return data;
+}
+
+/**
+ * 1-Click Web ECR Ed25519 Sign-Off for the Engineering Director.
+ */
+export async function signEcrWeb(
+  changeId: string,
+  decision: 'APPROVED' | 'REJECTED',
+  passphrase: string
+): Promise<any> {
+  const res = await authenticatedFetch('/api/governance/sign-ecr', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ changeId, decision, passphrase })
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || !data.success) {
+    throw new Error(data.error || `ECR signing failed (HTTP ${res.status})`);
+  }
+  return data;
+}

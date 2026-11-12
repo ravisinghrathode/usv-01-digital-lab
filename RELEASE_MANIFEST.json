@@ -3,8 +3,8 @@
   "programme": "NAVAL-USV",
   "project": "USV-01 Digital Engineering Lab",
   "releaseVersion": "1.0.0",
-  "gitCommitSha": "8e28dfe1e9da9bb46ebe8152702aad12bf09d475",
-  "builtAt": "2026-11-12T01:24:04.429Z",
+  "gitCommitSha": "b08e9f52fd1039ee250ee1b4dbd9c43fe9815faf",
+  "builtAt": "2026-11-12T01:55:59.887Z",
   "environment": {
     "nodeVersion": "v24.22.2",
     "osPlatform": "linux"
@@ -17,8 +17,8 @@
     },
     {
       "path": "server.ts",
-      "sha256": "97346adad0309c8367ec8f337d3ab44e19786119a9787ad465539a43532822ed",
-      "sizeBytes": 26249
+      "sha256": "9ee253939a0a136276a81ef7f077718c57425cec7bcce3486f8ad875c76621c4",
+      "sizeBytes": 37331
     },
     {
       "path": "USV01_PROJECT_CONTEXT.md",
@@ -32,8 +32,8 @@
     },
     {
       "path": "src/components/AgentOrchestratorView.tsx",
-      "sha256": "7a3b93eb7be9ac9e1899b7599c71cc8adbac05384814714d4be61396e00569e4",
-      "sizeBytes": 49468
+      "sha256": "f7864d38f16b2e1cfc176e27bc4145d8d7bb53ff6fd9644061c87adfaca9b8ee",
+      "sizeBytes": 61847
     },
     {
       "path": "src/components/AiEngineeringAssistant.tsx",
@@ -72,8 +72,8 @@
     },
     {
       "path": "src/components/LoginModal.tsx",
-      "sha256": "e2c1a0906e1041ca44a5edcb8cd03f47932adc3c50d173dd239838c87e509b22",
-      "sizeBytes": 9821
+      "sha256": "7e4d01d504ac5a6afb1b1083c7db709fd841c5127534e87e74ba11242111f5fa",
+      "sizeBytes": 11148
     },
     {
       "path": "src/components/MechanicalStructuralView.tsx",
@@ -167,8 +167,8 @@
     },
     {
       "path": "src/core/auth/authClient.ts",
-      "sha256": "1e16ce9de889628265e3add2c10cd93e834389dc6f6d88022c6cecfb592f7512",
-      "sizeBytes": 7410
+      "sha256": "6d8e23de67360b6b76150c1e835101dc9d8ec341e426fdc7e5d4487cf5879965",
+      "sizeBytes": 10278
     },
     {
       "path": "src/core/auth/credentialStore.ts",
@@ -312,5 +312,5 @@
     "auditVulnerabilities": 0,
     "staticAnalysisStatus": "PASS"
   },
-  "immutableManifestSha256": "45beaffdef71242f68b0881ae5220861134c8c024f569bfb3e61798f6a6da312"
+  "immutableManifestSha256": "e38902f059701e71b1982b61a378b9ea17a96b0d4b49fbf8b8531cc44cc901af"
 }
