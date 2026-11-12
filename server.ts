@@ -55,7 +55,7 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = express();
+export const app = express();
 const port = parseInt(process.env.PORT || '3000', 10);
 
 app.use(express.json({ limit: '25mb' }));
@@ -1446,17 +1446,12 @@ app.post('/api/gemini/generate', async (req, res) => {
           totalTokens: result.usageMetadata?.totalTokenCount || 0
         }
       });
-    } catch (_geminiErr: any) {
-      const { DeterministicProvider } = await import('./src/core/models/ModelProvider.ts');
-      const detProvider = new DeterministicProvider();
-      const detResult = await detProvider.generateText(
-        request || {
-          systemInstructions: systemInstruction || '',
-          userPrompt: prompt || '',
-          context
-        }
-      );
-      return res.json(detResult);
+    } catch (providerErr: any) {
+      return res.status(502).json({
+        success: false,
+        evidenceValid: false,
+        error: 'Gemini generation failed; no independent engineering analysis was completed.'
+      });
     }
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
@@ -1490,7 +1485,7 @@ app.post('/api/gemini/stream', async (req, res) => {
     res.write('data: [DONE]\n\n');
     res.end();
   } catch (_err: any) {
-    res.write(`data: ${JSON.stringify({ text: 'Deterministic telemetry stream active.' })}\n\n`);
+    res.write(`data: ${JSON.stringify({ error: 'Gemini streaming failed. No AI output was generated.' })}\n\n`);
     res.write('data: [DONE]\n\n');
     res.end();
   }

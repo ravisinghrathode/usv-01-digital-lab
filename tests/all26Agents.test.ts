@@ -101,27 +101,16 @@ describe('26-Agent Individual Verification Matrix (A01 - A26, Tests A through H)
       it(`[Test C — Invalid Input] should safely reject or handle malformed input for ${canonicalId}`, async () => {
         const agent = registry.getAgent(canonicalId)!;
         const invalidInput: AgentExecutionInput = {
-          taskId: `MATRIX-INVALID-${canonicalId}`,
-          context: {},
-          parameters: {
-            lwlMeters: -100,
-            beamMeters: 'invalid_beam',
-            components: 'not_an_array'
-          } as any
+          taskId: 123 as any,
+          context: null as any,
+          parameters: 'invalid_parameters' as any
         };
 
         const result = await executionEngine.executeAgent(agent.id, invalidInput);
         expect(result).toBeDefined();
-        // The engine must either return FAILED status or handle gracefully without throwing unhandled rejection
-        expect(['FAILED', 'SUCCESS', 'NEEDS_HUMAN_APPROVAL', 'PARTIAL']).toContain(result.status);
-        // Generic agent schemas may accept auxiliary fields; invalid physics must never create verified evidence.
-        if (result.status !== 'FAILED') {
-          expect(result.evidenceValid === true && result.deterministicToolEvidence.length === 0).toBe(false);
-        }
-        if (result.status === 'FAILED') {
-          expect(result.evidenceValid).toBe(false);
-          expect(result.executionMode).toBe('EXECUTION_FAILED');
-        }
+        expect(result.status).toBe('FAILED');
+        expect(result.evidenceValid).toBe(false);
+        expect(result.executionMode).toBe('EXECUTION_FAILED');
       });
 
       // Test D — Output validation
@@ -138,6 +127,9 @@ describe('26-Agent Individual Verification Matrix (A01 - A26, Tests A through H)
         expect(Array.isArray(result.openTbdItems)).toBe(true);
         expect(Array.isArray(result.warnings)).toBe(true);
         expect(Array.isArray(result.recommendations)).toBe(true);
+        if (result.status !== 'FAILED') {
+          expect(agent.outputSchema.safeParse(result.data).success).toBe(true);
+        }
       });
 
       // Test E — Dependency behavior
