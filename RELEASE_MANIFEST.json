@@ -3,8 +3,8 @@
   "programme": "NAVAL-USV",
   "project": "USV-01 Digital Engineering Lab",
   "releaseVersion": "1.0.0",
-  "gitCommitSha": "58891d83414cc76fe704c2b770652aebe50359bc",
-  "builtAt": "2026-11-12T18:09:23.161Z",
+  "gitCommitSha": "b076557d166a4407728ece34c0df94dd0fdf3523",
+  "builtAt": "2026-11-12T18:17:02.068Z",
   "environment": {
     "nodeVersion": "v24.22.2",
     "osPlatform": "linux"
@@ -366,33 +366,33 @@
       "sizeBytes": 10928
     },
     {
-      "path": "dist/assets/index-BIxfyvbH.js",
-      "sha256": "5b48e6aaefac44879b10ef22b6187395d31070725b7c611df762c2ca9f0760ae",
-      "sizeBytes": 753491
+      "path": "dist/assets/index-C2xUXJfB.js",
+      "sha256": "0ce47005bde1729b19eb272b426d357023d3017209bb01a5883436f16edc6d24",
+      "sizeBytes": 766582
     },
     {
-      "path": "dist/assets/index-BbUR6exW.css",
-      "sha256": "d447dfac1618012ee157854d7cc8fda24f903ae05b45eb63f58e09be6efa41ae",
-      "sizeBytes": 47455
+      "path": "dist/assets/index-jBpFdISO.css",
+      "sha256": "a70257a7a0807e85061edd43c9fa572062d7840eb986c0206e1e473f67ef0944",
+      "sizeBytes": 47525
     },
     {
-      "path": "dist/assets/vendor-libs-Bb8JjhAW.js",
-      "sha256": "63f6b447b655f5fdeee94114448a3e09bc92e8058ddf2ed3b44c16d3967943b3",
-      "sizeBytes": 3851
+      "path": "dist/assets/vendor-libs-E_n6JUh-.js",
+      "sha256": "6d8965af2beafbe9798241e3c30844fe1078d885ab2bd3b284478c00257b1f95",
+      "sizeBytes": 447880
     },
     {
-      "path": "dist/assets/vendor-react-DO6EVCPi.js",
-      "sha256": "5727a012962c79099a190e0e90d685ff6ed45ced41c75c1dc271713f03985f9b",
-      "sizeBytes": 250393
+      "path": "dist/assets/vendor-react-YBty3pab.js",
+      "sha256": "b8bf37cd7b31d069f1a610c89dd575acd4e486e87275b5b5113bc756025ac33c",
+      "sizeBytes": 251352
     },
     {
-      "path": "dist/assets/vendor-zod-DI3SlkSS.js",
-      "sha256": "b80c254796197e70618b79c55e7a98ad9cd932a73116cf3062099cee58ff83b1",
-      "sizeBytes": 92996
+      "path": "dist/assets/vendor-zod-BpELgJAh.js",
+      "sha256": "c239780ef28847685e51cb01ac86c44c22b4dcd83a5c6e7cdde5cc7cd04c30d4",
+      "sizeBytes": 94585
     },
     {
       "path": "dist/index.html",
-      "sha256": "3a35ab699e2f77b3dc90848985f949e117c13912f45e9f4adebbd1e838b0a3ca",
+      "sha256": "09cfa02b49d62d86b0e904712b6174a6a582b3cd9193a0e21571aa77906f2ae5",
       "sizeBytes": 1406
     }
   ],
@@ -402,5 +402,5 @@
     "auditVulnerabilities": 0,
     "staticAnalysisStatus": "PASS"
   },
-  "immutableManifestSha256": "5553f2ce57f5c74fb1623f80c8a6b260c34063fced2958832d15eeaa52722726"
+  "immutableManifestSha256": "054542a16760351da63f06fd8627e9bef2edba5f62d957102d91dca88043d92f"
 }
