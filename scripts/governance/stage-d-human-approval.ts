@@ -166,6 +166,12 @@ if (process.argv[1] && process.argv[1].endsWith('stage-d-human-approval.ts')) {
     }
   }
 
+  const outDir = path.join(process.cwd(), 'governance', 'reports');
+  if (!fs.existsSync(outDir)) {
+    fs.mkdirSync(outDir, { recursive: true });
+  }
+  fs.writeFileSync(path.join(outDir, 'stage-d-approval.json'), JSON.stringify(result, null, 2));
+
   if (result.humanApprovalRequired && !result.signatureVerified) {
     console.error('❌ STAGE D REJECTED: Safety-critical changes require a Director approval signed over this exact baseline.\n');
     process.exit(1);

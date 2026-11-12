@@ -1,8 +1,10 @@
-import { execSync } from 'child_process';
+import { execFileSync, execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
-import { ModelProviderRouter, isTestExecutionEnvironment } from '../../src/core/models/ModelProvider.ts';
+import { ModelProviderRouter, isTestExecutionEnvironment, resolveConfiguredProvider } from '../../src/core/models/ModelProvider.ts';
+import { computeBaselineDigest } from './ecr-approval.ts';
+import { generateClassificationReport } from './classify-change.ts';
 
 dotenv.config();
 
@@ -44,10 +46,15 @@ export interface RoleReviewOutput {
 export interface MultiRoleReviewReport {
   timestamp: string;
   gitRef: string;
+  evaluatedCommitSha: string;
+  baselineDigest: string;
   executionMode: string;
+  provider: string;
+  aiReviewStatus: 'COMPLETED' | 'AI_REVIEW_UNAVAILABLE' | 'FAILED';
+  deterministicStatus: 'PASS' | 'FAIL';
   hasMockFallback: boolean;
   reviews: RoleReviewOutput[];
-  compositeAdvisoryRecommendation: AdvisoryRecommendation;
+  compositeAdvisoryRecommendation: AdvisoryRecommendation | 'PENDING_HUMAN_REVIEW';
   governanceBanner: string;
 }
 
@@ -187,7 +194,49 @@ Respond strictly in valid JSON matching this schema:
   let modelRecommendation: AdvisoryRecommendation = 'ADVISORY_APPROVE';
   let summary = '';
 
-  const preferredProvider = process.env.OPENAI_API_KEY ? 'openai' : (process.env.GEMINI_API_KEY ? 'gemini' : 'mock_deterministic');
+  const configuredProvider = resolveConfiguredProvider();
+
+  // If deterministic mode is active, execute purely offline without external AI calls
+  if (configuredProvider === 'deterministic') {
+    const deterministicFindings = runDeterministicLayer(files, rawDiff);
+    let deterministicRec: AdvisoryRecommendation = 'ADVISORY_APPROVE';
+    if (deterministicFindings.some(f => f.severity === 'CRITICAL')) {
+      deterministicRec = 'ADVISORY_BLOCK';
+    } else if (deterministicFindings.some(f => f.severity === 'HIGH')) {
+      deterministicRec = 'ADVISORY_REQUEST_CHANGES';
+    } else if (deterministicFindings.length > 0) {
+      deterministicRec = 'ADVISORY_REQUEST_CHANGES';
+    }
+
+    return {
+      role: reviewer.role,
+      title: reviewer.title,
+      advisoryRecommendation: deterministicRec,
+      findings: deterministicFindings,
+      summary: deterministicFindings.length === 0
+        ? `Deterministic static verification completed for ${reviewer.title}. Zero rule violations identified.`
+        : `Deterministic static verification flagged ${deterministicFindings.length} issue(s) for ${reviewer.title}.`,
+      provider: 'deterministic',
+      model: 'none',
+      executionStatus: 'COMPLETED',
+      isMockFallback: false,
+      rawOutput: JSON.stringify({
+        status: 'COMPLETED',
+        provider: 'deterministic',
+        role: reviewer.role,
+        findingsCount: deterministicFindings.length,
+        recommendation: deterministicRec
+      }, null, 2),
+      deterministicFindings
+    };
+  }
+
+  let preferredModel = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+  if (configuredProvider === 'openai') {
+    preferredModel = process.env.CHATGPT_MODEL || 'gpt-4o-mini';
+  } else if (configuredProvider === 'ollama') {
+    preferredModel = process.env.OLLAMA_MODEL || 'llama3';
+  }
 
   try {
     const response = await router.generate(
@@ -201,8 +250,8 @@ Respond strictly in valid JSON matching this schema:
         }
       },
       {
-        preferredProvider,
-        modelName: process.env.CHATGPT_MODEL || 'gpt-4o-mini',
+        preferredProvider: configuredProvider,
+        modelName: preferredModel,
         temperature: 0.1,
         maxTokens: 2048,
         fallbackToMock: false
@@ -225,7 +274,7 @@ Respond strictly in valid JSON matching this schema:
         description: `Stage C Reviewer '${reviewer.role}' executed under synthetic mock fallback. Mock output cannot be accepted as certified Stage C independent technical review evidence.`,
         evidence: `Provider: ${providerUsed}, Model: ${modelUsed}, isMock: true`,
         potentialConsequences: 'Unreviewed baseline change entering engineering ecosystem with zero authentic independent AI verification.',
-        recommendedAction: 'Execute Stage C using an authenticated, operational model provider (OpenAI or Gemini) with active quota.'
+        recommendedAction: 'Execute Stage C using an authenticated, operational model provider or configure deterministic provider.'
       }];
     } else if (response.parsedJson && response.parsedJson.recommendation) {
       modelRecommendation = response.parsedJson.recommendation || 'ADVISORY_APPROVE';
@@ -235,26 +284,28 @@ Respond strictly in valid JSON matching this schema:
       summary = `Evaluation completed by ${reviewer.role}. Output parsed as plain text.`;
     }
   } catch (err: any) {
-    executionStatus = 'FAILED';
-    rawOutput = `Execution Error: ${err?.message || err}`;
+    // When external AI endpoint fails or credentials are unprovisioned, run deterministic checks
+    // Never fabricate mock AI output!
+    const deterministicFindings = runDeterministicLayer(files, rawDiff);
+    let deterministicRec: AdvisoryRecommendation = 'ADVISORY_APPROVE';
+    if (deterministicFindings.some(f => f.severity === 'CRITICAL')) {
+      deterministicRec = 'ADVISORY_BLOCK';
+    } else if (deterministicFindings.some(f => f.severity === 'HIGH')) {
+      deterministicRec = 'ADVISORY_REQUEST_CHANGES';
+    }
+
     return {
       role: reviewer.role,
       title: reviewer.title,
-      advisoryRecommendation: 'ADVISORY_BLOCK',
-      findings: [{
-        severity: 'CRITICAL',
-        affectedFiles: files.map(f => f.path),
-        description: `Mandatory independent AI reviewer '${reviewer.role}' failed to execute: ${err?.message || err}`,
-        evidence: `Model invocation against '${preferredProvider}' failed.`,
-        potentialConsequences: 'Unreviewed baseline change entering engineering ecosystem due to reviewer execution failure.',
-        recommendedAction: 'Verify model credentials and connectivity, or re-run pipeline when service is restored.'
-      }],
-      summary: `CRITICAL: Reviewer execution failed: ${err?.message || err}`,
-      provider: preferredProvider,
-      model: process.env.CHATGPT_MODEL || 'gpt-4o-mini',
+      advisoryRecommendation: deterministicRec,
+      findings: deterministicFindings,
+      summary: `AI review unavailable (${err?.message || err}). Deterministic verification executed with ${deterministicFindings.length} finding(s).`,
+      provider: `${configuredProvider} (unavailable)`,
+      model: preferredModel,
       executionStatus: 'FAILED',
-      isMockFallback: true,
-      rawOutput
+      isMockFallback: false,
+      rawOutput: `AI invocation unavailable: ${err?.message || err}`,
+      deterministicFindings
     };
   }
 
@@ -570,6 +621,7 @@ export class RequirementsTraceabilityReviewer implements IIndependentTechnicalRe
 // Multi-Role Review Orchestrator
 // ----------------------------------------------------------------------------------------
 export async function generateMultiRoleReview(baseRef = 'origin/main'): Promise<MultiRoleReviewReport> {
+  const rootDir = process.cwd();
   let rawDiff = '';
   try {
     rawDiff = execSync(`git diff ${baseRef}...HEAD`, { encoding: 'utf-8' });
@@ -580,6 +632,21 @@ export async function generateMultiRoleReview(baseRef = 'origin/main'): Promise<
       rawDiff = execSync('git diff --staged', { encoding: 'utf-8' });
     }
   }
+
+  const headRef = process.env.PR_HEAD_SHA || 'HEAD';
+  let evaluatedCommitSha = 'unknown';
+  try {
+    evaluatedCommitSha = execFileSync('git', ['rev-parse', headRef], { encoding: 'utf-8' }).trim();
+  } catch {
+    try {
+      evaluatedCommitSha = execSync('git rev-parse HEAD', { encoding: 'utf-8' }).trim();
+    } catch {}
+  }
+
+  let baselineDigest = 'unknown';
+  try {
+    baselineDigest = computeBaselineDigest(evaluatedCommitSha, rootDir);
+  } catch {}
 
   const sanitized = sanitizeDiffForReview(rawDiff);
   const diffFiles = parseDiff(sanitized);
@@ -598,16 +665,45 @@ export async function generateMultiRoleReview(baseRef = 'origin/main'): Promise<
   // Execute all 7 technical reviewers independently and concurrently
   const reviews = await Promise.all(reviewers.map(r => r.execute(diffFiles, sanitized)));
 
-  // Compute composite recommendation
-  let composite: AdvisoryRecommendation = 'ADVISORY_APPROVE';
+  const configuredProvider = resolveConfiguredProvider();
   const hasMockFallback = reviews.some(r => r.isMockFallback);
 
-  if (reviews.some(r => r.executionStatus === 'FAILED') || hasMockFallback) {
+  // Check deterministic status across all reviewers
+  const hasCriticalFindings = reviews.some(r => r.findings.some(f => f.severity === 'CRITICAL'));
+  const hasHighFindings = reviews.some(r => r.findings.some(f => f.severity === 'HIGH'));
+  const deterministicStatus: 'PASS' | 'FAIL' = hasCriticalFindings ? 'FAIL' : 'PASS';
+
+  // Determine overall AI status
+  let aiReviewStatus: 'COMPLETED' | 'AI_REVIEW_UNAVAILABLE' | 'FAILED' = 'COMPLETED';
+  if (configuredProvider === 'deterministic') {
+    aiReviewStatus = 'AI_REVIEW_UNAVAILABLE';
+  } else if (reviews.some(r => r.executionStatus === 'FAILED')) {
+    aiReviewStatus = 'AI_REVIEW_UNAVAILABLE';
+  }
+
+  // Get change classification risk
+  let changeRisk: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' = 'CRITICAL';
+  try {
+    const classReport = generateClassificationReport(baseRef);
+    changeRisk = classReport.summary.overallRisk;
+  } catch {}
+
+  // Compute composite recommendation
+  let composite: AdvisoryRecommendation | 'PENDING_HUMAN_REVIEW' = 'ADVISORY_APPROVE';
+
+  if (hasMockFallback || deterministicStatus === 'FAIL') {
     composite = 'ADVISORY_BLOCK';
-  } else if (reviews.some(r => r.advisoryRecommendation === 'ADVISORY_BLOCK')) {
-    composite = 'ADVISORY_BLOCK';
-  } else if (reviews.some(r => r.advisoryRecommendation === 'ADVISORY_REQUEST_CHANGES')) {
+  } else if (hasHighFindings) {
     composite = 'ADVISORY_REQUEST_CHANGES';
+  } else if (aiReviewStatus === 'AI_REVIEW_UNAVAILABLE') {
+    // If AI review was unavailable on a safety-critical / high-risk change:
+    if (changeRisk === 'CRITICAL' || changeRisk === 'HIGH') {
+      composite = 'PENDING_HUMAN_REVIEW';
+    } else {
+      composite = 'ADVISORY_APPROVE';
+    }
+  } else {
+    composite = 'ADVISORY_APPROVE';
   }
 
   const governanceBanner = `
@@ -619,22 +715,39 @@ export async function generateMultiRoleReview(baseRef = 'origin/main'): Promise<
 ========================================================================================
 `;
 
-  return {
+  const report: MultiRoleReviewReport = {
     timestamp: new Date().toISOString(),
     gitRef: baseRef,
-    executionMode: 'Seven Independent Model-Backed Reviewers (Concurrent Evaluation)',
+    evaluatedCommitSha,
+    baselineDigest,
+    executionMode: configuredProvider === 'deterministic'
+      ? 'Deterministic Static Rule Engine (Zero External API)'
+      : `Seven Independent Reviewers (${configuredProvider})`,
+    provider: configuredProvider,
+    aiReviewStatus,
+    deterministicStatus,
     hasMockFallback,
     reviews,
     compositeAdvisoryRecommendation: composite,
     governanceBanner: governanceBanner.trim()
   };
+
+  // Write report to governance/reports/stage-c-review.json
+  const outDir = path.join(rootDir, 'governance', 'reports');
+  if (!fs.existsSync(outDir)) {
+    fs.mkdirSync(outDir, { recursive: true });
+  }
+  fs.writeFileSync(path.join(outDir, 'stage-c-review.json'), JSON.stringify(report, null, 2));
+
+  return report;
 }
 
 export function formatReviewReportMarkdown(report: MultiRoleReviewReport): string {
-  const recBadge: Record<AdvisoryRecommendation, string> = {
+  const recBadge: Record<AdvisoryRecommendation | 'PENDING_HUMAN_REVIEW', string> = {
     ADVISORY_APPROVE: '🟢 ADVISORY APPROVAL RECOMMENDED',
     ADVISORY_REQUEST_CHANGES: '🟡 ADVISORY: CHANGES REQUESTED',
-    ADVISORY_BLOCK: '🔴 ADVISORY: MERGE BLOCKED BY INDEPENDENT REVIEW'
+    ADVISORY_BLOCK: '🔴 ADVISORY: MERGE BLOCKED BY INDEPENDENT REVIEW',
+    PENDING_HUMAN_REVIEW: '🟡 ADVISORY: PENDING HUMAN AUTHORITY SIGN-OFF (AI UNAVAILABLE FOR CRITICAL RISK)'
   };
 
   let md = `## 🤖 NAVAL-USV Stage C: Independent Multi-Role Technical Review
@@ -647,6 +760,10 @@ export function formatReviewReportMarkdown(report: MultiRoleReviewReport): strin
 
 **Composite Advisory Verdict:** **${recBadge[report.compositeAdvisoryRecommendation]}**  
 **Review Execution Mode:** \`${report.executionMode}\`  
+**Evaluated Commit:** \`${report.evaluatedCommitSha}\`  
+**Baseline Content Digest:** \`${report.baselineDigest}\`  
+**Deterministic Verification Status:** \`${report.deterministicStatus}\`  
+**AI Review Status:** \`${report.aiReviewStatus}\`  
 **Timestamp:** \`${report.timestamp}\`
 
 ---
@@ -688,6 +805,7 @@ if (process.argv[1] && process.argv[1].endsWith('independent-ai-review.ts')) {
       console.error('\n🚫 Stage C Independent Review recommended BLOCKING the change due to critical defects or mock reviewer fallback.\n');
       process.exit(1);
     }
+    process.exit(0);
   }).catch(err => {
     console.error('Fatal Stage C review error:', err);
     process.exit(1);

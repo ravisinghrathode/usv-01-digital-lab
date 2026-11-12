@@ -1,0 +1,128 @@
+{
+  "timestamp": "2026-11-12T00:09:03.932Z",
+  "gitRef": "origin/main",
+  "evaluatedCommitSha": "2e7bf6d76e38b3399740a70b1539a462971fb9e2",
+  "baselineDigest": "sha256:a4051d28caf5bc86c91f766f4b563c2367a23c9fb95e2baf5b225339d7a6b651",
+  "executionMode": "Deterministic Static Rule Engine (Zero External API)",
+  "provider": "deterministic",
+  "aiReviewStatus": "AI_REVIEW_UNAVAILABLE",
+  "deterministicStatus": "PASS",
+  "hasMockFallback": false,
+  "reviews": [
+    {
+      "role": "SOFTWARE_ARCHITECTURE_REVIEWER",
+      "title": "Software Architecture & Modular Cohesion Reviewer",
+      "advisoryRecommendation": "ADVISORY_REQUEST_CHANGES",
+      "findings": [
+        {
+          "severity": "MEDIUM",
+          "affectedFiles": [
+            "src/core/governance/AgentGovernanceBridge.ts"
+          ],
+          "description": "Deep relative import paths detected across architectural layers.",
+          "evidence": "import { ECRRecord } from '../../../scripts/governance/ecr-tool.ts';",
+          "potentialConsequences": "Tight coupling between lower-level utilities and higher-level domain services.",
+          "recommendedAction": "Use TypeScript path aliases or consolidate shared core modules."
+        }
+      ],
+      "summary": "Deterministic static verification flagged 1 issue(s) for Software Architecture & Modular Cohesion Reviewer.",
+      "provider": "deterministic",
+      "model": "none",
+      "executionStatus": "COMPLETED",
+      "isMockFallback": false,
+      "rawOutput": "{\n  \"status\": \"COMPLETED\",\n  \"provider\": \"deterministic\",\n  \"role\": \"SOFTWARE_ARCHITECTURE_REVIEWER\",\n  \"findingsCount\": 1,\n  \"recommendation\": \"ADVISORY_REQUEST_CHANGES\"\n}",
+      "deterministicFindings": [
+        {
+          "severity": "MEDIUM",
+          "affectedFiles": [
+            "src/core/governance/AgentGovernanceBridge.ts"
+          ],
+          "description": "Deep relative import paths detected across architectural layers.",
+          "evidence": "import { ECRRecord } from '../../../scripts/governance/ecr-tool.ts';",
+          "potentialConsequences": "Tight coupling between lower-level utilities and higher-level domain services.",
+          "recommendedAction": "Use TypeScript path aliases or consolidate shared core modules."
+        }
+      ]
+    },
+    {
+      "role": "CODE_QUALITY_REVIEWER",
+      "title": "Code Quality, Types & Strictness Reviewer",
+      "advisoryRecommendation": "ADVISORY_APPROVE",
+      "findings": [],
+      "summary": "Deterministic static verification completed for Code Quality, Types & Strictness Reviewer. Zero rule violations identified.",
+      "provider": "deterministic",
+      "model": "none",
+      "executionStatus": "COMPLETED",
+      "isMockFallback": false,
+      "rawOutput": "{\n  \"status\": \"COMPLETED\",\n  \"provider\": \"deterministic\",\n  \"role\": \"CODE_QUALITY_REVIEWER\",\n  \"findingsCount\": 0,\n  \"recommendation\": \"ADVISORY_APPROVE\"\n}",
+      "deterministicFindings": []
+    },
+    {
+      "role": "SOFTWARE_QA_REVIEWER",
+      "title": "Software QA & Verification Coverage Reviewer",
+      "advisoryRecommendation": "ADVISORY_APPROVE",
+      "findings": [],
+      "summary": "Deterministic static verification completed for Software QA & Verification Coverage Reviewer. Zero rule violations identified.",
+      "provider": "deterministic",
+      "model": "none",
+      "executionStatus": "COMPLETED",
+      "isMockFallback": false,
+      "rawOutput": "{\n  \"status\": \"COMPLETED\",\n  \"provider\": \"deterministic\",\n  \"role\": \"SOFTWARE_QA_REVIEWER\",\n  \"findingsCount\": 0,\n  \"recommendation\": \"ADVISORY_APPROVE\"\n}",
+      "deterministicFindings": []
+    },
+    {
+      "role": "CYBERSECURITY_REVIEWER",
+      "title": "Cybersecurity, Cryptography & Threat Mitigation Reviewer",
+      "advisoryRecommendation": "ADVISORY_APPROVE",
+      "findings": [],
+      "summary": "Deterministic static verification completed for Cybersecurity, Cryptography & Threat Mitigation Reviewer. Zero rule violations identified.",
+      "provider": "deterministic",
+      "model": "none",
+      "executionStatus": "COMPLETED",
+      "isMockFallback": false,
+      "rawOutput": "{\n  \"status\": \"COMPLETED\",\n  \"provider\": \"deterministic\",\n  \"role\": \"CYBERSECURITY_REVIEWER\",\n  \"findingsCount\": 0,\n  \"recommendation\": \"ADVISORY_APPROVE\"\n}",
+      "deterministicFindings": []
+    },
+    {
+      "role": "SAFETY_ENGINEERING_REVIEWER",
+      "title": "Naval Safety Engineering & Actuator Air-Gap Reviewer",
+      "advisoryRecommendation": "ADVISORY_APPROVE",
+      "findings": [],
+      "summary": "Deterministic static verification completed for Naval Safety Engineering & Actuator Air-Gap Reviewer. Zero rule violations identified.",
+      "provider": "deterministic",
+      "model": "none",
+      "executionStatus": "COMPLETED",
+      "isMockFallback": false,
+      "rawOutput": "{\n  \"status\": \"COMPLETED\",\n  \"provider\": \"deterministic\",\n  \"role\": \"SAFETY_ENGINEERING_REVIEWER\",\n  \"findingsCount\": 0,\n  \"recommendation\": \"ADVISORY_APPROVE\"\n}",
+      "deterministicFindings": []
+    },
+    {
+      "role": "CONFIGURATION_MANAGEMENT_REVIEWER",
+      "title": "Configuration Management & Baseline Integrity Reviewer",
+      "advisoryRecommendation": "ADVISORY_APPROVE",
+      "findings": [],
+      "summary": "Deterministic static verification completed for Configuration Management & Baseline Integrity Reviewer. Zero rule violations identified.",
+      "provider": "deterministic",
+      "model": "none",
+      "executionStatus": "COMPLETED",
+      "isMockFallback": false,
+      "rawOutput": "{\n  \"status\": \"COMPLETED\",\n  \"provider\": \"deterministic\",\n  \"role\": \"CONFIGURATION_MANAGEMENT_REVIEWER\",\n  \"findingsCount\": 0,\n  \"recommendation\": \"ADVISORY_APPROVE\"\n}",
+      "deterministicFindings": []
+    },
+    {
+      "role": "REQUIREMENTS_TRACEABILITY_REVIEWER",
+      "title": "Requirements Traceability & Allocation Reviewer",
+      "advisoryRecommendation": "ADVISORY_APPROVE",
+      "findings": [],
+      "summary": "Deterministic static verification completed for Requirements Traceability & Allocation Reviewer. Zero rule violations identified.",
+      "provider": "deterministic",
+      "model": "none",
+      "executionStatus": "COMPLETED",
+      "isMockFallback": false,
+      "rawOutput": "{\n  \"status\": \"COMPLETED\",\n  \"provider\": \"deterministic\",\n  \"role\": \"REQUIREMENTS_TRACEABILITY_REVIEWER\",\n  \"findingsCount\": 0,\n  \"recommendation\": \"ADVISORY_APPROVE\"\n}",
+      "deterministicFindings": []
+    }
+  ],
+  "compositeAdvisoryRecommendation": "PENDING_HUMAN_REVIEW",
+  "governanceBanner": "========================================================================================\n⚠️  NAVAL-USV INDEPENDENT TECHNICAL REVIEW PIPELINE (STAGE C) — ADVISORY EVIDENCE ONLY\n   NON-NEGOTIABLE PRINCIPLE 5: AI CANNOT INDEPENDENTLY AUTHORISE ITS OWN CHANGES.\n   SEVEN INDEPENDENT MODEL-BACKED REVIEWERS CONCURRENTLY EVALUATING CHANGE SET.\n   FINAL ACCEPTANCE REQUIRES SIGNED HUMAN AUTHORITY PER ENGINEERING GOVERNANCE POLICY.\n========================================================================================"
+}
