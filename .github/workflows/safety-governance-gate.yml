@@ -36,17 +36,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
 
-      - name: Install Project Dependencies
+      - name: Set up Bun (repository lockfile is bun.lock)
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Project Dependencies (immutable lockfile)
         run: |
           set -euo pipefail
-          npm ci
+          bun install --frozen-lockfile
 
       - name: Stage B — Dependency Security Audit
         run: |
           set -euo pipefail
-          npm audit --audit-level=high
+          bun audit --audit-level=high
 
       - name: Stage B — DevSecOps Secret Scanning
         run: |
