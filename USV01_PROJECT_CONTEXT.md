@@ -41,6 +41,7 @@ Develop an unmanned surface vessel (USV-01) for Coastal & Harbor Security / Auto
 8. Safety-critical conclusions require qualified human review, independent verification and appropriate physical testing.
 9. AI-generated outputs are proposals until reviewed and approved by an authorized engineer.
 10. No live vessel commands, actuator control, weapon-targeting or combat-payload functions are in scope for this Digital Lab.
+11. Closed-Loop Simulation Binding: Whenever agents compute or update boat design parameters (dimensions, mass, KG, hydrostatics, resistance, sensor ranges, COLREGS kinematics), the visual 3D model and realtime physics simulation of that exact vessel must automatically be updated and rendered to visually verify the physical consequences of the design.
 
 ## Compute context
 

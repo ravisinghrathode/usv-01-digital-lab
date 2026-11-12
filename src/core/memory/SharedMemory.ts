@@ -7,6 +7,7 @@ export class SharedMemory {
   private adrs: Map<string, ArchitectureDecisionRecord> = new Map();
   private risks: Map<string, RiskEntry> = new Map();
   private auditLogger = AuditLogger.getInstance();
+  private parameterListeners: Set<(param: EngineeringParameter) => void> = new Set();
 
   private constructor() {
     this.seedDefaultBaseline();
@@ -193,6 +194,23 @@ export class SharedMemory {
       date: '2026-11-11'
     });
 
+    this.adrs.set('ADR-004', {
+      id: 'ADR-004',
+      title: 'Closed-Loop Agent-to-Simulation Synthesis',
+      discipline: 'SYS',
+      status: 'APPROVED',
+      context: 'When agents calculate boat design parameters, the visual 3D model and realtime simulation of the boat must immediately and automatically reflect those found values without manual disconnects or static placeholders.',
+      decision: 'Mandate reactive synchronization between agent outputs in SharedMemory and all visual simulation components (3D hull geometry, 6-DOF flotation wave tank, and radar COLREGS kinematics).',
+      consequences: [
+        'Eliminates placeholder and unlinked simulation states',
+        'Provides real-time visual proof of agent-engineered physics and stability',
+        'Directly couples deterministic naval calculations to live visual twin'
+      ],
+      proposedByAgent: 'LEAD-SYS-01',
+      approvedBy: 'ENGINEERING_DIRECTOR',
+      date: '2026-11-12'
+    });
+
     // Default Risk
     this.risks.set('RSK-001', {
       id: 'RSK-001',
@@ -204,6 +222,23 @@ export class SharedMemory {
       status: 'OPEN',
       ownerAgentId: 'STAB-HYD-06'
     });
+  }
+
+  public subscribe(callback: (param: EngineeringParameter) => void): () => void {
+    this.parameterListeners.add(callback);
+    return () => {
+      this.parameterListeners.delete(callback);
+    };
+  }
+
+  private notifyListeners(param: EngineeringParameter): void {
+    for (const listener of this.parameterListeners) {
+      try {
+        listener(param);
+      } catch (err) {
+        console.error('Error in SharedMemory subscriber:', err);
+      }
+    }
   }
 
   public getParameter(id: string): EngineeringParameter | undefined {
@@ -249,6 +284,8 @@ export class SharedMemory {
       }
     });
 
+    this.notifyListeners(revised);
+
     return revised;
   }
 
@@ -257,6 +294,7 @@ export class SharedMemory {
       throw new Error(`Parameter with ID '${param.id}' already exists.`);
     }
     this.parameters.set(param.id, param);
+    this.notifyListeners(param);
   }
 
   public getAllAdrs(): ArchitectureDecisionRecord[] {

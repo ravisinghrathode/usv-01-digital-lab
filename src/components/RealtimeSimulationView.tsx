@@ -99,8 +99,22 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
   const [hydroMass, setHydroMass] = useState<number>(initialMass); // 6.2 tonnes
   const [hydroKg, setHydroKg] = useState<number>(initialKg); // 0.66 meters VCG
   const [waveAmp, setWaveAmp] = useState<number>(0.4); // meters
-  const [waveFreq, setWaveFreq] = useState<number>(1.2); // rad/s
   const [heelAngle, setHeelAngle] = useState<number>(0); // dynamic heel deg
+
+  // Reactive subscription: auto-update simulation whenever any agent writes to SharedMemory
+  useEffect(() => {
+    const unsubscribe = sharedMemory.subscribe((param) => {
+      if (param.id === 'USV-NA-004' && typeof param.value === 'number') {
+        setHydroMass(param.value);
+      } else if (param.id === 'USV-NA-006' && typeof param.value === 'number') {
+        setHydroKg(param.value);
+      } else if (param.id === 'USV-PROP-002' && typeof param.value === 'number') {
+        setUsvSpeed(param.value);
+        stateRef.current.usv.speed = param.value;
+      }
+    });
+    return unsubscribe;
+  }, [sharedMemory]);
 
   // Pre-configured Scenarios
   const loadScenario = (scenarioKey: string) => {
