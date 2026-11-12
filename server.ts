@@ -36,6 +36,7 @@ import { GlobalIntelligenceLearningBridge } from './src/core/intelligence/Global
 import http from 'http';
 import { WebSocketServer } from 'ws';
 import { VerifyUsv01Engine } from './src/core/verification/VerifyUsv01Engine.ts';
+import { getLabReadinessSnapshot } from './src/core/verification/LabReadiness.ts';
 import { AgentRegistry } from './src/core/registry/AgentRegistry.ts';
 import { BaseAgent } from './src/core/engine/BaseAgent.ts';
 import { CentralOrchestrator } from './src/core/orchestrator/CentralOrchestrator.ts';
@@ -934,6 +935,12 @@ app.post('/api/verify/execute', async (req, res) => {
 });
 
 // 2. Get latest verification report
+// Evidence-limited live snapshot. This never claims external integrations are healthy
+// without authenticated service-specific verification.
+app.get('/api/verify/readiness', (_req, res) => {
+  res.json({ success: true, report: getLabReadinessSnapshot() });
+});
+
 app.get('/api/verify/latest', async (req, res) => {
   try {
     const reportPath = path.join(process.cwd(), 'governance', 'reports', 'verify-usv01-report.json');
