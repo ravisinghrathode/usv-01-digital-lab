@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { generateApproverSignature, verifyApproverSignature, setDirectorSigningKey } from './src/core/safety/ApproverSigner.ts';
 import { AUTHORIZED_MEMBERS, type StaffMember } from './src/core/auth/staffDirectory.ts';
+import { authorizeLabRoute } from './src/core/auth/routeAuthorization.ts';
 import {
   verifyStaffCredential,
   isLockedOut,
@@ -236,7 +237,18 @@ app.use('/api', (req, res, next) => {
     (req.method === 'GET' && req.path === '/auth/setup-status') ||
     (req.method === 'POST' && req.path === '/auth/provision-initial');
   if (publiclyAccessible) return next();
-  return authMiddleware(req, res, next);
+  return authMiddleware(req, res, () => {
+    const user = (req as any).user as AuthenticatedUser;
+    if (!authorizeLabRoute(req.method, req.path, user.role)) {
+      AuditLogger.getInstance().log({
+        severity: 'SAFETY_CRITICAL',
+        action: 'UNAUTHORIZED_ROLE_OPERATION',
+        details: { userId: user.userId, role: user.role, method: req.method, route: req.path }
+      });
+      return res.status(403).json({ success: false, error: 'Forbidden: insufficient role authority for this operation.' });
+    }
+    next();
+  });
 });
 
 export function authenticateLoginRequest(body: { userId?: string; role?: string; passphrase?: string }): {
