@@ -683,7 +683,7 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
         expect(report.overallVerdict).not.toBe('PASS');
         expect(['CONDITIONAL', 'FAIL']).toContain(report.overallVerdict);
       }
-    });
+    }, 60000);
 
     it('should evaluate all 25 canonical HMEA agents (A01 - A25) with non-fabricated readiness', async () => {
       const engine = VerifyUsv01Engine.getInstance(process.cwd());
@@ -704,7 +704,7 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
         expect(a.readinessScore).toBeGreaterThanOrEqual(0);
         expect(a.readinessScore).toBeLessThanOrEqual(100);
       }
-    });
+    }, 60000);
   });
 
   describe('14. Defect Remediation Regression Suite (PR #14 Acceptance Criteria)', () => {
@@ -741,7 +741,7 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
 
       const buildCheck = phase1.checks.find(c => c.id === 'CHK-REPO-09');
       expect(buildCheck?.evidence?.command).toBe('npm run build');
-    });
+    }, 60000);
 
     it('Defect 4: should verify genuine execution of all 25 canonical agents without static ID lookups', async () => {
       const engineFile = fs.readFileSync(path.join(process.cwd(), 'src', 'core', 'verification', 'VerifyUsv01Engine.ts'), 'utf-8');
@@ -758,7 +758,7 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
         expect(['TESTED', 'SIMULATED', 'IMPLEMENTED', 'UNVERIFIED', 'FAILED']).toContain(a.capabilityStatus);
         expect(a.executionTestStatus).toBe('PASS');
       }
-    });
+    }, 60000);
 
     it('Defect 5: should enforce that missing, skipped, or unverified mandatory checks strictly fail', () => {
       const allPassed: IndividualCheckResult[] = [

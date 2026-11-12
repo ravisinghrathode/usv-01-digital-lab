@@ -92,6 +92,17 @@ jobs:
           path: test-output.log
           if-no-files-found: ignore
 
+      - name: Report Test Failure to PR
+        if: failure()
+        run: |
+          if [ -f test-output.log ]; then
+            tail -n 40 test-output.log > /tmp/pr-test-failure-summary.txt
+            gh pr comment 14 --body "### ❌ CI Test Suite Execution Failure Log
+\`\`\`
+$(cat /tmp/pr-test-failure-summary.txt)
+\`\`\`" || true
+          fi
+
       - name: Stage B — Production Bundle Verification
         run: |
           set -euo pipefail

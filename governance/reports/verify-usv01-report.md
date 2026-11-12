@@ -1,9 +1,9 @@
 # 🛡️ USV-01 DIGITAL ENGINEERING LAB — COMPREHENSIVE VERIFICATION REPORT
-**Document ID:** `USV01-VRFY-20261112125238`  
-**Execution Timestamp:** `2026-11-12T12:52:38.848Z`  
-**Evaluated Commit SHA:** `b1141d178fba46fd48fa6f3306977b096d781d9b` (`feat/verify-usv01-system`)  
-**Baseline Content Digest:** `sha256:c440c5fad52a9c4eaca566c9bcba454daf2d6d9485fcba372c70aa88121ef600`  
-**Total Verification Time:** `10750 ms`  
+**Document ID:** `USV01-VRFY-20261112130929`  
+**Execution Timestamp:** `2026-11-12T13:09:29.403Z`  
+**Evaluated Commit SHA:** `7a57f52ba16271d2bc875c738bae9ccf16046e78` (`feat/verify-usv01-system`)  
+**Baseline Content Digest:** `sha256:37868cddb96792e9db7978c590d613caf120221ec83458303e93a70b1e3ed23e`  
+**Total Verification Time:** `8276 ms`  
 
 ---
 
@@ -86,9 +86,9 @@
 | `CHK-REPO-04` | DevSecOps Secret Scanning & Cryptographic Key Protection | ✅ PASS | `YES` | Zero unredacted secrets, credentials, or private keys detected in repository diff. |
 | `CHK-REPO-05` | Repository Governance Configuration & CODEOWNERS Validation | ✅ PASS | `YES` | Governance workflows, CODEOWNERS, and branch protection configurations verified. |
 | `CHK-REPO-06` | Engineering Change Request (ECR) Document Integrity | ✅ PASS | `YES` | 1 formal ECR baseline records verified with complete frontmatter & safety schema. |
-| `CHK-REPO-07` | TypeScript Static Typecheck & Lint Execution | ✅ PASS | `YES` | Static typecheck & lint completed cleanly with 0 errors (205ms). |
-| `CHK-REPO-08` | Automated Deterministic & Safety Test Suite Execution | ✅ PASS | `YES` | Deterministic test suite executed: 97/97 tests passed across 8 test suites with 0 failures (9219ms). |
-| `CHK-REPO-09` | Production Client Bundle Build Verification | ✅ PASS | `YES` | Production bundle built successfully without external Node shimming errors (286ms). |
+| `CHK-REPO-07` | TypeScript Static Typecheck & Lint Execution | ✅ PASS | `YES` | Static typecheck & lint completed cleanly with 0 errors (221ms). |
+| `CHK-REPO-08` | Automated Deterministic & Safety Test Suite Execution | ✅ PASS | `YES` | Deterministic test suite executed: 97/97 tests passed across 8 test suites with 0 failures (6805ms). |
+| `CHK-REPO-09` | Production Client Bundle Build Verification | ✅ PASS | `YES` | Production bundle built successfully without external Node shimming errors (285ms). |
 
 ### Phase 2: Governance Stages A–E, Baseline Digest & Cryptographic Authority (Status: **FAIL**)
 
@@ -98,7 +98,7 @@
 | `CHK-GOV-02` | Stage C: Independent Multi-Role Technical Review | ✅ PASS | `YES` | Deterministic rule verification: PASS. Independent AI model review was UNAVAILABLE. |
 | `CHK-GOV-03` | Stage C: Model Transparency & Deterministic Review Disclosure | ✅ PASS | `YES` | CONFIRMED: Deterministic static analysis is accurately disclosed; no false claims of independent model review. |
 | `CHK-GOV-04` | Stage D: Human Authority & Cryptographic Director Authorization | ⏸️ BLOCKED | `YES` | PENDING: Safety-critical / High-risk change requires Director Ed25519 signature over exact baseline digest. |
-| `CHK-GOV-05` | Stage E: Governance Gate Enforcement & Fail-Closed Multi-Stage Gate | ❌ FAIL | `YES` | Stage E Gate BLOCKED: Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.; Stage D approval evidence does not correspond to the exact baseline digest being verified (expected sha256:c440c5fad52a9c4eaca566c9bcba454daf2d6d9485fcba372c70aa88121ef600, report had sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2).; Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2. |
+| `CHK-GOV-05` | Stage E: Governance Gate Enforcement & Fail-Closed Multi-Stage Gate | ❌ FAIL | `YES` | Stage E Gate BLOCKED: Stage A classification report evidence does not match the exact baseline digest being verified (expected sha256:37868cddb96792e9db7978c590d613caf120221ec83458303e93a70b1e3ed23e, report had sha256:c440c5fad52a9c4eaca566c9bcba454daf2d6d9485fcba372c70aa88121ef600).; Stage A classification report evidence does not match the exact commit SHA being verified (expected 7a57f52ba16271d2bc875c738bae9ccf16046e78, report had b1141d178fba46fd48fa6f3306977b096d781d9b).; Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.; Stage D approval evidence does not correspond to the exact baseline digest being verified (expected sha256:37868cddb96792e9db7978c590d613caf120221ec83458303e93a70b1e3ed23e, report had sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2).; Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2. |
 
 ### Phase 3: 25 HMEA Canonical Agents Execution Capability & Readiness (Status: **PASS**)
 
@@ -114,14 +114,14 @@
 |---|---|---|---|---|
 | `CHK-ENG-01` | Bidirectional Requirements Traceability (REQ → VNV → TEST) | 🟡 COND | `NO` | 2 requirements lack associated verification plans (REQ-NAV-002, REQ-MEC-001). |
 | `CHK-ENG-02` | TBD Parameter Tracking & Zero-Fabrication Assumption Audit | ✅ PASS | `YES` | 6 design parameters explicitly tracked as TBD without synthetic or fabricated values. |
-| `CHK-ENG-03` | Cryptographic Hash-Chained Audit Trail Integrity | ✅ PASS | `YES` | Audit ledger integrity verified across 125 SHA-256 chained events with zero tampering. |
+| `CHK-ENG-03` | Cryptographic Hash-Chained Audit Trail Integrity | ✅ PASS | `YES` | Audit ledger integrity verified across 165 SHA-256 chained events with zero tampering. |
 | `CHK-ENG-04` | Human Authority Gate State & Policy Enforcement | ✅ PASS | `YES` | 0 safety gates tracked (0 pending Director decision). Non-Negotiable Principle 5 enforced. |
 
 ---
 
 ## 🚫 Unresolved Blockers & Disqualifying Conditions
 
-- ❌ **CHK-GOV-05 (Stage E: Governance Gate Enforcement & Fail-Closed Multi-Stage Gate): Stage E Gate BLOCKED: Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.; Stage D approval evidence does not correspond to the exact baseline digest being verified (expected sha256:c440c5fad52a9c4eaca566c9bcba454daf2d6d9485fcba372c70aa88121ef600, report had sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2).; Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2.**
+- ❌ **CHK-GOV-05 (Stage E: Governance Gate Enforcement & Fail-Closed Multi-Stage Gate): Stage E Gate BLOCKED: Stage A classification report evidence does not match the exact baseline digest being verified (expected sha256:37868cddb96792e9db7978c590d613caf120221ec83458303e93a70b1e3ed23e, report had sha256:c440c5fad52a9c4eaca566c9bcba454daf2d6d9485fcba372c70aa88121ef600).; Stage A classification report evidence does not match the exact commit SHA being verified (expected 7a57f52ba16271d2bc875c738bae9ccf16046e78, report had b1141d178fba46fd48fa6f3306977b096d781d9b).; Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.; Stage D approval evidence does not correspond to the exact baseline digest being verified (expected sha256:37868cddb96792e9db7978c590d613caf120221ec83458303e93a70b1e3ed23e, report had sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2).; Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2.**
 - ❌ **CHK-GOV-04 (Stage D: Human Authority & Cryptographic Director Authorization): PENDING: Safety-critical / High-risk change requires Director Ed25519 signature over exact baseline digest.**
 
 ---
@@ -133,4 +133,4 @@
 - ℹ️ 2 engineering requirements lack associated verification plans.
 
 ---
-*Report cryptographically certified by NAVAL-USV / USV-01 Single-Press Verification Engine at 2026-11-12T12:52:38.848Z*
+*Report cryptographically certified by NAVAL-USV / USV-01 Single-Press Verification Engine at 2026-11-12T13:09:29.403Z*
