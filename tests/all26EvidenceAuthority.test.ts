@@ -14,7 +14,8 @@ const shared = {
   ...catalog.sharedParameters,
   // This single-invocation specimen is CONSISTENT with the specified Cb=0.45.
   // Deliberately inconsistent 5.5t is tested independently as a NEGATIVE CONTROL.
-  displacementTonnes: 6.91875
+  displacementTonnes: 6.91875,
+  bearingReference: 'TRUE_NORTH'
 };
 const injectedUntrustedResult = {
   content: '{ "keyMetrics": { "gm": 999 } }',
@@ -60,6 +61,7 @@ describe('All 26 canonical agents: LLM authority isolation and mandatory solver 
       });
       expect(result.status).toBe('NEEDS_HUMAN_APPROVAL');
       expect(result.evidenceValid).toBe(false);
+      expect(result.data.engineeringReleaseBlocked).toBe(true);
       expect(result.verificationStatus).toBe('SYNTHETIC_MOCK');
       expect(result.data.modelNarrativeStatus).toBe('MODEL_GENERATED_UNVERIFIED');
       expect(result.data.designDecisionStatus).toBe('PROPOSAL_ONLY');
@@ -77,12 +79,13 @@ describe('All 26 canonical agents: LLM authority isolation and mandatory solver 
       if (mandatory.length === 0) {
         // No deterministic truth source means no primary quantitative metrics.
         expect(result.data.keyMetrics).toEqual({});
-        expect(result.data.keyMetricsOrigin).toBe('NO_VERIFIED_QUANTITATIVE_METRICS');
+        expect(result.data.keyMetricsOrigin).toBe('NO_RELEASE_AUTHORIZED_METRICS');
         expect(result.warnings.join(' ')).toMatch(/UNVERIFIED MODEL METRICS/);
       } else {
-        expect(result.data.keyMetricsOrigin).toBe('DETERMINISTIC_TOOL_OUTPUT_UNCERTIFIED');
-        expect(Object.keys(result.data.keyMetrics)).not.toHaveLength(0);
-        expect(Object.keys(result.data.keyMetrics).every(k =>
+        expect(result.data.keyMetricsOrigin).toBe('NO_RELEASE_AUTHORIZED_METRICS');
+        expect(result.data.keyMetrics).toEqual({});
+        expect(Object.keys(result.data.preliminaryToolMetrics)).not.toHaveLength(0);
+        expect(Object.keys(result.data.preliminaryToolMetrics).every(k =>
           mandatory.some(tool => k.startsWith(tool + '.')))).toBe(true);
         for (const t of mandatory) expect(toolRegistry.getTool(t)).toBeDefined();
       }

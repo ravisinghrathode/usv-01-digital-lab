@@ -4,7 +4,7 @@ import { ToolRegistry } from '../src/core/tools/ToolRegistry.ts';
 const tool = ToolRegistry.getInstance();
 const approach = {
   ownCourseDeg: 0, ownSpeedKnots: 12,
-  targetBearingDeg: 0, targetRangeNm: 2,
+  targetBearingDeg: 0, bearingReference: 'TRUE_NORTH', targetRangeNm: 2,
   targetCourseDeg: 180, targetSpeedKnots: 12
 };
 async function check(extra: object) {

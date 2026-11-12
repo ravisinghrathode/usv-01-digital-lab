@@ -10,14 +10,14 @@ export const HydrostaticsTool: EngineeringTool = {
   deterministic: true,
   requiredPermissions: ['CALCULATION_EXEC'],
   inputSchema: z.object({
-    lwlMeters: z.coerce.number().positive(),
-    beamMeters: z.coerce.number().positive(),
-    draftMeters: z.coerce.number().positive(),
-    blockCoefficientCb: z.coerce.number().min(0.30).max(0.95).optional(),
-    waterplaneCoefficientCwp: z.coerce.number().min(0.4).max(0.95).optional(),
-    kgMeters: z.coerce.number().nonnegative().optional(),
-    displacementTonnes: z.coerce.number().positive().optional(),
-    seawaterDensityKgM3: z.coerce.number().min(900).max(1100).default(1025)
+    lwlMeters: z.number().positive(),
+    beamMeters: z.number().positive(),
+    draftMeters: z.number().positive(),
+    blockCoefficientCb: z.number().min(0.30).max(0.95).optional(),
+    waterplaneCoefficientCwp: z.number().min(0.4).max(0.95).optional(),
+    kgMeters: z.number().nonnegative().optional(),
+    displacementTonnes: z.number().positive().optional(),
+    seawaterDensityKgM3: z.number().min(900).max(1100).default(1025)
   }).passthrough().superRefine((data, ctx) => {
     if (data.blockCoefficientCb === undefined && data.displacementTonnes === undefined) {
       ctx.addIssue({ code: 'custom', message: 'An explicit Cb or measured displacement is required; arbitrary hull fullness is prohibited.' });
@@ -40,7 +40,8 @@ export const HydrostaticsTool: EngineeringTool = {
     centerOfBuoyancyKbM: z.number(),
     transverseMetacentricRadiusBmtM: z.number(),
     transverseMetacenterKmtM: z.number(),
-    metacentricHeightGmtM: z.number().nullable(),
+    metacentricHeightGmtM: z.null(),
+    preliminaryGmScreeningM: z.number().nullable(),
     stabilityStatus: z.enum(['STABLE_COMPLIANT', 'MARGINAL', 'UNSTABLE_CRITICAL', 'UNVERIFIED_ESTIMATE']),
     isPreliminaryEstimate: z.boolean(),
     engineeringComplianceValidated: z.literal(false),
@@ -70,13 +71,14 @@ export const HydrostaticsTool: EngineeringTool = {
       centerOfBuoyancyKbM: Number(kb.toFixed(3)),
       transverseMetacentricRadiusBmtM: Number(bmt.toFixed(3)),
       transverseMetacenterKmtM: Number(kmt.toFixed(3)),
-      metacentricHeightGmtM: gm === null ? null : Number(gm.toFixed(3)),
+      metacentricHeightGmtM: null, // No KG/GZ/offset-integrated, class-validated GM exists.
+      preliminaryGmScreeningM: gm === null ? null : Number(gm.toFixed(3)),
       stabilityStatus: gm !== null && gm < 0 ? 'UNSTABLE_CRITICAL' : 'UNVERIFIED_ESTIMATE',
       isPreliminaryEstimate: true,
       engineeringComplianceValidated: false,
       kgSource: hasKg ? 'USER_PROVIDED' : 'NOT_PROVIDED',
       complianceCheck: {
-        minGmMet: gm !== null && gm >= 0.35,
+        minGmMet: false, // Do not assert stability compliance from an approximate GM.
         morrishKbApproximationM: Number(kb.toFixed(3))
       }
     };
@@ -92,17 +94,25 @@ export const ResistanceTool: EngineeringTool = {
   deterministic: true,
   requiredPermissions: ['CALCULATION_EXEC'],
   inputSchema: z.object({
-    lwlMeters: z.coerce.number().positive(),
-    beamMeters: z.coerce.number().positive(),
-    draftMeters: z.coerce.number().positive(),
-    displacementTonnes: z.coerce.number().positive(),
-    speedKnots: z.coerce.number().positive(),
-    propulsiveEfficiencyEtaD: z.coerce.number().positive().max(1).default(0.65),
-    waterTempCelsius: z.coerce.number().min(-2).max(40).default(15)
-  }).passthrough().refine(data =>
-    data.displacementTonnes * 1000 <= 1025 * data.lwlMeters * data.beamMeters * data.draftMeters,
-    { message: 'Displacement exceeds the enclosing LWL × beam × draft prism; check dimensions and mass.' }
-  ),
+    lwlMeters: z.number().positive(),
+    beamMeters: z.number().positive(),
+    draftMeters: z.number().positive(),
+    displacementTonnes: z.number().positive(),
+    speedKnots: z.number().positive(),
+    propulsiveEfficiencyEtaD: z.number().positive().max(1),
+    waterTempCelsius: z.number().refine(v => Math.abs(v - 15) < 1e-9, {
+      message: 'Only 15°C seawater viscosity is implemented. Other temperatures require a validated viscosity model.'
+    })
+  }).passthrough().superRefine((data, ctx) => {
+    const cb = data.displacementTonnes * 1000 / (1025 * data.lwlMeters * data.beamMeters * data.draftMeters);
+    if (!Number.isFinite(cb) || cb < 0.30 || cb > 0.95) {
+      ctx.addIssue({ code: 'custom', message: 'Inferred block coefficient outside 0.30–0.95 supported screening envelope.' });
+    }
+    const re = data.speedKnots * (1852 / 3600) * data.lwlMeters / 1.188e-6;
+    if (!Number.isFinite(re) || re < 1e6 || re > 1e10) {
+      ctx.addIssue({ code: 'custom', message: 'Reynolds number outside defensible turbulent friction screening range [1e6,1e10].' });
+    }
+  }),
   outputSchema: z.object({
     speedMps: z.number(),
     froudeNumberFn: z.number(),
@@ -114,7 +124,9 @@ export const ResistanceTool: EngineeringTool = {
     effectivePowerPeKw: z.number(),
     shaftBrakePowerPbKw: z.number(),
     engineeringComplianceValidated: z.literal(false),
-    modelStatus: z.literal('PRELIMINARY_EMPIRICAL_ESTIMATE')
+    modelStatus: z.literal('PRELIMINARY_EMPIRICAL_ESTIMATE'),
+    designUsePermitted: z.literal(false),
+    residualDragModelValidated: z.literal(false)
   }),
   execute: (input: any) => {
     const { lwlMeters, beamMeters, draftMeters, displacementTonnes, speedKnots, propulsiveEfficiencyEtaD = 0.65 } = input;
@@ -147,7 +159,10 @@ export const ResistanceTool: EngineeringTool = {
     if (froudeNumberFn > 0.4 && froudeNumberFn <= 0.8) {
       cr = 0.0015 + 0.006 * Math.pow(froudeNumberFn - 0.4, 1.8);
     } else if (froudeNumberFn > 0.8) {
-      cr = 0.0045 + 0.002 * (froudeNumberFn - 0.8);
+      // Preserve C0 continuity at Fn=0.8. This is still an UNVALIDATED
+      // residual estimate; it is not an accepted high-speed hull method.
+      const crAt08 = 0.0015 + 0.006 * Math.pow(0.4, 1.8);
+      cr = crAt08 + 0.002 * (froudeNumberFn - 0.8);
     }
 
     // Correlation allowance Ca
@@ -175,7 +190,9 @@ export const ResistanceTool: EngineeringTool = {
       effectivePowerPeKw: Number(effectivePowerPeKw.toFixed(2)),
       shaftBrakePowerPbKw: Number(shaftBrakePowerPbKw.toFixed(2)),
       engineeringComplianceValidated: false,
-      modelStatus: 'PRELIMINARY_EMPIRICAL_ESTIMATE'
+      modelStatus: 'PRELIMINARY_EMPIRICAL_ESTIMATE',
+      designUsePermitted: false,
+      residualDragModelValidated: false
     };
   }
 };
@@ -190,26 +207,33 @@ export const MassBalanceTool: EngineeringTool = {
   requiredPermissions: ['CALCULATION_EXEC'],
   inputSchema: z.object({
     components: z.array(z.object({
-      name: z.string(),
-      massKg: z.coerce.number().positive(),
-      lcgMetersFromTransom: z.coerce.number(),
-      tcgMetersFromCl: z.coerce.number(),
-      vcgMetersFromKeel: z.coerce.number().nonnegative(),
-      designMarginPercent: z.coerce.number().min(0).max(50).default(10)
+      name: z.string().trim().min(1),
+      massKg: z.number().positive(),
+      lcgMetersFromTransom: z.number(),
+      tcgMetersFromCl: z.number(),
+      vcgMetersFromKeel: z.number().nonnegative(),
+      designMarginPercent: z.number().min(0).max(50)
     })).min(1, 'Mass ledger cannot be empty'),
-    baselineLcbMetersFromTransom: z.coerce.number().optional()
-  }).passthrough(),
+    baselineLcbMetersFromTransom: z.number().optional()
+  }).passthrough().superRefine((data, ctx) => {
+    const names = data.components.map(c => c.name.toLowerCase());
+    if (new Set(names).size !== names.length) {
+      ctx.addIssue({ code: 'custom', message: 'Duplicate component names: mass ledger double-counting risk.' });
+    }
+  }),
   outputSchema: z.object({
     lightshipMassKg: z.number(),
     designMarginMassKg: z.number(),
     totalDisplacementKg: z.number(),
     totalDisplacementTonnes: z.number(),
+    massLedgerComplete: z.literal(false),
+    hydrostaticDisplacementReconciled: z.literal(false),
     compositeLcgMeters: z.number(),
     compositeTcgMeters: z.number(),
     compositeKgMeters: z.number(),
     longitudinalTrimEvaluation: z.object({
       lcbAlignmentMeters: z.number().optional(),
-      trimRisk: z.enum(['ALIGNED', 'EXCESSIVE_TRIM_AFT', 'EXCESSIVE_TRIM_FWD'])
+      trimRisk: z.enum(['ALIGNED', 'EXCESSIVE_TRIM_AFT', 'EXCESSIVE_TRIM_FWD', 'UNASSESSED_NO_LCB'])
     })
   }),
   execute: (input: any) => {
@@ -222,7 +246,7 @@ export const MassBalanceTool: EngineeringTool = {
     let sumVcgMoment = 0;
 
     for (const comp of components) {
-      const margin = (comp.designMarginPercent ?? 10) / 100;
+      const margin = comp.designMarginPercent / 100;
       const totalCompMass = comp.massKg * (1 + margin);
 
       lightshipMassKg += comp.massKg;
@@ -240,7 +264,8 @@ export const MassBalanceTool: EngineeringTool = {
     const compositeTcgMeters = totalDisplacementKg > 0 ? sumTcgMoment / totalDisplacementKg : 0;
     const compositeKgMeters = totalDisplacementKg > 0 ? sumVcgMoment / totalDisplacementKg : 0;
 
-    let trimRisk: 'ALIGNED' | 'EXCESSIVE_TRIM_AFT' | 'EXCESSIVE_TRIM_FWD' = 'ALIGNED';
+    let trimRisk: 'ALIGNED' | 'EXCESSIVE_TRIM_AFT' | 'EXCESSIVE_TRIM_FWD' | 'UNASSESSED_NO_LCB' =
+      baselineLcbMetersFromTransom === undefined ? 'UNASSESSED_NO_LCB' : 'ALIGNED';
     let lcbDiff: number | undefined;
 
     if (baselineLcbMetersFromTransom !== undefined) {
@@ -257,6 +282,8 @@ export const MassBalanceTool: EngineeringTool = {
       designMarginMassKg: Number(designMarginMassKg.toFixed(2)),
       totalDisplacementKg: Number(totalDisplacementKg.toFixed(2)),
       totalDisplacementTonnes: Number(totalDisplacementTonnes.toFixed(3)),
+      massLedgerComplete: false,
+      hydrostaticDisplacementReconciled: false,
       compositeLcgMeters: Number(compositeLcgMeters.toFixed(3)),
       compositeTcgMeters: Number(compositeTcgMeters.toFixed(3)),
       compositeKgMeters: Number(compositeKgMeters.toFixed(3)),
@@ -277,28 +304,44 @@ export const ElectricalLoadTool: EngineeringTool = {
   deterministic: true,
   requiredPermissions: ['CALCULATION_EXEC'],
   inputSchema: z.object({
-    busVoltageV: z.coerce.number().positive().default(48),
-    batteryTotalKwh: z.coerce.number().positive().default(120),
-    usableDepthOfDischarge: z.coerce.number().min(0.1).max(1.0).default(0.8),
+    busVoltageV: z.number().positive(),
+    batteryTotalKwh: z.number().positive(),
+    usableDepthOfDischarge: z.number().min(0.1).max(1.0),
     consumers: z.array(z.object({
-      name: z.string(),
-      voltageV: z.coerce.number().default(48),
-      continuousPowerW: z.coerce.number().nonnegative(),
-      intermittentPowerW: z.coerce.number().nonnegative().default(0),
-      dutyCycle: z.coerce.number().min(0).max(1).default(1),
-      isEmergencyLoad: z.boolean().default(false)
-    })).default([])
-  }).passthrough(),
+      name: z.string().trim().min(1),
+      voltageV: z.number().positive(),
+      continuousPowerW: z.number().nonnegative(),
+      intermittentPowerW: z.number().nonnegative(),
+      dutyCycle: z.number().min(0).max(1),
+      isEmergencyLoad: z.boolean()
+    })).min(1, 'At least one real load is required')
+  }).passthrough().superRefine((data, ctx) => {
+    const names = data.consumers.map(c => c.name.toLowerCase());
+    if (new Set(names).size !== names.length) {
+      ctx.addIssue({ code: 'custom', message: 'Duplicate electrical consumer names may double-count load.' });
+    }
+    if (data.consumers.some(c => c.voltageV !== data.busVoltageV)) {
+      ctx.addIssue({ code: 'custom', message: 'Different consumer and DC bus voltages require a separately verified converter efficiency model.' });
+    }
+    if (data.consumers.every(c => c.continuousPowerW + c.intermittentPowerW * c.dutyCycle === 0)) {
+      ctx.addIssue({ code: 'custom', message: 'Zero-load endurance cannot be represented as a finite mission duration.' });
+    }
+  }),
   outputSchema: z.object({
     totalContinuousPowerW: z.number(),
     averagePowerW: z.number(),
     peakPowerW: z.number(),
     nominalBusCurrentAmps: z.number(),
     usableBatteryKwh: z.number(),
-    estimatedEnduranceHours: z.number(),
+    estimatedEnduranceHours: z.null(),
+    idealizedEnergyUpperBoundHours: z.number(),
+    missionEnduranceValidated: z.literal(false),
     emergencyLoadPowerW: z.number(),
-    emergencyEnduranceHours: z.number(),
-    recommendedMainFuseRatingAmps: z.number()
+    emergencyEnduranceHours: z.null(),
+    idealizedEmergencyEnergyUpperBoundHours: z.number().nullable(),
+    emergencySafeStateValidated: z.literal(false),
+    recommendedMainFuseRatingAmps: z.null(),
+    protectiveDeviceSizingValidated: z.literal(false)
   }),
   execute: (input: any) => {
     const { busVoltageV = 48, batteryTotalKwh, usableDepthOfDischarge = 0.8, consumers } = input;
@@ -315,7 +358,7 @@ export const ElectricalLoadTool: EngineeringTool = {
       peakPowerW += (c.continuousPowerW + c.intermittentPowerW);
 
       if (c.isEmergencyLoad) {
-        emergencyLoadPowerW += c.continuousPowerW;
+        emergencyLoadPowerW += compAvg; // include declared intermittent duty load
       }
     }
 
@@ -323,11 +366,14 @@ export const ElectricalLoadTool: EngineeringTool = {
     const peakCurrentAmps = peakPowerW / busVoltageV;
     const usableBatteryKwh = batteryTotalKwh * usableDepthOfDischarge;
 
-    const estimatedEnduranceHours = averagePowerW > 0 ? (usableBatteryKwh * 1000) / averagePowerW : 0;
-    const emergencyEnduranceHours = emergencyLoadPowerW > 0 ? (usableBatteryKwh * 1000) / emergencyLoadPowerW : 0;
-
-    // Recommended fuse rating (1.5x peak current rounded up to standard size)
-    const recommendedMainFuseRatingAmps = Math.ceil(peakCurrentAmps * 1.5 / 10) * 10;
+    const idealizedEnergyUpperBoundHours = usableBatteryKwh * 1000 / averagePowerW;
+    const idealizedEmergencyEnergyUpperBoundHours = emergencyLoadPowerW > 0
+      ? usableBatteryKwh * 1000 / emergencyLoadPowerW : null;
+    // NEVER issue actual endurance, emergency reserve or fuse sizing without
+    // measured losses, aging/temperature, safe-state load and DC fault studies.
+    const estimatedEnduranceHours = null;
+    const emergencyEnduranceHours = null;
+    const recommendedMainFuseRatingAmps = null;
 
     return {
       totalContinuousPowerW: Number(totalContinuousPowerW.toFixed(1)),
@@ -335,10 +381,16 @@ export const ElectricalLoadTool: EngineeringTool = {
       peakPowerW: Number(peakPowerW.toFixed(1)),
       nominalBusCurrentAmps: Number(nominalBusCurrentAmps.toFixed(2)),
       usableBatteryKwh: Number(usableBatteryKwh.toFixed(2)),
-      estimatedEnduranceHours: Number(estimatedEnduranceHours.toFixed(2)),
+      estimatedEnduranceHours,
+      idealizedEnergyUpperBoundHours: Number(idealizedEnergyUpperBoundHours.toFixed(2)),
+      missionEnduranceValidated: false,
       emergencyLoadPowerW: Number(emergencyLoadPowerW.toFixed(1)),
-      emergencyEnduranceHours: Number(emergencyEnduranceHours.toFixed(2)),
-      recommendedMainFuseRatingAmps
+      emergencyEnduranceHours,
+      idealizedEmergencyEnergyUpperBoundHours: idealizedEmergencyEnergyUpperBoundHours === null
+        ? null : Number(idealizedEmergencyEnergyUpperBoundHours.toFixed(2)),
+      emergencySafeStateValidated: false,
+      recommendedMainFuseRatingAmps,
+      protectiveDeviceSizingValidated: false
     };
   }
 };
@@ -352,24 +404,25 @@ export const StructuresTool: EngineeringTool = {
   deterministic: true,
   requiredPermissions: ['CALCULATION_EXEC'],
   inputSchema: z.object({
-    displacementTonnes: z.coerce.number().positive(),
-    speedKnots: z.coerce.number().positive(),
-    lwlMeters: z.coerce.number().positive(),
-    deadriseAngleDeg: z.coerce.number().min(5).max(45).default(18),
-    unsupportedPanelWidthMm: z.coerce.number().positive().default(450),
-    unsupportedPanelLengthMm: z.coerce.number().positive().default(900),
-    materialYieldStrengthMpa: z.coerce.number().positive().default(125), // 5083-H111 default
-    safetyFactor: z.coerce.number().min(1).default(2.0)
+    displacementTonnes: z.number().positive(),
+    speedKnots: z.number().positive(),
+    lwlMeters: z.number().positive(),
+    deadriseAngleDeg: z.number().min(5).max(45),
+    unsupportedPanelWidthMm: z.number().positive(),
+    unsupportedPanelLengthMm: z.number().positive(),
+    materialYieldStrengthMpa: z.number().positive(), // 5083-H111 default
+    safetyFactor: z.number().min(1)
   }).passthrough(),
   outputSchema: z.object({
-    designSlammingPressureKpa: z.number(),
+    designSlammingPressureKpa: z.null(),
     allowableStressMpa: z.number(),
-    aspectRatioCorrectionFactorK2: z.number(),
-    minPlatingThicknessMm: z.number(),
-    recommendedNominalThicknessMm: z.number(),
-    stiffenerSectionModulusCm3: z.number(),
+    aspectRatioCorrectionFactorK2: z.null(),
+    minPlatingThicknessMm: z.null(),
+    recommendedNominalThicknessMm: z.null(),
+    stiffenerSectionModulusCm3: z.null(),
     engineeringComplianceValidated: z.literal(false),
-    modelStatus: z.literal('UNVALIDATED_SCANTLING_SCREEN')
+    modelStatus: z.literal('BLOCKED_UNVALIDATED_SCANTLING_FORMULA'),
+    designUsePermitted: z.literal(false)
   }),
   execute: (input: any) => {
     const {
@@ -383,36 +436,20 @@ export const StructuresTool: EngineeringTool = {
       safetyFactor = 2.0
     } = input;
 
-    // ISO 12215-5 slamming pressure for high-speed craft:
-    // P_slam = (1.8 * Delta / Lwl) * (1 + 0.08 * V^2) * ((50 - deadrise) / 30) (kPa)
-    const deadriseFactor = Math.max(0.5, (50 - deadriseAngleDeg) / 30);
-    const baseP = (1.8 * displacementTonnes / lwlMeters) * (1 + 0.08 * Math.pow(speedKnots, 2));
-    const designSlammingPressureKpa = Math.max(35, baseP * deadriseFactor);
-
-    // Aspect ratio factor k2 = min(0.5, 0.271 * (a/b)^0.5 ...)
-    const aspectRatio = unsupportedPanelLengthMm / unsupportedPanelWidthMm;
-    const k2 = Math.min(0.5, 0.35 + 0.15 * Math.min(aspectRatio, 2.0));
-
-    const allowableStressMpa = materialYieldStrengthMpa / safetyFactor;
-
-    // Plating thickness formula: t = b * sqrt(P * k2 / (1000 * sigma_all))
-    const minPlatingThicknessMm = (unsupportedPanelWidthMm) * Math.sqrt((designSlammingPressureKpa * k2) / (1000 * allowableStressMpa));
-    const recommendedNominalThicknessMm = Math.ceil(minPlatingThicknessMm * 2) / 2; // round up to nearest 0.5mm
-
-    // Stiffener section modulus: SM = (P * s * l^2) / (12 * sigma_all) (in cm^3)
-    const sMeters = unsupportedPanelWidthMm / 1000;
-    const lMeters = unsupportedPanelLengthMm / 1000;
-    const stiffenerSectionModulusCm3 = (designSlammingPressureKpa * sMeters * Math.pow(lMeters, 2) * 1000) / (12 * allowableStressMpa * 10);
-
+    // The former formula was not traceable to an approved ISO/DNV rule,
+    // and did not include material, weld, laminate, fatigue, load patches,
+    // boundary conditions or test validation. Returning a thickness here
+    // could put a vessel at risk. Refuse to provide ANY sizing output.
     return {
-      designSlammingPressureKpa: Number(designSlammingPressureKpa.toFixed(1)),
-      allowableStressMpa: Number(allowableStressMpa.toFixed(1)),
-      aspectRatioCorrectionFactorK2: Number(k2.toFixed(3)),
-      minPlatingThicknessMm: Number(minPlatingThicknessMm.toFixed(2)),
-      recommendedNominalThicknessMm,
-      stiffenerSectionModulusCm3: Number(stiffenerSectionModulusCm3.toFixed(2)),
+      designSlammingPressureKpa: null,
+      allowableStressMpa: Number((materialYieldStrengthMpa / safetyFactor).toFixed(1)),
+      aspectRatioCorrectionFactorK2: null,
+      minPlatingThicknessMm: null,
+      recommendedNominalThicknessMm: null,
+      stiffenerSectionModulusCm3: null,
       engineeringComplianceValidated: false,
-      modelStatus: 'UNVALIDATED_SCANTLING_SCREEN'
+      modelStatus: 'BLOCKED_UNVALIDATED_SCANTLING_FORMULA',
+      designUsePermitted: false
     };
   }
 };
@@ -426,12 +463,13 @@ export const ColregsTool: EngineeringTool = {
   deterministic: true,
   requiredPermissions: ['CALCULATION_EXEC'],
   inputSchema: z.object({
-    ownCourseDeg: z.coerce.number().min(0).max(360),
-    ownSpeedKnots: z.coerce.number().nonnegative(),
-    targetBearingDeg: z.coerce.number().min(0).max(360),
-    targetRangeNm: z.coerce.number().positive(),
-    targetCourseDeg: z.coerce.number().min(0).max(360),
-    targetSpeedKnots: z.coerce.number().nonnegative(),
+    ownCourseDeg: z.number().min(0).max(360),
+    ownSpeedKnots: z.number().nonnegative(),
+    targetBearingDeg: z.number().min(0).max(360),
+    bearingReference: z.literal('TRUE_NORTH'),
+    targetRangeNm: z.number().positive(),
+    targetCourseDeg: z.number().min(0).max(360),
+    targetSpeedKnots: z.number().nonnegative(),
     visibilityMode: z.enum(['IN_SIGHT', 'RESTRICTED', 'UNKNOWN']).default('UNKNOWN'),
     ownVesselType: z.enum(['POWER_DRIVEN', 'OTHER', 'UNKNOWN']).default('UNKNOWN'),
     targetVesselType: z.enum(['POWER_DRIVEN', 'OTHER', 'UNKNOWN']).default('UNKNOWN')
@@ -445,6 +483,7 @@ export const ColregsTool: EngineeringTool = {
     mandatedAction: z.string(),
     safeAlterationCourseDeg: z.number().optional(),
     visibilityMode: z.enum(['IN_SIGHT', 'RESTRICTED', 'UNKNOWN']),
+    bearingReference: z.literal('TRUE_NORTH'),
     legalApplicabilityValidated: z.literal(false),
     maneuverValidated: z.literal(false)
   }),
@@ -545,13 +584,14 @@ export const ColregsTool: EngineeringTool = {
 
     return {
       relativeSpeedKnots: Number(relativeSpeedKnots.toFixed(2)),
-      closestPointOfApproachCpaNm: Number(cpaNm.toFixed(2)),
-      timeToCpaMinutes: Number(timeToCpaMinutes.toFixed(1)),
+      closestPointOfApproachCpaNm: Number(cpaNm.toFixed(5)), // sub-metre display resolution; NOT sensor accuracy
+      timeToCpaMinutes: Number(timeToCpaMinutes.toFixed(4)),
       relativeBearingDeg: Number(relBearing.toFixed(1)),
       colregsRuleApplicable: colregsRule,
       mandatedAction,
       safeAlterationCourseDeg: safeCourse,
       visibilityMode,
+      bearingReference: 'TRUE_NORTH',
       legalApplicabilityValidated: false,
       maneuverValidated: false
     };

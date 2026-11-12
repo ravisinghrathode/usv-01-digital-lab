@@ -850,7 +850,7 @@ export class VerifyUsv01Engine {
         ],
         ownCourseDeg: 0,
         ownSpeedKnots: 20,
-        targetBearingDeg: 45,
+        targetBearingDeg: 45, bearingReference: 'TRUE_NORTH',
         targetRangeNm: 2.5,
         targetCourseDeg: 270,
         targetSpeedKnots: 15

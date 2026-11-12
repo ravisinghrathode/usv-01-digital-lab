@@ -1,3 +1,5 @@
+> **Safety-case amendment — later calculator revision:** The new AGT-02 numerical hardening changes the current BaseAgent, ToolRegistry and all six engineering calculators. The 26 live-model responses recorded below belong ONLY to the earlier source fingerprint and must **not** be treated as a fresh 26-agent live run or source-verified engineering evidence for the revised calculators. The current candidate has 800 cross-language mathematical reference cases, conservative output rejection and a universal engineering-release block. Physical verification is still missing. See docs/AGT02_NUMERICAL_SAFETY_CASE_20261113.md.
+
 # USV-01 AGT-02 — 26-Agent Accuracy and Safety Remediation
 
 ## Engineering disposition: SOFTWARE HARDENED; INDEPENDENT NAVAL ACCEPTANCE OPEN

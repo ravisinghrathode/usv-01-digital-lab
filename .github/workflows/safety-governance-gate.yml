@@ -156,6 +156,20 @@ jobs:
           path: governance/reports/agt02-all-26-accuracy-audit.json
           if-no-files-found: ignore
 
+      - name: Stage B — 800 Independent Numerical Reference Vectors and Design Release Blocking
+        run: |
+          set -euo pipefail
+          mkdir -p governance/reports
+          npx vitest run tests/independentNumericalOracles.test.ts --reporter=json --outputFile=governance/reports/mathematical-oracle-vitest.json
+
+      - name: Upload Numerical Reference Validation Evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: usv01-mathematical-oracles-800-cases
+          path: governance/reports/mathematical-oracle-vitest.json
+          if-no-files-found: ignore
+
       - name: Stage B — Production Bundle Verification
         run: |
           set -euo pipefail

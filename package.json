@@ -16,6 +16,7 @@
     "acceptance:campaign": "tsx scripts/run-acceptance-campaign.ts",
     "acceptance:accuracy": "tsx scripts/assess-agent-accuracy.ts",
     "acceptance:agt02-audit": "tsx scripts/run-agent-accuracy-audit.ts",
+    "acceptance:numerical": "vitest run tests/independentNumericalOracles.test.ts",
     "acceptance:commission": "tsx scripts/run-commissioning-suite.ts",
     "acceptance:live-agents": "tsx scripts/run-live-agent-matrix.ts",
     "acceptance:live-integrations": "tsx scripts/run-live-commissioning.ts",
@@ -42,6 +43,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.0.2",
+    "ws": "^8.22.2",
     "zod": "^4.6.7"
   },
   "devDependencies": {
