@@ -1,8 +1,8 @@
 # 🛡️ USV-01 Digital Engineering Lab — Single-Press Verification Report
-**Report ID:** `USV01-VRFY-20261112114505`  
-**Generated At:** `2026-11-12T11:45:05.005Z` (865 ms execution)  
-**Evaluated Commit SHA:** `9b62b8e9ffed6db14dddf04b89835dff58213cc2` (Branch: `feat/verify-usv01-system`)  
-**Baseline Content Digest:** `sha256:63f68414eefde98fbdfac1085cdc2fa79b682f4c6aa038ec86a42589985fe341`  
+**Report ID:** `USV01-VRFY-20261112115552`  
+**Generated At:** `2026-11-12T11:55:52.768Z` (993 ms execution)  
+**Evaluated Commit SHA:** `769892c55f4a10687fa3585a5f082bf5648d4f89` (Branch: `feat/verify-usv01-system`)  
+**Baseline Content Digest:** `sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2`  
 **Overall Verification Verdict:** **🔴 VERIFICATION FAILED**  
 
 ---
@@ -30,7 +30,7 @@ Verification FAILED: 1 checks failed (CHK-GOV-05). Under USV-01 governance polic
 |---|---|---|---|---|
 | `CHK-REPO-01` | Git Repository Commit & Working Tree Integrity | **CONDITIONAL** | NO | Uncommitted changes present in local working tree; evaluating committed HEAD baseline. |
 | `CHK-REPO-02` | Package Manifest & Dependency Lockfile Integrity | **PASS** | YES | Package manifest validated (22 dependencies). package-lock.json present. |
-| `CHK-REPO-03` | Release Baseline Manifest & Checksum Audit | **PASS** | YES | RELEASE_MANIFEST.json valid with 68 tracked assets. |
+| `CHK-REPO-03` | Release Baseline Manifest & Checksum Audit | **PASS** | YES | RELEASE_MANIFEST.json valid with 69 tracked assets. |
 | `CHK-REPO-04` | DevSecOps Secret Scanning & Cryptographic Key Protection | **PASS** | YES | Zero unredacted secrets, credentials, or private keys detected in repository diff. |
 | `CHK-REPO-05` | Repository Governance Configuration & CODEOWNERS Validation | **PASS** | YES | Governance workflows, CODEOWNERS, and branch protection configurations verified. |
 | `CHK-REPO-06` | Engineering Change Request (ECR) Document Integrity | **PASS** | YES | 1 formal ECR baseline records verified with complete frontmatter & safety schema. |
@@ -39,11 +39,11 @@ Verification FAILED: 1 checks failed (CHK-GOV-05). Under USV-01 governance polic
 ### Phase 2: Governance Stages A–E & Human Authority (FAIL)
 | ID | Title | Status | Mandatory | Summary |
 |---|---|---|---|---|
-| `CHK-GOV-01` | Stage A: Change & Risk Classification | **PASS** | YES | Change risk classified as CRITICAL. Director approval required: YES. Categories: SOFTWARE, SECURITY, SAFETY, ARCHITECTURE, RELEASE, DOCUMENTATION, CONFIGURATION, REQUIREMENTS. |
+| `CHK-GOV-01` | Stage A: Change & Risk Classification | **PASS** | YES | Change risk classified as CRITICAL. Director approval required: YES. Categories: SOFTWARE, SECURITY, SAFETY, CONFIGURATION, ARCHITECTURE, RELEASE, DOCUMENTATION, REQUIREMENTS. |
 | `CHK-GOV-02` | Stage C: Independent Multi-Role Technical Review | **PASS** | YES | Deterministic rule verification: PASS. Independent AI model review was UNAVAILABLE. |
 | `CHK-GOV-03` | Stage C: Model Transparency & Deterministic Review Disclosure | **PASS** | YES | CONFIRMED: Deterministic static analysis is accurately disclosed; no false claims of independent model review. |
 | `CHK-GOV-04` | Stage D: Human Authority & Cryptographic Director Authorization | **BLOCKED** | YES | PENDING: Safety-critical / High-risk change requires Director Ed25519 signature over exact baseline digest. |
-| `CHK-GOV-05` | Stage E: Governance Gate Enforcement & Fail-Closed Multi-Stage Gate | **FAIL** | YES | Stage E Gate BLOCKED: Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.; Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:63f68414eefde98fbdfac1085cdc2fa79b682f4c6aa038ec86a42589985fe341. |
+| `CHK-GOV-05` | Stage E: Governance Gate Enforcement & Fail-Closed Multi-Stage Gate | **FAIL** | YES | Stage E Gate BLOCKED: Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.; Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2. |
 
 ### Phase 3: 25 HMEA Agents Execution Capability & Routing (PASS)
 * **Canonical Coverage:** `25/25`
@@ -83,13 +83,13 @@ Verification FAILED: 1 checks failed (CHK-GOV-05). Under USV-01 governance polic
 |---|---|---|---|---|
 | `CHK-ENG-01` | Bidirectional Requirements Traceability (REQ → VNV → TEST) | **CONDITIONAL** | NO | 2 requirements lack associated verification plans (REQ-NAV-002, REQ-MEC-001). |
 | `CHK-ENG-02` | TBD Parameter Tracking & Zero-Fabrication Assumption Audit | **PASS** | YES | 6 design parameters explicitly tracked as TBD without synthetic or fabricated values. |
-| `CHK-ENG-03` | Cryptographic Hash-Chained Audit Trail Integrity | **PASS** | YES | Audit chain valid: 15 tamper-evident events cryptographically verified. |
+| `CHK-ENG-03` | Cryptographic Hash-Chained Audit Trail Integrity | **PASS** | YES | Audit chain valid: 20 tamper-evident events cryptographically verified. |
 | `CHK-ENG-04` | Safety Approval Gates & Human Authority Enforcement | **PASS** | YES | 0 safety gates evaluated. 0 pending human authorization. Fail-closed safety gates armed. |
 
 ---
 
 ## 3. Governance Findings & Human Authority Status
-* **Stage A (Risk Classification):** `CRITICAL` (Categories: `SOFTWARE, SECURITY, SAFETY, ARCHITECTURE, RELEASE, DOCUMENTATION, CONFIGURATION, REQUIREMENTS`)
+* **Stage A (Risk Classification):** `CRITICAL` (Categories: `SOFTWARE, SECURITY, SAFETY, CONFIGURATION, ARCHITECTURE, RELEASE, DOCUMENTATION, REQUIREMENTS`)
 * **Stage B (DevSecOps Quality):** Secrets Detected: `0` | Configuration Valid: `YES` | ECR Valid: `YES`
 * **Stage C (Independent Review):** Provider: `deterministic` | Model-Backed: `NO` | AI Status: `AI_REVIEW_UNAVAILABLE` | Deterministic Status: `PASS`
 * **Stage D (Human Authority):** Required: `YES` | Verified: `NO` | Stale: `NO` | Signatory: `None`
@@ -99,7 +99,7 @@ Verification FAILED: 1 checks failed (CHK-GOV-05). Under USV-01 governance polic
 
 ## 4. Unresolved Blockers & Remaining Limitations
 ### Unresolved Blockers (2)
-- 🚫 CHK-GOV-05 (Stage E: Governance Gate Enforcement & Fail-Closed Multi-Stage Gate): Stage E Gate BLOCKED: Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.; Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:63f68414eefde98fbdfac1085cdc2fa79b682f4c6aa038ec86a42589985fe341.
+- 🚫 CHK-GOV-05 (Stage E: Governance Gate Enforcement & Fail-Closed Multi-Stage Gate): Stage E Gate BLOCKED: Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.; Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2.
 - 🚫 CHK-GOV-04 (Stage D: Human Authority & Cryptographic Director Authorization): PENDING: Safety-critical / High-risk change requires Director Ed25519 signature over exact baseline digest.
 
 ### Remaining Limitations (3)

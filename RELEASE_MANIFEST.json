@@ -3,8 +3,8 @@
   "programme": "NAVAL-USV",
   "project": "USV-01 Digital Engineering Lab",
   "releaseVersion": "1.0.0",
-  "gitCommitSha": "9b62b8e9ffed6db14dddf04b89835dff58213cc2",
-  "builtAt": "2026-11-12T11:45:03.511Z",
+  "gitCommitSha": "769892c55f4a10687fa3585a5f082bf5648d4f89",
+  "builtAt": "2026-11-12T11:55:51.234Z",
   "environment": {
     "nodeVersion": "v24.22.2",
     "osPlatform": "linux"
@@ -27,8 +27,8 @@
     },
     {
       "path": "src/App.tsx",
-      "sha256": "d71fb26bd66e1400cf862d91d65684f50b36a2888729e5ad61a7288621efdd4e",
-      "sizeBytes": 33476
+      "sha256": "3de4f59527e96826b1e7aba1b2fad7a57c8797f978679ddad91928e0c74b94a8",
+      "sizeBytes": 33464
     },
     {
       "path": "src/components/AgentOrchestratorView.tsx",
@@ -167,8 +167,8 @@
     },
     {
       "path": "src/components/VerifyUsv01Modal.tsx",
-      "sha256": "a1ebaf342f58a02ad71b2549d3f288918f0a6cd5f03e66e1a1bd794409cc42a3",
-      "sizeBytes": 31476
+      "sha256": "8e68eaf20b061c0680b84a6762232240a881b443335588d68816ca940759434f",
+      "sizeBytes": 31464
     },
     {
       "path": "src/components/Vessel3DVisualizer.tsx",
@@ -301,9 +301,14 @@
       "sizeBytes": 809
     },
     {
+      "path": "src/core/types/verification.ts",
+      "sha256": "056c6bfee8e84b2ac55154de3ce5f7e80dc4bdae84a4f8bb5a7d6fe9e12c8c10",
+      "sizeBytes": 2989
+    },
+    {
       "path": "src/core/verification/VerifyUsv01Engine.ts",
-      "sha256": "71a2d1e1e4b4dd84a88dacf271e17559e8d0610c38a274079d73f86af32f959b",
-      "sizeBytes": 50906
+      "sha256": "71781154456d23fbbcf7a9e357fda724654037268d75bee49e81ad3ad12cdfb8",
+      "sizeBytes": 48440
     },
     {
       "path": "src/data/globalUsvFleetData.ts",
@@ -357,5 +362,5 @@
     "auditVulnerabilities": 0,
     "staticAnalysisStatus": "PASS"
   },
-  "immutableManifestSha256": "7cd4d5c9a3a82961dd2666eff5e8dc34d327c8fa76fab4ef1a76cbf43367cab6"
+  "immutableManifestSha256": "b75ec65ecf4e7eed99c8b37c38f5bb38fb42c6d8ceee78e559fcbacf3027f8e0"
 }

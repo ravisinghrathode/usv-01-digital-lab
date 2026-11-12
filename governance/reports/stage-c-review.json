@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-11-12T11:53:31.624Z",
-  "gitRef": "HEAD",
-  "evaluatedCommitSha": "6eff53beedb22512776284a66738388e61657b19",
-  "baselineDigest": "sha256:49de751231b91ae6314b7073c05a344a26b5cc8481f900910e5249f79f4e86fe",
+  "timestamp": "2026-11-12T11:55:51.566Z",
+  "gitRef": "origin/main",
+  "evaluatedCommitSha": "769892c55f4a10687fa3585a5f082bf5648d4f89",
+  "baselineDigest": "sha256:63969d1cc0a907382d4dbc4215fc5da855edfd09cee23c98fcf458e5ddc497b2",
   "executionMode": "Deterministic Static Rule Engine (Zero External API — AI Review Unavailable)",
   "provider": "deterministic",
   "aiReviewStatus": "AI_REVIEW_UNAVAILABLE",
@@ -12,15 +12,57 @@
     {
       "role": "SOFTWARE_ARCHITECTURE_REVIEWER",
       "title": "Software Architecture & Modular Cohesion Reviewer",
-      "advisoryRecommendation": "ADVISORY_APPROVE",
-      "findings": [],
-      "summary": "Deterministic static verification completed for Software Architecture & Modular Cohesion Reviewer. Zero rule violations identified.",
+      "advisoryRecommendation": "ADVISORY_REQUEST_CHANGES",
+      "findings": [
+        {
+          "severity": "MEDIUM",
+          "affectedFiles": [
+            "src/core/governance/AgentGovernanceBridge.ts"
+          ],
+          "description": "Deep relative import paths detected across architectural layers.",
+          "evidence": "import type { ECRRecord } from '../../../scripts/governance/ecr-tool.ts';",
+          "potentialConsequences": "Tight coupling between lower-level utilities and higher-level domain services.",
+          "recommendedAction": "Use TypeScript path aliases or consolidate shared core modules."
+        },
+        {
+          "severity": "MEDIUM",
+          "affectedFiles": [
+            "src/core/verification/VerifyUsv01Engine.ts"
+          ],
+          "description": "Deep relative import paths detected across architectural layers.",
+          "evidence": "import { computeBaselineDigest, loadApprovalRecords, resolveDirectorPublicKey, verifyApproval } from '../../../scripts/governance/ecr-approval.ts';",
+          "potentialConsequences": "Tight coupling between lower-level utilities and higher-level domain services.",
+          "recommendedAction": "Use TypeScript path aliases or consolidate shared core modules."
+        }
+      ],
+      "summary": "Deterministic static verification flagged 2 issue(s) for Software Architecture & Modular Cohesion Reviewer.",
       "provider": "deterministic",
       "model": "none",
       "executionStatus": "COMPLETED",
       "isMockFallback": false,
-      "rawOutput": "{\n  \"status\": \"COMPLETED\",\n  \"provider\": \"deterministic\",\n  \"role\": \"SOFTWARE_ARCHITECTURE_REVIEWER\",\n  \"findingsCount\": 0,\n  \"recommendation\": \"ADVISORY_APPROVE\"\n}",
-      "deterministicFindings": []
+      "rawOutput": "{\n  \"status\": \"COMPLETED\",\n  \"provider\": \"deterministic\",\n  \"role\": \"SOFTWARE_ARCHITECTURE_REVIEWER\",\n  \"findingsCount\": 2,\n  \"recommendation\": \"ADVISORY_REQUEST_CHANGES\"\n}",
+      "deterministicFindings": [
+        {
+          "severity": "MEDIUM",
+          "affectedFiles": [
+            "src/core/governance/AgentGovernanceBridge.ts"
+          ],
+          "description": "Deep relative import paths detected across architectural layers.",
+          "evidence": "import type { ECRRecord } from '../../../scripts/governance/ecr-tool.ts';",
+          "potentialConsequences": "Tight coupling between lower-level utilities and higher-level domain services.",
+          "recommendedAction": "Use TypeScript path aliases or consolidate shared core modules."
+        },
+        {
+          "severity": "MEDIUM",
+          "affectedFiles": [
+            "src/core/verification/VerifyUsv01Engine.ts"
+          ],
+          "description": "Deep relative import paths detected across architectural layers.",
+          "evidence": "import { computeBaselineDigest, loadApprovalRecords, resolveDirectorPublicKey, verifyApproval } from '../../../scripts/governance/ecr-approval.ts';",
+          "potentialConsequences": "Tight coupling between lower-level utilities and higher-level domain services.",
+          "recommendedAction": "Use TypeScript path aliases or consolidate shared core modules."
+        }
+      ]
     },
     {
       "role": "CODE_QUALITY_REVIEWER",
