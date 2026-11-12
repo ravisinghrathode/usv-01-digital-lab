@@ -52,7 +52,14 @@ jobs:
         run: npm run lint
 
       - name: Stage B — Execute Deterministic & Safety Test Suite
-        run: npm test
+        run: |
+          npm test 2>&1 | tee test-output.log || {
+            echo "### ❌ Test Suite Execution Failure" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            tail -n 80 test-output.log >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          }
 
       - name: Stage B — Production Bundle Verification
         run: npm run build
