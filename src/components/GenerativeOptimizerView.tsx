@@ -45,9 +45,18 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
   const [activeTab, setActiveTab] = useState<'ledger' | 'studio' | 'agents25' | 'seastates' | 'pareto' | 'invariants' | 'redteam'>('ledger');
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [philosophy, setPhilosophy] = useState<DesignPhilosophy>('BALANCED_PATROL');
-  const [history, setHistory] = useState<CandidateDesign[]>([]);
-  const [champion, setChampion] = useState<CandidateDesign | null>(null);
-  const [invariants, setInvariants] = useState<LearnedInvariant[]>([]);
+  const [history, setHistory] = useState<CandidateDesign[]>(() => {
+    const existing = optimizer.getHistory();
+    if (existing.length === 0) {
+      for (let i = 0; i < 5; i++) {
+        optimizer.runIteration('BALANCED_PATROL');
+      }
+      return optimizer.getHistory();
+    }
+    return existing;
+  });
+  const [champion, setChampion] = useState<CandidateDesign | null>(() => optimizer.getChampion());
+  const [invariants, setInvariants] = useState<LearnedInvariant[]>(() => optimizer.getLearnedInvariants());
   const [selectedCandidate, setSelectedCandidate] = useState<CandidateDesign | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
 
@@ -129,7 +138,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
   };
 
   // Active display candidate
-  const activeCandidate = selectedCandidate || champion || history[0];
+  const activeCandidate = selectedCandidate || champion || history[0] || optimizer.getChampion() || optimizer.getHistory()[0] || null;
 
   // Studio candidate evaluation
   const studioCandidate = useMemo(() => {
@@ -352,7 +361,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                 USV-GEN-OPT // 25-AGENT MULTI-OBJECTIVE
               </span>
               <span className="text-xs font-mono text-slate-400">
-                GENERATION #{optimizer.getHistory().length > 0 ? history[0].generation : 0}
+                GENERATION #{history[0]?.generation ?? optimizer.getHistory()[0]?.generation ?? 0}
               </span>
             </div>
             <h1 className="text-xl font-bold text-slate-100 flex items-center gap-2">
@@ -630,7 +639,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
 
               {/* Debate Transcript */}
               <div className="mt-3 space-y-1.5 max-h-36 overflow-y-auto pr-1">
-                {activeCandidate.debateTranscript.map((d, i) => (
+                {(activeCandidate.debateTranscript || []).map((d, i) => (
                   <div
                     key={i}
                     className={`p-2 rounded text-xs border ${
@@ -1250,7 +1259,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-5 gap-3 font-mono text-xs">
-            {activeCandidate?.seaStates.map((ss) => (
+            {activeCandidate?.seaStates?.map((ss) => (
               <div
                 key={ss.seaState}
                 className="p-4 bg-slate-900 border border-slate-800 rounded-lg flex flex-col justify-between space-y-3"
@@ -1370,7 +1379,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
             </div>
 
             <div className="space-y-3 font-mono text-xs">
-              {activeCandidate?.sobolSensitivities.map((s) => (
+              {activeCandidate?.sobolSensitivities?.map((s) => (
                 <div key={s.parameter} className="p-3.5 bg-slate-950 rounded border border-slate-800 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-slate-200">{s.displayName}</span>

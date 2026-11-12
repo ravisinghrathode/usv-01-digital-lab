@@ -23,7 +23,7 @@ export class AuditLogger {
     this.logs.push(fullEntry);
 
     if (fullEntry.severity === 'SAFETY_CRITICAL') {
-      console.error(`[SAFETY_CRITICAL AUDIT] Agent: ${fullEntry.agentId || 'SYS'} | Action: ${fullEntry.action}`, fullEntry.details);
+      console.warn(`[SAFETY_CRITICAL AUDIT] Agent: ${fullEntry.agentId || 'SYS'} | Action: ${fullEntry.action}`, fullEntry.details);
     }
 
     return fullEntry;

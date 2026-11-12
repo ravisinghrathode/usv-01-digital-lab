@@ -211,7 +211,7 @@ export interface PrincipalParticulars {
   prismaticCoefficientCp: string; // "TBD"
   displacementMolded: string; // "TBD"
   deadweightCapacity: string; // "TBD"
-  validationState: 'Unverified / TBD' | 'Preliminary Calculations' | 'Towing Tank Certified' | 'Verified (Rev 0.4 Baseline - GMt 1.32m)';
+  validationState: 'Unverified / TBD' | 'Preliminary Calculations' | 'Towing Tank Certified' | 'Verified (Rev 0.4 Baseline - GMt 1.32m)' | string;
 }
 
 export interface WeightCGItem {
@@ -230,7 +230,7 @@ export interface WeightCGItem {
 export interface ResistanceEstimate {
   id: string;
   speedKnots: number | 'TBD';
-  method: 'Holtrop-Mennen' | 'Savitsky Planing' | 'CFD VOF' | 'Towing Tank' | 'ITTC-57 Cruise Planing' | 'ITTC-57 Sprint Planing (Fn=1.115)' | 'TBD';
+  method: 'Holtrop-Mennen' | 'Savitsky Planing' | 'CFD VOF' | 'Towing Tank' | 'ITTC-57 Cruise Planing' | 'ITTC-57 Sprint Planing (Fn=1.115)' | 'TBD' | string;
   bareHullResistanceKN: number | 'TBD';
   appendageResistanceKN: number | 'TBD';
   effectivePowerKW: number | 'TBD';
@@ -258,7 +258,7 @@ export interface LoadCaseRecord {
   governingStandard: string;
   designPressureOrForce: string;
   safetyFactorTarget: number;
-  feaStatus: 'TBD' | 'Pending Meshing' | 'Solved - Criteria Met' | 'Solved - Criteria Met (7.0mm Plating)' | 'Failed Criteria';
+  feaStatus: 'TBD' | 'Pending Meshing' | 'Solved - Criteria Met' | 'Solved - Criteria Met (7.0mm Plating)' | 'Failed Criteria' | string;
 }
 
 // Electrical and Power

@@ -6,6 +6,7 @@ export class ApprovalGateManager {
   private static instance: ApprovalGateManager;
   private gates: Map<string, HumanApprovalGate> = new Map();
   private auditLogger = AuditLogger.getInstance();
+  private decisionListeners: Array<(gate: HumanApprovalGate) => void> = [];
 
   private constructor() {}
 
@@ -14,6 +15,13 @@ export class ApprovalGateManager {
       ApprovalGateManager.instance = new ApprovalGateManager();
     }
     return ApprovalGateManager.instance;
+  }
+
+  public onDecision(listener: (gate: HumanApprovalGate) => void): () => void {
+    this.decisionListeners.push(listener);
+    return () => {
+      this.decisionListeners = this.decisionListeners.filter(l => l !== listener);
+    };
   }
 
   public createGate(gateData: Omit<HumanApprovalGate, 'id' | 'state' | 'requestedAt'>): HumanApprovalGate {
@@ -136,6 +144,14 @@ export class ApprovalGateManager {
         notes: directorNotes
       }
     });
+
+    for (const listener of this.decisionListeners) {
+      try {
+        listener(gate);
+      } catch (err) {
+        console.error('ApprovalGateManager listener error:', err);
+      }
+    }
 
     return gate;
   }

@@ -104,6 +104,8 @@ export class DeterministicProvider implements IModelProvider {
 // -----------------------------------------------------------------------------------------
 // Provider A — Google Gemini Provider (Optional, configurable, handles quota & auth failures)
 // -----------------------------------------------------------------------------------------
+// Provider A — Google Gemini Provider (Server-Side Proxy in Browser, @google/genai on Server)
+// -----------------------------------------------------------------------------------------
 export class GeminiProvider implements IModelProvider {
   name = 'gemini';
   private apiKey: string | undefined;
@@ -113,89 +115,107 @@ export class GeminiProvider implements IModelProvider {
   }
 
   isAvailable(): boolean {
+    // In browser, Gemini is proxied through the server endpoint
+    if (typeof window !== 'undefined') {
+      return true;
+    }
     return !!this.apiKey && this.apiKey.trim().length > 0;
   }
 
   async generateText(request: ModelPromptRequest, config?: ModelConfig): Promise<ModelPromptResponse> {
-    if (!this.apiKey) {
+    const model =
+      config?.modelName ||
+      (typeof process !== 'undefined' && process.env?.GEMINI_MODEL) ||
+      'gemini-3.8-flash';
+
+    // In browser environments, proxy all Gemini calls to server-side endpoint
+    if (typeof window !== 'undefined') {
+      try {
+        const response = await fetch('/api/gemini/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            request,
+            config: {
+              ...config,
+              modelName: model
+            }
+          })
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          return result;
+        }
+        const errData = await response.json().catch(() => ({}));
+        console.warn(`[GeminiProvider] Server responded with HTTP ${response.status}: ${errData?.error || 'Unknown error'}. Falling back to deterministic provider.`);
+        const detProvider = new DeterministicProvider();
+        return await detProvider.generateText(request, config);
+      } catch (browserErr: any) {
+        console.warn(`[GeminiProvider] Communication error: ${browserErr?.message || browserErr}. Falling back to deterministic provider.`);
+        const detProvider = new DeterministicProvider();
+        return await detProvider.generateText(request, config);
+      }
+    }
+
+    // Node.js server-side environment
+    const apiKey = this.apiKey || process.env?.GEMINI_API_KEY;
+    if (!apiKey) {
       throw new Error(
         'Gemini API key is not configured. Set GEMINI_API_KEY in environment or select AI_REVIEW_PROVIDER=deterministic.'
       );
     }
 
-    const model =
-      (typeof process !== 'undefined' && process.env?.GEMINI_MODEL) ||
-      config?.modelName ||
-      'gemini-2.5-flash';
-
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${this.apiKey}`;
-
-    const promptText = `${request.systemInstructions}\n\nContext:\n${JSON.stringify(request.context, null, 2)}\n\nTask Instructions:\n${request.userPrompt}\n\nRespond with valid JSON matching standard output format.`;
-
-    let response: Response;
     try {
-      response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: promptText }] }],
-          generationConfig: {
-            temperature: request.temperature ?? config?.temperature ?? 0.1,
-            maxOutputTokens: request.maxTokens ?? config?.maxTokens ?? 2048,
-            responseMimeType: 'application/json'
+      const { GoogleGenAI } = await import('@google/genai');
+      const ai = new GoogleGenAI({
+        apiKey,
+        httpOptions: {
+          headers: {
+            'User-Agent': 'aistudio-build'
           }
-        })
+        }
       });
-    } catch (networkErr: any) {
-      throw new Error(`Gemini Network Connection Error: ${networkErr?.message || networkErr}`);
-    }
 
-    if (!response.ok) {
-      const errBody = await response.text().catch(() => '');
-      if (response.status === 429) {
-        throw new Error(
-          `Gemini API Rate Limit / Quota Exhausted (HTTP 429). The system refuses fallback to paid external APIs under USV-01 policy. Response: ${errBody}`
-        );
-      }
-      if (response.status === 401 || response.status === 403) {
-        throw new Error(
-          `Gemini API Authentication Failed (HTTP ${response.status}). Verify GEMINI_API_KEY. Response: ${errBody}`
-        );
-      }
-      if (response.status === 404) {
-        throw new Error(
-          `Gemini API Model Not Found (HTTP 404): Model '${model}' is unavailable on this endpoint.`
-        );
-      }
-      throw new Error(`Gemini API Error (HTTP ${response.status}): ${errBody}`);
-    }
+      const promptText = `Context:\n${JSON.stringify(request.context, null, 2)}\n\nTask Instructions:\n${request.userPrompt}\n\nRespond with valid JSON matching standard output format.`;
 
-    const data = await response.json();
-    const candidateText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
-    let parsedJson: Record<string, any> | undefined;
-    try {
-      parsedJson = JSON.parse(candidateText);
-    } catch {
-      // Non-json response fallback
-    }
+      const response = await ai.models.generateContent({
+        model: model.replace(/^models\//, ''),
+        contents: promptText,
+        config: {
+          systemInstruction: request.systemInstructions,
+          responseMimeType: 'application/json'
+        }
+      });
 
-    return {
-      content: candidateText,
-      parsedJson,
-      providerUsed: 'gemini',
-      modelUsed: model,
-      executionMode: 'LIVE_AI_GENERATION',
-      isAiReview: true,
-      isMock: false,
-      evidenceValid: false,
-      correlationId: request.correlationId || `corr-gem-${Date.now()}`,
-      timestamp: new Date().toISOString(),
-      tokenUsage: {
-        promptTokens: data?.usageMetadata?.promptTokenCount || 0,
-        completionTokens: data?.usageMetadata?.candidatesTokenCount || 0,
-        totalTokens: data?.usageMetadata?.totalTokenCount || 0
+      const candidateText = response.text || '{}';
+      let parsedJson: Record<string, any> | undefined;
+      try {
+        parsedJson = JSON.parse(candidateText);
+      } catch {
+        // Non-json response fallback
       }
-    };
+
+      return {
+        content: candidateText,
+        parsedJson,
+        providerUsed: 'gemini',
+        modelUsed: model,
+        executionMode: 'LIVE_AI_GENERATION',
+        isAiReview: true,
+        isMock: false,
+        evidenceValid: false,
+        correlationId: request.correlationId || `corr-gem-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        tokenUsage: {
+          promptTokens: (response as any)?.usageMetadata?.promptTokenCount || 0,
+          completionTokens: (response as any)?.usageMetadata?.candidatesTokenCount || 0,
+          totalTokens: (response as any)?.usageMetadata?.totalTokenCount || 0
+        }
+      };
+    } catch (genAiErr: any) {
+      throw new Error(`Gemini SDK Execution Error: ${genAiErr?.message || genAiErr}`);
+    }
   }
 }
 

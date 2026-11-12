@@ -10,15 +10,15 @@ export const HydrostaticsTool: EngineeringTool = {
   deterministic: true,
   requiredPermissions: ['CALCULATION_EXEC'],
   inputSchema: z.object({
-    lwlMeters: z.number().positive(),
-    beamMeters: z.number().positive(),
-    draftMeters: z.number().positive(),
-    blockCoefficientCb: z.number().min(0.30).max(0.95).optional().default(0.44),
-    waterplaneCoefficientCwp: z.number().min(0.4).max(0.95).optional(),
-    kgMeters: z.number().positive().optional(),
-    displacementTonnes: z.number().positive().optional(),
-    seawaterDensityKgM3: z.number().default(1025)
-  }),
+    lwlMeters: z.coerce.number().positive(),
+    beamMeters: z.coerce.number().positive(),
+    draftMeters: z.coerce.number().positive(),
+    blockCoefficientCb: z.coerce.number().min(0.30).max(0.95).optional().or(z.literal(0)).transform(v => v ? Number(v) : 0.44),
+    waterplaneCoefficientCwp: z.coerce.number().min(0.4).max(0.95).optional().or(z.literal(0)).transform(v => v ? Number(v) : undefined),
+    kgMeters: z.coerce.number().positive().optional().or(z.literal(0)).transform(v => v ? Number(v) : undefined),
+    displacementTonnes: z.coerce.number().positive().optional().or(z.literal(0)).transform(v => v ? Number(v) : undefined),
+    seawaterDensityKgM3: z.coerce.number().default(1025)
+  }).passthrough(),
   outputSchema: z.object({
     displacedVolumeM3: z.number(),
     displacementTonnes: z.number(),
@@ -99,14 +99,14 @@ export const ResistanceTool: EngineeringTool = {
   deterministic: true,
   requiredPermissions: ['CALCULATION_EXEC'],
   inputSchema: z.object({
-    lwlMeters: z.number().positive(),
-    beamMeters: z.number().positive(),
-    draftMeters: z.number().positive(),
-    displacementTonnes: z.number().positive(),
-    speedKnots: z.number().positive(),
-    propulsiveEfficiencyEtaD: z.number().default(0.65),
-    waterTempCelsius: z.number().default(15)
-  }),
+    lwlMeters: z.coerce.number().positive(),
+    beamMeters: z.coerce.number().positive(),
+    draftMeters: z.coerce.number().positive(),
+    displacementTonnes: z.coerce.number().positive(),
+    speedKnots: z.coerce.number().positive(),
+    propulsiveEfficiencyEtaD: z.coerce.number().default(0.65),
+    waterTempCelsius: z.coerce.number().default(15)
+  }).passthrough(),
   outputSchema: z.object({
     speedMps: z.number(),
     froudeNumberFn: z.number(),
@@ -191,14 +191,14 @@ export const MassBalanceTool: EngineeringTool = {
   inputSchema: z.object({
     components: z.array(z.object({
       name: z.string(),
-      massKg: z.number().positive(),
-      lcgMetersFromTransom: z.number(),
-      tcgMetersFromCl: z.number(),
-      vcgMetersFromKeel: z.number().nonnegative(),
-      designMarginPercent: z.number().min(0).max(50).default(10)
-    })),
-    baselineLcbMetersFromTransom: z.number().optional()
-  }),
+      massKg: z.coerce.number().positive(),
+      lcgMetersFromTransom: z.coerce.number(),
+      tcgMetersFromCl: z.coerce.number(),
+      vcgMetersFromKeel: z.coerce.number().nonnegative(),
+      designMarginPercent: z.coerce.number().min(0).max(50).default(10)
+    })).default([]),
+    baselineLcbMetersFromTransom: z.coerce.number().optional()
+  }).passthrough(),
   outputSchema: z.object({
     lightshipMassKg: z.number(),
     designMarginMassKg: z.number(),
@@ -277,18 +277,18 @@ export const ElectricalLoadTool: EngineeringTool = {
   deterministic: true,
   requiredPermissions: ['CALCULATION_EXEC'],
   inputSchema: z.object({
-    busVoltageV: z.number().default(48),
-    batteryTotalKwh: z.number().positive(),
-    usableDepthOfDischarge: z.number().min(0.5).max(0.95).default(0.8),
+    busVoltageV: z.coerce.number().default(48),
+    batteryTotalKwh: z.coerce.number().positive().default(120),
+    usableDepthOfDischarge: z.coerce.number().min(0.1).max(1.0).default(0.8),
     consumers: z.array(z.object({
       name: z.string(),
-      voltageV: z.number().default(48),
-      continuousPowerW: z.number().nonnegative(),
-      intermittentPowerW: z.number().nonnegative().default(0),
-      dutyCycle: z.number().min(0).max(1).default(1),
+      voltageV: z.coerce.number().default(48),
+      continuousPowerW: z.coerce.number().nonnegative(),
+      intermittentPowerW: z.coerce.number().nonnegative().default(0),
+      dutyCycle: z.coerce.number().min(0).max(1).default(1),
       isEmergencyLoad: z.boolean().default(false)
-    }))
-  }),
+    })).default([])
+  }).passthrough(),
   outputSchema: z.object({
     totalContinuousPowerW: z.number(),
     averagePowerW: z.number(),
@@ -352,15 +352,15 @@ export const StructuresTool: EngineeringTool = {
   deterministic: true,
   requiredPermissions: ['CALCULATION_EXEC'],
   inputSchema: z.object({
-    displacementTonnes: z.number().positive(),
-    speedKnots: z.number().positive(),
-    lwlMeters: z.number().positive(),
-    deadriseAngleDeg: z.number().min(5).max(45),
-    unsupportedPanelWidthMm: z.number().positive(),
-    unsupportedPanelLengthMm: z.number().positive(),
-    materialYieldStrengthMpa: z.number().default(125), // 5083-H111 default
-    safetyFactor: z.number().default(2.0)
-  }),
+    displacementTonnes: z.coerce.number().positive(),
+    speedKnots: z.coerce.number().positive(),
+    lwlMeters: z.coerce.number().positive(),
+    deadriseAngleDeg: z.coerce.number().min(5).max(45).default(18),
+    unsupportedPanelWidthMm: z.coerce.number().positive().default(450),
+    unsupportedPanelLengthMm: z.coerce.number().positive().default(900),
+    materialYieldStrengthMpa: z.coerce.number().default(125), // 5083-H111 default
+    safetyFactor: z.coerce.number().default(2.0)
+  }).passthrough(),
   outputSchema: z.object({
     designSlammingPressureKpa: z.number(),
     allowableStressMpa: z.number(),
@@ -422,13 +422,13 @@ export const ColregsTool: EngineeringTool = {
   deterministic: true,
   requiredPermissions: ['CALCULATION_EXEC'],
   inputSchema: z.object({
-    ownCourseDeg: z.number().min(0).max(360),
-    ownSpeedKnots: z.number().positive(),
-    targetBearingDeg: z.number().min(0).max(360),
-    targetRangeNm: z.number().positive(),
-    targetCourseDeg: z.number().min(0).max(360),
-    targetSpeedKnots: z.number().positive()
-  }),
+    ownCourseDeg: z.coerce.number().min(0).max(360),
+    ownSpeedKnots: z.coerce.number().nonnegative(),
+    targetBearingDeg: z.coerce.number().min(0).max(360),
+    targetRangeNm: z.coerce.number().positive(),
+    targetCourseDeg: z.coerce.number().min(0).max(360),
+    targetSpeedKnots: z.coerce.number().nonnegative()
+  }).passthrough(),
   outputSchema: z.object({
     relativeSpeedKnots: z.number(),
     closestPointOfApproachCpaNm: z.number(),

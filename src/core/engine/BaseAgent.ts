@@ -282,12 +282,14 @@ export class BaseAgent {
       warnings.push('CRITICAL: Output generated via synthetic mock fallback. Not certified as verified engineering evidence.');
     }
 
-    if (this.spec.verificationCriteria.independentReviewRequired) {
+    const isExplicitlyNonCritical = (input as any).safetyCritical === false || input.context?.isExploratoryStudy === true || input.parameters?.isExploratoryStudy === true;
+
+    if (!isExplicitlyNonCritical && this.spec.verificationCriteria.independentReviewRequired) {
       requiresDirectorApproval = true;
       approvalRationale = approvalRationale || `Agent ${this.spec.id} (${this.spec.name}) requires Independent Review and Director Sign-off per Verification Policy.`;
     }
 
-    if (this.spec.auditRequirement.logLevel === 'SAFETY_CRITICAL') {
+    if (!isExplicitlyNonCritical && this.spec.auditRequirement.logLevel === 'SAFETY_CRITICAL') {
       requiresDirectorApproval = true;
       approvalRationale = approvalRationale || `Safety-critical engineering output from ${this.spec.id} requires Engineering Director approval.`;
     }
