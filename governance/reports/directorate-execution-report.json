@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-12T16:45:30.081Z",
+  "timestamp": "2026-11-12T17:06:26.733Z",
   "director": "usr-eng-dir-8841",
   "tasks": [
     {
@@ -27,13 +27,13 @@
         }
       },
       "status": "COMPLETED",
-      "createdAt": "2026-11-12T16:45:30.059Z",
+      "createdAt": "2026-11-12T17:06:26.711Z",
       "safetyCritical": false,
-      "startedAt": "2026-11-12T16:45:30.060Z",
+      "startedAt": "2026-11-12T17:06:26.712Z",
       "output": {
         "agentId": "HULL-GEO-05",
         "taskId": "TASK-NA-01-HULL",
-        "timestamp": "2026-11-12T16:45:30.062Z",
+        "timestamp": "2026-11-12T17:06:26.713Z",
         "status": "NEEDS_HUMAN_APPROVAL",
         "data": {
           "reviewMode": "DETERMINISTIC_STATIC_EVALUATION",
@@ -59,7 +59,7 @@
           "requiresDirectorApproval": false,
           "summary": "Deterministic static review completed successfully. Zero external API calls made.",
           "isMockFallback": false,
-          "executionTimeMs": 0.9240410000000168,
+          "executionTimeMs": 0.9909849999999949,
           "modelUsed": "gemini-1.5-flash"
         },
         "assumptions": [
@@ -107,8 +107,8 @@
         "requiresDirectorApproval": true,
         "approvalRationale": "Agent HULL-GEO-05 (Hull Form & Parametric Geometry Specialist) requires Independent Review and Director Sign-off per Verification Policy."
       },
-      "completedAt": "2026-11-12T16:45:30.062Z",
-      "approvalGateId": "GATE-1794501930062-sotx"
+      "completedAt": "2026-11-12T17:06:26.714Z",
+      "approvalGateId": "GATE-1794503186714-s4gl"
     },
     {
       "id": "TASK-NA-02-MASS",
@@ -180,13 +180,13 @@
         }
       },
       "status": "COMPLETED",
-      "createdAt": "2026-11-12T16:45:30.060Z",
+      "createdAt": "2026-11-12T17:06:26.711Z",
       "safetyCritical": false,
-      "startedAt": "2026-11-12T16:45:30.065Z",
+      "startedAt": "2026-11-12T17:06:26.717Z",
       "output": {
         "agentId": "WGT-BAL-09",
         "taskId": "TASK-NA-02-MASS",
-        "timestamp": "2026-11-12T16:45:30.066Z",
+        "timestamp": "2026-11-12T17:06:26.717Z",
         "status": "NEEDS_HUMAN_APPROVAL",
         "data": {
           "reviewMode": "DETERMINISTIC_STATIC_EVALUATION",
@@ -212,7 +212,7 @@
           "requiresDirectorApproval": false,
           "summary": "Deterministic static review completed successfully. Zero external API calls made.",
           "isMockFallback": false,
-          "executionTimeMs": 0.4842660000000194,
+          "executionTimeMs": 0.4492729999999767,
           "modelUsed": "gemini-1.5-flash"
         },
         "assumptions": [
@@ -303,8 +303,8 @@
         "requiresDirectorApproval": true,
         "approvalRationale": "Agent WGT-BAL-09 (Weight Distribution & Mass Balance Engineer) requires Independent Review and Director Sign-off per Verification Policy."
       },
-      "completedAt": "2026-11-12T16:45:30.066Z",
-      "approvalGateId": "GATE-1794501930066-1d31"
+      "completedAt": "2026-11-12T17:06:26.717Z",
+      "approvalGateId": "GATE-1794503186717-k84d"
     },
     {
       "id": "TASK-NA-03-STAB",
@@ -333,13 +333,13 @@
         }
       },
       "status": "COMPLETED",
-      "createdAt": "2026-11-12T16:45:30.060Z",
+      "createdAt": "2026-11-12T17:06:26.711Z",
       "safetyCritical": true,
-      "startedAt": "2026-11-12T16:45:30.069Z",
+      "startedAt": "2026-11-12T17:06:26.722Z",
       "output": {
         "agentId": "STAB-HYD-06",
         "taskId": "TASK-NA-03-STAB",
-        "timestamp": "2026-11-12T16:45:30.069Z",
+        "timestamp": "2026-11-12T17:06:26.722Z",
         "status": "NEEDS_HUMAN_APPROVAL",
         "data": {
           "reviewMode": "DETERMINISTIC_STATIC_EVALUATION",
@@ -365,7 +365,7 @@
           "requiresDirectorApproval": false,
           "summary": "Deterministic static review completed successfully. Zero external API calls made.",
           "isMockFallback": false,
-          "executionTimeMs": 0.20682200000001671,
+          "executionTimeMs": 0.21701699999999846,
           "modelUsed": "gemini-1.5-pro"
         },
         "assumptions": [
@@ -413,8 +413,8 @@
         "requiresDirectorApproval": true,
         "approvalRationale": "Agent STAB-HYD-06 (Hydrostatics & Intact Stability Engineer) requires Independent Review and Director Sign-off per Verification Policy."
       },
-      "completedAt": "2026-11-12T16:45:30.069Z",
-      "approvalGateId": "GATE-1794501930069-2dno"
+      "completedAt": "2026-11-12T17:06:26.722Z",
+      "approvalGateId": "GATE-1794503186722-n9vx"
     },
     {
       "id": "TASK-NA-04-RES",
@@ -442,13 +442,13 @@
         }
       },
       "status": "COMPLETED",
-      "createdAt": "2026-11-12T16:45:30.060Z",
+      "createdAt": "2026-11-12T17:06:26.711Z",
       "safetyCritical": false,
-      "startedAt": "2026-11-12T16:45:30.067Z",
+      "startedAt": "2026-11-12T17:06:26.719Z",
       "output": {
         "agentId": "RES-SEAK-07",
         "taskId": "TASK-NA-04-RES",
-        "timestamp": "2026-11-12T16:45:30.068Z",
+        "timestamp": "2026-11-12T17:06:26.720Z",
         "status": "SUCCESS",
         "data": {
           "reviewMode": "DETERMINISTIC_STATIC_EVALUATION",
@@ -474,7 +474,7 @@
           "requiresDirectorApproval": false,
           "summary": "Deterministic static review completed successfully. Zero external API calls made.",
           "isMockFallback": false,
-          "executionTimeMs": 0.38886499999998136,
+          "executionTimeMs": 0.8548720000000003,
           "modelUsed": "gemini-1.5-flash"
         },
         "assumptions": [
@@ -518,7 +518,7 @@
         "recommendations": [],
         "requiresDirectorApproval": false
       },
-      "completedAt": "2026-11-12T16:45:30.068Z"
+      "completedAt": "2026-11-12T17:06:26.720Z"
     },
     {
       "id": "TASK-NA-05-STR",
@@ -547,13 +547,13 @@
         }
       },
       "status": "COMPLETED",
-      "createdAt": "2026-11-12T16:45:30.060Z",
+      "createdAt": "2026-11-12T17:06:26.711Z",
       "safetyCritical": true,
-      "startedAt": "2026-11-12T16:45:30.068Z",
+      "startedAt": "2026-11-12T17:06:26.720Z",
       "output": {
         "agentId": "STR-MAT-10",
         "taskId": "TASK-NA-05-STR",
-        "timestamp": "2026-11-12T16:45:30.068Z",
+        "timestamp": "2026-11-12T17:06:26.721Z",
         "status": "NEEDS_HUMAN_APPROVAL",
         "data": {
           "reviewMode": "DETERMINISTIC_STATIC_EVALUATION",
@@ -579,7 +579,7 @@
           "requiresDirectorApproval": false,
           "summary": "Deterministic static review completed successfully. Zero external API calls made.",
           "isMockFallback": false,
-          "executionTimeMs": 0.20608400000000415,
+          "executionTimeMs": 0.8920420000000036,
           "modelUsed": "gemini-1.5-flash"
         },
         "assumptions": [
@@ -622,8 +622,8 @@
         "requiresDirectorApproval": true,
         "approvalRationale": "Agent STR-MAT-10 (Hull Structural Scantlings & Composites Engineer) requires Independent Review and Director Sign-off per Verification Policy."
       },
-      "completedAt": "2026-11-12T16:45:30.068Z",
-      "approvalGateId": "GATE-1794501930068-8tce"
+      "completedAt": "2026-11-12T17:06:26.721Z",
+      "approvalGateId": "GATE-1794503186721-y6td"
     },
     {
       "id": "TASK-PWR-01-PROP",
@@ -650,13 +650,13 @@
         }
       },
       "status": "COMPLETED",
-      "createdAt": "2026-11-12T16:45:30.060Z",
+      "createdAt": "2026-11-12T17:06:26.711Z",
       "safetyCritical": false,
-      "startedAt": "2026-11-12T16:45:30.070Z",
+      "startedAt": "2026-11-12T17:06:26.723Z",
       "output": {
         "agentId": "PROP-ENG-13",
         "taskId": "TASK-PWR-01-PROP",
-        "timestamp": "2026-11-12T16:45:30.070Z",
+        "timestamp": "2026-11-12T17:06:26.723Z",
         "status": "NEEDS_HUMAN_APPROVAL",
         "data": {
           "reviewMode": "DETERMINISTIC_STATIC_EVALUATION",
@@ -682,7 +682,7 @@
           "requiresDirectorApproval": false,
           "summary": "Deterministic static review completed successfully. Zero external API calls made.",
           "isMockFallback": false,
-          "executionTimeMs": 0.312907000000024,
+          "executionTimeMs": 0.12245000000001482,
           "modelUsed": "gemini-1.5-flash"
         },
         "assumptions": [
@@ -727,8 +727,8 @@
         "requiresDirectorApproval": true,
         "approvalRationale": "Agent PROP-ENG-13 (Propulsion Plant & Drivetrain Engineer) requires Independent Review and Director Sign-off per Verification Policy."
       },
-      "completedAt": "2026-11-12T16:45:30.070Z",
-      "approvalGateId": "GATE-1794501930070-t7bk"
+      "completedAt": "2026-11-12T17:06:26.723Z",
+      "approvalGateId": "GATE-1794503186723-8j08"
     },
     {
       "id": "TASK-PWR-02-ELEC",
@@ -810,13 +810,13 @@
         }
       },
       "status": "COMPLETED",
-      "createdAt": "2026-11-12T16:45:30.060Z",
+      "createdAt": "2026-11-12T17:06:26.711Z",
       "safetyCritical": false,
-      "startedAt": "2026-11-12T16:45:30.071Z",
+      "startedAt": "2026-11-12T17:06:26.725Z",
       "output": {
         "agentId": "ELEC-PWR-14",
         "taskId": "TASK-PWR-02-ELEC",
-        "timestamp": "2026-11-12T16:45:30.072Z",
+        "timestamp": "2026-11-12T17:06:26.725Z",
         "status": "NEEDS_HUMAN_APPROVAL",
         "data": {
           "reviewMode": "DETERMINISTIC_STATIC_EVALUATION",
@@ -842,7 +842,7 @@
           "requiresDirectorApproval": false,
           "summary": "Deterministic static review completed successfully. Zero external API calls made.",
           "isMockFallback": false,
-          "executionTimeMs": 0.48247100000000387,
+          "executionTimeMs": 0.5596940000000075,
           "modelUsed": "gemini-1.5-flash"
         },
         "assumptions": [
@@ -941,8 +941,8 @@
         "requiresDirectorApproval": true,
         "approvalRationale": "Agent ELEC-PWR-14 (Electrical Architecture & Microgrid Engineer) requires Independent Review and Director Sign-off per Verification Policy."
       },
-      "completedAt": "2026-11-12T16:45:30.072Z",
-      "approvalGateId": "GATE-1794501930072-mw8f"
+      "completedAt": "2026-11-12T17:06:26.725Z",
+      "approvalGateId": "GATE-1794503186725-twkr"
     },
     {
       "id": "TASK-PWR-03-BATT",
@@ -976,13 +976,13 @@
         }
       },
       "status": "COMPLETED",
-      "createdAt": "2026-11-12T16:45:30.060Z",
+      "createdAt": "2026-11-12T17:06:26.711Z",
       "safetyCritical": true,
-      "startedAt": "2026-11-12T16:45:30.073Z",
+      "startedAt": "2026-11-12T17:06:26.726Z",
       "output": {
         "agentId": "INDEP-CRIT-15",
         "taskId": "TASK-PWR-03-BATT",
-        "timestamp": "2026-11-12T16:45:30.073Z",
+        "timestamp": "2026-11-12T17:06:26.726Z",
         "status": "NEEDS_HUMAN_APPROVAL",
         "data": {
           "reviewMode": "DETERMINISTIC_STATIC_EVALUATION",
@@ -1008,7 +1008,7 @@
           "requiresDirectorApproval": false,
           "summary": "Deterministic static review completed successfully. Zero external API calls made.",
           "isMockFallback": false,
-          "executionTimeMs": 0.2750210000000095,
+          "executionTimeMs": 0.2937379999999905,
           "modelUsed": "gemini-1.5-pro"
         },
         "assumptions": [
@@ -1028,8 +1028,8 @@
         "requiresDirectorApproval": true,
         "approvalRationale": "Agent INDEP-CRIT-15 (Independent Technical Critic) requires Independent Review and Director Sign-off per Verification Policy."
       },
-      "completedAt": "2026-11-12T16:45:30.073Z",
-      "approvalGateId": "GATE-1794501930073-m4jk"
+      "completedAt": "2026-11-12T17:06:26.726Z",
+      "approvalGateId": "GATE-1794503186726-yasf"
     },
     {
       "id": "TASK-AUT-01-SENS",
@@ -1060,13 +1060,13 @@
         }
       },
       "status": "COMPLETED",
-      "createdAt": "2026-11-12T16:45:30.060Z",
+      "createdAt": "2026-11-12T17:06:26.711Z",
       "safetyCritical": false,
-      "startedAt": "2026-11-12T16:45:30.074Z",
+      "startedAt": "2026-11-12T17:06:26.727Z",
       "output": {
         "agentId": "SENS-PER-16",
         "taskId": "TASK-AUT-01-SENS",
-        "timestamp": "2026-11-12T16:45:30.074Z",
+        "timestamp": "2026-11-12T17:06:26.727Z",
         "status": "SUCCESS",
         "data": {
           "reviewMode": "DETERMINISTIC_STATIC_EVALUATION",
@@ -1092,7 +1092,7 @@
           "requiresDirectorApproval": false,
           "summary": "Deterministic static review completed successfully. Zero external API calls made.",
           "isMockFallback": false,
-          "executionTimeMs": 0.11835800000000063,
+          "executionTimeMs": 0.07021499999999037,
           "modelUsed": "gemini-1.5-flash"
         },
         "assumptions": [
@@ -1111,7 +1111,7 @@
         "recommendations": [],
         "requiresDirectorApproval": false
       },
-      "completedAt": "2026-11-12T16:45:30.074Z"
+      "completedAt": "2026-11-12T17:06:26.727Z"
     },
     {
       "id": "TASK-AUT-02-COL",
@@ -1139,13 +1139,13 @@
         }
       },
       "status": "COMPLETED",
-      "createdAt": "2026-11-12T16:45:30.060Z",
+      "createdAt": "2026-11-12T17:06:26.711Z",
       "safetyCritical": true,
-      "startedAt": "2026-11-12T16:45:30.074Z",
+      "startedAt": "2026-11-12T17:06:26.727Z",
       "output": {
         "agentId": "NAV-COL-17",
         "taskId": "TASK-AUT-02-COL",
-        "timestamp": "2026-11-12T16:45:30.075Z",
+        "timestamp": "2026-11-12T17:06:26.727Z",
         "status": "NEEDS_HUMAN_APPROVAL",
         "data": {
           "reviewMode": "DETERMINISTIC_STATIC_EVALUATION",
@@ -1171,7 +1171,7 @@
           "requiresDirectorApproval": false,
           "summary": "Deterministic static review completed successfully. Zero external API calls made.",
           "isMockFallback": false,
-          "executionTimeMs": 0.6232770000000016,
+          "executionTimeMs": 0.5525989999999865,
           "modelUsed": "gemini-1.5-pro"
         },
         "assumptions": [
@@ -1214,8 +1214,8 @@
         "requiresDirectorApproval": true,
         "approvalRationale": "Agent NAV-COL-17 (Navigation & COLREGS Collision Avoidance Specialist) requires Independent Review and Director Sign-off per Verification Policy."
       },
-      "completedAt": "2026-11-12T16:45:30.075Z",
-      "approvalGateId": "GATE-1794501930075-nxpg"
+      "completedAt": "2026-11-12T17:06:26.728Z",
+      "approvalGateId": "GATE-1794503186728-m1pq"
     },
     {
       "id": "TASK-AUT-03-COMM",
@@ -1242,13 +1242,13 @@
         }
       },
       "status": "COMPLETED",
-      "createdAt": "2026-11-12T16:45:30.060Z",
+      "createdAt": "2026-11-12T17:06:26.711Z",
       "safetyCritical": false,
-      "startedAt": "2026-11-12T16:45:30.076Z",
+      "startedAt": "2026-11-12T17:06:26.728Z",
       "output": {
         "agentId": "COMM-RF-19",
         "taskId": "TASK-AUT-03-COMM",
-        "timestamp": "2026-11-12T16:45:30.076Z",
+        "timestamp": "2026-11-12T17:06:26.729Z",
         "status": "SUCCESS",
         "data": {
           "reviewMode": "DETERMINISTIC_STATIC_EVALUATION",
@@ -1274,7 +1274,7 @@
           "requiresDirectorApproval": false,
           "summary": "Deterministic static review completed successfully. Zero external API calls made.",
           "isMockFallback": false,
-          "executionTimeMs": 0.18061700000001224,
+          "executionTimeMs": 0.28791000000001077,
           "modelUsed": "gemini-1.5-flash"
         },
         "assumptions": [
@@ -1293,7 +1293,7 @@
         "recommendations": [],
         "requiresDirectorApproval": false
       },
-      "completedAt": "2026-11-12T16:45:30.076Z"
+      "completedAt": "2026-11-12T17:06:26.729Z"
     },
     {
       "id": "TASK-AUT-04-SEC",
@@ -1318,13 +1318,13 @@
         }
       },
       "status": "COMPLETED",
-      "createdAt": "2026-11-12T16:45:30.060Z",
+      "createdAt": "2026-11-12T17:06:26.711Z",
       "safetyCritical": true,
-      "startedAt": "2026-11-12T16:45:30.076Z",
+      "startedAt": "2026-11-12T17:06:26.729Z",
       "output": {
         "agentId": "CYBER-SEC-20",
         "taskId": "TASK-AUT-04-SEC",
-        "timestamp": "2026-11-12T16:45:30.076Z",
+        "timestamp": "2026-11-12T17:06:26.729Z",
         "status": "NEEDS_HUMAN_APPROVAL",
         "data": {
           "reviewMode": "DETERMINISTIC_STATIC_EVALUATION",
@@ -1350,7 +1350,7 @@
           "requiresDirectorApproval": false,
           "summary": "Deterministic static review completed successfully. Zero external API calls made.",
           "isMockFallback": false,
-          "executionTimeMs": 0.20870699999997555,
+          "executionTimeMs": 0.11661900000001424,
           "modelUsed": "gemini-1.5-pro"
         },
         "assumptions": [
@@ -1370,8 +1370,8 @@
         "requiresDirectorApproval": true,
         "approvalRationale": "Agent CYBER-SEC-20 (Cyber-Physical Marine Security & Safe-State Engineer) requires Independent Review and Director Sign-off per Verification Policy."
       },
-      "completedAt": "2026-11-12T16:45:30.076Z",
-      "approvalGateId": "GATE-1794501930076-ge5e"
+      "completedAt": "2026-11-12T17:06:26.729Z",
+      "approvalGateId": "GATE-1794503186729-nhap"
     },
     {
       "id": "TASK-SYS-01-VVT",
@@ -1425,13 +1425,13 @@
         }
       },
       "status": "COMPLETED",
-      "createdAt": "2026-11-12T16:45:30.060Z",
+      "createdAt": "2026-11-12T17:06:26.711Z",
       "safetyCritical": false,
-      "startedAt": "2026-11-12T16:45:30.077Z",
+      "startedAt": "2026-11-12T17:06:26.729Z",
       "output": {
         "agentId": "VVT-VAL-24",
         "taskId": "TASK-SYS-01-VVT",
-        "timestamp": "2026-11-12T16:45:30.078Z",
+        "timestamp": "2026-11-12T17:06:26.729Z",
         "status": "SUCCESS",
         "data": {
           "reviewMode": "DETERMINISTIC_STATIC_EVALUATION",
@@ -1457,7 +1457,7 @@
           "requiresDirectorApproval": false,
           "summary": "Deterministic static review completed successfully. Zero external API calls made.",
           "isMockFallback": false,
-          "executionTimeMs": 0.1180569999999932,
+          "executionTimeMs": 0.051040999999997894,
           "modelUsed": "gemini-1.5-flash"
         },
         "assumptions": [
@@ -1476,7 +1476,7 @@
         "recommendations": [],
         "requiresDirectorApproval": false
       },
-      "completedAt": "2026-11-12T16:45:30.078Z"
+      "completedAt": "2026-11-12T17:06:26.729Z"
     },
     {
       "id": "TASK-SYS-02-RED",
@@ -1503,13 +1503,13 @@
         }
       },
       "status": "COMPLETED",
-      "createdAt": "2026-11-12T16:45:30.060Z",
+      "createdAt": "2026-11-12T17:06:26.711Z",
       "safetyCritical": true,
-      "startedAt": "2026-11-12T16:45:30.078Z",
+      "startedAt": "2026-11-12T17:06:26.729Z",
       "output": {
         "agentId": "INDEP-REV-23",
         "taskId": "TASK-SYS-02-RED",
-        "timestamp": "2026-11-12T16:45:30.078Z",
+        "timestamp": "2026-11-12T17:06:26.730Z",
         "status": "NEEDS_HUMAN_APPROVAL",
         "data": {
           "reviewMode": "DETERMINISTIC_STATIC_EVALUATION",
@@ -1535,7 +1535,7 @@
           "requiresDirectorApproval": false,
           "summary": "Deterministic static review completed successfully. Zero external API calls made.",
           "isMockFallback": false,
-          "executionTimeMs": 0.29000100000001794,
+          "executionTimeMs": 0.32576199999999744,
           "modelUsed": "gemini-1.5-pro"
         },
         "assumptions": [
@@ -1607,8 +1607,8 @@
         "requiresDirectorApproval": true,
         "approvalRationale": "Agent INDEP-REV-23 (Independent Design Reviewer (Challenger / Red Team)) requires Independent Review and Director Sign-off per Verification Policy."
       },
-      "completedAt": "2026-11-12T16:45:30.078Z",
-      "approvalGateId": "GATE-1794501930078-kdqv"
+      "completedAt": "2026-11-12T17:06:26.730Z",
+      "approvalGateId": "GATE-1794503186730-j348"
     },
     {
       "id": "TASK-SYS-03-LEAD",
@@ -1636,13 +1636,13 @@
         }
       },
       "status": "COMPLETED",
-      "createdAt": "2026-11-12T16:45:30.060Z",
+      "createdAt": "2026-11-12T17:06:26.711Z",
       "safetyCritical": true,
-      "startedAt": "2026-11-12T16:45:30.079Z",
+      "startedAt": "2026-11-12T17:06:26.731Z",
       "output": {
         "agentId": "LEAD-SYS-01",
         "taskId": "TASK-SYS-03-LEAD",
-        "timestamp": "2026-11-12T16:45:30.079Z",
+        "timestamp": "2026-11-12T17:06:26.731Z",
         "status": "NEEDS_HUMAN_APPROVAL",
         "data": {
           "reviewMode": "DETERMINISTIC_STATIC_EVALUATION",
@@ -1668,7 +1668,7 @@
           "requiresDirectorApproval": false,
           "summary": "Deterministic static review completed successfully. Zero external API calls made.",
           "isMockFallback": false,
-          "executionTimeMs": 0.08916999999999575,
+          "executionTimeMs": 0.09575000000000955,
           "modelUsed": "gemini-1.5-pro"
         },
         "assumptions": [
@@ -1688,13 +1688,13 @@
         "requiresDirectorApproval": true,
         "approvalRationale": "Agent LEAD-SYS-01 (Lead Systems Architect & Orchestrator) requires Independent Review and Director Sign-off per Verification Policy."
       },
-      "completedAt": "2026-11-12T16:45:30.079Z",
-      "approvalGateId": "GATE-1794501930079-f6o4"
+      "completedAt": "2026-11-12T17:06:26.731Z",
+      "approvalGateId": "GATE-1794503186731-tgkr"
     }
   ],
   "gates": [
     {
-      "id": "GATE-1794501930062-sotx",
+      "id": "GATE-1794503186714-s4gl",
       "taskId": "TASK-NA-01-HULL",
       "agentId": "HULL-GEO-05",
       "title": "Safety & Baseline Review: [BASELINE] Parametric Hull Geometry & Hydrostatics",
@@ -1724,24 +1724,24 @@
         "requiresDirectorApproval": false,
         "summary": "Deterministic static review completed successfully. Zero external API calls made.",
         "isMockFallback": false,
-        "executionTimeMs": 0.9240410000000168,
+        "executionTimeMs": 0.9909849999999949,
         "modelUsed": "gemini-1.5-flash"
       },
       "state": "APPROVED",
-      "requestedAt": "2026-11-12T16:45:30.062Z",
-      "decidedAt": "2026-11-12T16:45:30.065Z",
+      "requestedAt": "2026-11-12T17:06:26.714Z",
+      "decidedAt": "2026-11-12T17:06:26.717Z",
       "decidedBy": "undefined (usr-eng-dir-8841) [ENGINEERING_DIRECTOR]",
       "decidedByIdentity": {
         "userId": "usr-eng-dir-8841",
         "role": "ENGINEERING_DIRECTOR",
-        "authenticatedAt": "2026-11-12T16:45:30.059Z",
-        "sessionExpiresAt": "2026-11-13T16:45:30.059Z",
-        "tokenSignature": "5fef0379db493676a363952373f7d3c1411ba7b97c44c20e3902c832f66fbf88"
+        "authenticatedAt": "2026-11-12T17:06:26.711Z",
+        "sessionExpiresAt": "2026-11-13T17:06:26.711Z",
+        "tokenSignature": "678e20fd99172b54121882d8b5a931a9bfa439e0c515f3c4bc5dadd92fc07fa3"
       },
       "directorNotes": "Authorized by Engineering Director. Validated against USV-01 Revision 0.3 approved baseline standards."
     },
     {
-      "id": "GATE-1794501930066-1d31",
+      "id": "GATE-1794503186717-k84d",
       "taskId": "TASK-NA-02-MASS",
       "agentId": "WGT-BAL-09",
       "title": "Safety & Baseline Review: [BASELINE] SWBS Mass Balance & Centers of Gravity",
@@ -1771,24 +1771,24 @@
         "requiresDirectorApproval": false,
         "summary": "Deterministic static review completed successfully. Zero external API calls made.",
         "isMockFallback": false,
-        "executionTimeMs": 0.4842660000000194,
+        "executionTimeMs": 0.4492729999999767,
         "modelUsed": "gemini-1.5-flash"
       },
       "state": "APPROVED",
-      "requestedAt": "2026-11-12T16:45:30.066Z",
-      "decidedAt": "2026-11-12T16:45:30.067Z",
+      "requestedAt": "2026-11-12T17:06:26.717Z",
+      "decidedAt": "2026-11-12T17:06:26.719Z",
       "decidedBy": "undefined (usr-eng-dir-8841) [ENGINEERING_DIRECTOR]",
       "decidedByIdentity": {
         "userId": "usr-eng-dir-8841",
         "role": "ENGINEERING_DIRECTOR",
-        "authenticatedAt": "2026-11-12T16:45:30.059Z",
-        "sessionExpiresAt": "2026-11-13T16:45:30.059Z",
-        "tokenSignature": "cdfd635b40a6f32fa4c5968299d9ab29dd81c1b186af5c277aead7c651771977"
+        "authenticatedAt": "2026-11-12T17:06:26.711Z",
+        "sessionExpiresAt": "2026-11-13T17:06:26.711Z",
+        "tokenSignature": "104a363b0eae0912bfb88b1189e04a3e2a321fd318986685910d1b5af26f0f97"
       },
       "directorNotes": "Authorized by Engineering Director. Validated against USV-01 Revision 0.3 approved baseline standards."
     },
     {
-      "id": "GATE-1794501930068-8tce",
+      "id": "GATE-1794503186721-y6td",
       "taskId": "TASK-NA-05-STR",
       "agentId": "STR-MAT-10",
       "title": "Safety & Baseline Review: [BASELINE] Bottom Slamming Pressure & Scantlings",
@@ -1818,24 +1818,24 @@
         "requiresDirectorApproval": false,
         "summary": "Deterministic static review completed successfully. Zero external API calls made.",
         "isMockFallback": false,
-        "executionTimeMs": 0.20608400000000415,
+        "executionTimeMs": 0.8920420000000036,
         "modelUsed": "gemini-1.5-flash"
       },
       "state": "APPROVED",
-      "requestedAt": "2026-11-12T16:45:30.068Z",
-      "decidedAt": "2026-11-12T16:45:30.068Z",
+      "requestedAt": "2026-11-12T17:06:26.721Z",
+      "decidedAt": "2026-11-12T17:06:26.721Z",
       "decidedBy": "undefined (usr-eng-dir-8841) [ENGINEERING_DIRECTOR]",
       "decidedByIdentity": {
         "userId": "usr-eng-dir-8841",
         "role": "ENGINEERING_DIRECTOR",
-        "authenticatedAt": "2026-11-12T16:45:30.059Z",
-        "sessionExpiresAt": "2026-11-13T16:45:30.059Z",
-        "tokenSignature": "a516959ebb67e5d253d7598cd9cdaed2c2704e742de00f608589d7d5709b6ff0"
+        "authenticatedAt": "2026-11-12T17:06:26.711Z",
+        "sessionExpiresAt": "2026-11-13T17:06:26.711Z",
+        "tokenSignature": "b4fc4f95ad86a5ceb26ecf0018bc385db83db7e2df7b3f6e66be61110b17c6f7"
       },
       "directorNotes": "Authorized by Engineering Director. Validated against USV-01 Revision 0.3 approved baseline standards."
     },
     {
-      "id": "GATE-1794501930069-2dno",
+      "id": "GATE-1794503186722-n9vx",
       "taskId": "TASK-NA-03-STAB",
       "agentId": "STAB-HYD-06",
       "title": "Safety & Baseline Review: [BASELINE] Intact Stability & GMt IMO MSC.267(85) Audit",
@@ -1865,24 +1865,24 @@
         "requiresDirectorApproval": false,
         "summary": "Deterministic static review completed successfully. Zero external API calls made.",
         "isMockFallback": false,
-        "executionTimeMs": 0.20682200000001671,
+        "executionTimeMs": 0.21701699999999846,
         "modelUsed": "gemini-1.5-pro"
       },
       "state": "APPROVED",
-      "requestedAt": "2026-11-12T16:45:30.069Z",
-      "decidedAt": "2026-11-12T16:45:30.070Z",
+      "requestedAt": "2026-11-12T17:06:26.722Z",
+      "decidedAt": "2026-11-12T17:06:26.723Z",
       "decidedBy": "undefined (usr-eng-dir-8841) [ENGINEERING_DIRECTOR]",
       "decidedByIdentity": {
         "userId": "usr-eng-dir-8841",
         "role": "ENGINEERING_DIRECTOR",
-        "authenticatedAt": "2026-11-12T16:45:30.059Z",
-        "sessionExpiresAt": "2026-11-13T16:45:30.059Z",
-        "tokenSignature": "cb04b00b6507f9fd631d1622f7a629a9de7661296576859b8e32d9ad8c484642"
+        "authenticatedAt": "2026-11-12T17:06:26.711Z",
+        "sessionExpiresAt": "2026-11-13T17:06:26.711Z",
+        "tokenSignature": "bc63effeb4bf4911e92e75458858a6b6594d50ef1d302f856af026b059014364"
       },
       "directorNotes": "Authorized by Engineering Director. Validated against USV-01 Revision 0.3 approved baseline standards."
     },
     {
-      "id": "GATE-1794501930070-t7bk",
+      "id": "GATE-1794503186723-8j08",
       "taskId": "TASK-PWR-01-PROP",
       "agentId": "PROP-ENG-13",
       "title": "Safety & Baseline Review: [BASELINE] Azimuth Thruster & Electric Drivetrain Sizing",
@@ -1912,24 +1912,24 @@
         "requiresDirectorApproval": false,
         "summary": "Deterministic static review completed successfully. Zero external API calls made.",
         "isMockFallback": false,
-        "executionTimeMs": 0.312907000000024,
+        "executionTimeMs": 0.12245000000001482,
         "modelUsed": "gemini-1.5-flash"
       },
       "state": "APPROVED",
-      "requestedAt": "2026-11-12T16:45:30.070Z",
-      "decidedAt": "2026-11-12T16:45:30.071Z",
+      "requestedAt": "2026-11-12T17:06:26.723Z",
+      "decidedAt": "2026-11-12T17:06:26.724Z",
       "decidedBy": "undefined (usr-eng-dir-8841) [ENGINEERING_DIRECTOR]",
       "decidedByIdentity": {
         "userId": "usr-eng-dir-8841",
         "role": "ENGINEERING_DIRECTOR",
-        "authenticatedAt": "2026-11-12T16:45:30.059Z",
-        "sessionExpiresAt": "2026-11-13T16:45:30.059Z",
-        "tokenSignature": "701fdd1b7cc7a978fc4d772f1a4b87b984e7386c3ac25f9ae37a5cec8b012c28"
+        "authenticatedAt": "2026-11-12T17:06:26.711Z",
+        "sessionExpiresAt": "2026-11-13T17:06:26.711Z",
+        "tokenSignature": "ef7bb1ccfe84ddf3d38c7a8c4276e4f7d5fa842271d3143fe1e454b083ef0ee2"
       },
       "directorNotes": "Authorized by Engineering Director. Validated against USV-01 Revision 0.3 approved baseline standards."
     },
     {
-      "id": "GATE-1794501930072-mw8f",
+      "id": "GATE-1794503186725-twkr",
       "taskId": "TASK-PWR-02-ELEC",
       "agentId": "ELEC-PWR-14",
       "title": "Safety & Baseline Review: [BASELINE] DC Microgrid Load Balance & Sizing",
@@ -1959,24 +1959,24 @@
         "requiresDirectorApproval": false,
         "summary": "Deterministic static review completed successfully. Zero external API calls made.",
         "isMockFallback": false,
-        "executionTimeMs": 0.48247100000000387,
+        "executionTimeMs": 0.5596940000000075,
         "modelUsed": "gemini-1.5-flash"
       },
       "state": "APPROVED",
-      "requestedAt": "2026-11-12T16:45:30.072Z",
-      "decidedAt": "2026-11-12T16:45:30.073Z",
+      "requestedAt": "2026-11-12T17:06:26.725Z",
+      "decidedAt": "2026-11-12T17:06:26.726Z",
       "decidedBy": "undefined (usr-eng-dir-8841) [ENGINEERING_DIRECTOR]",
       "decidedByIdentity": {
         "userId": "usr-eng-dir-8841",
         "role": "ENGINEERING_DIRECTOR",
-        "authenticatedAt": "2026-11-12T16:45:30.059Z",
-        "sessionExpiresAt": "2026-11-13T16:45:30.059Z",
-        "tokenSignature": "84df1d87cd618da120ca71c4faeb70d268b24ac7898ac824d842c1e292eb8ce3"
+        "authenticatedAt": "2026-11-12T17:06:26.711Z",
+        "sessionExpiresAt": "2026-11-13T17:06:26.711Z",
+        "tokenSignature": "0682d48a5d591083fe9c72c71fd79b469a7bf4cb2c8329804aee19f9eaf06fd4"
       },
       "directorNotes": "Authorized by Engineering Director. Validated against USV-01 Revision 0.3 approved baseline standards."
     },
     {
-      "id": "GATE-1794501930073-m4jk",
+      "id": "GATE-1794503186726-yasf",
       "taskId": "TASK-PWR-03-BATT",
       "agentId": "INDEP-CRIT-15",
       "title": "Safety & Baseline Review: [BASELINE] LiFePO4 Energy Storage Safety & Thermal Containment",
@@ -2006,24 +2006,24 @@
         "requiresDirectorApproval": false,
         "summary": "Deterministic static review completed successfully. Zero external API calls made.",
         "isMockFallback": false,
-        "executionTimeMs": 0.2750210000000095,
+        "executionTimeMs": 0.2937379999999905,
         "modelUsed": "gemini-1.5-pro"
       },
       "state": "APPROVED",
-      "requestedAt": "2026-11-12T16:45:30.073Z",
-      "decidedAt": "2026-11-12T16:45:30.074Z",
+      "requestedAt": "2026-11-12T17:06:26.726Z",
+      "decidedAt": "2026-11-12T17:06:26.727Z",
       "decidedBy": "undefined (usr-eng-dir-8841) [ENGINEERING_DIRECTOR]",
       "decidedByIdentity": {
         "userId": "usr-eng-dir-8841",
         "role": "ENGINEERING_DIRECTOR",
-        "authenticatedAt": "2026-11-12T16:45:30.059Z",
-        "sessionExpiresAt": "2026-11-13T16:45:30.059Z",
-        "tokenSignature": "1eeb68e7d81440b65cc5aae2c674628ef9db91e92849b0c57dfb29e587553313"
+        "authenticatedAt": "2026-11-12T17:06:26.711Z",
+        "sessionExpiresAt": "2026-11-13T17:06:26.711Z",
+        "tokenSignature": "fdf977aa2551d0a8fbf37c4dfa646dae5c3cbf5e5d1dc490f489e508a0667f93"
       },
       "directorNotes": "Authorized by Engineering Director. Validated against USV-01 Revision 0.3 approved baseline standards."
     },
     {
-      "id": "GATE-1794501930075-nxpg",
+      "id": "GATE-1794503186728-m1pq",
       "taskId": "TASK-AUT-02-COL",
       "agentId": "NAV-COL-17",
       "title": "Safety & Baseline Review: [BASELINE] IMO COLREGs 1972 Collision Avoidance Vectors",
@@ -2053,24 +2053,24 @@
         "requiresDirectorApproval": false,
         "summary": "Deterministic static review completed successfully. Zero external API calls made.",
         "isMockFallback": false,
-        "executionTimeMs": 0.6232770000000016,
+        "executionTimeMs": 0.5525989999999865,
         "modelUsed": "gemini-1.5-pro"
       },
       "state": "APPROVED",
-      "requestedAt": "2026-11-12T16:45:30.075Z",
-      "decidedAt": "2026-11-12T16:45:30.076Z",
+      "requestedAt": "2026-11-12T17:06:26.728Z",
+      "decidedAt": "2026-11-12T17:06:26.728Z",
       "decidedBy": "undefined (usr-eng-dir-8841) [ENGINEERING_DIRECTOR]",
       "decidedByIdentity": {
         "userId": "usr-eng-dir-8841",
         "role": "ENGINEERING_DIRECTOR",
-        "authenticatedAt": "2026-11-12T16:45:30.059Z",
-        "sessionExpiresAt": "2026-11-13T16:45:30.059Z",
-        "tokenSignature": "e8deba9e8c1fdea446e6ea553e6272172327044b8c5f2c4364793d16412588d6"
+        "authenticatedAt": "2026-11-12T17:06:26.711Z",
+        "sessionExpiresAt": "2026-11-13T17:06:26.711Z",
+        "tokenSignature": "95fa4ad5e298ccbec8c813ad4075a0e1e71c5bfa7ae4df50d893764854fc4fc2"
       },
       "directorNotes": "Authorized by Engineering Director. Validated against USV-01 Revision 0.3 approved baseline standards."
     },
     {
-      "id": "GATE-1794501930076-ge5e",
+      "id": "GATE-1794503186729-nhap",
       "taskId": "TASK-AUT-04-SEC",
       "agentId": "CYBER-SEC-20",
       "title": "Safety & Baseline Review: [BASELINE] Cyber-Physical Marine Security & Safe-State Air-Gap",
@@ -2100,24 +2100,24 @@
         "requiresDirectorApproval": false,
         "summary": "Deterministic static review completed successfully. Zero external API calls made.",
         "isMockFallback": false,
-        "executionTimeMs": 0.20870699999997555,
+        "executionTimeMs": 0.11661900000001424,
         "modelUsed": "gemini-1.5-pro"
       },
       "state": "APPROVED",
-      "requestedAt": "2026-11-12T16:45:30.076Z",
-      "decidedAt": "2026-11-12T16:45:30.077Z",
+      "requestedAt": "2026-11-12T17:06:26.729Z",
+      "decidedAt": "2026-11-12T17:06:26.729Z",
       "decidedBy": "undefined (usr-eng-dir-8841) [ENGINEERING_DIRECTOR]",
       "decidedByIdentity": {
         "userId": "usr-eng-dir-8841",
         "role": "ENGINEERING_DIRECTOR",
-        "authenticatedAt": "2026-11-12T16:45:30.059Z",
-        "sessionExpiresAt": "2026-11-13T16:45:30.059Z",
-        "tokenSignature": "7ee09b0f755a312938b60e3e739ec8e7d15554462cac566ab8d62ac4781801da"
+        "authenticatedAt": "2026-11-12T17:06:26.711Z",
+        "sessionExpiresAt": "2026-11-13T17:06:26.711Z",
+        "tokenSignature": "1c506a047ec5bc5d248202bf3881c8d9775f32e58c058cfa44588b0b9b3becf7"
       },
       "directorNotes": "Authorized by Engineering Director. Validated against USV-01 Revision 0.3 approved baseline standards."
     },
     {
-      "id": "GATE-1794501930078-kdqv",
+      "id": "GATE-1794503186730-j348",
       "taskId": "TASK-SYS-02-RED",
       "agentId": "INDEP-REV-23",
       "title": "Safety & Baseline Review: [RED TEAM] Independent Recalculation & Anomaly Challenge",
@@ -2147,24 +2147,24 @@
         "requiresDirectorApproval": false,
         "summary": "Deterministic static review completed successfully. Zero external API calls made.",
         "isMockFallback": false,
-        "executionTimeMs": 0.29000100000001794,
+        "executionTimeMs": 0.32576199999999744,
         "modelUsed": "gemini-1.5-pro"
       },
       "state": "APPROVED",
-      "requestedAt": "2026-11-12T16:45:30.078Z",
-      "decidedAt": "2026-11-12T16:45:30.079Z",
+      "requestedAt": "2026-11-12T17:06:26.730Z",
+      "decidedAt": "2026-11-12T17:06:26.731Z",
       "decidedBy": "undefined (usr-eng-dir-8841) [ENGINEERING_DIRECTOR]",
       "decidedByIdentity": {
         "userId": "usr-eng-dir-8841",
         "role": "ENGINEERING_DIRECTOR",
-        "authenticatedAt": "2026-11-12T16:45:30.059Z",
-        "sessionExpiresAt": "2026-11-13T16:45:30.059Z",
-        "tokenSignature": "b2fe8e1217c1a0d3a4f79b11eb38823f36febe1af2c819e51e485fbc026d3e7e"
+        "authenticatedAt": "2026-11-12T17:06:26.711Z",
+        "sessionExpiresAt": "2026-11-13T17:06:26.711Z",
+        "tokenSignature": "327b06a37e80e0f2c7444358c3d604151ed1928cb7452bd5c73dc55457f23fce"
       },
       "directorNotes": "Authorized by Engineering Director. Validated against USV-01 Revision 0.3 approved baseline standards."
     },
     {
-      "id": "GATE-1794501930079-f6o4",
+      "id": "GATE-1794503186731-tgkr",
       "taskId": "TASK-SYS-03-LEAD",
       "agentId": "LEAD-SYS-01",
       "title": "Safety & Baseline Review: [DIRECTORATE] Lead Systems Architect Master Synthesis",
@@ -2194,19 +2194,19 @@
         "requiresDirectorApproval": false,
         "summary": "Deterministic static review completed successfully. Zero external API calls made.",
         "isMockFallback": false,
-        "executionTimeMs": 0.08916999999999575,
+        "executionTimeMs": 0.09575000000000955,
         "modelUsed": "gemini-1.5-pro"
       },
       "state": "APPROVED",
-      "requestedAt": "2026-11-12T16:45:30.079Z",
-      "decidedAt": "2026-11-12T16:45:30.080Z",
+      "requestedAt": "2026-11-12T17:06:26.731Z",
+      "decidedAt": "2026-11-12T17:06:26.732Z",
       "decidedBy": "undefined (usr-eng-dir-8841) [ENGINEERING_DIRECTOR]",
       "decidedByIdentity": {
         "userId": "usr-eng-dir-8841",
         "role": "ENGINEERING_DIRECTOR",
-        "authenticatedAt": "2026-11-12T16:45:30.059Z",
-        "sessionExpiresAt": "2026-11-13T16:45:30.059Z",
-        "tokenSignature": "0722fea9bb039b285539f2c30c6040b0a5509f414f505becaa7eef7c6ec0ca66"
+        "authenticatedAt": "2026-11-12T17:06:26.711Z",
+        "sessionExpiresAt": "2026-11-13T17:06:26.711Z",
+        "tokenSignature": "c9c123af669b7605ea279fbb3be96adc65dd7a756c735af5de74eb6627072aec"
       },
       "directorNotes": "Authorized by Engineering Director. Validated against USV-01 Revision 0.3 approved baseline standards."
     }
