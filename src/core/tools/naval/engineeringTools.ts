@@ -26,7 +26,9 @@ export const HydrostaticsTool: EngineeringTool = {
     transverseMetacentricRadiusBmtM: z.number(),
     transverseMetacenterKmtM: z.number(),
     metacentricHeightGmtM: z.number(),
-    stabilityStatus: z.enum(['STABLE_COMPLIANT', 'MARGINAL', 'UNSTABLE_CRITICAL']),
+    stabilityStatus: z.enum(['STABLE_COMPLIANT', 'MARGINAL', 'UNSTABLE_CRITICAL', 'UNVERIFIED_ESTIMATE']),
+    isPreliminaryEstimate: z.boolean(),
+    kgSource: z.enum(['USER_PROVIDED', 'ASSUMED_FOR_ESTIMATE']),
     complianceCheck: z.object({
       minGmMet: z.boolean(),
       morrishKbApproximationM: z.number()
@@ -67,12 +69,17 @@ export const HydrostaticsTool: EngineeringTool = {
     // GMt = KMt - KG
     const metacentricHeightGmtM = transverseMetacenterKmtM - kgMeters;
 
-    let stabilityStatus: 'STABLE_COMPLIANT' | 'MARGINAL' | 'UNSTABLE_CRITICAL' = 'STABLE_COMPLIANT';
+    const hasVerifiedKgInput = typeof input.kgMeters === 'number' && Number.isFinite(input.kgMeters) && input.kgMeters > 0;
+    let stabilityStatus: 'STABLE_COMPLIANT' | 'MARGINAL' | 'UNSTABLE_CRITICAL' | 'UNVERIFIED_ESTIMATE' = 'STABLE_COMPLIANT';
     if (metacentricHeightGmtM < 0.15) {
       stabilityStatus = 'UNSTABLE_CRITICAL';
     } else if (metacentricHeightGmtM < 0.35) {
       stabilityStatus = 'MARGINAL';
     }
+
+    // A guessed KG cannot establish stability compliance; keep the numeric result
+    // only as a transparent preliminary estimate, never a release criterion.
+    if (!hasVerifiedKgInput) stabilityStatus = 'UNVERIFIED_ESTIMATE';
 
     return {
       displacedVolumeM3: Number(displacedVolumeM3.toFixed(3)),
@@ -82,8 +89,10 @@ export const HydrostaticsTool: EngineeringTool = {
       transverseMetacenterKmtM: Number(transverseMetacenterKmtM.toFixed(3)),
       metacentricHeightGmtM: Number(metacentricHeightGmtM.toFixed(3)),
       stabilityStatus,
+      isPreliminaryEstimate: !hasVerifiedKgInput,
+      kgSource: hasVerifiedKgInput ? 'USER_PROVIDED' : 'ASSUMED_FOR_ESTIMATE',
       complianceCheck: {
-        minGmMet: metacentricHeightGmtM >= 0.35,
+        minGmMet: hasVerifiedKgInput && metacentricHeightGmtM >= 0.35,
         morrishKbApproximationM: Number(centerOfBuoyancyKbM.toFixed(3))
       }
     };
