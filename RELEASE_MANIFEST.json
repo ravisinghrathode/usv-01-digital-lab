@@ -3,8 +3,8 @@
   "programme": "NAVAL-USV",
   "project": "USV-01 Digital Engineering Lab",
   "releaseVersion": "1.0.0",
-  "gitCommitSha": "81d476cfc52b387db82519016a37f3b49138af3a",
-  "builtAt": "2026-11-12T00:20:10.878Z",
+  "gitCommitSha": "27db5f41458116db31d78669f6c55e1f9ae7f764",
+  "builtAt": "2026-11-12T00:24:43.263Z",
   "environment": {
     "nodeVersion": "v24.22.2",
     "osPlatform": "linux"
@@ -27,8 +27,8 @@
     },
     {
       "path": "src/App.tsx",
-      "sha256": "5a9796f1761adbbeb3c0484580620f8527eefb98b385120219c258777e25f1f9",
-      "sizeBytes": 31293
+      "sha256": "57a41756cdd28ba66244ced2d935ac806e44c0c6dfc980d9ecb2aac2ff97222c",
+      "sizeBytes": 31625
     },
     {
       "path": "src/components/AgentOrchestratorView.tsx",
@@ -54,6 +54,11 @@
       "path": "src/components/ExportImportModal.tsx",
       "sha256": "82630d1a9ed64183ab4c9f881659919b8aa5c258989fee1ab5b43dfea8da029b",
       "sizeBytes": 6377
+    },
+    {
+      "path": "src/components/GenerativeOptimizerView.tsx",
+      "sha256": "7a4eddf9dc1f249b4e94338a93b7bb39211c6752f101dd01979565115c76e040",
+      "sizeBytes": 62965
     },
     {
       "path": "src/components/HydrodynamicsView.tsx",
@@ -82,8 +87,8 @@
     },
     {
       "path": "src/components/NavigationSidebar.tsx",
-      "sha256": "d315917c036556712e07855d77361d035738317c1302f690ef89642d4b37d8b0",
-      "sizeBytes": 14773
+      "sha256": "15d994f4c4878f4eda7d4d71a4559c54fdc3928a546be8421b84eaf7af411e85",
+      "sizeBytes": 15794
     },
     {
       "path": "src/components/NewRecordModal.tsx",
@@ -97,8 +102,8 @@
     },
     {
       "path": "src/components/ProjectOverview.tsx",
-      "sha256": "926f4de876dc7b2b4c3f68abbab932f1602417671a4f5efb771f551219afc028",
-      "sizeBytes": 23750
+      "sha256": "63c0dc4f5544d360b73cdd64d475c584fb7a79dd7ec504d4fadbcc439920e8f6",
+      "sizeBytes": 25754
     },
     {
       "path": "src/components/PropulsionView.tsx",
@@ -196,6 +201,11 @@
       "sizeBytes": 19352
     },
     {
+      "path": "src/core/optimizer/GenerativeDesignOptimizer.ts",
+      "sha256": "8c0a5f21bc55611bf5c7c5d19af1d12eea8f3fd84c426c5f7ea3c4bf74f6372f",
+      "sizeBytes": 49351
+    },
+    {
       "path": "src/core/orchestrator/CentralOrchestrator.ts",
       "sha256": "5567dd72a73e9faa934bd4ed17ed277e1ad0b6f159f64c468cf912357100b727",
       "sizeBytes": 8241
@@ -291,14 +301,14 @@
       "sizeBytes": 10104
     },
     {
-      "path": "dist/assets/index-DsN8Dw5W.css",
-      "sha256": "54ca7cc3353169bac52d6d19b7fec828f9f2b3dd3fde24ed7ae76bdc2901de87",
-      "sizeBytes": 39196
+      "path": "dist/assets/index-CmTgJkML.css",
+      "sha256": "2fa16744e7f6b1992fb752c3dd9ea31340feea1c8e2ef628074276fc077210ba",
+      "sizeBytes": 40726
     },
     {
-      "path": "dist/assets/index-qX576ggW.js",
-      "sha256": "c9f48c2b5f36058c86c1cd475c1d6f5680a275fa90ffb2b3bd5db8a6fb42838f",
-      "sizeBytes": 876684
+      "path": "dist/assets/index-Sz-6P5Iu.js",
+      "sha256": "4a73d96973e6e1942bb422f77d11e53d1c49f486e533a632d44a270897b87840",
+      "sizeBytes": 1018725
     },
     {
       "path": "dist/assets/vendor-libs-BTFXSzXW.js",
@@ -306,9 +316,9 @@
       "sizeBytes": 4236
     },
     {
-      "path": "dist/assets/vendor-react-D_rkaU5G.js",
-      "sha256": "9d5e11271f7465f315affe47e425ec3f90e2739b81316955c9255fdba6db4147",
-      "sizeBytes": 452505
+      "path": "dist/assets/vendor-react-C-NPPq7d.js",
+      "sha256": "3a5054f0817371297ab28836611713628b4cbfe5cec81e84dd408851fe2966ba",
+      "sizeBytes": 453399
     },
     {
       "path": "dist/assets/vendor-zod-DI3SlkSS.js",
@@ -317,7 +327,7 @@
     },
     {
       "path": "dist/index.html",
-      "sha256": "1523cc2b9b4daf1ffd73e946bae94579c4427da058288ddb67335b72dbb0c2ee",
+      "sha256": "63b34fe4de0fe4703648b1c2a142aeaf0affdd671be2750a556d29b00a4b0ebe",
       "sizeBytes": 1406
     }
   ],
@@ -327,5 +337,5 @@
     "auditVulnerabilities": 0,
     "staticAnalysisStatus": "PASS"
   },
-  "immutableManifestSha256": "40b4b0022cd3c735755fdf83e8fefdbea94e26c02bcdc938aec52874360d35e1"
+  "immutableManifestSha256": "cd4c0e92dcf2d85a94ef9f9f0103565ad96f6d04970cdf14bd8f52aa5d13ad09"
 }
