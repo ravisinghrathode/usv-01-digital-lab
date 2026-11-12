@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   Cpu,
   Play,
@@ -19,13 +19,18 @@ import {
   ChevronRight,
   TrendingUp,
   BookOpen,
-  Info
+  Info,
+  Waves,
+  Users,
+  Search,
+  FileText
 } from 'lucide-react';
 import {
   GenerativeDesignOptimizer,
   CandidateDesign,
   LearnedInvariant,
-  DesignPhilosophy
+  DesignPhilosophy,
+  AgentEvaluation25
 } from '../core/optimizer/GenerativeDesignOptimizer';
 import { downloadCsv } from '../utils/engineeringUtils';
 
@@ -36,7 +41,7 @@ interface GenerativeOptimizerViewProps {
 export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = ({ onAskAi }) => {
   const optimizer = GenerativeDesignOptimizer.getInstance();
 
-  const [activeTab, setActiveTab] = useState<'ledger' | 'pareto' | 'invariants' | 'redteam'>('ledger');
+  const [activeTab, setActiveTab] = useState<'ledger' | 'studio' | 'agents25' | 'seastates' | 'pareto' | 'invariants' | 'redteam'>('ledger');
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [philosophy, setPhilosophy] = useState<DesignPhilosophy>('BALANCED_PATROL');
   const [history, setHistory] = useState<CandidateDesign[]>([]);
@@ -45,7 +50,22 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
   const [selectedCandidate, setSelectedCandidate] = useState<CandidateDesign | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
 
+  // 25-Agent tab filters
+  const [agentDivisionFilter, setAgentDivisionFilter] = useState<string>('ALL');
+  const [agentSearch, setAgentSearch] = useState<string>('');
+
+  // Interactive What-If Studio Sliders
+  const [studioParams, setStudioParams] = useState({
+    lwlMeters: 10.8,
+    beamMeters: 2.85,
+    deadriseDeg: 19.5,
+    batteryKwh: 58,
+    motorKwTotal: 75,
+    lcgPercent: 35.0
+  });
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const studioCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   // Sync state
   const refreshState = () => {
@@ -55,7 +75,6 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
   };
 
   useEffect(() => {
-    // Run initial batch if empty
     if (optimizer.getHistory().length === 0) {
       for (let i = 0; i < 5; i++) {
         optimizer.runIteration('BALANCED_PATROL');
@@ -99,6 +118,55 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
   // Active display candidate
   const activeCandidate = selectedCandidate || champion || history[0];
 
+  // Studio candidate evaluation
+  const studioCandidate = useMemo(() => {
+    return optimizer.evaluateCustomHypothesis(studioParams);
+  }, [studioParams]);
+
+  // Download CSV of trials
+  const handleExportCsv = () => {
+    const rows = history.map((h) => ({
+      Trial_ID: h.id,
+      Generation: h.generation,
+      Philosophy: h.philosophy,
+      Status: h.status,
+      Fitness_Score: h.fitnessScore,
+      LWL_m: h.lwlMeters,
+      Beam_m: h.beamMeters,
+      Draft_m: h.draftMeters,
+      Deadrise_deg: h.deadriseDeg,
+      LCG_pct: h.lcgPercent,
+      Battery_kWh: h.batteryKwh,
+      Motor_kW: h.motorKwTotal,
+      Displacement_t: h.displacementTonnes,
+      KG_m: h.kgMeters,
+      GMt_m: h.gmtMeters,
+      Peak_Drag_kN: h.peakDragKn,
+      Cruise_Drag_kN: h.cruiseDragKn,
+      Cruise_Power_kW: h.cruisePowerKw,
+      Sprint_Speed_kts: h.sprintSpeedKnots,
+      Endurance_hrs: h.enduranceHours,
+      Range_nm: h.rangeNm,
+      Slamming_kPa: h.slammingPressureKpa,
+      Failed_Gate: h.failedGate || 'NONE',
+      Rejection_Reason: h.rejectionReason || 'PASSED'
+    }));
+    downloadCsv(rows, 'USV-01_Generative_Design_Exploration_Ledger.csv');
+  };
+
+  // Download Executive Defense Dossier
+  const handleDownloadDossier = () => {
+    const dossier = optimizer.generateExecutiveDefenseDossierMarkdown(activeCandidate);
+    const blob = new Blob([dossier], { type: 'text/markdown;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `USV-01_Executive_Design_Defense_Dossier_${activeCandidate?.id || 'CHAMPION'}.md`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // Draw Dynamic Morphing Hull Canvas
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -127,7 +195,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
     ctx.setLineDash([]);
 
     // Hull Transverse Section
-    const scale = 80; // px/m
+    const scale = 80;
     const bPx = activeCandidate.beamMeters * scale;
     const dPx = activeCandidate.draftMeters * scale;
     const depthPx = 1.6 * scale;
@@ -135,7 +203,6 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
     ctx.save();
     ctx.translate(cx, cy);
 
-    // Draw Hull
     ctx.fillStyle = activeCandidate.status === 'SURVIVED' ? '#0f766e' : '#881337';
     ctx.strokeStyle = activeCandidate.status === 'SURVIVED' ? '#2dd4bf' : '#f43f5e';
     ctx.lineWidth = 2.5;
@@ -150,92 +217,93 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
     ctx.fill();
     ctx.stroke();
 
-    // Centers K, B, G, M
-    const kY = dPx;
-    const bY = dPx - activeCandidate.kbMeters * scale;
-    const gY = dPx - activeCandidate.kgMeters * scale;
-    const mY = dPx - activeCandidate.kmtMeters * scale;
+    // Centerline and Center of Gravity (KG)
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, -depthPx + dPx - 10);
+    ctx.lineTo(0, dPx + 15);
+    ctx.stroke();
 
-    // Keel (K)
-    ctx.fillStyle = '#94a3b8';
-    ctx.beginPath(); ctx.arc(0, kY, 4, 0, Math.PI * 2); ctx.fill();
-    ctx.fillText('K', 8, kY + 3);
+    const kgPx = dPx - activeCandidate.kgMeters * scale;
+    ctx.fillStyle = '#f59e0b';
+    ctx.beginPath();
+    ctx.arc(0, kgPx, 4, 0, Math.PI * 2);
+    ctx.fill();
 
-    // Buoyancy (B)
+    const kmPx = dPx - activeCandidate.kmtMeters * scale;
     ctx.fillStyle = '#38bdf8';
-    ctx.beginPath(); ctx.arc(0, bY, 5, 0, Math.PI * 2); ctx.fill();
-    ctx.fillText(`B (${activeCandidate.kbMeters}m)`, 8, bY + 3);
-
-    // Gravity (G)
-    ctx.fillStyle = '#f43f5e';
-    ctx.beginPath(); ctx.arc(0, gY, 5, 0, Math.PI * 2); ctx.fill();
-    ctx.fillText(`G (${activeCandidate.kgMeters}m)`, 8, gY + 3);
-
-    // Metacenter (M)
-    ctx.fillStyle = activeCandidate.gmtMeters >= 0.35 ? '#10b981' : '#ef4444';
-    ctx.beginPath(); ctx.arc(0, mY, 6, 0, Math.PI * 2); ctx.fill();
-    ctx.fillText(`M (${activeCandidate.kmtMeters}m)`, 8, mY + 3);
+    ctx.beginPath();
+    ctx.arc(0, kmPx, 4, 0, Math.PI * 2);
+    ctx.fill();
 
     ctx.restore();
 
-    // Canvas Telemetry Text
-    ctx.fillStyle = '#f8fafc';
-    ctx.font = '11px monospace';
-    ctx.fillText(`Candidate: ${activeCandidate.id} [${activeCandidate.philosophy}]`, 15, 25);
-    ctx.fillText(`LWL: ${activeCandidate.lwlMeters}m • Beam: ${activeCandidate.beamMeters}m • Deadrise: ${activeCandidate.deadriseDeg}°`, 15, 42);
-    ctx.fillText(`Displacement: ${activeCandidate.displacementTonnes}t • GMt: ${activeCandidate.gmtMeters}m`, 15, 59);
-
-    ctx.fillStyle = activeCandidate.status === 'SURVIVED' ? '#34d399' : '#f87171';
-    ctx.font = 'bold 12px monospace';
-    ctx.fillText(`STATUS: ${activeCandidate.status} (Fitness: ${activeCandidate.fitnessScore}/100)`, 15, 80);
+    ctx.font = '10px monospace';
+    ctx.fillStyle = '#f59e0b';
+    ctx.fillText(`• KG: ${activeCandidate.kgMeters}m`, 10, 20);
+    ctx.fillStyle = '#38bdf8';
+    ctx.fillText(`• KMt: ${activeCandidate.kmtMeters}m`, 10, 35);
+    ctx.fillStyle = activeCandidate.gmtMeters >= 0.35 ? '#34d399' : '#f87171';
+    ctx.fillText(`• GMt: ${activeCandidate.gmtMeters}m (${activeCandidate.gmtMeters >= 0.35 ? 'PASS' : 'FAIL'})`, 10, 50);
   }, [activeCandidate]);
 
-  // Export Iterations CSV
-  const handleExportCsv = () => {
-    const headers = [
-      'Trial ID',
-      'Generation',
-      'Philosophy',
-      'Status',
-      'Fitness Score',
-      'LWL (m)',
-      'Beam (m)',
-      'Draft (m)',
-      'Deadrise (deg)',
-      'Displacement (t)',
-      'Battery (kWh)',
-      'Motor (kW)',
-      'GMt (m)',
-      'Peak Drag (kN)',
-      'Sprint Speed (kt)',
-      'Endurance (h)',
-      'Range (nm)',
-      'Slamming (kPa)',
-      'Rejection Reason'
-    ];
-    const rows = history.map((c) => [
-      c.id,
-      c.generation,
-      c.philosophy,
-      c.status,
-      c.fitnessScore,
-      c.lwlMeters,
-      c.beamMeters,
-      c.draftMeters,
-      c.deadriseDeg,
-      c.displacementTonnes,
-      c.batteryKwh,
-      c.motorKwTotal,
-      c.gmtMeters,
-      c.peakDragKn,
-      c.sprintSpeedKnots,
-      c.enduranceHours,
-      c.rangeNm,
-      c.slammingPressureKpa,
-      c.rejectionReason || 'PASSED'
-    ]);
-    downloadCsv(`USV01_Generative_Optimization_Ledger_${new Date().toISOString().split('T')[0]}.csv`, headers, rows);
-  };
+  // Draw Studio Canvas
+  useEffect(() => {
+    const canvas = studioCanvasRef.current;
+    if (!canvas || !studioCandidate) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const w = canvas.width;
+    const h = canvas.height;
+    const cx = w / 2;
+    const cy = h / 2 + 10;
+
+    ctx.fillStyle = '#060d17';
+    ctx.fillRect(0, 0, w, h);
+
+    // Water
+    ctx.fillStyle = 'rgba(14, 116, 144, 0.4)';
+    ctx.fillRect(0, cy, w, h - cy);
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(0, cy);
+    ctx.lineTo(w, cy);
+    ctx.stroke();
+
+    // Hull Section
+    const scale = 80;
+    const bPx = studioCandidate.beamMeters * scale;
+    const dPx = studioCandidate.draftMeters * scale;
+    const depthPx = 1.6 * scale;
+
+    ctx.save();
+    ctx.translate(cx, cy);
+
+    ctx.fillStyle = studioCandidate.status === 'SURVIVED' ? '#065f46' : '#7f1d1d';
+    ctx.strokeStyle = studioCandidate.status === 'SURVIVED' ? '#34d399' : '#f87171';
+    ctx.lineWidth = 2.5;
+
+    ctx.beginPath();
+    ctx.moveTo(-bPx / 2, -depthPx + dPx);
+    ctx.lineTo(-bPx * 0.45, dPx * 0.3);
+    ctx.lineTo(0, dPx);
+    ctx.lineTo(bPx * 0.45, dPx * 0.3);
+    ctx.lineTo(bPx / 2, -depthPx + dPx);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.restore();
+
+    ctx.font = '10px monospace';
+    ctx.fillStyle = studioCandidate.gmtMeters >= 0.35 ? '#34d399' : '#f87171';
+    ctx.fillText(`GMt: ${studioCandidate.gmtMeters}m (${studioCandidate.status})`, 10, 20);
+    ctx.fillStyle = '#cbd5e1';
+    ctx.fillText(`Disp: ${studioCandidate.displacementTonnes}t | Draft: ${studioCandidate.draftMeters}m`, 10, 35);
+  }, [studioCandidate]);
 
   const filteredHistory = history.filter((h) => {
     if (statusFilter === 'ALL') return true;
@@ -246,257 +314,404 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
 
   const redTeamQuestions = optimizer.generateRedTeamChallenge();
 
+  // Filtered 25 agents
+  const filtered25Agents = useMemo(() => {
+    if (!activeCandidate || !activeCandidate.agentEvaluations25) return [];
+    return activeCandidate.agentEvaluations25.filter(a => {
+      const matchDivision = agentDivisionFilter === 'ALL' || a.division === agentDivisionFilter;
+      const matchSearch = agentSearch.trim() === '' ||
+        a.agentId.toLowerCase().includes(agentSearch.toLowerCase()) ||
+        a.name.toLowerCase().includes(agentSearch.toLowerCase()) ||
+        a.metric.toLowerCase().includes(agentSearch.toLowerCase());
+      return matchDivision && matchSearch;
+    });
+  }, [activeCandidate, agentDivisionFilter, agentSearch]);
+
+  const agentVoteSummary = useMemo(() => {
+    if (!activeCandidate || !activeCandidate.agentEvaluations25) return { concur: 0, reservation: 0, veto: 0 };
+    return {
+      concur: activeCandidate.agentEvaluations25.filter(a => a.vote === 'CONCUR').length,
+      reservation: activeCandidate.agentEvaluations25.filter(a => a.vote === 'RESERVATION').length,
+      veto: activeCandidate.agentEvaluations25.filter(a => a.vote === 'VETO').length
+    };
+  }, [activeCandidate]);
+
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
-        <div>
+    <div className="space-y-6">
+      {/* HEADER CONTROLS */}
+      <div className="bg-slate-900 border border-slate-800 rounded-lg p-5">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-purple-500/10 text-purple-400 border border-purple-500/30">
+                USV-GEN-OPT // 25-AGENT MULTI-OBJECTIVE
+              </span>
+              <span className="text-xs font-mono text-slate-400">
+                GENERATION #{optimizer.getHistory().length > 0 ? history[0].generation : 0}
+              </span>
+            </div>
+            <h1 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+              <Cpu className="w-5 h-5 text-purple-400" />
+              Generative Multi-Agent Design Optimization & Defense
+            </h1>
+            <p className="text-xs text-slate-400 max-w-3xl leading-relaxed">
+              25 specialized engineering agents iteratively generate, debate, stress-test, and eliminate hull candidates using deterministic naval hydrostatics, Savitsky planing equations, ISO 12215 scantlings, and multi-sea-state survivability gates.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => setIsRunning(!isRunning)}
+              className={`px-3 py-1.5 rounded text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-sm ${
+                isRunning
+                  ? 'bg-amber-600 hover:bg-amber-500 text-white'
+                  : 'bg-purple-600 hover:bg-purple-500 text-white'
+              }`}
+            >
+              {isRunning ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+              {isRunning ? 'Pause Evolution' : 'Continuous Evolution'}
+            </button>
+
+            <button
+              onClick={handleStepOnce}
+              disabled={isRunning}
+              className="px-3 py-1.5 rounded text-xs font-mono font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 disabled:opacity-50 flex items-center gap-1"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+              Step Trial
+            </button>
+
+            <button
+              onClick={handleReset}
+              className="px-2.5 py-1.5 rounded text-xs font-mono text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800 flex items-center gap-1"
+              title="Reset Search Space"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+            </button>
+
+            <button
+              onClick={handleDownloadDossier}
+              className="px-3 py-1.5 rounded text-xs font-mono font-bold bg-teal-600/20 hover:bg-teal-600/30 text-teal-300 border border-teal-500/40 flex items-center gap-1.5"
+              title="Export Executive Defense Dossier for Senior Leadership"
+            >
+              <FileText className="w-3.5 h-3.5 text-teal-400" />
+              Export Defense Dossier (.md)
+            </button>
+
+            <button
+              onClick={handleExportCsv}
+              className="px-2.5 py-1.5 rounded text-xs font-mono text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center gap-1"
+              title="Export Trials to CSV"
+            >
+              <Download className="w-3.5 h-3.5 text-slate-400" />
+              CSV
+            </button>
+          </div>
+        </div>
+
+        {/* PHILOSOPHY SELECTOR & METRICS STRIP */}
+        <div className="mt-4 pt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2">
-            <span className="font-mono text-xs text-purple-400 bg-purple-500/10 border border-purple-500/30 px-2 py-0.5 rounded flex items-center gap-1.5 font-bold">
-              <Cpu className="w-3.5 h-3.5" /> GENERATIVE-AI-OPTIMIZER
-            </span>
-            <span className="text-xs text-slate-500 font-mono">AUTONOMOUS MULTI-AGENT TRIAL & ERROR ENGINE</span>
+            <span className="text-slate-400 font-medium">Design Philosophy:</span>
+            <div className="flex items-center bg-slate-950 p-0.5 rounded border border-slate-800">
+              <button
+                onClick={() => setPhilosophy('BALANCED_PATROL')}
+                className={`px-2.5 py-1 rounded text-xs font-mono ${
+                  philosophy === 'BALANCED_PATROL'
+                    ? 'bg-purple-600 text-white font-bold'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                Balanced Patrol (10.5m)
+              </button>
+              <button
+                onClick={() => setPhilosophy('ALPHA_SPRINT')}
+                className={`px-2.5 py-1 rounded text-xs font-mono ${
+                  philosophy === 'ALPHA_SPRINT'
+                    ? 'bg-purple-600 text-white font-bold'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                Alpha Sprint (26kt)
+              </button>
+              <button
+                onClick={() => setPhilosophy('BRAVO_ENDURANCE')}
+                className={`px-2.5 py-1 rounded text-xs font-mono ${
+                  philosophy === 'BRAVO_ENDURANCE'
+                    ? 'bg-purple-600 text-white font-bold'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                Bravo Endurance (12h)
+              </button>
+              <button
+                onClick={() => setPhilosophy('CHARLIE_GUARDIAN')}
+                className={`px-2.5 py-1 rounded text-xs font-mono ${
+                  philosophy === 'CHARLIE_GUARDIAN'
+                    ? 'bg-purple-600 text-white font-bold'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                Charlie Guardian (Heavy Sea)
+              </button>
+            </div>
           </div>
-          <h2 className="text-xl font-bold text-slate-100 mt-1">
-            Generative Design Space Optimization & Executive Defense Ledger
-          </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
-            25 specialist agents exploring permutations via simulated trial-and-error, debating trade-offs, synthesizing permanent learned invariants, and establishing bulletproof senior leadership defense evidence.
-          </p>
-        </div>
 
-        {/* Global Controls */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <button
-            onClick={() => setIsRunning(!isRunning)}
-            className={`px-3 py-1.5 rounded flex items-center gap-1.5 text-xs font-bold transition-colors ${
-              isRunning
-                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30'
-                : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30'
-            }`}
-          >
-            {isRunning ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-            <span>{isRunning ? 'Pause Optimization' : 'Auto Trial & Error'}</span>
-          </button>
-
-          <button
-            onClick={handleStepOnce}
-            disabled={isRunning}
-            className="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono disabled:opacity-50 transition-colors"
-          >
-            Step 1 Trial
-          </button>
-
-          <button
-            onClick={handleReset}
-            className="p-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 transition-colors"
-            title="Reset Generations"
-          >
-            <RotateCcw className="w-4 h-4" />
-          </button>
-
-          <button
-            onClick={handleExportCsv}
-            className="px-3 py-1.5 rounded bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/30 text-teal-300 text-xs font-mono flex items-center gap-1.5 transition-colors"
-          >
-            <Download className="w-3.5 h-3.5" />
-            <span>Export Ledger CSV</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Philosophy Selector & Live Generation Tracker */}
-      <div className="bg-slate-900 border border-slate-800 rounded-lg p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-mono text-slate-400">Design Team Philosophy:</span>
-          <select
-            value={philosophy}
-            onChange={(e) => setPhilosophy(e.target.value as DesignPhilosophy)}
-            className="bg-slate-950 border border-slate-700 rounded px-2.5 py-1 text-slate-200 font-mono text-xs focus:outline-none focus:border-purple-500"
-          >
-            <option value="BALANCED_PATROL">Team Balanced: 14kt Cruise, 8h+ Range, SS3 Capability</option>
-            <option value="ALPHA_SPRINT">Team Alpha: Sprint Interceptor (26+ kt High Speed)</option>
-            <option value="BRAVO_ENDURANCE">Team Bravo: Endurance Patroller (12+ hours loiter)</option>
-            <option value="CHARLIE_GUARDIAN">Team Charlie: Heavy-Weather Guardian (Sea State 4 Stability)</option>
-          </select>
-        </div>
-
-        <div className="flex items-center gap-4 text-xs font-mono">
-          <div>
-            <span className="text-slate-500">TRIALS RUN:</span>
-            <span className="text-slate-100 font-bold ml-1">{history.length}</span>
-          </div>
-          <div>
-            <span className="text-slate-500">SURVIVED:</span>
-            <span className="text-emerald-400 font-bold ml-1">
-              {history.filter(h => h.status === 'SURVIVED').length}
-            </span>
-          </div>
-          <div>
-            <span className="text-slate-500">LEARNED INVARIANTS:</span>
-            <span className="text-purple-400 font-bold ml-1">{invariants.length}</span>
+          <div className="flex items-center gap-4 text-xs font-mono">
+            <div className="text-slate-400">
+              Trials Run: <strong className="text-slate-200">{history.length}</strong>
+            </div>
+            <div className="text-slate-400">
+              Passed Gates: <strong className="text-emerald-400">{history.filter(h => h.status === 'SURVIVED').length}</strong>
+            </div>
+            <div className="text-slate-400">
+              Learned Invariants: <strong className="text-purple-400">{invariants.length} rules</strong>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Live Morphing Hull Visualizer & Multi-Agent Dialectical Debate Feed */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left: Dynamic 2D Transverse Section (Canvas) */}
-        <div className="lg:col-span-6 bg-slate-900 border border-slate-800 rounded-lg p-4 space-y-3">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-            <h3 className="text-xs font-semibold text-slate-200 flex items-center gap-2">
-              <Sliders className="w-4 h-4 text-purple-400" />
-              <span>Dynamic Hull Morphing & Center of Mass (Current Candidate)</span>
-            </h3>
-            <span className="text-[10px] font-mono text-slate-400">LIVE GEOMETRY</span>
-          </div>
+      {/* TOP CHAMPION & DYNAMIC MORPHING VISUALIZER */}
+      {activeCandidate && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+          {/* Dynamic Transverse Hull Section & Stability */}
+          <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-lg p-4 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono font-bold text-slate-300">
+                    TRANSVERSE HULL DYNAMICS
+                  </span>
+                  <span className={`px-1.5 py-0.2 rounded text-[10px] font-mono font-bold ${
+                    activeCandidate.status === 'SURVIVED'
+                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                      : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                  }`}>
+                    {activeCandidate.id}
+                  </span>
+                </div>
+                <span className="text-[10px] font-mono text-slate-400">ARCHIMEDES FLOTATION</span>
+              </div>
 
-          <div className="rounded overflow-hidden border border-slate-800 bg-slate-950 flex items-center justify-center">
-            <canvas ref={canvasRef} width={550} height={320} className="w-full h-auto block" />
-          </div>
+              <div className="mt-3 flex justify-center">
+                <canvas
+                  ref={canvasRef}
+                  width={380}
+                  height={150}
+                  className="rounded border border-slate-800 bg-[#060d17] w-full max-w-[380px]"
+                />
+              </div>
+            </div>
 
-          {/* Candidate Metrics Ribbon */}
-          {activeCandidate && (
-            <div className="grid grid-cols-4 gap-2 text-center font-mono text-xs">
-              <div className="p-2 bg-slate-950 rounded border border-slate-800">
-                <span className="text-slate-500 block text-[10px]">GMt STABILITY</span>
+            <div className="mt-3 pt-3 border-t border-slate-800/80 grid grid-cols-3 gap-2 text-center text-xs font-mono">
+              <div className="p-2 bg-slate-950 rounded border border-slate-800/60">
+                <span className="text-[10px] text-slate-500 block">LWL x BEAM</span>
+                <span className="font-bold text-slate-200">
+                  {activeCandidate.lwlMeters}m x {activeCandidate.beamMeters}m
+                </span>
+              </div>
+              <div className="p-2 bg-slate-950 rounded border border-slate-800/60">
+                <span className="text-[10px] text-slate-500 block">DISPLACEMENT</span>
+                <span className="font-bold text-slate-200">
+                  {activeCandidate.displacementTonnes} tonnes
+                </span>
+              </div>
+              <div className="p-2 bg-slate-950 rounded border border-slate-800/60">
+                <span className="text-[10px] text-slate-500 block">GMt MARGIN</span>
                 <span className={`font-bold ${activeCandidate.gmtMeters >= 0.35 ? 'text-emerald-400' : 'text-rose-400'}`}>
                   {activeCandidate.gmtMeters}m
                 </span>
               </div>
-              <div className="p-2 bg-slate-950 rounded border border-slate-800">
-                <span className="text-slate-500 block text-[10px]">SPRINT SPEED</span>
-                <span className="text-slate-200 font-bold">{activeCandidate.sprintSpeedKnots} kts</span>
-              </div>
-              <div className="p-2 bg-slate-950 rounded border border-slate-800">
-                <span className="text-slate-500 block text-[10px]">ENDURANCE</span>
-                <span className={`font-bold ${activeCandidate.enduranceHours >= 8 ? 'text-emerald-400' : 'text-amber-400'}`}>
-                  {activeCandidate.enduranceHours} hrs
-                </span>
-              </div>
-              <div className="p-2 bg-slate-950 rounded border border-slate-800">
-                <span className="text-slate-500 block text-[10px]">FITNESS SCORE</span>
-                <span className="text-purple-400 font-bold">{activeCandidate.fitnessScore} / 100</span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Right: Live Multi-Agent Dialectical Debate Feed */}
-        <div className="lg:col-span-6 bg-slate-900 border border-slate-800 rounded-lg p-4 space-y-3 flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-              <h3 className="text-xs font-semibold text-slate-200 flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-sky-400" />
-                <span>Multi-Agent Dialectical Debate & Trade-Off Tension</span>
-              </h3>
-              <span className="text-[10px] font-mono text-slate-400">
-                TRIAL {activeCandidate?.id || 'N/A'}
-              </span>
-            </div>
-
-            <div className="mt-3 space-y-2.5 max-h-80 overflow-y-auto pr-1">
-              {activeCandidate?.debateTranscript && activeCandidate.debateTranscript.length > 0 ? (
-                activeCandidate.debateTranscript.map((t, idx) => (
-                  <div
-                    key={idx}
-                    className={`p-3 rounded text-xs border ${
-                      t.sentiment === 'ENDORSE'
-                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-200'
-                        : t.sentiment === 'OBJECT'
-                        ? 'bg-rose-500/10 border-rose-500/30 text-rose-200'
-                        : 'bg-amber-500/10 border-amber-500/30 text-amber-200'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between font-mono text-[10px] mb-1">
-                      <span className="font-bold">{t.agentId} ({t.role})</span>
-                      <span className={`px-1.5 py-0.2 rounded font-bold uppercase ${
-                        t.sentiment === 'ENDORSE' ? 'bg-emerald-500/20 text-emerald-300' :
-                        t.sentiment === 'OBJECT' ? 'bg-rose-500/20 text-rose-300' :
-                        'bg-amber-500/20 text-amber-300'
-                      }`}>
-                        {t.sentiment}
-                      </span>
-                    </div>
-                    <p className="leading-relaxed font-sans">{t.statement}</p>
-                  </div>
-                ))
-              ) : (
-                <div className="p-4 text-center text-slate-500 font-mono text-xs">
-                  Run a trial to observe multi-agent engineering debate.
-                </div>
-              )}
             </div>
           </div>
 
-          {activeCandidate?.rejectionReason && (
-            <div className="p-3 bg-rose-950/40 border border-rose-500/40 rounded text-xs text-rose-300 flex items-start gap-2">
-              <AlertTriangle className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
-              <div>
-                <strong className="font-bold">Failed Gate: {activeCandidate.failedGate}</strong>
-                <p className="mt-0.5 text-[11px] text-rose-200/90">{activeCandidate.rejectionReason}</p>
+          {/* ACTIVE CANDIDATE PERFORMANCE & DIALECTICAL DEBATE */}
+          <div className="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-lg p-4 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono font-bold text-slate-200">
+                    MULTI-AGENT CONSENSUS & DEBATE FEED
+                  </span>
+                  {activeCandidate.id === champion?.id && (
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
+                      ★ CURRENT LEADING CHAMPION
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 text-[10px] font-mono">
+                  <span className="text-slate-400">FITNESS:</span>
+                  <span className="text-sm font-bold text-purple-400">{activeCandidate.fitnessScore} / 100</span>
+                </div>
+              </div>
+
+              {/* 5 Physical Gates Telemetry Strip */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3 text-xs font-mono">
+                <div className="p-2 bg-slate-950 rounded border border-slate-800/80">
+                  <span className="text-[10px] text-slate-400 block">14KT CRUISE DRAG</span>
+                  <span className="font-bold text-slate-200">{activeCandidate.cruiseDragKn} kN</span>
+                  <span className="text-[10px] text-slate-500 block">Peak: {activeCandidate.peakDragKn}kN</span>
+                </div>
+                <div className="p-2 bg-slate-950 rounded border border-slate-800/80">
+                  <span className="text-[10px] text-slate-400 block">MAX SPRINT SPEED</span>
+                  <span className="font-bold text-teal-400">{activeCandidate.sprintSpeedKnots} knots</span>
+                  <span className="text-[10px] text-slate-500 block">Installed: {activeCandidate.motorKwTotal}kW</span>
+                </div>
+                <div className="p-2 bg-slate-950 rounded border border-slate-800/80">
+                  <span className="text-[10px] text-slate-400 block">PATROL ENDURANCE</span>
+                  <span className={`font-bold ${activeCandidate.enduranceHours >= 8 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    {activeCandidate.enduranceHours} hours
+                  </span>
+                  <span className="text-[10px] text-slate-500 block">Battery: {activeCandidate.batteryKwh}kWh</span>
+                </div>
+                <div className="p-2 bg-slate-950 rounded border border-slate-800/80">
+                  <span className="text-[10px] text-slate-400 block">ISO 12215 SLAMMING</span>
+                  <span className={`font-bold ${activeCandidate.slammingPressureKpa <= 135 ? 'text-slate-200' : 'text-rose-400'}`}>
+                    {activeCandidate.slammingPressureKpa} kPa
+                  </span>
+                  <span className="text-[10px] text-slate-500 block">Deadrise: {activeCandidate.deadriseDeg}°</span>
+                </div>
+              </div>
+
+              {/* Debate Transcript */}
+              <div className="mt-3 space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                {activeCandidate.debateTranscript.map((d, i) => (
+                  <div
+                    key={i}
+                    className={`p-2 rounded text-xs border ${
+                      d.sentiment === 'ENDORSE'
+                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-200'
+                        : d.sentiment === 'COMPROMISE'
+                        ? 'bg-amber-500/10 border-amber-500/30 text-amber-200'
+                        : 'bg-rose-500/10 border-rose-500/30 text-rose-200'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between text-[10px] font-mono mb-0.5">
+                      <span className="font-bold">{d.agentId} ({d.role})</span>
+                      <span className="uppercase font-semibold tracking-wider">{d.sentiment}</span>
+                    </div>
+                    <p className="text-[11px] leading-snug">{d.statement}</p>
+                  </div>
+                ))}
               </div>
             </div>
-          )}
-        </div>
-      </div>
 
-      {/* Tabs Section: Ledger, Invariants, Pareto, Red Team Defense */}
-      <div className="flex border-b border-slate-800 gap-2 text-xs font-mono overflow-x-auto">
+            {/* Verdict Footer */}
+            <div className="mt-2 pt-2 border-t border-slate-800 flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2">
+                <span className="text-slate-400 text-[11px]">VERDICT:</span>
+                <span className={`font-mono font-bold text-xs ${
+                  activeCandidate.status === 'SURVIVED' ? 'text-emerald-400' : 'text-rose-400'
+                }`}>
+                  {activeCandidate.status === 'SURVIVED'
+                    ? '✓ PASSED ALL 5 MULTI-AGENT GATES'
+                    : `✗ REJECTED: ${activeCandidate.rejectionReason}`}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-[11px] font-mono">
+                <span className="text-slate-400">25-Agent Sign-off:</span>
+                <span className="text-emerald-400 font-bold">{agentVoteSummary.concur} Concur</span>
+                <span className="text-amber-400 font-bold">{agentVoteSummary.reservation} Res</span>
+                <span className="text-rose-400 font-bold">{agentVoteSummary.veto} Veto</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* NAVIGATION TABS */}
+      <div className="flex items-center border-b border-slate-800 gap-1 text-xs font-mono overflow-x-auto">
         <button
           onClick={() => setActiveTab('ledger')}
-          className={`px-4 py-2 border-b-2 font-medium transition-colors whitespace-nowrap flex items-center gap-1.5 ${
+          className={`px-4 py-2.5 font-bold border-b-2 flex items-center gap-1.5 transition-colors whitespace-nowrap ${
             activeTab === 'ledger'
-              ? 'border-purple-400 text-purple-300 bg-slate-900/40'
+              ? 'border-purple-500 text-purple-400 bg-purple-500/5'
               : 'border-transparent text-slate-400 hover:text-slate-200'
           }`}
         >
-          <Layers className="w-3.5 h-3.5 text-purple-400" />
-          <span>Iteration Audit Ledger ({history.length})</span>
+          <Layers className="w-3.5 h-3.5" />
+          Trial Ledger ({history.length})
         </button>
 
         <button
-          onClick={() => setActiveTab('invariants')}
-          className={`px-4 py-2 border-b-2 font-medium transition-colors whitespace-nowrap flex items-center gap-1.5 ${
-            activeTab === 'invariants'
-              ? 'border-purple-400 text-purple-300 bg-slate-900/40'
+          onClick={() => setActiveTab('studio')}
+          className={`px-4 py-2.5 font-bold border-b-2 flex items-center gap-1.5 transition-colors whitespace-nowrap ${
+            activeTab === 'studio'
+              ? 'border-purple-500 text-purple-400 bg-purple-500/5'
               : 'border-transparent text-slate-400 hover:text-slate-200'
           }`}
         >
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Learned Engineering Invariants ({invariants.length})</span>
+          <Sliders className="w-3.5 h-3.5 text-teal-400" />
+          Interactive "What-If" Studio
+        </button>
+
+        <button
+          onClick={() => setActiveTab('agents25')}
+          className={`px-4 py-2.5 font-bold border-b-2 flex items-center gap-1.5 transition-colors whitespace-nowrap ${
+            activeTab === 'agents25'
+              ? 'border-purple-500 text-purple-400 bg-purple-500/5'
+              : 'border-transparent text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <Users className="w-3.5 h-3.5 text-blue-400" />
+          25-Agent Concurrence Matrix ({agentVoteSummary.concur} / 25)
+        </button>
+
+        <button
+          onClick={() => setActiveTab('seastates')}
+          className={`px-4 py-2.5 font-bold border-b-2 flex items-center gap-1.5 transition-colors whitespace-nowrap ${
+            activeTab === 'seastates'
+              ? 'border-purple-500 text-purple-400 bg-purple-500/5'
+              : 'border-transparent text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <Waves className="w-3.5 h-3.5 text-cyan-400" />
+          Sea-State Dynamics (SS 1–5)
         </button>
 
         <button
           onClick={() => setActiveTab('pareto')}
-          className={`px-4 py-2 border-b-2 font-medium transition-colors whitespace-nowrap flex items-center gap-1.5 ${
+          className={`px-4 py-2.5 font-bold border-b-2 flex items-center gap-1.5 transition-colors whitespace-nowrap ${
             activeTab === 'pareto'
-              ? 'border-purple-400 text-purple-300 bg-slate-900/40'
+              ? 'border-purple-500 text-purple-400 bg-purple-500/5'
               : 'border-transparent text-slate-400 hover:text-slate-200'
           }`}
         >
-          <TrendingUp className="w-3.5 h-3.5 text-cyan-400" />
-          <span>Pareto Frontier & "Knee of the Curve"</span>
+          <TrendingUp className="w-3.5 h-3.5" />
+          Pareto & Sensitivity
+        </button>
+
+        <button
+          onClick={() => setActiveTab('invariants')}
+          className={`px-4 py-2.5 font-bold border-b-2 flex items-center gap-1.5 transition-colors whitespace-nowrap ${
+            activeTab === 'invariants'
+              ? 'border-purple-500 text-purple-400 bg-purple-500/5'
+              : 'border-transparent text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <BookOpen className="w-3.5 h-3.5" />
+          Learned Invariants ({invariants.length})
         </button>
 
         <button
           onClick={() => setActiveTab('redteam')}
-          className={`px-4 py-2 border-b-2 font-medium transition-colors whitespace-nowrap flex items-center gap-1.5 ${
+          className={`px-4 py-2.5 font-bold border-b-2 flex items-center gap-1.5 transition-colors whitespace-nowrap ${
             activeTab === 'redteam'
-              ? 'border-purple-400 text-purple-300 bg-slate-900/40'
+              ? 'border-purple-500 text-purple-400 bg-purple-500/5'
               : 'border-transparent text-slate-400 hover:text-slate-200'
           }`}
         >
           <ShieldAlert className="w-3.5 h-3.5 text-rose-400" />
-          <span>Senior Leadership Red Team Defense Q&A</span>
+          Senior Leadership Red Team
         </button>
       </div>
 
-      {/* TAB 1: ITERATION LEDGER */}
+      {/* TAB 1: TRIAL LEDGER */}
       {activeTab === 'ledger' && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between gap-4 flex-wrap text-xs font-mono">
+          <div className="flex items-center justify-between text-xs font-mono">
             <div className="flex items-center gap-2">
+              <Filter className="w-3.5 h-3.5 text-slate-400" />
               <span className="text-slate-400">Filter Verdict:</span>
               <select
                 value={statusFilter}
@@ -581,23 +796,298 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
         </div>
       )}
 
-      {/* TAB 2: PERMANENT LEARNED INVARIANTS */}
-      {activeTab === 'invariants' && (
-        <div className="space-y-4">
-          <div className="p-4 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-300 leading-relaxed">
-            <strong className="text-slate-100 font-semibold">How Invariant Learning Works:</strong> Whenever an agent rejects a trial design, it performs an automated Root Cause Analysis (RCA) and synthesizes a permanent boundary rule. All future trials inherit these constraints, guaranteeing the multi-agent system never repeats past mistakes.
+      {/* TAB 2: INTERACTIVE WHAT-IF SENSITIVITY STUDIO */}
+      {activeTab === 'studio' && (
+        <div className="space-y-5">
+          <div className="p-4 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-300 leading-relaxed flex items-start gap-3">
+            <Sliders className="w-5 h-5 text-teal-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <strong className="text-slate-100 font-semibold">Live Naval Architecture "What-If" Studio:</strong>
+              <p className="mt-1 text-slate-400">
+                Directly adjust vessel geometry, energy storage, and deadrise below. Deterministic physics instantly recalculates intact stability, Savitsky drag, endurance, and ISO slamming loads, with real-time feedback from the 25 engineering agents.
+              </p>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 font-mono text-xs">
-            {invariants.map((inv) => (
-              <div key={inv.id} className="p-4 bg-slate-900 border border-slate-800 rounded-lg space-y-2">
-                <div className="flex items-center justify-between pb-1.5 border-b border-slate-800 text-[11px]">
-                  <span className="text-purple-400 font-bold">{inv.id}</span>
-                  <span className="text-slate-400">{inv.agentId} • GEN #{inv.discoveredAtGeneration}</span>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+            {/* Sliders Control Panel */}
+            <div className="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-lg p-5 space-y-4 font-mono text-xs">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span className="font-bold text-slate-200">FREE DESIGN PARAMETERS</span>
+                <span className="text-[11px] text-slate-400">6 DEGREES OF FREEDOM</span>
+              </div>
+
+              {/* Slider 1: LWL */}
+              <div className="space-y-1">
+                <div className="flex justify-between text-slate-300">
+                  <span>Waterline Length (LWL):</span>
+                  <strong className="text-teal-400">{studioParams.lwlMeters} m</strong>
                 </div>
-                <div className="font-semibold text-slate-100">{inv.ruleStatement}</div>
-                <div className="text-[10px] text-slate-500 pt-1 border-t border-slate-800/80">
-                  Evidence: {inv.mathEvidence}
+                <input
+                  type="range"
+                  min={8.5}
+                  max={13.5}
+                  step={0.1}
+                  value={studioParams.lwlMeters}
+                  onChange={(e) => setStudioParams({ ...studioParams, lwlMeters: parseFloat(e.target.value) })}
+                  className="w-full accent-teal-400 bg-slate-950 cursor-pointer"
+                />
+                <div className="flex justify-between text-[10px] text-slate-500">
+                  <span>8.5m (Trailerable)</span>
+                  <span>10.5m (Nominal)</span>
+                  <span>13.5m (Heavy Patrol)</span>
+                </div>
+              </div>
+
+              {/* Slider 2: Beam */}
+              <div className="space-y-1">
+                <div className="flex justify-between text-slate-300">
+                  <span>Waterline Beam (B):</span>
+                  <strong className="text-teal-400">{studioParams.beamMeters} m</strong>
+                </div>
+                <input
+                  type="range"
+                  min={2.0}
+                  max={3.6}
+                  step={0.05}
+                  value={studioParams.beamMeters}
+                  onChange={(e) => setStudioParams({ ...studioParams, beamMeters: parseFloat(e.target.value) })}
+                  className="w-full accent-teal-400 bg-slate-950 cursor-pointer"
+                />
+                <div className="flex justify-between text-[10px] text-slate-500">
+                  <span>2.0m (Slender, Low Drag)</span>
+                  <span>2.85m (Stable)</span>
+                  <span>3.6m (High GMt, Wave Slam)</span>
+                </div>
+              </div>
+
+              {/* Slider 3: Deadrise */}
+              <div className="space-y-1">
+                <div className="flex justify-between text-slate-300">
+                  <span>Transom Deadrise Angle (β):</span>
+                  <strong className="text-teal-400">{studioParams.deadriseDeg}°</strong>
+                </div>
+                <input
+                  type="range"
+                  min={14.0}
+                  max={26.0}
+                  step={0.5}
+                  value={studioParams.deadriseDeg}
+                  onChange={(e) => setStudioParams({ ...studioParams, deadriseDeg: parseFloat(e.target.value) })}
+                  className="w-full accent-teal-400 bg-slate-950 cursor-pointer"
+                />
+                <div className="flex justify-between text-[10px] text-slate-500">
+                  <span>14° (Fast Planing, Harsh Ride)</span>
+                  <span>19.5° (Deep-V Optimal)</span>
+                  <span>26° (Soft Wave Piercing)</span>
+                </div>
+              </div>
+
+              {/* Slider 4: Battery */}
+              <div className="space-y-1">
+                <div className="flex justify-between text-slate-300">
+                  <span>Battery Capacity (E_batt):</span>
+                  <strong className="text-teal-400">{studioParams.batteryKwh} kWh</strong>
+                </div>
+                <input
+                  type="range"
+                  min={35}
+                  max={90}
+                  step={1}
+                  value={studioParams.batteryKwh}
+                  onChange={(e) => setStudioParams({ ...studioParams, batteryKwh: parseFloat(e.target.value) })}
+                  className="w-full accent-teal-400 bg-slate-950 cursor-pointer"
+                />
+                <div className="flex justify-between text-[10px] text-slate-500">
+                  <span>35 kWh (Lightweight, 5h)</span>
+                  <span>58 kWh (8.5h Patrol)</span>
+                  <span>90 kWh (13h Endurance, Heavy)</span>
+                </div>
+              </div>
+
+              {/* Slider 5: Motor Power */}
+              <div className="space-y-1">
+                <div className="flex justify-between text-slate-300">
+                  <span>Installed Motor Power (Twin Pods):</span>
+                  <strong className="text-teal-400">{studioParams.motorKwTotal} kW</strong>
+                </div>
+                <input
+                  type="range"
+                  min={40}
+                  max={120}
+                  step={5}
+                  value={studioParams.motorKwTotal}
+                  onChange={(e) => setStudioParams({ ...studioParams, motorKwTotal: parseFloat(e.target.value) })}
+                  className="w-full accent-teal-400 bg-slate-950 cursor-pointer"
+                />
+                <div className="flex justify-between text-[10px] text-slate-500">
+                  <span>40 kW (Economic 16kt)</span>
+                  <span>75 kW (Nominal 24kt)</span>
+                  <span>120 kW (Sprint 28kt)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Studio Physics Feedback */}
+            <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-lg p-5 flex flex-col justify-between space-y-4">
+              <div>
+                <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                  <span className="text-xs font-mono font-bold text-slate-200">STUDIO TELEMETRY</span>
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
+                    studioCandidate.status === 'SURVIVED'
+                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                      : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                  }`}>
+                    {studioCandidate.status}
+                  </span>
+                </div>
+
+                <div className="mt-3 flex justify-center">
+                  <canvas
+                    ref={studioCanvasRef}
+                    width={320}
+                    height={130}
+                    className="rounded border border-slate-800 bg-[#060d17] w-full max-w-[320px]"
+                  />
+                </div>
+
+                <div className="mt-3 grid grid-cols-2 gap-2 text-xs font-mono">
+                  <div className="p-2 bg-slate-950 rounded border border-slate-800">
+                    <span className="text-[10px] text-slate-400 block">GMt STABILITY</span>
+                    <span className={`font-bold ${studioCandidate.gmtMeters >= 0.35 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                      {studioCandidate.gmtMeters} m
+                    </span>
+                    <span className="text-[10px] text-slate-500 block">IMO Limit: >= 0.35m</span>
+                  </div>
+
+                  <div className="p-2 bg-slate-950 rounded border border-slate-800">
+                    <span className="text-[10px] text-slate-400 block">SPRINT SPEED</span>
+                    <span className="font-bold text-teal-400">{studioCandidate.sprintSpeedKnots} knots</span>
+                    <span className="text-[10px] text-slate-500 block">Peak Drag: {studioCandidate.peakDragKn}kN</span>
+                  </div>
+
+                  <div className="p-2 bg-slate-950 rounded border border-slate-800">
+                    <span className="text-[10px] text-slate-400 block">PATROL ENDURANCE</span>
+                    <span className={`font-bold ${studioCandidate.enduranceHours >= 8.0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                      {studioCandidate.enduranceHours} hrs
+                    </span>
+                    <span className="text-[10px] text-slate-500 block">Mission Target: 8.0h</span>
+                  </div>
+
+                  <div className="p-2 bg-slate-950 rounded border border-slate-800">
+                    <span className="text-[10px] text-slate-400 block">ISO SLAMMING</span>
+                    <span className={`font-bold ${studioCandidate.slammingPressureKpa <= 135 ? 'text-slate-200' : 'text-rose-400'}`}>
+                      {studioCandidate.slammingPressureKpa} kPa
+                    </span>
+                    <span className="text-[10px] text-slate-500 block">Limit: 135 kPa</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-3 bg-slate-950 rounded border border-slate-800 text-xs font-mono">
+                <span className="text-slate-400 block text-[10px] uppercase font-bold">Agents Critical Reaction:</span>
+                <p className="mt-1 text-slate-300 leading-snug">
+                  {studioCandidate.status === 'SURVIVED'
+                    ? `✓ Balanced solution! GMt=${studioCandidate.gmtMeters}m offers safe restoring arm; ${studioCandidate.batteryKwh}kWh battery safely supports ${studioCandidate.enduranceHours}h patrol without overload.`
+                    : `✗ ${studioCandidate.rejectionReason}`}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 3: 25-AGENT CONCURRENCE & VETO MATRIX */}
+      {activeTab === 'agents25' && (
+        <div className="space-y-4">
+          <div className="p-4 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-300 leading-relaxed flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+            <div>
+              <strong className="text-slate-100 font-semibold">25-Agent Multi-Disciplinary Concurrence Matrix:</strong>
+              <p className="text-slate-400 mt-0.5">
+                Full governance sign-off record for Candidate <strong>{activeCandidate?.id}</strong>. Every specialized agent across all 5 engineering divisions evaluates their statutory criteria.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 font-mono text-xs">
+              <span className="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">
+                {agentVoteSummary.concur} CONCUR
+              </span>
+              <span className="px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
+                {agentVoteSummary.reservation} RESERVATION
+              </span>
+              <span className="px-2.5 py-1 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold">
+                {agentVoteSummary.veto} VETO
+              </span>
+            </div>
+          </div>
+
+          {/* Division Filter & Search */}
+          <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+            <div className="flex items-center gap-1.5 bg-slate-900 p-1 rounded border border-slate-800">
+              {['ALL', 'DIRECTORATE', 'NAVAL_ARCH', 'PROPULSION', 'AUTONOMY', 'SYSTEMS'].map((div) => (
+                <button
+                  key={div}
+                  onClick={() => setAgentDivisionFilter(div)}
+                  className={`px-2.5 py-1 rounded transition-colors ${
+                    agentDivisionFilter === div
+                      ? 'bg-purple-600 text-white font-bold'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  {div.replace('_', ' ')}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded px-2.5 py-1">
+              <Search className="w-3.5 h-3.5 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search agent ID, metric, name..."
+                value={agentSearch}
+                onChange={(e) => setAgentSearch(e.target.value)}
+                className="bg-transparent text-slate-200 text-xs focus:outline-none placeholder-slate-500"
+              />
+            </div>
+          </div>
+
+          {/* 25 Agents Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 font-mono text-xs">
+            {filtered25Agents.map((agent) => (
+              <div
+                key={agent.agentId}
+                className={`p-3.5 rounded-lg border flex flex-col justify-between space-y-2.5 ${
+                  agent.vote === 'CONCUR'
+                    ? 'bg-slate-900/90 border-slate-800'
+                    : agent.vote === 'RESERVATION'
+                    ? 'bg-amber-500/5 border-amber-500/30'
+                    : 'bg-rose-500/5 border-rose-500/30'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between pb-1.5 border-b border-slate-800/80">
+                    <span className="font-bold text-slate-200">{agent.agentId}</span>
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                      agent.vote === 'CONCUR'
+                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                        : agent.vote === 'RESERVATION'
+                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                        : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                    }`}>
+                      {agent.vote}
+                    </span>
+                  </div>
+
+                  <div className="text-[11px] font-sans font-semibold text-slate-300 mt-1">
+                    {agent.name}
+                  </div>
+
+                  <div className="text-[10px] text-teal-400 mt-1 font-mono">
+                    Criteria: {agent.metric}
+                  </div>
+                </div>
+
+                <div className="p-2 bg-slate-950/70 rounded text-[11px] font-sans text-slate-300 leading-snug">
+                  {agent.rationale}
                 </div>
               </div>
             ))}
@@ -605,9 +1095,85 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
         </div>
       )}
 
-      {/* TAB 3: PARETO FRONTIER */}
-      {activeTab === 'pareto' && (
+      {/* TAB 4: SEA-STATE SURVIVABILITY GATES (SS 1 - 5) */}
+      {activeTab === 'seastates' && (
         <div className="space-y-4">
+          <div className="p-4 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-300 leading-relaxed flex items-start gap-3">
+            <Waves className="w-5 h-5 text-cyan-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <strong className="text-slate-100 font-semibold">Multi-Sea-State Dynamics & Dynamic Resonance Audit:</strong>
+              <p className="mt-1 text-slate-400">
+                Senior naval architects require proof that hull performance is not confined to calm-water equations. This module evaluates vertical accelerations (a_cg), slamming shock loads, and synchronous roll resonance across Sea States 1 through 5.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-3 font-mono text-xs">
+            {activeCandidate?.seaStates.map((ss) => (
+              <div
+                key={ss.seaState}
+                className="p-4 bg-slate-900 border border-slate-800 rounded-lg flex flex-col justify-between space-y-3"
+              >
+                <div>
+                  <div className="flex items-center justify-between pb-1.5 border-b border-slate-800">
+                    <span className="font-bold text-cyan-400">SEA STATE {ss.seaState}</span>
+                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                      ss.slammingRisk === 'MINIMAL'
+                        ? 'bg-emerald-500/20 text-emerald-300'
+                        : ss.slammingRisk === 'MODERATE'
+                        ? 'bg-teal-500/20 text-teal-300'
+                        : ss.slammingRisk === 'ELEVATED'
+                        ? 'bg-amber-500/20 text-amber-300'
+                        : 'bg-rose-500/20 text-rose-300'
+                    }`}>
+                      {ss.slammingRisk}
+                    </span>
+                  </div>
+
+                  <div className="text-[11px] text-slate-300 font-sans mt-1">
+                    {ss.description}
+                  </div>
+
+                  <div className="mt-3 space-y-1.5 text-[11px]">
+                    <div className="flex justify-between text-slate-400">
+                      <span>Wave Height (Hs):</span>
+                      <strong className="text-slate-200">{ss.significantWaveHeightM} m</strong>
+                    </div>
+                    <div className="flex justify-between text-slate-400">
+                      <span>Vertical Accel (a_cg):</span>
+                      <strong className={ss.verticalAccelG <= 2.5 ? 'text-emerald-400' : 'text-amber-400'}>
+                        {ss.verticalAccelG} g
+                      </strong>
+                    </div>
+                    <div className="flex justify-between text-slate-400">
+                      <span>Roll Period (T_phi):</span>
+                      <strong className="text-slate-200">{ss.naturalRollPeriodSec} s</strong>
+                    </div>
+                    <div className="flex justify-between text-slate-400">
+                      <span>Resonance Hazard:</span>
+                      <strong className={ss.rollResonanceRisk ? 'text-rose-400' : 'text-emerald-400'}>
+                        {ss.rollResonanceRisk ? 'CRITICAL' : 'SAFE'}
+                      </strong>
+                    </div>
+                    <div className="flex justify-between text-slate-400">
+                      <span>Deck Wetness Prob:</span>
+                      <strong className="text-slate-200">{ss.deckWetnessProbabilityPercent}%</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-slate-800 text-[10px] text-slate-500">
+                  {ss.seaState <= 3 ? 'Normal Operations Approved' : ss.seaState === 4 ? 'Seakeeping Envelope Limit' : 'Survival Mode / Storm Loiter'}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* TAB 5: PARETO FRONTIER & SOBOL SENSITIVITIES */}
+      {activeTab === 'pareto' && (
+        <div className="space-y-5">
           <div className="bg-slate-900 border border-slate-800 rounded-lg p-5 space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-slate-800">
               <h3 className="text-xs font-semibold text-slate-200">
@@ -616,7 +1182,6 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
               <span className="text-[10px] font-mono text-slate-400">THE KNEE OF THE CURVE</span>
             </div>
 
-            {/* Simulated Scatter Matrix */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
               <div className="p-3 bg-slate-950 rounded border border-slate-800">
                 <span className="text-slate-400 block text-[11px]">GLOBAL CHAMPION</span>
@@ -641,27 +1206,114 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
               <div className="p-3 bg-slate-950 rounded border border-slate-800">
                 <span className="text-slate-400 block text-[11px]">REJECTED ALTERNATIVES</span>
                 <div className="mt-2 space-y-1.5 text-[11px] text-rose-300">
-                  <div>&bull; 8.5m Hull: Capsizes with 60kWh pack</div>
+                  <div>&bull; 8.5m Hull: Capsizes with 60kWh pack (GMt=0.18m)</div>
                   <div>&bull; 13.5m Hull: Tooling cost +40%, over-budget</div>
                   <div>&bull; 25° Deadrise: Planing hump drag stalls motors</div>
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Sobol Parameter Sensitivity Decomposition */}
+          <div className="bg-slate-900 border border-slate-800 rounded-lg p-5 space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+              <div className="space-y-0.5">
+                <h3 className="text-xs font-semibold text-slate-200">
+                  Sobol Global Sensitivity Analysis (S_i & S_Ti Decomposition)
+                </h3>
+                <p className="text-[11px] text-slate-400">
+                  Quantifies which parameters most heavily dictate stability, drag, and mission success.
+                </p>
+              </div>
+              <span className="text-[10px] font-mono text-purple-400">VARIANCE DECOMPOSITION</span>
+            </div>
+
+            <div className="space-y-3 font-mono text-xs">
+              {activeCandidate?.sobolSensitivities.map((s) => (
+                <div key={s.parameter} className="p-3.5 bg-slate-950 rounded border border-slate-800 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-slate-200">{s.displayName}</span>
+                    <div className="flex items-center gap-3 text-[11px]">
+                      <span>First-Order S_i: <strong className="text-teal-400">{s.firstOrderIndex}</strong></span>
+                      <span>Total-Effect S_Ti: <strong className="text-purple-400">{s.totalEffectIndex}</strong></span>
+                    </div>
+                  </div>
+
+                  {/* Sensitivity Bar */}
+                  <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden flex">
+                    <div
+                      className="bg-teal-400 h-full"
+                      style={{ width: `${s.firstOrderIndex * 100}%` }}
+                      title={`First Order: ${s.firstOrderIndex}`}
+                    />
+                    <div
+                      className="bg-purple-500 h-full opacity-60"
+                      style={{ width: `${(s.totalEffectIndex - s.firstOrderIndex) * 100}%` }}
+                      title={`Interaction Effect: ${(s.totalEffectIndex - s.firstOrderIndex).toFixed(2)}`}
+                    />
+                  </div>
+
+                  <div className="text-[11px] font-sans text-slate-300 flex items-start justify-between gap-3 pt-1">
+                    <div>
+                      <span className="text-slate-500 font-mono text-[10px] uppercase">Primary Target: </span>
+                      {s.primaryTarget}
+                    </div>
+                  </div>
+                  <div className="text-[10px] text-slate-400 font-mono">
+                    Guidance: {s.architecturalGuidance}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 
-      {/* TAB 4: RED TEAM DEFENSE Q&A */}
+      {/* TAB 6: PERMANENT LEARNED INVARIANTS */}
+      {activeTab === 'invariants' && (
+        <div className="space-y-4">
+          <div className="p-4 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-300 leading-relaxed">
+            <strong className="text-slate-100 font-semibold">How Invariant Learning Works:</strong> Whenever an agent rejects a trial design, it performs an automated Root Cause Analysis (RCA) and synthesizes a permanent boundary rule. All future trials inherit these constraints, guaranteeing the multi-agent system never repeats past mistakes.
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 font-mono text-xs">
+            {invariants.map((inv) => (
+              <div key={inv.id} className="p-4 bg-slate-900 border border-slate-800 rounded-lg space-y-2">
+                <div className="flex items-center justify-between pb-1.5 border-b border-slate-800 text-[11px]">
+                  <span className="text-purple-400 font-bold">{inv.id}</span>
+                  <span className="text-slate-400">{inv.agentId} • GEN #{inv.discoveredAtGeneration}</span>
+                </div>
+                <div className="font-semibold text-slate-100">{inv.ruleStatement}</div>
+                <div className="text-[10px] text-slate-500 pt-1 border-t border-slate-800/80">
+                  Evidence: {inv.mathEvidence}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* TAB 7: RED TEAM DEFENSE Q&A */}
       {activeTab === 'redteam' && (
         <div className="space-y-4">
-          <div className="p-4 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-300 flex items-start gap-3">
-            <ShieldAlert className="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
-            <div>
-              <strong className="text-slate-100 font-semibold">Senior Leadership Defense Dossier:</strong>
-              <p className="mt-0.5 text-slate-400 leading-relaxed">
-                Aggressive cross-examination compiled by <strong>INDEP-REV-23 (Independent Red Team Reviewer)</strong>. Prepares the engineering team for adversarial scrutiny from Chief Naval Architects and Executives.
-              </p>
+          <div className="p-4 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-300 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <ShieldAlert className="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <strong className="text-slate-100 font-semibold">Senior Leadership Defense Dossier:</strong>
+                <p className="mt-0.5 text-slate-400 leading-relaxed">
+                  Aggressive cross-examination compiled by <strong>INDEP-REV-24 (Independent Red Team Reviewer)</strong>. Prepares the engineering team for adversarial scrutiny from Chief Naval Architects, Executives, and Classification Societies.
+                </p>
+              </div>
             </div>
+
+            <button
+              onClick={handleDownloadDossier}
+              className="px-3.5 py-1.5 rounded text-xs font-mono font-bold bg-teal-600 hover:bg-teal-500 text-white flex items-center gap-1.5 shadow-sm whitespace-nowrap"
+            >
+              <Download className="w-3.5 h-3.5" />
+              Download Formal Dossier (.md)
+            </button>
           </div>
 
           <div className="space-y-3 font-sans text-xs">
