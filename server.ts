@@ -1225,8 +1225,7 @@ app.post('/api/gemini/generate', async (req, res) => {
           totalTokens: result.usageMetadata?.totalTokenCount || 0
         }
       });
-    } catch (geminiErr: any) {
-      console.warn('Gemini API call failed, falling back to DeterministicProvider:', geminiErr.message);
+    } catch (_geminiErr: any) {
       const { DeterministicProvider } = await import('./src/core/models/ModelProvider.ts');
       const detProvider = new DeterministicProvider();
       const detResult = await detProvider.generateText(
@@ -1395,9 +1394,7 @@ ACTION REQUESTED: ${actionType || 'General Engineering Query'}
       modelUsed: result.modelUsed,
       text: result.text || 'No response generated from model.'
     });
-  } catch (err: any) {
-    console.warn('Gemini API call returned error, serving baseline engineering response:', err.message);
-
+  } catch (_err: any) {
     res.json({
       success: true,
       modelUsed: 'usv01-engineering-baseline-engine',

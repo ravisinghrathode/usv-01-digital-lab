@@ -25,9 +25,20 @@ export function getGeminiClient(): GoogleGenAI | null {
   return cachedAiClient;
 }
 
+let quotaExhaustedUntil = 0;
+
+export function markGeminiQuotaExhausted(retryDelaySeconds?: number): void {
+  const delayMs = (retryDelaySeconds && retryDelaySeconds > 0) ? retryDelaySeconds * 1000 : 15 * 60 * 1000;
+  quotaExhaustedUntil = Date.now() + delayMs;
+}
+
 export function isGeminiAvailable(): boolean {
   const apiKey = process.env.GEMINI_API_KEY;
-  return !!apiKey && apiKey.trim().length > 0;
+  if (!apiKey || apiKey.trim().length === 0) return false;
+  if (Date.now() < quotaExhaustedUntil) {
+    return false;
+  }
+  return true;
 }
 
 export function resolveServerGeminiModel(overrideModel?: string): string {
@@ -73,17 +84,24 @@ export async function generateGeminiContent(options: ServerGenerateOptions): Pro
     config.responseSchema = options.responseSchema;
   }
 
-  const response = await ai.models.generateContent({
-    model,
-    contents,
-    config
-  });
+  try {
+    const response = await ai.models.generateContent({
+      model,
+      contents,
+      config
+    });
 
-  return {
-    text: response.text ?? '',
-    modelUsed: model,
-    usageMetadata: (response as any)?.usageMetadata
-  };
+    return {
+      text: response.text ?? '',
+      modelUsed: model,
+      usageMetadata: (response as any)?.usageMetadata
+    };
+  } catch (err: any) {
+    if (err?.message?.includes('429') || err?.message?.includes('RESOURCE_EXHAUSTED') || err?.message?.includes('quota')) {
+      markGeminiQuotaExhausted();
+    }
+    throw err;
+  }
 }
 
 /**
@@ -105,16 +123,23 @@ export async function* streamGeminiContent(options: ServerGenerateOptions): Asyn
     config.systemInstruction = options.systemInstruction;
   }
 
-  const responseStream = await ai.models.generateContentStream({
-    model,
-    contents,
-    config
-  });
+  try {
+    const responseStream = await ai.models.generateContentStream({
+      model,
+      contents,
+      config
+    });
 
-  for await (const chunk of responseStream) {
-    if (chunk.text) {
-      yield chunk.text;
+    for await (const chunk of responseStream) {
+      if (chunk.text) {
+        yield chunk.text;
+      }
     }
+  } catch (err: any) {
+    if (err?.message?.includes('429') || err?.message?.includes('RESOURCE_EXHAUSTED') || err?.message?.includes('quota')) {
+      markGeminiQuotaExhausted();
+    }
+    throw err;
   }
 }
 
