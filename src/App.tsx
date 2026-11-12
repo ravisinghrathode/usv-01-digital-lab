@@ -89,7 +89,7 @@ import {
 
 export default function App() {
   // Navigation & UI state
-  const [currentModule, setCurrentModule] = useState<NavigationModule>('overview');
+  const [currentModule, setCurrentModule] = useState<NavigationModule>('agent-orchestrator');
   const [globalSearch, setGlobalSearch] = useState('');
   const [isAiOpen, setIsAiOpen] = useState(false);
   const [aiPrefillPrompt, setAiPrefillPrompt] = useState<string | undefined>();
