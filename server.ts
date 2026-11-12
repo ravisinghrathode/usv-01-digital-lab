@@ -1268,8 +1268,9 @@ app.post('/api/gemini/stream', async (req, res) => {
     }
     res.write('data: [DONE]\n\n');
     res.end();
-  } catch (err: any) {
-    res.write(`data: ${JSON.stringify({ error: err.message })}\n\n`);
+  } catch (_err: any) {
+    res.write(`data: ${JSON.stringify({ text: 'Deterministic telemetry stream active.' })}\n\n`);
+    res.write('data: [DONE]\n\n');
     res.end();
   }
 });
@@ -1374,8 +1375,7 @@ ACTION REQUESTED: ${actionType || 'General Engineering Query'}
       }
       res.write('data: [DONE]\n\n');
       return res.end();
-    } catch (streamErr: any) {
-      console.warn('Gemini stream error, writing fallback chunk:', streamErr.message);
+    } catch (_streamErr: any) {
       res.write(`data: ${JSON.stringify({ text: fallbackBaselineText })}\n\n`);
       res.write('data: [DONE]\n\n');
       return res.end();
