@@ -227,22 +227,17 @@ export const authMiddleware = (req: express.Request, res: express.Response, next
   next();
 };
 
-// Protect sensitive administrative data, export/import, and gate signing endpoints
-app.use([
-  '/api/data',
-  '/api/verify',
-  '/api/notebook-lm',
-  '/api/export',
-  '/api/import',
-  '/api/auth/sign-gate',
-  '/api/auth/session',
-  '/api/gemini/generate',
-  '/api/gemini/stream',
-  '/api/gemini/assist',
-  '/api/usv-intel/scrape',
-  '/api/governance/keygen',
-  '/api/governance/sign-ecr'
-], authMiddleware);
+// Default-deny all API routes. Only login, setup status, and token-gated bootstrap
+// may be called without an existing session. Never expose project data or execution
+// endpoints merely because a route was omitted from a manual protection list.
+app.use('/api', (req, res, next) => {
+  const publiclyAccessible =
+    (req.method === 'POST' && req.path === '/auth/login') ||
+    (req.method === 'GET' && req.path === '/auth/setup-status') ||
+    (req.method === 'POST' && req.path === '/auth/provision-initial');
+  if (publiclyAccessible) return next();
+  return authMiddleware(req, res, next);
+});
 
 export function authenticateLoginRequest(body: { userId?: string; role?: string; passphrase?: string }): {
   statusCode: number;
