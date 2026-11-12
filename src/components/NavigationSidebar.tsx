@@ -26,6 +26,8 @@ import { WorkstreamCode } from '../types/engineering';
 export type NavigationModule = 
   | 'overview'
   | 'agent-orchestrator'
+  | 'orchestrator-tools'
+  | 'orchestrator-approvals'
   | 'global-usv-fleet'
   | 'workstream-SYS'
   | 'workstream-NAV'
@@ -63,7 +65,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   openSimulationsCount
 }) => {
   return (
-    <aside className="w-68 flex-shrink-0 bg-slate-950 border-r border-slate-800 flex flex-col h-screen select-none">
+    <aside className="w-64 min-w-[16rem] flex-shrink-0 bg-slate-950 border-r border-slate-800 flex flex-col h-screen select-none">
       {/* Brand & Vessel Header */}
       <div className="p-4 border-b border-slate-800 bg-slate-900/40">
         <div className="flex items-center gap-2.5">
@@ -128,6 +130,42 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
               </div>
             </div>
             {currentModule === 'agent-orchestrator' && <ChevronRight className="w-3.5 h-3.5 text-cyan-400" />}
+          </button>
+
+          <button
+            onClick={() => onSelectModule('orchestrator-tools')}
+            className={`w-full flex items-center justify-between px-2.5 py-2 rounded transition-colors ${
+              currentModule === 'orchestrator-tools'
+                ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-medium'
+                : 'text-slate-300 hover:bg-slate-900/80 hover:text-slate-100'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <Activity className="w-4 h-4 text-teal-400" />
+              <div className="flex items-center gap-1.5">
+                <span>Deterministic Tools</span>
+                <span className="text-[10px] px-1 py-0.2 rounded bg-teal-950/80 text-teal-400 border border-teal-800/40 font-mono">CALC</span>
+              </div>
+            </div>
+            {currentModule === 'orchestrator-tools' && <ChevronRight className="w-3.5 h-3.5 text-cyan-400" />}
+          </button>
+
+          <button
+            onClick={() => onSelectModule('orchestrator-approvals')}
+            className={`w-full flex items-center justify-between px-2.5 py-2 rounded transition-colors ${
+              currentModule === 'orchestrator-approvals'
+                ? 'bg-purple-500/15 text-purple-300 border border-purple-500/30 font-medium'
+                : 'text-slate-300 hover:bg-slate-900/80 hover:text-slate-100'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <ShieldCheck className="w-4 h-4 text-purple-400" />
+              <div className="flex items-center gap-1.5">
+                <span>Approval Gates</span>
+                <span className="text-[10px] px-1 py-0.2 rounded bg-purple-950/80 text-purple-400 border border-purple-800/40 font-mono">GATE</span>
+              </div>
+            </div>
+            {currentModule === 'orchestrator-approvals' && <ChevronRight className="w-3.5 h-3.5 text-purple-400" />}
           </button>
 
           <button

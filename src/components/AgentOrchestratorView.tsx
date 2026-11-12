@@ -48,10 +48,17 @@ import {
 
 interface AgentOrchestratorViewProps {
   onAskAi?: (prompt: string, record?: any) => void;
+  initialTab?: 'agents' | 'orchestrator' | 'approvals' | 'tools' | 'parameters' | 'audit';
 }
 
-export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ onAskAi }) => {
-  const [activeTab, setActiveTab] = useState<'agents' | 'orchestrator' | 'approvals' | 'tools' | 'parameters' | 'audit'>('orchestrator');
+export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ onAskAi, initialTab = 'orchestrator' }) => {
+  const [activeTab, setActiveTab] = useState<'agents' | 'orchestrator' | 'approvals' | 'tools' | 'parameters' | 'audit'>(initialTab);
+
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
 
   // Singletons
   const registry = AgentRegistry.getInstance();
@@ -536,7 +543,7 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
         <button
           onClick={() => setActiveTab('orchestrator')}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded transition-colors ${
-            activeTab === 'orchestrator' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'text-slate-400 hover:text-slate-200'
+            activeTab === 'orchestrator' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold' : 'text-slate-400 hover:text-slate-200'
           }`}
         >
           <Layers className="w-3.5 h-3.5" />
@@ -546,37 +553,37 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
         <button
           onClick={() => setActiveTab('agents')}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded transition-colors ${
-            activeTab === 'agents' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'text-slate-400 hover:text-slate-200'
+            activeTab === 'agents' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold' : 'text-slate-400 hover:text-slate-200'
           }`}
         >
           <Cpu className="w-3.5 h-3.5" />
-          <span>25 Agents Directory ({agents.length})</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('approvals')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded transition-colors ${
-            activeTab === 'approvals' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'text-slate-400 hover:text-slate-200'
-          }`}
-        >
-          <UserCheck className="w-3.5 h-3.5" />
-          <span>Safety Gates ({pendingGates.length})</span>
+          <span>26 Specialist Agents ({agents.length})</span>
         </button>
 
         <button
           onClick={() => setActiveTab('tools')}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded transition-colors ${
-            activeTab === 'tools' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'text-slate-400 hover:text-slate-200'
+            activeTab === 'tools' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold' : 'text-slate-400 hover:text-slate-200'
           }`}
         >
-          <Sliders className="w-3.5 h-3.5" />
-          <span>Deterministic Tools Suite</span>
+          <Sliders className="w-3.5 h-3.5 text-teal-400" />
+          <span>Deterministic Naval Tools</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('approvals')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded transition-colors ${
+            activeTab === 'approvals' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40 font-bold' : 'text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <UserCheck className="w-3.5 h-3.5 text-purple-400" />
+          <span>Approval Gates ({pendingGates.length})</span>
         </button>
 
         <button
           onClick={() => setActiveTab('parameters')}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded transition-colors ${
-            activeTab === 'parameters' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'text-slate-400 hover:text-slate-200'
+            activeTab === 'parameters' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold' : 'text-slate-400 hover:text-slate-200'
           }`}
         >
           <BookOpen className="w-3.5 h-3.5" />
@@ -586,11 +593,11 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
         <button
           onClick={() => setActiveTab('audit')}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded transition-colors ${
-            activeTab === 'audit' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'text-slate-400 hover:text-slate-200'
+            activeTab === 'audit' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold' : 'text-slate-400 hover:text-slate-200'
           }`}
         >
           <Activity className="w-3.5 h-3.5" />
-          <span>Safety Audit Trail</span>
+          <span>Cryptographic Audit Trail</span>
         </button>
       </div>
 

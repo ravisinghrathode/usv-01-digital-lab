@@ -528,7 +528,11 @@ export default function App() {
       case 'overview':
         return 'Project Overview & Executive Command';
       case 'agent-orchestrator':
-        return '25-Agent Autonomous Directorate & DAG Orchestrator';
+        return '26-Agent Autonomous Directorate & DAG Orchestrator';
+      case 'orchestrator-tools':
+        return 'Deterministic Naval Tools & Solvers';
+      case 'orchestrator-approvals':
+        return 'Human Authority Approval Gates (Stage D)';
       case 'workstream-SYS':
         return 'Subsystem 1: Systems Engineering';
       case 'workstream-NAV':
@@ -615,6 +619,36 @@ export default function App() {
           onOpenVerify={() => setIsVerifyModalOpen(true)}
         />
 
+        {/* Global Primary Navigation Tab Bar (Always Visible Across All Views) */}
+        <div className="bg-slate-900 border-b border-slate-800 px-4 py-2 flex items-center gap-1.5 overflow-x-auto text-xs font-mono sticky top-0 z-20 backdrop-blur-md shadow-sm">
+          <span className="text-slate-400 text-[10px] uppercase tracking-wider mr-1.5 font-bold flex items-center gap-1.5 flex-shrink-0">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" /> LAB TABS:
+          </span>
+          {[
+            { id: 'overview', label: '1. Master Overview (3D + Radar + DAG)', icon: '📊' },
+            { id: 'agent-orchestrator', label: '2. 26-Agent Directorate', icon: '🤖' },
+            { id: 'orchestrator-tools', label: '3. Deterministic Naval Tools', icon: '📐' },
+            { id: 'orchestrator-approvals', label: '4. Human Approval Gates', icon: '🛡️' },
+            { id: 'workstream-NAV', label: '5. 3D Naval Architecture', icon: '🚢' },
+            { id: 'realtime-sim', label: '6. Radar Simulator', icon: '📡' },
+            { id: 'generative-optimizer', label: '7. AI Optimizer', icon: '⚡' },
+            { id: 'global-usv-fleet', label: '8. Global USV Intel', icon: '🌐' }
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setCurrentModule(tab.id as NavigationModule)}
+              className={`px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 whitespace-nowrap text-xs font-semibold ${
+                currentModule === tab.id
+                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-sm shadow-cyan-950/40 ring-1 ring-cyan-500/30'
+                  : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/80 border border-slate-800/60'
+              }`}
+            >
+              <span>{tab.icon}</span>
+              <span>{tab.label}</span>
+            </button>
+          ))}
+        </div>
+
         {/* Scrollable Workspace Body */}
         <main className="flex-1 overflow-y-auto bg-slate-950/60 pb-12">
           {currentModule === 'overview' && (
@@ -631,8 +665,17 @@ export default function App() {
             />
           )}
 
-          {currentModule === 'agent-orchestrator' && (
-            <AgentOrchestratorView onAskAi={triggerAiQuery} />
+          {(currentModule === 'agent-orchestrator' || currentModule === 'orchestrator-tools' || currentModule === 'orchestrator-approvals') && (
+            <AgentOrchestratorView
+              onAskAi={triggerAiQuery}
+              initialTab={
+                currentModule === 'orchestrator-tools'
+                  ? 'tools'
+                  : currentModule === 'orchestrator-approvals'
+                  ? 'approvals'
+                  : 'orchestrator'
+              }
+            />
           )}
 
           {currentModule === 'workstream-SYS' && (
