@@ -93,6 +93,23 @@ let dbStore: Record<string, any[]> = {
   weight_cg: []
 };
 
+const APPROVED_DATA_COLLECTIONS = new Set([
+  'requirements', 'design_decisions', 'engineering_risks', 'simulation_jobs',
+  'verification_plans', 'test_records', 'components', 'activity_log',
+  'knowledge_notes', 'power_loads', 'interfaces', 'materials', 'load_cases',
+  'resistance_estimates', 'weight_cg'
+]);
+
+const validateDataCollection = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  if (!APPROVED_DATA_COLLECTIONS.has(req.params.collection)) {
+    return res.status(400).json({ success: false, error: 'Unknown engineering data collection.' });
+  }
+  if (req.params.collection === 'activity_log' && req.method !== 'GET') {
+    return res.status(403).json({ success: false, error: 'Audit history cannot be edited through the general CRUD API.' });
+  }
+  next();
+};
+
 const saveStoreToFile = () => {
   try {
     if (!fs.existsSync(DATA_DIR)) {
@@ -1026,13 +1043,13 @@ app.post('/api/data/reset-demo', async (req, res) => {
 });
 
 // 4. Collection CRUD
-app.get('/api/data/:collection', (req, res) => {
+app.get('/api/data/:collection', validateDataCollection, (req, res) => {
   const coll = req.params.collection;
   const items = dbStore[coll] || [];
   res.json({ success: true, collection: coll, count: items.length, data: items });
 });
 
-app.post('/api/data/:collection', (req, res) => {
+app.post('/api/data/:collection', validateDataCollection, (req, res) => {
   const coll = req.params.collection;
   if (!dbStore[coll]) {
     dbStore[coll] = [];
@@ -1064,7 +1081,7 @@ app.post('/api/data/:collection', (req, res) => {
   res.json({ success: true, item: newItem });
 });
 
-app.put('/api/data/:collection/:id', (req, res) => {
+app.put('/api/data/:collection/:id', validateDataCollection, (req, res) => {
   const coll = req.params.collection;
   const id = req.params.id;
   const items = dbStore[coll] || [];
@@ -1097,7 +1114,7 @@ app.put('/api/data/:collection/:id', (req, res) => {
   res.json({ success: true, item: items[idx] });
 });
 
-app.delete('/api/data/:collection/:id', (req, res) => {
+app.delete('/api/data/:collection/:id', validateDataCollection, (req, res) => {
   const coll = req.params.collection;
   const id = req.params.id;
   const items = dbStore[coll] || [];
@@ -1139,7 +1156,7 @@ app.post('/api/import', (req, res) => {
     }
     // Update collections present
     for (const key of Object.keys(importedData)) {
-      if (Array.isArray(importedData[key])) {
+      if (APPROVED_DATA_COLLECTIONS.has(key) && key !== 'activity_log' && Array.isArray(importedData[key])) {
         dbStore[key] = importedData[key];
       }
     }
