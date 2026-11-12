@@ -222,22 +222,71 @@ export class GlobalUsvIntelligenceAgent {
       ? sources
       : ['arXiv:maritime-robotics (Archive)', 'IEEE-Oceanic-Eng (Archive)', 'NavalNews (Archive)', 'Jane-Defense-USV-Register (Archive)'];
 
-    const sourceAttributions = declaredSources.map(s => ({
-      sourceName: s,
-      status: 'CACHED' as const,
-      retrievalTimestamp: startTime,
-      recordsFound: this.fleetData.length
+    // Live RSS metadata retrieval is explicitly opt-in and restricted to trusted public feeds.
+    // No vessel particulars are accepted as verified merely because a remote article was retrieved.
+    const configuredFeeds = typeof process !== 'undefined'
+      ? (process.env.USV_INTEL_PUBLIC_FEEDS || '').split(',').map(s => s.trim()).filter(Boolean)
+      : [];
+    const allowedHosts = new Set(['export.arxiv.org', 'arxiv.org', 'www.navalnews.com']);
+    const sourceAttributions: UsvScrapeReport['sourceAttributions'] = declaredSources.map(s => ({
+      sourceName: s, status: 'CACHED', retrievalTimestamp: startTime, recordsFound: 0
     }));
+    const sourcesQueried: string[] = [];
+    for (const feed of configuredFeeds.slice(0, 3)) {
+      let parsed: URL;
+      try {
+        parsed = new URL(feed);
+        if (parsed.protocol !== 'https:' || !allowedHosts.has(parsed.hostname) ||
+            parsed.username || parsed.password || parsed.port) {
+          sourceAttributions.push({ sourceName: feed, status: 'UNAVAILABLE', retrievalTimestamp: new Date().toISOString(), recordsFound: 0 });
+          continue;
+        }
+      } catch {
+        sourceAttributions.push({ sourceName: feed, status: 'UNAVAILABLE', retrievalTimestamp: new Date().toISOString(), recordsFound: 0 });
+        continue;
+      }
+      sourcesQueried.push(parsed.toString());
+      try {
+        const response = await fetch(parsed.toString(), {
+          method: 'GET', redirect: 'error', signal: AbortSignal.timeout(8000),
+          headers: { Accept: 'application/rss+xml, application/atom+xml, application/xml' }
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const contentType = response.headers.get('content-type') || '';
+        if (!/xml|rss|atom/i.test(contentType)) throw new Error('Unsupported feed content type');
+        const xml = (await response.text()).slice(0, 500000);
+        const items = (xml.match(/<(?:item|entry)(?:\s|>)/gi) || []).length;
+        sourceAttributions.push({
+          sourceName: parsed.hostname, sourceUrl: parsed.toString(), status: 'SUCCESS',
+          retrievalTimestamp: new Date().toISOString(), recordsFound: items
+        });
+      } catch {
+        sourceAttributions.push({
+          sourceName: parsed.hostname, sourceUrl: parsed.toString(), status: 'NETWORK_ERROR',
+          retrievalTimestamp: new Date().toISOString(), recordsFound: 0
+        });
+      }
+    }
+
+    const succeeded = sourceAttributions.filter(a => a.status === 'SUCCESS').length;
+    const failed = sourceAttributions.filter(a => a.status === 'NETWORK_ERROR').length;
+    const refreshMode: UsvScrapeReport['refreshMode'] = sourcesQueried.length === 0
+      ? 'CACHED_OFFLINE'
+      : succeeded === 0 ? 'NETWORK_FAILURE' : failed > 0 ? 'PARTIAL_SUCCESS' : 'LIVE_RETRIEVAL';
+    const statusMessage = refreshMode === 'CACHED_OFFLINE'
+      ? 'Cached Data — No Live Refresh Performed'
+      : refreshMode === 'NETWORK_FAILURE' ? 'Public feed requests failed — Cached Fleet Data Retained'
+      : 'Public article metadata retrieved; no new vessel specifications independently validated';
 
     return {
       executionTimestamp: startTime,
-      refreshMode: 'CACHED_OFFLINE',
-      statusMessage: 'Cached Data — No Live Refresh Performed',
-      totalVesselsScraped: 0, // Honest: 0 new remote vessels scraped during this run
-      sourcesQueried: [], // Honest: No remote queries dispatched in offline cache mode
+      refreshMode,
+      statusMessage,
+      totalVesselsScraped: 0, // Articles are not validated vessel model records.
+      sourcesQueried,
       sourceAttributions,
       newVesselsIdentified: 0,
-      papersExtracted: this.papersData.length,
+      papersExtracted: 0, // No papers have been ingested and verified during this refresh.
       activeNaviesCount: uniqueNavies.size,
       deduplicatedCount: dedupResult.deduplicatedCount,
       conflictCount: conflicts.length,

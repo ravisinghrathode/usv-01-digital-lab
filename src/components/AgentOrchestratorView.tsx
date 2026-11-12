@@ -169,6 +169,7 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
   // Authenticated User & Director Passphrase Verification State
   const [approverIdentity, setApproverIdentity] = useState<ApproverIdentity | null>(null);
   const [directorPassphrase, setDirectorPassphrase] = useState<string>('');
+  const [initialSetupSecret, setInitialSetupSecret] = useState<string>('');
   const [directorAuthError, setDirectorAuthError] = useState<string | null>(null);
   const [isDirectorAuthenticated, setIsDirectorAuthenticated] = useState<boolean>(false);
 
@@ -211,7 +212,7 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
       const setup = await fetchSetupStatus();
       let user: ApproverIdentity;
       if (!setup.provisionedUsers.includes('usr-eng-dir-8841')) {
-        user = await provisionInitialCredential('usr-eng-dir-8841', directorPassphrase);
+        user = await provisionInitialCredential('usr-eng-dir-8841', directorPassphrase, initialSetupSecret);
       } else {
         user = await authenticateAsDirector(directorPassphrase);
       }
@@ -219,6 +220,7 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
       setIsDirectorAuthenticated(true);
       setEcrSigningPassphrase(directorPassphrase);
       setDirectorPassphrase('');
+      setInitialSetupSecret('');
       refreshState();
     } catch (err: any) {
       setDirectorAuthError(err.message);
@@ -902,6 +904,15 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
                   <ShieldCheck className="w-3.5 h-3.5" /> Authenticate Authority
                 </button>
               </div>
+              <input
+                type="password"
+                autoComplete="off"
+                aria-label="One-time initial setup secret (only needed for first provisioning)"
+                placeholder="Initial setup secret (required on first provisioning only)"
+                value={initialSetupSecret}
+                onChange={(e) => setInitialSetupSecret(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-700 rounded px-3 py-1.5 text-xs text-slate-100 placeholder-slate-500"
+              />
               {directorAuthError && (
                 <p className="text-[11px] text-rose-400 font-mono">❌ {directorAuthError}</p>
               )}

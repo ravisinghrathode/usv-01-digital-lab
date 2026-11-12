@@ -114,6 +114,10 @@ describe('26-Agent Individual Verification Matrix (A01 - A26, Tests A through H)
         expect(result).toBeDefined();
         // The engine must either return FAILED status or handle gracefully without throwing unhandled rejection
         expect(['FAILED', 'SUCCESS', 'NEEDS_HUMAN_APPROVAL', 'PARTIAL']).toContain(result.status);
+        // Generic agent schemas may accept auxiliary fields; invalid physics must never create verified evidence.
+        if (result.status !== 'FAILED') {
+          expect(result.evidenceValid === true && result.deterministicToolEvidence.length === 0).toBe(false);
+        }
         if (result.status === 'FAILED') {
           expect(result.evidenceValid).toBe(false);
           expect(result.executionMode).toBe('EXECUTION_FAILED');
@@ -156,6 +160,9 @@ describe('26-Agent Individual Verification Matrix (A01 - A26, Tests A through H)
         });
 
         const mandatoryTools = agent.verificationCriteria?.mandatoryDeterministicTools || [];
+        expect(result.provider).toBeTruthy();
+        expect(result.modelIdentifier).toBeTruthy();
+        expect(['STATIC_RULES_EVALUATION', 'DETERMINISTIC_CALCULATION', 'LIVE_AI_GENERATION', 'SYNTHETIC_TEST_MOCK']).toContain(result.executionMode);
         if (mandatoryTools.length > 0) {
           // Must have executed the mandatory deterministic tools
           expect(result.deterministicToolEvidence.length).toBeGreaterThanOrEqual(1);
