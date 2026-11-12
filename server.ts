@@ -1030,8 +1030,8 @@ app.post('/api/data/reset-demo', async (req, res) => {
       {
         id: `LOG-${Date.now()}`,
         timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
-        userId: 'usr-admin',
-        userName: 'Systems Administrator',
+        userId: (req as any).user.userId,
+        userName: (req as any).user.userName,
         action: 'UPDATE',
         recordType: 'DATABASE',
         recordId: 'RESET',
@@ -1080,8 +1080,8 @@ app.post('/api/data/:collection', validateDataCollection, (req, res) => {
     dbStore.activity_log.unshift({
       id: `LOG-${Date.now()}`,
       timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
-      userId: req.body.owner || 'Lead Engineer',
-      userName: req.body.owner || 'Lead Engineer',
+      userId: (req as any).user.userId,
+      userName: (req as any).user.userName,
       action: 'CREATE',
       recordType: coll.toUpperCase(),
       recordId: newItem.id,
@@ -1113,9 +1113,9 @@ app.put('/api/data/:collection/:id', validateDataCollection, (req, res) => {
     dbStore.activity_log.unshift({
       id: `LOG-${Date.now()}`,
       timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
-      userId: req.body.reviewer || req.body.owner || 'Lead Engineer',
-      userName: req.body.reviewer || req.body.owner || 'Lead Engineer',
-      action: req.body.status === 'Approved' ? 'APPROVE' : req.body.status === 'Archived' ? 'ARCHIVE' : 'UPDATE',
+      userId: (req as any).user.userId,
+      userName: (req as any).user.userName,
+      action: req.body.status === 'Archived' ? 'ARCHIVE' : 'UPDATE',
       recordType: coll.toUpperCase(),
       recordId: id,
       details: `Updated ${coll} record ${id}: status=${items[idx].status || 'nominal'}`
@@ -1141,8 +1141,8 @@ app.delete('/api/data/:collection/:id', validateDataCollection, (req, res) => {
   dbStore.activity_log.unshift({
     id: `LOG-${Date.now()}`,
     timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
-    userId: 'Lead Engineer',
-    userName: 'Lead Engineer',
+    userId: (req as any).user.userId,
+    userName: (req as any).user.userName,
     action: 'ARCHIVE',
     recordType: coll.toUpperCase(),
     recordId: id,
@@ -1175,8 +1175,8 @@ app.post('/api/import', (req, res) => {
     dbStore.activity_log.unshift({
       id: `LOG-${Date.now()}`,
       timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
-      userId: 'Admin',
-      userName: 'Administrator',
+      userId: (req as any).user.userId,
+      userName: (req as any).user.userName,
       action: 'IMPORT',
       recordType: 'DATABASE',
       recordId: 'RESTORE',
