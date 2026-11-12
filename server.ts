@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { generateApproverSignature, verifyApproverSignature, setDirectorSigningKey } from './src/core/safety/ApproverSigner.ts';
 import { AUTHORIZED_MEMBERS, type StaffMember } from './src/core/auth/staffDirectory.ts';
+import { authorizeLabRoute } from './src/core/auth/routeAuthorization.ts';
 import {
   verifyStaffCredential,
   isLockedOut,
@@ -35,6 +36,7 @@ import { GlobalIntelligenceLearningBridge } from './src/core/intelligence/Global
 import http from 'http';
 import { WebSocketServer } from 'ws';
 import { VerifyUsv01Engine } from './src/core/verification/VerifyUsv01Engine.ts';
+import { getLabReadinessSnapshot } from './src/core/verification/LabReadiness.ts';
 import { AgentRegistry } from './src/core/registry/AgentRegistry.ts';
 import { BaseAgent } from './src/core/engine/BaseAgent.ts';
 import { CentralOrchestrator } from './src/core/orchestrator/CentralOrchestrator.ts';
@@ -236,7 +238,18 @@ app.use('/api', (req, res, next) => {
     (req.method === 'GET' && req.path === '/auth/setup-status') ||
     (req.method === 'POST' && req.path === '/auth/provision-initial');
   if (publiclyAccessible) return next();
-  return authMiddleware(req, res, next);
+  return authMiddleware(req, res, () => {
+    const user = (req as any).user as AuthenticatedUser;
+    if (!authorizeLabRoute(req.method, req.path, user.role)) {
+      AuditLogger.getInstance().log({
+        severity: 'SAFETY_CRITICAL',
+        action: 'UNAUTHORIZED_ROLE_OPERATION',
+        details: { userId: user.userId, role: user.role, method: req.method, route: req.path }
+      });
+      return res.status(403).json({ success: false, error: 'Forbidden: insufficient role authority for this operation.' });
+    }
+    next();
+  });
 });
 
 export function authenticateLoginRequest(body: { userId?: string; role?: string; passphrase?: string }): {
@@ -922,6 +935,12 @@ app.post('/api/verify/execute', async (req, res) => {
 });
 
 // 2. Get latest verification report
+// Evidence-limited live snapshot. This never claims external integrations are healthy
+// without authenticated service-specific verification.
+app.get('/api/verify/readiness', (_req, res) => {
+  res.json({ success: true, report: getLabReadinessSnapshot() });
+});
+
 app.get('/api/verify/latest', async (req, res) => {
   try {
     const reportPath = path.join(process.cwd(), 'governance', 'reports', 'verify-usv01-report.json');
@@ -1536,14 +1555,14 @@ ACTION REQUESTED: ${actionType || 'General Engineering Query'}
 
 ---
 
-#### 1. [VERIFIED FACTS]
+#### 1. [CONFIGURATION CONTEXT — NOT INDEPENDENTLY VERIFIED]
 - Subsystem workstream active: **${currentWorkstream || 'Systems Engineering'}**.
-- Authoritative baseline standard: **IMO Resolution MSC.267(85)** for stability, **DNV-RU-HSLC** for slamming structural design, and **IEEE 45** for electrical distribution.
+- Candidate reference standards include **IMO Resolution MSC.267(85)**, applicable class rules, and **IEEE 45**; applicability to this vessel and edition must be independently established before compliance can be asserted.
 - Traceability mandate: All requirements must trace to a Design Decision (\`DEC-xxx\`), Simulation (\`SIM-xxx\`), and Verification Procedure (\`VER-xxx\`).
 
 #### 2. [ASSUMPTIONS & ESTIMATES]
 - High-current propulsion bus is galvanically isolated from 24V avionics/sensors to mitigate ground loops and electromagnetic interference.
-- Calm-water resistance is being analyzed via OpenFOAM VOF free-surface simulations (\`SIM-HYD-001\`) and will be validated against physical scale towing tank data (\`VER-TOW-003\`).
+- Calm-water resistance simulation and towing-tank correlation are planned verification activities; no current execution or validated results are established by this offline fallback.
 
 #### 3. [MISSING INFORMATION & TBD UNCERTAINTIES]
 - Hull principal dimensions (LOA, Beam, Draft) remain **TBD** pending final payload volume envelope and hydrodynamic trade study (\`DEC-NAV-001\`).
@@ -1552,7 +1571,7 @@ ACTION REQUESTED: ${actionType || 'General Engineering Query'}
 
 #### 4. [AI PROPOSALS — HUMAN SIGN-OFF REQUIRED]
 - When defining new requirements, specify verifiable acceptance thresholds (e.g. *"Positive GZ area under curve >= 0.055 m-rad between 0° and 30°"* instead of *"Adequate stability"*).
-- For safety-critical autonomy encounters, enforce strict adherence to COLREGs Rules 14 and 15 with deterministic fallback to loiter when telemetry is lost.
+- For safety-critical autonomy encounters, assess COLREGs obligations and implement a formally validated, scenario-dependent loss-of-link contingency; do not assume loiter or zero-thrust is universally safe.
 `;
 
   if (!isGeminiAvailable()) {
@@ -1568,6 +1587,8 @@ ACTION REQUESTED: ${actionType || 'General Engineering Query'}
       success: true,
       modelUsed: 'local-engineering-rules-engine',
       isHeuristic: true,
+      evidenceValid: false,
+      verificationStatus: 'UNVERIFIED',
       text: fallbackBaselineText
     });
   }
