@@ -62,7 +62,14 @@ jobs:
           }
 
       - name: Stage B — Production Bundle Verification
-        run: npm run build
+        run: |
+          npm run build 2>&1 | tee build-output.log || {
+            echo "### ❌ Production Bundle Failure" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            tail -n 80 build-output.log >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          }
 
       - name: Stage A — PR Change Classification
         if: github.event_name == 'pull_request'
