@@ -230,6 +230,8 @@ export const authMiddleware = (req: express.Request, res: express.Response, next
 // Protect sensitive administrative data, export/import, and gate signing endpoints
 app.use([
   '/api/data',
+  '/api/verify',
+  '/api/notebook-lm',
   '/api/export',
   '/api/import',
   '/api/auth/sign-gate',
@@ -401,7 +403,7 @@ app.get('/api/auth/setup-status', (req, res) => {
   res.json({
     success: true,
     storeAvailable: !!store && provisionedUsers.length > 0,
-    provisionedUsers
+    initialized: provisionedUsers.length > 0
   });
 });
 
@@ -438,11 +440,12 @@ app.post('/api/auth/provision-initial', (req, res) => {
     const sessionUser = token ? verifySessionToken(token) : null;
     const isDirectorSession = sessionUser?.role === 'ENGINEERING_DIRECTOR';
 
-    const hasValidSetupToken = INITIAL_PROVISION_SECRET && setupToken === INITIAL_PROVISION_SECRET;
+    const hasValidSetupToken = typeof INITIAL_PROVISION_SECRET === 'string' && INITIAL_PROVISION_SECRET.length >= 32 && typeof setupToken === 'string' && setupToken.length === INITIAL_PROVISION_SECRET.length && crypto.timingSafeEqual(Buffer.from(setupToken), Buffer.from(INITIAL_PROVISION_SECRET));
     const hasProvisionedUsers = !!store && Object.keys(store.credentials).length > 0;
 
-    // If accounts already exist, ONLY an authenticated Director or valid setupToken can provision
-    if (hasProvisionedUsers && !isDirectorSession && !hasValidSetupToken) {
+    // Bootstrap tokens are one-time setup credentials, not standing administrator privileges.
+    // Once any staff account exists, only an authenticated Engineering Director may add users.
+    if (hasProvisionedUsers && !isDirectorSession) {
       AuditLogger.getInstance().log({
         severity: 'SAFETY_CRITICAL',
         action: 'UNAUTHORIZED_PROVISION_ATTEMPT',
@@ -450,11 +453,11 @@ app.post('/api/auth/provision-initial', (req, res) => {
       });
       return res.status(403).json({
         success: false,
-        error: 'Forbidden: Credential store is already initialized. Provisioning requires an authenticated Engineering Director session or valid setupToken.'
+        error: 'Forbidden: Once initialized, provisioning requires an authenticated Engineering Director session.'
       });
     }
 
-    // If store is empty, but INITIAL_PROVISION_SECRET is configured, enforce setupToken
+    // First-time bootstrap requires an explicitly configured setup token.
     if (!hasProvisionedUsers && !isDirectorSession && !hasValidSetupToken) {
       AuditLogger.getInstance().log({
         severity: 'SAFETY_CRITICAL',
