@@ -1,4 +1,4 @@
-import { AgentSpec, AgentDivision } from '../types/agent.ts';
+import type { AgentSpec, AgentDivision } from '../types/agent.ts';
 import { MASTER_AGENTS } from '../agents/definitions.ts';
 
 export class AgentRegistry {
