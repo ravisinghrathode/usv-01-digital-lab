@@ -324,6 +324,8 @@ ${paper.governingFormulas ? `- **Governing Formula:** $${paper.governingFormulas
       id: 'KN-USV-FLEET-OVERVIEW',
       title: 'Global Operating USV Fleet Intelligence & Naval Benchmark Summary',
       category: 'BENCHMARK',
+      subsystems: ['NAV', 'SYS', 'AUT'],
+      lastUpdated: '2026-11-12',
       tags: ['USV', 'Global-Fleet', 'Naval-Intelligence', 'Obsidian'],
       contentMarkdown: `# [[Global Operating USV Fleet Intelligence]]
 
@@ -358,6 +360,8 @@ See also: [[USV-01 Principal Particulars]], [[COLREGS Compliance Architecture]],
         id: `KN-USV-${vessel.id}`,
         title: `USV Benchmark: ${vessel.modelName} (${vessel.operatorNavy})`,
         category: 'BENCHMARK',
+        subsystems: ['NAV', 'SYS'],
+        lastUpdated: '2026-11-12',
         tags: ['USV', vessel.country, vessel.primaryMission, 'Naval-Fleet'],
         contentMarkdown: this.generateObsidianVaultExport(vessel),
         governingStandards: ['COLREGS 1972', 'NATO STANAG 4586'],

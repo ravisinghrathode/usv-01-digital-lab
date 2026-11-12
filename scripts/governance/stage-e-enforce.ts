@@ -1,15 +1,21 @@
 import fs from 'fs';
 import path from 'path';
+import { execFileSync } from 'child_process';
 import { generateClassificationReport, type PRClassificationReport } from './classify-change.ts';
 import type { MultiRoleReviewReport } from './independent-ai-review.ts';
 import type { StageDResult } from './stage-d-human-approval.ts';
+import { computeBaselineDigest } from './ecr-approval.ts';
 
 export interface StageEEvaluation {
   passed: boolean;
   overallVerdict: 'APPROVED' | 'BLOCKED' | 'PENDING_HUMAN_AUTHORITY';
+  currentCommitSha?: string;
+  currentBaselineDigest?: string;
   stageAResult: {
     overallRisk: string;
     requiresDirector: boolean;
+    digestMatches?: boolean;
+    commitMatches?: boolean;
   };
   stageCResult: {
     provider: string;
@@ -17,6 +23,8 @@ export interface StageEEvaluation {
     deterministicStatus: string;
     hasMockFallback: boolean;
     verdict: string;
+    digestMatches?: boolean;
+    commitMatches?: boolean;
   };
   stageDResult: {
     required: boolean;
@@ -25,12 +33,27 @@ export interface StageEEvaluation {
     authority?: string;
     baselineDigest?: string;
     evaluatedRef?: string;
+    digestMatches?: boolean;
   };
   blockingReasons: string[];
 }
 
 export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origin/main'): StageEEvaluation {
   const reportsDir = path.join(rootDir, 'governance', 'reports');
+
+  // Compute current commit and baseline digest for strict correspondence verification
+  let currentCommitSha = '';
+  let currentBaselineDigest = '';
+  try {
+    const headRef = process.env.PR_HEAD_SHA || 'HEAD';
+    try {
+      currentCommitSha = execFileSync('git', ['rev-parse', headRef], { cwd: rootDir, encoding: 'utf-8' }).trim();
+      currentBaselineDigest = computeBaselineDigest(headRef, rootDir);
+    } catch {
+      currentCommitSha = execFileSync('git', ['rev-parse', headRef], { cwd: process.cwd(), encoding: 'utf-8' }).trim();
+      currentBaselineDigest = computeBaselineDigest(headRef, process.cwd());
+    }
+  } catch {}
 
   // 1. Stage A: Change Classification
   let stageA: PRClassificationReport;
@@ -39,10 +62,10 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
     try {
       stageA = JSON.parse(fs.readFileSync(stageAPath, 'utf8'));
     } catch {
-      stageA = generateClassificationReport(baseRef);
+      stageA = generateClassificationReport(baseRef, rootDir);
     }
   } else {
-    stageA = generateClassificationReport(baseRef);
+    stageA = generateClassificationReport(baseRef, rootDir);
   }
 
   // 2. Stage C: Independent Technical Review
@@ -64,16 +87,48 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
   }
 
   const blockingReasons: string[] = [];
+  const expectedBaselineDigest = currentBaselineDigest || stageA.baselineDigest || '';
+  const expectedCommitSha = currentCommitSha || stageA.commitSha || '';
+
+  // Verify Stage A correspondence
+  let stageADigestMatches = true;
+  let stageACommitMatches = true;
+  if (currentBaselineDigest && stageA.baselineDigest && stageA.baselineDigest !== currentBaselineDigest) {
+    stageADigestMatches = false;
+    blockingReasons.push(
+      `Stage A classification report evidence does not match the exact baseline digest being verified (expected ${currentBaselineDigest}, report had ${stageA.baselineDigest}).`
+    );
+  }
+  if (currentCommitSha && stageA.commitSha && stageA.commitSha !== currentCommitSha) {
+    stageACommitMatches = false;
+    blockingReasons.push(
+      `Stage A classification report evidence does not match the exact commit SHA being verified (expected ${currentCommitSha}, report had ${stageA.commitSha}).`
+    );
+  }
 
   // Evaluate Stage C
   const hasMockFallback = stageC ? stageC.hasMockFallback : false;
   const deterministicStatus = stageC ? stageC.deterministicStatus : 'UNKNOWN';
   const aiStatus = stageC ? stageC.aiReviewStatus : 'UNKNOWN';
   const stageCVerdict = stageC ? stageC.compositeAdvisoryRecommendation : 'UNKNOWN';
+  let stageCDigestMatches = true;
+  let stageCCommitMatches = true;
 
   if (!stageC) {
     blockingReasons.push('Stage C independent review evidence report is missing.');
   } else {
+    if (expectedBaselineDigest && stageC.baselineDigest && stageC.baselineDigest !== expectedBaselineDigest) {
+      stageCDigestMatches = false;
+      blockingReasons.push(
+        `Stage C independent review evidence does not correspond to the exact baseline digest being verified (expected ${expectedBaselineDigest}, report had ${stageC.baselineDigest}).`
+      );
+    }
+    if (expectedCommitSha && stageC.evaluatedCommitSha && stageC.evaluatedCommitSha !== expectedCommitSha) {
+      stageCCommitMatches = false;
+      blockingReasons.push(
+        `Stage C independent review evidence does not correspond to the exact commit SHA being verified (expected ${expectedCommitSha}, report had ${stageC.evaluatedCommitSha}).`
+      );
+    }
     if (hasMockFallback) {
       blockingReasons.push('Stage C rejected: synthetic mock reviewer fallback detected. Unverified mock reviews violate governance standards.');
     }
@@ -98,16 +153,25 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
   const stageDRequired = isCriticalOrHigh || requiresDirector;
   const signatureVerified = stageD ? stageD.signatureVerified : false;
   const staleApproval = stageD ? stageD.staleApproval : false;
+  let stageDDigestMatches = true;
 
   if (stageDRequired) {
     if (!stageD) {
       blockingReasons.push('Stage D human authority verification report is missing.');
-    } else if (staleApproval) {
-      blockingReasons.push('Stage D rejected: ECR approval record is stale; does not match current baseline digest.');
-    } else if (!signatureVerified) {
-      blockingReasons.push(
-        `Stage D rejected: Safety-critical change (${overallRisk} risk) requires Director-signed Ed25519 approval over baseline digest ${stageD.baselineDigest || 'unknown'}.`
-      );
+    } else {
+      if (expectedBaselineDigest && stageD.baselineDigest && stageD.baselineDigest !== expectedBaselineDigest) {
+        stageDDigestMatches = false;
+        blockingReasons.push(
+          `Stage D approval evidence does not correspond to the exact baseline digest being verified (expected ${expectedBaselineDigest}, report had ${stageD.baselineDigest}).`
+        );
+      }
+      if (staleApproval) {
+        blockingReasons.push('Stage D rejected: ECR approval record is stale; does not match current baseline digest.');
+      } else if (!signatureVerified) {
+        blockingReasons.push(
+          `Stage D rejected: Safety-critical change (${overallRisk} risk) requires Director-signed Ed25519 approval over baseline digest ${stageD.baselineDigest || currentBaselineDigest || 'unknown'}.`
+        );
+      }
     }
   }
 
@@ -130,16 +194,22 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
   return {
     passed: blockingReasons.length === 0,
     overallVerdict,
+    currentCommitSha,
+    currentBaselineDigest,
     stageAResult: {
       overallRisk,
-      requiresDirector: stageDRequired
+      requiresDirector: stageDRequired,
+      digestMatches: stageADigestMatches,
+      commitMatches: stageACommitMatches
     },
     stageCResult: {
       provider: stageC?.provider || 'none',
       aiStatus,
       deterministicStatus,
       hasMockFallback,
-      verdict: stageCVerdict
+      verdict: stageCVerdict,
+      digestMatches: stageCDigestMatches,
+      commitMatches: stageCCommitMatches
     },
     stageDResult: {
       required: stageDRequired,
@@ -147,7 +217,8 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
       staleApproval,
       authority: stageD?.approverAuthority,
       baselineDigest: stageD?.baselineDigest,
-      evaluatedRef: stageD?.evaluatedRef
+      evaluatedRef: stageD?.evaluatedRef,
+      digestMatches: stageDDigestMatches
     },
     blockingReasons
   };

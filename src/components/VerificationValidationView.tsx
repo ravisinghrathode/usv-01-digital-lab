@@ -20,13 +20,15 @@ interface VerificationValidationViewProps {
   onAddPlan?: (plan: Partial<VerificationPlan>) => void;
   onOpenNewModal: () => void;
   onAskAi: (prompt: string, record?: any) => void;
+  onOpenVerify?: () => void;
 }
 
 export const VerificationValidationView: React.FC<VerificationValidationViewProps> = ({
   plans,
   testRecords,
   onOpenNewModal,
-  onAskAi
+  onAskAi,
+  onOpenVerify
 }) => {
   const [activeTab, setActiveTab] = useState<'plans' | 'records' | 'traceability'>('plans');
   const [selectedPlan, setSelectedPlan] = useState<VerificationPlan | null>(null);
@@ -57,6 +59,16 @@ export const VerificationValidationView: React.FC<VerificationValidationViewProp
         </div>
 
         <div className="flex items-center gap-2">
+          {onOpenVerify && (
+            <button
+              onClick={onOpenVerify}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-semibold font-mono tracking-tight transition-all shadow-sm shadow-emerald-950/40 active:scale-95 ring-1 ring-emerald-500/30"
+              title="Execute genuine 4-phase verification covering repo integrity, Stage A-E governance, 25 HMEA agents, and engineering traceability"
+            >
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <span>VERIFY USV-01</span>
+            </button>
+          )}
           <button
             onClick={onOpenNewModal}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/30 text-teal-300 text-xs font-medium transition-colors"

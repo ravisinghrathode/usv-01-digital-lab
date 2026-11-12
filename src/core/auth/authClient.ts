@@ -1,4 +1,4 @@
-import { ApproverIdentity } from '../types/safety.ts';
+import type { ApproverIdentity } from '../types/safety.ts';
 
 const SESSION_STORAGE_KEY = 'usv01_session_token';
 const USER_STORAGE_KEY = 'usv01_session_user';

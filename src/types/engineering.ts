@@ -292,10 +292,17 @@ export interface InterfaceDefinition {
 export interface KnowledgeNote {
   id: string;
   title: string;
-  category: 'Engineering Concept' | 'Research Note' | 'Lesson Learned' | 'Standard Reference' | 'Glossary Term';
+  category: 'Engineering Concept' | 'Research Note' | 'Lesson Learned' | 'Standard Reference' | 'Glossary Term' | 'BENCHMARK';
   subsystems: WorkstreamCode[];
   contentMarkdown: string; // Supports Obsidian wikilinks [[Topic]]
   obsidianVaultLink?: string;
   googleDriveRef?: string;
   lastUpdated: string;
+  tags?: string[];
+  governingStandards?: string[];
+  relatedRequirementIds?: string[];
+  author?: string;
+  createdDate?: string;
+  lastRevision?: string;
+  verificationStatus?: string;
 }

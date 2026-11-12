@@ -1,4 +1,4 @@
-import { EngineeringParameter, ArchitectureDecisionRecord, RiskEntry } from '../types/memory.ts';
+import type { EngineeringParameter, ArchitectureDecisionRecord, RiskEntry } from '../types/memory.ts';
 import { AuditLogger } from '../safety/AuditLogger.ts';
 
 export class SharedMemory {

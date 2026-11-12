@@ -1020,7 +1020,8 @@ export const GLOBAL_NAVY_USVS: OperatingUsvModel[] = [
     missionPackage: {
       combatPayloadDescription: 'OTO Melara 12.7mm Hitrole remote weapon station, long-range acoustic device (LRAD), and deployable mine neutralization vehicle.',
       weaponsFitted: ['12.7mm Hitrole remote weapon station', 'Acoustic hailing device'],
-      mcmEquipment: ['Towed synthetic aperture sonar (T-SAS)', 'Expendable mine disposal vehicle (EMDV)']
+      mcmEquipment: ['Towed synthetic aperture sonar (T-SAS)', 'Expendable mine disposal vehicle (EMDV)'],
+      surveillanceFeatures: ['High-resolution 360-degree electro-optical and thermal situational awareness']
     },
     linkedPapers: [GLOBAL_USV_ACADEMIC_PAPERS[5], GLOBAL_USV_ACADEMIC_PAPERS[0]],
     usv01BenchmarkDelta: {

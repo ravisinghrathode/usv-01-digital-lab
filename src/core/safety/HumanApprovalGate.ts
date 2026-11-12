@@ -1,4 +1,4 @@
-import { HumanApprovalGate, ApproverIdentity } from '../types/safety.ts';
+import type { HumanApprovalGate, ApproverIdentity } from '../types/safety.ts';
 import { AuditLogger } from './AuditLogger.ts';
 import { verifyApproverSignature } from './ApproverSigner.ts';
 

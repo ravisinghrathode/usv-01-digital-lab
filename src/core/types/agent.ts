@@ -14,7 +14,8 @@ export type AgentStatus = 'IDLE' | 'EXECUTING' | 'WAITING_APPROVAL' | 'COMPLETED
 
 export type ExecutionPermission = 'READ_ONLY' | 'PARAM_PROPOSAL' | 'CALCULATION_EXEC' | 'BASELINE_DRAFT' | 'VVT_REVIEW';
 
-export type { ModelConfig } from '../models/ModelProvider.ts';
+import type { ModelConfig } from '../models/ModelProvider.ts';
+export type { ModelConfig };
 
 export interface AgentVerificationCriteria {
   requiredChecklist: string[];

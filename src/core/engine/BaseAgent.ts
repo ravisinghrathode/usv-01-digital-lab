@@ -1,4 +1,4 @@
-import { AgentSpec, AgentExecutionInput, AgentExecutionOutput, TraceableAssumption } from '../types/agent.ts';
+import type { AgentSpec, AgentExecutionInput, AgentExecutionOutput, TraceableAssumption } from '../types/agent.ts';
 import { ToolRegistry } from '../tools/ToolRegistry.ts';
 import { ModelProviderRouter } from '../models/ModelProvider.ts';
 import { AuditLogger } from '../safety/AuditLogger.ts';

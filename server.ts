@@ -32,6 +32,7 @@ import { DEFAULT_PRIVATE_KEY_PATH } from './scripts/governance/director-keygen.t
 import { validateECRFile } from './scripts/governance/ecr-tool.ts';
 import { GlobalUsvIntelligenceAgent } from './src/core/agents/GlobalUsvIntelligenceAgent.ts';
 import { GlobalIntelligenceLearningBridge } from './src/core/intelligence/GlobalIntelligenceLearningBridge.ts';
+import { VerifyUsv01Engine } from './src/core/verification/VerifyUsv01Engine.ts';
 
 dotenv.config();
 
@@ -661,6 +662,59 @@ app.post('/api/governance/sign-ecr', (req, res) => {
 });
 
 
+
+// --- VERIFY USV-01 SINGLE-PRESS VERIFICATION ROUTES ---
+
+// 1. Run genuine verification
+app.post('/api/verify/execute', async (req, res) => {
+  try {
+    const engine = VerifyUsv01Engine.getInstance(process.cwd());
+    const report = await engine.executeVerification();
+    
+    // Save report to governance/reports
+    const outDir = path.join(process.cwd(), 'governance', 'reports');
+    if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
+    fs.writeFileSync(path.join(outDir, 'verify-usv01-report.json'), JSON.stringify(report, null, 2));
+    fs.writeFileSync(path.join(outDir, 'verify-usv01-report.md'), report.reportMarkdown);
+
+    res.json({ success: true, report });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 2. Get latest verification report
+app.get('/api/verify/latest', async (req, res) => {
+  try {
+    const reportPath = path.join(process.cwd(), 'governance', 'reports', 'verify-usv01-report.json');
+    if (fs.existsSync(reportPath)) {
+      const report = JSON.parse(fs.readFileSync(reportPath, 'utf-8'));
+      return res.json({ success: true, report });
+    }
+    const engine = VerifyUsv01Engine.getInstance(process.cwd());
+    const report = await engine.executeVerification();
+    res.json({ success: true, report });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 3. Download verification report in JSON or Markdown format
+app.get('/api/verify/download/:format', (req, res) => {
+  try {
+    const format = req.params.format === 'md' ? 'md' : 'json';
+    const filename = `verify-usv01-report.${format}`;
+    const reportPath = path.join(process.cwd(), 'governance', 'reports', filename);
+    if (!fs.existsSync(reportPath)) {
+      return res.status(404).json({ success: false, error: 'Verification report not yet generated. Run verification first.' });
+    }
+    const timestamp = new Date().toISOString().split('T')[0];
+    const downloadName = `USV01_Verification_Report_${timestamp}.${format}`;
+    res.download(reportPath, downloadName);
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
 
 // --- API ROUTES ---
 

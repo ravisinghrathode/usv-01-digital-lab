@@ -15,12 +15,16 @@ jobs:
   governance-verification:
     name: Deterministic Quality & Governance Gate
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
     env:
       DIRECTOR_PUBLIC_KEY: ${{ vars.DIRECTOR_PUBLIC_KEY || secrets.DIRECTOR_PUBLIC_KEY }}
       PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       AI_REVIEW_PROVIDER: ${{ vars.AI_REVIEW_PROVIDER || (secrets.GEMINI_API_KEY != '' && 'gemini' || 'deterministic') }}
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-2.5-flash' }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
@@ -34,51 +38,96 @@ jobs:
           cache: 'npm'
 
       - name: Install Project Dependencies
-        run: npm ci
+        run: |
+          set -euo pipefail
+          npm ci
 
       - name: Stage B — Dependency Security Audit
-        run: npm audit --audit-level=high
+        run: |
+          set -euo pipefail
+          npm audit --audit-level=high
 
       - name: Stage B — DevSecOps Secret Scanning
-        run: npx tsx scripts/governance/secret-scanner.ts
+        run: |
+          set -euo pipefail
+          npx tsx scripts/governance/secret-scanner.ts
 
       - name: Stage B — Repository Governance Configuration Validation
-        run: npx tsx scripts/governance/validate-config.ts
+        run: |
+          set -euo pipefail
+          npx tsx scripts/governance/validate-config.ts
 
       - name: Stage B — Engineering Change Request (ECR) Integrity Validation
-        run: npx tsx scripts/governance/ecr-tool.ts
+        run: |
+          set -euo pipefail
+          npx tsx scripts/governance/ecr-tool.ts
 
       - name: Stage B — TypeScript Static Typecheck & Lint
-        run: npm run lint
+        run: |
+          set -euo pipefail
+          npm run lint 2>&1 | tee lint-output.log || {
+            echo "### ❌ TypeScript Static Typecheck & Lint Failure" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            tail -n 80 lint-output.log >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          }
 
       - name: Stage B — Execute Deterministic & Safety Test Suite
-        run: npm test
+        run: |
+          set -euo pipefail
+          npm test 2>&1 | tee test-output.log || {
+            echo "### ❌ Test Suite Execution Failure" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            tail -n 80 test-output.log >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          }
+
+      - name: Upload Test Output on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-test-failure-output
+          path: test-output.log
+          if-no-files-found: ignore
+
 
       - name: Stage B — Production Bundle Verification
-        run: npm run build
+        run: |
+          set -euo pipefail
+          npm run build 2>&1 | tee build-output.log || {
+            echo "### ❌ Production Bundle Failure" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            tail -n 80 build-output.log >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          }
 
       - name: Stage A — PR Change Classification
         if: github.event_name == 'pull_request'
         run: |
+          set -euo pipefail
           npx tsx scripts/governance/classify-change.ts origin/main >> $GITHUB_STEP_SUMMARY
 
       - name: Stage C — Independent Technical Review
         id: stage_c
         if: github.event_name == 'pull_request'
-        continue-on-error: true
         run: |
+          set -euo pipefail
           echo "" >> $GITHUB_STEP_SUMMARY
           npx tsx scripts/governance/independent-ai-review.ts origin/main >> $GITHUB_STEP_SUMMARY
 
       - name: Stage D — Human Authority & ECR Authorization Verification
         id: stage_d
         if: github.event_name == 'pull_request'
-        continue-on-error: true
         run: |
+          set -euo pipefail
           echo "" >> $GITHUB_STEP_SUMMARY
           npx tsx scripts/governance/stage-d-human-approval.ts origin/main
 
       - name: Stage E — Governance Gate Enforcement
         if: github.event_name == 'pull_request'
         run: |
+          set -euo pipefail
           npx tsx scripts/governance/stage-e-enforce.ts origin/main

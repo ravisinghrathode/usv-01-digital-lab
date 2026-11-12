@@ -472,7 +472,10 @@ export class ModelProviderRouter {
 
   public async generate(request: ModelPromptRequest, config: ModelConfig): Promise<ModelPromptResponse> {
     const isTestMode = isTestExecutionEnvironment();
-    const providerName = config.preferredProvider || resolveConfiguredProvider();
+    let providerName = config.preferredProvider || resolveConfiguredProvider();
+    if (providerName === 'gemini' && (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY.trim().length === 0)) {
+      providerName = resolveConfiguredProvider();
+    }
 
     // If deterministic mode is requested or active, execute immediately without external APIs
     if (providerName === 'deterministic') {

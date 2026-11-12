@@ -1,6 +1,6 @@
-import { AgentSpec } from '../types/agent.ts';
+import type { AgentSpec } from '../types/agent.ts';
 import { CryptographicAuditTrail } from '../safety/CryptographicAuditTrail.ts';
-import { ECRRecord } from '../../../scripts/governance/ecr-tool.ts';
+import type { ECRRecord } from '../../../scripts/governance/ecr-tool.ts';
 
 export interface AgentProposalRequest {
   agentId: string;

@@ -31,6 +31,8 @@ import { NewRecordModal } from './components/NewRecordModal';
 import { ExportImportModal } from './components/ExportImportModal';
 import { ContextGuideModal } from './components/ContextGuideModal';
 import { LoginModal } from './components/LoginModal';
+import { VerifyUsv01Modal } from './components/VerifyUsv01Modal';
+import type { VerificationReport } from './core/types/verification.ts';
 import {
   authenticatedFetch,
   getCurrentUser,
@@ -122,6 +124,22 @@ export default function App() {
   const [powerLoads, setPowerLoads] = useState<PowerLoadItem[]>(INITIAL_POWER_LOADS);
   const [interfaces, setInterfaces] = useState<InterfaceDefinition[]>(INITIAL_INTERFACES);
   const [knowledgeNotes, setKnowledgeNotes] = useState<KnowledgeNote[]>(INITIAL_KNOWLEDGE_NOTES);
+  const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
+  const [verificationReport, setVerificationReport] = useState<VerificationReport | null>(null);
+
+  const handleRunVerification = async (): Promise<VerificationReport> => {
+    const res = await fetch('/api/verify/execute', { method: 'POST' });
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.error || `Verification failed with HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    if (!data.report) {
+      throw new Error('Malformed verification report received from server');
+    }
+    setVerificationReport(data.report);
+    return data.report;
+  };
 
   // Sync snapshot from server when authenticated
   const syncServerSnapshot = () => {
@@ -594,6 +612,7 @@ export default function App() {
           onToggleAiAssistant={() => setIsAiOpen(!isAiOpen)}
           isAiAssistantOpen={isAiOpen}
           onOpenContextGuide={() => setIsContextGuideOpen(true)}
+          onOpenVerify={() => setIsVerifyModalOpen(true)}
         />
 
         {/* Scrollable Workspace Body */}
@@ -694,6 +713,7 @@ export default function App() {
                 setIsNewRecordModalOpen(true);
               }}
               onAskAi={triggerAiQuery}
+              onOpenVerify={() => setIsVerifyModalOpen(true)}
             />
           )}
 
@@ -818,6 +838,14 @@ export default function App() {
           setIsLoginModalOpen(false);
         }}
         requiredRole={loginRequiredRole}
+      />
+
+      {/* VERIFY USV-01 Single-Press Systems Verification Modal */}
+      <VerifyUsv01Modal
+        isOpen={isVerifyModalOpen}
+        onClose={() => setIsVerifyModalOpen(false)}
+        onRunVerification={handleRunVerification}
+        cachedReport={verificationReport}
       />
     </div>
   );
