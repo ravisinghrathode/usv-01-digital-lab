@@ -32,7 +32,8 @@ describe('Deterministic Naval Engineering Tools: Physics Benchmarks & Analytical
       expect(res.output.transverseMetacentricRadiusBmtM).toBeGreaterThan(0.5);
       expect(res.output.transverseMetacenterKmtM).toBeCloseTo(res.output.centerOfBuoyancyKbM + res.output.transverseMetacentricRadiusBmtM, 2);
       expect(res.output.metacentricHeightGmtM).toBeCloseTo(res.output.transverseMetacenterKmtM - 0.4, 2);
-      expect(res.output.stabilityStatus).toBe('STABLE_COMPLIANT');
+      expect(res.output.stabilityStatus).toBe('UNVERIFIED_ESTIMATE');
+      expect(res.output.engineeringComplianceValidated).toBe(false);
       expect(res.output.complianceCheck.minGmMet).toBe(true);
     });
 
@@ -268,7 +269,7 @@ describe('Deterministic Naval Engineering Tools: Physics Benchmarks & Analytical
       expect(res.output.closestPointOfApproachCpaNm).toBeLessThan(0.1);
       expect(res.output.timeToCpaMinutes).toBeCloseTo(5.0, 0); // 24 knots relative speed = 2 nm in 5 min
       expect(res.output.colregsRuleApplicable).toBe('RULE_14_HEAD_ON');
-      expect(res.output.safeAlterationCourseDeg).toBeDefined();
+      expect(res.output.safeAlterationCourseDeg).toBeUndefined();
     });
 
     it('should identify Rule 15 Crossing Give-Way encounter when target is on Starboard bow', async () => {

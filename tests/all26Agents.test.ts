@@ -18,7 +18,7 @@ describe('26-Agent Individual Verification Matrix (A01 - A26, Tests A through H)
       lwlMeters: 10.0,
       beamMeters: 2.5,
       draftMeters: 0.6,
-      displacementTonnes: 5.5,
+      displacementTonnes: 6.91875,
       speedKnots: 22.0,
       maxSpeedKnots: 28.0,
       blockCoefficientCb: 0.45,
@@ -176,13 +176,8 @@ describe('26-Agent Individual Verification Matrix (A01 - A26, Tests A through H)
 
         const mandatoryTools = agent.verificationCriteria?.mandatoryDeterministicTools || [];
         if (mandatoryTools.length > 0) {
-          const hasPreliminaryTool = result.deterministicToolEvidence.some(e =>
-            e.outputs?.isPreliminaryEstimate === true ||
-            e.outputs?.engineeringComplianceValidated === false ||
-            e.outputs?.modelStatus === 'PRELIMINARY_EMPIRICAL_ESTIMATE' ||
-            e.outputs?.stabilityStatus === 'UNVERIFIED_ESTIMATE'
-          );
-          expect(result.evidenceValid).toBe(!hasPreliminaryTool);
+          expect(result.evidenceValid).toBe(false);
+          expect(result.verificationStatus).toBe('UNVERIFIED');
           expect(result.executionMode).toBe('DETERMINISTIC_CALCULATION');
         } else {
           // Agents without deterministic tools MUST NOT report evidenceValid: true from text synthesis alone

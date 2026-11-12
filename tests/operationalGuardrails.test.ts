@@ -30,6 +30,6 @@ describe('Operational engineering guardrails', () => {
   it('rejects implausible density rather than silently asserting stability', () => {
     const valid = { lwlMeters: 10, beamMeters: 2.5, draftMeters: 0.6 };
     expect(HydrostaticsTool.inputSchema.safeParse({ ...valid, seawaterDensityKgM3: -10 }).success).toBe(false);
-    expect(HydrostaticsTool.inputSchema.safeParse({ ...valid, seawaterDensityKgM3: 1025 }).success).toBe(true);
+    expect(HydrostaticsTool.inputSchema.safeParse({ ...valid, seawaterDensityKgM3: 1025, blockCoefficientCb: 0.44 }).success).toBe(true);
   });
 });

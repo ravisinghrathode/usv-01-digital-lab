@@ -167,7 +167,7 @@ export class BaseAgent {
 
     // 3. Synthesize via Model Provider Router
     const promptRequest = {
-      systemInstructions: this.spec.systemInstructions,
+      systemInstructions: this.spec.systemInstructions + '\nAccuracy rules: Do not invent test outcomes, regulatory thresholds, hardware parameters, tool invocations or numeric requirements. Only cite numeric values from explicit inputs or actual Tool Evidence, and label computations as preliminary. Flag unknowns TBD. Do not claim engineering certification.',
       userPrompt: `Execute task ${taskId} with parameters:\n${JSON.stringify(input.parameters, null, 2)}\n\nTool Evidence:\n${JSON.stringify(deterministicEvidence, null, 2)}`,
       context: {
         agentId: this.spec.id,
@@ -257,26 +257,34 @@ export class BaseAgent {
       openTbdItems.push(`Unconfirmed engineering assumptions for ${this.spec.id} tracked as TBD per zero-fabrication policy.`);
     }
 
-    // 6. Evidence Validity Determination
-    // AI-generated text alone NEVER establishes evidenceValid: true.
-    // Evidence validity derives strictly from executed deterministic tools or formal verification.
+    // 6. Execution of a formula is NOT independent verification of its
+    // physics, source inputs or class-rule compliance. No authentic external
+    // attestation exists in this runtime, so evidenceValid MUST remain false.
     const hasExecutedDeterministicTools = deterministicEvidence.length > 0;
     const allToolsVerified = hasExecutedDeterministicTools && deterministicEvidence.every(e => e.verified);
-    // Successful execution proves the formula ran, NOT that the assumed inputs or
-    // resulting predictions are independently validated for design release.
-    const hasPreliminaryTools = deterministicEvidence.some(e =>
-      e.outputs?.isPreliminaryEstimate === true ||
-      e.outputs?.engineeringComplianceValidated === false ||
-      e.outputs?.modelStatus === 'PRELIMINARY_EMPIRICAL_ESTIMATE' ||
-      e.outputs?.stabilityStatus === 'UNVERIFIED_ESTIMATE'
-    );
-    const evidenceValid = allToolsVerified && !hasPreliminaryTools;
+    const hasPreliminaryTools = hasExecutedDeterministicTools;
+    const evidenceValid = false;
 
     let executionMode = modelResponse.executionMode || 'LIVE_AI_GENERATION';
     if (hasExecutedDeterministicTools && allToolsVerified) {
       executionMode = 'DETERMINISTIC_CALCULATION';
     } else if (modelResponse.isMock) {
       executionMode = 'SYNTHETIC_TEST_MOCK';
+    }
+
+    // Do not expose invented numeric LLM claims as primary engineering results.
+    // When actual deterministic tools executed, prefer their output values
+    // under namespaced keys, retaining generated metrics only as explicitly
+    // UNVERIFIED suggestions for audit and independent review.
+    const toolCalculatedKeyMetrics: Record<string, string | number | boolean> = {};
+    for (const entry of deterministicEvidence) {
+      for (const [key, value] of Object.entries(entry.outputs ?? {})) {
+        if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+          if (typeof value !== 'number' || Number.isFinite(value)) {
+            toolCalculatedKeyMetrics[entry.toolName + '.' + key] = value;
+          }
+        }
+      }
     }
 
     // 7. Human Authority and Approval Gates
@@ -292,9 +300,9 @@ export class BaseAgent {
 
     if (hasPreliminaryTools) {
       requiresDirectorApproval = true;
-      approvalRationale = 'Preliminary engineering inputs detected: model result is not validated compliance evidence.';
-      warnings.push('UNVERIFIED ESTIMATE: A deterministic calculation used assumed inputs; independent validation is mandatory.');
-      openTbdItems.push('Replace assumed engineering inputs with traceable, validated measurements.');
+      approvalRationale = 'Deterministic tool success is not independent engineering validation.';
+      warnings.push('UNCERTIFIED CALCULATION: Tool executed, but engineering accuracy requires independent reference evidence.');
+      openTbdItems.push('Correlate numerical tool outputs to approved independent reference data.');
     }
 
     // Client-supplied exploratory flags never override registered safety and independent-review policy.
@@ -310,11 +318,7 @@ export class BaseAgent {
       approvalRationale = approvalRationale || `Safety-critical engineering output from ${this.spec.id} requires Engineering Director approval.`;
     }
 
-    const verificationStatus = modelResponse.isMock
-      ? 'SYNTHETIC_MOCK'
-      : evidenceValid
-      ? 'CALCULATED_VERIFIED'
-      : 'UNVERIFIED';
+    const verificationStatus = modelResponse.isMock ? 'SYNTHETIC_MOCK' : 'UNVERIFIED';
 
     const output: AgentExecutionOutput = {
       agentId: this.spec.id,
@@ -330,6 +334,12 @@ export class BaseAgent {
       verificationStatus,
       data: {
         ...synthesized,
+        // Model-suggested numbers never substitute for deterministic calculations.
+        modelSuggestedKeyMetrics: synthesized.keyMetrics,
+        keyMetrics: hasExecutedDeterministicTools ? toolCalculatedKeyMetrics : synthesized.keyMetrics,
+        keyMetricsOrigin: hasExecutedDeterministicTools
+          ? 'DETERMINISTIC_TOOL_OUTPUT_UNCERTIFIED'
+          : 'MODEL_GENERATED_UNVERIFIED',
         isMockFallback: !!modelResponse.isMock,
         evidenceValid,
         executionTimeMs: performance.now() - startTime,

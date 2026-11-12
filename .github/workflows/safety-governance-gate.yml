@@ -128,6 +128,19 @@ jobs:
             governance/reports/commissioning-suite.md
           if-no-files-found: ignore
 
+      - name: Stage B — Agent Accuracy Screen (Source-Backed)
+        run: |
+          set -euo pipefail
+          npm run acceptance:accuracy
+
+      - name: Upload Agent Accuracy Findings
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: usv01-agent-accuracy-screen
+          path: governance/reports/agent-accuracy-screen.json
+          if-no-files-found: ignore
+
       - name: Stage B — Production Bundle Verification
         run: |
           set -euo pipefail

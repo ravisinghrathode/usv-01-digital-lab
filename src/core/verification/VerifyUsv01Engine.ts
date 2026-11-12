@@ -825,7 +825,7 @@ export class VerifyUsv01Engine {
         lwlMeters: 10.0,
         beamMeters: 2.5,
         draftMeters: 0.6,
-        displacementTonnes: 5.5,
+        displacementTonnes: 6.91875, // consistent with synthetic Cb/L/B/T and 1025kg/m3
         speedKnots: 30,
         maxSpeedKnots: 30,
         blockCoefficientCb: 0.45,
