@@ -17,9 +17,9 @@ const suiteCases = Object.fromEntries(
   ])
 );
 
-const output = (agentId: string, provider: string, executionMode: AgentExecutionOutput['executionMode']): AgentExecutionOutput => ({
-  agentId, taskId: 'live-test', timestamp: new Date().toISOString(), status: 'NEEDS_HUMAN_APPROVAL',
-  provider, executionMode, correlationId: 'corr-' + agentId, evidenceValid: false,
+const output = (agentId: string, provider: string, executionMode: AgentExecutionOutput['executionMode'], taskId: string): AgentExecutionOutput => ({
+  agentId, taskId, timestamp: new Date().toISOString(), status: 'NEEDS_HUMAN_APPROVAL',
+  provider, executionMode, providerExecutionMode: executionMode, correlationId: 'corr-' + agentId, evidenceValid: false,
   verificationStatus: 'UNVERIFIED', data: { unverified: true }, assumptions: [],
   deterministicToolEvidence: [], openTbdItems: [], warnings: [],
   recommendations: [], requiresDirectorApproval: true
@@ -27,7 +27,7 @@ const output = (agentId: string, provider: string, executionMode: AgentExecution
 
 describe('Live agent operational matrix', () => {
   it('tracks all 26 runtime invocations without falsely certifying outputs', async () => {
-    const result = await runLiveAgentMatrix(suiteCases, async id => output(id, 'gemini', 'LIVE_AI_GENERATION'));
+    const result = await runLiveAgentMatrix(suiteCases, async (id, input) => output(id, 'gemini', 'LIVE_AI_GENERATION', input.taskId));
     expect(result.totalAgents).toBe(26);
     expect(result.liveProviderRuns).toBe(26);
     expect(result.providerOperationalMatrixComplete).toBe(true);
@@ -35,8 +35,16 @@ describe('Live agent operational matrix', () => {
     expect(result.engineeringReleaseApproved).toBe(false);
     expect(result.findings.every(f => f.outputDigestSha256?.startsWith('sha256:'))).toBe(true);
   });
+  it('accepts a real LLM trace when deterministic tools also executed', async () => {
+    const result = await runLiveAgentMatrix(suiteCases, async (id, input) => ({
+      ...output(id, 'gemini', 'LIVE_AI_GENERATION', input.taskId),
+      executionMode: 'DETERMINISTIC_CALCULATION'
+    }));
+    expect(result.liveProviderRuns).toBe(26);
+    expect(result.engineeringReleaseApproved).toBe(false);
+  });
   it('rejects mock/static providers as live evidence', async () => {
-    const result = await runLiveAgentMatrix(suiteCases, async id => output(id, 'deterministic', 'STATIC_RULES_EVALUATION'));
+    const result = await runLiveAgentMatrix(suiteCases, async (id, input) => output(id, 'deterministic', 'STATIC_RULES_EVALUATION', input.taskId));
     expect(result.liveProviderRuns).toBe(0);
     expect(result.providerOperationalMatrixComplete).toBe(false);
     expect(result.findings.every(f => f.status === 'NOT_LIVE_PROVIDER')).toBe(true);
