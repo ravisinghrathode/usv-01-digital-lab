@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-11-12T18:16:32.094Z",
-  "gitRef": "HEAD",
-  "evaluatedCommitSha": "b076557d166a4407728ece34c0df94dd0fdf3523",
-  "baselineDigest": "sha256:bbc538d5f1275935702771c6c507490af2a8d05212d177745a611f89e657f844",
+  "timestamp": "2026-11-12T18:17:15.007Z",
+  "gitRef": "origin/main",
+  "evaluatedCommitSha": "eb1483fa8e71a329a7015afa20c73cb4f2d795de",
+  "baselineDigest": "sha256:0454ab070041f98815ad35f5d4ebbbf3b5b4a8f5fc05c0965e7de2bc6d8c1110",
   "executionMode": "Deterministic Static Rule Engine (Zero External API — AI Review Unavailable)",
   "provider": "deterministic",
   "aiReviewStatus": "AI_REVIEW_UNAVAILABLE",
@@ -101,6 +101,6 @@
       "deterministicFindings": []
     }
   ],
-  "compositeAdvisoryRecommendation": "ADVISORY_APPROVE",
+  "compositeAdvisoryRecommendation": "PENDING_HUMAN_REVIEW",
   "governanceBanner": "========================================================================================\n⚠️  NAVAL-USV INDEPENDENT TECHNICAL REVIEW PIPELINE (STAGE C) — ADVISORY EVIDENCE ONLY\n   NON-NEGOTIABLE PRINCIPLE 5: AI CANNOT INDEPENDENTLY AUTHORISE ITS OWN CHANGES.\n   DETERMINISTIC STATIC RULE ENGINE REVIEW ONLY (AI MODEL-BACKED REVIEW IS UNAVAILABLE).\n   DETERMINISTIC REVIEWS MUST NEVER BE REPRESENTED AS INDEPENDENT MODEL-BACKED REVIEWS.\n   FINAL ACCEPTANCE REQUIRES SIGNED HUMAN AUTHORITY PER ENGINEERING GOVERNANCE POLICY.\n========================================================================================"
 }
