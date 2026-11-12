@@ -10,7 +10,7 @@ import {
   subscribeAuthState,
   signApprovalGate
 } from '../src/core/auth/authClient.ts';
-import { ApproverIdentity } from '../src/core/types/safety.ts';
+import type { ApproverIdentity } from '../src/core/types/safety.ts';
 
 describe('Client-Side Staff Authentication & Access Control (authClient)', () => {
   beforeEach(() => {

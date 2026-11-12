@@ -1,4 +1,4 @@
-import {
+import type {
   EngineeringTask,
   InterAgentMessage
 } from '../types/orchestrator.ts';

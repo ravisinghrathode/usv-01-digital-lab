@@ -3,8 +3,8 @@
   "programme": "NAVAL-USV",
   "project": "USV-01 Digital Engineering Lab",
   "releaseVersion": "1.0.0",
-  "gitCommitSha": "769892c55f4a10687fa3585a5f082bf5648d4f89",
-  "builtAt": "2026-11-12T11:55:51.234Z",
+  "gitCommitSha": "7231239e950ca214d38416b169f6c48b1c3eb322",
+  "builtAt": "2026-11-12T12:47:03.204Z",
   "environment": {
     "nodeVersion": "v24.22.2",
     "osPlatform": "linux"
@@ -27,8 +27,8 @@
     },
     {
       "path": "src/App.tsx",
-      "sha256": "3de4f59527e96826b1e7aba1b2fad7a57c8797f978679ddad91928e0c74b94a8",
-      "sizeBytes": 33464
+      "sha256": "ec2f3499731cc5db6f803a68f7ca9cf32579ec078cbcacf2ecdbd57c64fea206",
+      "sizeBytes": 33257
     },
     {
       "path": "src/components/AgentOrchestratorView.tsx",
@@ -182,8 +182,8 @@
     },
     {
       "path": "src/core/agents/definitions.ts",
-      "sha256": "d21f90d3a34d9e60ae898aac4ca5933e17f38551986caaa9e78308895994119b",
-      "sizeBytes": 49387
+      "sha256": "15feb4ffa6fd1ba284dcfdd2dd1df422acc40d618bb23ea84b21d047ac95df2d",
+      "sizeBytes": 49407
     },
     {
       "path": "src/core/auth/authClient.ts",
@@ -227,8 +227,8 @@
     },
     {
       "path": "src/core/models/ModelProvider.ts",
-      "sha256": "21e3b68c8b47a4f7818476df928d015d50b3d16ee68046d0a9526a879e72e350",
-      "sizeBytes": 19527
+      "sha256": "df9db9a89119ccf1c5fad32f59da4e8574307c7aab70b56208a37030ad26357f",
+      "sizeBytes": 19701
     },
     {
       "path": "src/core/optimizer/GenerativeDesignOptimizer.ts",
@@ -237,8 +237,8 @@
     },
     {
       "path": "src/core/orchestrator/CentralOrchestrator.ts",
-      "sha256": "5567dd72a73e9faa934bd4ed17ed277e1ad0b6f159f64c468cf912357100b727",
-      "sizeBytes": 8241
+      "sha256": "a319953ee5c7c92a1601c158c45a4448884bf9d97d7bb451acdf1fc2ab44d944",
+      "sizeBytes": 8246
     },
     {
       "path": "src/core/registry/AgentRegistry.ts",
@@ -287,8 +287,8 @@
     },
     {
       "path": "src/core/types/orchestrator.ts",
-      "sha256": "05aa079fc65f94c7983355d54e04b2a8455da0563ad8d0fb1dee81291cab62d1",
-      "sizeBytes": 1445
+      "sha256": "5ba4bbf778fe784a69f2d2aba6143af856dfef73c2af85488fb1dab373dfe82d",
+      "sizeBytes": 1450
     },
     {
       "path": "src/core/types/safety.ts",
@@ -307,8 +307,8 @@
     },
     {
       "path": "src/core/verification/VerifyUsv01Engine.ts",
-      "sha256": "71781154456d23fbbcf7a9e357fda724654037268d75bee49e81ad3ad12cdfb8",
-      "sizeBytes": 48440
+      "sha256": "a05ff3812a69c4486f3d0cf4c59ffb81e71f8550e3fade2aaac7b6f302df936a",
+      "sizeBytes": 59530
     },
     {
       "path": "src/data/globalUsvFleetData.ts",
@@ -354,13 +354,18 @@
       "path": "src/utils/navalCalculators.ts",
       "sha256": "cb47806fd9bb5de62125761ed46b4cf9ee78f40e8977986c58aac29d6df8c576",
       "sizeBytes": 10928
+    },
+    {
+      "path": "dist/index.html",
+      "sha256": "9c4933588b1a9ee29ef263f20ba05c14b5ea631bb94f36938242403587187b78",
+      "sizeBytes": 59
     }
   ],
   "verificationEvidence": {
-    "testsPassed": 66,
-    "testSuiteTotal": 66,
+    "testsPassed": 97,
+    "testSuiteTotal": 97,
     "auditVulnerabilities": 0,
     "staticAnalysisStatus": "PASS"
   },
-  "immutableManifestSha256": "b75ec65ecf4e7eed99c8b37c38f5bb38fb42c6d8ceee78e559fcbacf3027f8e0"
+  "immutableManifestSha256": "71268b09411151965a4624c38f40a4f46c8d46ce1106bee7ef9ef36fc55e4fed"
 }

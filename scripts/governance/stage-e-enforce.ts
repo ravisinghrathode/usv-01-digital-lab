@@ -46,8 +46,13 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
   let currentBaselineDigest = '';
   try {
     const headRef = process.env.PR_HEAD_SHA || 'HEAD';
-    currentCommitSha = execFileSync('git', ['rev-parse', headRef], { cwd: rootDir, encoding: 'utf-8' }).trim();
-    currentBaselineDigest = computeBaselineDigest(headRef, rootDir);
+    try {
+      currentCommitSha = execFileSync('git', ['rev-parse', headRef], { cwd: rootDir, encoding: 'utf-8' }).trim();
+      currentBaselineDigest = computeBaselineDigest(headRef, rootDir);
+    } catch {
+      currentCommitSha = execFileSync('git', ['rev-parse', headRef], { cwd: process.cwd(), encoding: 'utf-8' }).trim();
+      currentBaselineDigest = computeBaselineDigest(headRef, process.cwd());
+    }
   } catch {}
 
   // 1. Stage A: Change Classification

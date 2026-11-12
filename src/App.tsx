@@ -128,23 +128,17 @@ export default function App() {
   const [verificationReport, setVerificationReport] = useState<VerificationReport | null>(null);
 
   const handleRunVerification = async (): Promise<VerificationReport> => {
-    try {
-      const res = await fetch('/api/verify/execute', { method: 'POST' });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.report) {
-          setVerificationReport(data.report);
-          return data.report;
-        }
-      }
-    } catch (err: any) {
-      console.warn('Backend /api/verify/execute endpoint unreachable, falling back to local engine:', err.message);
+    const res = await fetch('/api/verify/execute', { method: 'POST' });
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.error || `Verification failed with HTTP ${res.status}`);
     }
-    const { VerifyUsv01Engine } = await import('./core/verification/VerifyUsv01Engine.ts');
-    const engine = VerifyUsv01Engine.getInstance();
-    const rep = await engine.executeVerification();
-    setVerificationReport(rep);
-    return rep;
+    const data = await res.json();
+    if (!data.report) {
+      throw new Error('Malformed verification report received from server');
+    }
+    setVerificationReport(data.report);
+    return data.report;
   };
 
   // Sync snapshot from server when authenticated

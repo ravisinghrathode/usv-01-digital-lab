@@ -1,1 +1,702 @@
-{"numTotalTestSuites":23,"numPassedTestSuites":23,"numFailedTestSuites":0,"numPendingTestSuites":0,"numTotalTests":66,"numPassedTests":66,"numFailedTests":0,"numPendingTests":0,"numTodoTests":0,"snapshot":{"added":0,"failure":false,"filesAdded":0,"filesRemoved":0,"filesRemovedList":[],"filesUnmatched":0,"filesUpdated":0,"matched":0,"total":0,"unchecked":0,"uncheckedKeysByFile":[],"unmatched":0,"updated":0,"didUpdate":false},"startTime":1794446231843,"success":true,"testResults":[{"assertionResults":[{"ancestorTitles":["Client-Side Staff Authentication & Access Control (authClient)"],"fullName":"Client-Side Staff Authentication & Access Control (authClient) should initially be unauthenticated with null token and user","status":"passed","title":"should initially be unauthenticated with null token and user","duration":1.7859459999999956,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["Client-Side Staff Authentication & Access Control (authClient)"],"fullName":"Client-Side Staff Authentication & Access Control (authClient) should reject login without userId or passphrase","status":"passed","title":"should reject login without userId or passphrase","duration":1.510690000000011,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["Client-Side Staff Authentication & Access Control (authClient)"],"fullName":"Client-Side Staff Authentication & Access Control (authClient) should fail closed in ensureAuthenticatedSession when no session exists","status":"passed","title":"should fail closed in ensureAuthenticatedSession when no session exists","duration":0.44471599999999967,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["Client-Side Staff Authentication & Access Control (authClient)"],"fullName":"Client-Side Staff Authentication & Access Control (authClient) should notify subscribers when session is set or cleared","status":"passed","title":"should notify subscribers when session is set or cleared","duration":0.9723610000000065,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["Client-Side Staff Authentication & Access Control (authClient)"],"fullName":"Client-Side Staff Authentication & Access Control (authClient) should prevent non-director staff from signing approval gates","status":"passed","title":"should prevent non-director staff from signing approval gates","duration":0.5363419999999905,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]}],"startTime":1794446234608,"endTime":1794446234613.5364,"status":"passed","message":"","name":"/home/antigravity/ravisinghrathode/usv-01-digital-lab/tests/authClient.test.ts"},{"assertionResults":[{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","1. Change & Risk Classification Engine (Stage A)"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 1. Change & Risk Classification Engine (Stage A) should classify safety and security paths as CRITICAL risk","status":"passed","title":"should classify safety and security paths as CRITICAL risk","duration":2.6152060000000006,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","1. Change & Risk Classification Engine (Stage A)"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 1. Change & Risk Classification Engine (Stage A) should classify core architecture as HIGH risk and documentation as LOW risk","status":"passed","title":"should classify core architecture as HIGH risk and documentation as LOW risk","duration":0.4107609999999795,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","2. DevSecOps Secret Scanner & Data Protection (Stage B)"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 2. DevSecOps Secret Scanner & Data Protection (Stage B) should detect exposed private keys and API keys","status":"passed","title":"should detect exposed private keys and API keys","duration":0.9182450000000131,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","2. DevSecOps Secret Scanner & Data Protection (Stage B)"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 2. DevSecOps Secret Scanner & Data Protection (Stage B) should pass cleanly for standard engineering code without credentials","status":"passed","title":"should pass cleanly for standard engineering code without credentials","duration":0.20788800000002539,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","3. Repository Configuration & CODEOWNERS Validation"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 3. Repository Configuration & CODEOWNERS Validation should validate CODEOWNERS and required governance files","status":"passed","title":"should validate CODEOWNERS and required governance files","duration":3.5339329999999904,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","4. Engineering Change Request (ECR) Validation"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 4. Engineering Change Request (ECR) Validation should validate compliant ECR baseline records","status":"passed","title":"should validate compliant ECR baseline records","duration":1.720837999999958,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","4. Engineering Change Request (ECR) Validation"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 4. Engineering Change Request (ECR) Validation should reject incomplete ECR records missing mandatory sections","status":"passed","title":"should reject incomplete ECR records missing mandatory sections","duration":0.4781229999999823,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","5. Cryptographically Hash-Chained Append-Only Audit Trail"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 5. Cryptographically Hash-Chained Append-Only Audit Trail should create valid chained blocks and verify end-to-end cryptographic integrity","status":"passed","title":"should create valid chained blocks and verify end-to-end cryptographic integrity","duration":4.026949000000002,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","5. Cryptographically Hash-Chained Append-Only Audit Trail"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 5. Cryptographically Hash-Chained Append-Only Audit Trail should detect retroactive tampering or bit flips in historical records","status":"passed","title":"should detect retroactive tampering or bit flips in historical records","duration":1.2626189999999724,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","6. Multi-Agent Governance Authority Boundaries (HMEA v0.2)"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 6. Multi-Agent Governance Authority Boundaries (HMEA v0.2) should permit canonical agents to submit engineering change proposals","status":"passed","title":"should permit canonical agents to submit engineering change proposals","duration":1.4595129999999017,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","6. Multi-Agent Governance Authority Boundaries (HMEA v0.2)"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 6. Multi-Agent Governance Authority Boundaries (HMEA v0.2) should reject agent attempts to directly modify governance or security subsystems","status":"passed","title":"should reject agent attempts to directly modify governance or security subsystems","duration":0.9915290000000141,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","6. Multi-Agent Governance Authority Boundaries (HMEA v0.2)"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 6. Multi-Agent Governance Authority Boundaries (HMEA v0.2) should fail-closed and block any agent attempt to authorise its own changes","status":"passed","title":"should fail-closed and block any agent attempt to authorise its own changes","duration":1.5946390000000292,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","7. Configuration Management & Release Manifests"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 7. Configuration Management & Release Manifests should generate a reproducible release manifest with SHA-256 asset checksums","status":"passed","title":"should generate a reproducible release manifest with SHA-256 asset checksums","duration":22.46634700000004,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content accepts a Director signature over the exact current baseline digest","status":"passed","title":"accepts a Director signature over the exact current baseline digest","duration":11.397154,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content keeps the digest unchanged when only the approval record is committed (no chicken-and-egg)","status":"passed","title":"keeps the digest unchanged when only the approval record is committed (no chicken-and-egg)","duration":28.734981999999945,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content rejects an older approval as STALE when ANY other file changes afterwards — including RELEASE_MANIFEST.json","status":"passed","title":"rejects an older approval as STALE when ANY other file changes afterwards — including RELEASE_MANIFEST.json","duration":25.005636000000095,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content rejects approvals signed by any key other than the pinned Director public key (AI/CI cannot forge)","status":"passed","title":"rejects approvals signed by any key other than the pinned Director public key (AI/CI cannot forge)","duration":13.939673999999968,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content rejects tampered records and records without a provisioned trust anchor","status":"passed","title":"rejects tampered records and records without a provisioned trust anchor","duration":13.047566999999958,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content rejects a REJECTED decision even when correctly signed","status":"passed","title":"rejects a REJECTED decision even when correctly signed","duration":8.805531000000087,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content blocks a safety-critical PR at Stage D until a genuine Director signature exists","status":"passed","title":"blocks a safety-critical PR at Stage D until a genuine Director signature exists","duration":794.836518,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content sign-ecr.ts contains no environment or argv passphrase substitution","status":"passed","title":"sign-ecr.ts contains no environment or argv passphrase substitution","duration":0.9376850000001014,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts)"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts) server.ts embeds no credential hashes, salts, or environment passphrase overrides","status":"passed","title":"server.ts embeds no credential hashes, salts, or environment passphrase overrides","duration":0.6005370000000312,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts)"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts) stores credentials as salted scrypt hashes only","status":"passed","title":"stores credentials as salted scrypt hashes only","duration":0.26707600000008824,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts)"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts) rejects unknown identities with 403","status":"passed","title":"rejects unknown identities with 403","duration":0.29513299999985065,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts)"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts) rejects role spoofing attempts","status":"passed","title":"rejects role spoofing attempts","duration":0.0974780000001374,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts)"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts) rejects ID-only (anonymous) login","status":"passed","title":"rejects ID-only (anonymous) login","duration":0.06412599999998747,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts)"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts) rejects wrong passphrases for staff and Director","status":"passed","title":"rejects wrong passphrases for staff and Director","duration":17.109133000000156,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts)"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts) fails closed (503) for identities with no provisioned credential","status":"passed","title":"fails closed (503) for identities with no provisioned credential","duration":85.93438900000001,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts)"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts) fails closed (503) when the credential store is absent","status":"passed","title":"fails closed (503) when the credential store is absent","duration":0.7807470000000194,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts)"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts) authenticates staff and Director only with their own correct passphrase","status":"passed","title":"authenticates staff and Director only with their own correct passphrase","duration":26.65831100000014,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts)"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts) locks an identity out after repeated failures","status":"passed","title":"locks an identity out after repeated failures","duration":41.862727999999834,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","10. Production Model Provider Fail-Closed Safety Invariant"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 10. Production Model Provider Fail-Closed Safety Invariant should throw hard error and refuse mock fallback in production when provider fails","status":"passed","title":"should throw hard error and refuse mock fallback in production when provider fails","duration":1.2338310000000092,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","10. Production Model Provider Fail-Closed Safety Invariant"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 10. Production Model Provider Fail-Closed Safety Invariant should strictly prohibit direct invocation of mock_deterministic provider in production","status":"passed","title":"should strictly prohibit direct invocation of mock_deterministic provider in production","duration":0.2881239999999252,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE G: Engineering Governance System (EGS) Verification","11. Stage C: Seven Independent Model-Backed Reviewer Architecture"],"fullName":"STAGE G: Engineering Governance System (EGS) Verification 11. Stage C: Seven Independent Model-Backed Reviewer Architecture should execute all seven independent reviewer roles concurrently and fail-closed on mock fallback","status":"passed","title":"should execute all seven independent reviewer roles concurrently and fail-closed on mock fallback","duration":36.62496799999985,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]}],"startTime":1794446232359,"endTime":1794446233566.625,"status":"passed","message":"","name":"/home/antigravity/ravisinghrathode/usv-01-digital-lab/tests/governance.test.ts"},{"assertionResults":[{"ancestorTitles":["STAGE D: Central Orchestrator & Task DAG Scheduler"],"fullName":"STAGE D: Central Orchestrator & Task DAG Scheduler should formulate topological execution stages for dependent tasks","status":"passed","title":"should formulate topological execution stages for dependent tasks","duration":4.115046000000007,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE D: Central Orchestrator & Task DAG Scheduler"],"fullName":"STAGE D: Central Orchestrator & Task DAG Scheduler should detect cyclic dependencies and reject invalid DAGs","status":"passed","title":"should detect cyclic dependencies and reject invalid DAGs","duration":0.9416970000000049,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE D: Central Orchestrator & Task DAG Scheduler"],"fullName":"STAGE D: Central Orchestrator & Task DAG Scheduler should execute tasks, pass data, and create safety approval gates for safety-critical tasks","status":"passed","title":"should execute tasks, pass data, and create safety approval gates for safety-critical tasks","duration":8.088898999999998,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE D: Central Orchestrator & Task DAG Scheduler"],"fullName":"STAGE D: Central Orchestrator & Task DAG Scheduler should route inter-agent messages cleanly","status":"passed","title":"should route inter-agent messages cleanly","duration":0.48600700000000074,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE D: Central Orchestrator & Task DAG Scheduler"],"fullName":"STAGE D: Central Orchestrator & Task DAG Scheduler should fail-closed and block downstream tasks when upstream dependency fails or is uncompleted","status":"passed","title":"should fail-closed and block downstream tasks when upstream dependency fails or is uncompleted","duration":2.1793419999999912,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]}],"startTime":1794446233811,"endTime":1794446233826.1794,"status":"passed","message":"","name":"/home/antigravity/ravisinghrathode/usv-01-digital-lab/tests/orchestrator.test.ts"},{"assertionResults":[{"ancestorTitles":["STAGE B: Agent Organization & Master Registry"],"fullName":"STAGE B: Agent Organization & Master Registry should register exactly 25 agents","status":"passed","title":"should register exactly 25 agents","duration":1.6015580000000114,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE B: Agent Organization & Master Registry"],"fullName":"STAGE B: Agent Organization & Master Registry should pass complete structural and dependency validation without errors","status":"passed","title":"should pass complete structural and dependency validation without errors","duration":0.9723260000000096,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE B: Agent Organization & Master Registry"],"fullName":"STAGE B: Agent Organization & Master Registry should verify all 25 agents have valid unique IDs and system instructions","status":"passed","title":"should verify all 25 agents have valid unique IDs and system instructions","duration":2.8279170000000136,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE B: Agent Organization & Master Registry"],"fullName":"STAGE B: Agent Organization & Master Registry should ensure all dependencies exist in registry","status":"passed","title":"should ensure all dependencies exist in registry","duration":0.6953399999999874,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE B: Agent Organization & Master Registry"],"fullName":"STAGE B: Agent Organization & Master Registry should retrieve agents by division correctly","status":"passed","title":"should retrieve agents by division correctly","duration":0.23538499999997953,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE B: Agent Organization & Master Registry"],"fullName":"STAGE B: Agent Organization & Master Registry should support HMEA v0.2 canonical IDs A01-A25 with backwards-compatible alias resolution","status":"passed","title":"should support HMEA v0.2 canonical IDs A01-A25 with backwards-compatible alias resolution","duration":0.9751770000000022,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]}],"startTime":1794446234446,"endTime":1794446234453.975,"status":"passed","message":"","name":"/home/antigravity/ravisinghrathode/usv-01-digital-lab/tests/registry.test.ts"},{"assertionResults":[{"ancestorTitles":["STAGE F: Human Authority Gates & Safety Governance"],"fullName":"STAGE F: Human Authority Gates & Safety Governance should create an approval gate in PENDING state","status":"passed","title":"should create an approval gate in PENDING state","duration":3.3126550000000066,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE F: Human Authority Gates & Safety Governance"],"fullName":"STAGE F: Human Authority Gates & Safety Governance should block approval attempt if role is NOT ENGINEERING_DIRECTOR or identity is invalid","status":"passed","title":"should block approval attempt if role is NOT ENGINEERING_DIRECTOR or identity is invalid","duration":1.5898009999999942,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE F: Human Authority Gates & Safety Governance"],"fullName":"STAGE F: Human Authority Gates & Safety Governance should allow approval when authenticated as ENGINEERING_DIRECTOR with valid cryptographic signature","status":"passed","title":"should allow approval when authenticated as ENGINEERING_DIRECTOR with valid cryptographic signature","duration":2.3733530000000087,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE F: Human Authority Gates & Safety Governance"],"fullName":"STAGE F: Human Authority Gates & Safety Governance should maintain immutable parameter revisions and record audit trail","status":"passed","title":"should maintain immutable parameter revisions and record audit trail","duration":0.841194999999999,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE F: Human Authority Gates & Safety Governance"],"fullName":"STAGE F: Human Authority Gates & Safety Governance should generate Obsidian markdown vault exports with wikilinks","status":"passed","title":"should generate Obsidian markdown vault exports with wikilinks","duration":0.4111780000000067,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE F: Human Authority Gates & Safety Governance"],"fullName":"STAGE F: Human Authority Gates & Safety Governance should enforce that MockDeterministicProvider reports 0.0 convergence confidence and unverified baseline","status":"passed","title":"should enforce that MockDeterministicProvider reports 0.0 convergence confidence and unverified baseline","duration":0.45167699999998945,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE F: Human Authority Gates & Safety Governance"],"fullName":"STAGE F: Human Authority Gates & Safety Governance should enforce verified ApproverIdentity object authentication and reject unverified users or invalid signatures","status":"passed","title":"should enforce verified ApproverIdentity object authentication and reject unverified users or invalid signatures","duration":5.975410000000011,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]}],"startTime":1794446234238,"endTime":1794446234252.9753,"status":"passed","message":"","name":"/home/antigravity/ravisinghrathode/usv-01-digital-lab/tests/safety.test.ts"},{"assertionResults":[{"ancestorTitles":["STAGE E: Deterministic Naval Engineering Tools"],"fullName":"STAGE E: Deterministic Naval Engineering Tools should register all 6 deterministic engineering tools","status":"passed","title":"should register all 6 deterministic engineering tools","duration":1.5950159999999869,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE E: Deterministic Naval Engineering Tools"],"fullName":"STAGE E: Deterministic Naval Engineering Tools should execute hydrostatics calculation with mathematical accuracy","status":"passed","title":"should execute hydrostatics calculation with mathematical accuracy","duration":4.246827999999994,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE E: Deterministic Naval Engineering Tools"],"fullName":"STAGE E: Deterministic Naval Engineering Tools should calculate hydrodynamic resistance and identify regime","status":"passed","title":"should calculate hydrodynamic resistance and identify regime","duration":1.9704460000000097,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE E: Deterministic Naval Engineering Tools"],"fullName":"STAGE E: Deterministic Naval Engineering Tools should calculate mass properties and composite center of gravity","status":"passed","title":"should calculate mass properties and composite center of gravity","duration":2.214078999999998,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE E: Deterministic Naval Engineering Tools"],"fullName":"STAGE E: Deterministic Naval Engineering Tools should calculate electrical load balance and battery endurance hours","status":"passed","title":"should calculate electrical load balance and battery endurance hours","duration":2.054201000000006,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE E: Deterministic Naval Engineering Tools"],"fullName":"STAGE E: Deterministic Naval Engineering Tools should calculate ISO/DNV slamming pressure and plating thickness","status":"passed","title":"should calculate ISO/DNV slamming pressure and plating thickness","duration":1.5518789999999854,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE E: Deterministic Naval Engineering Tools"],"fullName":"STAGE E: Deterministic Naval Engineering Tools should evaluate COLREGS encounter geometry and recommend give-way action","status":"passed","title":"should evaluate COLREGS encounter geometry and recommend give-way action","duration":1.5613030000000094,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE E: Deterministic Naval Engineering Tools"],"fullName":"STAGE E: Deterministic Naval Engineering Tools should enforce permission rejection if calling agent lacks permission","status":"passed","title":"should enforce permission rejection if calling agent lacks permission","duration":0.3095029999999781,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]},{"ancestorTitles":["STAGE E: Deterministic Naval Engineering Tools"],"fullName":"STAGE E: Deterministic Naval Engineering Tools should preserve explicit 0% design margin and NOT convert it to 10%","status":"passed","title":"should preserve explicit 0% design margin and NOT convert it to 10%","duration":0.4142810000000168,"failureMessages":[],"meta":{},"tags":[],"benchmarks":[]}],"startTime":1794446234038,"endTime":1794446234054.4143,"status":"passed","message":"","name":"/home/antigravity/ravisinghrathode/usv-01-digital-lab/tests/tools.test.ts"}]}
+{
+  "numTotalTestSuites": 8,
+  "numPassedTestSuites": 8,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 97,
+  "numPassedTests": 97,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "startTime": 1794487601641,
+  "success": true,
+  "testResults": [
+    {
+      "name": "/home/antigravity/ravisinghrathode/usv-01-digital-lab/tests/authClient.test.ts; /home/antigravity/ravisinghrathode/usv-01-digital-lab/tests/globalUsvIntel.test.ts; /home/antigravity/ravisinghrathode/usv-01-digital-lab/tests/governance.test.ts; /home/antigravity/ravisinghrathode/usv-01-digital-lab/tests/notebookLm.test.ts; /home/antigravity/ravisinghrathode/usv-01-digital-lab/tests/orchestrator.test.ts; /home/antigravity/ravisinghrathode/usv-01-digital-lab/tests/registry.test.ts; /home/antigravity/ravisinghrathode/usv-01-digital-lab/tests/safety.test.ts; /home/antigravity/ravisinghrathode/usv-01-digital-lab/tests/tools.test.ts",
+      "status": "passed",
+      "startTime": 1794487601641,
+      "endTime": 1794487611077,
+      "assertionResults": [
+        {
+          "fullName": "Client-Side Staff Authentication & Access Control (authClient) > should initially be unauthenticated with null token and user",
+          "title": "should initially be unauthenticated with null token and user",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "Client-Side Staff Authentication & Access Control (authClient) > should reject login without userId or passphrase",
+          "title": "should reject login without userId or passphrase",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "Client-Side Staff Authentication & Access Control (authClient) > should fail closed in ensureAuthenticatedSession when no session exists",
+          "title": "should fail closed in ensureAuthenticatedSession when no session exists",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "Client-Side Staff Authentication & Access Control (authClient) > should notify subscribers when session is set or cleared",
+          "title": "should notify subscribers when session is set or cleared",
+          "status": "passed",
+          "duration": 1,
+          "failureMessages": []
+        },
+        {
+          "fullName": "Client-Side Staff Authentication & Access Control (authClient) > should prevent non-director staff from signing approval gates",
+          "title": "should prevent non-director staff from signing approval gates",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "Global Navy USV Fleet Intelligence & Scraping Agent (INTEL-USV-26) > should verify agent specification and metadata",
+          "title": "should verify agent specification and metadata",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "Global Navy USV Fleet Intelligence & Scraping Agent (INTEL-USV-26) > should catalog operational USVs across major world navies",
+          "title": "should catalog operational USVs across major world navies",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "Global Navy USV Fleet Intelligence & Scraping Agent (INTEL-USV-26) > should validate complete naval architecture particulars for every vessel",
+          "title": "should validate complete naval architecture particulars for every vessel",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "Global Navy USV Fleet Intelligence & Scraping Agent (INTEL-USV-26) > should filter vessels by country and navy",
+          "title": "should filter vessels by country and navy",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "Global Navy USV Fleet Intelligence & Scraping Agent (INTEL-USV-26) > should filter vessels by mission profile",
+          "title": "should filter vessels by mission profile",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "Global Navy USV Fleet Intelligence & Scraping Agent (INTEL-USV-26) > should filter vessels by hull form",
+          "title": "should filter vessels by hull form",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "Global Navy USV Fleet Intelligence & Scraping Agent (INTEL-USV-26) > should perform keyword search across specifications",
+          "title": "should perform keyword search across specifications",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "Global Navy USV Fleet Intelligence & Scraping Agent (INTEL-USV-26) > should synthesize peer-reviewed academic papers and governing formulas",
+          "title": "should synthesize peer-reviewed academic papers and governing formulas",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "Global Navy USV Fleet Intelligence & Scraping Agent (INTEL-USV-26) > should compute comparative hydrodynamic benchmarks against USV-01",
+          "title": "should compute comparative hydrodynamic benchmarks against USV-01",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "Global Navy USV Fleet Intelligence & Scraping Agent (INTEL-USV-26) > should generate valid Obsidian markdown notes with wikilinks",
+          "title": "should generate valid Obsidian markdown notes with wikilinks",
+          "status": "passed",
+          "duration": 12,
+          "failureMessages": []
+        },
+        {
+          "fullName": "Global Navy USV Fleet Intelligence & Scraping Agent (INTEL-USV-26) > should generate KnowledgeNote records for digital lab knowledge base",
+          "title": "should generate KnowledgeNote records for digital lab knowledge base",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 1. Change & Risk Classification Engine (Stage A) > should classify safety and security paths as CRITICAL risk",
+          "title": "should classify safety and security paths as CRITICAL risk",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 1. Change & Risk Classification Engine (Stage A) > should classify core architecture as HIGH risk and documentation as LOW risk",
+          "title": "should classify core architecture as HIGH risk and documentation as LOW risk",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 2. DevSecOps Secret Scanner & Data Protection (Stage B) > should detect exposed private keys and API keys",
+          "title": "should detect exposed private keys and API keys",
+          "status": "passed",
+          "duration": 1,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 2. DevSecOps Secret Scanner & Data Protection (Stage B) > should pass cleanly for standard engineering code without credentials",
+          "title": "should pass cleanly for standard engineering code without credentials",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 3. Repository Configuration & CODEOWNERS Validation > should validate CODEOWNERS and required governance files",
+          "title": "should validate CODEOWNERS and required governance files",
+          "status": "passed",
+          "duration": 1,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 4. Engineering Change Request (ECR) Validation > should validate compliant ECR baseline records",
+          "title": "should validate compliant ECR baseline records",
+          "status": "passed",
+          "duration": 1,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 4. Engineering Change Request (ECR) Validation > should reject incomplete ECR records missing mandatory sections",
+          "title": "should reject incomplete ECR records missing mandatory sections",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 5. Cryptographically Hash-Chained Append-Only Audit Trail > should create valid chained blocks and verify end-to-end cryptographic integrity",
+          "title": "should create valid chained blocks and verify end-to-end cryptographic integrity",
+          "status": "passed",
+          "duration": 2,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 5. Cryptographically Hash-Chained Append-Only Audit Trail > should detect retroactive tampering or bit flips in historical records",
+          "title": "should detect retroactive tampering or bit flips in historical records",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 6. Multi-Agent Governance Authority Boundaries (HMEA v0.2) > should permit canonical agents to submit engineering change proposals",
+          "title": "should permit canonical agents to submit engineering change proposals",
+          "status": "passed",
+          "duration": 1,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 6. Multi-Agent Governance Authority Boundaries (HMEA v0.2) > should reject agent attempts to directly modify governance or security subsystems",
+          "title": "should reject agent attempts to directly modify governance or security subsystems",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 6. Multi-Agent Governance Authority Boundaries (HMEA v0.2) > should fail-closed and block any agent attempt to authorise its own changes",
+          "title": "should fail-closed and block any agent attempt to authorise its own changes",
+          "status": "passed",
+          "duration": 1,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 7. Configuration Management & Release Manifests > should generate a reproducible release manifest with SHA-256 asset checksums",
+          "title": "should generate a reproducible release manifest with SHA-256 asset checksums",
+          "status": "passed",
+          "duration": 24,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content > accepts a Director signature over the exact current baseline digest",
+          "title": "accepts a Director signature over the exact current baseline digest",
+          "status": "passed",
+          "duration": 13,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content > keeps the digest unchanged when only the approval record is committed (no chicken-and-egg)",
+          "title": "keeps the digest unchanged when only the approval record is committed (no chicken-and-egg)",
+          "status": "passed",
+          "duration": 35,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content > rejects an older approval as STALE when ANY other file changes afterwards — including RELEASE_MANIFEST.json",
+          "title": "rejects an older approval as STALE when ANY other file changes afterwards — including RELEASE_MANIFEST.json",
+          "status": "passed",
+          "duration": 38,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content > rejects approvals signed by any key other than the pinned Director public key (AI/CI cannot forge)",
+          "title": "rejects approvals signed by any key other than the pinned Director public key (AI/CI cannot forge)",
+          "status": "passed",
+          "duration": 16,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content > rejects tampered records and records without a provisioned trust anchor",
+          "title": "rejects tampered records and records without a provisioned trust anchor",
+          "status": "passed",
+          "duration": 16,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content > rejects a REJECTED decision even when correctly signed",
+          "title": "rejects a REJECTED decision even when correctly signed",
+          "status": "passed",
+          "duration": 10,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content > blocks a safety-critical PR at Stage D until a genuine Director signature exists",
+          "title": "blocks a safety-critical PR at Stage D until a genuine Director signature exists",
+          "status": "passed",
+          "duration": 1161,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 8. Stage D: Ed25519 Director Approval Bound to Exact Baseline Content > sign-ecr.ts contains no environment or argv passphrase substitution",
+          "title": "sign-ecr.ts contains no environment or argv passphrase substitution",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts) > server.ts embeds no credential hashes, salts, or environment passphrase overrides",
+          "title": "server.ts embeds no credential hashes, salts, or environment passphrase overrides",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts) > stores credentials as salted scrypt hashes only",
+          "title": "stores credentials as salted scrypt hashes only",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts) > rejects unknown identities with 403",
+          "title": "rejects unknown identities with 403",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts) > rejects role spoofing attempts",
+          "title": "rejects role spoofing attempts",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts) > rejects ID-only (anonymous) login",
+          "title": "rejects ID-only (anonymous) login",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts) > rejects wrong passphrases for staff and Director",
+          "title": "rejects wrong passphrases for staff and Director",
+          "status": "passed",
+          "duration": 19,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts) > fails closed (503) for identities with no provisioned credential",
+          "title": "fails closed (503) for identities with no provisioned credential",
+          "status": "passed",
+          "duration": 88,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts) > fails closed (503) when the credential store is absent",
+          "title": "fails closed (503) when the credential store is absent",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts) > authenticates staff and Director only with their own correct passphrase",
+          "title": "authenticates staff and Director only with their own correct passphrase",
+          "status": "passed",
+          "duration": 27,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 9. Authenticated Staff Allowlist & scrypt Credential Store (server.ts) > locks an identity out after repeated failures",
+          "title": "locks an identity out after repeated failures",
+          "status": "passed",
+          "duration": 42,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 10. Production Model Provider Fail-Closed Safety Invariant > should throw hard error and refuse mock fallback in production when provider fails",
+          "title": "should throw hard error and refuse mock fallback in production when provider fails",
+          "status": "passed",
+          "duration": 1,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 10. Production Model Provider Fail-Closed Safety Invariant > should strictly prohibit direct invocation of mock_deterministic provider in production",
+          "title": "should strictly prohibit direct invocation of mock_deterministic provider in production",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 11. Stage C: Seven Independent Model-Backed Reviewer Architecture > should execute all seven independent reviewer roles concurrently and fail-closed on mock fallback",
+          "title": "should execute all seven independent reviewer roles concurrently and fail-closed on mock fallback",
+          "status": "passed",
+          "duration": 93,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 12. Stage E: Governance Gate Enforcement & Fail-Closed Integrity > should evaluate governance gate with fail-closed verdict when critical change lacks human approval",
+          "title": "should evaluate governance gate with fail-closed verdict when critical change lacks human approval",
+          "status": "passed",
+          "duration": 12,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 12. Stage E: Governance Gate Enforcement & Fail-Closed Integrity > should block merge and reject PENDING_HUMAN_REVIEW as acceptable Stage C result on critical changes",
+          "title": "should block merge and reject PENDING_HUMAN_REVIEW as acceptable Stage C result on critical changes",
+          "status": "passed",
+          "duration": 17,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 12. Stage E: Governance Gate Enforcement & Fail-Closed Integrity > should reject Stage C evidence when baseline digest does not match current commit baseline",
+          "title": "should reject Stage C evidence when baseline digest does not match current commit baseline",
+          "status": "passed",
+          "duration": 16,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 12. Stage E: Governance Gate Enforcement & Fail-Closed Integrity > should accurately disclose deterministic review and never represent it as model-backed",
+          "title": "should accurately disclose deterministic review and never represent it as model-backed",
+          "status": "passed",
+          "duration": 55,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 13. VERIFY USV-01: Single-Press Systems Verification Engine > should execute complete 4-phase verification and return structured report",
+          "title": "should execute complete 4-phase verification and return structured report",
+          "status": "passed",
+          "duration": 1475,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 13. VERIFY USV-01: Single-Press Systems Verification Engine > should enforce fail-closed zero-fabrication: never produce PASS on unverified or failing criteria",
+          "title": "should enforce fail-closed zero-fabrication: never produce PASS on unverified or failing criteria",
+          "status": "passed",
+          "duration": 1432,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 13. VERIFY USV-01: Single-Press Systems Verification Engine > should evaluate all 25 canonical HMEA agents (A01 - A25) with non-fabricated readiness",
+          "title": "should evaluate all 25 canonical HMEA agents (A01 - A25) with non-fabricated readiness",
+          "status": "passed",
+          "duration": 1503,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 14. Defect Remediation Regression Suite (PR #14 Acceptance Criteria) > Defect 1: should decouple Node-only verification modules from browser bundle in src/App.tsx",
+          "title": "Defect 1: should decouple Node-only verification modules from browser bundle in src/App.tsx",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 14. Defect Remediation Regression Suite (PR #14 Acceptance Criteria) > Defect 2: should enforce set -euo pipefail and bash defaults in CI workflow without continue-on-error",
+          "title": "Defect 2: should enforce set -euo pipefail and bash defaults in CI workflow without continue-on-error",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 14. Defect Remediation Regression Suite (PR #14 Acceptance Criteria) > Defect 3: should include genuine command execution checks (lint, test, build) in VERIFY USV-01 Phase 1",
+          "title": "Defect 3: should include genuine command execution checks (lint, test, build) in VERIFY USV-01 Phase 1",
+          "status": "passed",
+          "duration": 1405,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 14. Defect Remediation Regression Suite (PR #14 Acceptance Criteria) > Defect 4: should verify genuine execution of all 25 canonical agents without static ID lookups",
+          "title": "Defect 4: should verify genuine execution of all 25 canonical agents without static ID lookups",
+          "status": "passed",
+          "duration": 1467,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 14. Defect Remediation Regression Suite (PR #14 Acceptance Criteria) > Defect 5: should enforce that missing, skipped, or unverified mandatory checks strictly fail",
+          "title": "Defect 5: should enforce that missing, skipped, or unverified mandatory checks strictly fail",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 14. Defect Remediation Regression Suite (PR #14 Acceptance Criteria) > Defect 6: should enforce exact commit SHA and baseline digest matching in Stage E gate",
+          "title": "Defect 6: should enforce exact commit SHA and baseline digest matching in Stage E gate",
+          "status": "passed",
+          "duration": 18,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE G: Engineering Governance System (EGS) Verification > 14. Defect Remediation Regression Suite (PR #14 Acceptance Criteria) > Defect 7: should ensure globalUsvIntel.test.ts and notebookLm.test.ts use vitest imports",
+          "title": "Defect 7: should ensure globalUsvIntel.test.ts and notebookLm.test.ts use vitest imports",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "Global Intelligence Learning Bridge & Naval NotebookLM > should harvest actionable engineering clues across all 8 engineering disciplines",
+          "title": "should harvest actionable engineering clues across all 8 engineering disciplines",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "Global Intelligence Learning Bridge & Naval NotebookLM > should validate clue structure with proposed application, benefit, and trade-off",
+          "title": "should validate clue structure with proposed application, benefit, and trade-off",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "Global Intelligence Learning Bridge & Naval NotebookLM > should support clue adoption workflow for engineering trials",
+          "title": "should support clue adoption workflow for engineering trials",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "Global Intelligence Learning Bridge & Naval NotebookLM > should generate discipline learning summaries for all 8 workstreams",
+          "title": "should generate discipline learning summaries for all 8 workstreams",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "Global Intelligence Learning Bridge & Naval NotebookLM > should provide formatted NotebookLM source documents for reading",
+          "title": "should provide formatted NotebookLM source documents for reading",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "Global Intelligence Learning Bridge & Naval NotebookLM > should synthesize grounded NotebookLM query with direct source citations",
+          "title": "should synthesize grounded NotebookLM query with direct source citations",
+          "status": "passed",
+          "duration": 6,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE D: Central Orchestrator & Task DAG Scheduler > should formulate topological execution stages for dependent tasks",
+          "title": "should formulate topological execution stages for dependent tasks",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE D: Central Orchestrator & Task DAG Scheduler > should detect cyclic dependencies and reject invalid DAGs",
+          "title": "should detect cyclic dependencies and reject invalid DAGs",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE D: Central Orchestrator & Task DAG Scheduler > should execute tasks, pass data, and create safety approval gates for safety-critical tasks",
+          "title": "should execute tasks, pass data, and create safety approval gates for safety-critical tasks",
+          "status": "passed",
+          "duration": 1,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE D: Central Orchestrator & Task DAG Scheduler > should route inter-agent messages cleanly",
+          "title": "should route inter-agent messages cleanly",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE D: Central Orchestrator & Task DAG Scheduler > should fail-closed and block downstream tasks when upstream dependency fails or is uncompleted",
+          "title": "should fail-closed and block downstream tasks when upstream dependency fails or is uncompleted",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE B: Agent Organization & Master Registry > should register all 26 directorate and specialist agents",
+          "title": "should register all 26 directorate and specialist agents",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE B: Agent Organization & Master Registry > should pass complete structural and dependency validation without errors",
+          "title": "should pass complete structural and dependency validation without errors",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE B: Agent Organization & Master Registry > should verify all 25 agents have valid unique IDs and system instructions",
+          "title": "should verify all 25 agents have valid unique IDs and system instructions",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE B: Agent Organization & Master Registry > should ensure all dependencies exist in registry",
+          "title": "should ensure all dependencies exist in registry",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE B: Agent Organization & Master Registry > should retrieve agents by division correctly",
+          "title": "should retrieve agents by division correctly",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE B: Agent Organization & Master Registry > should support HMEA v0.2 canonical IDs A01-A26 with backwards-compatible alias resolution",
+          "title": "should support HMEA v0.2 canonical IDs A01-A26 with backwards-compatible alias resolution",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE F: Human Authority Gates & Safety Governance > should create an approval gate in PENDING state",
+          "title": "should create an approval gate in PENDING state",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE F: Human Authority Gates & Safety Governance > should block approval attempt if role is NOT ENGINEERING_DIRECTOR or identity is invalid",
+          "title": "should block approval attempt if role is NOT ENGINEERING_DIRECTOR or identity is invalid",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE F: Human Authority Gates & Safety Governance > should allow approval when authenticated as ENGINEERING_DIRECTOR with valid cryptographic signature",
+          "title": "should allow approval when authenticated as ENGINEERING_DIRECTOR with valid cryptographic signature",
+          "status": "passed",
+          "duration": 2,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE F: Human Authority Gates & Safety Governance > should maintain immutable parameter revisions and record audit trail",
+          "title": "should maintain immutable parameter revisions and record audit trail",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE F: Human Authority Gates & Safety Governance > should generate Obsidian markdown vault exports with wikilinks",
+          "title": "should generate Obsidian markdown vault exports with wikilinks",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE F: Human Authority Gates & Safety Governance > should enforce that MockDeterministicProvider reports 0.0 convergence confidence and unverified baseline",
+          "title": "should enforce that MockDeterministicProvider reports 0.0 convergence confidence and unverified baseline",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE F: Human Authority Gates & Safety Governance > should enforce verified ApproverIdentity object authentication and reject unverified users or invalid signatures",
+          "title": "should enforce verified ApproverIdentity object authentication and reject unverified users or invalid signatures",
+          "status": "passed",
+          "duration": 3,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE E: Deterministic Naval Engineering Tools > should register all 6 deterministic engineering tools",
+          "title": "should register all 6 deterministic engineering tools",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE E: Deterministic Naval Engineering Tools > should execute hydrostatics calculation with mathematical accuracy",
+          "title": "should execute hydrostatics calculation with mathematical accuracy",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE E: Deterministic Naval Engineering Tools > should calculate hydrodynamic resistance and identify regime",
+          "title": "should calculate hydrodynamic resistance and identify regime",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE E: Deterministic Naval Engineering Tools > should calculate mass properties and composite center of gravity",
+          "title": "should calculate mass properties and composite center of gravity",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE E: Deterministic Naval Engineering Tools > should calculate electrical load balance and battery endurance hours",
+          "title": "should calculate electrical load balance and battery endurance hours",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE E: Deterministic Naval Engineering Tools > should calculate ISO/DNV slamming pressure and plating thickness",
+          "title": "should calculate ISO/DNV slamming pressure and plating thickness",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE E: Deterministic Naval Engineering Tools > should evaluate COLREGS encounter geometry and recommend give-way action",
+          "title": "should evaluate COLREGS encounter geometry and recommend give-way action",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE E: Deterministic Naval Engineering Tools > should enforce permission rejection if calling agent lacks permission",
+          "title": "should enforce permission rejection if calling agent lacks permission",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "fullName": "STAGE E: Deterministic Naval Engineering Tools > should preserve explicit 0% design margin and NOT convert it to 10%",
+          "title": "should preserve explicit 0% design margin and NOT convert it to 10%",
+          "status": "passed",
+          "duration": 0,
+          "failureMessages": []
+        }
+      ]
+    }
+  ]
+}

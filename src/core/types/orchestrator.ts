@@ -1,4 +1,4 @@
-import { AgentExecutionInput, AgentExecutionOutput } from './agent.ts';
+import type { AgentExecutionInput, AgentExecutionOutput } from './agent.ts';
 
 export type TaskStatus = 
   | 'PENDING'

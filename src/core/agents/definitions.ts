@@ -781,7 +781,7 @@ Scrutinize every claim. Look for:
     modelConfig: { preferredProvider: 'gemini', modelName: 'gemini-1.5-pro', temperature: 0.1, maxTokens: 4096, fallbackToMock: true },
     reportingTo: 'HUMAN_DIRECTOR',
     dependencies: ['STAB-HYD-06', 'RES-SEAK-07', 'WGT-BAL-09', 'STR-MAT-10', 'ELEC-PWR-14', 'NAV-COL-17'],
-    executionPermissions: ['READ_ONLY', 'VVT_REVIEW'],
+    executionPermissions: ['READ_ONLY', 'VVT_REVIEW', 'CALCULATION_EXEC'],
     verificationCriteria: {
       requiredChecklist: ['Verify independent recalculation of critical metrics', 'Check contradiction log'],
       mandatoryDeterministicTools: ['TOOL-HYDROSTATICS-01', 'TOOL-RESISTANCE-01'],
