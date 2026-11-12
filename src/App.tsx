@@ -630,7 +630,7 @@ export default function App() {
             { id: 'orchestrator-tools', label: '3. Deterministic Naval Tools', icon: '📐' },
             { id: 'orchestrator-approvals', label: '4. Human Approval Gates', icon: '🛡️' },
             { id: 'workstream-NAV', label: '5. 3D Naval Architecture', icon: '🚢' },
-            { id: 'realtime-sim', label: '6. Radar Simulator', icon: '📡' },
+            { id: 'realtime-sim', label: '6. Real-Time Boat Simulator', icon: '🧭' },
             { id: 'generative-optimizer', label: '7. AI Optimizer', icon: '⚡' },
             { id: 'global-usv-fleet', label: '8. Global USV Intel', icon: '🌐' }
           ].map((tab) => (
