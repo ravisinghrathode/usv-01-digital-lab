@@ -213,10 +213,22 @@ export function verifySessionToken(token: string): AuthenticatedUser | null {
     }
 
     const payload: AuthenticatedUser = JSON.parse(Buffer.from(payloadB64, 'base64url').toString('utf8'));
-    if (Date.now() > payload.expiresAt) {
-      return null; // Expired
+    // An HMAC authenticates the bytes of a session, not the continuing authority
+    // of the role embedded in it. Reconcile against the server-owned staff allowlist.
+    const canonical = payload && typeof payload.userId === 'string'
+      ? AUTHORIZED_MEMBERS[payload.userId] : undefined;
+    if (!canonical ||
+        typeof payload.issuedAt !== 'number' || !Number.isFinite(payload.issuedAt) ||
+        typeof payload.expiresAt !== 'number' || !Number.isFinite(payload.expiresAt) ||
+        payload.issuedAt > Date.now() + 60_000 ||
+        payload.expiresAt <= Date.now() ||
+        payload.expiresAt <= payload.issuedAt ||
+        payload.expiresAt - payload.issuedAt > 24 * 60 * 60 * 1000 ||
+        payload.role !== canonical.role ||
+        payload.userName !== canonical.userName) {
+      return null;
     }
-    return payload;
+    return { ...payload, role: canonical.role, userName: canonical.userName };
   } catch {
     return null;
   }
