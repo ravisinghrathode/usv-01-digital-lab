@@ -3,8 +3,8 @@
   "programme": "NAVAL-USV",
   "project": "USV-01 Digital Engineering Lab",
   "releaseVersion": "1.0.0",
-  "gitCommitSha": "bdb9aff50ef0a6544fca5a2f23e2e231cd2ee614",
-  "builtAt": "2026-11-12T02:03:23.111Z",
+  "gitCommitSha": "140bf54c083483d05b30128821b6d15501807c01",
+  "builtAt": "2026-11-12T02:05:45.214Z",
   "environment": {
     "nodeVersion": "v24.22.2",
     "osPlatform": "linux"
@@ -17,8 +17,8 @@
     },
     {
       "path": "server.ts",
-      "sha256": "9ee253939a0a136276a81ef7f077718c57425cec7bcce3486f8ad875c76621c4",
-      "sizeBytes": 37331
+      "sha256": "11d9d07509fa6f9b93518cf522f1a95e0098e310fdeec0c464baee2b8636a91a",
+      "sizeBytes": 45383
     },
     {
       "path": "USV01_PROJECT_CONTEXT.md",
@@ -27,8 +27,8 @@
     },
     {
       "path": "src/App.tsx",
-      "sha256": "57a41756cdd28ba66244ced2d935ac806e44c0c6dfc980d9ecb2aac2ff97222c",
-      "sizeBytes": 31625
+      "sha256": "c3fbe450106de068220943aa99258a0535f975856d2e28a4cba8119835d58853",
+      "sizeBytes": 32023
     },
     {
       "path": "src/components/AgentOrchestratorView.tsx",
@@ -37,8 +37,8 @@
     },
     {
       "path": "src/components/AiEngineeringAssistant.tsx",
-      "sha256": "6873716ee3679dcf973adab766f150e4114ab79b8a7734a41fd9ec35ea1c7ac6",
-      "sizeBytes": 11605
+      "sha256": "b378a7f1ce3c58e0be3b31d039aeaf5baed15757258b518ae0222826155e25ad",
+      "sizeBytes": 11712
     },
     {
       "path": "src/components/ContextGuideModal.tsx",
@@ -59,6 +59,11 @@
       "path": "src/components/GenerativeOptimizerView.tsx",
       "sha256": "f7c0bcec8950ab3721cd2e90b44ac60565cf74e4e82dfd6bfca52f4731b8d999",
       "sizeBytes": 71206
+    },
+    {
+      "path": "src/components/GlobalUsvFleetView.tsx",
+      "sha256": "47d23016d24e46f85d00c1f5f522b6965db750faeb465661265ce3f0509924e5",
+      "sizeBytes": 49208
     },
     {
       "path": "src/components/HydrodynamicsView.tsx",
@@ -86,9 +91,14 @@
       "sizeBytes": 41455
     },
     {
+      "path": "src/components/NavalNotebookLMView.tsx",
+      "sha256": "cd275fbe8faae25dd0935af1a4f40675468ffab692a4707efee27c57d458e3b4",
+      "sizeBytes": 26593
+    },
+    {
       "path": "src/components/NavigationSidebar.tsx",
-      "sha256": "15d994f4c4878f4eda7d4d71a4559c54fdc3928a546be8421b84eaf7af411e85",
-      "sizeBytes": 15794
+      "sha256": "3f4de74b66709b2bbd5103d0978bab36a54c24912806ab21a9c8e601c5fe3d8d",
+      "sizeBytes": 17094
     },
     {
       "path": "src/components/NewRecordModal.tsx",
@@ -161,9 +171,14 @@
       "sizeBytes": 42388
     },
     {
+      "path": "src/core/agents/GlobalUsvIntelligenceAgent.ts",
+      "sha256": "ad482f849596dda766d11df64cbbf0e84f801b7bebc35520845984321a506a43",
+      "sizeBytes": 17881
+    },
+    {
       "path": "src/core/agents/definitions.ts",
-      "sha256": "b40b295fb6c5209aad3563b940feaa22a47463b23d9d34dddfe827efbd02f3f2",
-      "sizeBytes": 46651
+      "sha256": "d21f90d3a34d9e60ae898aac4ca5933e17f38551986caaa9e78308895994119b",
+      "sizeBytes": 49387
     },
     {
       "path": "src/core/auth/authClient.ts",
@@ -196,6 +211,11 @@
       "sizeBytes": 4034
     },
     {
+      "path": "src/core/intelligence/GlobalIntelligenceLearningBridge.ts",
+      "sha256": "e22fa23ba18c3dc929fb49e37ab791e23f81365e6bf0377b1dfd32677a1e41de",
+      "sizeBytes": 27951
+    },
+    {
       "path": "src/core/memory/SharedMemory.ts",
       "sha256": "ffb2fa9ba9b7df0a622f41168dabe8915b3bf619d866cd020d7dd6b9ddd1b701",
       "sizeBytes": 8849
@@ -217,8 +237,8 @@
     },
     {
       "path": "src/core/registry/AgentRegistry.ts",
-      "sha256": "8d857188a31a02b5be3412856d724d653ae5603cfd60ee78df380fbfaad252db",
-      "sizeBytes": 4986
+      "sha256": "edd1f7281a756d356ce7abe0deabd8317644ab15a4af62fcb20aa60790b31fac",
+      "sizeBytes": 4991
     },
     {
       "path": "src/core/safety/ApproverSigner.ts",
@@ -276,6 +296,11 @@
       "sizeBytes": 809
     },
     {
+      "path": "src/data/globalUsvFleetData.ts",
+      "sha256": "f4c98e093c3caa2cdae813a9d475213f5902eecc0b6f1b10bde227de612661f8",
+      "sizeBytes": 52224
+    },
+    {
       "path": "src/data/initialProjectData.ts",
       "sha256": "b1c96a5a4a8683f179541288f0f86c0310e8636c6c8638e50a60d24cac8d8ef4",
       "sizeBytes": 37506
@@ -296,6 +321,16 @@
       "sizeBytes": 8436
     },
     {
+      "path": "src/types/notebookLm.ts",
+      "sha256": "6bd343858c14fdad3b4b872abacf3c3fca1151eae2ed49a2bb7b19a7f09335c8",
+      "sizeBytes": 1823
+    },
+    {
+      "path": "src/types/usvIntelligence.ts",
+      "sha256": "a6211b33b9aad166f89ada18a44aea31713869aa1d8a031518884e2b12948afe",
+      "sizeBytes": 5061
+    },
+    {
       "path": "src/utils/engineeringUtils.ts",
       "sha256": "a8734e3e23ab436ba6a319d62ecfe105b681180a4191f478f5c20cdc86c0dbb0",
       "sizeBytes": 2619
@@ -312,5 +347,5 @@
     "auditVulnerabilities": 0,
     "staticAnalysisStatus": "PASS"
   },
-  "immutableManifestSha256": "baf0bfb51773aae9b30a1e40355a5c180f1a18fc969caf107ec42aecbcceef93"
+  "immutableManifestSha256": "9d755e4ca3ea033c69ca094927603d3acb7b21856aae157d7f07e14ca29c260d"
 }

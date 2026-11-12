@@ -1,8 +1,8 @@
 {
   "summary": {
     "totalFilesChanged": 18,
-    "totalLinesAdded": 935,
-    "totalLinesDeleted": 499,
+    "totalLinesAdded": 936,
+    "totalLinesDeleted": 500,
     "dominantCategories": [
       "SOFTWARE",
       "CONFIGURATION",
@@ -58,8 +58,8 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 43,
-      "linesDeleted": 382
+      "linesAdded": 45,
+      "linesDeleted": 384
     },
     {
       "file": "governance/reports/stage-c-review.json",
@@ -67,8 +67,8 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 4,
-      "linesDeleted": 4
+      "linesAdded": 3,
+      "linesDeleted": 3
     },
     {
       "file": "governance/reports/stage-d-approval.json",
@@ -179,5 +179,5 @@
       "linesDeleted": 0
     }
   ],
-  "timestamp": "2026-11-12T02:03:06.793Z"
+  "timestamp": "2026-11-12T02:05:45.322Z"
 }
