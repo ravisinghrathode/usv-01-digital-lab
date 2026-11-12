@@ -49,14 +49,14 @@ interface Polygon3D {
 }
 
 export const Vessel3DVisualizer: React.FC<Vessel3DVisualizerProps> = ({
-  lwlMeters = 11.8,
-  beamMeters = 3.4,
+  lwlMeters = 10.5,
+  beamMeters = 2.9,
   draftMeters = 0.65,
   deadriseDeg = 20,
-  displacementTonnes = 5.8,
-  candidateId = 'USV-01-EXP',
-  status = 'SURVIVED',
-  initialHullType = 'CATAMARAN',
+  displacementTonnes = 6.2,
+  candidateId = 'USV-01-REV-0.4',
+  status = 'BASELINED',
+  initialHullType = 'MONOHULL',
   showPhotoRenderToggle = true,
   className = ''
 }) => {

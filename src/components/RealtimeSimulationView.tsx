@@ -23,6 +23,7 @@ import {
   Info,
   CheckCircle2
 } from 'lucide-react';
+import { SharedMemory } from '../core/memory/SharedMemory';
 
 interface ObstacleVessel {
   id: string;
@@ -78,9 +79,9 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
   const radarCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const hydroCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  // Internal Animation Refs (Starts at rest with zero velocity until commanded)
+  // Internal Animation Refs — Synchronized with Rev 0.4 Baseline (14 kt cruise speed)
   const stateRef = useRef({
-    usv: { x: 0, y: -350, heading: 0, speed: 0.0, baseHeading: 0, rudder: 0 },
+    usv: { x: 0, y: -350, heading: 0, speed: 14.0, baseHeading: 0, rudder: 0 },
     obstacles: [] as ObstacleVessel[],
     radarAngle: 0,
     isPlaying: true,
@@ -90,9 +91,13 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
     activeRule: 'Rule 10 (Traffic Lane)' as string
   });
 
-  // Hydrostatics & Flotation Tank State (Defaults to 0 / TBD baseline)
-  const [hydroMass, setHydroMass] = useState<number>(0.0); // tonnes
-  const [hydroKg, setHydroKg] = useState<number>(0.0); // meters VCG
+  // Hydrostatics & Flotation Tank State — Synchronized with Rev 0.4 Approved Baseline
+  const sharedMemory = SharedMemory.getInstance();
+  const displParam = sharedMemory.getParameter('USV-NA-004');
+  const initialMass = typeof displParam?.value === 'number' && displParam.value > 0 ? Number(displParam.value) : 6.2;
+  const initialKg = 0.66; // SWBS composite KG from Stage 1 mass balance
+  const [hydroMass, setHydroMass] = useState<number>(initialMass); // 6.2 tonnes
+  const [hydroKg, setHydroKg] = useState<number>(initialKg); // 0.66 meters VCG
   const [waveAmp, setWaveAmp] = useState<number>(0.4); // meters
   const [waveFreq, setWaveFreq] = useState<number>(1.2); // rad/s
   const [heelAngle, setHeelAngle] = useState<number>(0); // dynamic heel deg
@@ -101,7 +106,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
   const loadScenario = (scenarioKey: string) => {
     setSelectedScenario(scenarioKey);
     let newObs: ObstacleVessel[] = [];
-    let initialUsv = { x: 0, y: -350, heading: 0, speed: 18.0, baseHeading: 0, rudder: 0 };
+    let initialUsv = { x: 0, y: -350, heading: 0, speed: 14.0, baseHeading: 0, rudder: 0 };
 
     if (scenarioKey === 'rule14_headon') {
       newObs = [
@@ -753,17 +758,18 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, w, h);
 
-      // Hydrostatic physics calculation
-      // Displaced volume V = mass / rho_seawater
+      // Hydrostatic physics calculation — Synchronized with TOOL-HYDROSTATICS-01
       const rho = 1.025; // t/m^3
       const volume = hydroMass / rho; // m^3
       const lwl = 10.5;
-      const beam = 2.8;
-      const cb = 0.44;
+      const beam = 2.9;
+      const cb = 0.42;
+      const cwp = 0.64;
       // Draft T = V / (L * B * Cb)
-      const draft = volume > 0 ? volume / (lwl * beam * cb) : 0;
-      const kb = draft * 0.53; // Center of Buoyancy above keel
-      const bmt = draft > 0 ? (beam * beam) / (12 * draft * cb) * 0.65 : 0; // Transverse metacentric radius
+      const draft = volume > 0 ? volume / (lwl * beam * cb) : 0.65;
+      const kb = draft * (5 / 6 - cb / (3 * cwp)); // Center of Buoyancy above keel (Normand formula)
+      const It = (1 / 12) * cwp * lwl * Math.pow(beam, 3);
+      const bmt = volume > 0 ? It / volume : 1.64; // Transverse metacentric radius
       const kmt = kb + bmt; // Metacenter above keel
       const gmt = Math.max(kmt - hydroKg, 0); // Metacentric height GMt
 
