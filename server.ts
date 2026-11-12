@@ -4,7 +4,9 @@ import path from 'path';
 import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
-import { generateApproverSignature, setDirectorSigningKey } from './src/core/safety/ApproverSigner.ts';
+import { generateApproverSignature, verifyApproverSignature, setDirectorSigningKey } from './src/core/safety/ApproverSigner.ts';
+import { AUTHORIZED_MEMBERS, type StaffMember } from './src/core/auth/staffDirectory.ts';
+import { verifyStaffCredential, isLockedOut, recordFailure, recordSuccess } from './src/core/auth/credentialStore.ts';
 
 dotenv.config();
 
@@ -108,7 +110,7 @@ seedStoreIfEmpty();
 
 // --- CRYPTOGRAPHIC AUTHENTICATION & SESSION MANAGEMENT ---
 // Dynamic cryptographic session secret (uses env var if provided, or generated random bytes)
-const SESSION_SECRET = process.env.LAB_SESSION_SECRET || process.env.DIRECTOR_SIGNING_KEY || crypto.randomBytes(32).toString('hex');
+const SESSION_SECRET = process.env.LAB_SESSION_SECRET || crypto.randomBytes(32).toString('hex');
 setDirectorSigningKey(SESSION_SECRET);
 
 export interface AuthenticatedUser {
@@ -119,23 +121,8 @@ export interface AuthenticatedUser {
   expiresAt: number;
 }
 
-const AUTHORIZED_MEMBERS: Record<string, { userId: string; userName: string; role: string }> = {
-  'usr-eng-dir-8841': {
-    userId: 'usr-eng-dir-8841',
-    userName: 'Chief Naval Architect & Systems Director',
-    role: 'ENGINEERING_DIRECTOR'
-  },
-  'usr-lead-sys-01': {
-    userId: 'usr-lead-sys-01',
-    userName: 'Lead Systems Architect',
-    role: 'LEAD_SYSTEMS_ENGINEER'
-  },
-  'usr-naval-arch-05': {
-    userId: 'usr-naval-arch-05',
-    userName: 'Senior Hydrodynamics Engineer',
-    role: 'NAVAL_ARCHITECT'
-  }
-};
+export { AUTHORIZED_MEMBERS };
+export type { StaffMember };
 
 export function createSessionToken(user: { userId: string; userName: string; role: string }, expiresInMs = 24 * 60 * 60 * 1000): string {
   const issuedAt = Date.now();
@@ -201,22 +188,102 @@ export const authMiddleware = (req: express.Request, res: express.Response, next
 // Protect data, export/import, AI assistant, and gate signing endpoints
 app.use(['/api/data', '/api/export', '/api/import', '/api/gemini/assist', '/api/auth/sign-gate', '/api/auth/session'], authMiddleware);
 
+export function authenticateLoginRequest(body: { userId?: string; role?: string; passphrase?: string }): {
+  statusCode: number;
+  body: { success: boolean; user?: StaffMember; token?: string; error?: string };
+} {
+  const { userId, role, passphrase } = body || {};
+
+  if (!userId || typeof userId !== 'string') {
+    return {
+      statusCode: 400,
+      body: {
+        success: false,
+        error: "Authentication failed: Missing required 'userId'."
+      }
+    };
+  }
+
+  // Reject any identity not in the authoritative allowlist
+  const authorizedMember = AUTHORIZED_MEMBERS[userId];
+  if (!authorizedMember) {
+    return {
+      statusCode: 403,
+      body: {
+        success: false,
+        error: `Access Denied: Identity '${userId}' is not recognized in the authoritative staff member allowlist.`
+      }
+    };
+  }
+
+  // Reject unauthorized role spoofing: client cannot claim a different role than the authoritative assignment
+  if (role && role !== authorizedMember.role) {
+    return {
+      statusCode: 403,
+      body: {
+        success: false,
+        error: `Access Denied: User '${userId}' is strictly authorized only for role '${authorizedMember.role}'. Unauthorized role claim '${role}' rejected.`
+      }
+    };
+  }
+
+  // Mandatory credential verification for every identity, including the Engineering Director
+  if (!passphrase || typeof passphrase !== 'string') {
+    return {
+      statusCode: 401,
+      body: {
+        success: false,
+        error: `Authentication failed: Passphrase is required for staff member '${userId}'. Anonymous identity assertion is prohibited.`
+      }
+    };
+  }
+
+  if (isLockedOut(userId)) {
+    return {
+      statusCode: 429,
+      body: { success: false, error: `Authentication temporarily locked for '${userId}' after repeated failures. Try again later.` }
+    };
+  }
+
+  const check = verifyStaffCredential(userId, passphrase);
+  if (check === 'STORE_UNAVAILABLE' || check === 'NOT_PROVISIONED') {
+    return {
+      statusCode: 503,
+      body: {
+        success: false,
+        error: check === 'STORE_UNAVAILABLE'
+          ? 'Authentication service unavailable: staff credential store is not provisioned (STAFF_CREDENTIAL_STORE). Logins are disabled.'
+          : `Authentication unavailable: no credential has been provisioned for '${userId}'. Logins for this identity are disabled.`
+      }
+    };
+  }
+  if (check !== 'VALID') {
+    recordFailure(userId);
+    return {
+      statusCode: 401,
+      body: {
+        success: false,
+        error: `Authentication failed: Invalid credentials for staff member '${userId}'. Access denied.`
+      }
+    };
+  }
+  recordSuccess(userId);
+
+  const token = createSessionToken(authorizedMember);
+  return {
+    statusCode: 200,
+    body: {
+      success: true,
+      token,
+      user: authorizedMember
+    }
+  };
+}
+
 // --- AUTHENTICATION & GOVERNANCE SIGNING ENDPOINTS ---
 app.post('/api/auth/login', (req, res) => {
-  const { userId, role } = req.body || {};
-  const memberKey = userId || 'usr-eng-dir-8841';
-  const member = AUTHORIZED_MEMBERS[memberKey] || {
-    userId: memberKey,
-    userName: memberKey === 'usr-eng-dir-8841' ? 'Chief Naval Architect & Systems Director' : `User (${memberKey})`,
-    role: role || (memberKey === 'usr-eng-dir-8841' ? 'ENGINEERING_DIRECTOR' : 'SYSTEMS_ENGINEER')
-  };
-
-  const token = createSessionToken(member);
-  res.json({
-    success: true,
-    token,
-    user: member
-  });
+  const result = authenticateLoginRequest(req.body || {});
+  res.status(result.statusCode).json(result.body);
 });
 
 app.get('/api/auth/session', (req, res) => {
@@ -258,9 +325,19 @@ app.post('/api/auth/sign-gate', (req, res) => {
       userName: user.userName,
       role: user.role,
       authenticatedAt: timestamp,
-      tokenSignature: signature
+      tokenSignature: signature,
+      serverVerifiedSignature: signature
     }
   });
+});
+
+app.post('/api/auth/verify-gate', (req, res) => {
+  const { gateId, decision, identity } = req.body || {};
+  if (!gateId || !decision || !identity) {
+    return res.status(400).json({ success: false, valid: false, error: 'Missing required parameters' });
+  }
+  const valid = verifyApproverSignature(gateId, decision, identity, SESSION_SECRET);
+  res.json({ success: true, valid });
 });
 
 
@@ -613,4 +690,6 @@ async function startServer() {
   });
 }
 
-startServer();
+if (process.argv[1] && (process.argv[1].endsWith('server.ts') || process.argv[1].endsWith('server.js'))) {
+  startServer();
+}

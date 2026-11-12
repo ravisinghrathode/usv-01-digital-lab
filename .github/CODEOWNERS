@@ -1,0 +1,28 @@
+# NAVAL-USV USV-01 Digital Engineering Lab — CODEOWNERS
+# Engineering Governance Policy enforces that all changes require human review
+# by the designated Engineering Director.
+
+# Default rule: All files require Engineering Director sign-off
+* @ravisinghrathode
+
+# Safety-Critical & Core Architecture Paths (Risk Level: CRITICAL)
+/src/core/safety/ @ravisinghrathode
+/src/core/auth/ @ravisinghrathode
+/src/core/agents/ @ravisinghrathode
+/src/core/orchestrator/ @ravisinghrathode
+/src/core/models/ @ravisinghrathode
+/src/core/tools/ @ravisinghrathode
+
+# Engineering Baseline, Requirements & Data Store (Risk Level: HIGH)
+/USV01_PROJECT_CONTEXT.md @ravisinghrathode
+/data/ @ravisinghrathode
+/src/data/ @ravisinghrathode
+/server.ts @ravisinghrathode
+
+# CI/CD Workflows, Security Gates & Branch Protection (Risk Level: CRITICAL)
+/.github/ @ravisinghrathode
+/.github/workflows/ @ravisinghrathode
+/.github/CODEOWNERS @ravisinghrathode
+/scripts/ @ravisinghrathode
+/governance/ @ravisinghrathode
+/docs/governance/ @ravisinghrathode

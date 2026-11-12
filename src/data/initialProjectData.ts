@@ -25,8 +25,8 @@ export const INITIAL_PROJECT: ProjectInfo = {
   code: 'USV-01',
   description: 'Autonomous maritime surface vessel digital engineering lifecycle platform, requirements baseline, and physics simulation registry.',
   status: 'Active',
-  governanceState: 'Approved Baseline',
-  baselineRev: 'REV 0.2-BASELINE',
+  governanceState: 'Draft',
+  baselineRev: 'REV 0.2-DRAFT',
   leadEngineer: 'Chief Systems Architect',
   securityClassification: 'Engineering Controlled Baseline',
   lastUpdated: '2026-11-11 09:30 UTC'
@@ -145,7 +145,7 @@ export const INITIAL_REQUIREMENTS: Requirement[] = [
     acceptanceCriteria: 'Autonomous fail-safe mode engages within [TBD] seconds of simulated RF carrier loss across 10/10 trials.',
     owner: 'Dr. M. Lindqvist',
     revision: 'Rev 1.1',
-    status: 'Approved',
+    status: 'Draft',
     isIllustrative: true,
     relatedDecisions: ['DEC-AUT-001'],
     relatedSimulations: ['SIM-AUT-001'],
@@ -166,7 +166,7 @@ export const INITIAL_REQUIREMENTS: Requirement[] = [
     acceptanceCriteria: 'Positive GZ area under curve between 0° and 30° >= 0.055 m-rad; initial GM0 >= 0.15 m; maximum GZ >= 0.20 m at angle >= 30°.',
     owner: 'K. Tanaka',
     revision: 'Rev 1.0',
-    status: 'Approved',
+    status: 'Draft',
     isIllustrative: true,
     relatedDecisions: ['DEC-NAV-001'],
     relatedSimulations: ['SIM-NAV-001'],
@@ -229,7 +229,7 @@ export const INITIAL_REQUIREMENTS: Requirement[] = [
     acceptanceCriteria: 'Von Mises peak stress in aluminum framing shall not exceed 0.80 of yield strength (Marine 5083-H116) under peak design slamming head.',
     owner: 'H. Richter',
     revision: 'Rev 1.0',
-    status: 'Approved',
+    status: 'Draft',
     isIllustrative: true,
     relatedDecisions: ['DEC-NAV-001'],
     relatedSimulations: ['SIM-MEC-001'],
@@ -250,7 +250,7 @@ export const INITIAL_REQUIREMENTS: Requirement[] = [
     acceptanceCriteria: 'Insulation resistance > 10 MOhm between propulsion power ground and avionics ground; transient voltage drop < 5% during motor step throttle.',
     owner: 'S. Patel',
     revision: 'Rev 1.0',
-    status: 'Approved',
+    status: 'Draft',
     isIllustrative: true,
     relatedDecisions: ['DEC-ELE-001'],
     relatedSimulations: [],
@@ -318,7 +318,7 @@ export const INITIAL_DECISIONS: DesignDecision[] = [
     supportingEvidence: 'Risk assessment R-01 and cell abuse test documentation IEEE 45 compliant.',
     consequences: 'Increased mass budget allocated to Naval Architecture weight estimate (+18% battery volume compared to NMC).',
     reviewer: 'Lead Power Systems Engineer',
-    approvalState: 'Approved',
+    approvalState: 'Draft',
     revision: 'Rev 1.0',
     isAiProposal: false,
     isIllustrative: true,
@@ -339,7 +339,7 @@ export const INITIAL_DECISIONS: DesignDecision[] = [
     supportingEvidence: 'Latency benchmarking report USV01-AUT-SW-001 showing < 8ms round-trip latency on Jetson AGX Orin.',
     consequences: 'Requires Linux PREEMPT_RT kernel patch on autonomy compute hardware.',
     reviewer: 'Software Architecture Review Board',
-    approvalState: 'Approved',
+    approvalState: 'Draft',
     revision: 'Rev 1.1',
     isAiProposal: false,
     isIllustrative: true,
@@ -488,7 +488,7 @@ export const INITIAL_VERIFICATION_PLANS: VerificationPlan[] = [
     acceptanceCriteria: 'Galvanic resistance >= 10 MOhm at 500V test potential. Voltage sag <= 5% under 100A step load.',
     instrumentationAndCalibration: 'Megohmmeter Fluke 1587 (Calibrated 2026-09), Programmable DC Load Chroma 63200A (Calibrated 2026-08).',
     targetReqIds: ['REQ-ELE-001'],
-    status: 'Approved',
+    status: 'Draft',
     owner: 'S. Patel',
     isIllustrative: true,
     createdAt: '2026-10-28',
@@ -537,7 +537,7 @@ export const INITIAL_TEST_RECORDS: TestRecord[] = [
     deviationsAndCorrectiveActions: 'None. All criteria fulfilled.',
     evidenceAttachments: ['FAT_Report_PDB_Rev1.pdf', 'Chroma_Scope_Trace_StepLoad.png'],
     isIllustrative: true,
-    approvalStatus: 'Approved',
+    approvalStatus: 'In Review',
     approver: 'Lead Systems Architect',
     createdAt: '2026-11-07'
   }
@@ -668,8 +668,8 @@ export const INITIAL_POWER_LOADS: PowerLoadItem[] = [
 ];
 
 export const INITIAL_INTERFACES: InterfaceDefinition[] = [
-  { id: 'ICD-001', title: '[SAMPLE] Autonomy Computer to Motor Inverter Throttle/Steer', sourceSubsystem: 'AUT', targetSubsystem: 'PRP', physicalMedium: 'CAN 2.0B / NMEA 2000', protocol: 'Custom Binary', frequencyHz: '50 Hz', latencyBudgetMs: '20 ms', status: 'Approved', isIllustrative: true },
-  { id: 'ICD-002', title: '[SAMPLE] GNSS/INS Navigation State to Autonomy Perception', sourceSubsystem: 'AUT', targetSubsystem: 'AUT', physicalMedium: 'Ethernet 1000BASE-T', protocol: 'ROS2 / DDS', frequencyHz: '100 Hz', latencyBudgetMs: '10 ms', status: 'Approved', isIllustrative: true },
+  { id: 'ICD-001', title: '[SAMPLE] Autonomy Computer to Motor Inverter Throttle/Steer', sourceSubsystem: 'AUT', targetSubsystem: 'PRP', physicalMedium: 'CAN 2.0B / NMEA 2000', protocol: 'Custom Binary', frequencyHz: '50 Hz', latencyBudgetMs: '20 ms', status: 'Draft', isIllustrative: true },
+  { id: 'ICD-002', title: '[SAMPLE] GNSS/INS Navigation State to Autonomy Perception', sourceSubsystem: 'AUT', targetSubsystem: 'AUT', physicalMedium: 'Ethernet 1000BASE-T', protocol: 'ROS2 / DDS', frequencyHz: '100 Hz', latencyBudgetMs: '10 ms', status: 'Draft', isIllustrative: true },
   { id: 'ICD-003', title: '[SAMPLE] Battery Management System (BMS) Telemetry to Power Controller', sourceSubsystem: 'ELE', targetSubsystem: 'SYS', physicalMedium: 'CAN 2.0B / NMEA 2000', protocol: 'Modbus TCP', frequencyHz: '10 Hz', latencyBudgetMs: '100 ms', status: 'In Review', isIllustrative: true }
 ];
 

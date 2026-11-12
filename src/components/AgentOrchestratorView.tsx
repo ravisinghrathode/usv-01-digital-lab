@@ -35,7 +35,7 @@ import { EngineeringTask } from '../core/types/orchestrator.ts';
 import { HumanApprovalGate, ApproverIdentity } from '../core/types/safety.ts';
 import { EngineeringParameter } from '../core/types/memory.ts';
 import { downloadCsv } from '../utils/engineeringUtils.ts';
-import { signApprovalGate, ensureAuthenticatedSession } from '../core/auth/authClient.ts';
+import { signApprovalGate, authenticateAsDirector, subscribeAuthState } from '../core/auth/authClient.ts';
 
 interface AgentOrchestratorViewProps {
   onAskAi?: (prompt: string, record?: any) => void;
@@ -89,13 +89,11 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
   const [studyDisplacement, setStudyDisplacement] = useState<number>(7.8);
   const [studySpeed, setStudySpeed] = useState<number>(22.0);
 
-  // Authenticated Engineering Director Identity
-  const [approverIdentity, setApproverIdentity] = useState<ApproverIdentity>({
-    userId: 'usr-eng-dir-8841',
-    userName: 'Chief Naval Architect & Systems Director',
-    role: 'ENGINEERING_DIRECTOR',
-    authenticatedAt: new Date().toISOString()
-  });
+  // Authenticated User & Director Passphrase Verification State
+  const [approverIdentity, setApproverIdentity] = useState<ApproverIdentity | null>(null);
+  const [directorPassphrase, setDirectorPassphrase] = useState<string>('');
+  const [directorAuthError, setDirectorAuthError] = useState<string | null>(null);
+  const [isDirectorAuthenticated, setIsDirectorAuthenticated] = useState<boolean>(false);
 
   // Obsidian Export Modal State
   const [obsidianModalOpen, setObsidianModalOpen] = useState(false);
@@ -112,14 +110,25 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
 
   useEffect(() => {
     refreshState();
-    ensureAuthenticatedSession()
-      .then((session) => {
-        if (session.user) {
-          setApproverIdentity(session.user);
-        }
-      })
-      .catch((err) => console.warn('Could not establish director session:', err));
+    const unsubscribe = subscribeAuthState((user) => {
+      setApproverIdentity(user);
+      setIsDirectorAuthenticated(user?.role === 'ENGINEERING_DIRECTOR');
+    });
+    return () => unsubscribe();
   }, []);
+
+  const handleDirectorLogin = async () => {
+    try {
+      setDirectorAuthError(null);
+      const user = await authenticateAsDirector(directorPassphrase);
+      setApproverIdentity(user);
+      setIsDirectorAuthenticated(true);
+      setDirectorPassphrase('');
+    } catch (err: any) {
+      setDirectorAuthError(err.message);
+      setIsDirectorAuthenticated(false);
+    }
+  };
 
   // Run Baseline or Exploratory Topological Workflow
   const handleRunSampleWorkflow = async () => {
@@ -663,16 +672,56 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
             </div>
           </div>
 
-          <div className="p-3 bg-purple-900/30 border border-purple-700/50 rounded-lg flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span className="font-semibold text-purple-200">Verified Approver Session:</span>
-              <span className="text-slate-200 font-mono">{approverIdentity.userName} ({approverIdentity.userId})</span>
+          {/* Dynamic Approver Session & Director Authentication Bar */}
+          {isDirectorAuthenticated ? (
+            <div className="p-3 bg-emerald-950/30 border border-emerald-700/50 rounded-lg flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span className="font-semibold text-emerald-200">Authenticated Director Authority:</span>
+                <span className="text-slate-200 font-mono">{approverIdentity?.userName} ({approverIdentity?.userId})</span>
+              </div>
+              <span className="font-mono text-[11px] text-emerald-300 bg-emerald-950/80 border border-emerald-800/50 px-2 py-0.5 rounded">
+                Signing Authority: ACTIVE
+              </span>
             </div>
-            <span className="font-mono text-[11px] text-cyan-300 bg-cyan-950/70 border border-cyan-800/50 px-2 py-0.5 rounded">
-              Role: {approverIdentity.role} [HMAC-SHA256 Authority: Active]
-            </span>
-          </div>
+          ) : (
+            <div className="p-4 bg-amber-950/20 border border-amber-800/40 rounded-lg space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-amber-400" />
+                  <span className="font-semibold text-amber-200 text-xs">Director Authentication Required</span>
+                  <span className="text-slate-400 text-xs font-mono">
+                    (Current role: {approverIdentity?.role || 'STAFF_ENGINEER'})
+                  </span>
+                </div>
+                <span className="font-mono text-[10px] text-amber-400 bg-amber-950/80 border border-amber-800/50 px-2 py-0.5 rounded">
+                  Signing Authority: LOCKED
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-300">
+                Evaluating safety-critical baseline gates requires verified Engineering Director credentials. Enter director passphrase to unlock cryptographic decision signing:
+              </p>
+              <div className="flex items-center gap-2">
+                <input
+                  type="password"
+                  placeholder="Engineering Director Passphrase..."
+                  value={directorPassphrase}
+                  onChange={(e) => setDirectorPassphrase(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleDirectorLogin()}
+                  className="flex-1 bg-slate-950 border border-slate-700 rounded px-3 py-1.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 font-mono"
+                />
+                <button
+                  onClick={handleDirectorLogin}
+                  className="px-4 py-1.5 rounded bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5" /> Authenticate Authority
+                </button>
+              </div>
+              {directorAuthError && (
+                <p className="text-[11px] text-rose-400 font-mono">❌ {directorAuthError}</p>
+              )}
+            </div>
+          )}
 
           {pendingGates.length === 0 ? (
             <div className="p-8 rounded-lg bg-slate-900/40 border border-slate-800 text-center space-y-2">
@@ -723,13 +772,25 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
                     />
                     <button
                       onClick={() => handleDecision(gate.id, 'APPROVED')}
-                      className="px-3.5 py-1.5 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1"
+                      disabled={!isDirectorAuthenticated}
+                      title={!isDirectorAuthenticated ? "Director authentication required to approve safety gates" : undefined}
+                      className={`px-3.5 py-1.5 rounded font-bold text-xs flex items-center gap-1 ${
+                        isDirectorAuthenticated
+                          ? 'bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer'
+                          : 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700'
+                      }`}
                     >
                       <Check className="w-3.5 h-3.5" /> Approve Baseline
                     </button>
                     <button
                       onClick={() => handleDecision(gate.id, 'REJECTED')}
-                      className="px-3.5 py-1.5 rounded bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs flex items-center gap-1"
+                      disabled={!isDirectorAuthenticated}
+                      title={!isDirectorAuthenticated ? "Director authentication required to reject safety gates" : undefined}
+                      className={`px-3.5 py-1.5 rounded font-bold text-xs flex items-center gap-1 ${
+                        isDirectorAuthenticated
+                          ? 'bg-rose-600 hover:bg-rose-500 text-white cursor-pointer'
+                          : 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700'
+                      }`}
                     >
                       <X className="w-3.5 h-3.5" /> Reject
                     </button>

@@ -5,6 +5,7 @@ const USER_STORAGE_KEY = 'usv01_session_user';
 
 let currentSessionToken: string | null = null;
 let currentUser: ApproverIdentity | null = null;
+const authSubscribers: Set<(user: ApproverIdentity | null) => void> = new Set();
 
 // Initialize from sessionStorage if available
 if (typeof window !== 'undefined') {
@@ -17,6 +18,24 @@ if (typeof window !== 'undefined') {
   } catch {
     // Ignore storage errors in restricted contexts
   }
+}
+
+function notifySubscribers(): void {
+  for (const sub of authSubscribers) {
+    try {
+      sub(currentUser);
+    } catch (e) {
+      console.warn('Auth subscriber error:', e);
+    }
+  }
+}
+
+export function subscribeAuthState(callback: (user: ApproverIdentity | null) => void): () => void {
+  authSubscribers.add(callback);
+  callback(currentUser);
+  return () => {
+    authSubscribers.delete(callback);
+  };
 }
 
 export function getSessionToken(): string | null {
@@ -35,9 +54,10 @@ export function setSession(token: string, user: ApproverIdentity): void {
       window.sessionStorage.setItem(SESSION_STORAGE_KEY, token);
       window.sessionStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
     } catch {
-      // Ignore
+      // Ignore storage errors
     }
   }
+  notifySubscribers();
 }
 
 export function clearSession(): void {
@@ -48,85 +68,147 @@ export function clearSession(): void {
       window.sessionStorage.removeItem(SESSION_STORAGE_KEY);
       window.sessionStorage.removeItem(USER_STORAGE_KEY);
     } catch {
-      // Ignore
+      // Ignore storage errors
     }
   }
+  notifySubscribers();
 }
 
 /**
- * Ensures an authenticated session exists with the backend digital lab server.
- * Exchanges credentials for a cryptographically signed HMAC session token.
+ * Explicit login workflow requiring verified identity and passphrase.
+ * Strictly rejects anonymous identity assertion or empty passphrases.
  */
-export async function ensureAuthenticatedSession(): Promise<{ token: string; user: ApproverIdentity }> {
-  // If we have a valid token, verify it with the server
-  if (currentSessionToken && currentUser) {
-    try {
-      const res = await fetch('/api/auth/session', {
-        headers: {
-          'Authorization': `Bearer ${currentSessionToken}`
-        }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.success && data.user) {
-          currentUser = {
-            userId: data.user.userId,
-            userName: data.user.userName,
-            role: data.user.role,
-            authenticatedAt: new Date().toISOString()
-          };
-          return { token: currentSessionToken, user: currentUser };
-        }
-      }
-    } catch {
-      // Server check failed, fall through to re-login
-    }
+export async function login(
+  userId: string,
+  passphrase: string,
+  role?: string
+): Promise<ApproverIdentity> {
+  if (!userId || !passphrase) {
+    throw new Error('Authentication failed: User ID and passphrase are required.');
   }
 
-  // Request new authenticated session from server (defaults to Engineering Director in the digital lab)
-  const loginRes = await fetch('/api/auth/login', {
+  const payload: Record<string, string> = { userId, passphrase };
+  if (role) {
+    payload.role = role;
+  }
+
+  const res = await fetch('/api/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userId: 'usr-eng-dir-8841', role: 'ENGINEERING_DIRECTOR' })
+    body: JSON.stringify(payload)
   });
 
-  if (!loginRes.ok) {
-    throw new Error(`Authentication failed with HTTP ${loginRes.status}`);
-  }
+  const data = await res.json().catch(() => ({}));
 
-  const loginData = await loginRes.json();
-  if (!loginData.success || !loginData.token) {
-    throw new Error(loginData.error || 'Failed to obtain session token');
+  if (!res.ok || !data.success || !data.token) {
+    throw new Error(data.error || `Authentication failed with status HTTP ${res.status}`);
   }
 
   const identity: ApproverIdentity = {
-    userId: loginData.user.userId,
-    userName: loginData.user.userName,
-    role: loginData.user.role,
+    userId: data.user.userId,
+    userName: data.user.userName,
+    role: data.user.role,
     authenticatedAt: new Date().toISOString()
   };
 
-  setSession(loginData.token, identity);
-  return { token: loginData.token, user: identity };
+  setSession(data.token, identity);
+  return identity;
 }
 
 /**
- * Perform an authenticated HTTP fetch to the backend, appending the verified Bearer token.
+ * Terminate the active session and revoke stored credentials locally.
  */
-export async function authenticatedFetch(url: string, init?: RequestInit): Promise<Response> {
-  let token = currentSessionToken;
-  if (!token) {
-    try {
-      const session = await ensureAuthenticatedSession();
-      token = session.token;
-    } catch (err) {
-      console.warn('Could not establish initial session before fetch:', err);
+export function logout(): void {
+  clearSession();
+}
+
+/**
+ * Validates the current session token against the server's cryptographic session verifier.
+ * Returns the verified user identity or null if the token is absent, expired, or invalid.
+ */
+export async function validateSession(): Promise<ApproverIdentity | null> {
+  if (!currentSessionToken) {
+    return null;
+  }
+
+  try {
+    const res = await fetch('/api/auth/session', {
+      headers: {
+        Authorization: `Bearer ${currentSessionToken}`
+      }
+    });
+
+    if (!res.ok) {
+      clearSession();
+      return null;
+    }
+
+    const data = await res.json().catch(() => ({}));
+    if (data.success && data.user) {
+      const validated: ApproverIdentity = {
+        userId: data.user.userId,
+        userName: data.user.userName,
+        role: data.user.role,
+        authenticatedAt: new Date().toISOString()
+      };
+      currentUser = validated;
+      notifySubscribers();
+      return validated;
+    }
+
+    clearSession();
+    return null;
+  } catch {
+    // Network or server error; do not clear unconditionally on transient disconnect
+    return currentUser;
+  }
+}
+
+/**
+ * Authenticates specifically with Engineering Director authority using the required passphrase.
+ */
+export async function authenticateAsDirector(passphrase: string): Promise<ApproverIdentity> {
+  return login('usr-eng-dir-8841', passphrase, 'ENGINEERING_DIRECTOR');
+}
+
+/**
+ * Ensures an authenticated session exists with the digital lab server.
+ * If a valid session is already established, returns it.
+ * If a director passphrase is provided, attempts director login.
+ * Otherwise, rejects: ANONYMOUS OR DEFAULT IDENTITY FALLBACKS ARE STRICTLY PROHIBITED.
+ */
+export async function ensureAuthenticatedSession(
+  directorPassphrase?: string
+): Promise<{ token: string; user: ApproverIdentity }> {
+  // If we already have a session, validate it with the server
+  if (currentSessionToken && currentUser) {
+    const verified = await validateSession();
+    if (verified && currentSessionToken) {
+      return { token: currentSessionToken, user: verified };
     }
   }
 
+  // If a director passphrase was passed explicitly, authenticate
+  if (directorPassphrase) {
+    const user = await authenticateAsDirector(directorPassphrase);
+    if (currentSessionToken) {
+      return { token: currentSessionToken, user };
+    }
+  }
+
+  // Fail closed: anonymous or default identity fallbacks without passphrase are prohibited
+  throw new Error(
+    'Authentication required: No active session. Please authenticate via the digital lab login interface with valid staff credentials.'
+  );
+}
+
+/**
+ * Perform an authenticated HTTP fetch to the backend, appending the verified Bearer token if present.
+ */
+export async function authenticatedFetch(url: string, init?: RequestInit): Promise<Response> {
   const headers = new Headers(init?.headers || {});
-  if (token) {
-    headers.set('Authorization', `Bearer ${token}`);
+  if (currentSessionToken) {
+    headers.set('Authorization', `Bearer ${currentSessionToken}`);
   }
 
   return fetch(url, {
@@ -144,6 +226,12 @@ export async function signApprovalGate(
   decision: 'APPROVED' | 'REJECTED',
   directorNotes: string
 ): Promise<ApproverIdentity> {
+  if (!currentUser || currentUser.role !== 'ENGINEERING_DIRECTOR') {
+    throw new Error(
+      "Authorization Violation: Only an authenticated 'ENGINEERING_DIRECTOR' can sign safety-critical approval gates."
+    );
+  }
+
   const res = await authenticatedFetch('/api/auth/sign-gate', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

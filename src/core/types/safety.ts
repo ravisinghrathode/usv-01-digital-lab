@@ -6,6 +6,7 @@ export interface ApproverIdentity {
   role: 'ENGINEERING_DIRECTOR' | 'LEAD_SYSTEMS_ENGINEER' | 'ADMIN' | string;
   tokenSignature?: string;
   tokenOrSignature?: string;
+  serverVerifiedSignature?: string;
   authenticatedAt: string;
 }
 
