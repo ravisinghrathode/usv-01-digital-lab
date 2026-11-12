@@ -39,7 +39,8 @@ export type NavigationModule =
   | 'procurement-bom'
   | 'knowledge-centre'
   | 'realtime-sim'
-  | 'ship-building';
+  | 'ship-building'
+  | 'generative-optimizer';
 
 interface NavigationSidebarProps {
   currentModule: NavigationModule;
@@ -160,6 +161,24 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
               </div>
             </div>
             {currentModule === 'ship-building' && <ChevronRight className="w-3.5 h-3.5 text-amber-400" />}
+          </button>
+
+          <button
+            onClick={() => onSelectModule('generative-optimizer')}
+            className={`w-full flex items-center justify-between px-2.5 py-2 rounded transition-colors ${
+              currentModule === 'generative-optimizer'
+                ? 'bg-purple-500/15 text-purple-300 border border-purple-500/30 font-medium'
+                : 'text-slate-300 hover:bg-slate-900/80 hover:text-slate-100'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <Cpu className="w-4 h-4 text-purple-400" />
+              <div className="flex items-center gap-1.5">
+                <span>Generative AI Optimizer</span>
+                <span className="text-[10px] px-1 py-0.2 rounded bg-purple-950/80 text-purple-400 border border-purple-800/40 font-mono">GEN</span>
+              </div>
+            </div>
+            {currentModule === 'generative-optimizer' && <ChevronRight className="w-3.5 h-3.5 text-purple-400" />}
           </button>
         </div>
 

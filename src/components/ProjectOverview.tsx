@@ -10,7 +10,8 @@ import {
   UserCheck,
   AlertOctagon,
   Compass,
-  Hammer
+  Hammer,
+  Cpu
 } from 'lucide-react';
 import {
   WorkstreamSummary,
@@ -197,63 +198,98 @@ export const ProjectOverview: React.FC<ProjectOverviewProps> = ({
         </div>
       </div>
 
-      {/* Featured Live Modules: Real-Time Simulator & Physical Shipbuilding Lifecycle */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Featured Live Modules: Simulator, Optimizer & Shipbuilding Roadmap */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Real-time Simulator Card */}
         <div
           onClick={() => onNavigate('realtime-sim')}
-          className="p-4 rounded-lg bg-gradient-to-br from-teal-950/40 via-slate-900 to-slate-900 border border-teal-500/30 hover:border-teal-400 cursor-pointer transition-all group"
+          className="p-4 rounded-lg bg-gradient-to-br from-teal-950/40 via-slate-900 to-slate-900 border border-teal-500/30 hover:border-teal-400 cursor-pointer transition-all group flex flex-col justify-between"
         >
-          <div className="flex items-center justify-between pb-2">
-            <div className="flex items-center gap-2">
-              <div className="p-2 rounded bg-teal-500/20 text-teal-400 border border-teal-500/40">
-                <Compass className="w-5 h-5" />
+          <div>
+            <div className="flex items-center justify-between pb-2">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded bg-teal-500/20 text-teal-400 border border-teal-500/40">
+                  <Compass className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="font-mono text-[10px] text-teal-400 font-bold uppercase tracking-wider">Live Simulator</span>
+                  <h4 className="text-sm font-bold text-slate-100 group-hover:text-teal-300 transition-colors">
+                    COLREGs Radar & Waves
+                  </h4>
+                </div>
               </div>
-              <div>
-                <span className="font-mono text-[10px] text-teal-400 font-bold uppercase tracking-wider">Interactive Live Simulator</span>
-                <h4 className="text-sm font-bold text-slate-100 group-hover:text-teal-300 transition-colors">
-                  Real-Time COLREGs Radar & Flotation Wave Tank
-                </h4>
-              </div>
+              <ArrowUpRight className="w-4 h-4 text-teal-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </div>
-            <ArrowUpRight className="w-4 h-4 text-teal-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+              Test autonomous obstacle avoidance (Rules 13, 14, 15) with radar sweeps, CPA/TCPA vectors, and wave flotation.
+            </p>
           </div>
-          <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-            Test autonomous obstacle avoidance (Rules 13, 14, 15) with dynamic radar sweeps, CPA/TCPA vectors, and Archimedes wave tank flotation restoration in real time.
-          </p>
-          <div className="mt-3 flex items-center gap-2 font-mono text-[10px]">
-            <span className="px-2 py-0.5 rounded bg-teal-500/10 text-teal-300 border border-teal-500/30">60 FPS Radar</span>
-            <span className="px-2 py-0.5 rounded bg-sky-500/10 text-sky-300 border border-sky-500/30">COLREGs Kinematics</span>
-            <span className="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">Hydrostatic Physics</span>
+          <div className="mt-3 flex items-center gap-1.5 font-mono text-[9px] flex-wrap">
+            <span className="px-1.5 py-0.5 rounded bg-teal-500/10 text-teal-300 border border-teal-500/30">60 FPS Radar</span>
+            <span className="px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300 border border-sky-500/30">COLREGs</span>
+            <span className="px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">Wave Tank</span>
+          </div>
+        </div>
+
+        {/* Generative AI Optimizer Card */}
+        <div
+          onClick={() => onNavigate('generative-optimizer')}
+          className="p-4 rounded-lg bg-gradient-to-br from-purple-950/40 via-slate-900 to-slate-900 border border-purple-500/30 hover:border-purple-400 cursor-pointer transition-all group flex flex-col justify-between"
+        >
+          <div>
+            <div className="flex items-center justify-between pb-2">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded bg-purple-500/20 text-purple-400 border border-purple-500/40">
+                  <Cpu className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="font-mono text-[10px] text-purple-400 font-bold uppercase tracking-wider">Generative AI</span>
+                  <h4 className="text-sm font-bold text-slate-100 group-hover:text-purple-300 transition-colors">
+                    Trial & Error Optimizer
+                  </h4>
+                </div>
+              </div>
+              <ArrowUpRight className="w-4 h-4 text-purple-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </div>
+            <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+              Autonomous multi-agent trial-and-error evolution, dialectical design debate, learned invariants, and executive defense dossier.
+            </p>
+          </div>
+          <div className="mt-3 flex items-center gap-1.5 font-mono text-[9px] flex-wrap">
+            <span className="px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-300 border border-purple-500/30">Evolutionary</span>
+            <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Pareto Curve</span>
+            <span className="px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-300 border border-rose-500/30">Red Team Q&A</span>
           </div>
         </div>
 
         {/* Physical Shipbuilding Card */}
         <div
           onClick={() => onNavigate('ship-building')}
-          className="p-4 rounded-lg bg-gradient-to-br from-amber-950/30 via-slate-900 to-slate-900 border border-amber-500/30 hover:border-amber-400 cursor-pointer transition-all group"
+          className="p-4 rounded-lg bg-gradient-to-br from-amber-950/30 via-slate-900 to-slate-900 border border-amber-500/30 hover:border-amber-400 cursor-pointer transition-all group flex flex-col justify-between"
         >
-          <div className="flex items-center justify-between pb-2">
-            <div className="flex items-center gap-2">
-              <div className="p-2 rounded bg-amber-500/20 text-amber-400 border border-amber-500/40">
-                <Hammer className="w-5 h-5" />
+          <div>
+            <div className="flex items-center justify-between pb-2">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded bg-amber-500/20 text-amber-400 border border-amber-500/40">
+                  <Hammer className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="font-mono text-[10px] text-amber-400 font-bold uppercase tracking-wider">Manufacturing</span>
+                  <h4 className="text-sm font-bold text-slate-100 group-hover:text-amber-300 transition-colors">
+                    Shipbuilding Lifecycle
+                  </h4>
+                </div>
               </div>
-              <div>
-                <span className="font-mono text-[10px] text-amber-400 font-bold uppercase tracking-wider">Physical Manufacturing</span>
-                <h4 className="text-sm font-bold text-slate-100 group-hover:text-amber-300 transition-colors">
-                  Shipbuilding Lifecycle & Commissioning Roadmap
-                </h4>
-              </div>
+              <ArrowUpRight className="w-4 h-4 text-amber-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </div>
-            <ArrowUpRight className="w-4 h-4 text-amber-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+              Step-by-step 9-phase physical construction tracker from CNC tooling and resin infusion to basin inclining and sea trials.
+            </p>
           </div>
-          <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-            Step-by-step 9-phase physical construction tracker from 5-axis CNC hull tooling, vacuum resin infusion, and electric pod outfitting to basin inclining and open-water sea trials.
-          </p>
-          <div className="mt-3 flex items-center gap-2 font-mono text-[10px]">
-            <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30">9 Build Stages</span>
-            <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">QC Checklists</span>
-            <span className="px-2 py-0.5 rounded bg-purple-500/10 text-purple-300 border border-purple-500/30">Profile Cutaway</span>
+          <div className="mt-3 flex items-center gap-1.5 font-mono text-[9px] flex-wrap">
+            <span className="px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30">9 Build Stages</span>
+            <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">QC Checklists</span>
+            <span className="px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-300 border border-purple-500/30">Profile Cutaway</span>
           </div>
         </div>
       </div>
