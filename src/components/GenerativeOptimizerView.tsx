@@ -34,12 +34,14 @@ import {
 } from '../core/optimizer/GenerativeDesignOptimizer';
 import { downloadCsv } from '../utils/engineeringUtils';
 import { Vessel3DVisualizer } from './Vessel3DVisualizer';
+import { SharedMemory } from '../core/memory/SharedMemory';
 
 interface GenerativeOptimizerViewProps {
   onAskAi?: (prompt: string, record?: any) => void;
+  onNavigateToSimulator?: () => void;
 }
 
-export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = ({ onAskAi }) => {
+export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = ({ onAskAi, onNavigateToSimulator }) => {
   const optimizer = GenerativeDesignOptimizer.getInstance();
 
   const [activeTab, setActiveTab] = useState<'ledger' | 'studio' | 'agents25' | 'seastates' | 'pareto' | 'invariants' | 'redteam'>('ledger');
@@ -59,12 +61,13 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
   const [invariants, setInvariants] = useState<LearnedInvariant[]>(() => optimizer.getLearnedInvariants());
   const [selectedCandidate, setSelectedCandidate] = useState<CandidateDesign | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
+  const [appliedToast, setAppliedToast] = useState<{ id: string; message: string; lwl: number; beam: number; disp: number } | null>(null);
 
   // 25-Agent tab filters
   const [agentDivisionFilter, setAgentDivisionFilter] = useState<string>('ALL');
   const [agentSearch, setAgentSearch] = useState<string>('');
 
-  // Interactive What-If Studio Sliders
+  // Interactive What-If Studio Sliders — Synchronized with Rev 0.4 10.5m Baseline
   const [studioParams, setStudioParams] = useState<{
     hullType: 'CATAMARAN' | 'MONOHULL';
     lwlMeters: number;
@@ -74,13 +77,13 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
     motorKwTotal: number;
     lcgPercent: number;
   }>({
-    hullType: 'CATAMARAN',
-    lwlMeters: 10.8,
-    beamMeters: 2.85,
-    deadriseDeg: 19.5,
-    batteryKwh: 58,
-    motorKwTotal: 75,
-    lcgPercent: 35.0
+    hullType: 'MONOHULL',
+    lwlMeters: 10.5,
+    beamMeters: 2.90,
+    deadriseDeg: 19.0,
+    batteryKwh: 54,
+    motorKwTotal: 90,
+    lcgPercent: 36.0
   });
 
   const [candidateVisualTab, setCandidateVisualTab] = useState<'3D' | '2D'>('3D');
@@ -177,6 +180,34 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  // Apply candidate directly to SharedMemory and Digital Lab Simulator
+  const handleApplyCandidateToLab = (candidate: CandidateDesign) => {
+    const sm = SharedMemory.getInstance();
+    try {
+      sm.updateParameter('USV-NA-001', { value: candidate.lwlMeters, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
+      sm.updateParameter('USV-NA-002', { value: candidate.beamMeters, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
+      sm.updateParameter('USV-NA-003', { value: candidate.draftMeters, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
+      sm.updateParameter('USV-NA-004', { value: candidate.displacementTonnes, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
+      sm.updateParameter('USV-NA-005', { value: candidate.gmtMeters, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
+      sm.updateParameter('USV-NA-006', { value: candidate.kgMeters, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
+      sm.updateParameter('USV-PROP-001', { value: candidate.sprintSpeedKnots, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
+      sm.updateParameter('USV-PROP-002', { value: 14.0, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
+      if (sm.getParameter('USV-ELEC-001')) {
+        sm.updateParameter('USV-ELEC-001', { value: candidate.batteryKwh, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
+      }
+      setAppliedToast({
+        id: candidate.id,
+        message: `Design ${candidate.id} applied to Lab Baseline & Simulator!`,
+        lwl: candidate.lwlMeters,
+        beam: candidate.beamMeters,
+        disp: candidate.displacementTonnes
+      });
+      setTimeout(() => setAppliedToast(null), 8000);
+    } catch (err) {
+      console.error('Failed to update shared memory parameters', err);
+    }
   };
 
   // Draw Dynamic Morphing Hull Canvas
@@ -352,6 +383,32 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
 
   return (
     <div className="space-y-6">
+      {/* CLOSED-LOOP SYNTHESIS TOAST NOTIFICATION */}
+      {appliedToast && (
+        <div className="p-4 rounded-lg bg-emerald-950/40 border border-emerald-500/50 text-emerald-200 flex flex-wrap items-center justify-between gap-3 shadow-lg shadow-emerald-950/30 animate-in fade-in">
+          <div className="flex items-center gap-3 text-xs font-mono">
+            <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+            <div>
+              <div className="text-emerald-300 font-bold text-sm">
+                DESIGN CANDIDATE {appliedToast.id} APPLIED TO LAB & SIMULATOR!
+              </div>
+              <div className="text-slate-300 text-xs mt-0.5">
+                Waterline length: <strong className="text-white">{appliedToast.lwl}m</strong> • Beam: <strong className="text-white">{appliedToast.beam}m</strong> • Displacement: <strong className="text-amber-400">{appliedToast.disp.toFixed(2)}t</strong>. SharedMemory and 3D visual twins are synchronized.
+              </div>
+            </div>
+          </div>
+          {onNavigateToSimulator && (
+            <button
+              onClick={onNavigateToSimulator}
+              className="px-3.5 py-1.5 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-xs font-bold transition flex items-center gap-1.5 shadow"
+            >
+              <span>Open in Real-Time Simulator</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+      )}
+
       {/* HEADER CONTROLS */}
       <div className="bg-slate-900 border border-slate-800 rounded-lg p-5">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
@@ -374,6 +431,17 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
+            {champion && (
+              <button
+                onClick={() => handleApplyCandidateToLab(champion)}
+                className="px-3 py-1.5 rounded text-xs font-mono font-bold bg-emerald-600 hover:bg-emerald-500 text-white flex items-center gap-1.5 shadow-sm shadow-emerald-950/50 transition-colors"
+                title="Apply Champion to Lab Shared Memory Baseline & Real-Time Simulator"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                <span>Apply Champion to Simulator</span>
+              </button>
+            )}
+
             <button
               onClick={() => setIsRunning(!isRunning)}
               className={`px-3 py-1.5 rounded text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-sm ${
@@ -660,8 +728,8 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
               </div>
             </div>
 
-            {/* Verdict Footer */}
-            <div className="mt-2 pt-2 border-t border-slate-800 flex items-center justify-between text-xs">
+            {/* Verdict Footer with Direct Simulator Binding */}
+            <div className="mt-2 pt-2 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
               <div className="flex items-center gap-2">
                 <span className="text-slate-400 text-[11px]">VERDICT:</span>
                 <span className={`font-mono font-bold text-xs ${
@@ -672,11 +740,22 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                     : `✗ REJECTED: ${activeCandidate.rejectionReason}`}
                 </span>
               </div>
-              <div className="flex items-center gap-2 text-[11px] font-mono">
-                <span className="text-slate-400">25-Agent Sign-off:</span>
-                <span className="text-emerald-400 font-bold">{agentVoteSummary.concur} Concur</span>
-                <span className="text-amber-400 font-bold">{agentVoteSummary.reservation} Res</span>
-                <span className="text-rose-400 font-bold">{agentVoteSummary.veto} Veto</span>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5 text-[11px] font-mono">
+                  <span className="text-slate-400">Sign-off:</span>
+                  <span className="text-emerald-400 font-bold">{agentVoteSummary.concur}C</span>
+                  <span className="text-amber-400 font-bold">{agentVoteSummary.reservation}R</span>
+                  <span className="text-rose-400 font-bold">{agentVoteSummary.veto}V</span>
+                </div>
+
+                <button
+                  onClick={() => handleApplyCandidateToLab(activeCandidate)}
+                  className="px-2.5 py-1 rounded text-xs font-mono font-bold bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-300 border border-cyan-500/40 flex items-center gap-1.5 transition-colors"
+                  title="Apply this exact design geometry and physics to the Real-Time Simulator & SharedMemory"
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Apply to Simulator</span>
+                </button>
               </div>
             </div>
           </div>
@@ -1134,13 +1213,22 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                 </div>
               </div>
 
-              <div className="p-3 bg-slate-950 rounded border border-slate-800 text-xs font-mono">
-                <span className="text-slate-400 block text-[10px] uppercase font-bold">Agents Critical Reaction:</span>
-                <p className="mt-1 text-slate-300 leading-snug">
-                  {studioCandidate.status === 'SURVIVED'
-                    ? `✓ Balanced solution! GMt=${studioCandidate.gmtMeters}m offers safe restoring arm; ${studioCandidate.batteryKwh}kWh battery safely supports ${studioCandidate.enduranceHours}h patrol without overload.`
-                    : `✗ ${studioCandidate.rejectionReason}`}
-                </p>
+              <div className="p-3 bg-slate-950 rounded border border-slate-800 text-xs font-mono space-y-2">
+                <div>
+                  <span className="text-slate-400 block text-[10px] uppercase font-bold">Agents Critical Reaction:</span>
+                  <p className="mt-1 text-slate-300 leading-snug">
+                    {studioCandidate.status === 'SURVIVED'
+                      ? `✓ Balanced solution! GMt=${studioCandidate.gmtMeters}m offers safe restoring arm; ${studioCandidate.batteryKwh}kWh battery safely supports ${studioCandidate.enduranceHours}h patrol without overload.`
+                      : `✗ ${studioCandidate.rejectionReason}`}
+                  </p>
+                </div>
+                <button
+                  onClick={() => handleApplyCandidateToLab(studioCandidate)}
+                  className="w-full mt-1 px-3 py-1.5 rounded font-mono text-xs font-bold bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-300 border border-cyan-500/40 flex items-center justify-center gap-1.5 transition-colors"
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Apply Hypothesis to Lab Simulator</span>
+                </button>
               </div>
             </div>
           </div>
@@ -1333,17 +1421,28 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
-              <div className="p-3 bg-slate-950 rounded border border-slate-800">
-                <span className="text-slate-400 block text-[11px]">GLOBAL CHAMPION</span>
-                <span className="text-lg font-bold text-emerald-400 mt-1 block">
-                  {champion?.id || 'Running...'}
-                </span>
-                <div className="mt-2 text-slate-300 space-y-1 text-[11px]">
-                  <div>LWL: {champion?.lwlMeters}m • Beam: {champion?.beamMeters}m</div>
-                  <div>Speed: {champion?.sprintSpeedKnots} kts • Range: {champion?.rangeNm} nm</div>
-                  <div>Endurance: {champion?.enduranceHours} hrs @ 14kt</div>
-                  <div className="text-teal-400 font-bold">GMt: {champion?.gmtMeters}m (IMO Compliant)</div>
+              <div className="p-3 bg-slate-950 rounded border border-slate-800 flex flex-col justify-between">
+                <div>
+                  <span className="text-slate-400 block text-[11px]">GLOBAL CHAMPION</span>
+                  <span className="text-lg font-bold text-emerald-400 mt-1 block">
+                    {champion?.id || 'Running...'}
+                  </span>
+                  <div className="mt-2 text-slate-300 space-y-1 text-[11px]">
+                    <div>LWL: {champion?.lwlMeters}m • Beam: {champion?.beamMeters}m</div>
+                    <div>Speed: {champion?.sprintSpeedKnots} kts • Range: {champion?.rangeNm} nm</div>
+                    <div>Endurance: {champion?.enduranceHours} hrs @ 14kt</div>
+                    <div className="text-teal-400 font-bold">GMt: {champion?.gmtMeters}m (IMO Compliant)</div>
+                  </div>
                 </div>
+                {champion && (
+                  <button
+                    onClick={() => handleApplyCandidateToLab(champion)}
+                    className="mt-3 w-full px-2.5 py-1.5 rounded font-mono text-xs font-bold bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/40 flex items-center justify-center gap-1.5 transition-colors"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Apply Champion to Simulator</span>
+                  </button>
+                )}
               </div>
 
               <div className="p-3 bg-slate-950 rounded border border-slate-800">

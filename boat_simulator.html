@@ -36,7 +36,7 @@
     <!-- VIEW 1: INTERACTIVE 3D BOAT DESIGN & CAD HULL FORM -->
     <div id="panel-3d" class="space-y-2.5">
       <div class="flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1.5 flex-wrap">
           <button id="btnAutoRotate" onclick="toggleAutoRotate()" class="px-2.5 py-1 rounded bg-[var(--card)] border border-[var(--card-border)] hover:bg-cyan-500/10 text-cyan-400 font-bold">
             AUTO-ROTATE: ON
           </button>
@@ -44,6 +44,11 @@
           <button onclick="setRenderMode('REALISTIC')" id="modeBtn-real" class="px-2 py-1 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">Realistic</button>
           <button onclick="setRenderMode('CFD')" id="modeBtn-cfd" class="px-2 py-1 rounded bg-[var(--card)] text-[var(--muted-foreground)] border border-[var(--card-border)]">CFD Pressure</button>
           <button onclick="setRenderMode('WIREFRAME')" id="modeBtn-wire" class="px-2 py-1 rounded bg-[var(--card)] text-[var(--muted-foreground)] border border-[var(--card-border)]">Wireframe</button>
+          <span class="text-[var(--muted-foreground)] ml-2">Validated Design:</span>
+          <button onclick="loadDesignPreset('rev04')" id="presetBtn-rev04" class="px-2 py-1 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold">Rev 0.4 (10.5m)</button>
+          <button onclick="loadDesignPreset('champion')" id="presetBtn-champion" class="px-2 py-1 rounded bg-[var(--card)] text-[var(--muted-foreground)] border border-[var(--card-border)] font-bold">Champion (10.8m)</button>
+          <button onclick="loadDesignPreset('sprint')" id="presetBtn-sprint" class="px-2 py-1 rounded bg-[var(--card)] text-[var(--muted-foreground)] border border-[var(--card-border)] font-bold">Sprint (9.8m)</button>
+          <button onclick="loadDesignPreset('guardian')" id="presetBtn-guardian" class="px-2 py-1 rounded bg-[var(--card)] text-[var(--muted-foreground)] border border-[var(--card-border)] font-bold">Guardian (11.4m)</button>
         </div>
         <div class="text-[11px] text-[var(--muted-foreground)]">
           Drag mouse to orbit 3D model • Scroll wheel to zoom
@@ -58,19 +63,19 @@
       <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs font-mono">
         <div class="p-2 rounded-lg bg-[var(--card)] border border-[var(--card-border)]">
           <div class="text-[10px] text-[var(--muted-foreground)]">DIMENSIONS (L × B × T)</div>
-          <div class="font-bold text-slate-200">10.5m × 2.9m × 0.65m</div>
+          <div id="telemetryDim" class="font-bold text-slate-200">10.5m × 2.9m × 0.65m</div>
         </div>
         <div class="p-2 rounded-lg bg-[var(--card)] border border-[var(--card-border)]">
-          <div class="text-[10px] text-[var(--muted-foreground)]">HULL GEOMETRY</div>
-          <div class="font-bold text-cyan-400">Planing Monohull (19° V)</div>
+          <div class="text-[10px] text-[var(--muted-foreground)]">DESIGN VARIANT</div>
+          <div id="telemetryVariant" class="font-bold text-cyan-400">Planing Monohull (19° V)</div>
         </div>
         <div class="p-2 rounded-lg bg-[var(--card)] border border-[var(--card-border)]">
           <div class="text-[10px] text-[var(--muted-foreground)]">DISPLACEMENT & MASS</div>
-          <div class="font-bold text-amber-400">6.20 tonnes (Design)</div>
+          <div id="telemetryDisp" class="font-bold text-amber-400">6.20 tonnes (Design)</div>
         </div>
         <div class="p-2 rounded-lg bg-[var(--card)] border border-[var(--card-border)]">
-          <div class="text-[10px] text-[var(--muted-foreground)]">PROPULSION & POWER</div>
-          <div class="font-bold text-emerald-400">Twin Azimuth Pods (182 kW)</div>
+          <div class="text-[10px] text-[var(--muted-foreground)]">METACENTRIC STABILITY</div>
+          <div id="telemetryGmt" class="font-bold text-emerald-400">GMt = 1.32 m</div>
         </div>
       </div>
     </div>
@@ -230,11 +235,53 @@
       zoom3d = Math.max(0.6, Math.min(2.4, zoom3d - e.deltaY * 0.0015));
     });
 
-    // 3D Geometry: 10.5m Monohull Model
+    // Dynamic Naval Architecture Parameters & Validated Presets
+    let vesselL = 10.5;
+    let vesselB = 2.9;
+    let vesselT = 0.65;
+    let vesselDisp = 6.20;
+    let vesselKg = 0.66;
+    let vesselGmt = 1.32;
+    let vesselDeadrise = 19.0;
+    let currentPreset = 'rev04';
+
+    function loadDesignPreset(preset) {
+      currentPreset = preset;
+      if (preset === 'rev04') {
+        vesselL = 10.5; vesselB = 2.9; vesselT = 0.65; vesselDisp = 6.20; vesselKg = 0.66; vesselGmt = 1.32; vesselDeadrise = 19.0;
+        document.getElementById('telemetryVariant').innerText = 'Rev 0.4 Baseline (19° V)';
+      } else if (preset === 'champion') {
+        vesselL = 10.8; vesselB = 2.85; vesselT = 0.63; vesselDisp = 6.10; vesselKg = 0.64; vesselGmt = 1.38; vesselDeadrise = 19.5;
+        document.getElementById('telemetryVariant').innerText = 'Optimizer Champion (23.8kt)';
+      } else if (preset === 'sprint') {
+        vesselL = 9.8; vesselB = 2.45; vesselT = 0.58; vesselDisp = 5.20; vesselKg = 0.62; vesselGmt = 1.18; vesselDeadrise = 22.0;
+        document.getElementById('telemetryVariant').innerText = 'Alpha Sprint (26.4kt)';
+      } else if (preset === 'guardian') {
+        vesselL = 11.4; vesselB = 3.15; vesselT = 0.72; vesselDisp = 7.40; vesselKg = 0.68; vesselGmt = 1.52; vesselDeadrise = 21.0;
+        document.getElementById('telemetryVariant').innerText = 'Charlie Guardian (SS5 Tested)';
+      }
+
+      ['rev04', 'champion', 'sprint', 'guardian'].forEach(p => {
+        const btn = document.getElementById('presetBtn-' + p);
+        if (btn) {
+          if (p === preset) {
+            btn.className = 'px-2 py-1 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold';
+          } else {
+            btn.className = 'px-2 py-1 rounded bg-[var(--card)] text-[var(--muted-foreground)] border border-[var(--card-border)] font-bold';
+          }
+        }
+      });
+
+      document.getElementById('telemetryDim').innerText = `${vesselL.toFixed(1)}m × ${vesselB.toFixed(2)}m × ${vesselT.toFixed(2)}m`;
+      document.getElementById('telemetryDisp').innerText = `${vesselDisp.toFixed(2)} tonnes (Design)`;
+      document.getElementById('telemetryGmt').innerText = `GMt = ${vesselGmt.toFixed(2)} m`;
+    }
+
+    // 3D Geometry: Dynamically Morphing Monohull Model
     function build3dGeometry() {
-      const L = 10.5;
-      const B = 2.9;
-      const T = 0.65;
+      const L = vesselL;
+      const B = vesselB;
+      const T = vesselT;
       const fb = 0.95;
       const keelZ = -T;
       const deckZ = fb;
@@ -508,11 +555,11 @@
 
       ctx.fillStyle = '#06b6d4';
       ctx.font = '10px monospace';
-      ctx.fillText('USV-01 MONOHULL CAD TWIN (REV 0.4)', 16, 26);
+      ctx.fillText(`USV-01 CAD TWIN [${currentPreset.toUpperCase()}]`, 16, 26);
       ctx.fillStyle = '#10b981';
-      ctx.fillText(`LWL: 10.5m | BEAM: 2.9m | DRAFT: 0.65m`, 16, 40);
+      ctx.fillText(`LWL: ${vesselL.toFixed(1)}m | BEAM: ${vesselB.toFixed(2)}m | DRAFT: ${vesselT.toFixed(2)}m`, 16, 40);
       ctx.fillStyle = '#f59e0b';
-      ctx.fillText(`DISPLACEMENT: 6.20t | DEEP-V 19° DEADRISE`, 16, 54);
+      ctx.fillText(`DISP: ${vesselDisp.toFixed(2)}t | GMt: ${vesselGmt.toFixed(2)}m`, 16, 54);
       ctx.fillStyle = '#a855f7';
       ctx.fillText(`MAST: SIMRAD HALO24 + OUSTER LIDAR`, 16, 68);
       ctx.fillText(`THRUST: TWIN STEERABLE AZIMUTH PODS`, 16, 82);
@@ -584,9 +631,9 @@
       ctx.translate(cx, cy + heave);
       ctx.rotate(rollRad);
 
-      const halfBeam = 110;
-      const depth = 98;
-      const draft = 46;
+      const halfBeam = (vesselB / 2.9) * 110;
+      const depth = (vesselT / 0.65) * 98;
+      const draft = (vesselT / 0.65) * 46;
       const keelY = depth - draft;
 
       ctx.beginPath();

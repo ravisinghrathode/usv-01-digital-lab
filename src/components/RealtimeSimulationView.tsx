@@ -42,9 +42,10 @@ interface ObstacleVessel {
 
 interface RealtimeSimulationViewProps {
   onAskAi?: (prompt: string, record?: any) => void;
+  onNavigateToOptimizer?: () => void;
 }
 
-export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ onAskAi }) => {
+export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ onAskAi, onNavigateToOptimizer }) => {
   const [activeTab, setActiveTab] = useState<'design3d' | 'hydrostatics' | 'radar'>('design3d');
 
   // Simulation running state
@@ -55,7 +56,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
   // USV State
   const [usvPos, setUsvPos] = useState({ x: 0, y: -350 });
   const [usvHeading, setUsvHeading] = useState<number>(0); // 0 = North
-  const [usvSpeed, setUsvSpeed] = useState<number>(18.0); // knots
+  const [usvSpeed, setUsvSpeed] = useState<number>(14.0); // knots
   const [rudderAngle, setRudderAngle] = useState<number>(0); // degrees (-30 to +30)
   const [colregsState, setColregsState] = useState<'NORMAL_TRANSIT' | 'ASSESSING_RISK' | 'GIVE_WAY_ALTER_STARBOARD' | 'CLEARING_PASS_ASTERN' | 'STAND_ON' | 'RETURNING_TO_COURSE'>('NORMAL_TRANSIT');
   const [activeRule, setActiveRule] = useState<string>('Rule 10 (Traffic Lane)');
@@ -93,24 +94,49 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
     activeRule: 'Rule 10 (Traffic Lane)' as string
   });
 
-  // Hydrostatics & Flotation Tank State — Synchronized with Rev 0.4 Approved Baseline
+  // Hydrostatics & Closed-Loop Simulation State — Synchronized with SharedMemory & Generative Optimizer
   const sharedMemory = SharedMemory.getInstance();
+  const lwlParam = sharedMemory.getParameter('USV-NA-001');
+  const beamParam = sharedMemory.getParameter('USV-NA-002');
+  const draftParam = sharedMemory.getParameter('USV-NA-003');
   const displParam = sharedMemory.getParameter('USV-NA-004');
-  const initialMass = typeof displParam?.value === 'number' && displParam.value > 0 ? Number(displParam.value) : 6.2;
-  const initialKg = 0.66; // SWBS composite KG from Stage 1 mass balance
-  const [hydroMass, setHydroMass] = useState<number>(initialMass); // 6.2 tonnes
-  const [hydroKg, setHydroKg] = useState<number>(initialKg); // 0.66 meters VCG
+  const gmtParam = sharedMemory.getParameter('USV-NA-005');
+  const kgParam = sharedMemory.getParameter('USV-NA-006');
+  const sprintParam = sharedMemory.getParameter('USV-PROP-001');
+
+  const [vesselLwl, setVesselLwl] = useState<number>(typeof lwlParam?.value === 'number' && lwlParam.value > 0 ? Number(lwlParam.value) : 10.5);
+  const [vesselBeam, setVesselBeam] = useState<number>(typeof beamParam?.value === 'number' && beamParam.value > 0 ? Number(beamParam.value) : 2.9);
+  const [vesselDraft, setVesselDraft] = useState<number>(typeof draftParam?.value === 'number' && draftParam.value > 0 ? Number(draftParam.value) : 0.65);
+  const [hydroMass, setHydroMass] = useState<number>(typeof displParam?.value === 'number' && displParam.value > 0 ? Number(displParam.value) : 6.2);
+  const [vesselGmt, setVesselGmt] = useState<number>(typeof gmtParam?.value === 'number' && gmtParam.value > 0 ? Number(gmtParam.value) : 1.32);
+  const [hydroKg, setHydroKg] = useState<number>(typeof kgParam?.value === 'number' && kgParam.value > 0 ? Number(kgParam.value) : 0.66);
+  const [vesselSprint, setVesselSprint] = useState<number>(typeof sprintParam?.value === 'number' && sprintParam.value > 0 ? Number(sprintParam.value) : 22.0);
+  const [activeDesignLabel, setActiveDesignLabel] = useState<string>('REV 0.4 BASELINE');
+
   const [waveAmp, setWaveAmp] = useState<number>(0.4); // meters
   const [waveFreq, setWaveFreq] = useState<number>(1.2); // rad/s
   const [heelAngle, setHeelAngle] = useState<number>(0); // dynamic heel deg
 
-  // Reactive subscription: auto-update simulation whenever any agent writes to SharedMemory
+  // Reactive subscription: auto-update simulation whenever any agent or optimizer writes to SharedMemory
   useEffect(() => {
     const unsubscribe = sharedMemory.subscribe((param) => {
-      if (param.id === 'USV-NA-004' && typeof param.value === 'number') {
+      if (param.id === 'USV-NA-001' && typeof param.value === 'number') {
+        setVesselLwl(param.value);
+        if (param.assumptions?.[0]?.includes('Applied from Optimizer')) {
+          setActiveDesignLabel(param.assumptions[0].replace('Applied from Optimizer candidate ', ''));
+        }
+      } else if (param.id === 'USV-NA-002' && typeof param.value === 'number') {
+        setVesselBeam(param.value);
+      } else if (param.id === 'USV-NA-003' && typeof param.value === 'number') {
+        setVesselDraft(param.value);
+      } else if (param.id === 'USV-NA-004' && typeof param.value === 'number') {
         setHydroMass(param.value);
+      } else if (param.id === 'USV-NA-005' && typeof param.value === 'number') {
+        setVesselGmt(param.value);
       } else if (param.id === 'USV-NA-006' && typeof param.value === 'number') {
         setHydroKg(param.value);
+      } else if (param.id === 'USV-PROP-001' && typeof param.value === 'number') {
+        setVesselSprint(param.value);
       } else if (param.id === 'USV-PROP-002' && typeof param.value === 'number') {
         setUsvSpeed(param.value);
         stateRef.current.usv.speed = param.value;
@@ -118,6 +144,75 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
     });
     return unsubscribe;
   }, [sharedMemory]);
+
+  // Design Presets Switcher
+  const handleApplyDesignPreset = (preset: 'REV04' | 'CHAMPION' | 'SPRINT' | 'GUARDIAN') => {
+    if (preset === 'REV04') {
+      setVesselLwl(10.5);
+      setVesselBeam(2.9);
+      setVesselDraft(0.65);
+      setHydroMass(6.2);
+      setVesselGmt(1.32);
+      setHydroKg(0.66);
+      setVesselSprint(22.0);
+      setActiveDesignLabel('REV 0.4 BASELINE');
+      sharedMemory.updateParameter('USV-NA-001', { value: 10.5, assumptions: ['Rev 0.4 Planing Monohull'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-NA-002', { value: 2.9, assumptions: ['Molded beam 2.9m'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-NA-003', { value: 0.65, assumptions: ['Design draft 0.65m'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-NA-004', { value: 6.2, assumptions: ['6.20 t displacement'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-NA-005', { value: 1.32, assumptions: ['GMt 1.32m'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-NA-006', { value: 0.66, assumptions: ['KG 0.66m'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-PROP-001', { value: 22.0, assumptions: ['22.0 kt sprint'] }, 'SIM-PRESET');
+    } else if (preset === 'CHAMPION') {
+      setVesselLwl(10.8);
+      setVesselBeam(2.85);
+      setVesselDraft(0.63);
+      setHydroMass(6.1);
+      setVesselGmt(1.38);
+      setHydroKg(0.64);
+      setVesselSprint(23.8);
+      setActiveDesignLabel('OPTIMIZER CHAMPION');
+      sharedMemory.updateParameter('USV-NA-001', { value: 10.8, assumptions: ['Applied from Optimizer champion'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-NA-002', { value: 2.85, assumptions: ['Applied from Optimizer champion'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-NA-003', { value: 0.63, assumptions: ['Applied from Optimizer champion'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-NA-004', { value: 6.1, assumptions: ['Applied from Optimizer champion'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-NA-005', { value: 1.38, assumptions: ['Applied from Optimizer champion'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-NA-006', { value: 0.64, assumptions: ['Applied from Optimizer champion'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-PROP-001', { value: 23.8, assumptions: ['Applied from Optimizer champion'] }, 'SIM-PRESET');
+    } else if (preset === 'SPRINT') {
+      setVesselLwl(9.8);
+      setVesselBeam(2.45);
+      setVesselDraft(0.58);
+      setHydroMass(5.2);
+      setVesselGmt(1.18);
+      setHydroKg(0.62);
+      setVesselSprint(26.4);
+      setActiveDesignLabel('ALPHA SPRINT (26.4kt)');
+      sharedMemory.updateParameter('USV-NA-001', { value: 9.8, assumptions: ['Alpha Sprint variant'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-NA-002', { value: 2.45, assumptions: ['Narrow beam for sprint'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-NA-003', { value: 0.58, assumptions: ['Shallow draft'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-NA-004', { value: 5.2, assumptions: ['Lightweight 5.2t'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-NA-005', { value: 1.18, assumptions: ['GMt 1.18m'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-NA-006', { value: 0.62, assumptions: ['KG 0.62m'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-PROP-001', { value: 26.4, assumptions: ['26.4 kt sprint'] }, 'SIM-PRESET');
+    } else if (preset === 'GUARDIAN') {
+      setVesselLwl(11.4);
+      setVesselBeam(3.15);
+      setVesselDraft(0.72);
+      setHydroMass(7.4);
+      setVesselGmt(1.52);
+      setHydroKg(0.68);
+      setVesselSprint(20.5);
+      setActiveDesignLabel('CHARLIE GUARDIAN (SS5)');
+      sharedMemory.updateParameter('USV-NA-001', { value: 11.4, assumptions: ['Charlie Guardian SS5'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-NA-002', { value: 3.15, assumptions: ['Wide beam for high sea state'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-NA-003', { value: 0.72, assumptions: ['Deep draft 0.72m'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-NA-004', { value: 7.4, assumptions: ['Heavy displacement 7.4t'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-NA-005', { value: 1.52, assumptions: ['High GMt 1.52m'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-NA-006', { value: 0.68, assumptions: ['KG 0.68m'] }, 'SIM-PRESET');
+      sharedMemory.updateParameter('USV-PROP-001', { value: 20.5, assumptions: ['20.5 kt sprint'] }, 'SIM-PRESET');
+    }
+  };
 
   // Pre-configured Scenarios
   const loadScenario = (scenarioKey: string) => {
@@ -775,15 +870,15 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, w, h);
 
-      // Hydrostatic physics calculation — Synchronized with TOOL-HYDROSTATICS-01
+      // Hydrostatic physics calculation — Synchronized with TOOL-HYDROSTATICS-01 & Optimizer
       const rho = 1.025; // t/m^3
       const volume = hydroMass / rho; // m^3
-      const lwl = 10.5;
-      const beam = 2.9;
+      const lwl = vesselLwl;
+      const beam = vesselBeam;
       const cb = 0.42;
       const cwp = 0.64;
       // Draft T = V / (L * B * Cb)
-      const draft = volume > 0 ? volume / (lwl * beam * cb) : 0.65;
+      const draft = volume > 0 ? volume / (lwl * beam * cb) : vesselDraft;
       const kb = draft * (5 / 6 - cb / (3 * cwp)); // Center of Buoyancy above keel (Normand formula)
       const It = (1 / 12) * cwp * lwl * Math.pow(beam, 3);
       const bmt = volume > 0 ? It / volume : 1.64; // Transverse metacentric radius
@@ -1006,27 +1101,81 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
       {activeTab === 'design3d' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-lg p-4 space-y-3">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800 flex-wrap gap-2 text-xs">
-              <div className="flex items-center gap-2">
+            {/* Header and Preset Switcher */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-3 border-b border-slate-800 gap-2 text-xs">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="font-mono text-cyan-400 font-bold flex items-center gap-1.5">
                   <Rotate3d className="w-4 h-4" /> 3D Vessel Design & Perception Mast
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-300">
-                  REV 0.4 BASELINE
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 font-bold">
+                  {activeDesignLabel}
                 </span>
               </div>
-              <span className="text-xs text-slate-400 font-mono">
-                Click & drag to orbit • Scroll to zoom
-              </span>
+
+              {/* Quick Design Switcher */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-[10px] text-slate-400 font-mono">LOAD DESIGN:</span>
+                <button
+                  onClick={() => handleApplyDesignPreset('REV04')}
+                  className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold transition ${
+                    activeDesignLabel.includes('REV 0.4')
+                      ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
+                      : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  Rev 0.4 (10.5m)
+                </button>
+                <button
+                  onClick={() => handleApplyDesignPreset('CHAMPION')}
+                  className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold transition ${
+                    activeDesignLabel.includes('CHAMPION')
+                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                      : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  Optimizer Champion
+                </button>
+                <button
+                  onClick={() => handleApplyDesignPreset('SPRINT')}
+                  className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold transition ${
+                    activeDesignLabel.includes('SPRINT')
+                      ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40'
+                      : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  Sprint (9.8m)
+                </button>
+                <button
+                  onClick={() => handleApplyDesignPreset('GUARDIAN')}
+                  className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold transition ${
+                    activeDesignLabel.includes('GUARDIAN')
+                      ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                      : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  Guardian (11.4m)
+                </button>
+                {onNavigateToOptimizer && (
+                  <button
+                    onClick={onNavigateToOptimizer}
+                    className="ml-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-600/20 hover:bg-purple-600/40 text-purple-300 border border-purple-500/40 flex items-center gap-1 transition"
+                  >
+                    <Sparkles className="w-3 h-3 text-purple-400" />
+                    <span>AI Optimizer ➔</span>
+                  </button>
+                )}
+              </div>
             </div>
 
             <div className="rounded-lg overflow-hidden border border-slate-800 bg-slate-950">
               <Vessel3DVisualizer
                 initialHullType="MONOHULL"
-                lwlMeters={10.5}
-                beamMeters={2.9}
-                draftMeters={0.65}
+                lwlMeters={vesselLwl}
+                beamMeters={vesselBeam}
+                draftMeters={vesselDraft}
                 displacementTonnes={hydroMass}
+                status="VALIDATED"
+                candidateId={activeDesignLabel}
                 className="w-full h-[480px]"
               />
             </div>
@@ -1034,14 +1183,21 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
 
           <div className="lg:col-span-4 space-y-4 font-mono text-xs">
             <div className="bg-slate-900 border border-slate-800 rounded-lg p-4 space-y-3">
-              <div className="border-b border-slate-800 pb-2">
-                <span className="text-[10px] uppercase tracking-wider text-slate-500 block">DESIGN SPECIFICATIONS</span>
-                <span className="text-cyan-400 font-bold text-sm">USV-01 PLANING MONOHULL</span>
+              <div className="border-b border-slate-800 pb-2 flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] uppercase tracking-wider text-slate-500 block">DESIGN SPECIFICATIONS</span>
+                  <span className="text-cyan-400 font-bold text-sm">USV-01 PLANING MONOHULL</span>
+                </div>
+                <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
+                  CLOSED-LOOP SYNC
+                </span>
               </div>
               <div className="space-y-2 text-slate-300">
-                <div className="flex justify-between"><span>Length Waterline (LWL):</span> <strong className="text-white">10.5 m</strong></div>
-                <div className="flex justify-between"><span>Beam Overall (B):</span> <strong className="text-white">2.90 m</strong></div>
-                <div className="flex justify-between"><span>Draft Molded (T):</span> <strong className="text-white">0.65 m</strong></div>
+                <div className="flex justify-between"><span>Length Waterline (LWL):</span> <strong className="text-white">{vesselLwl.toFixed(2)} m</strong></div>
+                <div className="flex justify-between"><span>Beam Overall (B):</span> <strong className="text-white">{vesselBeam.toFixed(2)} m</strong></div>
+                <div className="flex justify-between"><span>Draft Molded (T):</span> <strong className="text-white">{vesselDraft.toFixed(2)} m</strong></div>
+                <div className="flex justify-between"><span>Metacentric Height (GMt):</span> <strong className="text-teal-400">{vesselGmt.toFixed(2)} m</strong></div>
+                <div className="flex justify-between"><span>Max Sprint Speed:</span> <strong className="text-cyan-400">{vesselSprint.toFixed(1)} knots</strong></div>
                 <div className="flex justify-between"><span>Freeboard (fb):</span> <strong className="text-white">0.80 m</strong></div>
                 <div className="flex justify-between"><span>Deadrise Angle:</span> <strong className="text-white">19° Deep-V</strong></div>
                 <div className="flex justify-between"><span>Displacement (Δ):</span> <strong className="text-amber-400">{hydroMass.toFixed(2)} t</strong></div>
@@ -1064,7 +1220,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
 
             <div className="p-3 rounded-lg bg-teal-950/40 border border-teal-500/30 text-[11px] text-teal-300">
               <CheckCircle2 className="w-3.5 h-3.5 inline mr-1 text-teal-400" />
-              Direct closed-loop rendering: CAD geometry, waterplane clearance, and mast hardware are bound to Rev 0.4 parameters.
+              Direct closed-loop rendering: 3D CAD mesh, wave tank physics, and SharedMemory update in real time when agents or the optimizer find new validated parameters.
             </div>
           </div>
         </div>
@@ -1364,17 +1520,51 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
                 <span>Parametric Naval Architecture Sliders</span>
               </h3>
 
+              {/* Length LWL */}
+              <div className="space-y-1 text-xs font-mono">
+                <div className="flex justify-between text-slate-400">
+                  <span>Waterline Length (LWL)</span>
+                  <span className="text-cyan-300 font-bold">{vesselLwl.toFixed(2)} m</span>
+                </div>
+                <input
+                  type="range"
+                  min="8.0"
+                  max="14.0"
+                  step="0.1"
+                  value={vesselLwl}
+                  onChange={(e) => setVesselLwl(Number(e.target.value))}
+                  className="w-full accent-cyan-400 h-1 bg-slate-950 rounded cursor-pointer"
+                />
+              </div>
+
+              {/* Beam */}
+              <div className="space-y-1 text-xs font-mono">
+                <div className="flex justify-between text-slate-400">
+                  <span>Waterline Beam (B)</span>
+                  <span className="text-cyan-300 font-bold">{vesselBeam.toFixed(2)} m</span>
+                </div>
+                <input
+                  type="range"
+                  min="2.0"
+                  max="4.0"
+                  step="0.05"
+                  value={vesselBeam}
+                  onChange={(e) => setVesselBeam(Number(e.target.value))}
+                  className="w-full accent-cyan-400 h-1 bg-slate-950 rounded cursor-pointer"
+                />
+              </div>
+
               {/* Mass */}
               <div className="space-y-1 text-xs font-mono">
                 <div className="flex justify-between text-slate-400">
                   <span>Full Load Displacement (Δ)</span>
-                  <span className="text-teal-300 font-bold">{hydroMass.toFixed(1)} tonnes</span>
+                  <span className="text-teal-300 font-bold">{hydroMass.toFixed(2)} tonnes</span>
                 </div>
                 <input
                   type="range"
-                  min="0.0"
+                  min="3.0"
                   max="14.0"
-                  step="0.2"
+                  step="0.1"
                   value={hydroMass}
                   onChange={(e) => setHydroMass(Number(e.target.value))}
                   className="w-full accent-teal-400 h-1 bg-slate-950 rounded cursor-pointer"
@@ -1390,7 +1580,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
                 </div>
                 <input
                   type="range"
-                  min="0.0"
+                  min="0.4"
                   max="1.5"
                   step="0.02"
                   value={hydroKg}
@@ -1434,33 +1624,23 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
                 />
               </div>
 
-              {/* Reset to Zero */}
+              {/* Reset to Rev 0.4 Baseline */}
               <button
-                onClick={() => {
-                  setHydroMass(0.0);
-                  setHydroKg(0.0);
-                  setWaveAmp(0.0);
-                  setWaveFreq(1.0);
-                }}
-                className="w-full py-1.5 rounded bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/30 text-rose-300 text-xs font-mono flex items-center justify-center gap-1.5 transition-colors"
-                title="Reset all simulation parameters to zero"
+                onClick={() => handleApplyDesignPreset('REV04')}
+                className="w-full py-1.5 rounded bg-cyan-600/20 hover:bg-cyan-600/30 border border-cyan-500/40 text-cyan-300 text-xs font-mono font-bold flex items-center justify-center gap-1.5 transition-colors"
+                title="Reset to Rev 0.4 Approved Baseline"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span>Reset Parameters to Zero</span>
+                <span>Reset to Rev 0.4 Baseline (10.5m)</span>
               </button>
 
-              {/* Reset to Baseline */}
+              {/* Sync with Optimizer Champion */}
               <button
-                onClick={() => {
-                  setHydroMass(7.8);
-                  setHydroKg(0.85);
-                  setWaveAmp(0.4);
-                  setWaveFreq(1.2);
-                }}
-                className="w-full py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono flex items-center justify-center gap-1.5 transition-colors"
+                onClick={() => handleApplyDesignPreset('CHAMPION')}
+                className="w-full py-1.5 rounded bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 text-xs font-mono font-bold flex items-center justify-center gap-1.5 transition-colors"
               >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>Reset to Study Baseline</span>
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Sync with Optimizer Champion</span>
               </button>
             </div>
           </div>

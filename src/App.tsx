@@ -819,7 +819,10 @@ export default function App() {
           )}
 
           {currentModule === 'realtime-sim' && (
-            <RealtimeSimulationView onAskAi={triggerAiQuery} />
+            <RealtimeSimulationView
+              onAskAi={triggerAiQuery}
+              onNavigateToOptimizer={() => setCurrentModule('generative-optimizer')}
+            />
           )}
 
           {currentModule === 'ship-building' && (
@@ -827,7 +830,10 @@ export default function App() {
           )}
 
           {currentModule === 'generative-optimizer' && (
-            <GenerativeOptimizerView onAskAi={triggerAiQuery} />
+            <GenerativeOptimizerView
+              onAskAi={triggerAiQuery}
+              onNavigateToSimulator={() => setCurrentModule('realtime-sim')}
+            />
           )}
 
           {currentModule === 'global-usv-fleet' && (
