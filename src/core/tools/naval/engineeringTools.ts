@@ -13,9 +13,10 @@ export const HydrostaticsTool: EngineeringTool = {
     lwlMeters: z.number().positive(),
     beamMeters: z.number().positive(),
     draftMeters: z.number().positive(),
-    blockCoefficientCb: z.number().min(0.35).max(0.9),
-    waterplaneCoefficientCwp: z.number().min(0.5).max(0.95).optional(),
-    kgMeters: z.number().positive(),
+    blockCoefficientCb: z.number().min(0.30).max(0.95).optional().default(0.44),
+    waterplaneCoefficientCwp: z.number().min(0.4).max(0.95).optional(),
+    kgMeters: z.number().positive().optional(),
+    displacementTonnes: z.number().positive().optional(),
     seawaterDensityKgM3: z.number().default(1025)
   }),
   outputSchema: z.object({
@@ -32,8 +33,13 @@ export const HydrostaticsTool: EngineeringTool = {
     })
   }),
   execute: (input: any) => {
-    const { lwlMeters, beamMeters, draftMeters, blockCoefficientCb, kgMeters, seawaterDensityKgM3 = 1025 } = input;
-    const cwp = input.waterplaneCoefficientCwp || (blockCoefficientCb + 0.15);
+    const { lwlMeters, beamMeters, draftMeters, seawaterDensityKgM3 = 1025 } = input;
+    let blockCoefficientCb = input.blockCoefficientCb ?? 0.44;
+    if (input.displacementTonnes && !input.blockCoefficientCb) {
+      const vol = (input.displacementTonnes * 1000) / seawaterDensityKgM3;
+      blockCoefficientCb = Math.min(0.85, Math.max(0.35, vol / (lwlMeters * beamMeters * draftMeters)));
+    }
+    const cwp = input.waterplaneCoefficientCwp || Number((blockCoefficientCb + 0.18).toFixed(3));
 
     // Underwater volume (m^3)
     const displacedVolumeM3 = lwlMeters * beamMeters * draftMeters * blockCoefficientCb;
@@ -41,7 +47,7 @@ export const HydrostaticsTool: EngineeringTool = {
     // Displacement (metric tonnes)
     const displacementTonnes = (displacedVolumeM3 * seawaterDensityKgM3) / 1000;
 
-    // Center of buoyancy KB (m) via Morrish's approximation: KB = T * (1/3 + 5/6 * Cb / Cwp) / ... or standard Normand formula:
+    // Center of buoyancy KB (m) via Normand formula:
     // KB = draft * (5/6 - Cb / (3 * Cwp))
     const centerOfBuoyancyKbM = draftMeters * (5 / 6 - blockCoefficientCb / (3 * cwp));
 
@@ -53,6 +59,10 @@ export const HydrostaticsTool: EngineeringTool = {
 
     // KMt = KB + BMt
     const transverseMetacenterKmtM = centerOfBuoyancyKbM + transverseMetacentricRadiusBmtM;
+
+    // If KG is not explicitly supplied, estimate typical USV KG based on draft:
+    // KG ~ draft * 1.15 for low-profile planing USV (battery in keel)
+    const kgMeters = input.kgMeters ?? Number((draftMeters * 1.15).toFixed(3));
 
     // GMt = KMt - KG
     const metacentricHeightGmtM = transverseMetacenterKmtM - kgMeters;
