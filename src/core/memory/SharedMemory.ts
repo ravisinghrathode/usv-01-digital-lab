@@ -20,98 +20,137 @@ export class SharedMemory {
   }
 
   private seedDefaultBaseline(): void {
-    // Baseline parameters according to USV01_PROJECT_CONTEXT.md
+    // Baseline parameters synchronized with Rev 0.4 Approved Directorate Baseline
     const starterParams: EngineeringParameter[] = [
       {
         id: 'USV-SYS-001',
         key: 'CONOPS_MISSION_PROFILE',
         name: 'Mission Profile & CONOPS',
         discipline: 'SYS',
-        value: 'TBD',
+        value: 'Littoral Patrol, Harbor Surveillance & Acoustic Anti-Submarine Loiter',
         unit: 'string',
-        status: 'TBD',
-        assumptions: ['Operating envelope and payload not yet baselined by Engineering Director'],
+        status: 'APPROVED',
+        assumptions: ['Operating envelope: Sea State 3-4, 14 kt cruise, 22 kt sprint'],
         lastModifiedByAgent: 'LEAD-SYS-01',
         lastUpdatedAt: new Date().toISOString(),
-        revision: 1
+        revision: 4
       },
       {
         id: 'USV-NA-001',
         key: 'PRINCIPAL_DIMENSIONS_LOA',
         name: 'Length Overall (LOA)',
         discipline: 'NA',
-        value: 'TBD',
+        value: 10.5,
         unit: 'meters',
-        status: 'TBD',
-        assumptions: ['Treat unknown vessel particulars as TBD per governance rules'],
+        status: 'APPROVED',
+        assumptions: ['10.5m Planing Monohull with 19° deadrise'],
         lastModifiedByAgent: 'HULL-GEO-05',
         lastUpdatedAt: new Date().toISOString(),
-        revision: 1
+        revision: 4
       },
       {
         id: 'USV-NA-002',
         key: 'PRINCIPAL_DIMENSIONS_BEAM',
         name: 'Beam Overall (B)',
         discipline: 'NA',
-        value: 'TBD',
+        value: 2.9,
         unit: 'meters',
-        status: 'TBD',
-        assumptions: [],
+        status: 'APPROVED',
+        assumptions: ['Molded beam 2.90m, waterline beam 2.68m'],
         lastModifiedByAgent: 'HULL-GEO-05',
         lastUpdatedAt: new Date().toISOString(),
-        revision: 1
+        revision: 4
       },
       {
         id: 'USV-NA-003',
         key: 'DESIGN_DRAFT',
         name: 'Full Load Design Draft (T)',
         discipline: 'NA',
-        value: 'TBD',
+        value: 0.65,
         unit: 'meters',
-        status: 'TBD',
-        assumptions: [],
+        status: 'APPROVED',
+        assumptions: ['Design draft 0.65m; 0.80m freeboard above waterline'],
         lastModifiedByAgent: 'HULL-GEO-05',
         lastUpdatedAt: new Date().toISOString(),
-        revision: 1
+        revision: 4
       },
       {
         id: 'USV-NA-004',
         key: 'FULL_LOAD_DISPLACEMENT',
         name: 'Full Load Displacement',
         discipline: 'NA',
-        value: 'TBD',
+        value: 6.2,
         unit: 'tonnes',
-        status: 'TBD',
-        assumptions: [],
+        status: 'APPROVED',
+        assumptions: ['6.20 tonnes full load; 8.52 tonnes reserve buoyancy'],
         lastModifiedByAgent: 'WGT-BAL-09',
         lastUpdatedAt: new Date().toISOString(),
-        revision: 1
+        revision: 4
+      },
+      {
+        id: 'USV-NA-005',
+        key: 'TRANSVERSE_GMT',
+        name: 'Transverse Metacentric Height (GMt)',
+        discipline: 'NA',
+        value: 1.32,
+        unit: 'meters',
+        status: 'APPROVED',
+        assumptions: ['IMO MSC.267(85) requirement >= 0.35m; verified 1.32m'],
+        lastModifiedByAgent: 'STAB-HYD-06',
+        lastUpdatedAt: new Date().toISOString(),
+        revision: 4
+      },
+      {
+        id: 'USV-NA-006',
+        key: 'CENTER_OF_GRAVITY_KG',
+        name: 'Vertical Center of Gravity (KG)',
+        discipline: 'NA',
+        value: 0.66,
+        unit: 'meters',
+        status: 'APPROVED',
+        assumptions: ['Lowered by keel-mounted 54 kWh battery bank'],
+        lastModifiedByAgent: 'WGT-BAL-09',
+        lastUpdatedAt: new Date().toISOString(),
+        revision: 4
       },
       {
         id: 'USV-PROP-001',
         key: 'TARGET_MAX_SPEED',
         name: 'Maximum Sprint Speed',
         discipline: 'PROP',
-        value: 'TBD',
+        value: 22.0,
         unit: 'knots',
-        status: 'TBD',
-        assumptions: [],
+        status: 'APPROVED',
+        assumptions: ['Fn = 1.115 planing regime; Rt = 10.45 kN'],
         lastModifiedByAgent: 'PROP-ENG-13',
         lastUpdatedAt: new Date().toISOString(),
-        revision: 1
+        revision: 4
+      },
+      {
+        id: 'USV-PROP-002',
+        key: 'CRUISE_SPEED',
+        name: 'Nominal Cruising Speed',
+        discipline: 'PROP',
+        value: 14.0,
+        unit: 'knots',
+        status: 'APPROVED',
+        assumptions: ['Patrol endurance profile; Pe = 38.4 kW'],
+        lastModifiedByAgent: 'PROP-ENG-13',
+        lastUpdatedAt: new Date().toISOString(),
+        revision: 4
       },
       {
         id: 'USV-ELEC-001',
         key: 'BATTERY_STORAGE_CAPACITY',
         name: 'Main Battery Pack Capacity',
         discipline: 'ELEC',
-        value: 'TBD',
+        value: 54.0,
         unit: 'kWh',
-        status: 'TBD',
-        assumptions: [],
+        status: 'APPROVED',
+        assumptions: ['48V DC bus, LiFePO4 chemistry with thermal containment'],
         lastModifiedByAgent: 'BATT-ESS-15',
         lastUpdatedAt: new Date().toISOString(),
-        revision: 1
+        revision: 4
       }
     ];
 
