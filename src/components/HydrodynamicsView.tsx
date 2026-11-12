@@ -33,11 +33,11 @@ export const HydrodynamicsView: React.FC<HydrodynamicsViewProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'savitsky' | 'cfd_jobs' | 'resistance' | 'seakeeping' | 'propeller'>('savitsky');
 
-  // Savitsky Planing Solver Parametric State
-  const [massKg, setMassKg] = useState<number>(2450);
-  const [beamM, setBeamM] = useState<number>(2.20);
-  const [deadriseDeg, setDeadriseDeg] = useState<number>(18.0);
-  const [lcgM, setLcgM] = useState<number>(1.85);
+  // Savitsky Planing Solver Parametric State (Rev 0.4 Baselined Particulars)
+  const [massKg, setMassKg] = useState<number>(6200);
+  const [beamM, setBeamM] = useState<number>(2.90);
+  const [deadriseDeg, setDeadriseDeg] = useState<number>(19.0);
+  const [lcgM, setLcgM] = useState<number>(4.85);
 
   // Live Savitsky Calculation
   const savitskyResult = useMemo(() => {

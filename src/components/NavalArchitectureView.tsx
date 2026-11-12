@@ -37,13 +37,13 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'solver' | 'particulars' | 'stability' | 'weight_cg' | 'subdivision'>('solver');
 
-  // Interactive Sizing & Stability Solver State (Defaults to 0 / TBD pending baseline inputs)
-  const [displacementKg, setDisplacementKg] = useState<number>(0);
-  const [beamM, setBeamM] = useState<number>(0);
-  const [draftM, setDraftM] = useState<number>(0);
-  const [depthM, setDepthM] = useState<number>(0);
-  const [vcgM, setVcgM] = useState<number>(0);
-  const [blockCoeffCb, setBlockCoeffCb] = useState<number>(0);
+  // Interactive Sizing & Stability Solver State (Initialized to Rev 0.4 Baselined Particulars)
+  const [displacementKg, setDisplacementKg] = useState<number>(6200);
+  const [beamM, setBeamM] = useState<number>(2.90);
+  const [draftM, setDraftM] = useState<number>(0.65);
+  const [depthM, setDepthM] = useState<number>(1.45);
+  const [vcgM, setVcgM] = useState<number>(0.66);
+  const [blockCoeffCb, setBlockCoeffCb] = useState<number>(0.42);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState(false);
 
   const handleResetToZero = () => {

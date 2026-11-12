@@ -84,12 +84,12 @@ export const ProjectOverview: React.FC<ProjectOverviewProps> = ({
   const activeSims = simulations.filter(s => s.runStatus === 'Running' || s.runStatus === 'Under Review' || s.runStatus === 'Queued');
   const verifiedPlans = verificationPlans.filter(v => v.status === 'Approved' || v.status === 'Executed').length;
 
-  // 3D Vessel Visualizer State
-  const [selectedHullType, setSelectedHullType] = useState<'CATAMARAN' | 'MONOHULL'>('CATAMARAN');
+  // 3D Vessel Visualizer State — Synchronized with Rev 0.4 Approved Baseline
+  const [selectedHullType, setSelectedHullType] = useState<'CATAMARAN' | 'MONOHULL'>('MONOHULL');
   const [vesselLwl, setVesselLwl] = useState<number>(10.5);
-  const [vesselBeam, setVesselBeam] = useState<number>(2.8);
+  const [vesselBeam, setVesselBeam] = useState<number>(2.9);
   const [vesselDraft, setVesselDraft] = useState<number>(0.65);
-  const [vesselDispl, setVesselDispl] = useState<number>(7.5);
+  const [vesselDispl, setVesselDispl] = useState<number>(6.2);
 
   // 26 Agents Directorate State
   const registry = AgentRegistry.getInstance();
