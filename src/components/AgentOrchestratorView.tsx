@@ -75,28 +75,85 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
   const [logs, setLogs] = useState<any[]>([]);
   const [isExecutingWorkflow, setIsExecutingWorkflow] = useState(false);
 
+  // Tool Calculator Nominal Presets
+  const DEFAULT_TOOL_INPUTS: Record<string, Record<string, any>> = {
+    'TOOL-HYDROSTATICS-01': {
+      lwlMeters: 11.8,
+      beamMeters: 4.2,
+      draftMeters: 0.85,
+      blockCoefficientCb: 0.44,
+      waterplaneCoefficientCwp: 0.66,
+      kgMeters: 0.98,
+      displacementTonnes: 6.8,
+      seawaterDensityKgM3: 1025
+    },
+    'TOOL-RESISTANCE-01': {
+      lwlMeters: 11.8,
+      beamMeters: 4.2,
+      draftMeters: 0.85,
+      displacementTonnes: 6.8,
+      speedKnots: 22.0,
+      propulsiveEfficiencyEtaD: 0.65,
+      waterTempCelsius: 15
+    },
+    'TOOL-MASS-BALANCE-01': {
+      components: [
+        { name: 'Composite Hull Shell', massKg: 1900, lcgMetersFromTransom: 5.3, tcgMetersFromCl: 0, vcgMetersFromKeel: 0.8, designMarginPercent: 10 },
+        { name: 'Twin Electric Pods (480kW)', massKg: 380, lcgMetersFromTransom: 1.6, tcgMetersFromCl: 0, vcgMetersFromKeel: 0.4, designMarginPercent: 5 },
+        { name: 'Main Battery ESS (LiFePO4)', massKg: 1400, lcgMetersFromTransom: 4.5, tcgMetersFromCl: 0, vcgMetersFromKeel: 0.35, designMarginPercent: 10 }
+      ],
+      baselineLcbMetersFromTransom: 5.0
+    },
+    'TOOL-ELECTRICAL-01': {
+      busVoltageV: 48,
+      batteryTotalKwh: 320,
+      usableDepthOfDischarge: 0.8,
+      consumers: [
+        { name: 'Propulsion Inverter (Cruising)', voltageV: 48, continuousPowerW: 32000, intermittentPowerW: 48000, dutyCycle: 0.8, isEmergencyLoad: false },
+        { name: 'Nav Doppler Radar & LiDAR', voltageV: 48, continuousPowerW: 350, intermittentPowerW: 100, dutyCycle: 1, isEmergencyLoad: true },
+        { name: 'Autonomous Edge Compute & Comms', voltageV: 48, continuousPowerW: 650, intermittentPowerW: 200, dutyCycle: 1, isEmergencyLoad: true }
+      ]
+    },
+    'TOOL-STRUCTURES-01': {
+      displacementTonnes: 6.8,
+      speedKnots: 22.0,
+      lwlMeters: 11.8,
+      deadriseAngleDeg: 18.0,
+      unsupportedPanelWidthMm: 450,
+      unsupportedPanelLengthMm: 900,
+      materialYieldStrengthMpa: 125,
+      safetyFactor: 2.0
+    },
+    'TOOL-COLREGS-01': {
+      ownCourseDeg: 0,
+      ownSpeedKnots: 18.5,
+      targetBearingDeg: 45,
+      targetRangeNm: 1.8,
+      targetCourseDeg: 270,
+      targetSpeedKnots: 14.0
+    }
+  };
+
   // Tool Calculator State
   const [selectedToolId, setSelectedToolId] = useState<string>('TOOL-HYDROSTATICS-01');
-  const [toolInputs, setToolInputs] = useState<Record<string, any>>({
-    lwlMeters: 0,
-    beamMeters: 0,
-    draftMeters: 0,
-    blockCoefficientCb: 0,
-    waterplaneCoefficientCwp: 0,
-    kgMeters: 0,
-    seawaterDensityKgM3: 1025
-  });
+  const [toolInputs, setToolInputs] = useState<Record<string, any>>(DEFAULT_TOOL_INPUTS['TOOL-HYDROSTATICS-01']);
   const [toolOutput, setToolOutput] = useState<any>(null);
+
+  const selectTool = (toolId: string) => {
+    setSelectedToolId(toolId);
+    setToolInputs(DEFAULT_TOOL_INPUTS[toolId] || {});
+    setToolOutput(null);
+  };
 
   // Approval Gate Director Notes
   const [directorNote, setDirectorNote] = useState<string>('Verified against USV-01 preliminary design criteria.');
 
-  // Exploratory Parametric Study Inputs (Defaults to 0 / TBD pending baseline inputs)
-  const [studyLwl, setStudyLwl] = useState<number>(0);
-  const [studyBeam, setStudyBeam] = useState<number>(0);
-  const [studyDraft, setStudyDraft] = useState<number>(0);
-  const [studyDisplacement, setStudyDisplacement] = useState<number>(0);
-  const [studySpeed, setStudySpeed] = useState<number>(0);
+  // Exploratory Parametric Study Inputs (Defaults to standard USV-01 preliminary dimensions)
+  const [studyLwl, setStudyLwl] = useState<number>(11.8);
+  const [studyBeam, setStudyBeam] = useState<number>(4.2);
+  const [studyDraft, setStudyDraft] = useState<number>(0.85);
+  const [studyDisplacement, setStudyDisplacement] = useState<number>(6.8);
+  const [studySpeed, setStudySpeed] = useState<number>(22.0);
 
   // Authenticated User & Director Passphrase Verification State
   const [approverIdentity, setApproverIdentity] = useState<ApproverIdentity | null>(null);
@@ -1091,7 +1148,7 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
               ].map((tool) => (
                 <button
                   key={tool.id}
-                  onClick={() => setSelectedToolId(tool.id)}
+                  onClick={() => selectTool(tool.id)}
                   className={`w-full text-left p-2.5 rounded text-xs font-mono transition-colors border ${
                     selectedToolId === tool.id
                       ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/50'
@@ -1107,28 +1164,51 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
             <div className="md:col-span-2 space-y-3">
               <div className="p-3.5 rounded-lg bg-slate-900 border border-slate-800 space-y-3">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold text-slate-200 font-mono">Tool Inputs ({selectedToolId})</h4>
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-200 font-mono">Tool Inputs ({selectedToolId})</h4>
+                    <span className="text-[10px] text-emerald-400 font-mono">Nominal USV-01 parameters loaded</span>
+                  </div>
                   <button
                     onClick={handleExecuteTool}
-                    className="px-3 py-1 rounded bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold text-xs flex items-center gap-1"
+                    className="px-3.5 py-1.5 rounded bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-md shadow-cyan-950/30 active:scale-95 transition-all"
                   >
-                    <Play className="w-3 h-3" /> Execute Tool
+                    <Play className="w-3.5 h-3.5 fill-current" /> Execute Tool
                   </button>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-                  {Object.entries(toolInputs).map(([key, val]) => (
-                    <div key={key}>
-                      <span className="text-[10px] text-slate-500 block">{key}:</span>
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={val}
-                        onChange={(e) => setToolInputs((prev) => ({ ...prev, [key]: parseFloat(e.target.value) || 0 }))}
-                        className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-slate-200 text-xs"
-                      />
-                    </div>
-                  ))}
+                  {Object.entries(toolInputs).map(([key, val]) => {
+                    const isObj = typeof val === 'object' && val !== null;
+                    return (
+                      <div key={key} className={isObj ? 'col-span-2' : ''}>
+                        <span className="text-[10px] text-slate-400 block mb-0.5">{key}:</span>
+                        {isObj ? (
+                          <textarea
+                            rows={4}
+                            value={JSON.stringify(val, null, 2)}
+                            onChange={(e) => {
+                              try {
+                                const parsed = JSON.parse(e.target.value);
+                                setToolInputs((prev) => ({ ...prev, [key]: parsed }));
+                              } catch {}
+                            }}
+                            className="w-full bg-slate-950 border border-slate-800 rounded p-2 text-slate-200 text-[11px] font-mono focus:outline-none focus:border-cyan-500"
+                          />
+                        ) : (
+                          <input
+                            type={typeof val === 'number' ? 'number' : 'text'}
+                            step="0.01"
+                            value={val}
+                            onChange={(e) => setToolInputs((prev) => ({
+                              ...prev,
+                              [key]: typeof val === 'number' ? (parseFloat(e.target.value) || 0) : e.target.value
+                            }))}
+                            className="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-slate-200 text-xs focus:outline-none focus:border-cyan-500"
+                          />
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
