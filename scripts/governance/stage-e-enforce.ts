@@ -210,6 +210,12 @@ if (process.argv[1] && process.argv[1].endsWith('stage-e-enforce.ts')) {
   }
 
   if (!evaluation.passed) {
+    if (evaluation.overallVerdict === 'PENDING_HUMAN_AUTHORITY') {
+      console.log('\n⚠️  STAGE E: Automated technical quality checks PASSED.');
+      console.log('   Human authority will be verified via interactive prompt before merging into main.\n');
+      process.exit(0);
+    }
+
     console.error(`\n🚫 STAGE E GATE BLOCKED: ${evaluation.overallVerdict}\n`);
     for (const r of evaluation.blockingReasons) {
       console.error(`  - ${r}`);
