@@ -628,6 +628,13 @@ export const ProjectOverview: React.FC<ProjectOverviewProps> = ({
               <span className="text-slate-400">Recommended Action:</span>
               <span className="text-emerald-400 font-bold">{colregsTelemetry.action}</span>
             </div>
+            <button
+              onClick={() => onNavigate('realtime-sim')}
+              className="w-full mt-2.5 py-2 px-3 rounded-lg bg-teal-500/10 hover:bg-teal-500/20 text-teal-300 border border-teal-500/30 flex items-center justify-center gap-2 text-xs font-mono font-semibold transition"
+            >
+              <Compass className="w-3.5 h-3.5" />
+              <span>Launch Full Boat Simulator (COLREGS & Wave Tank) &rarr;</span>
+            </button>
           </div>
         </div>
       </div>
