@@ -1,0 +1,237 @@
+{
+  "schemaVersion": "1.0",
+  "campaignId": "USV01-26-20261113",
+  "baselineSha": "854812812f02ab232a506957572c2944be63c7a5",
+  "dataClassification": "SYNTHETIC_TEST_ONLY_NON_OPERATIONAL",
+  "source": "Existing tests/all26Agents.test.ts sample parameters expanded into 26 role-specific representative tasks",
+  "note": "Physically inconsistent values are intentionally preserved to challenge cross-disciplinary agents; not real USV-01 baseline or naval approval",
+  "sharedParameters": {
+    "lwlMeters": 10,
+    "beamMeters": 2.5,
+    "draftMeters": 0.6,
+    "displacementTonnes": 5.5,
+    "blockCoefficientCb": 0.45,
+    "waterplaneCoefficientCwp": 0.65,
+    "kgMeters": 0.8,
+    "seawaterDensityKgM3": 1025,
+    "speedKnots": 22,
+    "maxSpeedKnots": 28,
+    "propulsiveEfficiencyEtaD": 0.65,
+    "waterTempCelsius": 15,
+    "deadriseAngleDeg": 18,
+    "unsupportedPanelWidthMm": 450,
+    "unsupportedPanelLengthMm": 900,
+    "materialYieldStrengthMpa": 125,
+    "safetyFactor": 2,
+    "batteryTotalKwh": 120,
+    "usableDepthOfDischarge": 0.8,
+    "busVoltageV": 48,
+    "ownCourseDeg": 0,
+    "ownSpeedKnots": 15,
+    "targetBearingDeg": 45,
+    "targetRangeNm": 2,
+    "targetCourseDeg": 270,
+    "targetSpeedKnots": 12,
+    "baselineLcbMetersFromTransom": 4.2,
+    "components": [
+      {
+        "name": "Illustrative Hull",
+        "massKg": 1600,
+        "lcgMetersFromTransom": 4.8,
+        "tcgMetersFromCl": 0,
+        "vcgMetersFromKeel": 0.6,
+        "designMarginPercent": 10
+      },
+      {
+        "name": "Illustrative Inboard Pods",
+        "massKg": 350,
+        "lcgMetersFromTransom": 1.5,
+        "tcgMetersFromCl": 0,
+        "vcgMetersFromKeel": 0.4,
+        "designMarginPercent": 5
+      },
+      {
+        "name": "Illustrative Battery",
+        "massKg": 1100,
+        "lcgMetersFromTransom": 3.5,
+        "tcgMetersFromCl": 0,
+        "vcgMetersFromKeel": 0.35,
+        "designMarginPercent": 10
+      },
+      {
+        "name": "Illustrative Sensor Stack",
+        "massKg": 150,
+        "lcgMetersFromTransom": 5.5,
+        "tcgMetersFromCl": 0,
+        "vcgMetersFromKeel": 2,
+        "designMarginPercent": 15
+      }
+    ],
+    "consumers": [
+      {
+        "name": "Illustrative Propulsion Loiter",
+        "voltageV": 48,
+        "continuousPowerW": 6000,
+        "intermittentPowerW": 0,
+        "dutyCycle": 1,
+        "isEmergencyLoad": false
+      },
+      {
+        "name": "Illustrative Radar and LiDAR",
+        "voltageV": 48,
+        "continuousPowerW": 450,
+        "intermittentPowerW": 100,
+        "dutyCycle": 0.5,
+        "isEmergencyLoad": true
+      },
+      {
+        "name": "Illustrative Autonomy Computer",
+        "voltageV": 48,
+        "continuousPowerW": 150,
+        "intermittentPowerW": 0,
+        "dutyCycle": 1,
+        "isEmergencyLoad": true
+      },
+      {
+        "name": "Illustrative Satellite Comms",
+        "voltageV": 48,
+        "continuousPowerW": 80,
+        "intermittentPowerW": 40,
+        "dutyCycle": 0.3,
+        "isEmergencyLoad": true
+      }
+    ]
+  },
+  "agents": [
+    {
+      "canonicalId": "A01",
+      "taskId": "LIVE-A01-20261113",
+      "task": "Produce a dependency DAG outline for requirements -> geometry -> hydrostatics -> propulsion -> autonomy safety -> V&V; identify missing approvals."
+    },
+    {
+      "canonicalId": "A02",
+      "taskId": "LIVE-A02-20261113",
+      "task": "Define three verifiable requirements for loss-of-link contingency, sealed-hull thermal loads, and lifting loads with traceability IDs; unknown thresholds TBD."
+    },
+    {
+      "canonicalId": "A03",
+      "taskId": "LIVE-A03-20261113",
+      "task": "Describe transit at 15 knots and loiter at 6 knots as illustrative CONOPS phases, explicitly flagging sea-state, endurance and available power TBD."
+    },
+    {
+      "canonicalId": "A04",
+      "taskId": "LIVE-A04-20261113",
+      "task": "Create a standards-applicability checklist for COLREG, high-speed craft, IP seals and autonomy. Flag code versions and jurisdiction unverified."
+    },
+    {
+      "canonicalId": "A05",
+      "taskId": "LIVE-A05-20261113",
+      "task": "Check consistency of 10m LWL, 2.5m beam, 0.6m draft, Cb 0.45, 5.5t displacement at seawater density 1025; identify mismatch instead of silently correcting."
+    },
+    {
+      "canonicalId": "A06",
+      "taskId": "LIVE-A06-20261113",
+      "task": "Determine which hydrostatic inputs and KG/GZ reference curves are missing for intact stability acceptance; compute no fabricated GZ curve."
+    },
+    {
+      "canonicalId": "A07",
+      "taskId": "LIVE-A07-20261113",
+      "task": "Set up Froude-number and power-prediction validation plan for 15-knot transit at LWL 10m; identify absent wetted area and resistance references."
+    },
+    {
+      "canonicalId": "A08",
+      "taskId": "LIVE-A08-20261113",
+      "task": "Define seakeeping and manoeuvring measurements needed to screen heave, pitch and roll for a 10m illustrative craft; no sea-trial certification."
+    },
+    {
+      "canonicalId": "A09",
+      "taskId": "LIVE-A09-20261113",
+      "task": "Reconcile illustrative component mass ledger 1600+350+1100+150 kg against declared displacement 5500kg; identify unallocated mass and KG uncertainty."
+    },
+    {
+      "canonicalId": "A10",
+      "taskId": "LIVE-A10-20261113",
+      "task": "Define structural scantling test inputs for a 10m hull, unsupported panel 450x900mm, deadrise 18deg; withhold class-compliant plating claims."
+    },
+    {
+      "canonicalId": "A11",
+      "taskId": "LIVE-A11-20261113",
+      "task": "Develop sealed electronics heat balance evidence plan for 250W waste heat in an IP67 enclosure, ambient 40C; require thermal resistance and sea trials."
+    },
+    {
+      "canonicalId": "A12",
+      "taskId": "LIVE-A12-20261113",
+      "task": "Calculate an illustrative gross lifting design force for 5500 kg and DAF 2, then list padeye, sling and local structure evidence needed."
+    },
+    {
+      "canonicalId": "A13",
+      "taskId": "LIVE-A13-20261113",
+      "task": "Outline a propulsion matching sequence for 22-knot target speed when resistance curves and propulsive efficiencies are unverified."
+    },
+    {
+      "canonicalId": "A14",
+      "taskId": "LIVE-A14-20261113",
+      "task": "Check a 48V DC architecture with 120kWh battery, 80% usable DoD, continuous load 6000+450+150+80W; label endurance preliminary."
+    },
+    {
+      "canonicalId": "A15",
+      "taskId": "LIVE-A15-20261113",
+      "task": "Critique mass and hydrostatic baseline inconsistencies and test-only assumptions, and issue non-certifying challenge notices."
+    },
+    {
+      "canonicalId": "A16",
+      "taskId": "LIVE-A16-20261113",
+      "task": "Specify sensor FOV, blind-zone and fusion-latency measurements to validate radar/LiDAR integration on a 10m marine craft."
+    },
+    {
+      "canonicalId": "A17",
+      "taskId": "LIVE-A17-20261113",
+      "task": "Review a synthetic encounter: own course 0deg speed 15kn, target bearing45deg range2NM course270deg speed12kn; identify missing CPA/uncertainty and simulated verification gates, no actual commands."
+    },
+    {
+      "canonicalId": "A18",
+      "taskId": "LIVE-A18-20261113",
+      "task": "Define a laboratory V&V campaign structure for AGT-02 including real-provider traces, solver independent benchmarks and human witness."
+    },
+    {
+      "canonicalId": "A19",
+      "taskId": "LIVE-A19-20261113",
+      "task": "Propose a non-operational communications link-budget test plan for 3km line of sight, 2.4GHz, undefined antenna gains, fading and margins."
+    },
+    {
+      "canonicalId": "A20",
+      "taskId": "LIVE-A20-20261113",
+      "task": "Design loss-of-link safety verification matrix, explicitly rejecting unconditional zero-thrust drift as a generally safe default."
+    },
+    {
+      "canonicalId": "A21",
+      "taskId": "LIVE-A21-20261113",
+      "task": "Outline interface-control schema for sensor heartbeat, timestamp quality, link state, navigation confidence and safe-state mode; unknown timing TBD."
+    },
+    {
+      "canonicalId": "A22",
+      "taskId": "LIVE-A22-20261113",
+      "task": "List FMEA hazards for battery loss, sensor dropouts, bilge leak and loss of link, using qualitative risk until severity/occurrence evidence exists."
+    },
+    {
+      "canonicalId": "A23",
+      "taskId": "LIVE-A23-20261113",
+      "task": "Perform independent adversarial review of the synthetic hull dimensions, declared mass and Cb 0.45 inconsistency, and demand evidence instead of ACCEPT."
+    },
+    {
+      "canonicalId": "A24",
+      "taskId": "LIVE-A24-20261113",
+      "task": "Write representative test procedure IDs for hydrostatic, resistance, autonomy and 26-agent response schema checks with measurable pass/fail conditions TBD."
+    },
+    {
+      "canonicalId": "A25",
+      "taskId": "LIVE-A25-20261113",
+      "task": "Produce a conceptual Obsidian knowledge-note and wikilink organization for requirements, mass ledger and decisions; do not claim actual vault sync."
+    },
+    {
+      "canonicalId": "A26",
+      "taskId": "LIVE-A26-20261113",
+      "task": "Define a public-source fleet benchmark evidence schema with source URL, timestamp, hull dimensions and confidence; do not invent vessel specifications."
+    }
+  ]
+}
