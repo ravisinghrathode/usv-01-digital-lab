@@ -22,6 +22,7 @@ import {
   Info
 } from 'lucide-react';
 import { ComponentBOM } from '../types/engineering';
+import { Vessel3DVisualizer } from './Vessel3DVisualizer';
 
 interface BuildStage {
   id: string;
@@ -314,6 +315,7 @@ export const ShipBuildingProcessView: React.FC<ShipBuildingProcessViewProps> = (
   const [stages, setStages] = useState<BuildStage[]>(INITIAL_BUILD_STAGES);
   const [selectedStageId, setSelectedStageId] = useState<string>('STAGE-02');
   const [activeSection, setActiveSection] = useState<'overview' | 'cutaway' | 'checklist' | 'specs'>('overview');
+  const [vesselViewTab, setVesselViewTab] = useState<'3D' | '2D'>('3D');
 
   const selectedStage = stages.find((s) => s.id === selectedStageId) || stages[0];
 
@@ -586,19 +588,52 @@ export const ShipBuildingProcessView: React.FC<ShipBuildingProcessViewProps> = (
 
         {/* Right Column: Physical Vessel Anatomy & Internal Outfitting Cutaway (5 cols) */}
         <div className="lg:col-span-5 space-y-4">
-          {/* Interactive Vessel Profile Schematic */}
+          {/* Interactive Vessel Anatomy: 3D Model & 2D Profile Schematic */}
           <div className="bg-slate-900 border border-slate-800 rounded-lg p-4 space-y-3">
             <div className="flex items-center justify-between pb-2 border-b border-slate-800">
               <h3 className="text-xs font-semibold text-slate-200 flex items-center gap-2">
                 <Anchor className="w-4 h-4 text-amber-400" />
-                <span>USV-01 Internal Outfitting Anatomy</span>
+                <span>USV-01 Physical Vessel Anatomy</span>
               </h3>
-              <span className="text-[10px] font-mono text-slate-400">PROFILE CUTAWAY</span>
+              <div className="flex bg-slate-950 p-0.5 rounded border border-slate-800 text-[10px] font-mono">
+                <button
+                  onClick={() => setVesselViewTab('3D')}
+                  className={`px-2 py-0.5 rounded transition-colors ${
+                    vesselViewTab === '3D'
+                      ? 'bg-purple-500/20 text-purple-300 font-bold border border-purple-500/40'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  3D Boat Model
+                </button>
+                <button
+                  onClick={() => setVesselViewTab('2D')}
+                  className={`px-2 py-0.5 rounded transition-colors ${
+                    vesselViewTab === '2D'
+                      ? 'bg-purple-500/20 text-purple-300 font-bold border border-purple-500/40'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  2D Cutaway
+                </button>
+              </div>
             </div>
 
-            {/* SVG Profile Cutaway Diagram */}
-            <div className="p-3 bg-slate-950 rounded border border-slate-800 flex items-center justify-center">
-              <svg viewBox="0 0 500 240" className="w-full h-auto">
+            {vesselViewTab === '3D' ? (
+              <Vessel3DVisualizer
+                lwlMeters={11.8}
+                beamMeters={3.4}
+                draftMeters={0.65}
+                deadriseDeg={20.0}
+                displacementTonnes={5.8}
+                candidateId="USV-01-PROD"
+                status="SURVIVED"
+              />
+            ) : (
+              <>
+                {/* SVG Profile Cutaway Diagram */}
+                <div className="p-3 bg-slate-950 rounded border border-slate-800 flex items-center justify-center">
+                  <svg viewBox="0 0 500 240" className="w-full h-auto">
                 {/* Waterline */}
                 <line x1="20" y1="150" x2="480" y2="150" stroke="#0284c7" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.6" />
                 <text x="25" y="145" fill="#0284c7" fontSize="9" fontFamily="monospace">DESIGN WATERLINE (DWL 0.65m)</text>
@@ -670,7 +705,9 @@ export const ShipBuildingProcessView: React.FC<ShipBuildingProcessViewProps> = (
                 <span className="text-amber-400 font-bold">Dual Pod Drives</span>
               </div>
             </div>
-          </div>
+          </>
+        )}
+      </div>
 
           {/* Bill of Materials Linkage for this stage */}
           <div className="bg-slate-900 border border-slate-800 rounded-lg p-4 space-y-3">

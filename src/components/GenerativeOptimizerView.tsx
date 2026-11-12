@@ -33,6 +33,7 @@ import {
   AgentEvaluation25
 } from '../core/optimizer/GenerativeDesignOptimizer';
 import { downloadCsv } from '../utils/engineeringUtils';
+import { Vessel3DVisualizer } from './Vessel3DVisualizer';
 
 interface GenerativeOptimizerViewProps {
   onAskAi?: (prompt: string, record?: any) => void;
@@ -63,6 +64,9 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
     motorKwTotal: 75,
     lcgPercent: 35.0
   });
+
+  const [candidateVisualTab, setCandidateVisualTab] = useState<'3D' | '2D'>('3D');
+  const [studioVisualTab, setStudioVisualTab] = useState<'3D' | '2D'>('3D');
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const studioCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -464,59 +468,101 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
       {/* TOP CHAMPION & DYNAMIC MORPHING VISUALIZER */}
       {activeCandidate && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-          {/* Dynamic Transverse Hull Section & Stability */}
-          <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-lg p-4 flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono font-bold text-slate-300">
-                    TRANSVERSE HULL DYNAMICS
-                  </span>
-                  <span className={`px-1.5 py-0.2 rounded text-[10px] font-mono font-bold ${
-                    activeCandidate.status === 'SURVIVED'
-                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                      : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
-                  }`}>
-                    {activeCandidate.id}
-                  </span>
+          {/* Dynamic 3D Boat Model Visualizer & Transverse Stability */}
+          <div className="lg:col-span-6 flex flex-col">
+            {candidateVisualTab === '3D' ? (
+              <Vessel3DVisualizer
+                lwlMeters={activeCandidate.lwlMeters}
+                beamMeters={activeCandidate.beamMeters}
+                draftMeters={activeCandidate.draftMeters}
+                deadriseDeg={activeCandidate.deadriseDeg}
+                displacementTonnes={activeCandidate.displacementTonnes}
+                candidateId={activeCandidate.id}
+                status={activeCandidate.status}
+                className="h-full"
+              />
+            ) : (
+              <div className="bg-slate-900 border border-slate-800 rounded-lg p-4 flex flex-col justify-between h-full">
+                <div>
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-mono font-bold text-slate-300">
+                        TRANSVERSE HULL DYNAMICS
+                      </span>
+                      <span className={`px-1.5 py-0.2 rounded text-[10px] font-mono font-bold ${
+                        activeCandidate.status === 'SURVIVED'
+                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                          : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                      }`}>
+                        {activeCandidate.id}
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-mono text-slate-400">ARCHIMEDES FLOTATION</span>
+                  </div>
+
+                  <div className="mt-3 flex justify-center">
+                    <canvas
+                      ref={canvasRef}
+                      width={380}
+                      height={200}
+                      className="rounded border border-slate-800 bg-white shadow-inner w-full max-w-[380px]"
+                    />
+                  </div>
                 </div>
-                <span className="text-[10px] font-mono text-slate-400">ARCHIMEDES FLOTATION</span>
-              </div>
 
-              <div className="mt-3 flex justify-center">
-                <canvas
-                  ref={canvasRef}
-                  width={380}
-                  height={150}
-                  className="rounded border border-slate-800 bg-white shadow-inner w-full max-w-[380px]"
-                />
+                <div className="mt-3 pt-3 border-t border-slate-800/80 grid grid-cols-3 gap-2 text-center text-xs font-mono">
+                  <div className="p-2 bg-slate-950 rounded border border-slate-800/60">
+                    <span className="text-[10px] text-slate-500 block">LWL x BEAM</span>
+                    <span className="font-bold text-slate-200">
+                      {activeCandidate.lwlMeters}m x {activeCandidate.beamMeters}m
+                    </span>
+                  </div>
+                  <div className="p-2 bg-slate-950 rounded border border-slate-800/60">
+                    <span className="text-[10px] text-slate-500 block">DISPLACEMENT</span>
+                    <span className="font-bold text-slate-200">
+                      {activeCandidate.displacementTonnes} tonnes
+                    </span>
+                  </div>
+                  <div className="p-2 bg-slate-950 rounded border border-slate-800/60">
+                    <span className="text-[10px] text-slate-500 block">GMt MARGIN</span>
+                    <span className={`font-bold ${activeCandidate.gmtMeters >= 0.35 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                      {activeCandidate.gmtMeters}m
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
 
-            <div className="mt-3 pt-3 border-t border-slate-800/80 grid grid-cols-3 gap-2 text-center text-xs font-mono">
-              <div className="p-2 bg-slate-950 rounded border border-slate-800/60">
-                <span className="text-[10px] text-slate-500 block">LWL x BEAM</span>
-                <span className="font-bold text-slate-200">
-                  {activeCandidate.lwlMeters}m x {activeCandidate.beamMeters}m
-                </span>
-              </div>
-              <div className="p-2 bg-slate-950 rounded border border-slate-800/60">
-                <span className="text-[10px] text-slate-500 block">DISPLACEMENT</span>
-                <span className="font-bold text-slate-200">
-                  {activeCandidate.displacementTonnes} tonnes
-                </span>
-              </div>
-              <div className="p-2 bg-slate-950 rounded border border-slate-800/60">
-                <span className="text-[10px] text-slate-500 block">GMt MARGIN</span>
-                <span className={`font-bold ${activeCandidate.gmtMeters >= 0.35 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                  {activeCandidate.gmtMeters}m
-                </span>
+            {/* Toggle bar between 3D Model and 2D Cross Section */}
+            <div className="mt-2 flex items-center justify-between px-1">
+              <span className="text-[10px] font-mono text-slate-400">VISUALIZATION MODE</span>
+              <div className="flex bg-slate-950 p-0.5 rounded border border-slate-800 text-[10px] font-mono">
+                <button
+                  onClick={() => setCandidateVisualTab('3D')}
+                  className={`px-2.5 py-0.5 rounded transition-colors ${
+                    candidateVisualTab === '3D'
+                      ? 'bg-purple-500/20 text-purple-300 font-bold border border-purple-500/40'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  3D Boat Model Viewport
+                </button>
+                <button
+                  onClick={() => setCandidateVisualTab('2D')}
+                  className={`px-2.5 py-0.5 rounded transition-colors ${
+                    candidateVisualTab === '2D'
+                      ? 'bg-purple-500/20 text-purple-300 font-bold border border-purple-500/40'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  2D Transverse Stability
+                </button>
               </div>
             </div>
           </div>
 
           {/* ACTIVE CANDIDATE PERFORMANCE & DIALECTICAL DEBATE */}
-          <div className="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-lg p-4 flex flex-col justify-between">
+          <div className="lg:col-span-6 bg-slate-900 border border-slate-800 rounded-lg p-4 flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between pb-2 border-b border-slate-800">
                 <div className="flex items-center gap-2">
@@ -922,7 +968,31 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
             <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-lg p-5 flex flex-col justify-between space-y-4">
               <div>
                 <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-                  <span className="text-xs font-mono font-bold text-slate-200">STUDIO TELEMETRY</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono font-bold text-slate-200">STUDIO TELEMETRY</span>
+                    <div className="flex bg-slate-950 p-0.5 rounded border border-slate-800 text-[10px] font-mono">
+                      <button
+                        onClick={() => setStudioVisualTab('3D')}
+                        className={`px-2 py-0.5 rounded transition-colors ${
+                          studioVisualTab === '3D'
+                            ? 'bg-purple-500/20 text-purple-300 font-bold border border-purple-500/40'
+                            : 'text-slate-400 hover:text-slate-200'
+                        }`}
+                      >
+                        3D Model
+                      </button>
+                      <button
+                        onClick={() => setStudioVisualTab('2D')}
+                        className={`px-2 py-0.5 rounded transition-colors ${
+                          studioVisualTab === '2D'
+                            ? 'bg-purple-500/20 text-purple-300 font-bold border border-purple-500/40'
+                            : 'text-slate-400 hover:text-slate-200'
+                        }`}
+                      >
+                        2D Section
+                      </button>
+                    </div>
+                  </div>
                   <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
                     studioCandidate.status === 'SURVIVED'
                       ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
@@ -932,14 +1002,29 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                   </span>
                 </div>
 
-                <div className="mt-3 flex justify-center">
-                  <canvas
-                    ref={studioCanvasRef}
-                    width={320}
-                    height={130}
-                    className="rounded border border-slate-800 bg-white shadow-inner w-full max-w-[320px]"
-                  />
-                </div>
+                {studioVisualTab === '3D' ? (
+                  <div className="mt-3">
+                    <Vessel3DVisualizer
+                      lwlMeters={studioParams.lwlMeters}
+                      beamMeters={studioParams.beamMeters}
+                      draftMeters={studioCandidate.draftMeters}
+                      deadriseDeg={studioParams.deadriseDeg}
+                      displacementTonnes={studioCandidate.displacementTonnes}
+                      candidateId="WHAT-IF-STUDIO"
+                      status={studioCandidate.status}
+                      showPhotoRenderToggle={false}
+                    />
+                  </div>
+                ) : (
+                  <div className="mt-3 flex justify-center">
+                    <canvas
+                      ref={studioCanvasRef}
+                      width={320}
+                      height={130}
+                      className="rounded border border-slate-800 bg-white shadow-inner w-full max-w-[320px]"
+                    />
+                  </div>
+                )}
 
                 <div className="mt-3 grid grid-cols-2 gap-2 text-xs font-mono">
                   <div className="p-2 bg-slate-950 rounded border border-slate-800">
