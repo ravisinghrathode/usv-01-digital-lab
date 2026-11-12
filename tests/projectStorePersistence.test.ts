@@ -6,7 +6,7 @@ import {
   STORE_COLLECTIONS, loadProjectStore, saveProjectStore, runIsolatedRestoreDrill
 } from '../src/core/storage/ProjectStorePersistence.ts';
 
-const store = () => Object.fromEntries(STORE_COLLECTIONS.map(name => [name, []]));
+const store = (): Record<string, any[]> => Object.fromEntries(STORE_COLLECTIONS.map(name => [name, []]));
 describe('Safety-critical engineering store integrity and restore drills', () => {
   it('saves atomically, loads all required collections, and exercises isolated restore', () => {
     const folder = fs.mkdtempSync(path.join(os.tmpdir(), 'usv01-store-'));
