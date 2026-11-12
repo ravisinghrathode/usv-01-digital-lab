@@ -55,6 +55,6 @@ export function getLabReadinessSnapshot() {
     integrations,
     engineeringPhysicsValidated: false,
     productionApproved: false,
-    acceptance: evaluateAcceptance(process.env.RELEASE_COMMIT_SHA || process.env.GITHUB_SHA || '')
+    acceptance: evaluateAcceptance(typeof process !== 'undefined' ? (process.env.RELEASE_COMMIT_SHA || process.env.GITHUB_SHA || '') : '')
   };
 }

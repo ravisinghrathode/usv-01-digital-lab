@@ -13,6 +13,7 @@
     "lint": "tsc --noEmit",
     "verify": "tsx scripts/verify-usv01.ts",
     "chatgpt:verify": "tsx scripts/chatgpt-verify.ts",
+    "acceptance:campaign": "tsx scripts/run-acceptance-campaign.ts",
     "governance:classify": "tsx scripts/governance/classify-change.ts",
     "governance:secrets": "tsx scripts/governance/secret-scanner.ts",
     "governance:validate": "tsx scripts/governance/validate-config.ts",
