@@ -1,0 +1,124 @@
+{
+  "campaignId": "USV01-26-20261113",
+  "kind": "CONNECTED_GEMINI_EXTERNAL_PROVIDER_PROBE",
+  "sourceCommit": "854812812f02ab232a506957572c2944be63c7a5",
+  "scope": "Real model calls via connected Gemini tool, not yet internal AgentRegistry execution or engineering certification",
+  "cases": [
+    {
+      "agentId": "A01",
+      "runtimeId": "LEAD-SYS-01",
+      "role": "Lead Systems Architect & Orchestrator",
+      "task": "For an illustrative 10 m unmanned surface craft, outline a requirements-to-validation dependency graph and gate unresolved parameters; do not approve.",
+      "sourceCommit": "854812812f02ab232a506957572c2944be63c7a5",
+      "provider": "gemini",
+      "modelVersion": "gemini-2.5-flash",
+      "responseId": "eC_2at3DL9DjytMP8Lfr4Ak",
+      "finishReason": "MAX_TOKENS",
+      "response": "```json\n{\n  \"disciplineSummary\": \"This preliminary engineering exercise for USV-01 case A01 outlines a requirements-to-validation dependency graph for a simulated 10m unmanned surface craft. Core Naval Architecture (NA) parameters (LWL, Beam, Draft, Displacement, Seawater Density",
+      "rawJsonParsePassed": false,
+      "outputContractShapePass": false,
+      "liveResponseObserved": true,
+      "usage": {
+        "candidatesTokenCount": 66,
+        "promptTokenCount": 362,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 362
+          }
+        ],
+        "serviceTier": "standard",
+        "thoughtsTokenCount": 1580,
+        "totalTokenCount": 2008
+      },
+      "error": null
+    },
+    {
+      "agentId": "A02",
+      "runtimeId": "REQ-TRC-02",
+      "role": "Requirements & Traceability Engineer",
+      "task": "Draft 3 requirement IDs with verification methods for loss-of-link, sealed electronics thermal envelope, and lifting loads. Mark thresholds TBD.",
+      "sourceCommit": "854812812f02ab232a506957572c2944be63c7a5",
+      "provider": "gemini",
+      "modelVersion": "gemini-2.5-flash",
+      "responseId": "eC_2ap-sL9TBxdIPgMOvOQ",
+      "finishReason": "MAX_TOKENS",
+      "response": "```json\n{\n  \"disciplineSummary\": \"Drafted preliminary engineering requirements for USV-01 loss-of-link, thermal envelope, and lifting loads for a simulated, non-actuating engineering test. All thresholds are marked TBD, pending further engineering definition.\",\n  \"keyMetrics\": {\n",
+      "rawJsonParsePassed": false,
+      "outputContractShapePass": false,
+      "liveResponseObserved": true,
+      "usage": {
+        "candidatesTokenCount": 64,
+        "promptTokenCount": 325,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 325
+          }
+        ],
+        "serviceTier": "standard",
+        "thoughtsTokenCount": 1581,
+        "totalTokenCount": 1970
+      },
+      "error": null
+    },
+    {
+      "agentId": "A03",
+      "runtimeId": "CONOPS-03",
+      "role": "Operational Profile & CONOPS Specialist",
+      "task": "Draft 6-knot loiter and 15-knot transit CONOPS phases for an illustrative craft; keep sea-state, range and endurance TBD.",
+      "sourceCommit": "854812812f02ab232a506957572c2944be63c7a5",
+      "provider": "gemini",
+      "modelVersion": "gemini-2.5-flash",
+      "responseId": "eC_2apybMKjgytMP-oaRkAc",
+      "finishReason": "MAX_TOKENS",
+      "response": "```json\n{\n  \"disciplineSummary\": \"This document outlines the preliminary Concept of Operations (CONOPS) for the USV-01 26-agent live acceptance campaign, specifically for synthetic preliminary engineering exercise case A03. It defines two primary operational phases: a 6-knot loiter and",
+      "rawJsonParsePassed": false,
+      "outputContractShapePass": false,
+      "liveResponseObserved": true,
+      "usage": {
+        "candidatesTokenCount": 65,
+        "promptTokenCount": 318,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 318
+          }
+        ],
+        "serviceTier": "standard",
+        "thoughtsTokenCount": 1581,
+        "totalTokenCount": 1964
+      },
+      "error": null
+    },
+    {
+      "agentId": "A04",
+      "runtimeId": "REG-STD-04",
+      "role": "Marine Regulatory & Class Standards Specialist",
+      "task": "Identify categories of IMO/COLREG and class requirements needing current authoritative checks. No compliance claims.",
+      "sourceCommit": "854812812f02ab232a506957572c2944be63c7a5",
+      "provider": "gemini",
+      "modelVersion": "gemini-2.5-flash",
+      "responseId": "eC_2auHxMd64xdIP6ouj6Qs",
+      "finishReason": "MAX_TOKENS",
+      "response": "```json\n{\n  \"disciplineSummary\": \"Preliminary regulatory and classification assessment for USV-01, focusing on identifying categories of IMO/COLREG and class requirements for a simulated, non-actuating engineering test. This exercise highlights areas requiring authoritative checks against evolving USV standards and established maritime codes, without asserting",
+      "rawJsonParsePassed": false,
+      "outputContractShapePass": false,
+      "liveResponseObserved": true,
+      "usage": {
+        "candidatesTokenCount": 65,
+        "promptTokenCount": 300,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 300
+          }
+        ],
+        "serviceTier": "standard",
+        "thoughtsTokenCount": 1581,
+        "totalTokenCount": 1946
+      },
+      "error": null
+    }
+  ]
+}
