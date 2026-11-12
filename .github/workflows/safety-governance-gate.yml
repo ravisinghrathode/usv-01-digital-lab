@@ -24,6 +24,7 @@ jobs:
       AI_REVIEW_PROVIDER: ${{ vars.AI_REVIEW_PROVIDER || (secrets.GEMINI_API_KEY != '' && 'gemini' || 'deterministic') }}
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-2.5-flash' }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
@@ -80,6 +81,12 @@ jobs:
             echo '```' >> $GITHUB_STEP_SUMMARY
             tail -n 80 test-output.log >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
+            if [ -n "${{ github.event.pull_request.number || '' }}" ]; then
+              gh pr comment "${{ github.event.pull_request.number }}" --body "### ❌ CI Test Suite Failure Log
+\`\`\`
+$(tail -n 60 test-output.log)
+\`\`\`" || true
+            fi
             exit 1
           }
 
