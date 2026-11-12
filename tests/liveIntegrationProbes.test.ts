@@ -9,7 +9,7 @@ describe('Authenticated live commissioning probes', () => {
     let calls = 0;
     const request = (async (_url: unknown, _init: RequestInit = {}) => {
       calls++;
-      return calls === 1
+      return calls <= 4
         ? new Response('', { status: 401 })
         : new Response(JSON.stringify({ acceptance: { baselineSha: sha } }), {
           status: 200, headers: { 'content-type': 'application/json' }
@@ -20,7 +20,7 @@ describe('Authenticated live commissioning probes', () => {
     }, request);
     expect(result.status).toBe('LIVE_PROBE_PASSED_UNATTESTED');
     expect(result.independentlyVerified).toBe(false);
-    expect(calls).toBe(2);
+    expect(calls).toBe(5);
   });
 
   it('rejects unauthenticated public readiness endpoints and stale deployments', async () => {
@@ -33,7 +33,7 @@ describe('Authenticated live commissioning probes', () => {
     let i = 0;
     const stale = (async () => {
       i++;
-      return i === 1 ? new Response('', { status: 401 }) :
+      return i <= 4 ? new Response('', { status: 401 }) :
         new Response(JSON.stringify({ acceptance: { baselineSha: 'b'.repeat(40) } }), { status: 200 });
     }) as typeof fetch;
     const second = await probeDeployedLab({
