@@ -1,5 +1,6 @@
 import { AgentRegistry } from '../registry/AgentRegistry.ts';
 import { ToolRegistry } from '../tools/ToolRegistry.ts';
+import { evaluateAcceptance } from './AcceptanceGate.ts';
 
 export type ReadinessState = 'CONFIGURED' | 'TOOL_BOUND' | 'BLOCKED_MISSING_TOOL';
 export interface AgentReadiness {
@@ -53,6 +54,7 @@ export function getLabReadinessSnapshot() {
     agents,
     integrations,
     engineeringPhysicsValidated: false,
-    productionApproved: false
+    productionApproved: false,
+    acceptance: evaluateAcceptance(process.env.RELEASE_COMMIT_SHA || process.env.GITHUB_SHA || '')
   };
 }
