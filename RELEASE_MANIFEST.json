@@ -3,8 +3,8 @@
   "programme": "NAVAL-USV",
   "project": "USV-01 Digital Engineering Lab",
   "releaseVersion": "1.0.0",
-  "gitCommitSha": "9d1dac42714f0403234541522b3242cfe69e1e93",
-  "builtAt": "2026-11-12T11:42:45.295Z",
+  "gitCommitSha": "9b62b8e9ffed6db14dddf04b89835dff58213cc2",
+  "builtAt": "2026-11-12T11:45:03.511Z",
   "environment": {
     "nodeVersion": "v24.22.2",
     "osPlatform": "linux"
@@ -167,8 +167,8 @@
     },
     {
       "path": "src/components/VerifyUsv01Modal.tsx",
-      "sha256": "bd53b06676ab31d70b55373540c6af00138b80a29d86bf49abad320669ed4ae1",
-      "sizeBytes": 31463
+      "sha256": "a1ebaf342f58a02ad71b2549d3f288918f0a6cd5f03e66e1a1bd794409cc42a3",
+      "sizeBytes": 31476
     },
     {
       "path": "src/components/Vessel3DVisualizer.tsx",
@@ -302,8 +302,8 @@
     },
     {
       "path": "src/core/verification/VerifyUsv01Engine.ts",
-      "sha256": "70a5ed82a89a78ee95a4d0fcf855f7ced96960730fa890f53a5f637552b6a06d",
-      "sizeBytes": 50878
+      "sha256": "71a2d1e1e4b4dd84a88dacf271e17559e8d0610c38a274079d73f86af32f959b",
+      "sizeBytes": 50906
     },
     {
       "path": "src/data/globalUsvFleetData.ts",
@@ -357,5 +357,5 @@
     "auditVulnerabilities": 0,
     "staticAnalysisStatus": "PASS"
   },
-  "immutableManifestSha256": "06e47d1d5247163746f6146b15bdbc391d0d1d79c1474b82ccb3bbd570196f45"
+  "immutableManifestSha256": "7cd4d5c9a3a82961dd2666eff5e8dc34d327c8fa76fab4ef1a76cbf43367cab6"
 }

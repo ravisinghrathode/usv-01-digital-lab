@@ -19,7 +19,7 @@ import {
   Terminal,
   Activity
 } from 'lucide-react';
-import type { VerificationReport, IndividualCheckResult, AgentReadinessReport } from '../core/verification/VerifyUsv01Engine.ts';
+import type { VerificationReport, IndividualCheckResult, AgentReadinessReport, CheckStatus } from '../core/verification/VerifyUsv01Engine.ts';
 
 interface VerifyUsv01ModalProps {
   isOpen: boolean;

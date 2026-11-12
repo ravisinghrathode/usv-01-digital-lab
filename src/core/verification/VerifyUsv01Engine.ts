@@ -865,7 +865,7 @@ export class VerifyUsv01Engine {
       }
     }
 
-    const unverifiedPlans = vplans.filter(p => !trecs.some(t => t.planId === p.id && t.verdict === 'PASS'));
+    const unverifiedPlans = vplans.filter(p => !trecs.some(t => t.planId === p.id && t.resultStatus === 'Passed'));
 
     phase4Checks.push({
       id: 'CHK-ENG-01',
@@ -956,7 +956,7 @@ export class VerifyUsv01Engine {
       evidence: {
         totalGates: allGates.length,
         pendingGatesCount: pendingGates.length,
-        gateList: allGates.map(g => ({ id: g.id, state: g.state, risk: g.riskLevel }))
+        gateList: allGates.map(g => ({ id: g.id, state: g.state, safetyImplication: g.safetyImplication }))
       },
       timestamp: new Date().toISOString()
     });

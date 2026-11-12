@@ -636,8 +636,8 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
       }
     });
 
-    it('should accurately disclose deterministic review and never represent it as model-backed', () => {
-      const report = generateMultiRoleReview('HEAD');
+    it('should accurately disclose deterministic review and never represent it as model-backed', async () => {
+      const report = await generateMultiRoleReview('HEAD');
       expect(report).toBeDefined();
       if (report.provider === 'deterministic') {
         expect(report.aiReviewStatus).toBe('AI_REVIEW_UNAVAILABLE');

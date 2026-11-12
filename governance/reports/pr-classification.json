@@ -1,8 +1,8 @@
 {
   "summary": {
     "totalFilesChanged": 33,
-    "totalLinesAdded": 3389,
-    "totalLinesDeleted": 89,
+    "totalLinesAdded": 3605,
+    "totalLinesDeleted": 149,
     "dominantCategories": [
       "SOFTWARE",
       "SECURITY",
@@ -17,8 +17,8 @@
     "requiresDesignatedAuthorityApproval": true,
     "requiresECR": true
   },
-  "commitSha": "9d1dac42714f0403234541522b3242cfe69e1e93",
-  "baselineDigest": "sha256:54ca7431badf7bfd051ff41e6764cf32dec92ae130766566992212845f864df9",
+  "commitSha": "9b62b8e9ffed6db14dddf04b89835dff58213cc2",
+  "baselineDigest": "sha256:63f68414eefde98fbdfac1085cdc2fa79b682f4c6aa038ec86a42589985fe341",
   "fileDetails": [
     {
       "file": "RELEASE_MANIFEST.json",
@@ -35,8 +35,8 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 7,
-      "linesDeleted": 5
+      "linesAdded": 204,
+      "linesDeleted": 61
     },
     {
       "file": "governance/reports/stage-c-review.json",
@@ -44,8 +44,8 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 6,
-      "linesDeleted": 6
+      "linesAdded": 52,
+      "linesDeleted": 10
     },
     {
       "file": "governance/reports/stage-d-approval.json",
@@ -62,7 +62,7 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 957,
+      "linesAdded": 930,
       "linesDeleted": 0
     },
     {
@@ -322,5 +322,5 @@
       "linesDeleted": 0
     }
   ],
-  "timestamp": "2026-11-12T11:42:45.423Z"
+  "timestamp": "2026-11-12T11:45:03.667Z"
 }
