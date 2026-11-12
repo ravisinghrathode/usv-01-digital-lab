@@ -213,10 +213,22 @@ export function verifySessionToken(token: string): AuthenticatedUser | null {
     }
 
     const payload: AuthenticatedUser = JSON.parse(Buffer.from(payloadB64, 'base64url').toString('utf8'));
-    if (Date.now() > payload.expiresAt) {
-      return null; // Expired
+    // An HMAC authenticates the bytes of a session, not the continuing authority
+    // of the role embedded in it. Reconcile against the server-owned staff allowlist.
+    const canonical = payload && typeof payload.userId === 'string'
+      ? AUTHORIZED_MEMBERS[payload.userId] : undefined;
+    if (!canonical ||
+        typeof payload.issuedAt !== 'number' || !Number.isFinite(payload.issuedAt) ||
+        typeof payload.expiresAt !== 'number' || !Number.isFinite(payload.expiresAt) ||
+        payload.issuedAt > Date.now() + 60_000 ||
+        payload.expiresAt <= Date.now() ||
+        payload.expiresAt <= payload.issuedAt ||
+        payload.expiresAt - payload.issuedAt > 24 * 60 * 60 * 1000 ||
+        payload.role !== canonical.role ||
+        payload.userName !== canonical.userName) {
+      return null;
     }
-    return payload;
+    return { ...payload, role: canonical.role, userName: canonical.userName };
   } catch {
     return null;
   }
@@ -1018,8 +1030,8 @@ app.post('/api/data/reset-demo', async (req, res) => {
       {
         id: `LOG-${Date.now()}`,
         timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
-        userId: 'usr-admin',
-        userName: 'Systems Administrator',
+        userId: (req as any).user.userId,
+        userName: (req as any).user.userName,
         action: 'UPDATE',
         recordType: 'DATABASE',
         recordId: 'RESET',
@@ -1068,8 +1080,8 @@ app.post('/api/data/:collection', validateDataCollection, (req, res) => {
     dbStore.activity_log.unshift({
       id: `LOG-${Date.now()}`,
       timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
-      userId: req.body.owner || 'Lead Engineer',
-      userName: req.body.owner || 'Lead Engineer',
+      userId: (req as any).user.userId,
+      userName: (req as any).user.userName,
       action: 'CREATE',
       recordType: coll.toUpperCase(),
       recordId: newItem.id,
@@ -1101,9 +1113,9 @@ app.put('/api/data/:collection/:id', validateDataCollection, (req, res) => {
     dbStore.activity_log.unshift({
       id: `LOG-${Date.now()}`,
       timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
-      userId: req.body.reviewer || req.body.owner || 'Lead Engineer',
-      userName: req.body.reviewer || req.body.owner || 'Lead Engineer',
-      action: req.body.status === 'Approved' ? 'APPROVE' : req.body.status === 'Archived' ? 'ARCHIVE' : 'UPDATE',
+      userId: (req as any).user.userId,
+      userName: (req as any).user.userName,
+      action: req.body.status === 'Archived' ? 'ARCHIVE' : 'UPDATE',
       recordType: coll.toUpperCase(),
       recordId: id,
       details: `Updated ${coll} record ${id}: status=${items[idx].status || 'nominal'}`
@@ -1129,8 +1141,8 @@ app.delete('/api/data/:collection/:id', validateDataCollection, (req, res) => {
   dbStore.activity_log.unshift({
     id: `LOG-${Date.now()}`,
     timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
-    userId: 'Lead Engineer',
-    userName: 'Lead Engineer',
+    userId: (req as any).user.userId,
+    userName: (req as any).user.userName,
     action: 'ARCHIVE',
     recordType: coll.toUpperCase(),
     recordId: id,
@@ -1163,8 +1175,8 @@ app.post('/api/import', (req, res) => {
     dbStore.activity_log.unshift({
       id: `LOG-${Date.now()}`,
       timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
-      userId: 'Admin',
-      userName: 'Administrator',
+      userId: (req as any).user.userId,
+      userName: (req as any).user.userName,
       action: 'IMPORT',
       recordType: 'DATABASE',
       recordId: 'RESTORE',
