@@ -913,7 +913,6 @@ export class VerifyUsv01Engine {
       if (depsRegistered) score += 20;
       if (toolsRegistered) score += 20;
       if (capabilityStatus === 'TESTED') score += 20;
-      else if (capabilityStatus === 'IMPLEMENTED') score += 15;
       else if (capabilityStatus === 'SIMULATED') score += 10;
 
       agentReports.push({
@@ -1039,11 +1038,11 @@ export class VerifyUsv01Engine {
       mandatory: true,
       summary: auditValid
         ? `Audit ledger integrity verified across ${auditEntries.length} SHA-256 chained events with zero tampering.`
-        : `Cryptographic audit chain broken at index ${integrityRes.brokenAtIndex}!`,
+        : `Cryptographic audit chain broken at index ${integrityRes.compromisedAtIndex}!`,
       evidence: {
         valid: auditValid,
         totalEntries: auditEntries.length,
-        brokenAtIndex: integrityRes.brokenAtIndex
+        compromisedAtIndex: integrityRes.compromisedAtIndex
       },
       remediation: !auditValid ? 'Inspect audit log for unauthorized modifications or truncation' : undefined,
       timestamp: new Date().toISOString()

@@ -64,7 +64,13 @@ jobs:
       - name: Stage B — TypeScript Static Typecheck & Lint
         run: |
           set -euo pipefail
-          npm run lint
+          npm run lint 2>&1 | tee lint-output.log || {
+            echo "### ❌ TypeScript Static Typecheck & Lint Failure" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            tail -n 80 lint-output.log >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          }
 
       - name: Stage B — Execute Deterministic & Safety Test Suite
         run: |

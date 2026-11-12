@@ -16,6 +16,7 @@ import { ModelProviderRouter } from '../src/core/models/ModelProvider.ts';
 import { generateMultiRoleReview } from '../scripts/governance/independent-ai-review.ts';
 import { evaluateGovernanceGate } from '../scripts/governance/stage-e-enforce.ts';
 import { VerifyUsv01Engine } from '../src/core/verification/VerifyUsv01Engine.ts';
+import type { IndividualCheckResult } from '../src/core/types/verification.ts';
 import path from 'path';
 import fs from 'fs';
 import { execSync } from 'child_process';
