@@ -32,7 +32,7 @@ import { ExportImportModal } from './components/ExportImportModal';
 import { ContextGuideModal } from './components/ContextGuideModal';
 import { LoginModal } from './components/LoginModal';
 import { VerifyUsv01Modal } from './components/VerifyUsv01Modal';
-import type { VerificationReport } from './core/verification/VerifyUsv01Engine.ts';
+import type { VerificationReport } from './core/types/verification.ts';
 import {
   authenticatedFetch,
   getCurrentUser,
