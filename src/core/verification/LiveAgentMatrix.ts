@@ -10,6 +10,7 @@ export interface AgentRunFinding {
   status: 'MISSING_CASE' | 'INVALID_INPUT' | 'EXECUTION_FAILED' | 'NOT_LIVE_PROVIDER' | 'LIVE_PROVIDER_EXECUTED_UNCERTIFIED';
   provider?: string;
   executionMode?: string;
+  providerExecutionMode?: string;
   outputDigestSha256?: string;
   correlationId?: string;
 }
@@ -57,10 +58,12 @@ export async function runLiveAgentMatrix(
       finding.correlationId = output.correlationId;
       finding.provider = output.provider;
       finding.executionMode = output.executionMode;
+      finding.providerExecutionMode = output.providerExecutionMode;
       finding.outputDigestSha256 = 'sha256:' + createHash('sha256')
         .update(JSON.stringify(output.data)).digest('hex');
       const realProvider = ['gemini','openai','ollama'].includes(output.provider || '');
-      const live = output.executionMode === 'LIVE_AI_GENERATION' && realProvider &&
+      const live = output.providerExecutionMode === 'LIVE_AI_GENERATION' && realProvider &&
+        output.agentId === spec.id && output.taskId === input.taskId &&
         !['FAILED','PARTIAL'].includes(output.status) && !!output.correlationId;
       finding.status = live ? 'LIVE_PROVIDER_EXECUTED_UNCERTIFIED' :
         output.status === 'FAILED' ? 'EXECUTION_FAILED' : 'NOT_LIVE_PROVIDER';
