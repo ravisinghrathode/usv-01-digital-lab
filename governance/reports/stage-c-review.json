@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-11-12T00:35:18.459Z",
+  "timestamp": "2026-11-12T00:49:33.544Z",
   "gitRef": "origin/main",
-  "evaluatedCommitSha": "faafa30c5ca759b25c904fa9ca2ce75428bbf1ce",
-  "baselineDigest": "sha256:d6c7681ee0641c967bf5d4d2bebfd51844b39d4377972aa6ebdd1aaf982093ac",
+  "evaluatedCommitSha": "489ebc685226e3773d021c5c534a26403400a494",
+  "baselineDigest": "sha256:adbdf77808213ca1768ff60717e592fd582e146dab175c2207e14f6bbfdd9e5f",
   "executionMode": "Deterministic Static Rule Engine (Zero External API)",
   "provider": "deterministic",
   "aiReviewStatus": "AI_REVIEW_UNAVAILABLE",
