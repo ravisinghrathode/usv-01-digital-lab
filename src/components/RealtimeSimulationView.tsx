@@ -21,9 +21,11 @@ import {
   Layers,
   ChevronRight,
   Info,
-  CheckCircle2
+  CheckCircle2,
+  Rotate3d
 } from 'lucide-react';
 import { SharedMemory } from '../core/memory/SharedMemory';
+import { Vessel3DVisualizer } from './Vessel3DVisualizer';
 
 interface ObstacleVessel {
   id: string;
@@ -43,7 +45,7 @@ interface RealtimeSimulationViewProps {
 }
 
 export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ onAskAi }) => {
-  const [activeTab, setActiveTab] = useState<'radar' | 'hydrostatics'>('radar');
+  const [activeTab, setActiveTab] = useState<'design3d' | 'hydrostatics' | 'radar'>('design3d');
 
   // Simulation running state
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
@@ -964,15 +966,15 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
       {/* Tabs */}
       <div className="flex border-b border-slate-800 gap-2 text-xs font-mono">
         <button
-          onClick={() => setActiveTab('radar')}
+          onClick={() => setActiveTab('design3d')}
           className={`px-4 py-2 border-b-2 font-medium transition-colors flex items-center gap-2 ${
-            activeTab === 'radar'
+            activeTab === 'design3d'
               ? 'border-teal-400 text-teal-300 bg-slate-900/40'
               : 'border-transparent text-slate-400 hover:text-slate-200'
           }`}
         >
-          <Radio className="w-4 h-4 text-teal-400" />
-          <span>Tactical Radar & Autonomous COLREGs View</span>
+          <Rotate3d className="w-4 h-4 text-cyan-400" />
+          <span>1. 3D Boat Design & CAD Mesh</span>
         </button>
 
         <button
@@ -984,11 +986,91 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
           }`}
         >
           <Waves className="w-4 h-4 text-cyan-400" />
-          <span>Flotation & Intact Stability Wave Tank</span>
+          <span>2. Flotation & Intact Stability Wave Tank</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('radar')}
+          className={`px-4 py-2 border-b-2 font-medium transition-colors flex items-center gap-2 ${
+            activeTab === 'radar'
+              ? 'border-teal-400 text-teal-300 bg-slate-900/40'
+              : 'border-transparent text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <Radio className="w-4 h-4 text-teal-400" />
+          <span>3. Tactical Radar & Autonomous COLREGs View</span>
         </button>
       </div>
 
-      {/* TAB 1: RADAR & AUTONOMOUS NAVIGATION */}
+      {/* TAB 1: 3D BOAT DESIGN & CAD MESH */}
+      {activeTab === 'design3d' && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-lg p-4 space-y-3">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800 flex-wrap gap-2 text-xs">
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-cyan-400 font-bold flex items-center gap-1.5">
+                  <Rotate3d className="w-4 h-4" /> 3D Vessel Design & Perception Mast
+                </span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-300">
+                  REV 0.4 BASELINE
+                </span>
+              </div>
+              <span className="text-xs text-slate-400 font-mono">
+                Click & drag to orbit • Scroll to zoom
+              </span>
+            </div>
+
+            <div className="rounded-lg overflow-hidden border border-slate-800 bg-slate-950">
+              <Vessel3DVisualizer
+                initialHullType="MONOHULL"
+                lwlMeters={10.5}
+                beamMeters={2.9}
+                draftMeters={0.65}
+                displacementTonnes={hydroMass}
+                className="w-full h-[480px]"
+              />
+            </div>
+          </div>
+
+          <div className="lg:col-span-4 space-y-4 font-mono text-xs">
+            <div className="bg-slate-900 border border-slate-800 rounded-lg p-4 space-y-3">
+              <div className="border-b border-slate-800 pb-2">
+                <span className="text-[10px] uppercase tracking-wider text-slate-500 block">DESIGN SPECIFICATIONS</span>
+                <span className="text-cyan-400 font-bold text-sm">USV-01 PLANING MONOHULL</span>
+              </div>
+              <div className="space-y-2 text-slate-300">
+                <div className="flex justify-between"><span>Length Waterline (LWL):</span> <strong className="text-white">10.5 m</strong></div>
+                <div className="flex justify-between"><span>Beam Overall (B):</span> <strong className="text-white">2.90 m</strong></div>
+                <div className="flex justify-between"><span>Draft Molded (T):</span> <strong className="text-white">0.65 m</strong></div>
+                <div className="flex justify-between"><span>Freeboard (fb):</span> <strong className="text-white">0.80 m</strong></div>
+                <div className="flex justify-between"><span>Deadrise Angle:</span> <strong className="text-white">19° Deep-V</strong></div>
+                <div className="flex justify-between"><span>Displacement (Δ):</span> <strong className="text-amber-400">{hydroMass.toFixed(2)} t</strong></div>
+                <div className="flex justify-between"><span>Vertical CG (KG):</span> <strong className="text-amber-400">{hydroKg.toFixed(2)} m</strong></div>
+              </div>
+            </div>
+
+            <div className="bg-slate-900 border border-slate-800 rounded-lg p-4 space-y-3">
+              <div className="border-b border-slate-800 pb-2">
+                <span className="text-[10px] uppercase tracking-wider text-slate-500 block">INTEGRATED PERCEPTION SUITE</span>
+                <span className="text-purple-400 font-bold text-sm">GATE 1 SENSOR MAST</span>
+              </div>
+              <div className="space-y-2 text-slate-300 text-[11px]">
+                <div className="flex justify-between"><span>Radar:</span> <strong className="text-white">Simrad HALO24 (60 RPM)</strong></div>
+                <div className="flex justify-between"><span>LiDAR:</span> <strong className="text-white">Ouster OS1-32 (120m)</strong></div>
+                <div className="flex justify-between"><span>EO/IR Turret:</span> <strong className="text-white">FLIR SeaFLIR 230 HD</strong></div>
+                <div className="flex justify-between"><span>Propulsion:</span> <strong className="text-emerald-400">Twin Azimuth Pods (182 kW)</strong></div>
+              </div>
+            </div>
+
+            <div className="p-3 rounded-lg bg-teal-950/40 border border-teal-500/30 text-[11px] text-teal-300">
+              <CheckCircle2 className="w-3.5 h-3.5 inline mr-1 text-teal-400" />
+              Direct closed-loop rendering: CAD geometry, waterplane clearance, and mast hardware are bound to Rev 0.4 parameters.
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 2: RADAR & AUTONOMOUS NAVIGATION */}
       {activeTab === 'radar' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Main Radar Screen (Canvas) */}
