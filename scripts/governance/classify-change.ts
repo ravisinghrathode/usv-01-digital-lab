@@ -110,15 +110,19 @@ export function classifyFile(filePath: string): { categories: ChangeCategory[]; 
   return { categories, risk };
 }
 
-export function generateClassificationReport(baseRef = 'origin/main'): PRClassificationReport {
+export function generateClassificationReport(baseRef = 'origin/main', rootDir = process.cwd()): PRClassificationReport {
   let diffStat = '';
   try {
-    diffStat = execSync(`git diff --numstat ${baseRef}...HEAD`, { encoding: 'utf-8' });
-  } catch {
+    diffStat = execSync(`git diff --numstat ${baseRef}...HEAD`, { cwd: rootDir, encoding: 'utf-8' });
+  } catch {}
+
+  if (!diffStat.trim()) {
     try {
-      diffStat = execSync('git diff --numstat HEAD~1...HEAD', { encoding: 'utf-8' });
+      diffStat = execSync('git diff --numstat HEAD~1...HEAD', { cwd: rootDir, encoding: 'utf-8' });
     } catch {
-      diffStat = execSync('git diff --numstat --staged', { encoding: 'utf-8' });
+      try {
+        diffStat = execSync('git diff --numstat --staged', { cwd: rootDir, encoding: 'utf-8' });
+      } catch {}
     }
   }
 

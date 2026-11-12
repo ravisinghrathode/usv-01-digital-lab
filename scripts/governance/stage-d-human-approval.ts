@@ -43,7 +43,7 @@ export function evaluateStageDHumanApproval(baseRef = 'origin/main', opts: Stage
   const headRef = opts.headRef || process.env.PR_HEAD_SHA || 'HEAD';
   const evaluatedRef = execFileSync('git', ['rev-parse', headRef], { cwd: rootDir, encoding: 'utf-8' }).trim();
 
-  const diffReport = generateClassificationReport(baseRef);
+  const diffReport = generateClassificationReport(baseRef, rootDir);
   const highestRisk = diffReport.summary.overallRisk;
   const isCriticalOrHigh = highestRisk === 'CRITICAL' || highestRisk === 'HIGH';
 
