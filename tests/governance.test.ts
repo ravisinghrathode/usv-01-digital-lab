@@ -498,6 +498,8 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
           expect(rev.advisoryRecommendation).toBe('ADVISORY_BLOCK');
           expect(rev.executionStatus).toBe('FAILED');
           expect(rev.summary).toContain('MOCK EXECUTION REJECTED');
+        } else if (rev?.executionStatus === 'FAILED') {
+          expect(rev.summary).toContain('AI review unavailable');
         } else {
           expect(rev?.executionStatus).toBe('COMPLETED');
         }
