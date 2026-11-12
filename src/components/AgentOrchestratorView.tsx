@@ -69,12 +69,12 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
   // Tool Calculator State
   const [selectedToolId, setSelectedToolId] = useState<string>('TOOL-HYDROSTATICS-01');
   const [toolInputs, setToolInputs] = useState<Record<string, any>>({
-    lwlMeters: 10.5,
-    beamMeters: 2.8,
-    draftMeters: 0.65,
-    blockCoefficientCb: 0.44,
-    waterplaneCoefficientCwp: 0.65,
-    kgMeters: 0.85,
+    lwlMeters: 0,
+    beamMeters: 0,
+    draftMeters: 0,
+    blockCoefficientCb: 0,
+    waterplaneCoefficientCwp: 0,
+    kgMeters: 0,
     seawaterDensityKgM3: 1025
   });
   const [toolOutput, setToolOutput] = useState<any>(null);
@@ -82,12 +82,12 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
   // Approval Gate Director Notes
   const [directorNote, setDirectorNote] = useState<string>('Verified against USV-01 preliminary design criteria.');
 
-  // Exploratory Parametric Study Inputs (used strictly for exploratory DAG runs when vessel baseline is TBD)
-  const [studyLwl, setStudyLwl] = useState<number>(11.2);
-  const [studyBeam, setStudyBeam] = useState<number>(2.9);
-  const [studyDraft, setStudyDraft] = useState<number>(0.68);
-  const [studyDisplacement, setStudyDisplacement] = useState<number>(7.8);
-  const [studySpeed, setStudySpeed] = useState<number>(22.0);
+  // Exploratory Parametric Study Inputs (Defaults to 0 / TBD pending baseline inputs)
+  const [studyLwl, setStudyLwl] = useState<number>(0);
+  const [studyBeam, setStudyBeam] = useState<number>(0);
+  const [studyDraft, setStudyDraft] = useState<number>(0);
+  const [studyDisplacement, setStudyDisplacement] = useState<number>(0);
+  const [studySpeed, setStudySpeed] = useState<number>(0);
 
   // Authenticated User & Director Passphrase Verification State
   const [approverIdentity, setApproverIdentity] = useState<ApproverIdentity | null>(null);
@@ -144,6 +144,12 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
       lwlParam && lwlParam.value !== 'TBD' && typeof lwlParam.value === 'number' &&
       beamParam && beamParam.value !== 'TBD' && typeof beamParam.value === 'number' &&
       draftParam && draftParam.value !== 'TBD' && typeof draftParam.value === 'number';
+
+    if (!hasCertifiedBaselines && (studyLwl <= 0 || studyBeam <= 0 || studyDraft <= 0 || studyDisplacement <= 0 || studySpeed <= 0)) {
+      alert('Vessel particulars are currently at 0 / TBD. Please enter non-zero study dimensions or certify baseline parameters before running calculation workflow.');
+      setIsExecutingWorkflow(false);
+      return;
+    }
 
     const lwlVal = hasCertifiedBaselines ? Number(lwlParam!.value) : studyLwl;
     const beamVal = hasCertifiedBaselines ? Number(beamParam!.value) : studyBeam;

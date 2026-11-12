@@ -78,9 +78,9 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
   const radarCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const hydroCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  // Internal Animation Refs
+  // Internal Animation Refs (Starts at rest with zero velocity until commanded)
   const stateRef = useRef({
-    usv: { x: 0, y: -350, heading: 0, speed: 18.0, baseHeading: 0, rudder: 0 },
+    usv: { x: 0, y: -350, heading: 0, speed: 0.0, baseHeading: 0, rudder: 0 },
     obstacles: [] as ObstacleVessel[],
     radarAngle: 0,
     isPlaying: true,
@@ -90,9 +90,9 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
     activeRule: 'Rule 10 (Traffic Lane)' as string
   });
 
-  // Hydrostatics & Flotation Tank State
-  const [hydroMass, setHydroMass] = useState<number>(7.8); // tonnes
-  const [hydroKg, setHydroKg] = useState<number>(0.85); // meters VCG
+  // Hydrostatics & Flotation Tank State (Defaults to 0 / TBD baseline)
+  const [hydroMass, setHydroMass] = useState<number>(0.0); // tonnes
+  const [hydroKg, setHydroKg] = useState<number>(0.0); // meters VCG
   const [waveAmp, setWaveAmp] = useState<number>(0.4); // meters
   const [waveFreq, setWaveFreq] = useState<number>(1.2); // rad/s
   const [heelAngle, setHeelAngle] = useState<number>(0); // dynamic heel deg
@@ -761,11 +761,11 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
       const beam = 2.8;
       const cb = 0.44;
       // Draft T = V / (L * B * Cb)
-      const draft = volume / (lwl * beam * cb);
+      const draft = volume > 0 ? volume / (lwl * beam * cb) : 0;
       const kb = draft * 0.53; // Center of Buoyancy above keel
-      const bmt = (beam * beam) / (12 * draft * cb) * 0.65; // Transverse metacentric radius
+      const bmt = draft > 0 ? (beam * beam) / (12 * draft * cb) * 0.65 : 0; // Transverse metacentric radius
       const kmt = kb + bmt; // Metacenter above keel
-      const gmt = kmt - hydroKg; // Metacentric height GMt
+      const gmt = Math.max(kmt - hydroKg, 0); // Metacentric height GMt
 
       // Wave elevation at hull location
       const waveY = Math.sin(time * waveFreq) * (waveAmp * 40);
@@ -1269,7 +1269,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
                 </div>
                 <input
                   type="range"
-                  min="4.0"
+                  min="0.0"
                   max="14.0"
                   step="0.2"
                   value={hydroMass}
@@ -1287,7 +1287,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
                 </div>
                 <input
                   type="range"
-                  min="0.5"
+                  min="0.0"
                   max="1.5"
                   step="0.02"
                   value={hydroKg}
@@ -1331,6 +1331,21 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
                 />
               </div>
 
+              {/* Reset to Zero */}
+              <button
+                onClick={() => {
+                  setHydroMass(0.0);
+                  setHydroKg(0.0);
+                  setWaveAmp(0.0);
+                  setWaveFreq(1.0);
+                }}
+                className="w-full py-1.5 rounded bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/30 text-rose-300 text-xs font-mono flex items-center justify-center gap-1.5 transition-colors"
+                title="Reset all simulation parameters to zero"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Reset Parameters to Zero</span>
+              </button>
+
               {/* Reset to Baseline */}
               <button
                 onClick={() => {
@@ -1342,7 +1357,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
                 className="w-full py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono flex items-center justify-center gap-1.5 transition-colors"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span>Reset to Baseline Dimensions</span>
+                <span>Reset to Study Baseline</span>
               </button>
             </div>
           </div>
