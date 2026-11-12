@@ -262,7 +262,13 @@ export class BaseAgent {
     // Evidence validity derives strictly from executed deterministic tools or formal verification.
     const hasExecutedDeterministicTools = deterministicEvidence.length > 0;
     const allToolsVerified = hasExecutedDeterministicTools && deterministicEvidence.every(e => e.verified);
-    const evidenceValid = allToolsVerified;
+    // Successful execution proves the formula ran, NOT that the assumed inputs or
+    // resulting predictions are independently validated for design release.
+    const hasPreliminaryTools = deterministicEvidence.some(e =>
+      e.outputs?.isPreliminaryEstimate === true ||
+      e.outputs?.stabilityStatus === 'UNVERIFIED_ESTIMATE'
+    );
+    const evidenceValid = allToolsVerified && !hasPreliminaryTools;
 
     let executionMode = modelResponse.executionMode || 'LIVE_AI_GENERATION';
     if (hasExecutedDeterministicTools && allToolsVerified) {
@@ -280,6 +286,13 @@ export class BaseAgent {
       requiresDirectorApproval = true;
       approvalRationale = 'Synthetic mock fallback used. Physics evidence not confirmed by live solver or verified model; requires human approval.';
       warnings.push('CRITICAL: Output generated via synthetic mock fallback. Not certified as verified engineering evidence.');
+    }
+
+    if (hasPreliminaryTools) {
+      requiresDirectorApproval = true;
+      approvalRationale = 'Preliminary engineering inputs detected: model result is not validated compliance evidence.';
+      warnings.push('UNVERIFIED ESTIMATE: A deterministic calculation used assumed inputs; independent validation is mandatory.');
+      openTbdItems.push('Replace assumed engineering inputs with traceable, validated measurements.');
     }
 
     // Client-supplied exploratory flags never override registered safety and independent-review policy.
