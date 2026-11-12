@@ -51,7 +51,8 @@ service cloud.firestore {
     // Requirements register: Bound to project membership; Baseline modification requires lead/director
     match /requirements/{reqId} {
       allow read: if isAuthenticated() && (resource == null || isProjectMember(resource.data.projectId));
-      allow create: if isAuthenticated() && isProjectMember(request.resource.data.projectId);
+      allow create: if isAuthenticated() && isProjectMember(request.resource.data.projectId) &&
+        (request.resource.data.status != 'Approved Baseline' || isLeadOrAdmin(request.resource.data.projectId));
       allow update: if isAuthenticated() && isProjectMember(resource.data.projectId) &&
         request.resource.data.projectId == resource.data.projectId &&
         (resource.data.status != 'Approved Baseline' && request.resource.data.status != 'Approved Baseline' ||
@@ -68,7 +69,8 @@ service cloud.firestore {
     // Design Decisions: Formal baseline decisions require lead or director approval
     match /design_decisions/{decisionId} {
       allow read: if isAuthenticated() && (resource == null || isProjectMember(resource.data.projectId));
-      allow create: if isAuthenticated() && isProjectMember(request.resource.data.projectId);
+      allow create: if isAuthenticated() && isProjectMember(request.resource.data.projectId) &&
+        (request.resource.data.status != 'Approved' || isLeadOrAdmin(request.resource.data.projectId));
       allow update: if isAuthenticated() && isProjectMember(resource.data.projectId) &&
         request.resource.data.projectId == resource.data.projectId &&
         (resource.data.status != 'Approved' && request.resource.data.status != 'Approved' ||
@@ -114,7 +116,7 @@ service cloud.firestore {
     // Human Authority Safety Approval Gates: Final decision strictly restricted to ENGINEERING_DIRECTOR
     match /approval_gates/{gateId} {
       allow read: if isAuthenticated();
-      allow create: if isAuthenticated();
+      allow create: if isLeadOrAdmin(request.resource.data.projectId);
       allow update: if isDirector();
       allow delete: if false; // Immutable safety ledger
     }
@@ -122,7 +124,8 @@ service cloud.firestore {
     // Activity Log - append only, immutable
     match /activity_log/{logId} {
       allow read: if isAuthenticated();
-      allow create: if isAuthenticated();
+      allow create: if isAuthenticated() &&
+        (request.resource.data.userId == request.auth.uid || isDirector());
       allow update, delete: if false;
     }
 

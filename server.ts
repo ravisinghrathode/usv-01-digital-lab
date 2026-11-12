@@ -1650,6 +1650,20 @@ async function startServer() {
       const host = request.headers.host || 'localhost';
       const pathname = request.url ? new URL(request.url, `http://${host}`).pathname : '';
       if (pathname === '/api/gemini/live' || pathname === '/live') {
+        // WebSockets bypass Express middleware. Verify the session before allocating
+        // an upstream paid Live API connection. Browsers send token in the second
+        // subprotocol after the fixed public protocol, which is the only protocol echoed.
+        const header = request.headers.authorization;
+        const bearer = typeof header === 'string' && header.startsWith('Bearer ')
+          ? header.slice(7) : '';
+        const protocols = String(request.headers['sec-websocket-protocol'] || '').split(',').map(s => s.trim());
+        const boundToken = protocols[0] === 'usv01-v1'
+          ? protocols.find(s => s.startsWith('auth.'))?.slice(5) : undefined;
+        if (!verifySessionToken(bearer || boundToken || '')) {
+          socket.write('HTTP/1.1 401 Unauthorized\r\nConnection: close\r\n\r\n');
+          socket.destroy();
+          return;
+        }
         wss.handleUpgrade(request, socket, head, (ws: any) => {
           wss.emit('connection', ws, request);
         });
