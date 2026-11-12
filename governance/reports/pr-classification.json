@@ -1,8 +1,8 @@
 {
   "summary": {
     "totalFilesChanged": 18,
-    "totalLinesAdded": 932,
-    "totalLinesDeleted": 519,
+    "totalLinesAdded": 935,
+    "totalLinesDeleted": 499,
     "dominantCategories": [
       "SOFTWARE",
       "CONFIGURATION",
@@ -40,8 +40,8 @@
         "RELEASE"
       ],
       "risk": "LOW",
-      "linesAdded": 24,
-      "linesDeleted": 49
+      "linesAdded": 23,
+      "linesDeleted": 53
     },
     {
       "file": "docs/governance/SOURCE_CODE_DATA_HANDLING_POLICY.md",
@@ -58,8 +58,8 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 38,
-      "linesDeleted": 405
+      "linesAdded": 43,
+      "linesDeleted": 382
     },
     {
       "file": "governance/reports/stage-c-review.json",
@@ -67,8 +67,8 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 5,
-      "linesDeleted": 5
+      "linesAdded": 4,
+      "linesDeleted": 4
     },
     {
       "file": "governance/reports/stage-d-approval.json",
@@ -179,5 +179,5 @@
       "linesDeleted": 0
     }
   ],
-  "timestamp": "2026-11-12T01:56:22.712Z"
+  "timestamp": "2026-11-12T02:03:06.793Z"
 }
