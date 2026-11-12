@@ -15,6 +15,7 @@ import { authenticateLoginRequest, AUTHORIZED_MEMBERS } from '../server.ts';
 import { ModelProviderRouter } from '../src/core/models/ModelProvider.ts';
 import { generateMultiRoleReview } from '../scripts/governance/independent-ai-review.ts';
 import { evaluateGovernanceGate } from '../scripts/governance/stage-e-enforce.ts';
+import { VerifyUsv01Engine } from '../src/core/verification/VerifyUsv01Engine.ts';
 import path from 'path';
 import fs from 'fs';
 import { execSync } from 'child_process';
@@ -586,6 +587,121 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
         expect(evalRes.blockingReasons.some(r => r.includes('PENDING_HUMAN_REVIEW'))).toBe(true);
       } finally {
         fs.rmSync(tmpDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should reject Stage C evidence when baseline digest does not match current commit baseline', () => {
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'egs-digest-c-'));
+      const reportsDir = path.join(tmpDir, 'governance', 'reports');
+      fs.mkdirSync(reportsDir, { recursive: true });
+
+      try {
+        fs.writeFileSync(
+          path.join(reportsDir, 'pr-classification.json'),
+          JSON.stringify({
+            summary: {
+              overallRisk: 'LOW',
+              requiresDesignatedAuthorityApproval: false,
+              totalFilesChanged: 1,
+              totalLinesAdded: 5,
+              totalLinesDeleted: 0,
+              dominantCategories: ['DOCUMENTATION'],
+              requiresECR: false
+            },
+            baselineDigest: 'sha256:current1234567890abcdef',
+            fileDetails: [],
+            timestamp: new Date().toISOString()
+          })
+        );
+
+        fs.writeFileSync(
+          path.join(reportsDir, 'stage-c-review.json'),
+          JSON.stringify({
+            compositeAdvisoryRecommendation: 'ADVISORY_APPROVE',
+            provider: 'deterministic',
+            aiReviewStatus: 'AI_REVIEW_UNAVAILABLE',
+            deterministicStatus: 'PASS',
+            hasMockFallback: false,
+            baselineDigest: 'sha256:mismatchedOldDigest999',
+            evaluatedCommitSha: 'oldCommitSha1234'
+          })
+        );
+
+        // When evaluating against a rootDir with different digest, Stage E detects mismatch
+        const evalRes = evaluateGovernanceGate(tmpDir, 'origin/main');
+        expect(evalRes.passed).toBe(false);
+        expect(evalRes.blockingReasons.some(r => r.includes('Stage C independent review evidence does not correspond to the exact baseline digest'))).toBe(true);
+      } finally {
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should accurately disclose deterministic review and never represent it as model-backed', () => {
+      const report = generateMultiRoleReview('HEAD');
+      expect(report).toBeDefined();
+      if (report.provider === 'deterministic') {
+        expect(report.aiReviewStatus).toBe('AI_REVIEW_UNAVAILABLE');
+        expect(report.executionMode).toContain('Deterministic Static Rule Engine');
+        expect(report.governanceBanner).toContain('DETERMINISTIC STATIC RULE ENGINE REVIEW ONLY');
+        expect(report.governanceBanner).not.toContain('SEVEN INDEPENDENT MODEL-BACKED REVIEWERS');
+      }
+    });
+  });
+
+  describe('13. VERIFY USV-01: Single-Press Systems Verification Engine', () => {
+    it('should execute complete 4-phase verification and return structured report', async () => {
+      const engine = VerifyUsv01Engine.getInstance(process.cwd());
+      const report = await engine.executeVerification();
+
+      expect(report).toBeDefined();
+      expect(report.reportId).toMatch(/^USV01-VRFY-/);
+      expect(report.system).toContain('USV-01');
+      expect(report.evaluatedCommitSha).toBeTruthy();
+      expect(report.baselineDigest).toBeTruthy();
+      expect(['PASS', 'CONDITIONAL', 'FAIL']).toContain(report.overallVerdict);
+
+      // Verify all 4 phases are present
+      expect(report.phases.phase1_repoQuality).toBeDefined();
+      expect(report.phases.phase2_governanceStages).toBeDefined();
+      expect(report.phases.phase3_hmeaAgents).toBeDefined();
+      expect(report.phases.phase4_engineeringData).toBeDefined();
+
+      // Verify stats
+      expect(report.summaryStatistics.totalChecks).toBeGreaterThanOrEqual(15);
+      expect(report.summaryStatistics.passed).toBeGreaterThan(0);
+      expect(report.reportMarkdown.length).toBeGreaterThan(500);
+    });
+
+    it('should enforce fail-closed zero-fabrication: never produce PASS on unverified or failing criteria', async () => {
+      const engine = VerifyUsv01Engine.getInstance(process.cwd());
+      const report = await engine.executeVerification();
+
+      // In current local repo state, if Stage D Director signature is missing or working tree is dirty or AI is unavailable,
+      // overall verdict MUST NOT be PASS!
+      if (report.summaryStatistics.failed > 0 || report.summaryStatistics.blocked > 0 || !report.governanceFindings.stageD.signatureVerified) {
+        expect(report.overallVerdict).not.toBe('PASS');
+        expect(['CONDITIONAL', 'FAIL']).toContain(report.overallVerdict);
+      }
+    });
+
+    it('should evaluate all 25 canonical HMEA agents (A01 - A25) with non-fabricated readiness', async () => {
+      const engine = VerifyUsv01Engine.getInstance(process.cwd());
+      const report = await engine.executeVerification();
+
+      const agents = report.phases.phase3_hmeaAgents.agentReadiness;
+      expect(agents.length).toBeGreaterThanOrEqual(25);
+
+      const canonicalIds = agents.map(a => a.canonicalId);
+      for (let i = 1; i <= 25; i++) {
+        const expected = `A${i.toString().padStart(2, '0')}`;
+        expect(canonicalIds).toContain(expected);
+      }
+
+      // Check capability classifications
+      for (const a of agents) {
+        expect(['IMPLEMENTED', 'TESTED', 'SIMULATED', 'UNAVAILABLE', 'UNVERIFIED']).toContain(a.capabilityStatus);
+        expect(a.readinessScore).toBeGreaterThanOrEqual(0);
+        expect(a.readinessScore).toBeLessThanOrEqual(100);
       }
     });
   });

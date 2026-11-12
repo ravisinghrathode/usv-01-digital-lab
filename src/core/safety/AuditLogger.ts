@@ -1,4 +1,4 @@
-import { AuditLogEntry } from '../types/safety.ts';
+import type { AuditLogEntry } from '../types/safety.ts';
 
 export class AuditLogger {
   private static instance: AuditLogger;

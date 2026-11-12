@@ -23,7 +23,8 @@ export type UsvHullForm =
   | 'Planing Monohull'
   | 'SWATH'
   | 'Rigid Inflatable Hull (RHIB)'
-  | 'Hydrofoil / Wave Piercing';
+  | 'Hydrofoil / Wave Piercing'
+  | 'Wave Piercing Monohull';
 
 export type UsvOperationalStatus =
   | 'Active Operational'
@@ -128,7 +129,7 @@ export interface OperatingUsvModel {
     weaponsFitted?: string[];
     mcmEquipment?: string[];
     aswEquipment?: string[];
-    surveillanceFeatures: string[];
+    surveillanceFeatures?: string[];
   };
 
   // 7. Research Papers & Knowledge Sources

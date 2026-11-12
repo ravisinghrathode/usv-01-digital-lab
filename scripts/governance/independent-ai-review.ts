@@ -726,11 +726,14 @@ export async function generateMultiRoleReview(baseRef = 'origin/main'): Promise<
     composite = 'ADVISORY_APPROVE';
   }
 
+  const isDeterministicOnly = configuredProvider === 'deterministic';
   const governanceBanner = `
 ========================================================================================
 ⚠️  NAVAL-USV INDEPENDENT TECHNICAL REVIEW PIPELINE (STAGE C) — ADVISORY EVIDENCE ONLY
    NON-NEGOTIABLE PRINCIPLE 5: AI CANNOT INDEPENDENTLY AUTHORISE ITS OWN CHANGES.
-   SEVEN INDEPENDENT MODEL-BACKED REVIEWERS CONCURRENTLY EVALUATING CHANGE SET.
+   ${isDeterministicOnly
+     ? 'DETERMINISTIC STATIC RULE ENGINE REVIEW ONLY (AI MODEL-BACKED REVIEW IS UNAVAILABLE).\n   DETERMINISTIC REVIEWS MUST NEVER BE REPRESENTED AS INDEPENDENT MODEL-BACKED REVIEWS.'
+     : 'SEVEN INDEPENDENT MODEL-BACKED REVIEWERS CONCURRENTLY EVALUATING CHANGE SET.'}
    FINAL ACCEPTANCE REQUIRES SIGNED HUMAN AUTHORITY PER ENGINEERING GOVERNANCE POLICY.
 ========================================================================================
 `;
@@ -740,8 +743,8 @@ export async function generateMultiRoleReview(baseRef = 'origin/main'): Promise<
     gitRef: baseRef,
     evaluatedCommitSha,
     baselineDigest,
-    executionMode: configuredProvider === 'deterministic'
-      ? 'Deterministic Static Rule Engine (Zero External API)'
+    executionMode: isDeterministicOnly
+      ? 'Deterministic Static Rule Engine (Zero External API — AI Review Unavailable)'
       : `Seven Independent Reviewers (${configuredProvider})`,
     provider: configuredProvider,
     aiReviewStatus,
@@ -770,12 +773,15 @@ export function formatReviewReportMarkdown(report: MultiRoleReviewReport): strin
     PENDING_HUMAN_REVIEW: '🟡 ADVISORY: PENDING HUMAN AUTHORITY SIGN-OFF (AI UNAVAILABLE FOR CRITICAL RISK)'
   };
 
+  const isDeterministicOnly = report.provider === 'deterministic';
   let md = `## 🤖 NAVAL-USV Stage C: Independent Multi-Role Technical Review
 
 > **CRITICAL GOVERNANCE MANDATE:**  
 > This multi-role review constitutes **advisory technical evidence only**, not human authorisation.  
 > Under USV-01 Governance Principle 5, **no AI tool or agent may independently authorise its own changes**.  
-> Seven independent model-backed technical reviewers concurrently assess all application, governance, and test changes.  
+${isDeterministicOnly
+  ? `> **DETERMINISTIC TRANSPARENCY NOTICE:** Review executed via static deterministic rule heuristics. Independent AI model-backed review was **UNAVAILABLE** (no live AI provider configured). Deterministic static checks must **NEVER** be represented as independent model-backed reviews.`
+  : `> Seven independent model-backed technical reviewers concurrently assess all application, governance, and test changes.`}
 > Mandatory human sign-off by designated Engineering Authority is required prior to baseline merge.
 
 **Composite Advisory Verdict:** **${recBadge[report.compositeAdvisoryRecommendation]}**  

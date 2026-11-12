@@ -1,4 +1,4 @@
-import { EngineeringTool, ToolExecutionResult } from '../types/tools.ts';
+import type { EngineeringTool, ToolExecutionResult } from '../types/tools.ts';
 import {
   HydrostaticsTool,
   ResistanceTool,

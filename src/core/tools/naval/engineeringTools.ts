@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { EngineeringTool } from '../../types/tools.ts';
+import type { EngineeringTool } from '../../types/tools.ts';
 
 // 1. Hydrostatics Tool
 export const HydrostaticsTool: EngineeringTool = {

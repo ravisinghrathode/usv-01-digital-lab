@@ -11,6 +11,7 @@
     "preview": "vite preview",
     "test": "vitest run --reporter=default --reporter=json --outputFile=governance/reports/test-results.json",
     "lint": "tsc --noEmit",
+    "verify": "tsx scripts/verify-usv01.ts",
     "chatgpt:verify": "tsx scripts/chatgpt-verify.ts",
     "governance:classify": "tsx scripts/governance/classify-change.ts",
     "governance:secrets": "tsx scripts/governance/secret-scanner.ts",

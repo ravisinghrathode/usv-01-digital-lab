@@ -1,0 +1,957 @@
+{
+  "reportId": "USV01-VRFY-20261112114153",
+  "timestamp": "2026-11-12T11:41:53.004Z",
+  "executionDurationMs": 832,
+  "system": "NAVAL-USV / USV-01 Digital Engineering Lab",
+  "systemVersion": "1.0.0",
+  "evaluatedCommitSha": "93bbfbbdf26d3e52e784055d46eb03b02b41965e",
+  "baselineDigest": "sha256:c4b56ac37581f6ec754e9e2be4c3930219d23f6ef64baf8ed9d4b1bd94571a2a",
+  "branch": "feat/verify-usv01-system",
+  "overallVerdict": "FAIL",
+  "verdictRationale": "Verification FAILED: 1 checks failed (CHK-GOV-05). Under USV-01 governance policy, failure in any mandatory check halts release.",
+  "summaryStatistics": {
+    "totalChecks": 19,
+    "passed": 15,
+    "conditional": 2,
+    "failed": 1,
+    "blocked": 1,
+    "skipped": 0,
+    "unverified": 0,
+    "mandatoryFailedOrBlocked": 2
+  },
+  "phases": {
+    "phase1_repoQuality": {
+      "title": "Phase 1: Repository Integrity, Dependencies, Build, Lint & Automated Tests",
+      "status": "CONDITIONAL",
+      "checks": [
+        {
+          "id": "CHK-REPO-01",
+          "category": "REPO_INTEGRITY",
+          "title": "Git Repository Commit & Working Tree Integrity",
+          "status": "CONDITIONAL",
+          "mandatory": false,
+          "summary": "Uncommitted changes present in local working tree; evaluating committed HEAD baseline.",
+          "evidence": {
+            "commitSha": "93bbfbbdf26d3e52e784055d46eb03b02b41965e",
+            "branch": "feat/verify-usv01-system",
+            "baselineDigest": "sha256:c4b56ac37581f6ec754e9e2be4c3930219d23f6ef64baf8ed9d4b1bd94571a2a",
+            "dirty": true,
+            "modifiedFiles": [
+              "M RELEASE_MANIFEST.json",
+              " M governance/reports/pr-classification.json",
+              " M governance/reports/stage-c-review.json",
+              " M governance/reports/stage-d-approval.json",
+              " M package.json",
+              " M scripts/governance/classify-change.ts",
+              " M scripts/governance/independent-ai-review.ts",
+              " M scripts/governance/stage-e-enforce.ts",
+              " M server.ts",
+              " M src/App.tsx",
+              " M src/components/TopBar.tsx",
+              " M src/components/VerificationValidationView.tsx",
+              " M src/core/agents/GlobalUsvIntelligenceAgent.ts",
+              " M src/core/auth/authClient.ts",
+              " M src/core/engine/BaseAgent.ts",
+              " M src/core/engine/ExecutionEngine.ts",
+              " M src/core/governance/AgentGovernanceBridge.ts",
+              " M src/core/memory/SharedMemory.ts",
+              " M src/core/safety/ApproverSigner.ts",
+              " M src/core/safety/AuditLogger.ts",
+              " M src/core/safety/HumanApprovalGate.ts",
+              " M src/core/tools/ToolRegistry.ts",
+              " M src/core/tools/naval/engineeringTools.ts",
+              " M src/core/types/agent.ts",
+              " M src/data/globalUsvFleetData.ts",
+              " M src/types/engineering.ts",
+              " M src/types/usvIntelligence.ts",
+              " M tests/governance.test.ts",
+              "?? governance/reports/verify-usv01-report.json",
+              "?? governance/reports/verify-usv01-report.md",
+              "?? scripts/verify-usv01.ts",
+              "?? src/components/VerifyUsv01Modal.tsx",
+              "?? src/core/verification/"
+            ]
+          },
+          "remediation": "Commit or stash local modifications before final merge",
+          "timestamp": "2026-11-12T11:41:53.028Z"
+        },
+        {
+          "id": "CHK-REPO-02",
+          "category": "REPO_INTEGRITY",
+          "title": "Package Manifest & Dependency Lockfile Integrity",
+          "status": "PASS",
+          "mandatory": true,
+          "summary": "Package manifest validated (22 dependencies). package-lock.json present.",
+          "evidence": {
+            "packageJsonValid": true,
+            "lockfilePresent": true,
+            "dependencyCount": 22
+          },
+          "timestamp": "2026-11-12T11:41:53.028Z"
+        },
+        {
+          "id": "CHK-REPO-03",
+          "category": "REPO_INTEGRITY",
+          "title": "Release Baseline Manifest & Checksum Audit",
+          "status": "PASS",
+          "mandatory": true,
+          "summary": "RELEASE_MANIFEST.json valid with 68 tracked assets.",
+          "evidence": {
+            "manifestValid": true,
+            "manifestAssetsTracked": 68,
+            "manifestChecksum": "fb4029e97a03d83db7e30da9342c677c52a5a74568a0a475439fd70fe10533c8"
+          },
+          "timestamp": "2026-11-12T11:41:53.028Z"
+        },
+        {
+          "id": "CHK-REPO-04",
+          "category": "REPO_INTEGRITY",
+          "title": "DevSecOps Secret Scanning & Cryptographic Key Protection",
+          "status": "PASS",
+          "mandatory": true,
+          "summary": "Zero unredacted secrets, credentials, or private keys detected in repository diff.",
+          "evidence": {
+            "secretsFound": 0,
+            "findings": []
+          },
+          "timestamp": "2026-11-12T11:41:53.032Z"
+        },
+        {
+          "id": "CHK-REPO-05",
+          "category": "REPO_INTEGRITY",
+          "title": "Repository Governance Configuration & CODEOWNERS Validation",
+          "status": "PASS",
+          "mandatory": true,
+          "summary": "Governance workflows, CODEOWNERS, and branch protection configurations verified.",
+          "evidence": {
+            "valid": true,
+            "errors": []
+          },
+          "timestamp": "2026-11-12T11:41:53.033Z"
+        },
+        {
+          "id": "CHK-REPO-06",
+          "category": "REPO_INTEGRITY",
+          "title": "Engineering Change Request (ECR) Document Integrity",
+          "status": "PASS",
+          "mandatory": true,
+          "summary": "1 formal ECR baseline records verified with complete frontmatter & safety schema.",
+          "evidence": {
+            "ecrCount": 1,
+            "valid": true,
+            "errors": []
+          },
+          "timestamp": "2026-11-12T11:41:53.033Z"
+        },
+        {
+          "id": "CHK-REPO-07",
+          "category": "REPO_INTEGRITY",
+          "title": "Automated Deterministic & Safety Test Suite",
+          "status": "PASS",
+          "mandatory": true,
+          "summary": "Deterministic test suite: 66/66 tests passed across 23 test suites with 0 failures.",
+          "evidence": {
+            "testReportFound": true,
+            "totalTests": 66,
+            "passedTests": 66,
+            "failedTests": 0,
+            "testSuitesCount": 23
+          },
+          "timestamp": "2026-11-12T11:41:53.034Z"
+        }
+      ]
+    },
+    "phase2_governanceStages": {
+      "title": "Phase 2: Governance Stages A–E, Baseline Digest & Cryptographic Authority",
+      "status": "FAIL",
+      "checks": [
+        {
+          "id": "CHK-GOV-01",
+          "category": "GOVERNANCE_STAGES",
+          "title": "Stage A: Change & Risk Classification",
+          "status": "PASS",
+          "mandatory": true,
+          "summary": "Change risk classified as CRITICAL. Director approval required: YES. Categories: SOFTWARE, CONFIGURATION, RELEASE, DOCUMENTATION, SECURITY, ARCHITECTURE.",
+          "evidence": {
+            "overallRisk": "CRITICAL",
+            "requiresDirector": true,
+            "filesChanged": 18,
+            "linesAdded": 981,
+            "linesDeleted": 510
+          },
+          "timestamp": "2026-11-12T11:41:53.060Z"
+        },
+        {
+          "id": "CHK-GOV-02",
+          "category": "GOVERNANCE_STAGES",
+          "title": "Stage C: Independent Multi-Role Technical Review",
+          "status": "PASS",
+          "mandatory": true,
+          "summary": "Deterministic rule verification: PASS. Independent AI model review was UNAVAILABLE.",
+          "evidence": {
+            "provider": "deterministic",
+            "aiReviewStatus": "AI_REVIEW_UNAVAILABLE",
+            "deterministicStatus": "PASS",
+            "hasMockFallback": false,
+            "digestMatches": true,
+            "commitMatches": true,
+            "compositeRecommendation": "PENDING_HUMAN_REVIEW"
+          },
+          "timestamp": "2026-11-12T11:41:53.060Z"
+        },
+        {
+          "id": "CHK-GOV-03",
+          "category": "GOVERNANCE_STAGES",
+          "title": "Stage C: Model Transparency & Deterministic Review Disclosure",
+          "status": "PASS",
+          "mandatory": true,
+          "summary": "CONFIRMED: Deterministic static analysis is accurately disclosed; no false claims of independent model review.",
+          "evidence": {
+            "provider": "deterministic",
+            "isDeterministicOnly": true,
+            "transparencyHonored": true
+          },
+          "timestamp": "2026-11-12T11:41:53.060Z"
+        },
+        {
+          "id": "CHK-GOV-04",
+          "category": "GOVERNANCE_STAGES",
+          "title": "Stage D: Human Authority & Cryptographic Director Authorization",
+          "status": "BLOCKED",
+          "mandatory": true,
+          "summary": "PENDING: Safety-critical / High-risk change requires Director Ed25519 signature over exact baseline digest.",
+          "evidence": {
+            "approvalRequired": true,
+            "signatureVerified": false,
+            "staleApproval": false,
+            "digestMatches": true,
+            "evaluatedBaselineDigest": "sha256:c4b56ac37581f6ec754e9e2be4c3930219d23f6ef64baf8ed9d4b1bd94571a2a",
+            "currentBaselineDigest": "sha256:c4b56ac37581f6ec754e9e2be4c3930219d23f6ef64baf8ed9d4b1bd94571a2a",
+            "error": "No Director approval records found in governance/approvals/."
+          },
+          "remediation": "Engineering Director must authenticate on secure TTY and sign ECR over current baseline digest (`npm run governance:sign`)",
+          "timestamp": "2026-11-12T11:41:53.826Z"
+        },
+        {
+          "id": "CHK-GOV-05",
+          "category": "GOVERNANCE_STAGES",
+          "title": "Stage E: Governance Gate Enforcement & Fail-Closed Multi-Stage Gate",
+          "status": "FAIL",
+          "mandatory": true,
+          "summary": "Stage E Gate BLOCKED: Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.; Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:c4b56ac37581f6ec754e9e2be4c3930219d23f6ef64baf8ed9d4b1bd94571a2a.",
+          "evidence": {
+            "passed": false,
+            "overallVerdict": "BLOCKED",
+            "blockingReasons": [
+              "Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.",
+              "Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:c4b56ac37581f6ec754e9e2be4c3930219d23f6ef64baf8ed9d4b1bd94571a2a."
+            ],
+            "stageAResult": {
+              "overallRisk": "CRITICAL",
+              "requiresDirector": true,
+              "digestMatches": true,
+              "commitMatches": true
+            },
+            "stageCResult": {
+              "provider": "deterministic",
+              "aiStatus": "AI_REVIEW_UNAVAILABLE",
+              "deterministicStatus": "PASS",
+              "hasMockFallback": false,
+              "verdict": "PENDING_HUMAN_REVIEW",
+              "digestMatches": true,
+              "commitMatches": true
+            },
+            "stageDResult": {
+              "required": true,
+              "signatureVerified": false,
+              "staleApproval": false,
+              "baselineDigest": "sha256:c4b56ac37581f6ec754e9e2be4c3930219d23f6ef64baf8ed9d4b1bd94571a2a",
+              "evaluatedRef": "93bbfbbdf26d3e52e784055d46eb03b02b41965e",
+              "digestMatches": true
+            }
+          },
+          "remediation": "Resolve all listed blocking reasons to satisfy Stage E criteria",
+          "timestamp": "2026-11-12T11:41:53.834Z"
+        }
+      ]
+    },
+    "phase3_hmeaAgents": {
+      "title": "Phase 3: 25 HMEA Canonical Agents Execution Capability & Readiness",
+      "status": "PASS",
+      "totalAgentsEvaluated": 26,
+      "canonicalCoverage": "25/25",
+      "checks": [
+        {
+          "id": "CHK-AGT-01",
+          "category": "HMEA_AGENTS",
+          "title": "HMEA v0.2 Canonical 25-Agent Population Coverage",
+          "status": "PASS",
+          "mandatory": true,
+          "summary": "All 25 canonical HMEA agents (A01–A25) registered (26 total active agents).",
+          "evidence": {
+            "totalRegistered": 26,
+            "canonicalCovered": 25,
+            "missing": []
+          },
+          "timestamp": "2026-11-12T11:41:53.835Z"
+        },
+        {
+          "id": "CHK-AGT-02",
+          "category": "HMEA_AGENTS",
+          "title": "Agent DAG Routing & Inter-Agent Dependency Topology",
+          "status": "PASS",
+          "mandatory": true,
+          "summary": "Acyclic dependency DAG confirmed; all upstream-downstream agent routings valid.",
+          "evidence": {
+            "valid": true,
+            "errors": []
+          },
+          "timestamp": "2026-11-12T11:41:53.835Z"
+        },
+        {
+          "id": "CHK-AGT-03",
+          "category": "HMEA_AGENTS",
+          "title": "Agent Execution Readiness & Interface Schema Validation",
+          "status": "PASS",
+          "mandatory": true,
+          "summary": "All 26 agents verified: complete schemas, tools, and executable contracts.",
+          "evidence": {
+            "totalEvaluated": 26,
+            "unverifiedCount": 0,
+            "unverifiedList": []
+          },
+          "timestamp": "2026-11-12T11:41:53.835Z"
+        }
+      ],
+      "agentReadiness": [
+        {
+          "canonicalId": "A01",
+          "id": "LEAD-SYS-01",
+          "name": "Lead Systems Architect & Orchestrator",
+          "division": "DIRECTORATE",
+          "capabilityStatus": "TESTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-DAG-SCHEDULER",
+            "TOOL-BASELINE-QUERY",
+            "TOOL-AUDIT-LOGGER"
+          ],
+          "mandatoryTools": [],
+          "toolsRegistered": true,
+          "readinessScore": 100,
+          "findings": []
+        },
+        {
+          "canonicalId": "A02",
+          "id": "REQ-TRC-02",
+          "name": "Requirements & Traceability Engineer",
+          "division": "REQUIREMENTS_BASELINE",
+          "capabilityStatus": "TESTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-TRACEABILITY-MATRIX",
+            "TOOL-BASELINE-QUERY"
+          ],
+          "mandatoryTools": [],
+          "toolsRegistered": true,
+          "readinessScore": 100,
+          "findings": []
+        },
+        {
+          "canonicalId": "A03",
+          "id": "CONOPS-03",
+          "name": "Operational Profile & CONOPS Specialist",
+          "division": "REQUIREMENTS_BASELINE",
+          "capabilityStatus": "IMPLEMENTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-BASELINE-QUERY"
+          ],
+          "mandatoryTools": [],
+          "toolsRegistered": true,
+          "readinessScore": 95,
+          "findings": []
+        },
+        {
+          "canonicalId": "A04",
+          "id": "REG-STD-04",
+          "name": "Marine Regulatory & Class Standards Specialist",
+          "division": "REQUIREMENTS_BASELINE",
+          "capabilityStatus": "IMPLEMENTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-BASELINE-QUERY"
+          ],
+          "mandatoryTools": [],
+          "toolsRegistered": true,
+          "readinessScore": 95,
+          "findings": []
+        },
+        {
+          "canonicalId": "A05",
+          "id": "HULL-GEO-05",
+          "name": "Hull Form & Parametric Geometry Specialist",
+          "division": "NAVAL_ARCHITECTURE",
+          "capabilityStatus": "TESTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-HYDROSTATICS-01",
+            "TOOL-BASELINE-QUERY"
+          ],
+          "mandatoryTools": [
+            "TOOL-HYDROSTATICS-01"
+          ],
+          "toolsRegistered": true,
+          "readinessScore": 100,
+          "findings": []
+        },
+        {
+          "canonicalId": "A06",
+          "id": "STAB-HYD-06",
+          "name": "Hydrostatics & Intact Stability Engineer",
+          "division": "NAVAL_ARCHITECTURE",
+          "capabilityStatus": "TESTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-HYDROSTATICS-01",
+            "TOOL-MASS-BALANCE-01"
+          ],
+          "mandatoryTools": [
+            "TOOL-HYDROSTATICS-01"
+          ],
+          "toolsRegistered": true,
+          "readinessScore": 100,
+          "findings": []
+        },
+        {
+          "canonicalId": "A07",
+          "id": "RES-SEAK-07",
+          "name": "Hydrodynamic Resistance & Performance Engineer",
+          "division": "NAVAL_ARCHITECTURE",
+          "capabilityStatus": "TESTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-RESISTANCE-01",
+            "TOOL-HYDROSTATICS-01"
+          ],
+          "mandatoryTools": [
+            "TOOL-RESISTANCE-01"
+          ],
+          "toolsRegistered": true,
+          "readinessScore": 100,
+          "findings": []
+        },
+        {
+          "canonicalId": "A08",
+          "id": "MAN-MOT-08",
+          "name": "Seakeeping & Manoeuvring Dynamics Specialist",
+          "division": "NAVAL_ARCHITECTURE",
+          "capabilityStatus": "IMPLEMENTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-HYDROSTATICS-01",
+            "TOOL-BASELINE-QUERY"
+          ],
+          "mandatoryTools": [],
+          "toolsRegistered": true,
+          "readinessScore": 95,
+          "findings": []
+        },
+        {
+          "canonicalId": "A09",
+          "id": "WGT-BAL-09",
+          "name": "Weight Distribution & Mass Balance Engineer",
+          "division": "NAVAL_ARCHITECTURE",
+          "capabilityStatus": "TESTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-MASS-BALANCE-01"
+          ],
+          "mandatoryTools": [
+            "TOOL-MASS-BALANCE-01"
+          ],
+          "toolsRegistered": true,
+          "readinessScore": 100,
+          "findings": []
+        },
+        {
+          "canonicalId": "A10",
+          "id": "STR-MAT-10",
+          "name": "Hull Structural Scantlings & Composites Engineer",
+          "division": "STRUCTURES_MECHANICAL",
+          "capabilityStatus": "IMPLEMENTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-STRUCTURES-01"
+          ],
+          "mandatoryTools": [
+            "TOOL-STRUCTURES-01"
+          ],
+          "toolsRegistered": true,
+          "readinessScore": 95,
+          "findings": []
+        },
+        {
+          "canonicalId": "A11",
+          "id": "ENV-ENV-11",
+          "name": "Marine Environmental & Thermal Specialist",
+          "division": "STRUCTURES_MECHANICAL",
+          "capabilityStatus": "IMPLEMENTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-BASELINE-QUERY"
+          ],
+          "mandatoryTools": [],
+          "toolsRegistered": true,
+          "readinessScore": 95,
+          "findings": []
+        },
+        {
+          "canonicalId": "A12",
+          "id": "MECH-APP-12",
+          "name": "Mechanical Appendages & Deck Equipment Engineer",
+          "division": "STRUCTURES_MECHANICAL",
+          "capabilityStatus": "IMPLEMENTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-STRUCTURES-01"
+          ],
+          "mandatoryTools": [],
+          "toolsRegistered": true,
+          "readinessScore": 95,
+          "findings": []
+        },
+        {
+          "canonicalId": "A13",
+          "id": "PROP-ENG-13",
+          "name": "Propulsion Plant & Drivetrain Engineer",
+          "division": "POWER_PROPULSION",
+          "capabilityStatus": "TESTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-RESISTANCE-01",
+            "TOOL-ELECTRICAL-01"
+          ],
+          "mandatoryTools": [
+            "TOOL-RESISTANCE-01"
+          ],
+          "toolsRegistered": true,
+          "readinessScore": 100,
+          "findings": []
+        },
+        {
+          "canonicalId": "A14",
+          "id": "ELEC-PWR-14",
+          "name": "Electrical Architecture & Microgrid Engineer",
+          "division": "POWER_PROPULSION",
+          "capabilityStatus": "TESTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-ELECTRICAL-01"
+          ],
+          "mandatoryTools": [
+            "TOOL-ELECTRICAL-01"
+          ],
+          "toolsRegistered": true,
+          "readinessScore": 100,
+          "findings": []
+        },
+        {
+          "canonicalId": "A15",
+          "id": "INDEP-CRIT-15",
+          "name": "Independent Technical Critic",
+          "division": "SYSTEMS_VVT",
+          "capabilityStatus": "TESTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-HYDROSTATICS-01",
+            "TOOL-RESISTANCE-01",
+            "TOOL-ELECTRICAL-01",
+            "TOOL-MASS-BALANCE-01",
+            "TOOL-BASELINE-QUERY"
+          ],
+          "mandatoryTools": [],
+          "toolsRegistered": true,
+          "readinessScore": 100,
+          "findings": []
+        },
+        {
+          "canonicalId": "A16",
+          "id": "SENS-PER-16",
+          "name": "Perception & Sensor Suite Integration Specialist",
+          "division": "AUTONOMY_ELECTRONICS",
+          "capabilityStatus": "IMPLEMENTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-BASELINE-QUERY"
+          ],
+          "mandatoryTools": [],
+          "toolsRegistered": true,
+          "readinessScore": 95,
+          "findings": []
+        },
+        {
+          "canonicalId": "A17",
+          "id": "NAV-COL-17",
+          "name": "Navigation & COLREGS Collision Avoidance Specialist",
+          "division": "AUTONOMY_ELECTRONICS",
+          "capabilityStatus": "IMPLEMENTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-COLREGS-01"
+          ],
+          "mandatoryTools": [
+            "TOOL-COLREGS-01"
+          ],
+          "toolsRegistered": true,
+          "readinessScore": 95,
+          "findings": []
+        },
+        {
+          "canonicalId": "A18",
+          "id": "TEST-DIR-18",
+          "name": "Test & Verification Director",
+          "division": "SYSTEMS_VVT",
+          "capabilityStatus": "TESTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-BASELINE-QUERY"
+          ],
+          "mandatoryTools": [],
+          "toolsRegistered": true,
+          "readinessScore": 100,
+          "findings": []
+        },
+        {
+          "canonicalId": "A19",
+          "id": "COMM-RF-19",
+          "name": "Comms, RF & Telemetry Specialist",
+          "division": "AUTONOMY_ELECTRONICS",
+          "capabilityStatus": "IMPLEMENTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-BASELINE-QUERY"
+          ],
+          "mandatoryTools": [],
+          "toolsRegistered": true,
+          "readinessScore": 95,
+          "findings": []
+        },
+        {
+          "canonicalId": "A20",
+          "id": "CYBER-SEC-20",
+          "name": "Cyber-Physical Marine Security & Safe-State Engineer",
+          "division": "AUTONOMY_ELECTRONICS",
+          "capabilityStatus": "IMPLEMENTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-BASELINE-QUERY"
+          ],
+          "mandatoryTools": [],
+          "toolsRegistered": true,
+          "readinessScore": 95,
+          "findings": []
+        },
+        {
+          "canonicalId": "A21",
+          "id": "ICD-ENG-21",
+          "name": "Interface Control Document (ICD) Engineer",
+          "division": "SYSTEMS_VVT",
+          "capabilityStatus": "IMPLEMENTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-BASELINE-QUERY"
+          ],
+          "mandatoryTools": [],
+          "toolsRegistered": true,
+          "readinessScore": 95,
+          "findings": []
+        },
+        {
+          "canonicalId": "A22",
+          "id": "FMEA-RSK-22",
+          "name": "FMEA & System Safety Specialist",
+          "division": "SYSTEMS_VVT",
+          "capabilityStatus": "IMPLEMENTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-BASELINE-QUERY"
+          ],
+          "mandatoryTools": [],
+          "toolsRegistered": true,
+          "readinessScore": 95,
+          "findings": []
+        },
+        {
+          "canonicalId": "A23",
+          "id": "INDEP-REV-23",
+          "name": "Independent Design Reviewer (Challenger / Red Team)",
+          "division": "SYSTEMS_VVT",
+          "capabilityStatus": "TESTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-HYDROSTATICS-01",
+            "TOOL-RESISTANCE-01",
+            "TOOL-ELECTRICAL-01",
+            "TOOL-MASS-BALANCE-01"
+          ],
+          "mandatoryTools": [
+            "TOOL-HYDROSTATICS-01",
+            "TOOL-RESISTANCE-01"
+          ],
+          "toolsRegistered": true,
+          "readinessScore": 100,
+          "findings": []
+        },
+        {
+          "canonicalId": "A24",
+          "id": "VVT-VAL-24",
+          "name": "Verification, Validation & Test Specialist",
+          "division": "SYSTEMS_VVT",
+          "capabilityStatus": "TESTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-BASELINE-QUERY"
+          ],
+          "mandatoryTools": [],
+          "toolsRegistered": true,
+          "readinessScore": 100,
+          "findings": []
+        },
+        {
+          "canonicalId": "A25",
+          "id": "DOC-OBS-25",
+          "name": "Documentation, BOM & Obsidian Knowledge Specialist",
+          "division": "OPERATIONS_DELIVERABLES",
+          "capabilityStatus": "IMPLEMENTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-BASELINE-QUERY",
+            "TOOL-OBSIDIAN-EXPORT"
+          ],
+          "mandatoryTools": [],
+          "toolsRegistered": true,
+          "readinessScore": 95,
+          "findings": []
+        },
+        {
+          "canonicalId": "A26",
+          "id": "INTEL-USV-26",
+          "name": "Global Navy USV Fleet Intelligence & Benchmark Analyst",
+          "division": "OPERATIONS_DELIVERABLES",
+          "capabilityStatus": "TESTED",
+          "executionTestStatus": "PASS",
+          "inputSchemaValid": true,
+          "outputSchemaValid": true,
+          "dependenciesRegistered": true,
+          "permittedTools": [
+            "TOOL-BASELINE-QUERY",
+            "TOOL-OBSIDIAN-EXPORT",
+            "TOOL-HYDROSTATICS",
+            "TOOL-RESISTANCE"
+          ],
+          "mandatoryTools": [],
+          "toolsRegistered": true,
+          "readinessScore": 100,
+          "findings": []
+        }
+      ]
+    },
+    "phase4_engineeringData": {
+      "title": "Phase 4: Engineering Data Integrity, Requirements Traceability & Safety Gates",
+      "status": "CONDITIONAL",
+      "checks": [
+        {
+          "id": "CHK-ENG-01",
+          "category": "ENGINEERING_INTEGRITY",
+          "title": "Bidirectional Requirements Traceability (REQ → VNV → TEST)",
+          "status": "CONDITIONAL",
+          "mandatory": false,
+          "summary": "2 requirements lack associated verification plans (REQ-NAV-002, REQ-MEC-001).",
+          "evidence": {
+            "totalRequirements": 7,
+            "totalPlans": 3,
+            "totalTestRecords": 1,
+            "unlinkedRequirements": [
+              "REQ-NAV-002",
+              "REQ-MEC-001"
+            ],
+            "unverifiedPlansCount": 3
+          },
+          "remediation": "Create verification plans in VNV-08 for unmapped requirements",
+          "timestamp": "2026-11-12T11:41:53.835Z"
+        },
+        {
+          "id": "CHK-ENG-02",
+          "category": "ENGINEERING_INTEGRITY",
+          "title": "TBD Parameter Tracking & Zero-Fabrication Assumption Audit",
+          "status": "PASS",
+          "mandatory": true,
+          "summary": "6 design parameters explicitly tracked as TBD without synthetic or fabricated values.",
+          "evidence": {
+            "openTbdsCount": 6,
+            "trackedTbdItems": [
+              "REQ-SYS-001: [SAMPLE] Remote Operational Telemetry & Watchdog Link",
+              "REQ-NAV-002: [SAMPLE] Draft and Freeboard Operational Envelope",
+              "REQ-HYD-001: [SAMPLE] Calm-Water Resistance Characterization",
+              "REQ-MEC-001: [SAMPLE] Bottom Slamming Pressure Structural Integrity",
+              "REQ-ELE-001: [SAMPLE] Isolated Dual DC Bus Architecture",
+              "REQ-AUT-001: [SAMPLE] COLREGs Collision Avoidance Autonomous Maneuver"
+            ]
+          },
+          "timestamp": "2026-11-12T11:41:53.835Z"
+        },
+        {
+          "id": "CHK-ENG-03",
+          "category": "ENGINEERING_INTEGRITY",
+          "title": "Cryptographic Hash-Chained Audit Trail Integrity",
+          "status": "PASS",
+          "mandatory": true,
+          "summary": "Audit chain valid: 10 tamper-evident events cryptographically verified.",
+          "evidence": {
+            "valid": true,
+            "totalEvents": 10
+          },
+          "timestamp": "2026-11-12T11:41:53.836Z"
+        },
+        {
+          "id": "CHK-ENG-04",
+          "category": "ENGINEERING_INTEGRITY",
+          "title": "Safety Approval Gates & Human Authority Enforcement",
+          "status": "PASS",
+          "mandatory": true,
+          "summary": "0 safety gates evaluated. 0 pending human authorization. Fail-closed safety gates armed.",
+          "evidence": {
+            "totalGates": 0,
+            "pendingGatesCount": 0,
+            "gateList": []
+          },
+          "timestamp": "2026-11-12T11:41:53.836Z"
+        }
+      ]
+    }
+  },
+  "governanceFindings": {
+    "stageA": {
+      "risk": "CRITICAL",
+      "categories": [
+        "SOFTWARE",
+        "CONFIGURATION",
+        "RELEASE",
+        "DOCUMENTATION",
+        "SECURITY",
+        "ARCHITECTURE"
+      ],
+      "requiresDirector": true
+    },
+    "stageB": {
+      "secretsDetected": 0,
+      "configValid": true,
+      "ecrValid": true
+    },
+    "stageC": {
+      "provider": "deterministic",
+      "aiReviewStatus": "AI_REVIEW_UNAVAILABLE",
+      "deterministicStatus": "PASS",
+      "isModelBacked": false
+    },
+    "stageD": {
+      "humanApprovalRequired": true,
+      "signatureVerified": false,
+      "staleApproval": false
+    },
+    "stageE": {
+      "overallVerdict": "BLOCKED",
+      "passed": false,
+      "blockingReasons": [
+        "Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.",
+        "Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:c4b56ac37581f6ec754e9e2be4c3930219d23f6ef64baf8ed9d4b1bd94571a2a."
+      ]
+    }
+  },
+  "unresolvedBlockers": [
+    "CHK-GOV-05 (Stage E: Governance Gate Enforcement & Fail-Closed Multi-Stage Gate): Stage E Gate BLOCKED: Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.; Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:c4b56ac37581f6ec754e9e2be4c3930219d23f6ef64baf8ed9d4b1bd94571a2a.",
+    "CHK-GOV-04 (Stage D: Human Authority & Cryptographic Director Authorization): PENDING: Safety-critical / High-risk change requires Director Ed25519 signature over exact baseline digest."
+  ],
+  "remainingLimitations": [
+    "Stage C review executed in deterministic static analysis mode (independent model-backed review unavailable due to external API configuration).",
+    "Local working tree has uncommitted modifications; verification report is bound to committed HEAD baseline.",
+    "2 engineering requirements lack associated verification plans."
+  ],
+  "reportMarkdown": "# 🛡️ USV-01 Digital Engineering Lab — Single-Press Verification Report\n**Report ID:** `USV01-VRFY-20261112114153`  \n**Generated At:** `2026-11-12T11:41:53.004Z` (832 ms execution)  \n**Evaluated Commit SHA:** `93bbfbbdf26d3e52e784055d46eb03b02b41965e` (Branch: `feat/verify-usv01-system`)  \n**Baseline Content Digest:** `sha256:c4b56ac37581f6ec754e9e2be4c3930219d23f6ef64baf8ed9d4b1bd94571a2a`  \n**Overall Verification Verdict:** **🔴 VERIFICATION FAILED**  \n\n---\n\n## 1. Executive Summary & Verdict Rationale\n\nVerification FAILED: 1 checks failed (CHK-GOV-05). Under USV-01 governance policy, failure in any mandatory check halts release.\n\n### Verification Statistics\n| Status | Count | Percentage |\n|---|---|---|\n| **Total Checks Evaluated** | **19** | 100% |\n| 🟢 Passed | 15 | 79% |\n| 🟡 Conditional | 2 | 11% |\n| 🔴 Failed | 1 | 5% |\n| 🚫 Blocked | 1 | 5% |\n| ⚪ Skipped / Unverified | 0 | 0% |\n\n---\n\n## 2. Four-Phase Verification Breakdown\n\n### Phase 1: Repository Integrity, Dependencies & Automated Test Suite (CONDITIONAL)\n| ID | Title | Status | Mandatory | Summary |\n|---|---|---|---|---|\n| `CHK-REPO-01` | Git Repository Commit & Working Tree Integrity | **CONDITIONAL** | NO | Uncommitted changes present in local working tree; evaluating committed HEAD baseline. |\n| `CHK-REPO-02` | Package Manifest & Dependency Lockfile Integrity | **PASS** | YES | Package manifest validated (22 dependencies). package-lock.json present. |\n| `CHK-REPO-03` | Release Baseline Manifest & Checksum Audit | **PASS** | YES | RELEASE_MANIFEST.json valid with 68 tracked assets. |\n| `CHK-REPO-04` | DevSecOps Secret Scanning & Cryptographic Key Protection | **PASS** | YES | Zero unredacted secrets, credentials, or private keys detected in repository diff. |\n| `CHK-REPO-05` | Repository Governance Configuration & CODEOWNERS Validation | **PASS** | YES | Governance workflows, CODEOWNERS, and branch protection configurations verified. |\n| `CHK-REPO-06` | Engineering Change Request (ECR) Document Integrity | **PASS** | YES | 1 formal ECR baseline records verified with complete frontmatter & safety schema. |\n| `CHK-REPO-07` | Automated Deterministic & Safety Test Suite | **PASS** | YES | Deterministic test suite: 66/66 tests passed across 23 test suites with 0 failures. |\n\n### Phase 2: Governance Stages A–E & Human Authority (FAIL)\n| ID | Title | Status | Mandatory | Summary |\n|---|---|---|---|---|\n| `CHK-GOV-01` | Stage A: Change & Risk Classification | **PASS** | YES | Change risk classified as CRITICAL. Director approval required: YES. Categories: SOFTWARE, CONFIGURATION, RELEASE, DOCUMENTATION, SECURITY, ARCHITECTURE. |\n| `CHK-GOV-02` | Stage C: Independent Multi-Role Technical Review | **PASS** | YES | Deterministic rule verification: PASS. Independent AI model review was UNAVAILABLE. |\n| `CHK-GOV-03` | Stage C: Model Transparency & Deterministic Review Disclosure | **PASS** | YES | CONFIRMED: Deterministic static analysis is accurately disclosed; no false claims of independent model review. |\n| `CHK-GOV-04` | Stage D: Human Authority & Cryptographic Director Authorization | **BLOCKED** | YES | PENDING: Safety-critical / High-risk change requires Director Ed25519 signature over exact baseline digest. |\n| `CHK-GOV-05` | Stage E: Governance Gate Enforcement & Fail-Closed Multi-Stage Gate | **FAIL** | YES | Stage E Gate BLOCKED: Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.; Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:c4b56ac37581f6ec754e9e2be4c3930219d23f6ef64baf8ed9d4b1bd94571a2a. |\n\n### Phase 3: 25 HMEA Agents Execution Capability & Routing (PASS)\n* **Canonical Coverage:** `25/25`\n* **Total Evaluated Agents:** `26`\n\n| Canonical | ID | Agent Name | Division | Capability | Test Status | Readiness |\n|---|---|---|---|---|---|---|\n| `A01` | `LEAD-SYS-01` | Lead Systems Architect & Orchestrator | `DIRECTORATE` | **TESTED** | PASS | **100%** |\n| `A02` | `REQ-TRC-02` | Requirements & Traceability Engineer | `REQUIREMENTS_BASELINE` | **TESTED** | PASS | **100%** |\n| `A03` | `CONOPS-03` | Operational Profile & CONOPS Specialist | `REQUIREMENTS_BASELINE` | **IMPLEMENTED** | PASS | **95%** |\n| `A04` | `REG-STD-04` | Marine Regulatory & Class Standards Specialist | `REQUIREMENTS_BASELINE` | **IMPLEMENTED** | PASS | **95%** |\n| `A05` | `HULL-GEO-05` | Hull Form & Parametric Geometry Specialist | `NAVAL_ARCHITECTURE` | **TESTED** | PASS | **100%** |\n| `A06` | `STAB-HYD-06` | Hydrostatics & Intact Stability Engineer | `NAVAL_ARCHITECTURE` | **TESTED** | PASS | **100%** |\n| `A07` | `RES-SEAK-07` | Hydrodynamic Resistance & Performance Engineer | `NAVAL_ARCHITECTURE` | **TESTED** | PASS | **100%** |\n| `A08` | `MAN-MOT-08` | Seakeeping & Manoeuvring Dynamics Specialist | `NAVAL_ARCHITECTURE` | **IMPLEMENTED** | PASS | **95%** |\n| `A09` | `WGT-BAL-09` | Weight Distribution & Mass Balance Engineer | `NAVAL_ARCHITECTURE` | **TESTED** | PASS | **100%** |\n| `A10` | `STR-MAT-10` | Hull Structural Scantlings & Composites Engineer | `STRUCTURES_MECHANICAL` | **IMPLEMENTED** | PASS | **95%** |\n| `A11` | `ENV-ENV-11` | Marine Environmental & Thermal Specialist | `STRUCTURES_MECHANICAL` | **IMPLEMENTED** | PASS | **95%** |\n| `A12` | `MECH-APP-12` | Mechanical Appendages & Deck Equipment Engineer | `STRUCTURES_MECHANICAL` | **IMPLEMENTED** | PASS | **95%** |\n| `A13` | `PROP-ENG-13` | Propulsion Plant & Drivetrain Engineer | `POWER_PROPULSION` | **TESTED** | PASS | **100%** |\n| `A14` | `ELEC-PWR-14` | Electrical Architecture & Microgrid Engineer | `POWER_PROPULSION` | **TESTED** | PASS | **100%** |\n| `A15` | `INDEP-CRIT-15` | Independent Technical Critic | `SYSTEMS_VVT` | **TESTED** | PASS | **100%** |\n| `A16` | `SENS-PER-16` | Perception & Sensor Suite Integration Specialist | `AUTONOMY_ELECTRONICS` | **IMPLEMENTED** | PASS | **95%** |\n| `A17` | `NAV-COL-17` | Navigation & COLREGS Collision Avoidance Specialist | `AUTONOMY_ELECTRONICS` | **IMPLEMENTED** | PASS | **95%** |\n| `A18` | `TEST-DIR-18` | Test & Verification Director | `SYSTEMS_VVT` | **TESTED** | PASS | **100%** |\n| `A19` | `COMM-RF-19` | Comms, RF & Telemetry Specialist | `AUTONOMY_ELECTRONICS` | **IMPLEMENTED** | PASS | **95%** |\n| `A20` | `CYBER-SEC-20` | Cyber-Physical Marine Security & Safe-State Engineer | `AUTONOMY_ELECTRONICS` | **IMPLEMENTED** | PASS | **95%** |\n| `A21` | `ICD-ENG-21` | Interface Control Document (ICD) Engineer | `SYSTEMS_VVT` | **IMPLEMENTED** | PASS | **95%** |\n| `A22` | `FMEA-RSK-22` | FMEA & System Safety Specialist | `SYSTEMS_VVT` | **IMPLEMENTED** | PASS | **95%** |\n| `A23` | `INDEP-REV-23` | Independent Design Reviewer (Challenger / Red Team) | `SYSTEMS_VVT` | **TESTED** | PASS | **100%** |\n| `A24` | `VVT-VAL-24` | Verification, Validation & Test Specialist | `SYSTEMS_VVT` | **TESTED** | PASS | **100%** |\n| `A25` | `DOC-OBS-25` | Documentation, BOM & Obsidian Knowledge Specialist | `OPERATIONS_DELIVERABLES` | **IMPLEMENTED** | PASS | **95%** |\n| `A26` | `INTEL-USV-26` | Global Navy USV Fleet Intelligence & Benchmark Analyst | `OPERATIONS_DELIVERABLES` | **TESTED** | PASS | **100%** |\n\n### Phase 4: Engineering Data Integrity & Safety Gates (CONDITIONAL)\n| ID | Title | Status | Mandatory | Summary |\n|---|---|---|---|---|\n| `CHK-ENG-01` | Bidirectional Requirements Traceability (REQ → VNV → TEST) | **CONDITIONAL** | NO | 2 requirements lack associated verification plans (REQ-NAV-002, REQ-MEC-001). |\n| `CHK-ENG-02` | TBD Parameter Tracking & Zero-Fabrication Assumption Audit | **PASS** | YES | 6 design parameters explicitly tracked as TBD without synthetic or fabricated values. |\n| `CHK-ENG-03` | Cryptographic Hash-Chained Audit Trail Integrity | **PASS** | YES | Audit chain valid: 10 tamper-evident events cryptographically verified. |\n| `CHK-ENG-04` | Safety Approval Gates & Human Authority Enforcement | **PASS** | YES | 0 safety gates evaluated. 0 pending human authorization. Fail-closed safety gates armed. |\n\n---\n\n## 3. Governance Findings & Human Authority Status\n* **Stage A (Risk Classification):** `CRITICAL` (Categories: `SOFTWARE, CONFIGURATION, RELEASE, DOCUMENTATION, SECURITY, ARCHITECTURE`)\n* **Stage B (DevSecOps Quality):** Secrets Detected: `0` | Configuration Valid: `YES` | ECR Valid: `YES`\n* **Stage C (Independent Review):** Provider: `deterministic` | Model-Backed: `NO` | AI Status: `AI_REVIEW_UNAVAILABLE` | Deterministic Status: `PASS`\n* **Stage D (Human Authority):** Required: `YES` | Verified: `NO` | Stale: `NO` | Signatory: `None`\n* **Stage E (Enforcement Gate):** Verdict: **`BLOCKED`** | Passed: `NO`\n\n---\n\n## 4. Unresolved Blockers & Remaining Limitations\n### Unresolved Blockers (2)\n- 🚫 CHK-GOV-05 (Stage E: Governance Gate Enforcement & Fail-Closed Multi-Stage Gate): Stage E Gate BLOCKED: Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.; Stage D rejected: Safety-critical change (CRITICAL risk) requires Director-signed Ed25519 approval over baseline digest sha256:c4b56ac37581f6ec754e9e2be4c3930219d23f6ef64baf8ed9d4b1bd94571a2a.\n- 🚫 CHK-GOV-04 (Stage D: Human Authority & Cryptographic Director Authorization): PENDING: Safety-critical / High-risk change requires Director Ed25519 signature over exact baseline digest.\n\n### Remaining Limitations (3)\n- ℹ️ Stage C review executed in deterministic static analysis mode (independent model-backed review unavailable due to external API configuration).\n- ℹ️ Local working tree has uncommitted modifications; verification report is bound to committed HEAD baseline.\n- ℹ️ 2 engineering requirements lack associated verification plans.\n\n---\n_Generated automatically by VERIFY USV-01 Single-Press Systems Verification Engine._  \n_Strict Zero-Fabrication Rule Enforced. NAVAL-USV Digital Engineering Lab._\n"
+}

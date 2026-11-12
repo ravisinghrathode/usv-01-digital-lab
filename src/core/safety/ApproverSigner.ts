@@ -1,4 +1,4 @@
-import { ApproverIdentity } from '../types/safety.ts';
+import type { ApproverIdentity } from '../types/safety.ts';
 
 /**
  * Universal, zero-dependency constant-time byte string comparison.

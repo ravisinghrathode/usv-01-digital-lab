@@ -1,6 +1,6 @@
 import { AgentRegistry } from '../registry/AgentRegistry.ts';
 import { BaseAgent } from './BaseAgent.ts';
-import { AgentExecutionInput, AgentExecutionOutput, AgentStatus } from '../types/agent.ts';
+import type { AgentExecutionInput, AgentExecutionOutput, AgentStatus } from '../types/agent.ts';
 import { AuditLogger } from '../safety/AuditLogger.ts';
 
 export class ExecutionEngine {

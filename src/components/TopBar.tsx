@@ -28,6 +28,7 @@ interface TopBarProps {
   currentUser?: ApproverIdentity | null;
   onOpenLogin: () => void;
   onLogout: () => void;
+  onOpenVerify?: () => void;
 }
 
 export const TopBar: React.FC<TopBarProps> = ({
@@ -42,7 +43,8 @@ export const TopBar: React.FC<TopBarProps> = ({
   onOpenContextGuide,
   currentUser,
   onOpenLogin,
-  onLogout
+  onLogout,
+  onOpenVerify
 }) => {
   const isDirector = currentUser?.role === 'ENGINEERING_DIRECTOR';
 
@@ -85,6 +87,16 @@ export const TopBar: React.FC<TopBarProps> = ({
             </button>
           )}
         </div>
+
+        {/* VERIFY USV-01 Single-Press Button */}
+        <button
+          onClick={onOpenVerify}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 text-xs font-semibold tracking-tight transition-all shadow-sm shadow-emerald-950/40 active:scale-95 ring-1 ring-emerald-500/30"
+          title="Single-Press Verification: Execute genuine 4-phase verification covering repo integrity, Stage A-E governance, 25 HMEA agents, and engineering traceability"
+        >
+          <Shield className="w-3.5 h-3.5 text-emerald-400" />
+          <span className="font-mono">VERIFY USV-01</span>
+        </button>
 
         {/* New Record Button */}
         <button

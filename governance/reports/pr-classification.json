@@ -1,8 +1,8 @@
 {
   "summary": {
     "totalFilesChanged": 18,
-    "totalLinesAdded": 936,
-    "totalLinesDeleted": 500,
+    "totalLinesAdded": 981,
+    "totalLinesDeleted": 510,
     "dominantCategories": [
       "SOFTWARE",
       "CONFIGURATION",
@@ -15,6 +15,8 @@
     "requiresDesignatedAuthorityApproval": true,
     "requiresECR": true
   },
+  "commitSha": "93bbfbbdf26d3e52e784055d46eb03b02b41965e",
+  "baselineDigest": "sha256:c4b56ac37581f6ec754e9e2be4c3930219d23f6ef64baf8ed9d4b1bd94571a2a",
   "fileDetails": [
     {
       "file": ".env.example",
@@ -40,8 +42,8 @@
         "RELEASE"
       ],
       "risk": "LOW",
-      "linesAdded": 23,
-      "linesDeleted": 53
+      "linesAdded": 68,
+      "linesDeleted": 63
     },
     {
       "file": "docs/governance/SOURCE_CODE_DATA_HANDLING_POLICY.md",
@@ -179,5 +181,5 @@
       "linesDeleted": 0
     }
   ],
-  "timestamp": "2026-11-12T02:05:45.322Z"
+  "timestamp": "2026-11-12T11:38:04.030Z"
 }

@@ -1,6 +1,7 @@
 import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
+import { computeBaselineDigest } from './ecr-approval.ts';
 
 export type ChangeCategory =
   | 'DOCUMENTATION'
@@ -32,6 +33,8 @@ export interface PRClassificationReport {
     requiresDesignatedAuthorityApproval: boolean;
     requiresECR: boolean;
   };
+  commitSha?: string;
+  baselineDigest?: string;
   fileDetails: FileClassification[];
   timestamp: string;
 }
@@ -176,6 +179,13 @@ export function generateClassificationReport(baseRef = 'origin/main', rootDir = 
   const requiresDesignatedAuthorityApproval = overallRisk === 'HIGH' || overallRisk === 'CRITICAL';
   const requiresECR = requiresDesignatedAuthorityApproval;
 
+  let commitSha = '';
+  let baselineDigest = '';
+  try {
+    commitSha = execSync('git rev-parse HEAD', { cwd: rootDir, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim();
+    baselineDigest = computeBaselineDigest('HEAD', rootDir);
+  } catch {}
+
   return {
     summary: {
       totalFilesChanged: fileDetails.length,
@@ -186,6 +196,8 @@ export function generateClassificationReport(baseRef = 'origin/main', rootDir = 
       requiresDesignatedAuthorityApproval,
       requiresECR
     },
+    commitSha,
+    baselineDigest,
     fileDetails,
     timestamp: new Date().toISOString()
   };
