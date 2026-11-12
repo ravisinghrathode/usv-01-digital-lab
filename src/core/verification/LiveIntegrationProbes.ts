@@ -6,7 +6,7 @@
 import { createHash, randomBytes } from 'node:crypto';
 
 export interface ProbeResult {
-  target: 'AI_STUDIO_DEPLOYMENT' | 'GOOGLE_DRIVE';
+  target: 'AI_STUDIO_DEPLOYMENT' | 'GOOGLE_DRIVE' | 'OBSIDIAN_VAULT';
   status: 'NOT_CONFIGURED' | 'LIVE_PROBE_PASSED_UNATTESTED' | 'LIVE_PROBE_FAILED';
   observed: string[];
   failure?: string;
