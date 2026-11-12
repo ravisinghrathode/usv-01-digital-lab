@@ -43,12 +43,22 @@ export async function probeDeployedLab(
   }
   const url = new URL('/api/verify/readiness', config.origin).toString();
   try {
-    // Reject redirects and assert auth boundary before requesting private data.
-    const unauth = await request(url, { redirect: 'error', headers: { accept: 'application/json' } });
-    if (unauth.status !== 401) {
-      return result('LIVE_PROBE_FAILED', 'Unauthenticated readiness endpoint must reject with HTTP 401');
+    // Exercise real negative authorization boundaries, without storing any data.
+    for (const route of ['/api/verify/readiness', '/api/export', '/api/data/snapshot']) {
+      const response = await request(new URL(route, config.origin).toString(), {
+        redirect: 'error', headers: { accept: 'application/json' }
+      });
+      if (response.status !== 401) {
+        return result('LIVE_PROBE_FAILED', 'Protected endpoint allowed unauthenticated access: ' + route);
+      }
     }
-    observed.push('unauthenticated HTTP 401');
+    const executionUnauth = await request(new URL('/api/agents/execute', config.origin).toString(), {
+      method: 'POST', redirect: 'error', headers: { accept: 'application/json' }
+    });
+    if (executionUnauth.status !== 401) {
+      return result('LIVE_PROBE_FAILED', 'Agent execution endpoint allowed unauthenticated access');
+    }
+    observed.push('four protected API routes rejected unauthenticated access with HTTP 401');
     const auth = await request(url, {
       redirect: 'error',
       headers: { authorization: 'Bearer ' + config.sessionToken, accept: 'application/json' }
