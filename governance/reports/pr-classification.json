@@ -1,13 +1,14 @@
 {
   "summary": {
-    "totalFilesChanged": 15,
-    "totalLinesAdded": 219,
-    "totalLinesDeleted": 584,
+    "totalFilesChanged": 18,
+    "totalLinesAdded": 932,
+    "totalLinesDeleted": 519,
     "dominantCategories": [
       "SOFTWARE",
       "CONFIGURATION",
       "RELEASE",
       "DOCUMENTATION",
+      "SECURITY",
       "ARCHITECTURE"
     ],
     "overallRisk": "CRITICAL",
@@ -39,8 +40,8 @@
         "RELEASE"
       ],
       "risk": "LOW",
-      "linesAdded": 18,
-      "linesDeleted": 43
+      "linesAdded": 24,
+      "linesDeleted": 49
     },
     {
       "file": "docs/governance/SOURCE_CODE_DATA_HANDLING_POLICY.md",
@@ -57,8 +58,8 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 15,
-      "linesDeleted": 494
+      "linesAdded": 38,
+      "linesDeleted": 405
     },
     {
       "file": "governance/reports/stage-c-review.json",
@@ -66,8 +67,8 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 3,
-      "linesDeleted": 3
+      "linesAdded": 5,
+      "linesDeleted": 5
     },
     {
       "file": "governance/reports/stage-d-approval.json",
@@ -75,8 +76,8 @@
         "SOFTWARE"
       ],
       "risk": "MEDIUM",
-      "linesAdded": 5,
-      "linesDeleted": 5
+      "linesAdded": 2,
+      "linesDeleted": 2
     },
     {
       "file": "scripts/chatgpt-verify.ts",
@@ -120,8 +121,35 @@
         "SOFTWARE"
       ],
       "risk": "HIGH",
-      "linesAdded": 3,
+      "linesAdded": 324,
+      "linesDeleted": 4
+    },
+    {
+      "file": "src/components/AgentOrchestratorView.tsx",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 240,
       "linesDeleted": 2
+    },
+    {
+      "file": "src/components/LoginModal.tsx",
+      "categories": [
+        "SOFTWARE"
+      ],
+      "risk": "MEDIUM",
+      "linesAdded": 38,
+      "linesDeleted": 15
+    },
+    {
+      "file": "src/core/auth/authClient.ts",
+      "categories": [
+        "SECURITY"
+      ],
+      "risk": "CRITICAL",
+      "linesAdded": 86,
+      "linesDeleted": 0
     },
     {
       "file": "src/core/models/ModelProvider.ts",
@@ -151,5 +179,5 @@
       "linesDeleted": 0
     }
   ],
-  "timestamp": "2026-11-12T01:23:51.826Z"
+  "timestamp": "2026-11-12T01:56:22.712Z"
 }
