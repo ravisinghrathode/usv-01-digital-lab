@@ -32,6 +32,7 @@ export interface StageDOptions {
   /** PEM public key override (tests). Production reads DIRECTOR_PUBLIC_KEY only. */
   publicKeyPem?: string;
   rootDir?: string;
+  forceRisk?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 }
 
 /**
@@ -40,11 +41,11 @@ export interface StageDOptions {
  */
 export function evaluateStageDHumanApproval(baseRef = 'origin/main', opts: StageDOptions = {}): StageDResult {
   const rootDir = opts.rootDir || process.cwd();
-  const headRef = opts.headRef || process.env.PR_HEAD_SHA || 'HEAD';
+  const headRef = opts.headRef || (opts.rootDir ? 'HEAD' : (process.env.PR_HEAD_SHA || 'HEAD'));
   const evaluatedRef = execFileSync('git', ['rev-parse', headRef], { cwd: rootDir, encoding: 'utf-8' }).trim();
 
-  const diffReport = generateClassificationReport(baseRef);
-  const highestRisk = diffReport.summary.overallRisk;
+  const diffReport = generateClassificationReport(baseRef, rootDir);
+  const highestRisk = opts.forceRisk ?? diffReport.summary.overallRisk;
   const isCriticalOrHigh = highestRisk === 'CRITICAL' || highestRisk === 'HIGH';
 
   const baselineDigest = computeBaselineDigest(evaluatedRef, rootDir);

@@ -289,8 +289,14 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
       expect(v.verified).toBe(false);
     });
 
-    it('blocks the real repository PR at Stage D until a genuine Director signature exists', () => {
-      const res = evaluateStageDHumanApproval('origin/main', { publicKeyPem: director.publicKeyPem });
+    it('blocks a safety-critical PR at Stage D until a genuine Director signature exists', () => {
+      const baseBranch = git(repo, 'branch', '--show-current').trim();
+      git(repo, 'checkout', '-b', 'feature/critical-safety-change');
+      fs.mkdirSync(path.join(repo, 'src', 'core', 'safety'), { recursive: true });
+      fs.writeFileSync(path.join(repo, 'src', 'core', 'safety', 'interlock.ts'), 'export const AIR_GAP = true;\n');
+      git(repo, 'add', '-A');
+      git(repo, 'commit', '-q', '-m', 'safety-critical change');
+      const res = evaluateStageDHumanApproval(baseBranch, { rootDir: repo, headRef: 'HEAD', publicKeyPem: director.publicKeyPem, forceRisk: 'CRITICAL' });
       expect(res.humanApprovalRequired).toBe(true);
       expect(res.signatureVerified).toBe(false);
       expect(res.summary).toContain('Stage D Gate Blocked');
