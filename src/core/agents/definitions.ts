@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { AgentSpec } from '../types/agent.ts';
+import type { AgentSpec } from '../types/agent.ts';
 
 // Common Schema definitions
 const genericInputSchema = z.object({
@@ -854,5 +854,47 @@ Use standard formatting, stable record IDs, and clear change logs.`,
       independentReviewRequired: false
     },
     auditRequirement: { logLevel: 'INFO', retainExecutionTrace: true, recordAssumptions: true, traceableToRequirementIds: true }
+  },
+
+  // 26. Global Navy USV Fleet Intelligence & Benchmark Analyst
+  {
+    id: 'INTEL-USV-26',
+    canonicalId: 'A26',
+    aliases: ['INTEL-USV-26', 'A26', 'USV-INTEL-SCRAPER'],
+    division: 'OPERATIONS_DELIVERABLES',
+    name: 'Global Navy USV Fleet Intelligence & Benchmark Analyst',
+    speciality: 'Global naval USV fleet scraping, technical model extraction, academic paper synthesis, comparative benchmarking',
+    responsibilities: [
+      'Continuously search and scrape operational naval USV models across international navies (US, UK, TR, UA, IL, FR, SG, AU, IN, CN)',
+      'Extract technical hull dimensions, propulsion machinery, autonomy levels, sensors, and weapons payloads',
+      'Synthesize peer-reviewed academic literature, DOIs, governing hydrodynamic and control formulas',
+      'Execute comparative benchmarking and Froude number calculations against USV-01 baseline',
+      'Generate Obsidian vault markdown notes with [[wikilinks]] for the Knowledge Centre'
+    ],
+    systemInstructions: `You are the Global Navy USV Fleet Intelligence & Benchmark Analyst (INTEL-USV-26 / A26).
+Your mandate is to provide factual, unclassified, verified intelligence on operational naval USVs worldwide.
+Catalog hull particulars (LOA, Beam, Draft, Displacement), machinery ratings, endurance, autonomy levels (AL 1-5), and combat packages.
+Extract empirical academic papers and link to governing hydrodynamic formulas.
+Perform comparative naval architecture trade analyses against the USV-01 baseline.`,
+    inputSchema: genericInputSchema,
+    outputSchema: genericOutputSchema,
+    requiredKnowledgeSources: ['GLOBAL_NAVY_USVS', 'IEEE_OCEANIC_ENGINEERING', 'DARPA_ACTUV_ARCHIVE', 'SNAME_TRANSACTIONS', 'USV01_PROJECT_CONTEXT.md'],
+    permittedTools: ['TOOL-BASELINE-QUERY', 'TOOL-OBSIDIAN-EXPORT', 'TOOL-HYDROSTATICS', 'TOOL-RESISTANCE'],
+    modelConfig: { preferredProvider: 'gemini', modelName: 'gemini-1.5-pro', temperature: 0.1, maxTokens: 4096, fallbackToMock: true },
+    reportingTo: 'LEAD-SYS-01',
+    dependencies: ['LEAD-SYS-01'],
+    executionPermissions: ['READ_ONLY', 'BASELINE_DRAFT'],
+    verificationCriteria: {
+      requiredChecklist: ['Verify vessel operator navy and country of origin', 'Verify displacement and length dimensions against open-source naval data', 'Verify peer-reviewed paper DOIs'],
+      mandatoryDeterministicTools: [],
+      acceptanceThresholds: { unverifiedVessels: 0 },
+      independentReviewRequired: false
+    },
+    auditRequirement: { logLevel: 'AUDIT', retainExecutionTrace: true, recordAssumptions: true, traceableToRequirementIds: true }
   }
 ];
+
+export const INTEL_USV_26_SPEC = MASTER_AGENTS[25];
+export const INTELLIGENCE_AGENTS: AgentSpec[] = [INTEL_USV_26_SPEC];
+
+

@@ -202,6 +202,7 @@ How can I assist your engineering evaluation today?`,
           <option value="CYBER-SEC-20">CYBER-SEC-20 (Cyber-Physical Security)</option>
           <option value="INDEP-REV-23">INDEP-REV-23 (Red Team Reviewer)</option>
           <option value="DOC-OBS-25">DOC-OBS-25 (Obsidian Documentation)</option>
+          <option value="INTEL-USV-26">INTEL-USV-26 (Global Navy Fleet Intelligence & Benchmarks)</option>
         </select>
       </div>
 

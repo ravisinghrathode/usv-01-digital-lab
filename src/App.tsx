@@ -24,6 +24,8 @@ import { AgentOrchestratorView } from './components/AgentOrchestratorView';
 import { RealtimeSimulationView } from './components/RealtimeSimulationView';
 import { ShipBuildingProcessView } from './components/ShipBuildingProcessView';
 import { GenerativeOptimizerView } from './components/GenerativeOptimizerView';
+import { GlobalUsvFleetView } from './components/GlobalUsvFleetView';
+import { NavalNotebookLMView } from './components/NavalNotebookLMView';
 import { AiEngineeringAssistant } from './components/AiEngineeringAssistant';
 import { NewRecordModal } from './components/NewRecordModal';
 import { ExportImportModal } from './components/ExportImportModal';
@@ -763,6 +765,14 @@ export default function App() {
 
           {currentModule === 'generative-optimizer' && (
             <GenerativeOptimizerView onAskAi={triggerAiQuery} />
+          )}
+
+          {currentModule === 'global-usv-fleet' && (
+            <GlobalUsvFleetView onAskAi={triggerAiQuery} />
+          )}
+
+          {currentModule === 'notebook-lm' && (
+            <NavalNotebookLMView onAskGlobalAi={triggerAiQuery} />
           )}
         </main>
       </div>
