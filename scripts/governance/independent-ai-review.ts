@@ -1,12 +1,26 @@
 import { execFileSync, execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
-import dotenv from 'dotenv';
 import { ModelProviderRouter, isTestExecutionEnvironment, resolveConfiguredProvider } from '../../src/core/models/ModelProvider.ts';
 import { computeBaselineDigest } from './ecr-approval.ts';
 import { generateClassificationReport } from './classify-change.ts';
 
-dotenv.config();
+// Safely load .env without requiring third-party dependencies
+function loadEnv() {
+  try {
+    const envPath = path.join(process.cwd(), '.env');
+    if (fs.existsSync(envPath)) {
+      const lines = fs.readFileSync(envPath, 'utf-8').split('\n');
+      for (const line of lines) {
+        const match = line.match(/^\s*([\w.-]+)\s*=\s*(.*)?\s*$/);
+        if (match && !process.env[match[1]]) {
+          process.env[match[1]] = (match[2] || '').trim().replace(/^['"](.*)['"]$/, '$1');
+        }
+      }
+    }
+  } catch {}
+}
+loadEnv();
 
 export type ReviewerRole =
   | 'SOFTWARE_ARCHITECTURE_REVIEWER'

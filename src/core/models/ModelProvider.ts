@@ -1,4 +1,10 @@
-import { ModelConfig } from '../types/agent.ts';
+export interface ModelConfig {
+  preferredProvider?: 'gemini' | 'openai' | 'deterministic' | 'ollama' | 'mock_deterministic';
+  modelName?: string;
+  temperature?: number;
+  maxTokens?: number;
+  fallbackToMock?: boolean;
+}
 
 export interface ModelPromptRequest {
   systemInstructions: string;

@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import { generateClassificationReport, PRClassificationReport } from './classify-change.ts';
-import { MultiRoleReviewReport } from './independent-ai-review.ts';
-import { StageDResult } from './stage-d-human-approval.ts';
+import { generateClassificationReport, type PRClassificationReport } from './classify-change.ts';
+import type { MultiRoleReviewReport } from './independent-ai-review.ts';
+import type { StageDResult } from './stage-d-human-approval.ts';
 
 export interface StageEEvaluation {
   passed: boolean;
@@ -83,6 +83,11 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
     if (stageCVerdict === 'ADVISORY_BLOCK') {
       blockingReasons.push('Stage C advisory verdict is ADVISORY_BLOCK.');
     }
+    if (stageCVerdict === 'PENDING_HUMAN_REVIEW') {
+      blockingReasons.push(
+        'Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review must be completed prior to approval.'
+      );
+    }
   }
 
   // Evaluate Stage D
@@ -108,7 +113,14 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
 
   let overallVerdict: StageEEvaluation['overallVerdict'] = 'APPROVED';
   if (blockingReasons.length > 0) {
-    if (!signatureVerified && stageDRequired && !hasMockFallback && deterministicStatus === 'PASS') {
+    if (
+      !signatureVerified &&
+      stageDRequired &&
+      !hasMockFallback &&
+      deterministicStatus === 'PASS' &&
+      stageCVerdict !== 'PENDING_HUMAN_REVIEW' &&
+      stageCVerdict !== 'ADVISORY_BLOCK'
+    ) {
       overallVerdict = 'PENDING_HUMAN_AUTHORITY';
     } else {
       overallVerdict = 'BLOCKED';
@@ -210,17 +222,29 @@ if (process.argv[1] && process.argv[1].endsWith('stage-e-enforce.ts')) {
   }
 
   if (!evaluation.passed) {
-    if (evaluation.overallVerdict === 'PENDING_HUMAN_AUTHORITY') {
-      console.log('\n⚠️  STAGE E: Automated technical quality checks PASSED.');
-      console.log('   Human authority will be verified via interactive prompt before merging into main.\n');
-      process.exit(0);
-    }
-
     console.error(`\n🚫 STAGE E GATE BLOCKED: ${evaluation.overallVerdict}\n`);
     for (const r of evaluation.blockingReasons) {
       console.error(`  - ${r}`);
     }
     console.error('');
+
+    const isCI = !!(process.env.CI || process.env.GITHUB_ACTIONS);
+    const allowPendingLocal = process.argv.includes('--allow-pending') && !isCI;
+
+    if (evaluation.overallVerdict === 'PENDING_HUMAN_AUTHORITY') {
+      console.warn('⚠️  STAGE E: Automated technical quality checks PASSED, but Director authorization is pending.');
+      console.warn('   In accordance with NAVAL-USV Non-Negotiable Principle 5, AI cannot authorize safety-critical changes.');
+      console.warn('   A valid Ed25519 signature from the Engineering Director over the exact baseline is mandatory.\n');
+
+      if (allowPendingLocal) {
+        console.log('ℹ️  Exiting 0 for local advisory inspection (--allow-pending specified).');
+        process.exit(0);
+      } else {
+        console.error('🚫 CI/Branch Protection Gate BLOCKED: Fail-closed on missing human authority approval.');
+        process.exit(1);
+      }
+    }
+
     process.exit(1);
   }
 
