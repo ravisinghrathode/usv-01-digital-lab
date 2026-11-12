@@ -3,8 +3,8 @@
   "programme": "NAVAL-USV",
   "project": "USV-01 Digital Engineering Lab",
   "releaseVersion": "1.0.0",
-  "gitCommitSha": "9fcceeb6894bd86c3322ea0c14504bfd04e6918a",
-  "builtAt": "2026-11-12T00:46:39.846Z",
+  "gitCommitSha": "489ebc685226e3773d021c5c534a26403400a494",
+  "builtAt": "2026-11-12T00:49:45.009Z",
   "environment": {
     "nodeVersion": "v24.22.2",
     "osPlatform": "linux"
@@ -57,8 +57,8 @@
     },
     {
       "path": "src/components/GenerativeOptimizerView.tsx",
-      "sha256": "7a4eddf9dc1f249b4e94338a93b7bb39211c6752f101dd01979565115c76e040",
-      "sizeBytes": 62965
+      "sha256": "c7f1a760ae9c3a2d5a48cddeaee1aeaf7cb12d0a0b6f51d4bbfe7651b848dec4",
+      "sizeBytes": 62985
     },
     {
       "path": "src/components/HydrodynamicsView.tsx",
@@ -112,8 +112,8 @@
     },
     {
       "path": "src/components/RealtimeSimulationView.tsx",
-      "sha256": "d217f79d05d96075cc68f8022080d93ab90b48e8b8f59bc7bc1bbbdca4a45cce",
-      "sizeBytes": 52097
+      "sha256": "99a85cab73484c21048378837fb17821cc8f11db4f07328f81b16810bda8c37a",
+      "sizeBytes": 52081
     },
     {
       "path": "src/components/RisksDecisionsView.tsx",
@@ -122,8 +122,8 @@
     },
     {
       "path": "src/components/ShipBuildingProcessView.tsx",
-      "sha256": "926b2eb91fd45d497f9d09ce97695a8e0c9a39560c23491378fec54eff7416cc",
-      "sizeBytes": 39786
+      "sha256": "b6bd259e6883d9703c8bd5aa7101db6ce77661ea5ef0f1f4a0f68eea4d43cea8",
+      "sizeBytes": 39919
     },
     {
       "path": "src/components/SimulationCentreView.tsx",
@@ -277,8 +277,8 @@
     },
     {
       "path": "src/index.css",
-      "sha256": "7062be3e24eac64faa34b9d79d764211186fba6677b0681566f338632724b88e",
-      "sizeBytes": 444
+      "sha256": "e303bde961da0babae52c5520759142784813e00aa849b207a39eb87bd27ceaa",
+      "sizeBytes": 495
     },
     {
       "path": "src/main.tsx",
@@ -301,14 +301,14 @@
       "sizeBytes": 10104
     },
     {
-      "path": "dist/assets/index-CmTgJkML.css",
-      "sha256": "2fa16744e7f6b1992fb752c3dd9ea31340feea1c8e2ef628074276fc077210ba",
-      "sizeBytes": 40726
+      "path": "dist/assets/index-D2fJP_Ct.js",
+      "sha256": "43697970e718bbc11ab98259a9c9ac0bdd8ce08767ae4293e09072133de5bd36",
+      "sizeBytes": 1018862
     },
     {
-      "path": "dist/assets/index-Sz-6P5Iu.js",
-      "sha256": "4a73d96973e6e1942bb422f77d11e53d1c49f486e533a632d44a270897b87840",
-      "sizeBytes": 1018725
+      "path": "dist/assets/index-lOGYyy89.css",
+      "sha256": "8bd52feaf0625abf214fe64dc81931c4c0142e46fe0687e4da9a446be14610e0",
+      "sizeBytes": 41187
     },
     {
       "path": "dist/assets/vendor-libs-BTFXSzXW.js",
@@ -327,7 +327,7 @@
     },
     {
       "path": "dist/index.html",
-      "sha256": "63b34fe4de0fe4703648b1c2a142aeaf0affdd671be2750a556d29b00a4b0ebe",
+      "sha256": "69db7025deba1f2769a25d88dd26e3269669eb465866813e18613afe5c4a6f59",
       "sizeBytes": 1406
     }
   ],
@@ -337,5 +337,5 @@
     "auditVulnerabilities": 0,
     "staticAnalysisStatus": "PASS"
   },
-  "immutableManifestSha256": "e1f8863e50853628009ee57b6a74c128bf485e5d90c3df7b556077fa94c37bb5"
+  "immutableManifestSha256": "905d984f9517a8dd3c226777593fc4286554a517dbc95796bf328aadfbd46c57"
 }
