@@ -5,7 +5,7 @@ const specs = getSubscriptionCliSpecs();
 let failed = false;
 
 console.log('USV-01 Mission Control local preflight');
-console.log('Policy: subscription/free account CLIs only; paid AI API credentials are excluded from Mission Control child processes.\n');
+console.log('Policy: signed-in subscription CLI only; paid AI API credentials are excluded from Mission Control child processes.\n');
 
 for (const [role, spec] of Object.entries(specs)) {
   const check = spawnSync('/usr/bin/env', ['which', spec.executable], {
@@ -28,5 +28,5 @@ if (exposedBillingVars.length) {
 }
 
 console.log('\nAuthentication is intentionally not probed here because that would consume model usage.');
-console.log('Run each CLI interactively once on the Mac and sign in to the intended subscription/account.');
+console.log('Run Codex CLI interactively once on the Mac and sign in with the intended ChatGPT subscription/account.');
 if (failed) process.exitCode = 1;

@@ -50,19 +50,20 @@ export interface MissionEvidenceManifest {
   objectiveDigest: string;
   generatedAt: string;
   orchestrator: {
-    provider: 'claude-subscription-cli';
+    provider: 'openai-codex-chatgpt-subscription-cli';
     outputDigest: string;
     plan: Record<string, unknown>;
   };
   deterministicEvidence: DeterministicEvidence[];
   worker: {
-    provider: 'gemini-antigravity-subscription-cli';
+    provider: 'openai-codex-chatgpt-subscription-cli';
     cycle: number;
     outputDigest: string;
     output: Record<string, unknown>;
   };
   reviewer: {
     provider: 'openai-codex-chatgpt-subscription-cli';
+    independentProvider: boolean;
     cycle: number;
     outputDigest: string;
     decision: ReviewerDecision;
@@ -262,7 +263,7 @@ export class MissionControlCoordinator {
     workerOutput: Record<string, unknown>
   ): string {
     return [
-      'You are the independent USV technical reviewer. You are not the worker and cannot grant human approval.',
+      'You are the separate USV technical review role. Runtime evidence determines whether the provider is actually independent. You cannot grant human approval.',
       `Review specialist: ${spec.id} / ${spec.canonicalId} — ${spec.name}`,
       `Original objective: ${input.objective}`,
       `Original requirements: ${JSON.stringify(input.requirements)}`,
@@ -296,7 +297,7 @@ export class MissionControlCoordinator {
         prompt: this.buildOrchestratorPrompt(spec, input),
         workingDirectory: input.workingDirectory
       });
-      requireCompleted(orchestration, 'Claude orchestrator');
+      requireCompleted(orchestration, 'subscription orchestrator');
       const planEnvelope = extractStructuredJson(orchestration.stdout);
       const plan = (planEnvelope.plan && typeof planEnvelope.plan === 'object')
         ? planEnvelope.plan as Record<string, unknown>
@@ -321,7 +322,7 @@ export class MissionControlCoordinator {
           prompt: this.buildWorkerPrompt(spec, input, plan, deterministicEvidence, priorFindings),
           workingDirectory: input.workingDirectory
         });
-        requireCompleted(worker, 'Gemini worker');
+        requireCompleted(worker, 'subscription worker');
 
         const workerOutput = extractStructuredJson(worker.stdout);
         const validatedWorker = spec.outputSchema.safeParse(workerOutput);
@@ -347,7 +348,7 @@ export class MissionControlCoordinator {
           prompt: this.buildReviewerPrompt(spec, input, plan, deterministicEvidence, validatedWorkerData),
           workingDirectory: input.workingDirectory
         });
-        requireCompleted(reviewer, 'GPT reviewer');
+        requireCompleted(reviewer, 'subscription reviewer');
 
         const review = parseReviewerDecision(reviewer.stdout);
         const manifest: MissionEvidenceManifest = {
@@ -359,19 +360,20 @@ export class MissionControlCoordinator {
           objectiveDigest: digest(input.objective),
           generatedAt: new Date().toISOString(),
           orchestrator: {
-            provider: 'claude-subscription-cli',
+            provider: 'openai-codex-chatgpt-subscription-cli',
             outputDigest: digest(orchestration.stdout),
             plan
           },
           deterministicEvidence,
           worker: {
-            provider: 'gemini-antigravity-subscription-cli',
+            provider: 'openai-codex-chatgpt-subscription-cli',
             cycle,
             outputDigest: digest(validatedWorkerData),
             output: validatedWorkerData
           },
           reviewer: {
             provider: 'openai-codex-chatgpt-subscription-cli',
+            independentProvider: worker.executable !== reviewer.executable,
             cycle,
             outputDigest: digest(review),
             decision: review
@@ -380,7 +382,10 @@ export class MissionControlCoordinator {
         };
 
         if (review.decision === 'APPROVE') {
-          const requiresHuman = !!input.safetyCritical || !!spec.verificationCriteria.independentReviewRequired;
+          const requiresHuman =
+            !!input.safetyCritical ||
+            !!spec.verificationCriteria.independentReviewRequired ||
+            worker.executable === reviewer.executable;
           const state: MissionTaskState = requiresHuman ? 'READY_FOR_HUMAN_REVIEW' : 'TECHNICALLY_REVIEWED';
           await this.transition(input.taskId, state, { evidenceManifest: manifest, reviewCycle: cycle });
           return { state, taskId: input.taskId, agentId: spec.id, reviewCycles: cycle, manifest };
