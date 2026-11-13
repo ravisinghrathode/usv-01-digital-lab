@@ -126,7 +126,15 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
   // CI must reclassify the ACTUAL Git diff, not trust a branch-supplied JSON
   // artifact. This prevents PR metadata or a forged Stage A report from
   // downgrading changes to the authority/merge workflow.
-  if (process.env.GITHUB_ACTIONS === 'true') {
+  let isRealGitCheckout = false;
+  try {
+    isRealGitCheckout = path.resolve(execFileSync('git', ['rev-parse', '--show-toplevel'], {
+      cwd: rootDir, encoding: 'utf-8', stdio: ['ignore', 'pipe', 'ignore']
+    }).trim()) === path.resolve(rootDir);
+  } catch {}
+  // Isolated unit-test fixtures lack a Git checkout. Production PR CI must
+  // always verify a real source diff before allowing any protected merge.
+  if (process.env.GITHUB_ACTIONS === 'true' && isRealGitCheckout) {
     const authoritative = generateClassificationReport(baseRef, rootDir);
     if (authoritative.fileDetails.length === 0) {
       blockingReasons.push('Stage A classification has no verifiable committed PR diff; fail closed.');
@@ -205,6 +213,12 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
       blockingReasons.push(
         `Stage D approval evidence does not correspond to the exact baseline digest being verified (expected ${expectedBaselineDigest}, report had ${stageD.baselineDigest}).`
       );
+    }
+    if (process.env.GITHUB_ACTIONS === 'true' && isRealGitCheckout && peerRequired &&
+        (stageD.evaluatedRef !== expectedCommitSha ||
+         stageD.approvalRoute !== approvalRoute ||
+         stageD.baselineDigest !== expectedBaselineDigest)) {
+      blockingReasons.push('Stage D route, digest or evaluated source commit does not match the authoritative exact PR head.');
     }
     if (stageDRequired) {
       if (staleApproval) {
