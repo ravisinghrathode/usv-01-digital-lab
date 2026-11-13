@@ -140,8 +140,6 @@ jobs:
             USV_SOLVER_WORK_DIR="$ROOT/work"
             USV_SOLVER_ARTIFACT_DIR="$ROOT/artifacts"
             USV_SOLVER_BIN_PATH="/usr/bin:/bin"
-            USV_OPENFOAM_WRAPPER="/usr/bin/openfoam2606"
-            USV_OPENFOAM_PROJECT_DIR="/usr/lib/openfoam/openfoam2606"
             USV_SOLVER_CPU_SECONDS="1200"
             USV_SOLVER_ADDRESS_SPACE_BYTES="$((6*1024*1024*1024))"
             USV_SOLVER_FILE_BYTES="$((2*1024*1024*1024))"
@@ -356,6 +354,8 @@ jobs:
             USV_SOLVER_WORK_DIR="$ROOT/work"
             USV_SOLVER_ARTIFACT_DIR="$ROOT/artifacts"
             USV_SOLVER_BIN_PATH="/usr/bin:/bin"
+            USV_OPENFOAM_WRAPPER="/usr/bin/openfoam2606"
+            USV_OPENFOAM_PROJECT_DIR="/usr/lib/openfoam/openfoam2606"
             USV_SOLVER_CPU_SECONDS="1200"
             USV_SOLVER_ADDRESS_SPACE_BYTES="$((6*1024*1024*1024))"
             USV_SOLVER_FILE_BYTES="$((2*1024*1024*1024))"
@@ -377,7 +377,7 @@ jobs:
             governance/reports/openfoam-backward-step-evidence.zip
           chmod 600 governance/reports/openfoam-backward-step-evidence.zip
 
-      - name: Upload Real OpenFOAM Flat-Plate Evidence
+      - name: Upload Real OpenFOAM Backward-Step Evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
