@@ -36,13 +36,13 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'solver' | 'particulars' | 'stability' | 'weight_cg' | 'subdivision'>('solver');
 
-  // Preliminary parametric sizing workspace, NOT approved hull input
-  const [displacementKg, setDisplacementKg] = useState<number>(6200);
-  const [beamM, setBeamM] = useState<number>(2.90);
-  const [draftM, setDraftM] = useState<number>(0.65);
-  const [depthM, setDepthM] = useState<number>(1.45);
-  const [vcgM, setVcgM] = useState<number>(0.66);
-  const [blockCoeffCb, setBlockCoeffCb] = useState<number>(0.42);
+  // Blank by default: neither the 120 kg concept nor the 6,200 kg synthetic example is an approved vessel baseline.
+  const [displacementKg, setDisplacementKg] = useState<number>(0);
+  const [beamM, setBeamM] = useState<number>(0);
+  const [draftM, setDraftM] = useState<number>(0);
+  const [depthM, setDepthM] = useState<number>(0);
+  const [vcgM, setVcgM] = useState<number>(0);
+  const [blockCoeffCb, setBlockCoeffCb] = useState<number>(0);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState(false);
 
   const handleResetToZero = () => {
@@ -132,7 +132,7 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
 
         <div className="flex items-center gap-2">
           <button
-            onClick={() => onAskAi('Audit the Naval Architecture baseline against IMO MSC.267(85) criteria. List all unverified parameters and explain what physical or numerical evidence is required before dimensions can be unfrozen.')}
+            onClick={() => onAskAi('Identify the USV-01 vessel configuration and applicable flag/class stability design basis first. Audit missing verified geometry, load cases, independent hydrostatics, downflooding, GZ and approvals; do not presume IMO MSC.267(85) applies.')}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 text-sky-300 text-xs transition-colors"
           >
             <Sparkles className="w-3.5 h-3.5" />
@@ -147,7 +147,7 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
         <div>
           <h4 className="font-semibold text-amber-300">Mandatory Naval Architecture Governance Rule</h4>
           <p className="text-slate-300 mt-0.5 leading-relaxed">
-            Per systems engineering guidelines, vessel dimensions and stability metrics must not be fabricated. The interactive calculator below provides analytical mathematical estimates to guide preliminary sizing. Values remain <strong className="font-mono text-amber-300 bg-amber-500/10 px-1 py-0.2 rounded">TBD</strong> on the baseline register until peer-reviewed and verified by physical inclining trials.
+            Per systems engineering guidelines, vessel dimensions and stability metrics must not be fabricated. The interactive calculator below starts blank and provides only preliminary sensitivity estimates once explicitly entered; no 120 kg or 6,200 kg vessel has been approved. Values remain <strong className="font-mono text-amber-300 bg-amber-500/10 px-1 py-0.2 rounded">TBD</strong> on the baseline register until peer-reviewed and verified by physical inclining trials.
           </p>
         </div>
       </div>

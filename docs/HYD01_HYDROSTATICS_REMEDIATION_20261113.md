@@ -1,7 +1,7 @@
 # HYD-01 Numerical Remediation and Remaining Acceptance Gates
 
 **Date:** 2026-11-13  
-**State:** Proposed numerical remediation in branch `fix/hyd-01-offsets-gz-20261113`; external acceptance OPEN.
+**State:** Numerical first-stage remediation merged as PR #40 (merge commit `21992ef6e10cdf902c33a1fd41f28f68a6314a02`). PR #46 is a subsequent self-audit improvement; physical acceptance and engineering release remain OPEN.
 
 ## Findings
 
@@ -45,3 +45,33 @@ Earlier live Gemini campaign `evidence/live-agents/live-gemini-26-20261113.json`
 ## Baseline write protection
 
 The interactive slider was capable of staging the 6,200 kg demonstration scenario as project particulars and calculating waterline beam as `beamM * 0.92` without verified offsets. That pathway was disabled. Users can export a clearly `UNVERIFIED PARAMETRIC SCREEN` CSV; slider reset affects only local state. No automated calculator can overwrite the project baseline. `tests/hydroBaselineIntegrity.test.ts` enforces the critical UI boundary.
+
+## Post-merge independent self-audit (PR #46, not a certified stability solution)
+
+An internal critique identified the following remediations:
+- The fixed-trim source-offset tool had no longitudinal pitch equilibrium. `calculateTrimmedOffsetHydrostatics` now solves heave plus longitudinal trim at each **prescribed heel** for the stated offset hull, within a ±15° trim screening envelope; infeasible mass/CG cases throw rather than return unphysical GZ.
+- `TOOL-TRIMMED-HYDROSTATICS-01` is registered with `CALCULATION_EXEC` permission checks and A06 authorization.
+- The `calculateGZStability` slider curve is an empirical wall-sided/rollover approximation, not a validated hydrostatic righting curve. Its `overallPass` cannot become true; negative righting arms and negative GZ-area integrals are no longer clipped. It rejects invalid numerical inputs.
+- The vessel dashboard now starts blank (no invented 6,200 kg default). The 120 kg concept and 6,200 kg exploratory data are distinct, unapproved configurations; neither is a naval baseline.
+- `evidence/hyd01/acceptance-manifest.json` represents the actual absent baseline, load cases, hydrostatic benchmark and signatures explicitly as null/empty. `HydroEvidenceAudit.ts` checks exact SHA, geometry revision, load-case evidence coverage and reference tolerances. Structural completeness **never equals authenticated or independently accepted evidence**.
+- Automated analytical trim and negative tests are not independent hydrostatic-software validation. Actual 3D CAD/offset provenance, station-convergence study, all load cases, downflooding, heel/trim trials, independent correlation and approval remain mandatory.
+
+**Numerical integration caveat:** The solver trapezoidally integrates cross-sectional properties across stations. It is a section-based screening approximation and cannot establish geometry closure between stations, appendage buoyancy, physical hull watertightness, or cross-checks against a second certified solver.
+
+## Critical independent finding: sample project records impersonated approved engineering
+
+The repository had `INITIAL_PROJECT.governanceState = Approved`, `INITIAL_NAVAL_PARTICULARS` claiming a verified 11.2 m, 6.2-tonne hull and GM = 1.32 m, fictional `INITIAL_WEIGHT_CG` numbers marked non-illustrative, `INITIAL_RESISTANCE` marked Verified, `INITIAL_LOAD_CASES` marked solved and `INITIAL_TEST_RECORDS` claiming a passed FAT with manufactured values and filenames. This was a **source-data integrity defect**, not a harmless dashboard cosmetic.
+
+PR #46 resets the default vessel particulars to TBD, project governance to Draft, removes unsupported baseline weight/resistance/passed-test records, demotes synthetic simulation outputs to unexecuted draft scenarios, and returns structure load cases to TBD. The 120 kg owner-directed concept from the separate proposed parameter YAML remains **a different, explicitly unapproved design alternative**; do not automatically transfer those values into this lab without a controlled vessel identity and source revision.
+
+`tests/seedBaselineIntegrity.test.ts` prevents regression. This only corrects misleading stored demo fixtures; it does not validate vessel measurements, assign engineers, or approve a design.
+
+## Google Drive source inspection — 13 November 2026
+
+The connected USV-01 Drive was queried for `USV`, `hull`, `hydro`, `CAD`, `weight` and `STEP`, and the controlled CAD and hydrostatic folders were inspected directly:
+
+- [CAD folder — 11_CAD_Drawings](https://drive.google.com/drive/folders/1jiD8ovY8dEBIHDNWPbPJXz8czGjP_mmM) contains [CAD Source and Revision Control Protocol](https://drive.google.com/file/d/1BBtzquDTI2eoRnzRXlEhFzs48E6Ysrpq/view?usp=drivesdk), but no actual hull geometry was returned in the folder listing.
+- [HYD-01 CAD/Hydrostatics Protocol](https://drive.google.com/file/d/1i2lc-KsdRX9Pt1myBTSogq57aGeSuDTq/view?usp=drivesdk) is the only file returned by the designated HYD-01 folder listing.
+- [Gate 0 Evidence Acquisition Register](https://drive.google.com/file/d/1i-mHJiWBhcwkqgA5cNu9ysv0uImkaqXN/view?usp=drivesdk) provides a related evidence-acquisition reference.
+
+**Evidence interpretation:** Only protocols/registers, not approved 3D hull surfaces, offsets, measured CG, inclining or independently validated hydrostatic tables, were observed in these scoped queries. This is a bounded search result, not proof that geometry does not exist elsewhere. Until the approved source is identified and inspected, the physical acceptance remains blocked.

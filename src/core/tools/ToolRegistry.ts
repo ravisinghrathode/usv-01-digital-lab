@@ -1,5 +1,5 @@
 import type { EngineeringTool, ToolExecutionResult } from '../types/tools.ts';
-import { OffsetHydrostaticsTool } from './naval/offsetHydrostaticsTool.ts';
+import { OffsetHydrostaticsTool, TrimmedOffsetHydrostaticsTool } from './naval/offsetHydrostaticsTool.ts';
 import { LiftingLoadScreenTool } from './naval/liftingLoadTool.ts';
 import { LiftingEquilibriumTool } from './naval/liftingEquilibriumTool.ts';
 import { BeamArithmeticTool } from './naval/beamArithmeticTool.ts';
@@ -32,6 +32,7 @@ export class ToolRegistry {
     const defaultTools = [
       HydrostaticsTool,
       OffsetHydrostaticsTool,
+      TrimmedOffsetHydrostaticsTool,
       ResistanceTool,
       MassBalanceTool,
       ElectricalLoadTool,
