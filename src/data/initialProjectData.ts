@@ -412,8 +412,31 @@ export const INITIAL_RISKS: EngineeringRisk[] = [
 ];
 
 // No synthetic CFD/FEA result is preloaded as if it were an executed run.
-// Planned campaigns are created from authenticated geometry/input revisions.
-export const INITIAL_SIMULATIONS: SimulationJob[] = [];
+// This single record is a planned illustrative structural campaign so the UI
+// and regression guards can represent a fail-closed FEA work item explicitly.
+export const INITIAL_SIMULATIONS: SimulationJob[] = [
+  {
+    id: 'SIM-MEC-PLANNED-001',
+    projectId: 'PRJ-USV-01',
+    discipline: 'MEC',
+    name: '[ILLUSTRATIVE] Structural FEA campaign — not executed',
+    geometryRevision: 'TBD — approved geometry not established',
+    inputConfiguration: 'TBD — loads, material allowables and boundary conditions not approved',
+    solver: 'TBD — solver/version to be selected and independently verified',
+    boundaryConditions: 'TBD',
+    unitsAndReferenceFrame: 'TBD',
+    assumptions: 'Illustrative planning record only; no numerical structural result is asserted.',
+    computeEnvironment: 'TBD — validated compute environment not commissioned',
+    runStatus: 'Draft',
+    outputFiles: 'TBD — no solver output exists',
+    resultsSummary: 'TBD — no run or result verified',
+    reviewer: 'TBD — qualified independent structural reviewer required',
+    validationStatus: 'UNVERIFIED — NO VERIFIED FEA',
+    isIllustrative: true,
+    createdAt: '2026-11-13',
+    updatedAt: '2026-11-13'
+  }
+];
 
 export const INITIAL_VERIFICATION_PLANS: VerificationPlan[] = [
   {
@@ -568,9 +591,9 @@ export const INITIAL_MATERIALS: MaterialRecord[] = [
 ];
 
 export const INITIAL_LOAD_CASES: LoadCaseRecord[] = [
-  { id: 'LC-01', title: 'Bottom slamming pressure and local hull panel integrity', loadType: 'Bottom Slamming', governingStandard: 'TBD — applicability of ISO 12215-5 / class rules under review', designPressureOrForce: 'TBD — no approved pressure field', safetyFactorTarget: 'TBD', feaStatus: 'TBD — illustrative screening only' },
-  { id: 'LC-02', title: 'Hull-girder hogging and sagging bending', loadType: 'Hull Girder Bending', governingStandard: 'TBD — applicable hull structure design basis', designPressureOrForce: 'TBD — requires geometry, weights and wave design loads', safetyFactorTarget: 'TBD', feaStatus: 'TBD — no verified global FEA' },
-  { id: 'LC-03', title: 'Crane lift and asymmetric sling / connection loads', loadType: 'Crane Lift', governingStandard: 'TBD — lifting equipment, national law and approved rigging basis', designPressureOrForce: 'TBD — handling mass, dynamic factor, CG and point shares unapproved', safetyFactorTarget: 'TBD', feaStatus: 'TBD — lifting points not released' }
+  { id: 'LC-01', title: 'Bottom slamming pressure and local hull panel integrity — pressure field unresolved', loadType: 'Bottom Slamming', governingStandard: 'TBD — applicability of ISO 12215-5 / class rules under review', designPressureOrForce: 'TBD', safetyFactorTarget: 'TBD', feaStatus: 'TBD' },
+  { id: 'LC-02', title: 'Hull-girder hogging and sagging bending — geometry, weights and wave loads unresolved', loadType: 'Hull Girder Bending', governingStandard: 'TBD — applicable hull structure design basis', designPressureOrForce: 'TBD', safetyFactorTarget: 'TBD', feaStatus: 'TBD' },
+  { id: 'LC-03', title: 'Crane lift and asymmetric sling / connection loads — handling mass, CG and dynamic factors unresolved', loadType: 'Crane Lift', governingStandard: 'TBD — lifting equipment, national law and approved rigging basis', designPressureOrForce: 'TBD', safetyFactorTarget: 'TBD', feaStatus: 'TBD' }
 ];
 
 // Electrical consumers and propulsion loads remain TBD until source-backed equipment/load data exists.

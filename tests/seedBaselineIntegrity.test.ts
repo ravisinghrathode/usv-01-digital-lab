@@ -39,8 +39,8 @@ describe('No fabricated engineering baseline or physical acceptance in starter f
       expect(sim.validationStatus).toContain('UNVERIFIED');
     }
     for (const load of INITIAL_LOAD_CASES) {
-      expect(load.designPressureOrForce).toContain('TBD');
-      expect(load.feaStatus).toContain('TBD');
+      expect(load.designPressureOrForce).toBe('TBD');
+      expect(load.feaStatus).toBe('TBD');
     }
     expect(INITIAL_MATERIALS.every(m => m.isIllustrative)).toBe(true);
     expect(INITIAL_KNOWLEDGE_NOTES[0].contentMarkdown).toContain('Applicability Not Established');
