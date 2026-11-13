@@ -302,7 +302,7 @@ jobs:
           npx tsx scripts/governance/stage-e-enforce.ts origin/main
 
   openfoam-known-case:
-    name: Real OpenFOAM Flat-Plate Commissioning (Uncertified)
+    name: Real OpenFOAM Backward-Step Commissioning (Uncertified)
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -334,13 +334,14 @@ jobs:
           sudo bash /tmp/add-openfoam-repo.sh
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends openfoam2606-default zip
-          ROOT=/tmp/usv-openfoam-flatplate
+          ROOT=/tmp/usv-openfoam-backward-step
           rm -rf "$ROOT"
           mkdir -p "$ROOT/case" "$ROOT/staged" "$ROOT/work" "$ROOT/artifacts" governance/reports
-          cp -rL /usr/lib/openfoam/openfoam2606/tutorials/incompressible/simpleFoam/turbulentFlatPlate/. "$ROOT/case/"
-          rm -rf "$ROOT/case/0"
-          cp -rL "$ROOT/case/0.kOmegaSST" "$ROOT/case/0"
-          cp "$ROOT/case/constant/turbulenceProperties-kOmegaSST" "$ROOT/case/constant/turbulenceProperties"
+          cp -rL /usr/lib/openfoam/openfoam2606/tutorials/incompressible/simpleFoam/backwardFacingStep2D/. "$ROOT/case/"
+          if [ ! -d "$ROOT/case/0" ]; then
+            test -d "$ROOT/case/0.orig"
+            cp -rL "$ROOT/case/0.orig" "$ROOT/case/0"
+          fi
           (cd "$ROOT/case" && /usr/bin/openfoam2606 blockMesh > blockMesh.log 2>&1)
           (cd "$ROOT/case" && zip -qr "$ROOT/case.zip" .)
           npm exec -- tsx scripts/generate-known-solver-manifest.ts -- \
@@ -349,7 +350,7 @@ jobs:
             --mesh "$ROOT/case/constant/polyMesh/points" \
             --out "$ROOT/manifest.json" \
             --family OPENFOAM_CFD \
-            --job-ref CI_OPENFOAM_TURBULENT_FLAT_PLATE
+            --job-ref CI_OPENFOAM_BACKWARD_STEP
           ARCHIVE_DIGEST="sha256:$(sha256sum "$ROOT/case.zip" | awk '{print $1}')"
           cp "$ROOT/case.zip" "$ROOT/staged/${ARCHIVE_DIGEST#sha256:}.zip"
           COMMON_ENV=(
@@ -372,21 +373,21 @@ jobs:
             USV_SOLVER_APPROVED_ARTIFACT_DIGESTS="$ARCHIVE_DIGEST" \
             python3 "$GITHUB_WORKSPACE/remote_solver/worker.py" \
               --manifest "$ROOT/manifest.json" > "$ROOT/result.json"
-          sudo python3 remote_solver/known_cases/check_openfoam_flat_plate.py "$ROOT/result.json"
-          cp "$ROOT/result.json" governance/reports/openfoam-flat-plate-result.json
-          sudo cp "$ROOT/artifacts/CI_OPENFOAM_TURBULENT_FLAT_PLATE-solver-evidence.zip" \
-            governance/reports/openfoam-flat-plate-evidence.zip
-          sudo chown "$(id -u):$(id -g)" governance/reports/openfoam-flat-plate-evidence.zip
-          chmod 600 governance/reports/openfoam-flat-plate-evidence.zip
+          sudo python3 remote_solver/known_cases/check_openfoam_backward_step.py "$ROOT/result.json"
+          cp "$ROOT/result.json" governance/reports/openfoam-backward-step-result.json
+          sudo cp "$ROOT/artifacts/CI_OPENFOAM_BACKWARD_STEP-solver-evidence.zip" \
+            governance/reports/openfoam-backward-step-evidence.zip
+          sudo chown "$(id -u):$(id -g)" governance/reports/openfoam-backward-step-evidence.zip
+          chmod 600 governance/reports/openfoam-backward-step-evidence.zip
 
       - name: Upload Real OpenFOAM Flat-Plate Evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: usv01-real-openfoam-flat-plate-unverified
+          name: usv01-real-openfoam-backward-step-unverified
           path: |
-            governance/reports/openfoam-flat-plate-result.json
-            governance/reports/openfoam-flat-plate-evidence.zip
+            governance/reports/openfoam-backward-step-result.json
+            governance/reports/openfoam-backward-step-evidence.zip
             governance/reports/openfoam-host-probe.json
           if-no-files-found: ignore
 
