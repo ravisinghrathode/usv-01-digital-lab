@@ -143,10 +143,13 @@ jobs:
             USV_SOLVER_BIN_PATH="/usr/bin:/bin" \
             python3 "$GITHUB_WORKSPACE/remote_solver/worker.py" \
               --manifest "$ROOT/manifest.json" > "$ROOT/result.json"
-          python3 remote_solver/known_cases/check_calculix_axial_bar.py "$ROOT/result.json"
+          sudo python3 remote_solver/known_cases/check_calculix_axial_bar.py "$ROOT/result.json"
           cp "$ROOT/result.json" governance/reports/calculix-known-case-result.json
-          cp "$ROOT/artifacts/CI_CALCULIX_AXIAL_BAR-solver-evidence.zip" \
+          sudo cp "$ROOT/artifacts/CI_CALCULIX_AXIAL_BAR-solver-evidence.zip" \
             governance/reports/calculix-known-case-evidence.zip
+          sudo chown "$(id -u):$(id -g)" \
+            governance/reports/calculix-known-case-evidence.zip
+          chmod 600 governance/reports/calculix-known-case-evidence.zip
 
       - name: Upload Real CalculiX Known-Case Evidence
         if: always()
