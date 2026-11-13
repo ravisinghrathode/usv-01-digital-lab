@@ -2,11 +2,11 @@
 
 **Context revision:** 0.4  
 **Last updated:** 2026-11-12  
-**Project state:** Baselined Multi-Disciplinary Engineering Directorate Dossier
+**Project state:** HISTORICAL REV 0.4 DOSSIER — design authority and numerical baseline are UNDER RECONCILIATION; Gate 0 not approved
 
 ## Mission
 
-Develop an unmanned surface vessel (USV-01) for Coastal & Harbor Security / Autonomous Patrol. The engineering baseline particulars, hydrostatics, powering, scantlings, and 3 critical decision gates have been computed deterministically and approved by the Engineering Director under Revision 0.4.
+Develop an unmanned surface vessel (USV-01) for Coastal & Harbor Security / Autonomous Patrol. Rev 0.4 contains historical numerical proposals and claimed past approvals, but current acceptance records do NOT establish approved hull offsets, mass/CG, hydrostatics, propulsion, structure or release evidence. None of these values may be treated as verified by a new agent campaign or promoted to the controlled vessel baseline before Gate 0 configuration reconciliation and independent review.
 
 ## Engineering disciplines
 
@@ -47,7 +47,7 @@ Develop an unmanned surface vessel (USV-01) for Coastal & Harbor Security / Auto
 
 The local development Mac is Apple Silicon with 8 GB unified memory. Use it for documentation, browser research, VS Code, Git, light Python analysis, KiCad and modest CAD. Heavy CFD, FEA and simulation should run on a separately validated remote Linux compute host. Google Cloud TPU access is reported, but TPU generation, host CPU/RAM/disk and actual provisioned configuration are not yet confirmed. Do not assume the TPU accelerator is a drop-in CFD/FEA GPU.
 
-## Approved Engineering Baseline (Revision 0.4)
+## Historical numeric scenario — Revision 0.4 (NOT VERIFIED / NOT AUTHORIZED FOR DESIGN RELEASE)
 
 - **Mission Statement & CONOPS:** Coastal & Harbor Security / Autonomous Patrol (surveillance, dynamic obstacle detection, perimeter patrol, intruder interception).
 - **Operating Area & Environmental Envelope:** Coastal littoral waters, fairways, harbor approaches (Operational up to Sea State 3-4).
@@ -59,10 +59,10 @@ The local development Mac is Apple Silicon with 8 GB unified memory. Use it for 
 - **Speed, Range & Endurance:** Cruise speed 14 knots; sprint speed 22 knots; 8.5–12 hour operational loiter/patrol endurance.
 - **Autonomy & Navigation Basis:** IMO COLREGs 1972 statutory rules (Rules 13, 14, 15), ROS 2 Humble executive stack, micro-ROS CAN FD motor controllers.
 
-## Baselined Decision Gates (Resolved by 26-Agent Directorate)
+## Historical decision hypotheses — require independent source and Project Lead review
 
 1. **Gate 1 — Sensor Complement:** Simrad HALO24 Pulse Compression FMCW Radar (24nm, 60 RPM mode) + Ouster OS1-32 Gen 2 LiDAR (32-ch, 120m, IP68/IP69K) + FLIR SeaFLIR 230 Cooled MWIR/HD EO Gyro Gimbal + Furuno FA-170 Class-A AIS.
 2. **Gate 2 — RF / Telemetry Links:** Primary Silvus SC4200EP 2x2 MIMO IP mesh (5.8 GHz, 10–20 Mbps up to 18 km LOS) + Backup Iridium Certus 100 L-band SATCOM with 15-second heartbeat failsafe loiter transition.
 3. **Gate 3 — Sea Trials Acceptance Criteria:** Approved verification procedures `VVP-001` (Speed-power curve $\pm 0.5\,\text{kt}$), `VVP-002` (Turning circle tactical diameter $< 4.5 L_{WL}$), `VVP-003` (COLREGs CPA $> 0.5\,\text{NM}$), `VVP-004` (Failsafe loiter transition within 15s), `VVP-005` (Battery runaway containment 60 min), and `VVP-006` (8.5h endurance test).
 
-Use stable IDs such as `USV-NA-001`, `ADR-002`, `RSK-001`, `SIM-001` and `VVP-001`. Obsidian notes should use `[[wikilinks]]`; controlled Google Drive documents should be cited by stable URL and revision.
+Use stable IDs such as `USV-NA-001`, `ADR-002`, `RSK-001`, `SIM-001` and `VVP-001`. Obsidian notes should use `[[wikilinks]]`; controlled Google Drive documents should be cited by stable URL and revision.\n\n**Configuration boundary:** A proposed 2.5 m / 120 kg craft is a distinct unapproved concept. Do NOT combine its parameters with the historical ~11.2 m / 6.2 t dossier. Current Project Lead direction is agents research sourced options, compare alternatives, then seek explicit project-level concept selection; safety-critical engineering acceptance and Director cryptographic sign-off remain separate mandatory gates.
