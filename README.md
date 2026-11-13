@@ -22,7 +22,7 @@ The USV-01 Digital Engineering Lab is an operational, modular multi-agent platfo
 # Install dependencies
 npm install
 
-# Run automated verification test suite (22 unit & integration tests)
+# Run automated verification test suite (test totals come from each CI run)
 npm test
 
 # Build production bundle
