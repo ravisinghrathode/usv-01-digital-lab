@@ -23,9 +23,9 @@ const requireObject = (raw: unknown): Record<string, unknown> => {
 };
 async function main() {
   const providerMode=process.env.AI_REVIEW_PROVIDER?.toLowerCase();
-  const usingCli=providerMode==='gemini_cli';
-  if (!usingCli && !process.env.GEMINI_API_KEY?.trim()) {
-    throw new Error('Actual agent design iterations require an authenticated Gemini CLI with AI_REVIEW_PROVIDER=gemini_cli, or GEMINI_API_KEY; no offline simulation is substituted.');
+  if (providerMode !== 'codex_cli' || process.env.USV_SUBSCRIPTION_PILOT !== 'enabled' ||
+      process.env.USV_ALLOW_PAID_AI_API === 'true') {
+    throw new Error('Actual agent design iterations require authenticated Codex CLI with AI_REVIEW_PROVIDER=codex_cli, USV_SUBSCRIPTION_PILOT=enabled, paid API disabled; no simulation or Gemini fallback.');
   }
   const missionPath = path.resolve(value('--mission-file'));
   if (fs.statSync(missionPath).size > 2 * 1024 * 1024) throw new Error('Mission brief exceeds 2 MiB');
