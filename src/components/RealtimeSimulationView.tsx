@@ -111,7 +111,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
   const [vesselGmt, setVesselGmt] = useState<number>(typeof gmtParam?.value === 'number' && gmtParam.value > 0 ? Number(gmtParam.value) : 1.32);
   const [hydroKg, setHydroKg] = useState<number>(typeof kgParam?.value === 'number' && kgParam.value > 0 ? Number(kgParam.value) : 0.66);
   const [vesselSprint, setVesselSprint] = useState<number>(typeof sprintParam?.value === 'number' && sprintParam.value > 0 ? Number(sprintParam.value) : 22.0);
-  const [activeDesignLabel, setActiveDesignLabel] = useState<string>('REV 0.4 BASELINE');
+  const [activeDesignLabel, setActiveDesignLabel] = useState<string>('REV 0.4 HISTORICAL PROPOSAL — UNVERIFIED');
 
   const [waveAmp, setWaveAmp] = useState<number>(0.4); // meters
   const [waveFreq, setWaveFreq] = useState<number>(1.2); // rad/s
@@ -155,7 +155,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
       setVesselGmt(1.32);
       setHydroKg(0.66);
       setVesselSprint(22.0);
-      setActiveDesignLabel('REV 0.4 BASELINE');
+      setActiveDesignLabel('REV 0.4 HISTORICAL PROPOSAL — UNVERIFIED');
       sharedMemory.updateParameter('USV-NA-001', { value: 10.5, assumptions: ['Rev 0.4 Planing Monohull'] }, 'SIM-PRESET');
       sharedMemory.updateParameter('USV-NA-002', { value: 2.9, assumptions: ['Molded beam 2.9m'] }, 'SIM-PRESET');
       sharedMemory.updateParameter('USV-NA-003', { value: 0.65, assumptions: ['Design draft 0.65m'] }, 'SIM-PRESET');
@@ -1043,7 +1043,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
             Real-Time COLREGs Autonomous Navigation & Flotation Dynamics
           </h2>
           <p className="text-xs text-slate-400 mt-0.5">
-            Interactive closed-loop kinematics, statutory collision avoidance (Rules 13, 14, 15), radar perception sweeps, and hydrostatic restoration physics.
+            Interactive kinematics and visual hydrostatic screening. Vessel particulars below are historical proposals and are not verified design or safety evidence.
           </p>
         </div>
 
@@ -1628,10 +1628,10 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
               <button
                 onClick={() => handleApplyDesignPreset('REV04')}
                 className="w-full py-1.5 rounded bg-cyan-600/20 hover:bg-cyan-600/30 border border-cyan-500/40 text-cyan-300 text-xs font-mono font-bold flex items-center justify-center gap-1.5 transition-colors"
-                title="Reset to Rev 0.4 Approved Baseline"
+                title="Load historical Rev 0.4 proposal for visualization; values are unverified"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span>Reset to Rev 0.4 Baseline (10.5m)</span>
+                <span>Load historical Rev 0.4 proposal (10.5m)</span>
               </button>
 
               {/* Sync with Optimizer Champion */}
