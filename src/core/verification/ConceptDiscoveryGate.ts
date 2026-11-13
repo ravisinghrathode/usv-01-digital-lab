@@ -132,6 +132,7 @@ export function assessConceptDiscovery(raw: unknown) {
     }
     conceptIds.add(c.id);
     const values = new Set<string>();
+    let sourcedForConcept = 0;
     for (const p of c.parameters) {
       if (!obj(p) || !nonblank(p.id) || !nonblank(p.unit) ||
           !nonblank(p.authoredBy) || !ROLE.test(p.authoredBy) ||
@@ -151,11 +152,12 @@ export function assessConceptDiscovery(raw: unknown) {
       } else if (p.basis === 'SOURCE_OBSERVATION') {
         if (!urlSafe(p.sourceUri) || typeof p.sourceDigest !== 'string' || !DIGEST.test(p.sourceDigest)) {
           issues.push('Source observation lacks HTTPS citation and checksum: ' + p.id);
-        } else sourceClaims++;
+        } else { sourceClaims++; sourcedForConcept++; }
       } else if (p.basis === 'DERIVED_SCREEN' && !nonblank(p.calculationReference)) {
         issues.push('Derived screening value lacks calculation reference: ' + p.id);
       }
     }
+    if (sourcedForConcept === 0) issues.push('Concept lacks any source-identified parameter: ' + c.id);
   }
   const decision = x.projectLeadSelection;
   if (decision !== undefined &&
