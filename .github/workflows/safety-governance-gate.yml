@@ -140,7 +140,8 @@ jobs:
             USV_SOLVER_WORK_DIR="$ROOT/work"
             USV_SOLVER_ARTIFACT_DIR="$ROOT/artifacts"
             USV_SOLVER_BIN_PATH="/usr/bin:/bin"
-            USV_OPENFOAM_PROJECT_DIR="/usr/share/openfoam"
+            USV_OPENFOAM_WRAPPER="/usr/bin/openfoam2606"
+            USV_OPENFOAM_PROJECT_DIR="/usr/lib/openfoam/openfoam2606"
             USV_SOLVER_CPU_SECONDS="1200"
             USV_SOLVER_ADDRESS_SPACE_BYTES="$((6*1024*1024*1024))"
             USV_SOLVER_FILE_BYTES="$((2*1024*1024*1024))"
@@ -329,17 +330,18 @@ jobs:
       - name: Install Ubuntu 24.04 OpenFOAM Package and Run Real Flat-Plate Case
         run: |
           set -euo pipefail
-          sudo add-apt-repository -y universe
+          wget -q -O /tmp/add-openfoam-repo.sh https://dl.openfoam.com/add-debian-repo.sh
+          sudo bash /tmp/add-openfoam-repo.sh
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends openfoam openfoam-examples zip
+          sudo apt-get install -y --no-install-recommends openfoam2606-default zip
           ROOT=/tmp/usv-openfoam-flatplate
           rm -rf "$ROOT"
           mkdir -p "$ROOT/case" "$ROOT/staged" "$ROOT/work" "$ROOT/artifacts" governance/reports
-          cp -rL /usr/share/doc/openfoam-examples/examples/incompressible/simpleFoam/turbulentFlatPlate/. "$ROOT/case/"
+          cp -rL /usr/lib/openfoam/openfoam2606/tutorials/incompressible/simpleFoam/turbulentFlatPlate/. "$ROOT/case/"
           rm -rf "$ROOT/case/0"
           cp -rL "$ROOT/case/0.kOmegaSST" "$ROOT/case/0"
           cp "$ROOT/case/constant/turbulenceProperties-kOmegaSST" "$ROOT/case/constant/turbulenceProperties"
-          (cd "$ROOT/case" && WM_PROJECT_DIR=/usr/share/openfoam blockMesh > blockMesh.log 2>&1)
+          (cd "$ROOT/case" && /usr/bin/openfoam2606 blockMesh > blockMesh.log 2>&1)
           (cd "$ROOT/case" && zip -qr "$ROOT/case.zip" .)
           npm exec -- tsx scripts/generate-known-solver-manifest.ts -- \
             --source-sha "$PR_HEAD_SHA" \
