@@ -147,18 +147,27 @@ jobs:
             USV_SOLVER_PROCESSES="64"
             USV_SOLVER_WALL_TIMEOUT_SECONDS="1200"
           )
-          env "${COMMON_ENV[@]}" \
+          set +e
+          env "${COMMON_ENV[@]}" USV_SOLVER_ISOLATION_MODE=UNSHARE_USER_NET \
             python3 "$GITHUB_WORKSPACE/remote_solver/host_probe.py" \
               --require-calculix --require-network-isolation \
-              > governance/reports/calculix-host-probe.json
-          env "${COMMON_ENV[@]}" \
+              > governance/reports/calculix-host-probe-nonroot.json
+          NONROOT_RC=$?
+          set -e
+          echo "Non-root namespace preflight exit code: $NONROOT_RC"
+          sudo env "${COMMON_ENV[@]}" USV_SOLVER_ISOLATION_MODE=UNSHARE_NET_PRIVILEGED \
+            python3 "$GITHUB_WORKSPACE/remote_solver/host_probe.py" \
+              --require-calculix --require-network-isolation \
+              > governance/reports/calculix-host-probe-privileged.json
+          sudo env "${COMMON_ENV[@]}" USV_SOLVER_ISOLATION_MODE=UNSHARE_NET_PRIVILEGED \
             USV_SOLVER_APPROVED_ARTIFACT_DIGESTS="$ARCHIVE_DIGEST" \
             python3 "$GITHUB_WORKSPACE/remote_solver/worker.py" \
               --manifest "$ROOT/manifest.json" > "$ROOT/result.json"
-          python3 remote_solver/known_cases/check_calculix_axial_bar.py "$ROOT/result.json"
+          sudo python3 remote_solver/known_cases/check_calculix_axial_bar.py "$ROOT/result.json"
           cp "$ROOT/result.json" governance/reports/calculix-known-case-result.json
-          cp "$ROOT/artifacts/CI_CALCULIX_AXIAL_BAR-solver-evidence.zip" \
+          sudo cp "$ROOT/artifacts/CI_CALCULIX_AXIAL_BAR-solver-evidence.zip" \
             governance/reports/calculix-known-case-evidence.zip
+          sudo chown "$(id -u):$(id -g)" governance/reports/calculix-known-case-evidence.zip
           chmod 600 governance/reports/calculix-known-case-evidence.zip
 
       - name: Upload Real CalculiX Known-Case Evidence
@@ -169,7 +178,8 @@ jobs:
           path: |
             governance/reports/calculix-known-case-result.json
             governance/reports/calculix-known-case-evidence.zip
-            governance/reports/calculix-host-probe.json
+            governance/reports/calculix-host-probe-nonroot.json
+            governance/reports/calculix-host-probe-privileged.json
           if-no-files-found: ignore
       - name: Stage B — Source-Derived Agent/Tool/Documentation Capability Audit
         run: |
@@ -363,18 +373,27 @@ jobs:
             USV_SOLVER_PROCESSES="64"
             USV_SOLVER_WALL_TIMEOUT_SECONDS="1200"
           )
-          env "${COMMON_ENV[@]}" \
+          set +e
+          env "${COMMON_ENV[@]}" USV_SOLVER_ISOLATION_MODE=UNSHARE_USER_NET \
             python3 "$GITHUB_WORKSPACE/remote_solver/host_probe.py" \
               --require-openfoam --require-network-isolation \
-              > governance/reports/openfoam-host-probe.json
-          env "${COMMON_ENV[@]}" \
+              > governance/reports/openfoam-host-probe-nonroot.json
+          NONROOT_RC=$?
+          set -e
+          echo "Non-root namespace preflight exit code: $NONROOT_RC"
+          sudo env "${COMMON_ENV[@]}" USV_SOLVER_ISOLATION_MODE=UNSHARE_NET_PRIVILEGED \
+            python3 "$GITHUB_WORKSPACE/remote_solver/host_probe.py" \
+              --require-openfoam --require-network-isolation \
+              > governance/reports/openfoam-host-probe-privileged.json
+          sudo env "${COMMON_ENV[@]}" USV_SOLVER_ISOLATION_MODE=UNSHARE_NET_PRIVILEGED \
             USV_SOLVER_APPROVED_ARTIFACT_DIGESTS="$ARCHIVE_DIGEST" \
             python3 "$GITHUB_WORKSPACE/remote_solver/worker.py" \
               --manifest "$ROOT/manifest.json" > "$ROOT/result.json"
-          python3 remote_solver/known_cases/check_openfoam_backward_step.py "$ROOT/result.json"
+          sudo python3 remote_solver/known_cases/check_openfoam_backward_step.py "$ROOT/result.json"
           cp "$ROOT/result.json" governance/reports/openfoam-backward-step-result.json
-          cp "$ROOT/artifacts/CI_OPENFOAM_BACKWARD_STEP-solver-evidence.zip" \
+          sudo cp "$ROOT/artifacts/CI_OPENFOAM_BACKWARD_STEP-solver-evidence.zip" \
             governance/reports/openfoam-backward-step-evidence.zip
+          sudo chown "$(id -u):$(id -g)" governance/reports/openfoam-backward-step-evidence.zip
           chmod 600 governance/reports/openfoam-backward-step-evidence.zip
 
       - name: Upload Real OpenFOAM Backward-Step Evidence
@@ -385,6 +404,7 @@ jobs:
           path: |
             governance/reports/openfoam-backward-step-result.json
             governance/reports/openfoam-backward-step-evidence.zip
-            governance/reports/openfoam-host-probe.json
+            governance/reports/openfoam-host-probe-nonroot.json
+            governance/reports/openfoam-host-probe-privileged.json
           if-no-files-found: ignore
 
