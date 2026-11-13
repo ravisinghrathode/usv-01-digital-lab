@@ -157,7 +157,7 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
   };
 
   // Approval Gate Director Notes
-  const [directorNote, setDirectorNote] = useState<string>('Verified against USV-01 preliminary design criteria.');
+  const [directorNote, setDirectorNote] = useState<string>(''); // No prewritten verification claims on human safety approvals.
 
   // Illustrative parametric study inputs, never an approved vessel baseline.
   const [studyLwl, setStudyLwl] = useState<number>(11.8);
@@ -1122,8 +1122,8 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
                     />
                     <button
                       onClick={() => handleDecision(gate.id, 'APPROVED')}
-                      disabled={!isDirectorAuthenticated}
-                      title={!isDirectorAuthenticated ? "Director authentication required to approve safety gates" : undefined}
+                      disabled={!isDirectorAuthenticated || !directorNote.trim()}
+                      title={!isDirectorAuthenticated ? "Director authentication required to approve safety gates" : !directorNote.trim() ? "Provide your evidence-based approval rationale" : undefined}
                       className={`px-3.5 py-1.5 rounded font-bold text-xs flex items-center gap-1 ${
                         isDirectorAuthenticated
                           ? 'bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer'
