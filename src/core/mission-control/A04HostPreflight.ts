@@ -56,6 +56,6 @@ export function assessA04HostProbe(probe: A04HostProbe): A04PreflightDecision {
 /** Parse the CLI's login status without ever preserving full auth text in receipts/logs. */
 export function isChatgptSubscriptionLogin(output: string, exitCode: number | null): boolean {
   const normalized = output.toLowerCase();
-  return exitCode === 0 && normalized.includes('chatgpt') &&
-    !/api[- ]?key|access token/.test(normalized);
+  return exitCode === 0 && /\blogged in using chatgpt\b/.test(normalized) &&
+    !/\bnot\s+logged\b|\blogin failed\b|api[- ]?key|access token/.test(normalized);
 }
