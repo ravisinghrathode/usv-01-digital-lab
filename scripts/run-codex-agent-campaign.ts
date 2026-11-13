@@ -3,6 +3,9 @@
  * catalog. Subscription-authenticated live Codex runs are explicit opt-in.
  * No output from this script is certified vessel evidence.
  */
+import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import { assertPinnedCleanGitRevision } from '../src/core/mission-control/GitRevisionGuard.ts';
 import fs from 'node:fs';
 import path from 'node:path';
 import { compileCodexAgentCases } from '../src/core/verification/CodexMatrixInput.ts';
@@ -16,17 +19,25 @@ async function main() {
       : 'evidence/live-agents/representative-cases.json'
   );
   if (fs.statSync(sourcePath).size > 2 * 1024 * 1024) throw new Error('Catalog too large');
-  const catalog = JSON.parse(fs.readFileSync(sourcePath, 'utf8'));
+  const source = fs.readFileSync(sourcePath);
+  const catalog = JSON.parse(source.toString('utf8'));
+  const execute = process.argv.includes('--execute');
+  const implementationSha = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+  if (execute) await assertPinnedCleanGitRevision(process.cwd(), implementationSha);
+  const provenance = {
+    implementationSha,
+    catalogSha256: createHash('sha256').update(source).digest('hex')
+  };
   const cases = compileCodexAgentCases(catalog);
   const preflight = await preflightCodexAgentCases(cases);
-  const preflightPath = path.resolve('governance/reports/codex-26-agent-preflight.json');
+  const preflightPath = path.resolve(execute ? 'data/codex-26-agent-preflight.json' : 'governance/reports/codex-26-agent-preflight.json');
   fs.mkdirSync(path.dirname(preflightPath), { recursive: true });
   fs.writeFileSync(preflightPath, JSON.stringify({
-    ...preflight, catalogClassification: catalog.dataClassification,
+    ...preflight, ...provenance, catalogClassification: catalog.dataClassification,
     illustrativeNonOperational: true, historicalCatalogBaseline: catalog.baselineSha
   }, null, 2) + '\n');
 
-  if (!process.argv.includes('--execute')) {
+  if (!execute) {
     console.log(JSON.stringify({
       status: preflight.status,
       agents: preflight.totalAgents,
@@ -55,25 +66,27 @@ async function main() {
     throw new Error('Codex campaign needs explicit subscription CLI mode; paid API fallback forbidden');
   }
   const report = await runLiveAgentMatrix(cases);
-  const location = path.resolve('governance/reports/codex-26-agent-matrix.json');
+  await assertPinnedCleanGitRevision(process.cwd(), implementationSha);
+  const location = path.resolve('data/codex-26-agent-matrix.json');
   fs.mkdirSync(path.dirname(location), { recursive: true });
   fs.writeFileSync(location, JSON.stringify({
-    ...report,
+    ...report, ...provenance,
     dataClassification: catalog.dataClassification,
     illustrativeNonOperational: true,
     historicalCatalogBaseline: catalog.baselineSha,
     independentlyEngineeringValidated: false,
     engineeringReleaseApproved: false
   }, null, 2) + '\n');
+  const complete = report.providerOperationalMatrixComplete && report.findings.every(row => row.provider === 'codex_cli');
   console.log(JSON.stringify({
-    status: report.providerOperationalMatrixComplete
+    status: complete
       ? 'CODEX_26_PROVIDER_RUNS_OBSERVED_UNCERTIFIED' : 'CODEX_CAMPAIGN_INCOMPLETE',
     agents: report.totalAgents,
     liveProviderRuns: report.liveProviderRuns,
     report: location,
     engineeringReleaseApproved: false
   }, null, 2));
-  if (!report.providerOperationalMatrixComplete) process.exitCode = 1;
+  if (!complete) process.exitCode = 1;
 }
 
 main().catch(error => {
