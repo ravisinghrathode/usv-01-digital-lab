@@ -1,5 +1,6 @@
 import type { EngineeringTool, ToolExecutionResult } from '../types/tools.ts';
 import { LiftingLoadScreenTool } from './naval/liftingLoadTool.ts';
+import { LiftingEquilibriumTool } from './naval/liftingEquilibriumTool.ts';
 import {
   HydrostaticsTool,
   ResistanceTool,
@@ -33,6 +34,7 @@ export class ToolRegistry {
       ElectricalLoadTool,
       StructuresTool,
       LiftingLoadScreenTool,
+      LiftingEquilibriumTool,
       ColregsTool
     ];
 
