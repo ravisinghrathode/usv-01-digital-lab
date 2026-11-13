@@ -77,6 +77,8 @@ describe('B01: demonstration UI never promotes historical data', () => {
     expect(orchestrator).not.toContain("'CERTIFIED BASELINE'");
     expect(orchestrator).toContain("baselineStatus: 'UNVERIFIED_PARAMETRIC_STUDY'");
     expect(orchestrator).toContain('isExploratoryStudy: true');
+    expect(orchestrator).not.toContain("'Verified against USV-01 preliminary design criteria.'");
+    expect(orchestrator).toContain('disabled={!isDirectorAuthenticated || !directorNote.trim()}');
   });
 
   it('labels schematic rendering and pressure coloring as unverified', () => {
