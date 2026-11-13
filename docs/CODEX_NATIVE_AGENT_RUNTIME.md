@@ -22,7 +22,8 @@ export AI_REVIEW_PROVIDER=codex_cli
 export USV_SUBSCRIPTION_PILOT=enabled
 export USV_ALLOW_PAID_AI_API=false
 npm run mission-control:preflight
-npm run acceptance:codex-agents
+npm run acceptance:codex-agents               # validates all 26 case envelopes without AI calls
+npm run acceptance:codex-agents -- --execute  # actual, noncertifying 26-agent signed-in run
 npm run design:live-cli -- --revisions 3 --seed 1337
 ```
 
