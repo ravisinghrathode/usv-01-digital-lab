@@ -11,6 +11,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { runAcceptanceCampaign, acceptanceCampaignMarkdown } from '../src/core/verification/AcceptanceCampaign.ts';
 import { parseAcceptanceEvidence, parseReferenceMeasurements } from '../src/core/verification/AcceptanceInputParser.ts';
+import { parseEvidenceDecisionInput } from '../src/core/verification/EvidenceDecisionGate.ts';
 
 const args = process.argv.slice(2);
 const argument = (name: string): string | undefined => {
@@ -31,9 +32,11 @@ try {
   const baselineSha = argument('--baseline-sha') || process.env.GITHUB_SHA || process.env.RELEASE_COMMIT_SHA || '';
   const evidencePath = argument('--evidence-file');
   const benchmarkPath = argument('--benchmark-file');
+  const configurationPath = argument('--configuration-evidence') || 'governance/evidence/USV01_GATE0_SEED.json';
   const evidence = evidencePath ? parseAcceptanceEvidence(readJson(evidencePath)) : [];
   const benchmarkMeasurements = benchmarkPath ? parseReferenceMeasurements(readJson(benchmarkPath)) : [];
-  const report = runAcceptanceCampaign({ baselineSha, evidence, benchmarkMeasurements });
+  const evidenceDecisionInput = parseEvidenceDecisionInput(readJson(configurationPath));
+  const report = runAcceptanceCampaign({ baselineSha, evidence, benchmarkMeasurements, evidenceDecisionInput });
   const markdown = acceptanceCampaignMarkdown(report);
 
   fs.mkdirSync(outDir, { recursive: true });
