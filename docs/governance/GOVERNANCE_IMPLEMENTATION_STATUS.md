@@ -33,7 +33,7 @@ Server-side branch protection has been established via the GitHub REST API on `h
 | **Stage A: PR Change & Risk Classification** | ✅ YES | ✅ YES | ✅ YES | ✅ **YES** | Implemented in `scripts/governance/classify-change.ts`; tested in `tests/governance.test.ts` |
 | **Stage B: DevSecOps Secret Scanning** | ✅ YES | ✅ YES | ✅ YES | ✅ **YES** | Implemented in `scripts/governance/secret-scanner.ts`; tested in `tests/governance.test.ts` |
 | **Stage B: Config & ECR Validation** | ✅ YES | ✅ YES | ✅ YES | ✅ **YES** | Implemented in `validate-config.ts` and `ecr-tool.ts`; tested in `tests/governance.test.ts` |
-| **Stage B: Deterministic & Safety Tests** | ✅ YES | ✅ YES | ✅ YES | ✅ **YES** | 40 tests passing across 5 test suites in Vitest |
+| **Stage B: Deterministic & Safety Tests** | ✅ YES | ✅ YES | ✅ YES | ✅ **YES** | Historical audit record only; use latest GitHub CI for current test counts |
 | **Stage C: 7-Role Independent AI Review** | ✅ YES | ✅ YES | ✅ YES | ✅ **YES** | Implemented in `scripts/governance/independent-ai-review.ts` |
 | **Stage D: Human Authority Approval Gate** | ✅ YES | ✅ YES | ✅ YES | ✅ **YES** | Implemented in `HumanApprovalGate.ts` and `ApproverSigner.ts`; tested in `tests/safety.test.ts` |
 | **Cryptographic Token Verification (HMAC-SHA256)** | ✅ YES | ✅ YES | ✅ YES | ✅ **YES** | Implemented in `server.ts` and `authClient.ts`; tested with dynamic keys |
