@@ -345,7 +345,7 @@ export class SharedMemory {
     // 1. Master index note
     files['USV-01_Digital_Lab_Index.md'] = `# USV-01 Digital Engineering Lab — Knowledge Graph
 **Revision Date:** ${new Date().toISOString().split('T')[0]}
-**Engineering authority:** NONE IN THIS CLIENT-SIDE EXPORT; approval requires controlled Gate 0 evidence and authenticated human decision.
+**Engineering authority:** NONE IN THIS CLIENT-SIDE EXPORT; [[Engineering Director]] approval requires controlled Gate 0 evidence and authenticated human decision.
 
 ## Historical / Exploratory Parameter Register (UNVERIFIED)
 ${Array.from(this.parameters.values()).map(p => `- [[${p.id}]]: ${p.name} = **${p.value} ${p.unit}** (Status: \`${p.status}\`)`).join('\n')}
