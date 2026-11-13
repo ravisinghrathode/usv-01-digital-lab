@@ -58,7 +58,7 @@ export const MechanicalStructuralView: React.FC<MechanicalStructuralViewProps> =
 
         <div className="flex items-center gap-2">
           <button
-            onClick={() => onAskAi('Audit the Mechanical and Structural load cases and material selections against DNV High Speed Craft rules. Check for galvanic corrosion risks between aluminum framing and carbon fiber mast.')}
+            onClick={() => onAskAi('Audit the mechanical/structural candidate load cases and materials without assuming DNV/ISO applicability or verified CAD/FEA. Identify absent geometry, mass, CG, weld allowables, lift load paths, galvanic isolation and required validation evidence.')}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 text-sky-300 text-xs transition-colors"
           >
             <Sparkles className="w-3.5 h-3.5" />
@@ -237,7 +237,7 @@ export const MechanicalStructuralView: React.FC<MechanicalStructuralViewProps> =
       {activeTab === 'drawings' && (
         <div className="bg-slate-900 border border-slate-800 rounded p-4 text-xs font-mono space-y-3">
           <h3 className="text-xs font-semibold text-slate-200 pb-2 border-b border-slate-800">
-            Controlled Engineering Drawings Register (Google Drive Archive)
+            Illustrative Drawings Register — Actual Controlled CAD Not Verified
           </h3>
           <div className="space-y-2">
             <div className="p-2.5 rounded bg-slate-950 border border-slate-800 flex items-center justify-between">
@@ -245,21 +245,21 @@ export const MechanicalStructuralView: React.FC<MechanicalStructuralViewProps> =
                 <span className="text-teal-400 font-bold">DWG-HULL-001 Rev A [SAMPLE]</span>
                 <span className="text-slate-400 block text-[11px] mt-0.5">Lines Plan, Station Offsets, and Waterlines</span>
               </div>
-              <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">CONTROLLED CAD</span>
+              <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">ILLUSTRATIVE ONLY</span>
             </div>
             <div className="p-2.5 rounded bg-slate-950 border border-slate-800 flex items-center justify-between">
               <div>
                 <span className="text-teal-400 font-bold">DWG-STR-002 Rev B [SAMPLE]</span>
                 <span className="text-slate-400 block text-[11px] mt-0.5">Midship Section Scantlings, Keel Plating & Stiffeners</span>
               </div>
-              <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">CONTROLLED CAD</span>
+              <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">ILLUSTRATIVE ONLY</span>
             </div>
             <div className="p-2.5 rounded bg-slate-950 border border-slate-800 flex items-center justify-between">
               <div>
                 <span className="text-teal-400 font-bold">DWG-MAST-003 Rev A [SAMPLE]</span>
                 <span className="text-slate-400 block text-[11px] mt-0.5">Carbon Fiber Sensor Mast & Shock Mount Assembly</span>
               </div>
-              <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">CONTROLLED CAD</span>
+              <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">ILLUSTRATIVE ONLY</span>
             </div>
           </div>
         </div>
