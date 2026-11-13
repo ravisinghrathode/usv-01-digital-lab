@@ -36,20 +36,24 @@ async function main() {
   fs.mkdirSync(outDir, { recursive: true, mode: 0o700 });
   const runId = 'USV01-LIVE-CONCEPT-' + sourceCommit.slice(0, 12) + '-S' + seed;
   // Authenticate an actual provider response before spending the research budget.
-  const preflight = await commissionLiveModel(sourceCommit, process.env.GEMINI_MODEL || 'gemini-3.8-flash');
+  if (!process.env.GEMINI_MODEL?.trim()) throw new Error('Specify a current authorized GEMINI_MODEL; no guessed model name');
+  const preflight = await commissionLiveModel(sourceCommit, process.env.GEMINI_MODEL);
   const missionDigest = 'sha256:' + createHash('sha256').update(fs.readFileSync(missionPath)).digest('hex');
   const report = await runAgentDesignLoop({
     runId, sourceCommit, seed, maxRevisions,
     missionStatement: mission.missionStatement as string,
     requirements: mission.requirements as { id: string; statement: string; source: string }[],
     sourceReferences: (mission.researchSources || []) as { reference: string; description: string }[],
-    objectives: (mission.objectives || []) as import('../src/core/optimizer/AgentDesignLoop.ts').PreliminaryObjective[]
+    objectives: (mission.objectives || []) as import('../src/core/optimizer/AgentDesignLoop.ts').PreliminaryObjective[],
+    comparisonMode: mission.comparisonMode === 'FIXED_CONDITIONS_RESCREEN' ? 'FIXED_CONDITIONS_RESCREEN' : 'STRICT',
+    specialistReviews: 'AUTO'
   });
   const filename = path.join(outDir, runId + '-UNVERIFIED.json');
   fs.writeFileSync(filename, JSON.stringify({missionDigest,preflight,report}, null, 2) + '\n', { mode: 0o600 });
   console.log(JSON.stringify({
     runId, sourceCommit, seed, missionDigest, preflight: preflight.status, model: preflight.modelUsed, revisionCount: report.revisions.length,
     completedAgentCalls: report.completedAgentCalls,
+    specialistReviewCount: report.specialistReviewCount,
     preliminaryToolScreens: report.completedToolScreens,
     preliminaryComparisonStatus: report.comparison.status,
     preliminaryRankedRevisionCount: report.comparison.rankings.length,
