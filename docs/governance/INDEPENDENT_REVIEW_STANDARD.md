@@ -39,7 +39,7 @@ The Independent Review Standard establishes a four-stage pipeline ensuring that 
 │  - DevSecOps secret scanner                   │
 │  - Repository configuration validation        │
 │  - ECR format & completeness validation       │
-│  - Vitest test suite (40 passing tests)       │
+│  - Current Vitest suite (live CI report)       │
 │  - Production bundle build (npm run build)    │
 └───────────────────────┬───────────────────────┘
                         │
