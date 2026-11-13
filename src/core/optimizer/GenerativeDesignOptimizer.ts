@@ -30,11 +30,11 @@ export interface ScenarioRuleCheck {
   rationale: string;
 }
 
-export interface SobolSensitivity {
+export interface LocalSensitivity {
   parameter: string;
   displayName: string;
-  firstOrderIndex: number; // 0 to 1
-  totalEffectIndex: number; // 0 to 1
+  targetChangePercent: number | null; // finite difference response to +1% input
+  inputPerturbationPercent: number;
   primaryTarget: string;
   architecturalGuidance: string;
 }
@@ -80,8 +80,8 @@ export interface CandidateDesign {
   // 12 purely synthetic input/heuristic checks (no agent review)
   scenarioRuleChecks: ScenarioRuleCheck[];
 
-  // Parameter Sensitivity Indices (Sobol Decomposition)
-  sobolSensitivities: SobolSensitivity[];
+  // Local 1% finite-difference influence (unverified model)
+  localSensitivities: LocalSensitivity[];
 
   // Evaluation & Verdict
   status: 'SURVIVED' | 'REJECTED_STABILITY' | 'REJECTED_DRAG' | 'REJECTED_RANGE' | 'REJECTED_STRUCTURE' | 'REJECTED_FLOTATION';
@@ -189,8 +189,8 @@ export class GenerativeDesignOptimizer {
     // 2. Solve Multi-Sea-State Dynamics (SS 1 - 5)
     this.solveSeaStateDynamics(candidate);
 
-    // 3. Compute Sobol Sensitivity Decomposition
-    this.computeSobolSensitivities(candidate);
+    // 3. Compute local one-factor-at-a-time scenario sensitivity
+    this.computeLocalSensitivities(candidate);
 
     // 4. Evaluate 5 Multi-Agent Physics Gates
     this.evaluateHeuristicScenarioGates(candidate);
@@ -303,7 +303,7 @@ export class GenerativeDesignOptimizer {
       slammingPressureKpa: 0,
       seaStates: [],
       scenarioRuleChecks: [],
-      sobolSensitivities: [],
+      localSensitivities: [],
       status: 'SURVIVED',
       fitnessScore: 0,
       debateTranscript: [],
@@ -500,49 +500,42 @@ export class GenerativeDesignOptimizer {
     });
   }
 
-  private computeSobolSensitivities(c: CandidateDesign) {
-    c.sobolSensitivities = [
-      {
-        parameter: 'beamMeters',
-        displayName: 'Waterline Beam (B)',
-        firstOrderIndex: 0.44,
-        totalEffectIndex: 0.52,
-        primaryTarget: 'Transverse Metacentric Height (GMt) & Wave Resistance',
-        architecturalGuidance: 'Dominant driver of intact stability (I_wp ~ B^3). Increasing beam by 0.2m increases GMt by +0.18m but adds +1.2kN hump drag.'
-      },
-      {
-        parameter: 'batteryKwh',
-        displayName: 'Battery Storage (E_batt)',
-        firstOrderIndex: 0.51,
-        totalEffectIndex: 0.60,
-        primaryTarget: 'Patrol Endurance (Hours) & Displacement Mass',
-        architecturalGuidance: 'Direct 1:1 driver of 8h loiter mission. Pack mass (11.5 kg/kWh) penalizes draft and raises slamming loads.'
-      },
-      {
-        parameter: 'deadriseDeg',
-        displayName: 'Deadrise Angle (β)',
-        firstOrderIndex: 0.32,
-        totalEffectIndex: 0.41,
-        primaryTarget: 'Bottom Slamming Pressure & Dynamic Lift',
-        architecturalGuidance: 'High deadrise (>22°) softens vertical acceleration in Sea State 3 but increases power required to plane by 18%.'
-      },
-      {
-        parameter: 'lwlMeters',
-        displayName: 'Waterline Length (LWL)',
-        firstOrderIndex: 0.28,
-        totalEffectIndex: 0.35,
-        primaryTarget: 'Length/Beam Slenderness & Pitch Damping',
-        architecturalGuidance: 'Controls volumetric Froude number Fn_V. Under 9.5m, hull suffers severe hump squat. Over 12.0m increases structural mold tooling cost.'
-      },
-      {
-        parameter: 'motorKwTotal',
-        displayName: 'Installed Power (P_inst)',
-        firstOrderIndex: 0.22,
-        totalEffectIndex: 0.29,
-        primaryTarget: 'Sprint Speed & Thermal Heat Rejection',
-        architecturalGuidance: '70-90 kW provides 23-25 kt sprint. Diminishing returns above 100 kW due to battery C-rate discharge limits.'
-      }
+  private computeLocalSensitivities(c: CandidateDesign) {
+    // Real finite differences of the legacy deterministic heuristic solver.
+    // This is one-factor-at-a-time LOCAL numerical influence, NOT Sobol
+    // variance decomposition, uncertainty bounds or physical calibration.
+    type NumericParam = 'beamMeters' | 'batteryKwh' | 'deadriseDeg' | 'lwlMeters' | 'motorKwTotal';
+    type NumericTarget = 'gmtMeters' | 'enduranceHours' | 'peakDragKn' | 'sprintSpeedKnots';
+    const specs: Array<{ key: NumericParam; target: NumericTarget; name: string; description: string }> = [
+      { key: 'beamMeters', target: 'gmtMeters', name: 'Waterline Beam', description: 'Approximate GM screening' },
+      { key: 'batteryKwh', target: 'enduranceHours', name: 'Battery Hypothesis', description: 'Synthetic energy-duration equation' },
+      { key: 'deadriseDeg', target: 'peakDragKn', name: 'Transom Deadrise', description: 'Legacy approximate resistance' },
+      { key: 'lwlMeters', target: 'peakDragKn', name: 'Waterline Length', description: 'Legacy approximate resistance' },
+      { key: 'motorKwTotal', target: 'sprintSpeedKnots', name: 'Installed Motor Hypothesis', description: 'Discrete speed scanning, finite difference may be zero' }
     ];
+    c.localSensitivities = specs.map(spec => {
+      const original = c[spec.key];
+      const relative = 0.01;
+      const delta = original * relative;
+      const trial: CandidateDesign = {
+        ...c, [spec.key]: original + delta,
+        seaStates: [], scenarioRuleChecks: [], localSensitivities: [],
+        debateTranscript: [], agentLearnings: []
+      };
+      this.solvePhysics(trial);
+      const baseTarget = c[spec.target];
+      const perturbed = trial[spec.target];
+      const change = Number.isFinite(baseTarget) && Number.isFinite(perturbed) && Math.abs(baseTarget) > 1e-12
+        ? Number((((perturbed - baseTarget) / Math.abs(baseTarget)) * 100).toFixed(3))
+        : null;
+      return {
+        parameter: spec.key, displayName: spec.name,
+        inputPerturbationPercent: 1,
+        targetChangePercent: change,
+        primaryTarget: spec.description,
+        architecturalGuidance: 'UNVERIFIED one-at-a-time +1% input sensitivity in legacy heuristic, not a Sobol index or validated naval-design recommendation.'
+      };
+    });
   }
 
   private evaluateHeuristicScenarioGates(c: CandidateDesign) {
@@ -734,7 +727,7 @@ export class GenerativeDesignOptimizer {
       slammingPressureKpa: 0,
       seaStates: [],
       scenarioRuleChecks: [],
-      sobolSensitivities: [],
+      localSensitivities: [],
       status: 'SURVIVED',
       fitnessScore: 0,
       debateTranscript: [],
@@ -743,7 +736,7 @@ export class GenerativeDesignOptimizer {
 
     this.solvePhysics(candidate);
     this.solveSeaStateDynamics(candidate);
-    this.computeSobolSensitivities(candidate);
+    this.computeLocalSensitivities(candidate);
     this.evaluateHeuristicScenarioGates(candidate);
     this.evaluateSyntheticRuleVotes(candidate);
 
@@ -784,7 +777,7 @@ export class GenerativeDesignOptimizer {
   }
 
   /**
-   * Export formal Executive Design Defense Dossier formatted for executive review
+   * Export unverified exploratory concept dossier formatted for executive review
    */
   public generateExecutiveDefenseDossierMarkdown(candidate?: CandidateDesign): string {
     const c = candidate || this.currentChampion || this.history[0];
@@ -828,9 +821,9 @@ ${c.seaStates.map(s => `| **SS ${s.seaState}** (${s.description}) | ${s.signific
 
 ---
 
-## 3. Global Sobol Parameter Sensitivity Decomposition
+## 3. Local finite-difference influence — NOT Sobol/validated sensitivities
 These heuristic sensitivity indicators are unvalidated and do not establish robustness:
-${c.sobolSensitivities.map(s => `- **${s.displayName}**: First-Order S_i = **${s.firstOrderIndex}**, Total S_Ti = **${s.totalEffectIndex}**\n  *Impact:* ${s.primaryTarget}\n  *Guidance:* ${s.architecturalGuidance}`).join('\n')}
+${c.localSensitivities.map(s => `- **${s.displayName}**: +${s.inputPerturbationPercent}% input => ${s.targetChangePercent === null ? 'NOT AVAILABLE' : s.targetChangePercent + '%'} output change (legacy local model)\n  *Target:* ${s.primaryTarget}\n  *Limitations:* ${s.architecturalGuidance}`).join('\n')}
 
 ---
 
@@ -841,22 +834,13 @@ ${c.scenarioRuleChecks.map(a => `| **${a.agentId}** | ${a.name} | **${a.vote}** 
 
 ---
 
-## 5. Architectural Trade-Off Matrix: Catamaran vs Monohull
-Unvalidated heuristic assumptions were used for this illustrative comparison; these are NOT independently researched vendor or model results:
-
-| Evaluation Dimension | Catamaran Topology | Monohull Topology | Engineering Verdict |
-| :--- | :--- | :--- | :--- |
-| **Intact Roll Stability ($GM_t$)** | **1.4m - 2.6m** (Parallel Axis Theorem) | 0.35m - 0.75m (Single waterplane) | Catamaran provides >3x restoring moment against 35kt beam wind gusts. |
-| **Payload Deck Area** | **~18.5 m²** (Full beam crossdeck) | ~9.2 m² (Tapering foredeck) | Catamaran accommodates dual UAV launch pads and sensor mast baseline. |
-| **14-Knot Cruise Resistance** | **Lower** (Slender demi-hull wave slicing) | Higher (Planing transition hump) | Catamaran achieves +1.4h additional loiter at 14kt patrol. |
-| **Sea State 4 Head Slamming** | Tunnel clearance dependent ($0.75\text{m} - T$) | **Continuous deadrise wave cutting** | Monohull experiences lower vertical accelerations in steep head seas. |
-| **Lightship Structural Mass** | Higher (+17% cross-deck bridging) | **Lower** (Single infused shell) | Monohull saves composite scantling weight. |
-| **Tooling & Shipyard Cost** | Higher (Twin demi-molds + bridge) | **Lower** (-35% tooling expenditure) | Monohull has simplified one-piece split demolding. |
+## 5. Architectural Trade-Offs — SOURCE EVIDENCE MISSING
+No validated monohull/catamaran comparative resistance curves, stability curves, deck arrangements, structural weights, model tests or shipyard cost quotations are attached. No superiority or cost percentages may be asserted. See source-identified agent research and independent concept-selection gates before issuing a recommendation.
 
 ---
 
 ## 6. Heuristic Rules Ledger — NOT Validated Invariants
-During trial-and-error exploration, rejected candidates were subjected to automated Root Cause Analysis, producing permanent boundary rules that prevented future failures:
+No externally established invariant is registered. Synthetic rule thresholds must not be treated as approved source evidence:
 ${this.learnedInvariants.map(inv => `### [${inv.id}] Discovered at Generation #${inv.discoveredAtGeneration} by ${inv.agentId} (${inv.category})
 - **Rule:** ${inv.ruleStatement}
 - **Proof:** \`${inv.mathEvidence}\``).join('\n\n')}
