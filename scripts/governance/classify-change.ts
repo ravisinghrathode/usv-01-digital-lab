@@ -44,7 +44,27 @@ export function classifyFile(filePath: string): { categories: ChangeCategory[]; 
   const categories: ChangeCategory[] = [];
   let risk: RiskClassification = 'LOW';
 
+  // A change to the autonomy/safety-evidence path or the authority gate
+  // is safety-critical even when it sits in a generic verification or docs
+  // directory. Do not infer risk solely from filename extension.
+  const autonomyOrSafetyAcceptance = (
+    /^src\/core\/verification\/(Autonomy[^/]*|SafetyScenarioSuite|MarineSystemsSuite|AcceptanceGate)\.ts$/i.test(norm) ||
+    norm === 'src/components/SoftwareAutonomyView.tsx' ||
+    /^tests\/(autonomy[^/]*|governance)\.test\.ts$/i.test(norm) ||
+    /^docs\/AUT01_/i.test(norm) ||
+    norm === 'docs/CONSOLIDATED_ACCEPTANCE_REGISTER.md' ||
+    norm.startsWith('evidence/aut01/')
+  );
+  const governanceAuthorityControl = (
+    norm.startsWith('scripts/governance/') ||
+    norm.startsWith('governance/approvals/') ||
+    norm.startsWith('governance/ecr/')
+  );
+
   // Category matching
+  if (autonomyOrSafetyAcceptance || governanceAuthorityControl) {
+    categories.push('SAFETY');
+  }
   if (norm.startsWith('.github/') || norm.includes('package.json') || norm.includes('tsconfig.json') || norm.includes('vite.config.ts')) {
     categories.push('CONFIGURATION');
   }
