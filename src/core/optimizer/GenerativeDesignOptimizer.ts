@@ -46,6 +46,11 @@ export interface CandidateDesign {
   generation: number;
   philosophy: DesignPhilosophy;
   hullType: HullTopology;    // Primary topology architecture dynamically evaluated by 25 agents
+  /** Reproducibility metadata, NEVER engineering validation. */
+  runSeed: number;
+  scenarioRevision: string;
+  /** Number of seeded PRNG draws consumed before this candidate was generated. */
+  drawIndex: number;
   // 7 Free Design Parameters
   lwlMeters: number;         // Waterline length (6.0m - 14.0m)
   beamMeters: number;        // Waterline beam (1.8m - 3.8m)
@@ -104,6 +109,26 @@ export class GenerativeDesignOptimizer {
   private learnedInvariants: LearnedInvariant[] = [];
   private currentGeneration: number = 0;
   private currentChampion: CandidateDesign | null = null;
+  /** Explicit reproducibility seed, NOT an engineering baseline identifier. */
+  private seed = 0x55535631;
+  private randomState = this.seed;
+  private draws = 0;
+  private readonly scenarioRevision = 'LEGACY_HEURISTIC_REV_0_4_UNVERIFIED';
+
+  private nextRandom(): number {
+    // Mulberry32: fixed 32-bit integer operations make scenario sampling repeatable.
+    this.randomState = (this.randomState + 0x6D2B79F5) >>> 0;
+    let t = this.randomState;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    this.draws += 1;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  }
+
+  public getRunMetadata() {
+    return { runSeed: this.seed, scenarioRevision: this.scenarioRevision, randomDraws: this.draws, generation: this.currentGeneration,
+      screeningOnly: true as const, engineeringReleaseAuthorized: false as const };
+  }
 
   private constructor() {
     this.seedBaselineInvariants();
@@ -157,7 +182,13 @@ export class GenerativeDesignOptimizer {
     return this.learnedInvariants;
   }
 
-  public resetOptimizer() {
+  public resetOptimizer(seed: number = this.seed) {
+    if (!Number.isInteger(seed) || seed < 0 || seed > 0xFFFFFFFF) {
+      throw new Error('Optimizer seed must be an unsigned 32-bit integer');
+    }
+    this.seed = seed >>> 0;
+    this.randomState = this.seed;
+    this.draws = 0;
     this.history = [];
     this.currentGeneration = 0;
     this.currentChampion = null;
@@ -171,7 +202,7 @@ export class GenerativeDesignOptimizer {
     this.currentGeneration += 1;
     const gen = this.currentGeneration;
 
-    // Mutate parameters using active learned invariants
+    // Mutate parameters using seeded exploratory heuristics, never approved vessel particulars.
     const candidate = this.generateCandidateParameters(gen, targetPhilosophy);
 
     // 1. Solve Naval Physics
@@ -186,8 +217,8 @@ export class GenerativeDesignOptimizer {
     // 4. Evaluate 5 Multi-Agent Physics Gates
     this.evaluateGatesAndDebate(candidate);
 
-    // 5. Evaluate Full 25-Agent Concurrence & Veto Matrix
-    this.evaluateAll25Agents(candidate);
+    // 5. Legacy synthetic rule votes (NOT live agent executions)
+    this.evaluateSyntheticRuleVotes(candidate);
 
     // 6. Update Champion if Survived and Higher Fitness
     if (candidate.status === 'SURVIVED') {
@@ -238,18 +269,18 @@ export class GenerativeDesignOptimizer {
     const baseMotor = this.currentChampion ? this.currentChampion.motorKwTotal : (motorMin + motorMax) / 2;
 
     const jitter = (min: number, max: number, base: number) => {
-      const delta = (max - min) * variance * (Math.random() - 0.5);
+      const delta = (max - min) * variance * (this.nextRandom() - 0.5);
       return Math.min(Math.max(base + delta, min), max);
     };
 
     // Explore both Monohull and Catamaran topologies dynamically
     let hullType: HullTopology;
-    if (this.currentChampion && Math.random() > 0.35) {
+    if (this.currentChampion && this.nextRandom() > 0.35) {
       // 65% of the time, explore variations of the leading champion's topology
       hullType = this.currentChampion.hullType;
     } else {
       // 35% of the time, test counter-hypotheses between Monohull and Catamaran
-      hullType = Math.random() > 0.5 ? 'CATAMARAN' : 'MONOHULL';
+      hullType = this.nextRandom() > 0.5 ? 'CATAMARAN' : 'MONOHULL';
     }
 
     if (hullType === 'CATAMARAN') {
@@ -262,12 +293,15 @@ export class GenerativeDesignOptimizer {
     const deadrise = Number(jitter(deadriseMin, deadriseMax, baseDeadrise).toFixed(1));
     const battery = Number(jitter(battMin, battMax, baseBatt).toFixed(1));
     const motor = Number(jitter(motorMin, motorMax, baseMotor).toFixed(1));
-    const lcg = Number((34.5 + (Math.random() - 0.5) * 4 * variance).toFixed(1));
+    const lcg = Number((34.5 + (this.nextRandom() - 0.5) * 4 * variance).toFixed(1));
     const draft = Number((0.55 + (battery / 100) * 0.18).toFixed(2));
 
     return {
       id: `ITER-${gen.toString().padStart(3, '0')}`,
       generation: gen,
+      runSeed: this.seed,
+      scenarioRevision: this.scenarioRevision,
+      drawIndex: this.draws,
       philosophy: phil,
       hullType,
       lwlMeters: lwl,
@@ -723,7 +757,7 @@ export class GenerativeDesignOptimizer {
     });
   }
 
-  private evaluateAll25Agents(c: CandidateDesign) {
+  private evaluateSyntheticRuleVotes(c: CandidateDesign) {
     const isSurvived = c.status === 'SURVIVED';
 
     c.agentEvaluations25 = [
@@ -1027,6 +1061,9 @@ export class GenerativeDesignOptimizer {
     const candidate: CandidateDesign = {
       id: 'CUSTOM-STUDIO',
       generation: this.currentGeneration,
+      runSeed: this.seed,
+      scenarioRevision: this.scenarioRevision,
+      drawIndex: this.draws,
       philosophy: 'BALANCED_PATROL',
       hullType: params.hullType || (this.currentChampion ? this.currentChampion.hullType : 'CATAMARAN'),
       lwlMeters: params.lwlMeters,
@@ -1061,7 +1098,7 @@ export class GenerativeDesignOptimizer {
     this.solveSeaStateDynamics(candidate);
     this.computeSobolSensitivities(candidate);
     this.evaluateGatesAndDebate(candidate);
-    this.evaluateAll25Agents(candidate);
+    this.evaluateSyntheticRuleVotes(candidate);
 
     return candidate;
   }
@@ -1141,7 +1178,7 @@ export class GenerativeDesignOptimizer {
     const vetoes = c.agentEvaluations25.filter(a => a.vote === 'VETO').length;
 
     return `# USV-01 DIGITAL LAB | EXECUTIVE NAVAL DESIGN DEFENSE DOSSIER
-**Document Control:** USV-01-DEF-DOSSIER-REV-1.0 (SCREENING / NOT FOR DESIGN RELEASE)
+**Document Control:** USV-01-DEF-DOSSIER-REV-1.0 (SCREENING / NOT FOR DESIGN RELEASE)\n**Reproducibility Seed:** ${c.runSeed} | PRNG draw index: ${c.drawIndex} | Scenario revision: ${c.scenarioRevision}\n**Numerical Confidence:** UNVERIFIED LEGACY HEURISTIC; deterministic replay does not validate engineering accuracy.
 **UNVERIFIED EXPLORATORY CANDIDATE:** ${c.id} (Generation #${c.generation})
 **Design Philosophy:** ${c.philosophy}
 **Composite Multi-Objective Fitness:** ${c.fitnessScore} / 100
