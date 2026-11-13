@@ -346,10 +346,11 @@ jobs:
           mkdir -p "$ROOT/case" "$ROOT/staged" "$ROOT/work" "$ROOT/artifacts" governance/reports
           CASE_SRC="$(find /usr/lib/openfoam/openfoam2606/tutorials -type d -path '*/incompressible/simpleFoam/turbulentFlatPlate' -print -quit)"
           test -n "$CASE_SRC"
-          # The official flat-plate tutorial is a case generator, not a
-          # preassembled 0/constant/system case. Reproduce its Allrun setup
-          # deterministically for kOmegaSST at y+=1 (GRADING=2200), but execute
-          # blockMesh/simpleFoam only through our controlled path.
+          # The official flat-plate tutorial spans 0.05<y+<100 using the
+          # same cell count with different wall-normal grading. For bounded CI
+          # commissioning use its y+=30 wall-function case (GRADING=30), which
+          # remains within the documented V&V family while avoiding the much
+          # slower wall-resolved y+=1 grading=2200 case.
           cp -aL "$CASE_SRC/setups.orig/common/." "$ROOT/case/"
           cp -aL "$CASE_SRC/setups.orig/kOmegaSST/0.orig/." "$ROOT/case/0.orig/"
           if [ -d "$CASE_SRC/setups.orig/kOmegaSST/constant" ]; then
@@ -359,7 +360,7 @@ jobs:
             cp -aL "$CASE_SRC/setups.orig/kOmegaSST/system/." "$ROOT/case/system/"
           fi
           test -f "$CASE_SRC/setups.orig/common/system/blockMeshDict.template"
-          sed 's/GRADING/2200/g' "$CASE_SRC/setups.orig/common/system/blockMeshDict.template" \
+          sed 's/GRADING/30/g' "$CASE_SRC/setups.orig/common/system/blockMeshDict.template" \
             > "$ROOT/case/system/blockMeshDict"
           cp -aL "$ROOT/case/0.orig" "$ROOT/case/0"
           (cd "$ROOT/case" && /usr/bin/openfoam2606 blockMesh > blockMesh.log 2>&1)
