@@ -486,7 +486,7 @@ export const INITIAL_VERIFICATION_PLANS: VerificationPlan[] = [
     title: '[SAMPLE] Factory Acceptance Test: DC Power Distribution Board & Isolation',
     procedureSummary: 'Verify galvanic isolation, overcurrent breaker tripping curves, and step load voltage sag on 48V and 24V buses in accordance with IEEE 45.',
     acceptanceCriteria: 'Galvanic resistance >= 10 MOhm at 500V test potential. Voltage sag <= 5% under 100A step load.',
-    instrumentationAndCalibration: 'Megohmmeter Fluke 1587 (Calibrated 2026-09), Programmable DC Load Chroma 63200A (Calibrated 2026-08).',
+    instrumentationAndCalibration: 'TBD — source and calibration records not provided',
     targetReqIds: ['REQ-ELE-001'],
     status: 'Draft',
     owner: 'S. Patel',
@@ -501,7 +501,7 @@ export const INITIAL_VERIFICATION_PLANS: VerificationPlan[] = [
     title: '[SAMPLE] Hardware-in-the-Loop: Autonomy Heartbeat Loss & Fail-Safe Response',
     procedureSummary: 'Simulate telemetry link failure between shoreside command console and vessel autonomy computer, record transition delay to loiter/anchor mode.',
     acceptanceCriteria: 'Fail-safe maneuver triggered within [TBD] seconds; thruster commands clamped to safe idle.',
-    instrumentationAndCalibration: 'CAN Bus Analyzer Kvaser Leaf v2, Hardware Timestamper GPS PPS synchronized.',
+    instrumentationAndCalibration: 'TBD — source and calibration records not provided',
     targetReqIds: ['REQ-SYS-001', 'REQ-AUT-001'],
     status: 'Draft',
     owner: 'E. Chen',
@@ -516,7 +516,7 @@ export const INITIAL_VERIFICATION_PLANS: VerificationPlan[] = [
     title: '[SAMPLE] Towing Tank Physical Resistance & Trim Trial',
     procedureSummary: 'Tow 1:5 scale physical hull model at designated carriage speeds in towing tank facility, record total drag and dynamic sinkage/trim.',
     acceptanceCriteria: 'Model drag measurements within +/- 5% of scaled CFD resistance prediction; no unpredicted porpoising or chine immersion.',
-    instrumentationAndCalibration: 'Calibrated Towing Dynamometer, Ultrasonic Wave Height Gauges.',
+    instrumentationAndCalibration: 'TBD — source and calibration records not provided',
     targetReqIds: ['REQ-NAV-001', 'REQ-HYD-001'],
     status: 'Draft',
     owner: 'K. Tanaka',
@@ -579,7 +579,7 @@ export const INITIAL_COMPONENTS_BOM: ComponentBOM[] = [
     quantity: 1,
     unitCost: '$4,200.00',
     leadTimeWeeks: '4 weeks',
-    procurementStatus: 'Ordered',
+    procurementStatus: 'Specifying',
     isIllustrative: true,
     createdAt: '2026-11-01',
     updatedAt: '2026-11-08'
@@ -627,9 +627,9 @@ export const INITIAL_WEIGHT_CG: WeightCGItem[] = [];
 export const INITIAL_RESISTANCE: ResistanceEstimate[] = [];
 
 export const INITIAL_MATERIALS: MaterialRecord[] = [
-  { id: 'MAT-01', materialName: 'Marine Aluminum 5083-H116', specification: 'ASTM B928 / DNV Grade 5083', yieldStrengthMPa: 215, ultimateStrengthMPa: 305, densityKgM3: 2660, corrosionResistanceMarine: 'Excellent in saltwater; highly resistant to intergranular attack', notes: 'Authoritative choice for primary hull bottom plating and stringers', isIllustrative: true },
-  { id: 'MAT-02', materialName: 'Marine Aluminum 6061-T6 Extrusion', specification: 'ASTM B221 / DNV Grade 6061', yieldStrengthMPa: 240, ultimateStrengthMPa: 290, densityKgM3: 2700, corrosionResistanceMarine: 'Good; requires marine anodizing or conversion coating', notes: 'Selected for internal equipment rack mounting and structural beams', isIllustrative: true },
-  { id: 'MAT-03', materialName: 'Carbon Fiber / Epoxy Pre-Preg', specification: 'High-Modulus Toray T700 / Marine Epoxy', yieldStrengthMPa: 450, ultimateStrengthMPa: 620, densityKgM3: 1550, corrosionResistanceMarine: 'Inert; requires galvanic isolation when contacting aluminum', notes: 'Selected for composite hull skin and sensor mast to preserve transverse GM', isIllustrative: false }
+  { id: 'MAT-01', materialName: 'Marine Aluminum 5083-H116', specification: 'ASTM B928 / DNV Grade 5083', yieldStrengthMPa: 215, ultimateStrengthMPa: 305, densityKgM3: 2660, corrosionResistanceMarine: 'Excellent in saltwater; highly resistant to intergranular attack', notes: 'ILLUSTRATIVE candidate material only; no primary hull selection or independent review', isIllustrative: true },
+  { id: 'MAT-02', materialName: 'Marine Aluminum 6061-T6 Extrusion', specification: 'ASTM B221 / DNV Grade 6061', yieldStrengthMPa: 240, ultimateStrengthMPa: 290, densityKgM3: 2700, corrosionResistanceMarine: 'Good; requires marine anodizing or conversion coating', notes: 'ILLUSTRATIVE candidate; not procured or structurally accepted', isIllustrative: true },
+  { id: 'MAT-03', materialName: 'Carbon Fiber / Epoxy Pre-Preg', specification: 'High-Modulus Toray T700 / Marine Epoxy', yieldStrengthMPa: 450, ultimateStrengthMPa: 620, densityKgM3: 1550, corrosionResistanceMarine: 'Inert; requires galvanic isolation when contacting aluminum', notes: 'ILLUSTRATIVE candidate; no hull laminate or stability claim accepted', isIllustrative: true }
 ];
 
 export const INITIAL_LOAD_CASES: LoadCaseRecord[] = [
@@ -638,14 +638,8 @@ export const INITIAL_LOAD_CASES: LoadCaseRecord[] = [
   { id: 'LC-03', title: '[SAMPLE — NOT VERIFIED] Single-Point Crane Lift Acceleration', loadType: 'Crane Lift', governingStandard: 'ISO 12215-6', designPressureOrForce: 'TBD', safetyFactorTarget: 3.0, feaStatus: 'TBD' }
 ];
 
-export const INITIAL_POWER_LOADS: PowerLoadItem[] = [
-  { id: 'PWR-01', consumerName: 'Twin PMSM Propulsion Motors (Transit/Sprint)', subsystem: 'PRP', voltageV: '48V DC', nominalPowerW: 14500, dutyCyclePercent: 35, averageContinuousPowerW: 14500, peakPowerW: 32500, isEssential: true },
-  { id: 'PWR-02', consumerName: 'Mission Autonomy Computer (ROS 2 Humble / Jetson)', subsystem: 'AUT', voltageV: '48V DC', nominalPowerW: 450, dutyCyclePercent: 80, averageContinuousPowerW: 450, peakPowerW: 650, isEssential: true },
-  { id: 'PWR-03', consumerName: 'Simrad HALO24 Radar & Ouster OS1 LiDAR', subsystem: 'AUT', voltageV: '48V DC', nominalPowerW: 280, dutyCyclePercent: 90, averageContinuousPowerW: 280, peakPowerW: 340, isEssential: true },
-  { id: 'PWR-04', consumerName: 'FLIR SeaFLIR 230 Cooled MWIR Camera Gimbal', subsystem: 'AUT', voltageV: '48V DC', nominalPowerW: 120, dutyCyclePercent: 50, averageContinuousPowerW: 120, peakPowerW: 200, isEssential: false },
-  { id: 'PWR-05', consumerName: 'Silvus 5.8GHz Mesh & Iridium SATCOM', subsystem: 'AUT', voltageV: '48V DC', nominalPowerW: 95, dutyCyclePercent: 50, averageContinuousPowerW: 95, peakPowerW: 145, isEssential: true },
-  { id: 'PWR-06', consumerName: 'Navigation Lighting, Transponders & Bilge Pumps', subsystem: 'ELE', voltageV: '48V DC', nominalPowerW: 235, dutyCyclePercent: 30, averageContinuousPowerW: 235, peakPowerW: 585, isEssential: true }
-];
+// No authenticated supplier load, bus rating or as-installed input-power budget.
+export const INITIAL_POWER_LOADS: PowerLoadItem[] = [];
 
 export const INITIAL_INTERFACES: InterfaceDefinition[] = [
   { id: 'ICD-001', title: '[SAMPLE] Autonomy Computer to Motor Inverter Throttle/Steer', sourceSubsystem: 'AUT', targetSubsystem: 'PRP', physicalMedium: 'CAN 2.0B / NMEA 2000', protocol: 'Custom Binary', frequencyHz: '50 Hz', latencyBudgetMs: '20 ms', status: 'Draft', isIllustrative: true },
@@ -659,23 +653,15 @@ export const INITIAL_KNOWLEDGE_NOTES: KnowledgeNote[] = [
     title: 'Naval Architecture Intact Stability Criteria [[Naval Architecture]]',
     category: 'Standard Reference',
     subsystems: ['NAV', 'SYS'],
-    contentMarkdown: `## Governing Framework: IMO MSC.267(85) / 2008 IS Code
+    contentMarkdown: `## USV-01 Stability Rules — Applicability Not Established
 
-The USV-01 vessel stability must be certified under the International Code on Intact Stability.
+The applicable flag, class, small-craft and unmanned-vessel intact stability basis has not been selected. No numerical IMO/ISO threshold is approved for this craft merely because it appears in a sample dataset.
 
-### Key Mandatory Parameters:
-1. **Area under GZ curve**:
-   - Up to 30°: $\\ge 0.055\\text{ m-rad}$
-   - Up to 40° (or angle of downflooding): $\\ge 0.090\\text{ m-rad}$
-   - Between 30° and 40°: $\\ge 0.030\\text{ m-rad}$
-2. **Initial Metacentric Height ($GM_0$)**:
-   - Shall not be less than $0.15\\text{ m}$.
-3. **Maximum Righting Lever ($GZ_{max}$)**:
-   - Occur at an angle $\\theta_{max} \\ge 25^{\\circ}$ (ideally $\\ge 30^{\\circ}$).
+Needed: source-controlled vessel dimensions/geometry, independently verified loading cases and KG, righting-arm curves, downflooding geometry and competent reviewer decision.
 
-See linked analysis: [[Hydrodynamics]] and [[Weight and CG Tracking]].`,
-    obsidianVaultLink: 'obsidian://open?vault=USV01_Vault&file=Naval%20Architecture%2FIntact%20Stability',
-    googleDriveRef: 'https://drive.google.com/drive/folders/usv01-naval-arch-standards',
+See [[Naval Architecture]] and [[Weight and CG Tracking]].`,
+    obsidianVaultLink: '', // not authenticated; avoid fictional vault reference
+    googleDriveRef: '', // no verified project Drive identifier
     lastUpdated: '2026-11-04'
   },
   {
@@ -693,8 +679,8 @@ Autonomous implementation within the USV-01 autonomy stack:
 - **Rule 17 (Action by Stand-on Vessel)**: Maintain course and speed, but take emergency action if give-way vessel fails to maneuver.
 
 Traceability reference: [[Requirements Register]] -> \`REQ-AUT-001\`.`,
-    obsidianVaultLink: 'obsidian://open?vault=USV01_Vault&file=Autonomy%2FCOLREGs%20Rules',
-    googleDriveRef: 'https://drive.google.com/drive/folders/usv01-autonomy-colregs',
+    obsidianVaultLink: '', // not authenticated; avoid fictional vault reference
+    googleDriveRef: '', // no verified project Drive identifier
     lastUpdated: '2026-11-08'
   },
   {
@@ -710,15 +696,11 @@ Direct mechanical contact between stainless steel fasteners (AISI 316) and alumi
 - Install non-conductive dielectric washers (Nylon / PTFE / Delrin) under all bolt heads and nuts.
 - Coat fasteners with marine anti-seize paste (Tef-Gel or Duralac).
 - Ensure sacrificial zinc / aluminum hull anodes are properly bonded to the main hull grounding plate.`,
-    obsidianVaultLink: 'obsidian://open?vault=USV01_Vault&file=Structures%2FGalvanic%20Corrosion',
-    googleDriveRef: 'https://drive.google.com/drive/folders/usv01-materials-corrosion',
+    obsidianVaultLink: '', // not authenticated; avoid fictional vault reference
+    googleDriveRef: '', // no verified project Drive identifier
     lastUpdated: '2026-11-09'
   }
 ];
 
-export const INITIAL_ACTIVITY_LOG: ActivityLogItem[] = [
-  { id: 'LOG-001', timestamp: '2026-11-11 09:15', userId: 'usr-lead', userName: 'Chief Systems Architect', action: 'CREATE', recordType: 'BASELINE', recordId: 'USV01-REV-0.2', details: 'Initialized USV-01 Digital Engineering Lab authoritative baseline.' },
-  { id: 'LOG-002', timestamp: '2026-11-10 16:40', userId: 'usr-hyd', userName: 'A. Boucher', action: 'UPDATE', recordType: 'SIMULATION', recordId: 'SIM-HYD-001', details: 'Updated OpenFOAM VOF mesh parameters and boundary conditions.' },
-  { id: 'LOG-003', timestamp: '2026-11-09 14:20', userId: 'usr-ele', userName: 'S. Patel', action: 'APPROVE', recordType: 'TEST_RECORD', recordId: 'TEST-REC-001', details: 'Approved DC Power Distribution Board factory acceptance test record.' },
-  { id: 'LOG-004', timestamp: '2026-11-08 11:05', userId: 'usr-aut', userName: 'E. Chen', action: 'UPDATE', recordType: 'REQUIREMENT', recordId: 'REQ-AUT-001', details: 'Updated acceptance criteria for COLREGs collision avoidance.' }
-];
+// Do not fabricate an immutable engineering audit trail from example users.
+export const INITIAL_ACTIVITY_LOG: ActivityLogItem[] = [];
