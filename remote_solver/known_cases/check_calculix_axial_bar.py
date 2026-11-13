@@ -12,21 +12,23 @@ version=str(result.get('solverVersion',''))
 if not version or version=='NOT_RECORDED':
     raise SystemExit('Solver version missing')
 key=result.get('keyResults') or {}
-stress=key.get('maxAbsoluteStressComponent')
+stress=key.get('meanFirstNormalStressComponent')
+peak_stress=key.get('maxAbsoluteStressComponent')
+stress_samples=key.get('firstNormalStressSampleCount')
 disp=key.get('maxDisplacementMagnitude')
-if not isinstance(stress,(int,float)) or not math.isfinite(stress):
-    raise SystemExit('Parsed stress missing')
+if not isinstance(stress,(int,float)) or not math.isfinite(stress) or not isinstance(stress_samples,int) or stress_samples < 1:
+    raise SystemExit('Parsed mean axial stress/sample count missing')
 if not isinstance(disp,(int,float)) or not math.isfinite(disp):
     raise SystemExit('Parsed displacement missing')
 expected_stress=100.0
 expected_disp=100.0*10.0/(1.0*210000.0)
 stress_rel=abs(stress-expected_stress)/expected_stress
 disp_rel=abs(disp-expected_disp)/expected_disp
-# 3-D end constraints and one-element-thick mesh create local effects. This gate
-# is deliberately loose enough for commissioning, not an accuracy certificate.
-if stress_rel>0.15:
+# The closed-form axial equilibrium applies to the mean Sxx over the integration-point field.
+# The local peak is retained separately because the fully fixed end creates 3-D Poisson/end effects.
+if stress_rel>0.005:
     raise SystemExit(f'FE stress differs from analytical bar by {stress_rel:.3%}')
-if disp_rel>0.15:
+if disp_rel>0.02:
     raise SystemExit(f'FE displacement differs from analytical bar by {disp_rel:.3%}')
 archive=Path(result['outputArtifactLocalPath'])
 if not archive.is_file():
@@ -39,7 +41,9 @@ with zipfile.ZipFile(archive) as z:
 print(json.dumps({
     'status':'REAL_CALCULIX_KNOWN_CASE_PASS_UNCERTIFIED',
     'solverVersion':version,
-    'maxStressComponentMpa':stress,
+    'meanAxialStressMpa':stress,
+    'stressSampleCount':stress_samples,
+    'maxLocalStressComponentMpa':peak_stress,
     'analyticalStressMpa':expected_stress,
     'stressRelativeError':stress_rel,
     'maxDisplacementMm':disp,
