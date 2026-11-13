@@ -1,0 +1,284 @@
+{
+  "status": "PREFLIGHT_READY_NO_AI_CALLS",
+  "totalAgents": 26,
+  "agentInputsValid": 26,
+  "deterministicToolsPassed": 10,
+  "deterministicToolsFailed": 0,
+  "deterministicToolsExpectedRejections": 0,
+  "liveCodexCalls": 0,
+  "independentlyEngineeringValidated": false,
+  "engineeringReleaseApproved": false,
+  "findings": [
+    {
+      "canonicalId": "A01",
+      "agentId": "LEAD-SYS-01",
+      "inputSchemaValid": true,
+      "toolEvidence": [],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A02",
+      "agentId": "REQ-TRC-02",
+      "inputSchemaValid": true,
+      "toolEvidence": [],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A03",
+      "agentId": "CONOPS-03",
+      "inputSchemaValid": true,
+      "toolEvidence": [],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A04",
+      "agentId": "REG-STD-04",
+      "inputSchemaValid": true,
+      "toolEvidence": [],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A05",
+      "agentId": "HULL-GEO-05",
+      "inputSchemaValid": true,
+      "toolEvidence": [
+        {
+          "toolId": "TOOL-HYDROSTATICS-01",
+          "success": true,
+          "inputSchemaValid": true
+        }
+      ],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A06",
+      "agentId": "STAB-HYD-06",
+      "inputSchemaValid": true,
+      "toolEvidence": [
+        {
+          "toolId": "TOOL-HYDROSTATICS-01",
+          "success": true,
+          "inputSchemaValid": true
+        }
+      ],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A07",
+      "agentId": "RES-SEAK-07",
+      "inputSchemaValid": true,
+      "toolEvidence": [
+        {
+          "toolId": "TOOL-RESISTANCE-01",
+          "success": true,
+          "inputSchemaValid": true
+        }
+      ],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A08",
+      "agentId": "MAN-MOT-08",
+      "inputSchemaValid": true,
+      "toolEvidence": [],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A09",
+      "agentId": "WGT-BAL-09",
+      "inputSchemaValid": true,
+      "toolEvidence": [
+        {
+          "toolId": "TOOL-MASS-BALANCE-01",
+          "success": true,
+          "inputSchemaValid": true
+        }
+      ],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A10",
+      "agentId": "STR-MAT-10",
+      "inputSchemaValid": true,
+      "toolEvidence": [
+        {
+          "toolId": "TOOL-STRUCTURES-01",
+          "success": true,
+          "inputSchemaValid": true
+        }
+      ],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A11",
+      "agentId": "ENV-ENV-11",
+      "inputSchemaValid": true,
+      "toolEvidence": [],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A12",
+      "agentId": "MECH-APP-12",
+      "inputSchemaValid": true,
+      "toolEvidence": [],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A13",
+      "agentId": "PROP-ENG-13",
+      "inputSchemaValid": true,
+      "toolEvidence": [
+        {
+          "toolId": "TOOL-RESISTANCE-01",
+          "success": true,
+          "inputSchemaValid": true
+        }
+      ],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A14",
+      "agentId": "ELEC-PWR-14",
+      "inputSchemaValid": true,
+      "toolEvidence": [
+        {
+          "toolId": "TOOL-ELECTRICAL-01",
+          "success": true,
+          "inputSchemaValid": true
+        }
+      ],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A15",
+      "agentId": "INDEP-CRIT-15",
+      "inputSchemaValid": true,
+      "toolEvidence": [],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A16",
+      "agentId": "SENS-PER-16",
+      "inputSchemaValid": true,
+      "toolEvidence": [],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A17",
+      "agentId": "NAV-COL-17",
+      "inputSchemaValid": true,
+      "toolEvidence": [
+        {
+          "toolId": "TOOL-COLREGS-01",
+          "success": true,
+          "inputSchemaValid": true
+        }
+      ],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A18",
+      "agentId": "TEST-DIR-18",
+      "inputSchemaValid": true,
+      "toolEvidence": [],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A19",
+      "agentId": "COMM-RF-19",
+      "inputSchemaValid": true,
+      "toolEvidence": [],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A20",
+      "agentId": "CYBER-SEC-20",
+      "inputSchemaValid": true,
+      "toolEvidence": [],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A21",
+      "agentId": "ICD-ENG-21",
+      "inputSchemaValid": true,
+      "toolEvidence": [],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A22",
+      "agentId": "FMEA-RSK-22",
+      "inputSchemaValid": true,
+      "toolEvidence": [],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A23",
+      "agentId": "INDEP-REV-23",
+      "inputSchemaValid": true,
+      "toolEvidence": [
+        {
+          "toolId": "TOOL-HYDROSTATICS-01",
+          "success": true,
+          "inputSchemaValid": true
+        },
+        {
+          "toolId": "TOOL-RESISTANCE-01",
+          "success": true,
+          "inputSchemaValid": true
+        }
+      ],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A24",
+      "agentId": "VVT-VAL-24",
+      "inputSchemaValid": true,
+      "toolEvidence": [],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A25",
+      "agentId": "DOC-OBS-25",
+      "inputSchemaValid": true,
+      "toolEvidence": [],
+      "blockers": [],
+      "readyForModelAttempt": true
+    },
+    {
+      "canonicalId": "A26",
+      "agentId": "INTEL-USV-26",
+      "inputSchemaValid": true,
+      "toolEvidence": [],
+      "blockers": [],
+      "readyForModelAttempt": true
+    }
+  ],
+  "catalogClassification": "SYNTHETIC_TEST_ONLY_NON_OPERATIONAL",
+  "illustrativeNonOperational": true,
+  "historicalCatalogBaseline": "854812812f02ab232a506957572c2944be63c7a5",
+  "sourceCommitSha": "4cf2b52ca3091083227bbb3265d8c402a8c6da0d"
+}

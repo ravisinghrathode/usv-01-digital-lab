@@ -32,5 +32,5 @@
 - **Authority ID:** PENDING
 - **Signed At:** PENDING
 - **Cryptographic Signature / Hash:** PENDING
-- **Implementation Commit:** PENDING — exact GitHub commit SHA will be recorded after the authenticated branch update.
+- **Implementation Commit:** `4cf2b52ca3091083227bbb3265d8c402a8c6da0d` — PR #64, `feat/complete-codex-runtime-cutover`
 - **Notes:** This ECR records software validation only. A Codex campaign, deterministic test result, or CI success is not an independent engineering review, Director signature, or authorization to merge a critical-risk baseline.
