@@ -110,11 +110,19 @@ export function assessConceptDiscovery(raw: unknown) {
     if (r.sourceCommit !== x.sourceCommit) issues.push('Agent run has stale or mismatched source SHA: ' + r.canonicalId);
     const liveClaim = r.status === 'LIVE_PROVIDER_EXECUTED_UNCERTIFIED' &&
       r.providerExecutionMode === 'LIVE_AI_GENERATION' &&
-      ['gemini', 'ollama', 'openai'].includes(r.provider || '') &&
+      typeof r.provider === 'string' && ['gemini', 'ollama', 'openai'].includes(r.provider) &&
       typeof r.outputDigestSha256 === 'string' && DIGEST.test(r.outputDigestSha256);
     if (!liveClaim) issues.push('No complete live-provider research trace for ' + r.canonicalId);
     else claimedLive++;
-    byRole.set(r.canonicalId, r as ResearchRun);
+    byRole.set(r.canonicalId, {
+      canonicalId: r.canonicalId,
+      runtimeId: typeof r.runtimeId === 'string' ? r.runtimeId : '',
+      sourceCommit: typeof r.sourceCommit === 'string' ? r.sourceCommit : '',
+      status: typeof r.status === 'string' ? r.status : '',
+      provider: typeof r.provider === 'string' ? r.provider : undefined,
+      providerExecutionMode: typeof r.providerExecutionMode === 'string' ? r.providerExecutionMode : undefined,
+      outputDigestSha256: typeof r.outputDigestSha256 === 'string' ? r.outputDigestSha256 : undefined
+    });
   }
   for (const spec of registry.getAllAgents()) {
     if (!byRole.has(spec.canonicalId)) issues.push('Missing agent research role ' + spec.canonicalId);
