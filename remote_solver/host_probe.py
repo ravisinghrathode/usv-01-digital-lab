@@ -40,8 +40,15 @@ def main() -> int:
         failures.append("Linux host required")
 
     required={"unshare":True}
+    openfoam_wrapper=os.environ.get("USV_OPENFOAM_WRAPPER","").strip()
     if args.require_openfoam:
-        required.update({"simpleFoam":True,"checkMesh":True})
+        if openfoam_wrapper:
+            wrapper_path=Path(openfoam_wrapper)
+            checks["binaries"]["openfoamWrapper"]=str(wrapper_path)
+            if not wrapper_path.is_absolute() or not wrapper_path.is_file():
+                failures.append("Configured OpenFOAM wrapper is missing")
+        else:
+            required.update({"simpleFoam":True,"checkMesh":True})
     if args.require_calculix:
         required["ccx"]=True
     for binary in required:
@@ -49,6 +56,19 @@ def main() -> int:
         checks["binaries"][binary]=located
         if not located:
             failures.append("Missing binary: "+binary)
+
+    if args.require_openfoam and openfoam_wrapper and Path(openfoam_wrapper).is_file():
+        command=[openfoam_wrapper,"simpleFoam","-help"]
+        if args.require_network_isolation:
+            command=["unshare","--net","--",*command]
+        p=subprocess.run(command,capture_output=True,text=True,check=False,timeout=20)
+        banner=(p.stdout or "")+"\n"+(p.stderr or "")
+        checks["openfoamExecutionProbe"]={
+            "returnCode":p.returncode,
+            "banner":banner[:800]
+        }
+        if "OpenFOAM" not in banner:
+            failures.append("Versioned OpenFOAM wrapper did not execute simpleFoam help")
 
     if args.require_network_isolation and shutil.which("unshare"):
         p=subprocess.run(["unshare","--net","--","sh","-c","test -r /proc/self/ns/net"],
