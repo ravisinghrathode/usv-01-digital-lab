@@ -103,6 +103,25 @@ describe('Remote CFD/FEA job evidence', () => {
     expect(rejected.issues.join(' ')).toMatch(/did not declare SIMPLE/);
   });
 
+  it('retains completed quality-rejected CFD evidence but never exposes it to design agents', async () => {
+    const manifest=createSolverJobManifest(raw());
+    const result=await pollRemoteSolverJob(manifest,async jobId=>({
+      jobId,acceptedInputDigest:manifest.manifestSha256,
+      state:'COMPUTE_DONE_QUALITY_REJECTED',
+      solverVersion:'OpenFOAM-v2606',
+      outputArtifactUri:'https://solver.example.org/artifacts/'+jobId,
+      outputSha256:d,
+      quality:{finalResidual:1.2e-3,gridUncertaintyFraction:null,
+        maximumMeshSkewness:0.27,maximumNonOrthogonalityDeg:83.3}
+    }));
+    expect(result.status).toBe('REJECTED');
+    expect(result.meshAndResidualScreenPassed).toBe(false);
+    expect(result.issues.join(' ')).toMatch(/quality plan rejected/);
+    expect(result.receipt?.outputSha256).toBe(d);
+    expect(getAgentUsableSolverEvidence(result)).toBeNull();
+    expect(result.engineeringReleaseAuthorized).toBe(false);
+  });
+
   it('rejects computed receipts missing retained artifacts, version or mesh quality', async () => {
     const manifest=createSolverJobManifest(raw());
     const missing=await pollRemoteSolverJob(manifest,async jobId=>({
