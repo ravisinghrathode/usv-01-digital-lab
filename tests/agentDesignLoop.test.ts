@@ -43,6 +43,26 @@ describe('Reproducible legacy scenarios and real-agent iterative design screenin
     expect(() => o.resetOptimizer(2 ** 32)).toThrow(/unsigned 32-bit/);
   });
 
+  it('isolates separate seeded campaigns without contaminating the interactive singleton', async () => {
+    const shared = GenerativeDesignOptimizer.getInstance();
+    shared.resetOptimizer(987);
+    const original = shared.runIteration().id;
+    const a = GenerativeDesignOptimizer.createIsolated(12);
+    const b = GenerativeDesignOptimizer.createIsolated(99);
+    const firstA = a.runIteration();
+    b.runIteration();
+    a.runIteration();
+    expect(a.getHistory()).toHaveLength(2);
+    expect(b.getHistory()).toHaveLength(1);
+    expect(shared.getRunMetadata().runSeed).toBe(987);
+    expect(shared.getHistory()).toHaveLength(1);
+    expect(shared.getHistory()[0].id).toBe(original);
+    const again = GenerativeDesignOptimizer.createIsolated(12).runIteration();
+    expect([again.lwlMeters, again.beamMeters, again.hullType, again.drawIndex]).toEqual(
+      [firstA.lwlMeters, firstA.beamMeters, firstA.hullType, firstA.drawIndex]
+    );
+  });
+
   it('invokes actual registered proposer and critic IDs and screens two distinct revisions with real deterministic tools', async () => {
     const seen: Array<{ agent: string; prior: AgentExecutionInput['priorAgentOutputs']; ctx: AgentExecutionInput['context'] }> = [];
     const execute = async (id: string, input: AgentExecutionInput) => {
