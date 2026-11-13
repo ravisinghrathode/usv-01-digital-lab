@@ -125,7 +125,7 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
   const directorEcrRequiredByRoute = approvalRoute === 'SAFETY_CRITICAL_ENGINEERING';
   const directorEcrRequired = ENFORCE_HUMAN_APPROVALS && directorEcrRequiredByRoute;
   const protectedSoftware = approvalRoute === 'PROTECTED_SOFTWARE_SECURITY';
-  const peerRequired = ENFORCE_HUMAN_APPROVALS && (directorEcrRequiredByRoute || protectedSoftware);
+  const peerRequired = directorEcrRequiredByRoute || protectedSoftware;
   const requiresReviewEvidence = directorEcrRequiredByRoute || protectedSoftware;
 
   // CI must reclassify the ACTUAL Git diff, not trust a branch-supplied JSON
@@ -246,7 +246,7 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
         );
       }
     }
-    if (peerRequired && !independentPeerApproved && !(protectedSoftware && authorSignoff)) {
+    if (ENFORCE_HUMAN_APPROVALS && peerRequired && !independentPeerApproved && !(protectedSoftware && authorSignoff)) {
       blockingReasons.push(directorEcrRequired
         ? 'Stage D rejected: vessel engineering changes require an independent GitHub peer approval of the exact source head.'
         : 'Stage D rejected: protected software requires independent GitHub peer approval on the exact PR head OR an explicit authenticated repo-admin PR-author signoff. An author signoff is not independent review.');
