@@ -30,7 +30,7 @@ function completed(input: PilotRequest, stdout: string): PilotResult {
     stdout,
     stderr: '',
     exitCode: 0,
-    executable: input.role === 'orchestrator' ? 'claude' : input.role === 'worker' ? 'agy' : 'codex',
+    executable: 'codex',
     verifiedByHuman: false
   };
 }
@@ -50,7 +50,7 @@ describe('Mission Control coordination', () => {
     expect(extractStructuredJson(wrapped)).toMatchObject({ decision: 'APPROVE' });
   });
 
-  it('routes rejected work back to Gemini and never marks human approval satisfied', async () => {
+  it('routes rejected work back to the specialist and treats same-provider review as non-independent', async () => {
     const dir = await mkdtemp(path.join(os.tmpdir(), 'usv-mission-control-'));
     tempDirs.push(dir);
     const storePath = path.join(dir, 'state.json');
@@ -97,17 +97,18 @@ describe('Mission Control coordination', () => {
       maxReviewCycles: 2
     });
 
-    expect(result.state).toBe('TECHNICALLY_REVIEWED');
+    expect(result.state).toBe('READY_FOR_HUMAN_REVIEW');
     expect(result.reviewCycles).toBe(2);
     expect(result.manifest?.humanApprovalSatisfied).toBe(false);
     expect(result.manifest?.specialistAgentId).toBe('REQ-TRC-02');
+    expect(result.manifest?.reviewer.independentProvider).toBe(false);
     expect(calls.map(call => call.role)).toEqual([
       'orchestrator', 'worker', 'reviewer', 'worker', 'reviewer'
     ]);
     expect(calls[3].prompt).toContain('Explicitly state that no requirement was invented.');
 
     const persisted = JSON.parse(await readFile(storePath, 'utf8'));
-    expect(persisted.tasks['MC-TEST-001'].state).toBe('TECHNICALLY_REVIEWED');
+    expect(persisted.tasks['MC-TEST-001'].state).toBe('READY_FOR_HUMAN_REVIEW');
     expect(persisted.tasks['MC-TEST-001'].evidenceManifest.humanApprovalSatisfied).toBe(false);
   });
 
