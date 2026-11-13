@@ -12,6 +12,7 @@ import {
   type MissionTaskRecord,
   type MissionTaskState
 } from './MissionControlStore.ts';
+import { assertPinnedCleanGitRevision } from './GitRevisionGuard.ts';
 
 export interface MissionControlTaskInput {
   taskId: string;
@@ -79,6 +80,7 @@ export interface MissionControlResult {
 }
 
 export type MissionCliRunner = (input: PilotRequest) => Promise<PilotResult>;
+export type RevisionVerifier = (workingDirectory: string, commitSha: string) => Promise<unknown>;
 
 function digest(value: unknown): string {
   return crypto.createHash('sha256').update(
@@ -179,7 +181,8 @@ export class MissionControlCoordinator {
 
   constructor(
     private readonly store: MissionControlStore,
-    private readonly cliRunner: MissionCliRunner = runSubscriptionCli
+    private readonly cliRunner: MissionCliRunner = runSubscriptionCli,
+    private readonly revisionVerifier: RevisionVerifier = assertPinnedCleanGitRevision
   ) {}
 
   private async transition(taskId: string, state: MissionTaskState, extras: Record<string, unknown> = {}): Promise<void> {
@@ -281,9 +284,10 @@ export class MissionControlCoordinator {
 
     const spec = this.registry.requireAgent(input.specialistAgentId);
     const maxReviewCycles = Math.min(Math.max(input.maxReviewCycles ?? 2, 1), 3);
-    await this.store.createTask(baseTaskRecord(input));
 
     try {
+      await this.revisionVerifier(input.workingDirectory, input.commitSha);
+      await this.store.createTask(baseTaskRecord(input));
       await this.transition(input.taskId, 'ORCHESTRATING');
       const orchestration = await this.cliRunner({
         role: 'orchestrator',
