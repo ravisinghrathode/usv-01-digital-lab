@@ -165,7 +165,7 @@ def _limit_resources() -> None:
 
 def _host_solver_argv(argv: list[str]) -> list[str]:
     wrapper = os.environ.get("USV_OPENFOAM_WRAPPER", "").strip()
-    if wrapper and argv and argv[0] in ("simpleFoam", "checkMesh"):
+    if wrapper and argv and argv[0] in ("simpleFoam", "checkMesh", "blockMesh", "postProcess"):
         path = Path(wrapper)
         if not path.is_absolute() or not re.fullmatch(r"openfoam[0-9]+", path.name):
             raise RuntimeError("USV_OPENFOAM_WRAPPER must be an absolute versioned OpenFOAM wrapper")
