@@ -126,6 +126,46 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(result['keyResults']['forceCoefficients']['coefficients']['Cd'],0.012)
         self.assertTrue(Path(result['outputArtifactLocalPath']).is_file())
 
+    def test_openfoam_source_field_residual_control_and_declared_convergence(self):
+        manifest,digest=self._openfoam_fixture()
+        manifest['jobRef']='UNIT_FOAM_RESIDUAL_CONTROL'
+        manifest['qualityPlan']['initialResidualThresholds']={
+            'p':1e-4,'U*':1e-6,'k':1e-5,'omega':1e-5
+        }
+        manifest['qualityPlan']['requireSolverDeclaredConvergence']=True
+        def fake(args,**kwargs):
+            if args==['simpleFoam','-help']:
+                return subprocess.CompletedProcess(args,0,stdout='OpenFOAM-v2606',stderr='')
+            if args[0]=='checkMesh':
+                return subprocess.CompletedProcess(args,0,stdout=
+                    'Mesh non-orthogonality Max: 20 average: 5\nMax skewness = 0.4 OK.\n',stderr='')
+            return subprocess.CompletedProcess(args,0,stdout=
+                'Solving for Ux, Initial residual = 9e-7, Final residual = 8e-5, No Iterations 1\n'
+                'Solving for Uy, Initial residual = 8e-7, Final residual = 7e-5, No Iterations 1\n'
+                'Solving for p, Initial residual = 9e-5, Final residual = 8e-4, No Iterations 1\n'
+                'Solving for k, Initial residual = 9e-6, Final residual = 8e-4, No Iterations 1\n'
+                'Solving for omega, Initial residual = 8e-6, Final residual = 7e-4, No Iterations 1\n'
+                'SIMPLE solution converged in 321 iterations\n',stderr='')
+        result=run_staged_case(
+            manifest,self.staging,self.root/'work',{digest},runner=fake,
+            artifact_root=self.artifacts,isolation_mode='TEST_NO_NAMESPACE')
+        self.assertTrue(result['quality']['solverDeclaredConverged'])
+        self.assertEqual(result['quality']['convergedIterations'],321.0)
+        self.assertEqual(result['quality']['initialResidualsByField']['p'],9e-5)
+        # Deliberately demonstrate why final linear residual is not the SIMPLE criterion.
+        self.assertGreater(result['quality']['finalResidual'],manifest['qualityPlan']['residualThreshold'])
+
+        manifest2={**manifest,'jobRef':'UNIT_FOAM_NO_CONVERGENCE'}
+        def no_declaration(args,**kwargs):
+            p=fake(args,**kwargs)
+            if args==['simpleFoam']:
+                return subprocess.CompletedProcess(args,0,stdout=p.stdout.replace(
+                    'SIMPLE solution converged in 321 iterations\n',''),stderr='')
+            return p
+        with self.assertRaisesRegex(RuntimeError,'did not declare SIMPLE'):
+            run_staged_case(manifest2,self.staging,self.root/'work2',{digest},runner=no_declaration,
+                artifact_root=self.artifacts/'no-convergence',isolation_mode='TEST_NO_NAMESPACE')
+
     def test_openfoam_rejects_mesh_or_residual_over_threshold(self):
         manifest,digest=self._openfoam_fixture()
         def bad_mesh(args,**kwargs):
