@@ -73,12 +73,12 @@ export const INITIAL_WORKSTREAMS: WorkstreamSummary[] = [
     code: 'MEC',
     name: 'Mechanical & Structural',
     lead: 'H. Richter (Structures Lead)',
-    status: 'Nominal',
+    status: 'Blocked',
     completionPercent: 31,
     openItemsCount: 6,
     openDecisionsCount: 1,
     openRisksCount: 2,
-    lastActivity: 'Marine 5083-H116 slamming panel load case DNV-RU-HSLC logged',
+    lastActivity: 'Structural baseline reconciliation pending: lifting load cases, CAD/FEA and material allowables unverified',
     description: 'Hull girder longitudinal strength, transverse frames, material database, component CAD registry, and FEA stress runs.'
   },
   {
@@ -446,11 +446,11 @@ export const INITIAL_SIMULATIONS: SimulationJob[] = [
     unitsAndReferenceFrame: 'SI (mm, N, MPa); Global ship coordinates.',
     assumptions: 'Marine Aluminum 5083-H116 isotropic linear elastic behavior below yield (E=71 GPa, Poisson=0.33).',
     computeEnvironment: 'Engineering Workstation Linux (32 threads, 64GB RAM).',
-    runStatus: 'Completed',
-    outputFiles: 'slam_stress_von_mises.rmed, displacement_field.vtu',
-    resultsSummary: 'Peak Von Mises stress occurs at chine stiffener intersection. Maximum stress ratio to yield: [TBD ratio]. No plastic deformation predicted for design load case.',
+    runStatus: 'Draft',
+    outputFiles: 'TBD — illustrative filenames are not evidence of completed simulation',
+    resultsSummary: 'TBD — synthetic example only; no verified solver outputs, mesh convergence, stress or load path evidence.',
     reviewer: 'H. Richter (Structures Lead)',
-    validationStatus: 'Complies with DNV-RU-HSLC allowable stress margins.',
+    validationStatus: 'ILLUSTRATIVE ONLY — NO VERIFIED FEA / NO CLASS-RULE COMPLIANCE EVIDENCE.',
     isIllustrative: true,
     createdAt: '2026-11-04',
     updatedAt: '2026-11-07'
@@ -648,15 +648,15 @@ export const INITIAL_RESISTANCE: ResistanceEstimate[] = [
 ];
 
 export const INITIAL_MATERIALS: MaterialRecord[] = [
-  { id: 'MAT-01', materialName: 'Marine Aluminum 5083-H116', specification: 'ASTM B928 / DNV Grade 5083', yieldStrengthMPa: 215, ultimateStrengthMPa: 305, densityKgM3: 2660, corrosionResistanceMarine: 'Excellent in saltwater; highly resistant to intergranular attack', notes: 'Authoritative choice for primary hull bottom plating and stringers', isIllustrative: true },
-  { id: 'MAT-02', materialName: 'Marine Aluminum 6061-T6 Extrusion', specification: 'ASTM B221 / DNV Grade 6061', yieldStrengthMPa: 240, ultimateStrengthMPa: 290, densityKgM3: 2700, corrosionResistanceMarine: 'Good; requires marine anodizing or conversion coating', notes: 'Selected for internal equipment rack mounting and structural beams', isIllustrative: true },
-  { id: 'MAT-03', materialName: 'Carbon Fiber / Epoxy Pre-Preg', specification: 'High-Modulus Toray T700 / Marine Epoxy', yieldStrengthMPa: 450, ultimateStrengthMPa: 620, densityKgM3: 1550, corrosionResistanceMarine: 'Inert; requires galvanic isolation when contacting aluminum', notes: 'Selected for composite hull skin and sensor mast to preserve transverse GM', isIllustrative: false }
+  { id: 'MAT-01', materialName: 'Marine Aluminum 5083-H116', specification: 'ASTM B928 / DNV Grade 5083', yieldStrengthMPa: 215, ultimateStrengthMPa: 305, densityKgM3: 2660, corrosionResistanceMarine: 'Excellent in saltwater; highly resistant to intergranular attack', notes: 'ILLUSTRATIVE candidate only; source MTR, weld-zone properties and approved structural material selection TBD', isIllustrative: true },
+  { id: 'MAT-02', materialName: 'Marine Aluminum 6061-T6 Extrusion', specification: 'ASTM B221 / DNV Grade 6061', yieldStrengthMPa: 240, ultimateStrengthMPa: 290, densityKgM3: 2700, corrosionResistanceMarine: 'Good; requires marine anodizing or conversion coating', notes: 'ILLUSTRATIVE candidate only; not a released material selection', isIllustrative: true },
+  { id: 'MAT-03', materialName: 'Carbon Fiber / Epoxy Pre-Preg', specification: 'High-Modulus Toray T700 / Marine Epoxy', yieldStrengthMPa: 450, ultimateStrengthMPa: 620, densityKgM3: 1550, corrosionResistanceMarine: 'Inert; requires galvanic isolation when contacting aluminum', notes: 'ILLUSTRATIVE candidate only; no validated laminate allowables or layup design', isIllustrative: true }
 ];
 
 export const INITIAL_LOAD_CASES: LoadCaseRecord[] = [
-  { id: 'LC-01', title: 'Bottom Slamming Pressure on Keel Plating (ISO 12215-5)', loadType: 'Bottom Slamming', governingStandard: 'ISO 12215-5 / DNV-RU-HSLC', designPressureOrForce: '45.0 kPa', safetyFactorTarget: 2.2, feaStatus: 'Solved - Criteria Met (7.0mm Plating)' },
-  { id: 'LC-02', title: 'Hull Girder Sagging & Hogging Bending', loadType: 'Hull Girder Bending', governingStandard: 'IMO HSC Code / DNV', designPressureOrForce: '14.2 kN*m', safetyFactorTarget: 2.0, feaStatus: 'Solved - Criteria Met' },
-  { id: 'LC-03', title: 'Single-Point Crane Lift Acceleration', loadType: 'Crane Lift', governingStandard: 'ISO 12215-6', designPressureOrForce: '2.5g Dynamic Factor', safetyFactorTarget: 3.0, feaStatus: 'Solved - Criteria Met' }
+  { id: 'LC-01', title: 'Bottom slamming pressure and local hull panel integrity', loadType: 'Bottom Slamming', governingStandard: 'TBD — applicability of ISO 12215-5 / class rules under review', designPressureOrForce: 'TBD — no approved pressure field', safetyFactorTarget: 2.2, feaStatus: 'TBD — illustrative screening only' },
+  { id: 'LC-02', title: 'Hull-girder hogging and sagging bending', loadType: 'Hull Girder Bending', governingStandard: 'TBD — applicable hull structure design basis', designPressureOrForce: 'TBD — requires geometry, weights and wave design loads', safetyFactorTarget: 2.0, feaStatus: 'TBD — no verified global FEA' },
+  { id: 'LC-03', title: 'Crane lift and asymmetric sling / connection loads', loadType: 'Crane Lift', governingStandard: 'TBD — lifting equipment, national law and approved rigging basis', designPressureOrForce: 'TBD — handling mass, dynamic factor, CG and point shares unapproved', safetyFactorTarget: 3.0, feaStatus: 'TBD — lifting points not released' }
 ];
 
 export const INITIAL_POWER_LOADS: PowerLoadItem[] = [
