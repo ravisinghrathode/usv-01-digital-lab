@@ -51,7 +51,11 @@ npm run dev
 3. **Unknowns as TBD:** Never fabricate vessel particulars. All open parameters are preserved as `TBD`.
 4. **Deterministic Separation:** Deterministic naval calculations are strictly separated from probabilistic LLM synthesis.
 
-## ChatGPT-only agent runtime (NOT certified vessel design)\n\nAll 26 canonical agent role definitions now use the operator-authenticated ChatGPT Codex CLI (`codex_cli`) for AI synthesis. The CLI must be installed and signed in on the execution machine. Set `AI_REVIEW_PROVIDER=codex_cli`, `USV_SUBSCRIPTION_PILOT=enabled` and `USV_ALLOW_PAID_AI_API=false` before invoking live agents. The repository does not itself deploy or continuously run the agents. If authentication or runtime is unavailable, live agent tasks fail rather than using Gemini. All outputs remain unverified until independent review and engineering acceptance.\n\n## Two-stage authority model
+## ChatGPT-only agent runtime (NOT certified vessel design)
+
+All 26 canonical agent role definitions now use the operator-authenticated ChatGPT Codex CLI (`codex_cli`) for AI synthesis. The CLI must be installed and signed in on the execution machine. Set `AI_REVIEW_PROVIDER=codex_cli`, `USV_SUBSCRIPTION_PILOT=enabled` and `USV_ALLOW_PAID_AI_API=false` before invoking live agents. The repository does not itself deploy or continuously run the agents. If authentication or runtime is unavailable, live agent tasks fail rather than using Gemini. All outputs remain unverified until independent review and engineering acceptance.
+
+## Two-stage authority model
 
 **Lab commissioning:** The existing subscription-pilot opt-in permits bounded, non-operational ChatGPT/Codex research even while vessel particulars are TBD. This is not vessel-baseline approval and does not authorize physical actuators or an engineering release.
 
