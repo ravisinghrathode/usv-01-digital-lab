@@ -159,18 +159,28 @@ def _wrapped_argv(argv: list[str], isolation_mode: str) -> list[str]:
         return argv
     raise ValueError("Unsupported network-isolation mode")
 
+def _solver_environment(case: Path) -> dict[str, str]:
+    # Do not inherit the host environment wholesale. OpenFOAM's Debian/Ubuntu
+    # binaries require WM_PROJECT_DIR to find their shipped etc dictionaries.
+    # The path is operator-controlled, never supplied by the case archive/API.
+    wm_project_dir = os.environ.get("USV_OPENFOAM_PROJECT_DIR", "/usr/share/openfoam")
+    if not os.path.isabs(wm_project_dir) or ".." in Path(wm_project_dir).parts:
+        raise RuntimeError("USV_OPENFOAM_PROJECT_DIR must be an absolute trusted host path")
+    return {
+        "PATH": os.environ.get("USV_SOLVER_BIN_PATH", "/usr/bin:/bin"),
+        "HOME": str(case), "LC_ALL": "C",
+        "WM_PROJECT_DIR": wm_project_dir,
+        "OMP_NUM_THREADS": os.environ.get("USV_SOLVER_OMP_THREADS", "2"),
+        "OPENBLAS_NUM_THREADS": os.environ.get("USV_SOLVER_BLAS_THREADS", "2"),
+    }
+
 def _run(runner: Callable[..., subprocess.CompletedProcess], argv: list[str], case: Path,
          timeout: int | None = None, isolation_mode: str = "UNSHARE_NET") -> subprocess.CompletedProcess:
     effective_timeout = resource_policy()["wallTimeoutSeconds"] if timeout is None else timeout
     return runner(
         _wrapped_argv(argv, isolation_mode), cwd=str(case), capture_output=True,
         text=True, timeout=effective_timeout, check=False, preexec_fn=_limit_resources,
-        env={
-            "PATH": os.environ.get("USV_SOLVER_BIN_PATH", "/usr/bin:/bin"),
-            "HOME": str(case), "LC_ALL": "C",
-            "OMP_NUM_THREADS": os.environ.get("USV_SOLVER_OMP_THREADS", "2"),
-            "OPENBLAS_NUM_THREADS": os.environ.get("USV_SOLVER_BLAS_THREADS", "2"),
-        }
+        env=_solver_environment(case)
     )
 
 def _version_command(family: str) -> list[str]:
