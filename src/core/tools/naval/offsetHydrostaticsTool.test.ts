@@ -51,6 +51,20 @@ describe('Offset-integrated hydrostatics tool registration and permissions', () 
     expect(missingSource.error).toContain('Input Schema Validation Failed');
   });
 
+  it('provides the coupled heave/trim screen through a permission-restricted registry tool', async () => {
+    const valid = sampleInput();
+    valid.load.lcgM = 6;
+    const result = await registry.executeTool('TOOL-TRIMMED-HYDROSTATICS-01', valid, ['CALCULATION_EXEC']);
+    expect(result.success, JSON.stringify(result.validationErrors ?? result.error)).toBe(true);
+    expect(result.output.method).toBe('COUPLED_HEAVE_TRIM_AT_PRESCRIBED_HEEL');
+    expect(result.output.engineeringComplianceValidated).toBe(false);
+    expect(result.output.results[0].trimDeg).toBeGreaterThan(0);
+    expect(Math.abs(result.output.results[0].longitudinalMomentResidualM)).toBeLessThan(1e-7);
+    const denied = await registry.executeTool('TOOL-TRIMMED-HYDROSTATICS-01', valid, ['READ_ONLY']);
+    expect(denied.success).toBe(false);
+    expect(denied.error).toContain('Permission Denied');
+  });
+
   it('fails safely on unphysical displacement instead of asserting valid stability', async () => {
     const overloaded = sampleInput();
     overloaded.load.massKg = 25000;

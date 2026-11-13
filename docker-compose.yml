@@ -1,0 +1,61 @@
+services:
+  usv-lab:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: usv-01-digital-lab:local
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      AI_REVIEW_PROVIDER: deterministic
+      USV_ALLOW_PAID_AI_API: "false"
+      USV_SUBSCRIPTION_PILOT: disabled
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - usv_lab_data:/app/data
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/api/auth/setup-status').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  mission-control-tests:
+    profiles: ["ci"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: build
+    environment:
+      NODE_ENV: test
+      AI_REVIEW_PROVIDER: deterministic
+      USV_ALLOW_PAID_AI_API: "false"
+      USV_SUBSCRIPTION_PILOT: disabled
+      VITEST: "true"
+    command:
+      - npm
+      - run
+      - mission-control:test
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  usv_lab_data:

@@ -56,29 +56,29 @@ export const PropulsionView: React.FC<PropulsionViewProps> = ({
       <div className="bg-slate-900 border border-slate-800 rounded p-4 space-y-3">
         <h3 className="text-xs font-semibold text-slate-200 pb-2 border-b border-slate-800 flex items-center gap-2">
           <Gauge className="w-4 h-4 text-teal-400" />
-          <span>Active Propulsion Architecture Baseline</span>
+          <span>Propulsion Architecture Proposal — Not Released</span>
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3 font-mono text-xs">
           <div className="p-3 rounded bg-slate-950 border border-slate-800">
             <span className="text-slate-500 text-[10px]">DRIVE CONFIGURATION</span>
-            <strong className="text-teal-400 block mt-1">Twin Electric Pods / Steerable Thrusters</strong>
-            <span className="text-[11px] text-slate-400 block mt-1">Differential thrust enables 360° low-speed station keeping without dedicated rudder.</span>
+            <strong className="text-teal-400 block mt-1">Twin electric drives — proposed</strong>
+            <span className="text-[11px] text-slate-400 block mt-1">Differential thrust is a proposed control strategy. Station-keeping authority is not yet verified.</span>
           </div>
           <div className="p-3 rounded bg-slate-950 border border-slate-800">
             <span className="text-slate-500 text-[10px]">MOTOR TOPOLOGY</span>
-            <strong className="text-slate-200 block mt-1">Brushless PMSM Liquid-Cooled</strong>
-            <span className="text-[11px] text-slate-400 block mt-1">Direct drive to eliminate gearbox mechanical losses and acoustic underwater signature.</span>
+            <strong className="text-slate-200 block mt-1">PMSM candidate; cooling TBD</strong>
+            <span className="text-[11px] text-slate-400 block mt-1">Drive train, efficiency, acoustic emissions and heat rejection require supplier and test evidence.</span>
           </div>
           <div className="p-3 rounded bg-slate-950 border border-slate-800">
             <span className="text-slate-500 text-[10px]">MOTOR CONTINUOUS RATING</span>
             <strong className="text-amber-400 block mt-1">TBD kW</strong>
-            <span className="text-[11px] text-slate-400 block mt-1">Awaiting calibrated bare hull resistance curves (SIM-HYD-001).</span>
+            <span className="text-[11px] text-slate-400 block mt-1">RES-01 evidence gate: require validated resistance and efficiency across operating speeds before rating motors.</span>
           </div>
           <div className="p-3 rounded bg-slate-950 border border-slate-800">
             <span className="text-slate-500 text-[10px]">PROPELLER DIAMETER & PITCH</span>
             <strong className="text-amber-400 block mt-1">TBD mm / TBD mm</strong>
-            <span className="text-[11px] text-slate-400 block mt-1">Targeting minimum 20% cavitation inception margin at sprint throttle.</span>
+            <span className="text-[11px] text-slate-400 block mt-1">Cavitation/ventilation margin TBD until selected propulsor and test conditions are verified.</span>
           </div>
         </div>
       </div>
@@ -114,9 +114,9 @@ export const PropulsionView: React.FC<PropulsionViewProps> = ({
               </tr>
               <tr>
                 <td className="py-2 px-3 text-slate-200 font-bold">Material Specification</td>
-                <td className="py-2 px-3 text-slate-300">Nickel-Aluminum Bronze (NAB - Cu3)</td>
-                <td className="py-2 px-3 text-slate-400">ASTM B148 / DNV Grade Cu3</td>
-                <td className="py-2 px-3 text-slate-400">Material Mill Certificate</td>
+                <td className="py-2 px-3 text-slate-300">Material TBD — no approved propeller</td>
+                <td className="py-2 px-3 text-slate-400">Selected material and corrosion evidence TBD</td>
+                <td className="py-2 px-3 text-slate-400">Material qualification and mill certificate</td>
               </tr>
               <tr>
                 <td className="py-2 px-3 text-slate-200 font-bold">Cavitation Inception Speed</td>
@@ -132,7 +132,7 @@ export const PropulsionView: React.FC<PropulsionViewProps> = ({
       {/* Bill of Materials Items for Propulsion */}
       <div className="bg-slate-900 border border-slate-800 rounded p-4 text-xs font-mono">
         <h3 className="text-xs font-semibold text-slate-200 pb-3 border-b border-slate-800">
-          Propulsion Hardware Register
+          Propulsion Hardware Register — Candidate/Procurement Status Only
         </h3>
         <div className="space-y-2.5 mt-3 font-sans">
           {propulsionComponents.map((item) => (

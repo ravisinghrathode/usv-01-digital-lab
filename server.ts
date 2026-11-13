@@ -367,6 +367,48 @@ app.post('/api/auth/login', (req, res) => {
   res.status(result.statusCode).json(result.body);
 });
 
+// One-click Project Lead merge request: authenticated Director session triggers a
+// GitHub Actions workflow. This endpoint does NOT approve GitHub reviews, sign
+// engineering evidence or merge a PR directly; GitHub gates remain authoritative.
+app.post('/api/project-lead/merge-eligible', async (req, res) => {
+  const user = (req as any).user as AuthenticatedUser | undefined;
+  if (user?.role !== 'ENGINEERING_DIRECTOR' || user.userId !== 'usr-eng-dir-8841') {
+    return res.status(403).json({ success: false, error: 'Engineering Director session required.' });
+  }
+  const token = process.env.USV01_GITHUB_DISPATCH_TOKEN;
+  if (!token) {
+    return res.status(503).json({ success: false, error: 'Server is not configured with a GitHub Actions dispatch credential.' });
+  }
+  try {
+    const result = await fetch('https://api.github.com/repos/ravisinghrathode/usv-01-digital-lab/actions/workflows/project-lead-bulk-merge.yml/dispatches', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+        'Content-Type': 'application/json',
+        'User-Agent': 'USV-01-Mission-Control'
+      },
+      body: JSON.stringify({ ref: 'main' }),
+      signal: AbortSignal.timeout(15000)
+    });
+    if (result.status !== 204) {
+      console.error('GitHub workflow dispatch rejected:', result.status);
+      return res.status(502).json({ success: false, error: 'GitHub did not accept the merge request. Check workflow availability and dispatch token permissions.' });
+    }
+    console.info('Project Lead merge workflow dispatched', { userId: user.userId, at: new Date().toISOString() });
+    return res.status(202).json({
+      success: true,
+      status: 'DISPATCHED_NOT_MERGED',
+      message: 'Eligibility checks started. Only GitHub-approved, gate-cleared PRs can merge.',
+      url: 'https://github.com/ravisinghrathode/usv-01-digital-lab/actions/workflows/project-lead-bulk-merge.yml'
+    });
+  } catch (error) {
+    console.error('Project Lead merge dispatch unavailable:', error instanceof Error ? error.message : 'unknown');
+    return res.status(502).json({ success: false, error: 'Unable to contact GitHub.' });
+  }
+});
+
 app.get('/api/auth/session', (req, res) => {
   const user = (req as any).user;
   res.json({ success: true, user });

@@ -1,3 +1,5 @@
+import { isPaidAiApiAllowed } from './AiBillingPolicy.ts';
+
 export type ExecutionMode =
   | 'DETERMINISTIC_CALCULATION'
   | 'LIVE_AI_GENERATION'
@@ -115,6 +117,7 @@ export class GeminiProvider implements IModelProvider {
   }
 
   isAvailable(): boolean {
+    if (!isPaidAiApiAllowed()) return false;
     // In browser, Gemini is proxied through the server endpoint
     if (typeof window !== 'undefined') {
       return true;
@@ -123,6 +126,9 @@ export class GeminiProvider implements IModelProvider {
   }
 
   async generateText(request: ModelPromptRequest, config?: ModelConfig): Promise<ModelPromptResponse> {
+    if (!isPaidAiApiAllowed()) {
+      return await new DeterministicProvider().generateText(request, config);
+    }
     // Deployment override takes precedence over agent specs; enables coordinated
     // model migrations without editing all 26 agent definitions.
     const model =
@@ -394,6 +400,7 @@ export class OpenAIProvider implements IModelProvider {
   name = 'openai';
 
   isAvailable(): boolean {
+    if (!isPaidAiApiAllowed()) return false;
     const isConfigured =
       typeof process !== 'undefined' &&
       process.env?.AI_REVIEW_PROVIDER?.toLowerCase() === 'openai';
@@ -405,6 +412,9 @@ export class OpenAIProvider implements IModelProvider {
   }
 
   async generateText(request: ModelPromptRequest, config?: ModelConfig): Promise<ModelPromptResponse> {
+    if (!isPaidAiApiAllowed()) {
+      return await new DeterministicProvider().generateText(request, config);
+    }
     const apiKey = typeof process !== 'undefined' ? process.env?.OPENAI_API_KEY : undefined;
     if (!apiKey) {
       throw new Error('OPENAI_API_KEY environment variable is not configured.');
@@ -572,12 +582,19 @@ export function resolveConfiguredProvider(): 'gemini' | 'gemini_cli' | 'determin
   if (typeof process === 'undefined') return 'deterministic';
 
   const configured = process.env.AI_REVIEW_PROVIDER?.toLowerCase();
-  if (configured === 'gemini' || configured === 'gemini_cli' || configured === 'deterministic' || configured === 'ollama' || configured === 'openai') {
+  if (configured === 'deterministic' || configured === 'ollama' || configured === 'gemini_cli') {
+    return configured;
+  }
+  if ((configured === 'gemini' || configured === 'openai') && isPaidAiApiAllowed()) {
     return configured;
   }
 
-  // If Gemini API key is explicitly present, default to Gemini; otherwise default to deterministic
-  if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim().length > 0) {
+  // API-backed providers are opt-in only; merely having a key present must never enable billing.
+  if (
+    isPaidAiApiAllowed() &&
+    process.env.GEMINI_API_KEY &&
+    process.env.GEMINI_API_KEY.trim().length > 0
+  ) {
     return 'gemini';
   }
 

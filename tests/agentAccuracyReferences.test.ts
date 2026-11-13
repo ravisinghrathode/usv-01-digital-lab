@@ -35,15 +35,21 @@ describe('AGT-02 reproducible first-principles worked-example checks', () => {
   });
 
   it('checks independent unit conversion, Froude number and power identity', async () => {
+    // Test-only hypothetical resistance and efficiency, never project acceptance evidence.
     const r = await calc('TOOL-RESISTANCE-01', {
       lwlMeters: 10, beamMeters: 2.5, draftMeters: 0.6,
-      displacementTonnes: 5.5, speedKnots: 15, propulsiveEfficiencyEtaD: 0.65,
-      waterTempCelsius: 15
+      displacementTonnes: 5.5, speedKnots: 15,
+      documentedTotalResistanceKn: 4,
+      resistanceEvidenceRef: 'TEST-WORKED-RES-01',
+      propulsiveEfficiencyEtaD: 0.65,
+      efficiencyEvidenceRef: 'TEST-WORKED-ETA-01'
     });
     expect(r.success).toBe(true);
     expect(r.output.speedMps).toBeCloseTo(15 * 1852 / 3600, 2);
     expect(r.output.froudeNumberFn).toBeCloseTo(0.779, 2);
-    expect(r.output.shaftBrakePowerPbKw).toBeCloseTo(r.output.effectivePowerPeKw / 0.65, 0);
+    expect(r.output.effectivePowerPeKw).toBeCloseTo(4 * 15 * 1852 / 3600, 5);
+    expect(r.output.shaftBrakePowerPbKw).toBeCloseTo(4 * 15 * 1852 / 3600 / 0.65, 5);
+    expect(r.output.modelStatus).toBe('EVIDENCE_REFERENCED_UNVERIFIED');
     expect(r.output.engineeringComplianceValidated).toBe(false);
   });
 

@@ -37,18 +37,17 @@ describe('STAGE E: Deterministic Naval Engineering Tools', () => {
       beamMeters: 2.5,
       draftMeters: 0.6,
       displacementTonnes: 7.0,
-      speedKnots: 20.0,
-      propulsiveEfficiencyEtaD: 0.65,
-      waterTempCelsius: 15
+      speedKnots: 20.0
     };
 
     const res = await toolRegistry.executeTool('TOOL-RESISTANCE-01', input, ['CALCULATION_EXEC']);
     expect(res.success).toBe(true);
     expect(res.output.froudeNumberFn).toBeGreaterThan(1.0);
-    expect(res.output.hydrodynamicRegime).toBe('PLANING');
-    expect(res.output.totalResistanceKn).toBeGreaterThan(0);
-    expect(res.output.effectivePowerPeKw).toBeGreaterThan(0);
-    expect(res.output.shaftBrakePowerPbKw).toBeGreaterThan(res.output.effectivePowerPeKw);
+    expect(res.output.hydrodynamicRegime).toBe('UNVERIFIED');
+    expect(res.output.totalResistanceKn).toBeNull();
+    expect(res.output.effectivePowerPeKw).toBeNull();
+    expect(res.output.shaftBrakePowerPbKw).toBeNull();
+    expect(res.output.modelStatus).toBe('INSUFFICIENT_EVIDENCE');
   });
 
   it('should calculate mass properties and composite center of gravity', async () => {

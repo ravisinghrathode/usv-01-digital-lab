@@ -1,7 +1,9 @@
 /**
- * USV-01 Digital Engineering Lab — Naval Architecture & Hydrodynamics Solvers
- * Authoritative mathematical implementations of classical Savitsky planing equations,
- * hydrostatic stability GZ curves, and IMO Resolution MSC.267(85) audit integrals.
+ * USV-01 Digital Engineering Lab — EXPERIMENTAL naval visualizations.
+ * IMPORTANT: The planing routine below is a legacy uncalibrated heuristic, not
+ * a classical Savitsky trim/force/moment equilibrium solver. Its apparent
+ * resistance, trim, transition and power outputs are NOT engineering predictions.
+ * Do not use for design release, motor sizing, acceptance or certification.
  */
 
 export interface SavitskyInputs {
@@ -28,6 +30,8 @@ export interface SpeedResistancePoint {
 }
 
 export interface SavitskyResult {
+  engineeringComplianceValidated: false;
+  modelStatus: 'UNVALIDATED_HEURISTIC';
   inputs: SavitskyInputs;
   curve: SpeedResistancePoint[];
   planingSpeedKnots: number; // Speed where Fn_b >= 1.0
@@ -36,7 +40,7 @@ export interface SavitskyResult {
 }
 
 /**
- * Solve Savitsky (1964) planing resistance curve across speed spectrum (2 to 40 knots)
+ * Plot a legacy illustrative planing heuristic across 4 to 40 knots; NOT Savitsky validation
  */
 export function calculateSavitskyPlaning(inputs: SavitskyInputs): SavitskyResult {
   const g = 9.80665;
@@ -137,6 +141,8 @@ export function calculateSavitskyPlaning(inputs: SavitskyInputs): SavitskyResult
   }
 
   return {
+    engineeringComplianceValidated: false,
+    modelStatus: 'UNVALIDATED_HEURISTIC',
     inputs,
     curve,
     planingSpeedKnots: Math.round(1.0 * Math.sqrt(g * b) * 1.94384),
@@ -176,8 +182,10 @@ export interface ImoStabilityAudit {
     area30To40Pass: boolean;
     gm0Pass: boolean;
     gzMaxPass: boolean;
-    overallPass: boolean;
+    overallPass: boolean; // always false for heuristic GZ: not a regulatory pass
+    screeningThresholdsMet: boolean;
   };
+  engineeringComplianceValidated: false;
 }
 
 export interface StabilityResult {
@@ -190,10 +198,20 @@ export interface StabilityResult {
 }
 
 /**
- * Solve Hydrostatic Stability, Righting Arm Curve GZ(theta), and IMO MSC.267(85) audit
+ * Illustrative hydrostatic estimates only; no validated hull geometry, downflooding,
+ * free-surface or approved loading cases. Never assert statutory compliance.
  */
 export function calculateGZStability(inputs: StabilityInputs): StabilityResult {
-  if (!inputs.beamM || !inputs.draftM || !inputs.displacementKg) {
+  if (!Object.values(inputs).every(v => typeof v === 'number' && Number.isFinite(v))) {
+    throw new Error('Stability screening requires finite numerical inputs');
+  }
+  if (inputs.beamM < 0 || inputs.draftM < 0 || inputs.depthM < 0 ||
+      inputs.displacementKg < 0 || inputs.vcgM < 0 || inputs.blockCoeffCb < 0 ||
+      inputs.blockCoeffCb > 1) {
+    throw new Error('Negative geometry/mass/CG or invalid Cb is not physically admissible');
+  }
+  if (!inputs.beamM || !inputs.draftM || !inputs.displacementKg ||
+      !inputs.depthM || !inputs.blockCoeffCb || inputs.depthM <= inputs.draftM) {
     const curve: GZPoint[] = [];
     for (let deg = 0; deg <= 60; deg += 2) {
       curve.push({
@@ -221,8 +239,10 @@ export function calculateGZStability(inputs: StabilityInputs): StabilityResult {
           area30To40Pass: false,
           gm0Pass: false,
           gzMaxPass: false,
-          overallPass: false
-        }
+          overallPass: false,
+          screeningThresholdsMet: false
+        },
+        engineeringComplianceValidated: false
       },
       kmM: 0,
       bmM: 0,
@@ -242,12 +262,12 @@ export function calculateGZStability(inputs: StabilityInputs): StabilityResult {
   const KB = T * (5 / 6 - Cb / 3);
 
   // Transverse Metacentric Radius: BM = IT / nabla ≈ B^2 / (11.4 * T * Cb)
-  const BM = (B * B) / Math.max(11.4 * T * Cb, 0.5);
+  const BM = (B * B) / (11.4 * T * Cb);
   const KM = KB + BM;
   const GM0 = KM - KG;
 
   // Deck edge immersion angle: theta_deck = arctan(2 * (D - T) / B)
-  const freeboard = Math.max(D - T, 0.1);
+  const freeboard = D - T;
   const thetaDeckRad = Math.atan((2 * freeboard) / B);
   const deckEdgeAngleDeg = Math.round((thetaDeckRad * 180) / Math.PI);
 
@@ -268,7 +288,7 @@ export function calculateGZStability(inputs: StabilityInputs): StabilityResult {
       gz = gzAtDeck * Math.cos(anglePastDeck) - (KG - D * 0.5) * Math.sin(anglePastDeck) * 0.4;
     }
 
-    gz = Math.max(gz, -0.2); // avoid wild negatives
+    // Preserve negative righting arms: clipping would hide an unsafe estimate.
 
     curve.push({
       heelDeg: deg,
@@ -302,13 +322,15 @@ export function calculateGZStability(inputs: StabilityInputs): StabilityResult {
     }
   }
 
-  // IMO Resolution MSC.267(85) intact stability code criteria checks:
+  // Illustrative comparison with common numerical thresholds only; the
+  // applicable code and its full acceptance criteria have NOT been established.
   const area0To30Pass = area0To30 >= 0.055;
   const area0To40Pass = area0To40 >= 0.09;
   const area30To40Pass = area30To40 >= 0.03;
   const gm0Pass = GM0 >= 0.15;
   const gzMaxPass = maxGZ >= 0.2 && maxAngle >= 25;
-  const overallPass = area0To30Pass && area0To40Pass && area30To40Pass && gm0Pass && gzMaxPass;
+  const screeningThresholdsMet = area0To30Pass && area0To40Pass && area30To40Pass && gm0Pass && gzMaxPass;
+  const overallPass = false; // heuristic screening cannot certify a vessel
 
   return {
     inputs,
@@ -330,8 +352,10 @@ export function calculateGZStability(inputs: StabilityInputs): StabilityResult {
         area30To40Pass,
         gm0Pass,
         gzMaxPass,
-        overallPass
-      }
+        overallPass,
+        screeningThresholdsMet
+      },
+      engineeringComplianceValidated: false
     }
   };
 }
@@ -344,5 +368,5 @@ function trapezoidalIntegral(points: GZPoint[]): number {
     const avgGz = (points[i].gzM + points[i - 1].gzM) / 2;
     sum += avgGz * dTheta;
   }
-  return Math.max(sum, 0);
+  return sum; // negative dynamic stability area must not be silently hidden
 }

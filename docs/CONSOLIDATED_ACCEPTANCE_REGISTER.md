@@ -11,10 +11,10 @@
 | GOV-02 | Independent technical scrutiny | Named independent reviewer + recorded findings | Not substitutable by deterministic static output |
 | AGT-01 | All 26 registered roles match canonical code | Machine-readable registry reconciliation | Readiness API available; operational proof pending |
 | AGT-02 | Each agent produces reproducible domain results | Golden input/output tests, actual provider/tool traces | Pending capability-by-capability validation |
-| HYD-01 | Hydrostatics / stability | Approved hull offsets, hydrostatic tables, verified KG, GZ curves, loading cases, reference comparison | Preliminary only |
-| RES-01 | Resistance / power | Actual hull geometry, wetted area, vessel regime, towing tank/CFD or accepted reference dataset with uncertainty | Preliminary only |
+| HYD-01 | Hydrostatics / stability | Approved source-referenced CAD/offsets, verified mass/KG and loading cases, equilibrium trim/GZ and downflooding, independent benchmark tolerances, reviewer and Director digest | PR #40 software merged; 425 tests passed at merger. Self-audit PR #46 corrects trim screening and machine-readable evidence ledger. **PHYSICAL ACCEPTANCE BLOCKED** until external evidence is independently verified |
+| RES-01 | Resistance / power and twin-electric propulsion | Controlled hull offsets, appended resistance curve with uncertainty, installed pod/thrust/shaft/thermal/energy maps, matched-power VVP-001 sea trials and independent approval | Unsafe numerical inference fixed on proposed PR #39; physical evidence and review remain open. Evidence intake and checks: `docs/RES01_RESISTANCE_PROPULSION_TEST_PROCEDURE.md` and `src/core/verification/ResistancePropulsionEvidence.ts` |
 | STR-01 | Structures | Load envelopes, class-rule citations, FEA correlations, fatigue and buckling | Pending |
-| AUT-01 | Safety-critical autonomy | Non-actuating COLREG screen, synthetic sensor evidence and advisory SIL replay in PR #41; full closed-loop SIL, physical HIL, qualified independent review, regulated sea trials and Director release evidence required | Software controls implemented; physical and governance acceptance OPEN |
+| AUT-01 | Safety-critical autonomy | Non-actuating COLREG screen, synthetic sensor evidence and advisory SIL replay in PR #41; full closed-loop SIL, physical HIL, qualified independent review, regulated sea trials and Director release evidence required | Software controls merged, but PR #41 final governance check failed (NC Issue #43); engineering release HOLD, physical and qualified review OPEN |
 | MAR-01 | Marine systems integration | Launch/recovery loads, acoustics wet-end, thermal, corrosion/fouling, condensation/bilge evidence | Pending |
 | INT-01 | Google AI Studio source sync | Live deployed revision/commit digest matching accepted GitHub SHA | Not yet observed |
 | INT-02 | Google Drive | Authenticated read/write test of controlled project artifact and role controls | Not yet observed |
@@ -28,6 +28,8 @@
 3. Domain validation requires traceable reference data; fabricated validation values, mock model output, and assumed KG are never acceptance evidence.
 4. External connection readiness requires authenticated handshake and matching commit provenance. A configured UI button or local interface is insufficient.
 5. A human engineering authority must verify acceptance material; AI agents may prepare and check evidence but cannot sign on their behalf.
+
+**RES-01 acceptance status:**The new numeric screen, if supplied with externally obtained measurements, reports `NUMERIC_PASS_UNCERTIFIED` rather than automatic closure. Do not interpret a metadata hash, GitHub CI green Stage B, or entered test numbers as proof of engineering approval. PR #39 requires independent expert verification and final source-digest-bound human sign-off.
 
 ## Follow-up evidence collection
 
