@@ -1,0 +1,165 @@
+{
+  "schemaVersion": 1,
+  "recordType": "SOURCE_PINNED_THIRD_PARTY_INVESTIGATION",
+  "status": "PINNED_SOURCE_INSPECTED_ADAPTER_PROPOSED_NOT_STAGED_OR_EXECUTED",
+  "id": "fossen-python-vehicle-simulator",
+  "createdDate": "2026-11-14",
+  "upstream": {
+    "repository": "cybergalactic/PythonVehicleSimulator",
+    "url": "https://github.com/cybergalactic/PythonVehicleSimulator",
+    "pinnedCommit": "a93d1938ba1f78f2580c24c73f003091b2f03cd0",
+    "pinnedCommitUrl": "https://github.com/cybergalactic/PythonVehicleSimulator/tree/a93d1938ba1f78f2580c24c73f003091b2f03cd0",
+    "inspectedFileBlobShas": {
+      "src/python_vehicle_simulator/lib/gnc.py": "8a0054ad3f730b9250ed778e9c4bb99e7599f076",
+      "src/python_vehicle_simulator/vehicles/otter.py": "33fb2b7d38c78dc092097b32a9dcd3850a9258ad",
+      "README.md": "572d7c1efbac97d577047df6e463ce3e069922b9",
+      "LICENSE": "248f6fc115c7024230f89517a954ef9d04fdd8fe"
+    },
+    "upstreamDeclaredLicense": "MIT",
+    "licenseCompatibilityDecision": "TBD_PENDING_HUMAN_LICENSE_REVIEW",
+    "upstreamDeclaredRuntimeDependencies": [
+      "Python >=3.10",
+      "numpy",
+      "matplotlib"
+    ],
+    "gitTreeSha": "TBD_PENDING_AUTOMATED_INTAKE"
+  },
+  "userValue": "Offline research comparison for A08 ship motions / A16-A17 marine GNC utilities; not for vessel control.",
+  "candidateToolId": "TOOL-EXT-FOSSEN-GNC-SIMULATION",
+  "agentReviewAssignments": [
+    "A08",
+    "A15",
+    "A16",
+    "A17",
+    "A18",
+    "A20",
+    "A21",
+    "A23",
+    "A24",
+    "A26"
+  ],
+  "trustedAdapter": "integrations/candidates/fossen_python_vehicle_simulator_adapter.py",
+  "adapterStatus": "STATIC_PROPOSAL; UPSTREAM_RUNTIME_NOT_TESTED",
+  "runnerImageDigest": "TBD",
+  "sandboxSecurityReview": "TBD",
+  "dependenciesCveScan": "TBD",
+  "sbom": "TBD",
+  "technicalMarineReferenceValidation": "TBD",
+  "independentReviewerApproval": "TBD",
+  "directorSoftwareAcceptance": "TBD",
+  "proposedReferenceCases": [
+    {
+      "id": "wrap-zero",
+      "input": {
+        "operation": "ssa",
+        "angleRad": 0
+      },
+      "expected": {
+        "value": 0
+      },
+      "absoluteTolerance": {
+        "value": 1e-12
+      }
+    },
+    {
+      "id": "wrap-threepi",
+      "input": {
+        "operation": "ssa",
+        "angleRad": 9.42477796076938
+      },
+      "expected": {
+        "value": -3.141592653589793
+      },
+      "absoluteTolerance": {
+        "value": 1e-12
+      }
+    },
+    {
+      "id": "sat-upper",
+      "input": {
+        "operation": "sat",
+        "value": 8,
+        "minimum": -2,
+        "maximum": 5
+      },
+      "expected": {
+        "value": 5
+      },
+      "absoluteTolerance": {
+        "value": 0
+      }
+    },
+    {
+      "id": "zero-rotation",
+      "input": {
+        "operation": "rzyx",
+        "rollRad": 0,
+        "pitchRad": 0,
+        "yawRad": 0
+      },
+      "expected": {
+        "r00": 1,
+        "r01": 0,
+        "r02": 0,
+        "r10": 0,
+        "r11": 1,
+        "r12": 0,
+        "r20": 0,
+        "r21": 0,
+        "r22": 1
+      },
+      "absoluteTolerance": {
+        "r00": 1e-12,
+        "r01": 1e-12,
+        "r02": 1e-12,
+        "r10": 1e-12,
+        "r11": 1e-12,
+        "r12": 1e-12,
+        "r20": 1e-12,
+        "r21": 1e-12,
+        "r22": 1e-12
+      }
+    },
+    {
+      "id": "skew-matrix",
+      "input": {
+        "operation": "smtrx",
+        "vector": [
+          1,
+          2,
+          3
+        ]
+      },
+      "expected": {
+        "s01": -3,
+        "s02": 2,
+        "s10": 3,
+        "s12": -1,
+        "s20": -2,
+        "s21": 1
+      }
+    }
+  ],
+  "readiness": {
+    "metadata": "GITHUB_SOURCE_INSPECTED",
+    "pinnedSha": "VERIFIED_VIA_GITHUB_CONNECTED_SOURCE",
+    "exactTreeStaged": false,
+    "codeExecuted": false,
+    "upstreamTestsRun": false,
+    "benchmarksPassed": false,
+    "integrationProposalOnly": true,
+    "registryModified": false,
+    "engineeringApproved": false,
+    "vesselControlAuthorized": false
+  },
+  "followUp": [
+    "Resolve exact Git tree via repository intake and stage on a disposable evaluation host",
+    "Build/review adapter image and record real immutable OCI SHA256 image digest; do not invent digest",
+    "Resolve and lock Python dependencies with checksum/SBOM/CVE assessment",
+    "Run adapter against pinned upstream checkout in an isolated, offline environment",
+    "Compare independent analytic GNC cases; add marine motion benchmark against independently accepted sources",
+    "Record source and image provenance, license findings, simulation limitations, independent A15/A23 review",
+    "Prepare protected tool-registration PR only after evidence gate; never auto-deploy"
+  ],
+  "governanceNotice": "Research-only. Does not authorize vessel parameters, actuators, deployment, code adoption, or baseline release."
+}
