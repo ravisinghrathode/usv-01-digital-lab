@@ -14,6 +14,7 @@
     "verify": "tsx scripts/verify-usv01.ts",
     "chatgpt:verify": "tsx scripts/chatgpt-verify.ts",
     "acceptance:campaign": "tsx scripts/run-acceptance-campaign.ts",
+    "evidence:gate0": "tsx scripts/run-evidence-decision-gate.ts",
     "acceptance:accuracy": "tsx scripts/assess-agent-accuracy.ts",
     "acceptance:agt02-audit": "tsx scripts/run-agent-accuracy-audit.ts",
     "acceptance:numerical": "vitest run tests/independentNumericalOracles.test.ts",
