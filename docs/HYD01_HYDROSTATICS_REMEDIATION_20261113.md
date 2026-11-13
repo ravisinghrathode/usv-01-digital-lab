@@ -57,3 +57,11 @@ An internal critique identified the following remediations:
 - Automated analytical trim and negative tests are not independent hydrostatic-software validation. Actual 3D CAD/offset provenance, station-convergence study, all load cases, downflooding, heel/trim trials, independent correlation and approval remain mandatory.
 
 **Numerical integration caveat:** The solver trapezoidally integrates cross-sectional properties across stations. It is a section-based screening approximation and cannot establish geometry closure between stations, appendage buoyancy, physical hull watertightness, or cross-checks against a second certified solver.
+
+## Critical independent finding: sample project records impersonated approved engineering
+
+The repository had `INITIAL_PROJECT.governanceState = Approved`, `INITIAL_NAVAL_PARTICULARS` claiming a verified 11.2 m, 6.2-tonne hull and GM = 1.32 m, fictional `INITIAL_WEIGHT_CG` numbers marked non-illustrative, `INITIAL_RESISTANCE` marked Verified, `INITIAL_LOAD_CASES` marked solved and `INITIAL_TEST_RECORDS` claiming a passed FAT with manufactured values and filenames. This was a **source-data integrity defect**, not a harmless dashboard cosmetic.
+
+PR #46 resets the default vessel particulars to TBD, project governance to Draft, removes unsupported baseline weight/resistance/passed-test records, demotes synthetic simulation outputs to unexecuted draft scenarios, and returns structure load cases to TBD. The 120 kg owner-directed concept from the separate proposed parameter YAML remains **a different, explicitly unapproved design alternative**; do not automatically transfer those values into this lab without a controlled vessel identity and source revision.
+
+`tests/seedBaselineIntegrity.test.ts` prevents regression. This only corrects misleading stored demo fixtures; it does not validate vessel measurements, assign engineers, or approve a design.
