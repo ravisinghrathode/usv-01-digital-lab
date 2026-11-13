@@ -202,6 +202,12 @@ export function isProtectedSoftwareAuthorityPath(file: string): boolean {
     p.startsWith('src/core/auth/') ||
     p.startsWith('src/core/governance/') ||
     p.startsWith('src/core/safety/') ||
+    p.startsWith('src/core/tools/') ||
+    p.startsWith('src/core/orchestrator/') ||
+    p.startsWith('src/core/registry/') ||
+    (p.startsWith('src/core/verification/') &&
+      /(Gate|Acceptance|Approval|Authority|Policy|Release|EvidenceDecision|VerifyUsv01|Safety|Autonomy|Permission)/i
+        .test(p.slice('src/core/verification/'.length))) ||
     p.startsWith('src/core/models/') ||
     p.startsWith('src/core/mission-control/') ||
     p.startsWith('src/core/verification/EngineeringCampaignAcceptance.') ||
