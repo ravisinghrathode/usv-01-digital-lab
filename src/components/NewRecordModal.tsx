@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
 import { X, Plus, ShieldAlert } from 'lucide-react';
-import { WorkstreamCode, RequirementPriority, EngineeringStatus, SimulationRunStatus } from '../types/engineering';
-
-type RecordKind = 'requirement' | 'decision' | 'risk' | 'simulation' | 'verification' | 'component';
+import {
+  WorkstreamCode,
+  RequirementPriority,
+  EngineeringStatus,
+  SimulationRunStatus,
+  RecordKind,
+  ModalRecordPayload
+} from '../types';
 
 interface NewRecordModalProps {
   isOpen: boolean;
   onClose: () => void;
   defaultSubsystem?: WorkstreamCode;
-  onCreateRecord: (kind: RecordKind, data: any) => void;
+  onCreateRecord: (payload: ModalRecordPayload) => void;
 }
 
 export const NewRecordModal: React.FC<NewRecordModalProps> = ({
@@ -55,95 +60,114 @@ export const NewRecordModal: React.FC<NewRecordModalProps> = ({
     e.preventDefault();
 
     if (kind === 'requirement') {
-      onCreateRecord('requirement', {
-        title,
-        description,
-        subsystemCode: subsystem,
-        priority,
-        category: 'Functional & Safety',
-        subsystemAllocation: subsystem,
-        verificationMethod: 'Test',
-        acceptanceCriteria: acceptanceCriteria || 'Quantitative criteria to be verified [TBD].',
-        owner,
-        revision: 'Rev 1.0',
-        status: 'Draft',
-        isIllustrative: false,
-        relatedDecisions: [],
-        relatedSimulations: [],
-        relatedVerifications: []
+      onCreateRecord({
+        kind: 'requirement',
+        data: {
+          title,
+          description,
+          subsystemCode: subsystem,
+          priority,
+          category: 'Functional & Safety',
+          subsystemAllocation: subsystem,
+          verificationMethod: 'Test',
+          acceptanceCriteria: acceptanceCriteria || 'Quantitative criteria to be verified [TBD].',
+          owner,
+          revision: 'Rev 1.0',
+          status: 'Draft',
+          isIllustrative: false,
+          relatedDecisions: [],
+          relatedSimulations: [],
+          relatedVerifications: []
+        }
       });
     } else if (kind === 'decision') {
-      onCreateRecord('decision', {
-        title,
-        subsystemCode: subsystem,
-        problemStatement,
-        alternatives: alternatives.split('\n').filter(Boolean),
-        rationale,
-        supportingEvidence: 'Engineering evaluation record pending',
-        consequences: 'Allocated to subsystem specification',
-        reviewer: owner,
-        approvalState: 'Draft',
-        revision: 'Rev 0.1',
-        isAiProposal: false,
-        isIllustrative: false
+      onCreateRecord({
+        kind: 'decision',
+        data: {
+          title,
+          subsystemCode: subsystem,
+          problemStatement,
+          alternatives: alternatives.split('\n').filter(Boolean),
+          rationale,
+          supportingEvidence: 'Engineering evaluation record pending',
+          consequences: 'Allocated to subsystem specification',
+          reviewer: owner,
+          approvalState: 'Draft',
+          revision: 'Rev 0.1',
+          isAiProposal: false,
+          isIllustrative: false
+        }
       });
     } else if (kind === 'risk') {
-      onCreateRecord('risk', {
-        subsystemCode: subsystem,
-        description,
-        probability,
-        impact,
-        riskScore: probability * impact,
-        mitigation,
-        owner,
-        status: 'Open',
-        isIllustrative: false
+      onCreateRecord({
+        kind: 'risk',
+        data: {
+          subsystemCode: subsystem,
+          description,
+          probability,
+          impact,
+          riskScore: probability * impact,
+          mitigation,
+          owner,
+          status: 'Open',
+          isIllustrative: false
+        }
       });
     } else if (kind === 'simulation') {
-      onCreateRecord('simulation', {
-        discipline: subsystem,
-        name: title,
-        geometryRevision: geometryRev,
-        inputConfiguration: 'Mesh parameters specified in run script',
-        solver,
-        boundaryConditions,
-        unitsAndReferenceFrame: 'SI; AP origin at transom baseline',
-        assumptions: description || 'Isothermal seawater model',
-        computeEnvironment: 'Dedicated HPC Cluster Node',
-        runStatus: 'Ready',
-        outputFiles: 'log.run, results.vtu',
-        resultsSummary: 'Job staged; awaiting run execution and peer review.',
-        reviewer: owner,
-        validationStatus: 'Draft Job Staged',
-        isIllustrative: false
+      onCreateRecord({
+        kind: 'simulation',
+        data: {
+          discipline: subsystem,
+          name: title,
+          geometryRevision: geometryRev,
+          inputConfiguration: 'Mesh parameters specified in run script',
+          solver,
+          boundaryConditions,
+          unitsAndReferenceFrame: 'SI; AP origin at transom baseline',
+          assumptions: description || 'Isothermal seawater model',
+          computeEnvironment: 'Dedicated HPC Cluster Node',
+          runStatus: 'Ready',
+          outputFiles: 'log.run, results.vtu',
+          resultsSummary: 'Job staged; awaiting run execution and peer review.',
+          reviewer: owner,
+          validationStatus: 'Draft Job Staged',
+          isIllustrative: false
+        }
       });
     } else if (kind === 'verification') {
-      onCreateRecord('verification', {
-        title,
-        subsystemCode: subsystem,
-        procedureSummary: description,
-        acceptanceCriteria,
-        instrumentationAndCalibration: 'Calibrated laboratory instruments per ISO 17025',
-        targetReqIds: [],
-        status: 'Draft',
-        owner,
-        isIllustrative: false
+      onCreateRecord({
+        kind: 'verification',
+        data: {
+          title,
+          subsystemCode: subsystem,
+          procedureSummary: description,
+          acceptanceCriteria,
+          instrumentationAndCalibration: 'Calibrated laboratory instruments per ISO 17025',
+          targetReqIds: [],
+          status: 'Draft',
+          owner,
+          isIllustrative: false
+        }
       });
     } else if (kind === 'component') {
-      onCreateRecord('component', {
-        subsystemCode: subsystem,
-        partNumber,
-        description: title,
-        manufacturer,
-        supplier,
-        technicalSpecs: description,
-        quantity,
-        unitCost,
-        leadTimeWeeks: '4 weeks',
-        procurementStatus: 'Specifying',
-        isIllustrative: false
+      onCreateRecord({
+        kind: 'component',
+        data: {
+          subsystemCode: subsystem,
+          partNumber,
+          description: title,
+          manufacturer,
+          supplier,
+          technicalSpecs: description,
+          quantity,
+          unitCost,
+          leadTimeWeeks: '4 weeks',
+          procurementStatus: 'Specifying',
+          isIllustrative: false
+        }
       });
     }
+
 
     onClose();
   };

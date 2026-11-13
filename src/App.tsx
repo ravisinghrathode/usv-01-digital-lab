@@ -63,8 +63,10 @@ import {
   KnowledgeNote,
   WorkstreamCode,
   EngineeringStatus,
-  SimulationRunStatus
-} from './types/engineering';
+  SimulationRunStatus,
+  ModalRecordPayload
+} from './types';
+
 
 import {
   INITIAL_PROJECT,
@@ -297,21 +299,23 @@ export default function App() {
   };
 
   // Modal new record dispatcher
-  const handleCreateRecordFromModal = (kind: string, data: any) => {
-    if (kind === 'requirement') {
-      handleAddRequirement(data);
-    } else if (kind === 'decision') {
+  // Modal new record dispatcher
+  const handleCreateRecordFromModal = (payload: ModalRecordPayload) => {
+    if (payload.kind === 'requirement') {
+      handleAddRequirement(payload.data);
+    } else if (payload.kind === 'decision') {
+      const { data } = payload;
       const newDec: DesignDecision = {
         id: `DEC-${data.subsystemCode || 'SYS'}-${Date.now().toString().slice(-3)}`,
         projectId: 'PRJ-USV-01',
-        subsystemCode: data.subsystemCode,
-        title: data.title,
-        problemStatement: data.problemStatement,
+        subsystemCode: data.subsystemCode || 'SYS',
+        title: data.title || 'Untitled Decision',
+        problemStatement: data.problemStatement || '',
         alternatives: data.alternatives || [],
-        rationale: data.rationale,
+        rationale: data.rationale || '',
         supportingEvidence: data.supportingEvidence || '',
         consequences: data.consequences || '',
-        reviewer: data.reviewer,
+        reviewer: data.reviewer || 'Lead Engineer',
         approvalState: data.approvalState || 'Draft',
         revision: 'Rev 0.1',
         isAiProposal: false,
@@ -326,17 +330,18 @@ export default function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newDec)
       }).catch(() => {});
-    } else if (kind === 'risk') {
+    } else if (payload.kind === 'risk') {
+      const { data } = payload;
       const newRisk: EngineeringRisk = {
         id: `RSK-${Date.now().toString().slice(-3)}`,
         projectId: 'PRJ-USV-01',
-        subsystemCode: data.subsystemCode,
-        description: data.description,
-        probability: data.probability,
-        impact: data.impact,
-        riskScore: data.riskScore,
-        mitigation: data.mitigation,
-        owner: data.owner,
+        subsystemCode: data.subsystemCode || 'SYS',
+        description: data.description || 'Unspecified risk',
+        probability: data.probability ?? 3,
+        impact: data.impact ?? 3,
+        riskScore: data.riskScore ?? ((data.probability ?? 3) * (data.impact ?? 3)),
+        mitigation: data.mitigation || '',
+        owner: data.owner || 'Lead Engineer',
         status: 'Open',
         isIllustrative: false,
         createdAt: new Date().toISOString().split('T')[0],
@@ -349,24 +354,25 @@ export default function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newRisk)
       }).catch(() => {});
-    } else if (kind === 'simulation') {
+    } else if (payload.kind === 'simulation') {
+      const { data } = payload;
       const newSim: SimulationJob = {
         id: `SIM-${data.discipline || 'HYD'}-${Date.now().toString().slice(-3)}`,
         projectId: 'PRJ-USV-01',
-        discipline: data.discipline,
-        name: data.name,
-        geometryRevision: data.geometryRevision,
-        inputConfiguration: data.inputConfiguration,
-        solver: data.solver,
-        boundaryConditions: data.boundaryConditions,
-        unitsAndReferenceFrame: data.unitsAndReferenceFrame,
-        assumptions: data.assumptions,
-        computeEnvironment: data.computeEnvironment,
+        discipline: data.discipline || 'HYD',
+        name: data.name || 'Untitled Simulation',
+        geometryRevision: data.geometryRevision || 'CAD-REV-0.1',
+        inputConfiguration: data.inputConfiguration || '',
+        solver: data.solver || 'OpenFOAM',
+        boundaryConditions: data.boundaryConditions || '',
+        unitsAndReferenceFrame: data.unitsAndReferenceFrame || 'SI',
+        assumptions: data.assumptions || '',
+        computeEnvironment: data.computeEnvironment || 'Local Workstation',
         runStatus: data.runStatus || 'Ready',
         outputFiles: data.outputFiles || '',
-        resultsSummary: data.resultsSummary,
-        reviewer: data.reviewer,
-        validationStatus: data.validationStatus,
+        resultsSummary: data.resultsSummary || '',
+        reviewer: data.reviewer || 'Lead Engineer',
+        validationStatus: data.validationStatus || 'Pending',
         isIllustrative: false,
         createdAt: new Date().toISOString().split('T')[0],
         updatedAt: new Date().toISOString().split('T')[0]
@@ -378,18 +384,19 @@ export default function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newSim)
       }).catch(() => {});
-    } else if (kind === 'verification') {
+    } else if (payload.kind === 'verification') {
+      const { data } = payload;
       const newPlan: VerificationPlan = {
         id: `VER-${data.subsystemCode || 'SYS'}-${Date.now().toString().slice(-3)}`,
         projectId: 'PRJ-USV-01',
-        subsystemCode: data.subsystemCode,
-        title: data.title,
-        procedureSummary: data.procedureSummary,
-        acceptanceCriteria: data.acceptanceCriteria,
-        instrumentationAndCalibration: data.instrumentationAndCalibration,
+        subsystemCode: data.subsystemCode || 'SYS',
+        title: data.title || 'Untitled Verification Plan',
+        procedureSummary: data.procedureSummary || '',
+        acceptanceCriteria: data.acceptanceCriteria || '',
+        instrumentationAndCalibration: data.instrumentationAndCalibration || '',
         targetReqIds: data.targetReqIds || [],
         status: 'Draft',
-        owner: data.owner,
+        owner: data.owner || 'Lead Engineer',
         isIllustrative: false,
         createdAt: new Date().toISOString().split('T')[0],
         updatedAt: new Date().toISOString().split('T')[0]
@@ -401,19 +408,20 @@ export default function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newPlan)
       }).catch(() => {});
-    } else if (kind === 'component') {
+    } else if (payload.kind === 'component') {
+      const { data } = payload;
       const newComp: ComponentBOM = {
         id: `BOM-${Date.now().toString().slice(-3)}`,
         projectId: 'PRJ-USV-01',
-        subsystemCode: data.subsystemCode,
-        partNumber: data.partNumber,
-        description: data.description,
-        manufacturer: data.manufacturer,
-        supplier: data.supplier,
-        technicalSpecs: data.technicalSpecs,
-        quantity: data.quantity,
-        unitCost: data.unitCost,
-        leadTimeWeeks: data.leadTimeWeeks,
+        subsystemCode: data.subsystemCode || 'SYS',
+        partNumber: data.partNumber || 'PART-TBD',
+        description: data.description || '',
+        manufacturer: data.manufacturer || 'TBD',
+        supplier: data.supplier || 'TBD',
+        technicalSpecs: data.technicalSpecs || '',
+        quantity: data.quantity ?? 1,
+        unitCost: data.unitCost || '$0.00',
+        leadTimeWeeks: data.leadTimeWeeks || '4 weeks',
         procurementStatus: data.procurementStatus || 'Specifying',
         isIllustrative: false,
         createdAt: new Date().toISOString().split('T')[0],
@@ -428,6 +436,7 @@ export default function App() {
       }).catch(() => {});
     }
   };
+
 
   // Reset demo data handler
   const handleResetDemoData = async () => {
