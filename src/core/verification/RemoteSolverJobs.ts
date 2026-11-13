@@ -36,7 +36,7 @@ export interface SolverJobManifest extends SolverJobRequest {
 export interface SolverServiceReceipt {
   jobId: string;
   acceptedInputDigest: string;
-  state: 'QUEUED' | 'RUNNING' | 'COMPLETED' | 'COMPUTE_DONE_EVIDENCE_PENDING' | 'COMPUTE_DONE_QUALITY_REJECTED';
+  state: 'QUEUED' | 'RUNNING' | 'COMPLETED' | 'COMPUTE_DONE_EVIDENCE_PENDING' | 'COMPUTE_DONE_QUALITY_REJECTED' | 'COMPUTE_TIMEOUT_REJECTED';
   solverVersion?: string;
   outputArtifactUri?: string;
   outputSha256?: string;
@@ -137,14 +137,15 @@ export function evaluateSolverReceipt(
   const r = raw as Partial<SolverServiceReceipt>;
   if (typeof r.jobId !== 'string' || !/^[A-Za-z0-9_-]{3,128}$/.test(r.jobId) ||
       r.acceptedInputDigest !== manifest.manifestSha256 ||
-      !['QUEUED', 'RUNNING', 'COMPLETED', 'COMPUTE_DONE_EVIDENCE_PENDING', 'COMPUTE_DONE_QUALITY_REJECTED'].includes(r.state || '')) return invalid;
+      !['QUEUED', 'RUNNING', 'COMPLETED', 'COMPUTE_DONE_EVIDENCE_PENDING', 'COMPUTE_DONE_QUALITY_REJECTED', 'COMPUTE_TIMEOUT_REJECTED'].includes(r.state || '')) return invalid;
   const completed = r.state === 'COMPLETED';
   const computedWithoutConvergence = r.state === 'COMPUTE_DONE_EVIDENCE_PENDING';
   const computedQualityRejected = r.state === 'COMPUTE_DONE_QUALITY_REJECTED';
+  const computedTimeoutRejected = r.state === 'COMPUTE_TIMEOUT_REJECTED';
   let qualityScreenPassed = false;
   let meshAndResidualScreenPassed = false;
 
-  if (completed || computedWithoutConvergence || computedQualityRejected) {
+  if (completed || computedWithoutConvergence || computedQualityRejected || computedTimeoutRejected) {
     if (!r.outputArtifactUri || !httpsRef(r.outputArtifactUri) ||
         !r.outputSha256 || !SHA.test(r.outputSha256) ||
         !r.solverVersion || !r.solverVersion.trim() ||
@@ -215,9 +216,12 @@ export function evaluateSolverReceipt(
   if (computedQualityRejected) {
     problems.push('Solver subprocess completed and evidence was retained, but the source-defined numerical quality plan rejected the result');
   }
+  if (computedTimeoutRejected) {
+    problems.push('Solver execution exceeded the host wall-time policy; partial evidence was retained but the result is unusable');
+  }
   const receipt = r as SolverServiceReceipt;
   return {
-    status: computedQualityRejected || problems.length ? 'REJECTED' : completed ? 'COMPLETED_UNVERIFIED' :
+    status: computedQualityRejected || computedTimeoutRejected || problems.length ? 'REJECTED' : completed ? 'COMPLETED_UNVERIFIED' :
       computedWithoutConvergence ? 'COMPUTE_DONE_EVIDENCE_PENDING' : 'SUBMITTED_UNVERIFIED',
     jobId: r.jobId,
     qualityScreenPassed: completed && qualityScreenPassed && problems.length === 0,
@@ -227,6 +231,8 @@ export function evaluateSolverReceipt(
       ['Solver subprocess completed with retained results and mesh/residual screening; grid-convergence and independent reference proof remain required'] :
       computedQualityRejected ?
       ['Quality-rejected solver output is diagnostic evidence only and cannot be supplied to design agents as a usable engineering result'] :
+      computedTimeoutRejected ?
+      ['Timed-out solver output is partial diagnostic evidence only and cannot be supplied to design agents'] :
       ['Server receipt is self-reported; validate solver output, mesh convergence, independent benchmarks and technical authority externally']),
     engineeringValidated: false, independentReferenceValidated: false,
     engineeringReleaseAuthorized: false, receipt
