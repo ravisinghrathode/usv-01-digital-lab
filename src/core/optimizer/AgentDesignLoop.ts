@@ -16,6 +16,10 @@ import type { ToolExecutionResult } from '../types/tools.ts';
 const SHA = /^[0-9a-f]{40}$/;
 const PRNG_MAX = 0xffffffff;
 const REQUIRED_HYDRO = ['lwlMeters', 'beamMeters', 'draftMeters'];
+const REQUIRED_CAT_HYDRO = [
+  'lwlMeters','demiHullBeamMeters','draftMeters','blockCoefficientCb',
+  'waterplaneCoefficientCwp','demiHullCenterlineSeparationMeters'
+];
 const REQUIRED_RESISTANCE = [
   'lwlMeters', 'beamMeters', 'draftMeters', 'displacementTonnes',
   'speedKnots', 'propulsiveEfficiencyEtaD', 'waterTempCelsius'
@@ -110,6 +114,7 @@ const hash = (v: unknown) => 'sha256:' + createHash('sha256').update(JSON.string
 const supported = new Set([
   'lwlMeters', 'beamMeters', 'draftMeters', 'blockCoefficientCb',
   'waterplaneCoefficientCwp', 'kgMeters', 'displacementTonnes',
+  'demiHullBeamMeters', 'demiHullCenterlineSeparationMeters',
   'speedKnots', 'propulsiveEfficiencyEtaD', 'waterTempCelsius'
 ]);
 
@@ -396,9 +401,10 @@ export async function runAgentDesignLoop(
     }
 
     const missingEngineeringInputs: string[] = [...unsubstantiated];
-    const supportedTopology = topology === 'MONOHULL';
-    if (!supportedTopology) {
-      missingEngineeringInputs.push('Topology '+topology+': single-hull empirical calculators are NOT applicable; independently approved multihull model or actual CFD/FEA required');
+    const monohullTopology = topology === 'MONOHULL';
+    const catamaranTopology = topology === 'CATAMARAN';
+    if (!monohullTopology && !catamaranTopology) {
+      missingEngineeringInputs.push('Topology '+topology+': no registered deterministic screening model; independently approved geometry/solver evidence required');
     }
     for (const [key,claim] of Object.entries(claims)) if (claim.sourceKind === 'HYPOTHESIS') {
       missingEngineeringInputs.push(key+': unverified assumption ('+claim.sourceReference+')');
@@ -406,13 +412,18 @@ export async function runAgentDesignLoop(
     const screenResults: ScreenedProposal['screenResults'] = [];
     const has = (names: string[]) => names.every(key => numbers[key] !== undefined);
     const toolCases: Array<[string, string[], Record<string, number>]> = [];
-    if (supportedTopology && has(REQUIRED_HYDRO) && (numbers.blockCoefficientCb !== undefined || numbers.displacementTonnes !== undefined)) {
+    if (monohullTopology && has(REQUIRED_HYDRO) &&
+        (numbers.blockCoefficientCb !== undefined || numbers.displacementTonnes !== undefined)) {
       toolCases.push(['TOOL-HYDROSTATICS-01', ['CALCULATION_EXEC'], numbers]);
+    } else if (catamaranTopology && has(REQUIRED_CAT_HYDRO)) {
+      toolCases.push(['TOOL-CATAMARAN-HYDROSTATICS-01', ['CALCULATION_EXEC'], numbers]);
     } else {
-      missingEngineeringInputs.push('Hydrostatics: LWL/beam/draft and Cb or displacement not all source-identified');
+      missingEngineeringInputs.push('Hydrostatics: topology-specific geometry/form inputs are incomplete or unsourced');
     }
-    if (supportedTopology && has(REQUIRED_RESISTANCE)) {
+    if (monohullTopology && has(REQUIRED_RESISTANCE)) {
       toolCases.push(['TOOL-RESISTANCE-01', ['CALCULATION_EXEC'], numbers]);
+    } else if (catamaranTopology) {
+      missingEngineeringInputs.push('Catamaran resistance: validated demi-hull interference/wave resistance model or actual CFD evidence required; monohull resistance model is forbidden');
     } else {
       missingEngineeringInputs.push('Resistance: incomplete vessel/displacement/speed/efficiency/15C conditions');
     }
@@ -437,12 +448,13 @@ export async function runAgentDesignLoop(
     // resistance; A23 requires both. A09/A10/A14 remain TBD until component,
     // structure and electrical input packages exist.
     const successful = new Set(screenResults.filter(r => r.success).map(r => r.toolId));
-    const specialistPlan = input.specialistReviews === 'OFF' ? [] : [
-      { role: 'A05', required: ['TOOL-HYDROSTATICS-01'] },
-      { role: 'A06', required: ['TOOL-HYDROSTATICS-01'] },
-      { role: 'A07', required: ['TOOL-RESISTANCE-01'] },
-      { role: 'A23', required: ['TOOL-HYDROSTATICS-01','TOOL-RESISTANCE-01'] }
-    ].filter(entry => entry.required.every(toolId => successful.has(toolId)));
+    const specialistPlan = input.specialistReviews === 'OFF' ? [] :
+      (monohullTopology ? [
+        { role: 'A05', required: ['TOOL-HYDROSTATICS-01'] },
+        { role: 'A06', required: ['TOOL-HYDROSTATICS-01'] },
+        { role: 'A07', required: ['TOOL-RESISTANCE-01'] },
+        { role: 'A23', required: ['TOOL-HYDROSTATICS-01','TOOL-RESISTANCE-01'] }
+      ] : []).filter(entry => entry.required.every(toolId => successful.has(toolId)));
     const specialistReviews: DesignRevision['specialistReviews'] = [];
     for (const plan of specialistPlan) {
       const specialist = registry.requireAgent(plan.role);
