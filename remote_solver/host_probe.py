@@ -23,14 +23,22 @@ def main() -> int:
     parser.add_argument("--require-openfoam",action="store_true")
     parser.add_argument("--require-calculix",action="store_true")
     parser.add_argument("--require-network-isolation",action="store_true")
+    parser.add_argument("--isolation-mode",choices=["UNSHARE_USER_NET","UNSHARE_NET_PRIVILEGED"],
+                        default=os.environ.get("USV_SOLVER_ISOLATION_MODE","UNSHARE_USER_NET"))
     args=parser.parse_args()
 
+    isolation_prefix = (
+        ["unshare","--user","--map-root-user","--net","--"]
+        if args.isolation_mode=="UNSHARE_USER_NET"
+        else ["unshare","--net","--"]
+    )
     checks: dict[str,object] = {
         "platform": platform.platform(),
         "linux": platform.system()=="Linux",
         "resourcePolicy": resource_policy(),
         "serviceUid": os.geteuid() if hasattr(os,"geteuid") else None,
-        "networkIsolation": {"required": args.require_network_isolation, "passed": False},
+        "networkIsolation": {"required": args.require_network_isolation, "passed": False,
+                             "mode": args.isolation_mode},
         "binaries": {},
         "filesystem": {},
         "engineeringReleaseAuthorized": False,
@@ -60,7 +68,7 @@ def main() -> int:
     if args.require_openfoam and openfoam_wrapper and Path(openfoam_wrapper).is_file():
         command=[openfoam_wrapper,"simpleFoam","-help"]
         if args.require_network_isolation:
-            command=["unshare","--user","--map-root-user","--net","--",*command]
+            command=[*isolation_prefix,*command]
         p=subprocess.run(command,capture_output=True,text=True,check=False,timeout=20)
         banner=(p.stdout or "")+"\n"+(p.stderr or "")
         checks["openfoamExecutionProbe"]={
@@ -71,15 +79,15 @@ def main() -> int:
             failures.append("Versioned OpenFOAM wrapper did not execute simpleFoam help")
 
     if args.require_network_isolation and shutil.which("unshare"):
-        p=subprocess.run(["unshare","--user","--map-root-user","--net","--","sh","-c","test -r /proc/self/ns/net"],
+        p=subprocess.run([*isolation_prefix,"sh","-c","test -r /proc/self/ns/net"],
                          capture_output=True,text=True,check=False,timeout=10)
         checks["networkIsolation"]={
-            "required":True,"passed":p.returncode==0,
+            "required":True,"passed":p.returncode==0,"mode":args.isolation_mode,
             "returnCode":p.returncode,
             "stderr":(p.stderr or "")[:500]
         }
         if p.returncode!=0:
-            failures.append("unprivileged user+network namespace failed for this service account")
+            failures.append(args.isolation_mode+" failed for this service account")
     elif not args.require_network_isolation:
         checks["networkIsolation"]={"required":False,"passed":None}
 
