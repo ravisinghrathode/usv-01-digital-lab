@@ -123,6 +123,58 @@ describe('Reproducible legacy scenarios and real-agent iterative design screenin
     expect(result.engineeringReleaseAuthorized).toBe(false);
   });
 
+  it('activates A09/A10/A14 only from source-hashed discipline input packages', async () => {
+    const pkgSha='sha256:'+'d'.repeat(64);
+    const pkgMission={...mission,maxRevisions:1,specialistReviews:'AUTO' as const,
+      sourceReferences:[{reference:'PKG-001',description:'Synthetic unit package',
+        sha256:pkgSha,url:'https://example.org/pkg-001.json'}],
+      disciplinePackages:[
+        {id:'MASS',canonicalAgent:'A09' as const,toolId:'TOOL-MASS-BALANCE-01' as const,
+          sourceReference:'PKG-001',sourceSha256:pkgSha,input:{components:[
+            {name:'Hull',massKg:100,lcgMetersFromTransom:5,tcgMetersFromCl:0,
+              vcgMetersFromKeel:0.5,designMarginPercent:10}
+          ]}},
+        {id:'STRUCT',canonicalAgent:'A10' as const,toolId:'TOOL-STRUCTURES-01' as const,
+          sourceReference:'PKG-001',sourceSha256:pkgSha,input:{
+            displacementTonnes:5,speedKnots:10,lwlMeters:10,deadriseAngleDeg:15,
+            unsupportedPanelWidthMm:500,unsupportedPanelLengthMm:700,
+            materialYieldStrengthMpa:200,safetyFactor:2
+          }},
+        {id:'ELEC',canonicalAgent:'A14' as const,toolId:'TOOL-ELECTRICAL-01' as const,
+          sourceReference:'PKG-001',sourceSha256:pkgSha,input:{
+            busVoltageV:48,batteryTotalKwh:20,usableDepthOfDischarge:0.8,
+            consumers:[{name:'Compute',voltageV:48,continuousPowerW:500,
+              intermittentPowerW:200,dutyCycle:0.5,isEmergencyLoad:true}]
+          }}
+      ]};
+    const calls:string[]=[];
+    const report=await runAgentDesignLoop(pkgMission,async(id,input)=>{
+      calls.push(id);
+      if(id!==proposer)return makeOutput(id,input,{});
+      return makeOutput(id,input,{lwlMeters:10,beamMeters:3,draftMeters:0.7,
+        blockCoefficientCb:0.55,displacementTonnes:11.83875,
+        speedKnots:10,propulsiveEfficiencyEtaD:0.6,waterTempCelsius:15});
+    });
+    expect(report.revisions).toHaveLength(1);
+    expect(report.revisions[0].screened.screenResults.map(x=>x.toolId)).toEqual(
+      expect.arrayContaining(['TOOL-MASS-BALANCE-01','TOOL-STRUCTURES-01','TOOL-ELECTRICAL-01']));
+    expect(calls).toEqual(expect.arrayContaining([
+      registry.requireAgent('A09').id,registry.requireAgent('A10').id,registry.requireAgent('A14').id
+    ]));
+    expect(report.revisions[0].specialistReviews.map(x=>x.canonicalId)).toEqual(
+      expect.arrayContaining(['A09','A10','A14']));
+    expect(report.engineeringReleaseAuthorized).toBe(false);
+  });
+
+  it('rejects discipline packages whose source digest is not in the fetched source index', async () => {
+    const invalid={...mission,disciplinePackages:[{
+      id:'MASS',canonicalAgent:'A09' as const,toolId:'TOOL-MASS-BALANCE-01' as const,
+      sourceReference:'UNKNOWN',sourceSha256:'sha256:'+'e'.repeat(64),
+      input:{components:[]}
+    }]};
+    await expect(runAgentDesignLoop(invalid)).rejects.toThrow(/source record/);
+  });
+
   it('ranks only source-defined, same-condition preliminary tool outputs, never design acceptance', async () => {
     const caseMission = {
       ...mission,
