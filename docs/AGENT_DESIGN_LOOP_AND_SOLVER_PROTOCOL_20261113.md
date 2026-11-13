@@ -14,6 +14,33 @@ The new `AgentDesignLoop` performs up to five *real*, sequential proposal–scre
 4. Actual A15 Independent Technical Critic receives the exact hypothesis, method output, assumption and TBD lists and challenges missing engineering evidence. The next A01 call receives prior A15 feedback and must propose a revision.
 5. Stop at budget, failure, unavailable live model, invalid numbers or unchanged proposal. Report each input/output digest and trace. Never mark result independently validated, selected, detailed-design authorized, production ready or safe to actuate.
 
+6. If and only if the controlled mission JSON supplies **source-identified objectives** (each with an actual `toolId`, `outputMetric`, `direction`, positive `weight`, `unit`, `sourceReference`, and explicit identical `fixedInputParameters`), compare revisions on the recorded **actual tool screen outputs**. Different speed, efficiency, temperature or other declared test conditions exclude a candidate rather than silently ranking incomparable power estimates. The within-run weighted relative score is **COMPARISON_READY_UNVERIFIED**, NOT performance validation, a Pareto frontier or approved concept. Without objectives or at least two comparable candidates the result is **UNRANKED**, never an invented score.
+
+Example mission-only comparison input (synthetic illustrative schema; *not* a real performance requirement):
+
+```json
+{
+  "objectives": [
+    {
+      "id": "POWER_AT_FIXED_SPEED",
+      "toolId": "TOOL-RESISTANCE-01",
+      "outputMetric": "shaftBrakePowerPbKw",
+      "direction": "MINIMIZE",
+      "weight": 1,
+      "unit": "kW",
+      "sourceReference": "TBD_PROJECT_LEAD_APPROVED_CONOPS",
+      "fixedInputParameters": {
+        "speedKnots": 10,
+        "propulsiveEfficiencyEtaD": 0.6,
+        "waterTempCelsius": 15
+      }
+    }
+  ]
+}
+```
+
+The sample 10-knot condition and 0.6 efficiency are **unapproved demonstration values**; they must not be copied as a vessel requirement. For an actual comparison, source references and conditions require review, and numerical-model fidelity still must be independently established.
+
 This loop is an **initial live design core**, not a complete automated naval architecture design engine. It still requires actual missions, external source checking, numerical reference validation, robust optimizer integration and specialist verification. Its seed only makes the legacy starting hypothesis repeatable; nondeterministic live LLM output cannot be guaranteed reproducible. Actual provider/model response IDs and snapshots should be retained by a trusted orchestration log before formal evidence acceptance.
 
 ## Running it
