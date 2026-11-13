@@ -39,4 +39,26 @@ describe('26-agent operating charter v1: specification and current evidence boun
     expect(charter).toContain('at least two true feedback revisions');
     expect(charter).toContain('PROPOSED');
   });
+
+  it('makes ChatGPT advisory authority explicit without introducing a 27th registered agent', () => {
+    expect(charter).toContain('## 10. ChatGPT operating charter');
+    expect(charter).toContain('not an additional registered A01–A26 runtime agent');
+    expect(charter).toContain('The Engineering Director/Project Lead owns mission approval');
+    expect(charter).toContain('It is not A27');
+  });
+
+  it('specifies task handoffs, revision invalidation and separated assurance artifacts', () => {
+    expect(charter).toContain('## 11. Collaborative execution and handoff acceptance contract');
+    expect(charter).toContain('NOT_RUN/BLOCKED');
+    expect(charter).toContain('invalidates all dependent cached calculations');
+    expect(charter).toContain('## 12. Evidence disposition and governance adoption checklist');
+    expect(charter).toContain('C07: Attach an authorized Engineering Director');
+  });
+
+  it('keeps unfinished engineering implementation behind explicit adoption criteria', () => {
+    expect(charter).toContain('## 13. Staged implementation and acceptance roadmap');
+    expect(charter).toContain('R0 — Charter reconciliation');
+    expect(charter).toContain('Do not implement B03 or B04 as part of this charter amendment');
+    expect(charter).toContain('Engineering-release HOLD');
+  });
 });
