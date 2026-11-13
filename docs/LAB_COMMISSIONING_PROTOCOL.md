@@ -84,12 +84,26 @@ A proposed design may advance to a *controlled engineering baseline* only after:
 
 ## 5. Keep source governance intact
 
-Source-code and GitHub change governance remains separate. A HIGH/CRITICAL PR,
-including a change to the agent execution or authority boundary, continues to
-require the repository's protected-branch CI, independent GitHub peer approval,
-and an Ed25519 Director signature bound to the **exact source-content digest**.
-This may be required before the new runtime code is merged, but should never be
-represented as pre-approval of the unknown vessel design.
+Source-code and GitHub change governance remains separate from vessel
+baseline approval. The protected path-based Stage A classifier chooses:
+
+- `RESTRICTED_LAB_SOFTWARE` for non-operational research-only changes:
+  normal protected CI and human merge decision; no vessel ECR.
+- `PROTECTED_SOFTWARE_SECURITY` for governance, authentication, Codex
+  provider, lab commissioning authority, execution-host and CI workflow
+  changes: deterministic technical/security checks and **independent
+  GitHub peer approval on the exact PR head**; no vessel ECR.
+- `SAFETY_CRITICAL_ENGINEERING` when a change touches naval engineering
+  calculators, vessel safety acceptance, controlled design data, release
+  manifests or an ECR: independent peer, technical engineering review,
+  and **Engineering Director Ed25519 ECR for the exact source-content digest**.
+- `ROUTINE_SOFTWARE` for unrelated low-risk work.
+
+A mixed change set always receives its strongest applicable route. No PR
+label, author declaration, runtime flag or AI reviewer can downgrade this.
+Stage E remains the required fail-closed integrity check for all routes,
+not a separate approval authority. Signing source changes is never equivalent
+to approving an unknown vessel design.
 
 Do not add a special PR branch-protection bypass for laboratory commissioning.
 
