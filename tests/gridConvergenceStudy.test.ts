@@ -1,5 +1,6 @@
 import {describe,expect,it} from 'vitest';
-import {evaluateThreeGridConvergence} from '../src/core/verification/GridConvergenceStudy.ts';
+import {evaluateThreeGridConvergence,evaluateSolverGridConvergence} from '../src/core/verification/GridConvergenceStudy.ts';
+import {createSolverJobManifest,evaluateSolverReceipt} from '../src/core/verification/RemoteSolverJobs.ts';
 
 const d=(c:string)=>'sha256:'+c.repeat(64);
 describe('Three-grid GCI screen',()=>{
@@ -40,6 +41,34 @@ describe('Three-grid GCI screen',()=>{
       {id:'coarse',characteristicGridSize:3,scalarMetric:2,sourceDigest:d('c')},0.1);
     expect(irregular.status).toBe('NON_MONOTONIC_OR_DEGENERATE');
   });
+  it('derives GCI only from three retained single-run quality-screened solver receipts',()=>{
+    const mk=(job:string,value:number,digest:string)=>{
+      const m=createSolverJobManifest({
+        jobRef:job,sourceCommit:'a'.repeat(40),family:'OPENFOAM_CFD',
+        inputArtifactUri:'https://solver.example.org/'+job+'.zip',
+        inputArtifactSha256:d('d'),meshArtifactSha256:d('e'),
+        qualityPlan:{sourceReference:'TEST_GCI',residualThreshold:0.01,
+          gridUncertaintyMaxFraction:0.3,maxMeshSkewness:4,maxNonOrthogonalityDeg:70}
+      });
+      return evaluateSolverReceipt(m,{
+        jobId:job,acceptedInputDigest:m.manifestSha256,state:'COMPUTE_DONE_EVIDENCE_PENDING',
+        solverVersion:'2606',outputArtifactUri:'https://solver.example.org/artifacts/'+job,
+        outputSha256:digest,quality:{finalResidual:1e-5,gridUncertaintyFraction:null,
+          maximumMeshSkewness:0.2,maximumNonOrthogonalityDeg:10},
+        keyResults:{forceCoefficients:{coefficients:{Cd:value}}}
+      });
+    };
+    const out=evaluateSolverGridConvergence(
+      {id:'fine',characteristicGridSize:0.5,disposition:mk('GCI_FINE',1.25,d('1'))},
+      {id:'medium',characteristicGridSize:1,disposition:mk('GCI_MEDIUM',2,d('2'))},
+      {id:'coarse',characteristicGridSize:2,disposition:mk('GCI_COARSE',5,d('3'))},
+      'forceCoefficients.coefficients.Cd',0.3
+    );
+    expect(out.report.status).toBe('GCI_SCREEN_PASS_UNCERTIFIED');
+    expect(out.agentEvidence?.gridUncertaintyFraction).toBeCloseTo(0.25,10);
+    expect(out.agentEvidence?.engineeringReleaseAuthorized).toBe(false);
+  });
+
   it('rejects invalid evidence identity and unordered grids',()=>{
     expect(()=>evaluateThreeGridConvergence(
       {id:'fine',characteristicGridSize:1,scalarMetric:1,sourceDigest:'bad'},
