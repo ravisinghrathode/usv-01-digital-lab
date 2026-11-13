@@ -40,22 +40,43 @@ export interface AcceptanceEvidence {
 
 const commitPattern = /^[0-9a-f]{40}$/;
 const digestPattern = /^sha256:[0-9a-f]{64}$/;
+const sourceTypes = new Set<string>([
+  'PHYSICAL_TEST', 'INDEPENDENT_REVIEW', 'SERVICE_HANDSHAKE', 'PRODUCTION_TEST'
+]);
+
+function isSafeHttpsReference(value: unknown): boolean {
+  if (typeof value !== 'string') return false;
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' && url.hostname.length > 0 &&
+      url.username.length === 0 && url.password.length === 0;
+  } catch {
+    return false;
+  }
+}
 
 export function evaluateAcceptance(
   baselineSha: string,
   evidence: readonly AcceptanceEvidence[] = []
 ) {
-  // Invalid SHA is never a matching baseline: reject accidental placeholder metadata.
-  const baselineValid = commitPattern.test(baselineSha);
+  // Evidence may originate from JSON files or external requests despite static TS types.
+  // Invalid/malformed objects must fail closed without crashing the readiness process.
+  const baselineValid = typeof baselineSha === 'string' && commitPattern.test(baselineSha);
+  const suppliedEvidence = Array.isArray(evidence) ? evidence : [];
   const requirements = ACCEPTANCE_REQUIREMENTS.map(requirement => {
-    const submitted = evidence.filter(item => item.requirementId === requirement.id);
+    const submitted = suppliedEvidence.filter((item): item is AcceptanceEvidence =>
+      item !== null && typeof item === 'object' && !Array.isArray(item) &&
+      item.requirementId === requirement.id
+    );
     const matching = submitted.filter(item =>
       baselineValid &&
-      item.baselineSha === baselineSha &&
-      digestPattern.test(item.referenceSha256) &&
-      /^https:\/\//.test(item.referenceUri) &&
-      item.reviewedBy.trim().length > 0 &&
-      item.sourceType !== undefined
+      typeof item.baselineSha === 'string' && item.baselineSha === baselineSha &&
+      typeof item.referenceSha256 === 'string' && digestPattern.test(item.referenceSha256) &&
+      isSafeHttpsReference(item.referenceUri) &&
+      typeof item.reviewedBy === 'string' && item.reviewedBy.trim().length > 0 &&
+      sourceTypes.has(item.sourceType) &&
+      typeof item.independentlyVerified === 'boolean' &&
+      typeof item.attestationVerified === 'boolean'
     );
     // A boolean in an application object is not cryptographic verification.
     // There is intentionally NO automatic VERIFIED status for externally supplied evidence.
