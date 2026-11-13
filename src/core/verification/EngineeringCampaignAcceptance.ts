@@ -74,6 +74,7 @@ export interface EvidenceAssessment {
   };
   perAgent: Array<{
     canonicalId: string;
+    requiredIndependentEvidence: string;
     liveExecuted: boolean;
     independentReviewAttested: boolean;
     blockers: string[];
@@ -223,6 +224,17 @@ export function assessEngineeringCampaign(
 
   const reviews = options.reviews ?? [];
   const observedReviews = new Set<string>();
+  if (options.hostPublicKeyPem && options.independentReviewerPublicKeyPem) {
+    try {
+      const hostDer = createPublicKey(options.hostPublicKeyPem).export({ type: 'spki', format: 'der' }) as Buffer;
+      const reviewDer = createPublicKey(options.independentReviewerPublicKeyPem).export({ type: 'spki', format: 'der' }) as Buffer;
+      if (hostDer.equals(reviewDer)) {
+        independentValidation.push('Independent reviewer and runtime host use the same attestation key; separate trust anchors are required');
+      }
+    } catch {
+      independentValidation.push('Host or reviewer trust anchor is malformed');
+    }
+  }
   const perAgent = required.map(spec => {
     const issues: string[] = [];
     const run = byId.get(spec.canonicalId);
@@ -271,7 +283,10 @@ export function assessEngineeringCampaign(
     }
     if (!independentReviewAttested) missingReferenceRows.push(spec.canonicalId);
     if (independentReviewAttested) observedReviews.add(spec.canonicalId);
-    return { canonicalId: spec.canonicalId, liveExecuted, independentReviewAttested, blockers: issues };
+    const requiredIndependentEvidence = ROLE_ACCURACY_OBLIGATIONS
+      .find(x => x.canonicalId === spec.canonicalId)?.independentlyRequired || 'Missing independent review obligation';
+    return { canonicalId: spec.canonicalId, requiredIndependentEvidence,
+      liveExecuted, independentReviewAttested, blockers: issues };
   });
   if (reviews.some(r => !canonicalIds.includes(r.canonicalId))) {
     independentValidation.push('Review pack contains unknown specialist identifiers');
