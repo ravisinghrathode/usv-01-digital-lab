@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Public, read-only software discovery; not engineering acceptance",
+  "categories": [
+    { "id": "usv-platforms", "agents": ["A01", "A03", "A26"], "queries": ["autonomous surface vessel", "unmanned surface vehicle robotics"], "keywords": ["usv", "asv", "surface vessel", "autonomous boat"] },
+    { "id": "hull-design", "agents": ["A05", "A06", "A09"], "queries": ["ship hull design hydrostatics", "parametric hull design"], "keywords": ["hull", "hydrostatics", "stability", "freecad", "openvsp"] },
+    { "id": "cfd-resistance", "agents": ["A07", "A08", "A13"], "queries": ["ship resistance openfoam", "marine hydrodynamics cfd"], "keywords": ["openfoam", "cfd", "resistance", "waves", "seakeeping"] },
+    { "id": "marine-simulation", "agents": ["A08", "A17", "A18", "A24"], "queries": ["marine vessel simulator", "robot boat simulation gazebo"], "keywords": ["simulation", "simulator", "gazebo", "marine", "usv"] },
+    { "id": "navigation-colregs", "agents": ["A17", "A22", "A24"], "queries": ["COLREGS collision avoidance", "marine navigation path planning"], "keywords": ["colregs", "collision avoidance", "cpa", "tcpa", "navigation"] },
+    { "id": "autonomy-control", "agents": ["A16", "A17", "A19", "A20"], "queries": ["autonomous boat ros2", "asv guidance navigation control"], "keywords": ["ros2", "autonomy", "guidance", "control", "mission"] },
+    { "id": "perception-sonar", "agents": ["A12", "A16", "A21"], "queries": ["marine sonar processing", "maritime object detection"], "keywords": ["sonar", "radar", "lidar", "perception", "bathymetry"] },
+    { "id": "propulsion-power", "agents": ["A13", "A14", "A11"], "queries": ["marine electric propulsion simulation", "battery vessel energy model"], "keywords": ["propulsion", "electric", "battery", "thermal", "motor"] },
+    { "id": "marine-iot", "agents": ["A19", "A20", "A21"], "queries": ["NMEA2000 marine telemetry", "marine robot communication"], "keywords": ["nmea", "marine", "telemetry", "communication", "gnss"] },
+    { "id": "verification-safety", "agents": ["A15", "A18", "A22", "A23", "A24"], "queries": ["maritime autonomy verification", "robotics safety simulation testing"], "keywords": ["verification", "validation", "testing", "safety", "fmea"] },
+    { "id": "structures-materials", "agents": ["A10", "A11", "A12"], "queries": ["ship structural finite element", "composite boat structures"], "keywords": ["fea", "finite element", "structures", "composite", "corrosion"] },
+    { "id": "mission-digital-twin", "agents": ["A01", "A18", "A25", "A26"], "queries": ["maritime digital twin", "autonomous maritime mission planning"], "keywords": ["digital twin", "mission", "telemetry", "observability", "robotics"] }
+  ]
+}
