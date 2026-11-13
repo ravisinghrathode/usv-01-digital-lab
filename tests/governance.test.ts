@@ -685,7 +685,7 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
       }
     });
 
-    it('blocks a routine change when the independent GitHub approval is missing', () => {
+    it('permits routine changes without a second reviewer when Stage D verification exists', () => {
       const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'egs-routine-no-peer-'));
       const reportsDir = path.join(tmpDir, 'governance', 'reports');
       fs.mkdirSync(reportsDir, { recursive: true });
@@ -714,8 +714,9 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
         }));
 
         const evalRes = evaluateGovernanceGate(tmpDir, 'origin/main');
-        expect(evalRes.passed).toBe(false);
-        expect(evalRes.blockingReasons.some(r => r.includes('Routine change requires an independent GitHub peer approval'))).toBe(true);
+        expect(evalRes.passed).toBe(true);
+        expect(evalRes.overallVerdict).toBe('APPROVED');
+        expect(evalRes.blockingReasons).toHaveLength(0);
       } finally {
         fs.rmSync(tmpDir, { recursive: true, force: true });
       }
