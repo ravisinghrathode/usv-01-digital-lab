@@ -5,7 +5,7 @@ import { AgentRegistry } from '../src/core/registry/AgentRegistry.ts';
 const charter = readFileSync('docs/governance/USV01_26_AGENT_OPERATING_CHARTER_V1.md', 'utf8');
 const architecture = readFileSync('docs/ARCHITECTURE.md', 'utf8');
 
-describe('26-agent operating charter v1: specification and current evidence boundaries', () => {
+describe('26-agent operating charter v1.1: specification and current evidence boundaries', () => {
   it('references the actual 26 canonical roles rather than inventing a second roster', () => {
     const roles = AgentRegistry.getInstance().getAllAgents();
     expect(roles).toHaveLength(26);
@@ -60,5 +60,46 @@ describe('26-agent operating charter v1: specification and current evidence boun
     expect(charter).toContain('R0 — Charter reconciliation');
     expect(charter).toContain('Do not implement B03 or B04 as part of this charter amendment');
     expect(charter).toContain('Engineering-release HOLD');
+  });
+
+  it('expressly binds amendments A-E to acceptance without implying implementation', () => {
+    for (const amendment of [
+      'A — One authoritative engineering digital thread',
+      'B — Three separate, interfacing engineering loops',
+      'C — Physics-based feasibility before optimization',
+      'D — Autonomous research; controlled engineering authority',
+      'E — Measurable proof of engineering autonomy'
+    ]) expect(charter).toContain(amendment);
+    expect(charter).toContain('**B03**');
+    expect(charter).toContain('P0 OPEN');
+  });
+
+  it('disentangles evidence maturity from decision authority and treats missing safety data as unknown', () => {
+    expect(charter).toContain('Two orthogonal status dimensions');
+    expect(charter).toContain('an authority state, not proof');
+    expect(charter).toContain('PASS at declared fidelity, FAIL, or UNKNOWN');
+    expect(charter).toContain('UNKNOWN can remain in exploratory studies');
+    expect(charter).toContain('legacy single-field status labels');
+  });
+
+  it('blocks unapproved spending, publication and AI self-certification', () => {
+    expect(charter).toContain('zero permission for new paid external resource consumption');
+    expect(charter).toContain('The GitHub repository is publicly visible');
+    expect(charter).toContain('self-critique');
+    expect(charter).toContain('No actuation');
+    expect(charter).toContain('model output and retrieved documents as untrusted input');
+  });
+
+  it('requires uncertainty-aware measured gain and distinguishes self-critique from independent review', () => {
+    expect(charter).toContain('FAILURE_TO_IMPROVE');
+    expect(charter).toContain('NOT ACCEPTED AS IMPROVEMENT');
+    expect(charter).toContain('C09:');
+    expect(charter).toContain('C10:');
+    const memo = readFileSync('docs/governance/USV01_OPERATING_CHARTER_V11_AI_SELF_CRITIQUE.md', 'utf8');
+    expect(memo).toContain('INDEPENDENT GOVERNANCE AND QUALIFIED ENGINEERING REVIEW **NOT PERFORMED**');
+    for (let i = 1; i <= 17; i++) {
+      expect(memo).toContain('| F' + String(i).padStart(2, '0') + ' |');
+    }
+    expect(memo).toContain('READY FOR INDEPENDENT GOVERNANCE REVIEW, NOT ADOPTED');
   });
 });
