@@ -41,3 +41,7 @@ Authoritative references: https://www.imo.org/en/ourwork/safety/pages/shipdesign
 ## Evidence-chain disposition
 
 Earlier live Gemini campaign `evidence/live-agents/live-gemini-26-20261113.json` was executed at source SHA `854812812f02ab232a506957572c2944be63c7a5`. The A06 prompt has changed in HYD-01; it remains an immutable historical provider observation, **not** current A06 evidence. `tests/liveGeminiEvidence.test.ts` checks both the historical A06 hash and its mismatch to the current instructions, without editing past provider outputs.
+
+## Baseline write protection
+
+The interactive slider was capable of staging the 6,200 kg demonstration scenario as project particulars and calculating waterline beam as `beamM * 0.92` without verified offsets. That pathway was disabled. Users can export a clearly `UNVERIFIED PARAMETRIC SCREEN` CSV; slider reset affects only local state. No automated calculator can overwrite the project baseline. `tests/hydroBaselineIntegrity.test.ts` enforces the critical UI boundary.
