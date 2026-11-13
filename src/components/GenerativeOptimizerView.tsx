@@ -34,7 +34,6 @@ import {
 } from '../core/optimizer/GenerativeDesignOptimizer';
 import { downloadCsv } from '../utils/engineeringUtils';
 import { Vessel3DVisualizer } from './Vessel3DVisualizer';
-import { SharedMemory } from '../core/memory/SharedMemory';
 
 interface GenerativeOptimizerViewProps {
   onAskAi?: (prompt: string, record?: any) => void;
@@ -182,32 +181,17 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
     document.body.removeChild(link);
   };
 
-  // Apply candidate directly to SharedMemory and Digital Lab Simulator
+  // Synthetic optimizer scenarios are local previews only. They MUST NOT write
+  // invented hull, stability or powering values to controlled SharedMemory.
   const handleApplyCandidateToLab = (candidate: CandidateDesign) => {
-    const sm = SharedMemory.getInstance();
-    try {
-      sm.updateParameter('USV-NA-001', { value: candidate.lwlMeters, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
-      sm.updateParameter('USV-NA-002', { value: candidate.beamMeters, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
-      sm.updateParameter('USV-NA-003', { value: candidate.draftMeters, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
-      sm.updateParameter('USV-NA-004', { value: candidate.displacementTonnes, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
-      sm.updateParameter('USV-NA-005', { value: candidate.gmtMeters, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
-      sm.updateParameter('USV-NA-006', { value: candidate.kgMeters, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
-      sm.updateParameter('USV-PROP-001', { value: candidate.sprintSpeedKnots, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
-      sm.updateParameter('USV-PROP-002', { value: 14.0, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
-      if (sm.getParameter('USV-ELEC-001')) {
-        sm.updateParameter('USV-ELEC-001', { value: candidate.batteryKwh, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
-      }
-      setAppliedToast({
-        id: candidate.id,
-        message: `Design ${candidate.id} applied to Lab Baseline & Simulator!`,
-        lwl: candidate.lwlMeters,
-        beam: candidate.beamMeters,
-        disp: candidate.displacementTonnes
-      });
-      setTimeout(() => setAppliedToast(null), 8000);
-    } catch (err) {
-      console.error('Failed to update shared memory parameters', err);
-    }
+    setSelectedCandidate(candidate);
+    setAppliedToast({
+      id: candidate.id,
+      message: 'UNVERIFIED SCREENING PREVIEW — controlled vessel baseline unchanged',
+      lwl: candidate.lwlMeters,
+      beam: candidate.beamMeters,
+      disp: candidate.displacementTonnes
+    });
   };
 
   // Draw Dynamic Morphing Hull Canvas
@@ -383,6 +367,12 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
 
   return (
     <div className="space-y-6">
+      <div role="alert" className="rounded-lg border border-amber-500 bg-amber-950/20 p-4 text-sm text-amber-200">
+        <strong>UNVERIFIED CONCEPT EXPLORATION.</strong> The legacy optimizer uses assumed numerical coefficients
+        and synthetic votes, not validated resistance, hydrostatics, structures or a live 26-agent
+        decision. All generated values are illustrative. Previewing a design does not change
+        SharedMemory, the accepted baseline or the real-time vessel simulator.
+      </div>
       {/* CLOSED-LOOP SYNTHESIS TOAST NOTIFICATION */}
       {appliedToast && (
         <div className="p-4 rounded-lg bg-emerald-950/40 border border-emerald-500/50 text-emerald-200 flex flex-wrap items-center justify-between gap-3 shadow-lg shadow-emerald-950/30 animate-in fade-in">
@@ -390,10 +380,10 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
             <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
             <div>
               <div className="text-emerald-300 font-bold text-sm">
-                DESIGN CANDIDATE {appliedToast.id} APPLIED TO LAB & SIMULATOR!
+                DESIGN CANDIDATE {appliedToast.id}: PREVIEW ONLY — NOT APPROVED
               </div>
               <div className="text-slate-300 text-xs mt-0.5">
-                Waterline length: <strong className="text-white">{appliedToast.lwl}m</strong> • Beam: <strong className="text-white">{appliedToast.beam}m</strong> • Displacement: <strong className="text-amber-400">{appliedToast.disp.toFixed(2)}t</strong>. SharedMemory and 3D visual twins are synchronized.
+                Waterline length: <strong className="text-white">{appliedToast.lwl}m</strong> • Beam: <strong className="text-white">{appliedToast.beam}m</strong> • Displacement: <strong className="text-amber-400">{appliedToast.disp.toFixed(2)}t</strong>. Numbers are illustrative; the controlled engineering baseline and simulator remain unchanged.
               </div>
             </div>
           </div>
@@ -426,7 +416,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
               Generative Multi-Agent Design Optimization & Defense
             </h1>
             <p className="text-xs text-slate-400 max-w-3xl leading-relaxed">
-              25 specialized engineering agents iteratively generate, debate, stress-test, and eliminate hull candidates using deterministic naval hydrostatics, Savitsky planing equations, ISO 12215 scantlings, and multi-sea-state survivability gates.
+              Exploratory synthetic heuristic scenarios, NOT live 26-agent engineering reviews or validated naval calculations. Results are unverified and cannot establish design compliance.
             </p>
           </div>
 
@@ -751,10 +741,10 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                 <button
                   onClick={() => handleApplyCandidateToLab(activeCandidate)}
                   className="px-2.5 py-1 rounded text-xs font-mono font-bold bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-300 border border-cyan-500/40 flex items-center gap-1.5 transition-colors"
-                  title="Apply this exact design geometry and physics to the Real-Time Simulator & SharedMemory"
+                  title="Preview the synthetic scenario locally; does not update the controlled engineering baseline"
                 >
                   <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400" />
-                  <span>Apply to Simulator</span>
+                  <span>Preview Candidate</span>
                 </button>
               </div>
             </div>
