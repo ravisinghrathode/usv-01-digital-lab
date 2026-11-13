@@ -34,7 +34,6 @@ import { validateECRFile } from './scripts/governance/ecr-tool.ts';
 import { GlobalUsvIntelligenceAgent } from './src/core/agents/GlobalUsvIntelligenceAgent.ts';
 import { GlobalIntelligenceLearningBridge } from './src/core/intelligence/GlobalIntelligenceLearningBridge.ts';
 import http from 'http';
-import { WebSocketServer } from 'ws';
 import { VerifyUsv01Engine } from './src/core/verification/VerifyUsv01Engine.ts';
 import { getLabReadinessSnapshot } from './src/core/verification/LabReadiness.ts';
 import { loadProjectStore, saveProjectStore } from './src/core/storage/ProjectStorePersistence.ts';
@@ -45,13 +44,10 @@ import { ApprovalGateManager } from './src/core/safety/HumanApprovalGate.ts';
 import type { EngineeringTask } from './src/core/types/orchestrator.ts';
 import { AuditLogger } from './src/core/safety/AuditLogger.ts';
 import {
-  getGeminiClient,
-  isGeminiAvailable,
-  generateGeminiContent,
-  streamGeminiContent,
-  setupLiveApiWebSocket,
-  resolveServerGeminiModel
-} from './src/server/geminiService.ts';
+  generateCodexAssistantText,
+  isCodexAssistantEnabled,
+  isLoopbackPeer
+} from './src/server/codexAssistantService.ts';
 
 dotenv.config();
 
@@ -1413,55 +1409,7 @@ app.post('/api/notebook-lm/chat', async (req, res) => {
     const { prompt, selectedSourceIds } = req.body;
     if (!prompt) return res.status(400).json({ success: false, error: 'Missing prompt' });
 
-    if (isGeminiAvailable()) {
-      try {
-        const sources = learningBridge.getNotebookSources();
-        const activeSources =
-          selectedSourceIds && selectedSourceIds.length > 0
-            ? sources.filter((s: any) => selectedSourceIds.includes(s.id))
-            : sources;
-
-        const clues = learningBridge.getClues();
-        const systemInstruction = `You are the Naval NotebookLM Grounded Research Assistant for the USV-01 project.
-Answer the user's research query strictly using the provided Naval Research Sources and Transferred Technical Clues.
-Cite source titles and evidence directly in your answer.`;
-
-        const context = {
-          sources: activeSources.map((s: any) => ({
-            id: s.id,
-            title: s.title,
-            summary: s.summary,
-            excerpt: s.fullTextExcerpt
-          })),
-          clues: clues.slice(0, 8).map((c: any) => ({
-            id: c.id,
-            title: c.clueTitle,
-            principle: c.technicalPrinciple
-          }))
-        };
-
-        const result = await generateGeminiContent({
-          prompt,
-          systemInstruction,
-          context
-        });
-
-        return res.json({
-          success: true,
-          message: {
-            id: `asst-${Date.now()}`,
-            sender: 'assistant',
-            text: result.text,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            isGrounded: true,
-            modelUsed: result.modelUsed
-          }
-        });
-      } catch (geminiErr: any) {
-        console.warn('NotebookLM Gemini generation error, using local grounded synthesizer:', geminiErr.message);
-      }
-    }
-
+    // Notebook grounding is deterministic; no external AI credentials or unverified model claims.
     const message = learningBridge.answerGroundedQuery(prompt, selectedSourceIds);
     res.json({ success: true, message });
   } catch (err: any) {
@@ -1469,232 +1417,73 @@ Cite source titles and evidence directly in your answer.`;
   }
 });
 
-// --- SERVER-SIDE GEMINI API SUITE ---
+// --- OPERATOR-LOCAL CODEX SUBSCRIPTION ASSISTANT ---
+// Old Gemini endpoints are intentionally retired, not silently rerouted to a different provider.
+for (const route of ['/api/gemini/generate', '/api/gemini/stream', '/api/gemini/assist']) {
+  app.post(route, (_req, res) =>
+    res.status(410).json({ success: false, evidenceValid: false,
+      error: 'Legacy Gemini endpoint retired. Use the operator-local Codex assistant.' }));
+}
+app.get('/api/gemini/status', (_req, res) => res.status(410).json({
+  success: false, available: false, error: 'Gemini API retired from this server.'
+}));
 
-// 1. Gemini Runtime Status Endpoint
-app.get('/api/gemini/status', (req, res) => {
-  res.json({
-    success: true,
-    available: isGeminiAvailable(),
-    model: resolveServerGeminiModel(),
-    majorCapability: 'MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API'
-  });
-});
+app.get('/api/assistant/status', (req, res) => res.json({
+  success: true, provider: 'codex_cli', configured: isCodexAssistantEnabled(),
+  localOnly: true, authenticatedSessionVerified: false,
+  modelIdentityVerified: false, engineeringEvidenceValid: false
+}));
 
-// 2. Server-side General Gemini Generation Endpoint (used by ModelProvider and agent matrix)
-app.post('/api/gemini/generate', async (req, res) => {
+let assistantBusy = false;
+app.post('/api/assistant/assist', async (req, res) => {
+  // A ChatGPT/Codex personal CLI login is a LOCAL user session, not a shared API key.
+  if (!isLoopbackPeer(req.socket.remoteAddress)) {
+    return res.status(403).json({ success: false,
+      error: 'Subscription Codex assistant is limited to the local operator workstation.' });
+  }
+  if (!isCodexAssistantEnabled()) {
+    return res.status(503).json({ success: false,
+      error: 'Codex CLI unavailable: sign in locally and enable the subscription pilot. No hosted API fallback.' });
+  }
+  if (assistantBusy) {
+    return res.status(429).json({ success: false, error: 'A local Codex consultation is already in progress.' });
+  }
+
+  const { prompt, currentWorkstream, activeRecord, selectedAgent } = req.body || {};
+  if (typeof prompt !== 'string' || !prompt.trim() || prompt.length > 10_000) {
+    return res.status(400).json({ success: false, error: 'Invalid bounded engineering prompt.' });
+  }
+
+  const instruction = [
+    'Operate as a non-authoritative USV-01 systems-engineering advisor.',
+    'No physical or numerical claim without verified baseline inputs or real tool evidence.',
+    'Keep missing particulars TBD. No vessel-control actions.',
+    'Project context:', projectContext.slice(0, 3000)
+  ].join('\n');
+  assistantBusy = true;
   try {
-    const { request, config } = req.body || {};
-    const prompt = request?.userPrompt || req.body.prompt;
-    const systemInstruction = request?.systemInstructions || req.body.systemInstruction;
-    const context = request?.context || req.body.context;
-    const model = config?.modelName || req.body.model;
-
-    if (!isGeminiAvailable()) {
-      return res.status(503).json({ success: false, error: 'Gemini provider unavailable. No AI analysis was performed.' });
-    }
-
-    try {
-      const result = await generateGeminiContent({
-        prompt: prompt || 'Provide engineering analysis',
-        systemInstruction,
-        context,
-        model,
-        responseMimeType: 'application/json'
-      });
-
-      let parsedJson: any;
-      try {
-        parsedJson = JSON.parse(result.text);
-      } catch {}
-
-      return res.json({
-        content: result.text,
-        parsedJson,
-        providerUsed: 'gemini',
-        modelUsed: result.modelUsed,
-        isAiReview: true,
-        isMock: false,
-        evidenceValid: false, // AI narrative is not independently verified engineering evidence.
-        tokenUsage: {
-          promptTokens: result.usageMetadata?.promptTokenCount || 0,
-          completionTokens: result.usageMetadata?.candidatesTokenCount || 0,
-          totalTokens: result.usageMetadata?.totalTokenCount || 0
-        }
-      });
-    } catch (providerErr: any) {
-      return res.status(502).json({
-        success: false,
-        evidenceValid: false,
-        error: 'Gemini generation failed; no independent engineering analysis was completed.'
-      });
-    }
-  } catch (err: any) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-// 3. Server-side Gemini Streaming Endpoint (Server-Sent Events)
-app.post('/api/gemini/stream', async (req, res) => {
-  const { prompt, systemInstruction, context, model } = req.body || {};
-  if (!prompt) {
-    return res.status(400).json({ success: false, error: 'Missing prompt' });
-  }
-
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
-
-  if (!isGeminiAvailable()) {
-    // Return single SSE chunk with offline baseline text
-    res.write(
-      `data: ${JSON.stringify({ text: 'Offline mode: GEMINI_API_KEY is not configured on the server runtime.' })}\n\n`
-    );
-    res.write('data: [DONE]\n\n');
-    return res.end();
-  }
-
-  try {
-    for await (const chunk of streamGeminiContent({ prompt, systemInstruction, context, model })) {
-      res.write(`data: ${JSON.stringify({ text: chunk })}\n\n`);
-    }
-    res.write('data: [DONE]\n\n');
-    res.end();
-  } catch (_err: any) {
-    res.write(`data: ${JSON.stringify({ error: 'Gemini streaming failed. No AI output was generated.' })}\n\n`);
-    res.write('data: [DONE]\n\n');
-    res.end();
-  }
-});
-
-// 4. Server-side Gemini AI Engineering Assistant Endpoint
-app.post('/api/gemini/assist', async (req, res) => {
-  const { prompt, currentWorkstream, activeRecord, actionType, selectedAgent, stream } = req.body;
-
-  if (!prompt && !actionType) {
-    return res.status(400).json({ success: false, error: 'Missing prompt' });
-  }
-
-  const isStreaming = stream === true || req.query.stream === 'true';
-
-  // System instruction enforcing engineering discipline
-  const systemInstruction = `
-You are the AI Engineering Assistant embedded inside the USV-01 Digital Engineering Lab.
-Operating persona: ${selectedAgent && selectedAgent !== 'AUTO' ? `Specialist Agent ${selectedAgent}` : 'Lead Systems Architect (LEAD-SYS-01)'}.
-The USV-01 is an autonomous Unmanned Surface Vessel engineering project.
-
-CRITICAL MANDATES:
-1. All vessel-specific technical dimensions, performance limits, exact displacement, speed, power ratings, and stability parameters must remain "TBD" (To Be Determined) unless explicitly supplied in verified project context. DO NOT invent vessel dimensions or fake stability claims.
-2. In every response, you MUST clearly categorize statements into:
-   - [VERIFIED FACTS]: Items already established in the USV-01 project baseline.
-   - [USER INPUTS / DRAFTS]: Items entered as drafts or proposals.
-   - [ASSUMPTIONS & ESTIMATES]: Numerical or physical models undergoing evaluation.
-   - [AI PROPOSALS]: Suggestions generated by you that REQUIRE QUALIFIED HUMAN SIGN-OFF before adoption.
-   - [MISSING INFORMATION & TBD UNCERTAINTIES]: Explicit gaps that must be resolved prior to design freeze.
-3. This is an engineering design and analysis environment, NOT an operational vessel controller. Live vessel control or weapon systems are strictly out of scope.
-4. When reviewing requirements, check for quantitative acceptance criteria, clear verification methods (Analysis, Test, Demonstration, Inspection, Simulation), and bi-directional traceability.
-5. Refer to relevant engineering standards: IMO MSC.267(85), DNV-RU-HSLC, ISO 12217, IEEE 45, and COLREGs rules.
-
-COMMON BASELINE CONTEXT:
-${projectContext.substring(0, 3000)}
-
-ACTIVE WORKSTREAM FOCUS: ${currentWorkstream || 'General Systems Engineering'}
-ACTIVE SPECIALIST AGENT: ${selectedAgent || 'LEAD-SYS-01'}
-ACTIVE RECORD UNDER REVIEW: ${activeRecord ? JSON.stringify(activeRecord) : 'None'}
-ACTION REQUESTED: ${actionType || 'General Engineering Query'}
-`;
-
-  const userPrompt =
-    prompt ||
-    `Perform an engineering review for the active workstream ${currentWorkstream} and active record. Highlight missing inputs, traceability gaps, and standard compliance.`;
-
-  const fallbackBaselineText = `### [AI Engineering Assistant — Baseline Response]
-
-> **Note on Environment:** Server-side Gemini API key is not currently detected in environment variables. Providing rule-based engineering analysis derived from \`USV01_PROJECT_CONTEXT.md\`.
-
----
-
-#### 1. [CONFIGURATION CONTEXT — NOT INDEPENDENTLY VERIFIED]
-- Subsystem workstream active: **${currentWorkstream || 'Systems Engineering'}**.
-- Candidate reference standards include **IMO Resolution MSC.267(85)**, applicable class rules, and **IEEE 45**; applicability to this vessel and edition must be independently established before compliance can be asserted.
-- Traceability mandate: All requirements must trace to a Design Decision (\`DEC-xxx\`), Simulation (\`SIM-xxx\`), and Verification Procedure (\`VER-xxx\`).
-
-#### 2. [ASSUMPTIONS & ESTIMATES]
-- High-current propulsion bus is galvanically isolated from 24V avionics/sensors to mitigate ground loops and electromagnetic interference.
-- Calm-water resistance simulation and towing-tank correlation are planned verification activities; no current execution or validated results are established by this offline fallback.
-
-#### 3. [MISSING INFORMATION & TBD UNCERTAINTIES]
-- Hull principal dimensions (LOA, Beam, Draft) remain **TBD** pending final payload volume envelope and hydrodynamic trade study (\`DEC-NAV-001\`).
-- Propulsion motor continuous rating remains **TBD** awaiting certified resistance curves at operating Froude numbers.
-- Metacentric height ($GM$) and full-load displacement remain **TBD** pending weighing and inclining experiment.
-
-#### 4. [AI PROPOSALS — HUMAN SIGN-OFF REQUIRED]
-- When defining new requirements, specify verifiable acceptance thresholds (e.g. *"Positive GZ area under curve >= 0.055 m-rad between 0° and 30°"* instead of *"Adequate stability"*).
-- For safety-critical autonomy encounters, assess COLREGs obligations and implement a formally validated, scenario-dependent loss-of-link contingency; do not assume loiter or zero-thrust is universally safe.
-`;
-
-  if (!isGeminiAvailable()) {
-    if (isStreaming) {
+    const text = await generateCodexAssistantText({
+      prompt, instruction, context: {
+        currentWorkstream: String(currentWorkstream || '').slice(0, 120),
+        selectedAgent: String(selectedAgent || 'LEAD-SYS-01').slice(0, 80),
+        activeRecord: activeRecord ? JSON.stringify(activeRecord).slice(0, 4000) : null
+      }
+    });
+    if (req.query.stream === 'true' || req.body?.stream === true) {
       res.setHeader('Content-Type', 'text/event-stream');
       res.setHeader('Cache-Control', 'no-cache');
-      res.setHeader('Connection', 'keep-alive');
-      res.write(`data: ${JSON.stringify({ text: fallbackBaselineText })}\n\n`);
+      res.write('data: ' + JSON.stringify({ text }) + '\n\n');
       res.write('data: [DONE]\n\n');
       return res.end();
     }
-    return res.json({
-      success: true,
-      modelUsed: 'local-engineering-rules-engine',
-      isHeuristic: true,
-      evidenceValid: false,
-      verificationStatus: 'UNVERIFIED',
-      text: fallbackBaselineText
-    });
-  }
-
-  const geminiModel = resolveServerGeminiModel();
-
-  if (isStreaming) {
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-
-    try {
-      for await (const chunk of streamGeminiContent({
-        prompt: userPrompt,
-        systemInstruction,
-        model: geminiModel
-      })) {
-        res.write(`data: ${JSON.stringify({ text: chunk })}\n\n`);
-      }
-      res.write('data: [DONE]\n\n');
-      return res.end();
-    } catch (_streamErr: any) {
-      res.write(`data: ${JSON.stringify({ text: fallbackBaselineText })}\n\n`);
-      res.write('data: [DONE]\n\n');
-      return res.end();
-    }
-  }
-
-  try {
-    const result = await generateGeminiContent({
-      prompt: userPrompt,
-      systemInstruction,
-      model: geminiModel
-    });
-
-    res.json({
-      success: true,
-      modelUsed: result.modelUsed,
-      text: result.text || 'No response generated from model.'
-    });
-  } catch (_err: any) {
-    res.json({
-      success: true,
-      modelUsed: 'usv01-engineering-baseline-engine',
-      isHeuristic: true,
-      text: fallbackBaselineText
-    });
+    return res.json({ success: true, text, providerUsed: 'codex_cli',
+      modelUsed: 'operator-authenticated-cli-model-unattested', evidenceValid: false,
+      isHeuristic: false, independentlyReviewed: false });
+  } catch {
+    return res.status(503).json({ success: false, evidenceValid: false,
+      error: 'Codex CLI could not complete an authenticated local consultation. No AI response or evidence was generated.' });
+  } finally {
+    assistantBusy = false;
   }
 });
 
@@ -1719,46 +1508,13 @@ async function startServer() {
 
   const httpServer = http.createServer(app);
 
-  // Mount Gemini Live API WebSocket Server
-  const wss = new WebSocketServer({ noServer: true });
-  setupLiveApiWebSocket(wss);
-
-  httpServer.on('upgrade', (request, socket, head) => {
-    try {
-      const host = request.headers.host || 'localhost';
-      const pathname = request.url ? new URL(request.url, `http://${host}`).pathname : '';
-      if (pathname === '/api/gemini/live' || pathname === '/live') {
-        // WebSockets bypass Express middleware. Verify the session before allocating
-        // an upstream paid Live API connection. Browsers send token in the second
-        // subprotocol after the fixed public protocol, which is the only protocol echoed.
-        const header = request.headers.authorization;
-        const bearer = typeof header === 'string' && header.startsWith('Bearer ')
-          ? header.slice(7) : '';
-        const protocols = String(request.headers['sec-websocket-protocol'] || '').split(',').map(s => s.trim());
-        const boundToken = protocols[0] === 'usv01-v1'
-          ? protocols.find(s => s.startsWith('auth.'))?.slice(5) : undefined;
-        if (!verifySessionToken(bearer || boundToken || '')) {
-          socket.write('HTTP/1.1 401 Unauthorized\r\nConnection: close\r\n\r\n');
-          socket.destroy();
-          return;
-        }
-        wss.handleUpgrade(request, socket, head, (ws: any) => {
-          wss.emit('connection', ws, request);
-        });
-      }
-    } catch (upgradeErr: any) {
-      console.warn('[HTTP Upgrade Error]', upgradeErr.message);
-      socket.destroy();
-    }
-  });
+  // Legacy paid Gemini Live WebSocket removed. No subscription voice transport is implied.
 
   httpServer.listen(port, '0.0.0.0', () => {
     console.log(
       `[USV-01 Digital Engineering Lab] Server running on port ${port} (${isProd ? 'production' : 'development'})`
     );
-    console.log(
-      `[Gemini Server-Side] Status: ${isGeminiAvailable() ? 'ONLINE' : 'OFFLINE_HEURISTIC'} (Model: ${resolveServerGeminiModel()})`
-    );
+    console.log('[Codex Advisory] Local subscription pilot configured:', isCodexAssistantEnabled());
   });
 }
 
