@@ -22,6 +22,8 @@ export interface SolverJobRequest {
     gridUncertaintyMaxFraction: number;
     maxMeshSkewness: number;
     maxNonOrthogonalityDeg: number;
+    initialResidualThresholds?: Record<string, number>;
+    requireSolverDeclaredConvergence?: boolean;
     maxElementAspectRatio?: number;
     minScaledJacobian?: number;
   };
@@ -43,6 +45,9 @@ export interface SolverServiceReceipt {
     gridUncertaintyFraction: number | null;
     maximumMeshSkewness: number | null;
     maximumNonOrthogonalityDeg: number | null;
+    initialResidualsByField?: Record<string, number>;
+    solverDeclaredConverged?: boolean;
+    convergedIterations?: number | null;
     maximumElementAspectRatio?: number | null;
     minimumScaledJacobian?: number | null;
   };
@@ -72,6 +77,15 @@ const httpsRef = (uri: string) => {
 const sha256 = (v: unknown) => 'sha256:' + createHash('sha256').update(JSON.stringify(v)).digest('hex');
 const finiteNonnegative = (v: unknown): v is number =>
   typeof v === 'number' && Number.isFinite(v) && v >= 0;
+const validResidualThresholdMap = (v: unknown): v is Record<string,number> => {
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return false;
+  const entries=Object.entries(v);
+  return entries.length > 0 && entries.every(([field,threshold]) =>
+    /^[A-Za-z][A-Za-z0-9_]*(?:\*)?$/.test(field) &&
+    typeof threshold === 'number' && Number.isFinite(threshold) && threshold > 0);
+};
+const residualSelectorMatches = (selector:string, field:string) =>
+  selector.endsWith('*') ? field.startsWith(selector.slice(0,-1)) : field === selector;
 
 export function createSolverJobManifest(raw: SolverJobRequest): SolverJobManifest {
   if (!raw || !['OPENFOAM_CFD', 'CALCULIX_FEA'].includes(raw.family) ||
@@ -86,6 +100,11 @@ export function createSolverJobManifest(raw: SolverJobRequest): SolverJobManifes
       !finiteNonnegative(raw.qualityPlan.maxNonOrthogonalityDeg) ||
       raw.qualityPlan.gridUncertaintyMaxFraction > 1 ||
       raw.qualityPlan.maxNonOrthogonalityDeg > 180 ||
+      (raw.qualityPlan.initialResidualThresholds !== undefined &&
+        (raw.family !== 'OPENFOAM_CFD' ||
+         !validResidualThresholdMap(raw.qualityPlan.initialResidualThresholds))) ||
+      (raw.qualityPlan.requireSolverDeclaredConvergence !== undefined &&
+        typeof raw.qualityPlan.requireSolverDeclaredConvergence !== 'boolean') ||
       (raw.family === 'CALCULIX_FEA' &&
         (!finiteNonnegative(raw.qualityPlan.maxElementAspectRatio) ||
          raw.qualityPlan.maxElementAspectRatio! < 1 ||
@@ -133,11 +152,42 @@ export function evaluateSolverReceipt(
     }
     const q = r.quality;
     if (manifest.family === 'OPENFOAM_CFD') {
+      const fieldThresholds=manifest.qualityPlan.initialResidualThresholds;
       if (!q || !finiteNonnegative(q.finalResidual) ||
           !finiteNonnegative(q.maximumMeshSkewness) ||
           !finiteNonnegative(q.maximumNonOrthogonalityDeg)) {
-        problems.push('Computed CFD job lacks final residual or mesh-quality evidence');
+        problems.push('Computed CFD job lacks residual or mesh-quality evidence');
       } else {
+        let residualPassed=false;
+        if (fieldThresholds) {
+          const actual=q.initialResidualsByField;
+          if (!actual || typeof actual !== 'object' || Array.isArray(actual)) {
+            problems.push('Computed CFD job lacks field-specific initial residual evidence');
+          } else {
+            residualPassed=Object.entries(fieldThresholds).every(([selector,threshold]) => {
+              const matched=Object.entries(actual).filter(([field])=>residualSelectorMatches(selector,field));
+              return matched.length > 0 && matched.every(([,value])=>finiteNonnegative(value) && value <= threshold);
+            });
+            if (!residualPassed) problems.push('CFD source-defined field residualControl thresholds not met');
+            if (manifest.qualityPlan.requireSolverDeclaredConvergence && q.solverDeclaredConverged !== true) {
+              residualPassed=false;
+              problems.push('CFD solver did not declare SIMPLE residualControl convergence');
+            }
+          }
+        } else {
+          residualPassed=q.finalResidual <= manifest.qualityPlan.residualThreshold;
+          if (!residualPassed) problems.push('CFD final-residual threshold not met');
+        }
+        meshAndResidualScreenPassed =
+          residualPassed &&
+          q.maximumMeshSkewness <= manifest.qualityPlan.maxMeshSkewness &&
+          q.maximumNonOrthogonalityDeg <= manifest.qualityPlan.maxNonOrthogonalityDeg;
+        if (!meshAndResidualScreenPassed &&
+            !problems.some(x=>x.startsWith('CFD '))) {
+          problems.push('CFD mesh or residual threshold not met');
+        }
+      }
+    } else {
         meshAndResidualScreenPassed =
           q.finalResidual <= manifest.qualityPlan.residualThreshold &&
           q.maximumMeshSkewness <= manifest.qualityPlan.maxMeshSkewness &&
