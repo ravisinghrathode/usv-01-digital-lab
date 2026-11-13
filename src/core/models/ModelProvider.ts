@@ -617,12 +617,15 @@ export class ModelProviderRouter {
 
   public async generate(request: ModelPromptRequest, config: ModelConfig): Promise<ModelPromptResponse> {
     const isTestMode = isTestExecutionEnvironment();
-    // An explicit deployment-level provider selection overrides the 26 agent
-    // defaults. This is required for operator-authenticated Gemini CLI runs
-    // without rewriting every registered agent spec.
+    // Only the operator-authenticated CLI transport needs to override the
+    // 26 legacy per-agent Gemini SDK preferences. Other deployment values keep
+    // the original preference/fail-closed behavior so governance tests and
+    // explicit provider selections cannot be silently bypassed.
+    const explicitProvider =
+      typeof process !== 'undefined' ? process.env?.AI_REVIEW_PROVIDER?.toLowerCase() : undefined;
     let providerName =
-      (typeof process !== 'undefined' && process.env?.AI_REVIEW_PROVIDER)
-        ? resolveConfiguredProvider()
+      explicitProvider === 'gemini_cli'
+        ? 'gemini_cli'
         : (config.preferredProvider || resolveConfiguredProvider());
     const hasGeminiKey = typeof process !== 'undefined' && !!process.env?.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim().length > 0;
     if (providerName === 'gemini' && !hasGeminiKey) {
