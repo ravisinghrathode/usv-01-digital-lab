@@ -145,6 +145,17 @@ describe('RES-01 independent-data acceptance screening (NOT certification)', () 
     expect(result.releaseApproved).toBe(false);
   });
 
+  it('rejects measurements for a different source commit even if sample arithmetic passes', () => {
+    const data = sample();
+    const mismatched = screenResistancePropulsionEvidence(data, 'b'.repeat(40));
+    expect(mismatched.status).toBe('NUMERIC_FAIL');
+    expect(mismatched.numericalProblemGates).toContain('RES-01-A');
+    expect(mismatched.issues.join(' ')).toMatch(/exact baseline SHA/);
+    expect(mismatched.releaseApproved).toBe(false);
+    const same = screenResistancePropulsionEvidence(data, 'a'.repeat(40));
+    expect(same.status).toBe('NUMERIC_PASS_UNCERTIFIED');
+  });
+
   it('blocks nonphysical uncertainty combinations', () => {
     const data = sample();
     data.propulsionCurve[0].efficiencyAbsoluteUncertainty = 0.8;
