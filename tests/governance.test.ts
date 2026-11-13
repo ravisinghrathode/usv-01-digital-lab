@@ -47,6 +47,14 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
       expect(docCheck.categories).toContain('DOCUMENTATION');
       expect(docCheck.risk).toBe('LOW');
     });
+
+    it('uses the routine route for low/medium work and the signed engineering route for high/critical work', () => {
+      const routine = classifyFile('src/components/StatusPanel.tsx');
+      const critical = classifyFile('scripts/governance/stage-e-enforce.ts');
+
+      expect(routine.risk).toBe('MEDIUM');
+      expect(critical.risk).toBe('CRITICAL');
+    });
   });
 
   describe('2. DevSecOps Secret Scanner & Data Protection (Stage B)', () => {
@@ -591,7 +599,7 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
       }
     });
 
-    it('should reject Stage C evidence when baseline digest does not match current commit baseline', () => {
+    it('should reject Stage C evidence when a safety-critical baseline digest does not match', () => {
       const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'egs-digest-c-'));
       const reportsDir = path.join(tmpDir, 'governance', 'reports');
       fs.mkdirSync(reportsDir, { recursive: true });
@@ -601,13 +609,13 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
           path.join(reportsDir, 'pr-classification.json'),
           JSON.stringify({
             summary: {
-              overallRisk: 'LOW',
-              requiresDesignatedAuthorityApproval: false,
+              overallRisk: 'CRITICAL',
+              requiresDesignatedAuthorityApproval: true,
               totalFilesChanged: 1,
               totalLinesAdded: 5,
               totalLinesDeleted: 0,
-              dominantCategories: ['DOCUMENTATION'],
-              requiresECR: false
+              dominantCategories: ['SAFETY'],
+              requiresECR: true
             },
             baselineDigest: 'sha256:current1234567890abcdef',
             fileDetails: [],
@@ -632,6 +640,40 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
         const evalRes = evaluateGovernanceGate(tmpDir, 'origin/main');
         expect(evalRes.passed).toBe(false);
         expect(evalRes.blockingReasons.some(r => r.includes('Stage C independent review evidence does not correspond to the exact baseline digest'))).toBe(true);
+      } finally {
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+      }
+    });
+
+    it('permits a routine change to use the protected-branch review route without Stage C or a Director signature', () => {
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'egs-routine-route-'));
+      const reportsDir = path.join(tmpDir, 'governance', 'reports');
+      fs.mkdirSync(reportsDir, { recursive: true });
+
+      try {
+        fs.writeFileSync(
+          path.join(reportsDir, 'pr-classification.json'),
+          JSON.stringify({
+            summary: {
+              overallRisk: 'LOW',
+              approvalRoute: 'ROUTINE_SOFTWARE',
+              requiresIndependentEngineeringReview: false,
+              requiresDesignatedAuthorityApproval: false,
+              totalFilesChanged: 1,
+              totalLinesAdded: 5,
+              totalLinesDeleted: 0,
+              dominantCategories: ['DOCUMENTATION'],
+              requiresECR: false
+            },
+            fileDetails: [],
+            timestamp: new Date().toISOString()
+          })
+        );
+
+        const evalRes = evaluateGovernanceGate(tmpDir, 'origin/main');
+        expect(evalRes.passed).toBe(true);
+        expect(evalRes.overallVerdict).toBe('APPROVED');
+        expect(evalRes.stageAResult.approvalRoute).toBe('ROUTINE_SOFTWARE');
       } finally {
         fs.rmSync(tmpDir, { recursive: true, force: true });
       }
