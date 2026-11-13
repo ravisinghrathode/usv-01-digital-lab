@@ -1,43 +1,176 @@
-# USV-01 subscription-only Mission Control pilot
+# USV-01 Mission Control — subscription-only orchestration
 
-**Status: experimental; disabled by default; no engineering or approval authority.**
+**Status:** implementation complete in PR #53; live subscription authentication still requires one local Mac preflight.
 
-## Existing assets preserved
+## Purpose
 
-The repository already has **26 agents** in `src/core/agents/definitions.ts`, checked by `AgentRegistry`. It has a DAG scheduler in `CentralOrchestrator`, engineering execution tooling, an existing React dashboard, and cryptographic human approval controls. These are retained.
+Mission Control coordinates the existing **26 specialist agents** without replacing, renaming, merging, or weakening them.
 
-Do **not** create a second agent registry, second task scheduler, or alternative approval mechanism. The long-term design is to attach subscription-CLI role adapters to existing execution and verification boundaries after local validation.
+- **Claude Code** — chief orchestrator/planner.
+- **Google Antigravity CLI (Gemini)** — execution/synthesis worker operating under the selected specialist agent's mandate.
+- **OpenAI Codex CLI (GPT)** — independent technical reviewer aligned with `INDEP-REV-23`.
+- **Deterministic USV tools** — calculations and test evidence.
+- **Existing human authority gate** — remains the only Project Lead / Engineering Director approval mechanism.
 
-## Role mapping (do not replace specialist agents)
+The existing `AgentRegistry`, `CentralOrchestrator`, engineering tools, dashboard, and governance code remain authoritative.
 
-- Claude Code: planning/orchestration advice for `LEAD-SYS-01` and existing `CentralOrchestrator`. It is **not** a new authority gate.
-- Gemini: worker implementation support for existing A01–A26 specialist roles. The specialist's permissions, verification criteria and mandatory deterministic tools remain authoritative.
-- Codex: independent review assistance aligned to `INDEP-REV-23` and existing Stage C review machinery. GPT advice **does not** satisfy a human approval gate.
+## Zero-paid-API policy
 
-## Billing and credentials
+Paid AI API access is denied by default by `AiBillingPolicy.ts`.
 
-The pilot is **off** until `USV_SUBSCRIPTION_PILOT=enabled` is set intentionally on the Mac. The new `SubscriptionCliAdapter` strips API credentials, uses no shell, and offers no fallback to API providers. It does **not** change the existing `geminiService.ts` or `ModelProviderRouter` API-capable paths. The project owner must audit/disable those paths separately before claiming the entire lab uses zero paid APIs.
+```text
+USV_ALLOW_PAID_AI_API=false
+```
 
-Subscription login, CLI availability, and allowance for non-interactive use must be checked against the provider's current terms on the actual machine. A CLI may fail or require interactive authentication; treat that as unavailable, never as permission to use an API key.
+Merely having `GEMINI_API_KEY` or `OPENAI_API_KEY` in a shell does not authorize provider use. Mission Control additionally strips API/provider credential environment variables before invoking the three local CLIs.
 
-## Pilot sequence
+Governance CI is deterministic-only. It must not invoke Claude, Gemini, Codex, Gemini API, or OpenAI API.
 
-1. Freeze the current branch/commit and record agent registry count, canonical IDs, governance checks and outstanding blockers.
-2. Confirm each installed CLI's supported sign-in and non-interactive commands. **The `agy` invocation is a hypothesis and MUST be verified on the Mac before use.** Do not run arbitrary generated commands.
-3. Run unit tests for the disabled-by-default guard and credential scrubbing.
-4. Make a task specification tied to a real specialist agent, original requirements and a Git commit.
-5. In an isolated working copy, request an implementation from Gemini and execute deterministic tests.
-6. Give Codex only the original requirements, current commit and verified evidence; require structured review findings.
-7. Rework rejected revisions with a maximum retry count. Human approval is handled only by the established gate.
-8. Observe provider quotas; stop on exhaustion without billing upgrade.
+## Local architecture
 
-## Rollout blockers / explicit non-goals
+```text
+Project Lead
+    |
+    v
+MissionControlCoordinator
+    |
+    +--> Claude Code (-p, plan mode)
+    |       |
+    |       v
+    |   task plan
+    |
+    +--> existing A01-A26 specialist contract
+    |       |
+    |       +--> mandatory deterministic tools
+    |       |
+    |       +--> Antigravity / Gemini worker (-p, plan mode)
+    |
+    +--> Codex reviewer (exec, read-only sandbox)
+            |
+            +--> APPROVE -> next governance stage
+            +--> REQUEST_CHANGES -> bounded Gemini rework
+            +--> BLOCK -> task blocked
 
-- This PR does **not** wire the adapter into `CentralOrchestrator`, add a durable task queue, run live CLI tests, install Docker, or trigger the 26 specialists. These must come only after the local pilot and review.
-- No API keys, approval signing keys, GitHub credentials, or Docker socket should enter AI task environments.
-- No safety-critical task acceptance based on an AI assertion. Unknown engineering particulars remain TBD.
-- Maintain the existing actuator air gap and all current blocking GitHub checks.
+No AI result satisfies human approval.
+```
 
-## Follow-up
+## Durable state and recovery
 
-Implement a separate add-on to the existing TypeScript execution engine after validating the Mac toolchain. Reuse the existing dashboard, orchestrator, agent registry and approval gates. Add Docker only for isolated numerical workloads and nonprivileged services.
+`MissionControlStore` writes an atomic JSON state file containing task state, review cycles, commit SHA, and evidence manifest. A restart therefore preserves completed/pending task records instead of relying on chat history.
+
+Default pilot path:
+
+```text
+data/mission_control_state.json
+```
+
+The file is runtime data and must not contain API keys, signing keys, or Project Lead credentials.
+
+## Evidence manifest
+
+Every successful review record contains:
+
+- specialist ID and canonical A01-A26 ID;
+- exact Git commit SHA;
+- objective digest;
+- Claude plan digest;
+- deterministic tool inputs/outputs and verification state;
+- Gemini worker output digest;
+- GPT review decision and findings;
+- `humanApprovalSatisfied: false`.
+
+This prevents a GPT/Claude/Gemini statement from being mistaken for Project Lead authorization.
+
+## Docker
+
+Docker is used for the deterministic lab runtime and CI validation, not for the signed-in AI CLIs.
+
+```bash
+docker compose config --quiet
+docker compose build usv-lab
+docker compose up -d usv-lab
+```
+
+The container:
+
+- defaults to `AI_REVIEW_PROVIDER=deterministic`;
+- sets `USV_ALLOW_PAID_AI_API=false`;
+- disables the subscription pilot;
+- drops Linux capabilities;
+- runs with a read-only root filesystem;
+- exposes the lab only on `127.0.0.1:3000`;
+- persists `/app/data` in a named volume;
+- never mounts the Docker socket.
+
+The subscription CLIs remain on the host Mac so their desktop/account authentication is not copied into Docker.
+
+## Local Mac preflight
+
+Install/sign in to the three CLIs using the intended subscription/account. Then, from the repository:
+
+```bash
+npm run mission-control:preflight
+```
+
+This checks that `claude`, `agy`, and `codex` executables exist. It does not consume model usage or test authentication.
+
+Authenticate interactively once with each provider. Do not configure API keys for Mission Control.
+
+Current supported non-interactive mechanisms used by the adapter:
+
+```text
+Claude Code:        claude -p ... --output-format json --permission-mode plan
+Antigravity CLI:    agy -p ... --output-format json --mode plan
+Codex CLI:          codex exec --sandbox read-only ...
+```
+
+## Run the bounded pilot
+
+Pin the exact Git commit before execution:
+
+```bash
+export USV_SUBSCRIPTION_PILOT=enabled
+npm run mission-control:pilot -- \
+  --commit "$(git rev-parse HEAD)" \
+  --agent REQ-TRC-02 \
+  --objective "Verify one bounded requirements-traceability package."
+```
+
+The initial pilot deliberately uses a non-safety-critical specialist with no mandatory numerical tool so that cross-provider coordination can be tested independently of missing vessel particulars.
+
+After that succeeds, select a real engineering workstream. Any mandatory deterministic tool failure blocks the task before reviewer acceptance.
+
+## Automated validation
+
+```bash
+npm run lint
+npm run mission-control:test
+npm run mission-control:docker:validate
+```
+
+The regression suite verifies:
+
+1. all 26 specialist agents remain registered;
+2. provider envelopes are parsed without trusting vendor-specific shapes;
+3. a reviewer rejection routes work back to Gemini;
+4. the correction cycle is bounded;
+5. human approval is never inferred from AI review;
+6. unavailable CLIs fail closed;
+7. paid AI APIs are denied unless explicitly opted in;
+8. API/provider credentials are stripped from Mission Control child processes.
+
+## Explicit boundaries
+
+Mission Control must not:
+
+- merge GitHub pull requests;
+- sign ECRs;
+- possess Project Lead private/signing credentials;
+- execute vessel actuators, steering, throttle, or payload controls;
+- turn a failed calculation into an approved result;
+- invent missing vessel measurements, test evidence, standards applicability, or acceptance criteria;
+- silently switch to an API key, provider billing, cloud credits, or pay-as-you-go service.
+
+## Remaining local prerequisite
+
+Repository implementation and deterministic CI can be completed remotely. The only unavoidable local prerequisite is **verifying that the user's Mac is signed into Claude Code, Antigravity CLI, and Codex CLI with the intended subscription/account**. That credential state cannot be created or verified from GitHub CI without either the user's interactive login or introducing machine/API credentials, which this design intentionally forbids.
