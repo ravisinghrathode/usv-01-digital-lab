@@ -628,14 +628,15 @@ def run_staged_case(manifest: dict, stage: Path, work_root: Path,
                     "engineeringReleaseAuthorized":False,
                 }
                 evidence_path,evidence_sha = _persist_artifacts(
-                    case,artifact_root,manifest["jobRef"]+"-FAILED",failure_summary)
-                raise RuntimeError(
-                    str(exc)+"; quality="+json.dumps(quality,sort_keys=True)+
-                    "; initialResidualsByField="+json.dumps(residual_info["initialResidualsByField"],sort_keys=True)+
-                    "; finalResidualsByField="+json.dumps(residual_info["finalResidualsByField"],sort_keys=True)+
-                    "; failureEvidenceSha256="+evidence_sha+
-                    "; failureEvidencePath="+str(evidence_path)
-                ) from exc
+                    case,artifact_root,manifest["jobRef"],failure_summary)
+                return {
+                    **failure_summary,
+                    "state":"COMPUTE_DONE_QUALITY_REJECTED",
+                    "qualityGateIssue":str(exc),
+                    "outputArtifactLocalPath":str(evidence_path),
+                    "outputSha256":evidence_sha,
+                    "independentReferenceValidated":False,
+                }
         else:
             quality.update(_parse_c3d8_mesh_quality(case / "model.inp"))
             key_results = _parse_calculix_dat(case)
@@ -658,12 +659,15 @@ def run_staged_case(manifest: dict, stage: Path, work_root: Path,
                     "engineeringReleaseAuthorized":False,
                 }
                 evidence_path,evidence_sha = _persist_artifacts(
-                    case,artifact_root,manifest["jobRef"]+"-FAILED",failure_summary)
-                raise RuntimeError(
-                    str(exc)+"; quality="+json.dumps(quality,sort_keys=True)+
-                    "; failureEvidenceSha256="+evidence_sha+
-                    "; failureEvidencePath="+str(evidence_path)
-                ) from exc
+                    case,artifact_root,manifest["jobRef"],failure_summary)
+                return {
+                    **failure_summary,
+                    "state":"COMPUTE_DONE_QUALITY_REJECTED",
+                    "qualityGateIssue":str(exc),
+                    "outputArtifactLocalPath":str(evidence_path),
+                    "outputSha256":evidence_sha,
+                    "independentReferenceValidated":False,
+                }
 
         summary = {
             "jobId":manifest["jobRef"],
