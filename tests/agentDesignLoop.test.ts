@@ -22,7 +22,7 @@ const makeOutput = (agentId: string, input: AgentExecutionInput, metrics: Record
   warnings: [], recommendations: ['Revisit assumptions'], requiresDirectorApproval: true
 });
 const registry = AgentRegistry.getInstance();
-const proposer = registry.requireAgent('A05').id;
+const proposer = registry.requireAgent('A01').id;
 const critic = registry.requireAgent('A15').id;
 
 describe('Reproducible legacy scenarios and real-agent iterative design screening', () => {
