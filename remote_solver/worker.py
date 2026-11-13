@@ -459,7 +459,7 @@ def _selected_artifacts(case: Path) -> Iterable[Path]:
             continue
         rel = file.relative_to(case).as_posix()
         time_field = bool(re.fullmatch(
-            r"(?:[0-9]+(?:\\.[0-9]+)?)/(?:(?:Cx)|(?:wallShearStress)|(?:yPlus))", rel
+            r"(?:[0-9]+(?:\.[0-9]+)?)/(?:Cx|wallShearStress|yPlus)", rel
         ))
         if rel in exact or rel.startswith("postProcessing/") or time_field:
             yield file
