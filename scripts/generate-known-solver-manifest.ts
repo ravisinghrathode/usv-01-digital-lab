@@ -22,8 +22,16 @@ const manifest=createSolverJobManifest({
   inputArtifactUri:'https://ci-known-case.invalid/'+encodeURIComponent(value('--job-ref'))+'.zip',
   inputArtifactSha256:digest(archive),
   meshArtifactSha256:digest(mesh),
-  qualityPlan:{
-    sourceReference:'CI_KNOWN_CASE_COMMISSIONING_ONLY_NOT_VESSEL_ACCEPTANCE',
+  qualityPlan: family==='OPENFOAM_CFD' ? {
+    sourceReference:'https://gitlab.com/openfoam/core/openfoam/-/raw/OpenFOAM-v2606/tutorials/incompressible/simpleFoam/backwardFacingStep2D/system/fvSolution',
+    residualThreshold:1e-4,
+    initialResidualThresholds:{p:1e-4,'U*':1e-6,k:1e-5,omega:1e-5},
+    requireSolverDeclaredConvergence:true,
+    gridUncertaintyMaxFraction:0.05,
+    maxMeshSkewness:4,
+    maxNonOrthogonalityDeg:70
+  } : {
+    sourceReference:'CI_CALCULIX_AXIAL_BAR_ANALYTICAL_COMMISSIONING_PLAN',
     residualThreshold:1e-4,
     gridUncertaintyMaxFraction:0.05,
     maxMeshSkewness:4,
