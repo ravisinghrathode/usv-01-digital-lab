@@ -10,7 +10,7 @@ import os from 'os';
 import { CryptographicAuditTrail } from '../src/core/safety/CryptographicAuditTrail.ts';
 import { AgentGovernanceBridge } from '../src/core/governance/AgentGovernanceBridge.ts';
 import { generateReleaseManifest } from '../scripts/governance/release-manifest.ts';
-import { evaluateStageDHumanApproval } from '../scripts/governance/stage-d-human-approval.ts';
+import { evaluateStageDHumanApproval, hasCurrentHeadIndependentApproval } from '../scripts/governance/stage-d-human-approval.ts';
 import { authenticateLoginRequest, AUTHORIZED_MEMBERS } from '../server.ts';
 import { ModelProviderRouter } from '../src/core/models/ModelProvider.ts';
 import { generateMultiRoleReview } from '../scripts/governance/independent-ai-review.ts';
@@ -20,6 +20,32 @@ import type { IndividualCheckResult } from '../src/core/types/verification.ts';
 import path from 'path';
 import fs from 'fs';
 import { execSync } from 'child_process';
+
+describe('Exact-head independent review integrity', () => {
+  const head = 'a'.repeat(40);
+  const previous = 'b'.repeat(40);
+  const review = (id: number, login: string, commit_id: string, state = 'APPROVED', association = 'COLLABORATOR') => ({
+    id, state, commit_id, submitted_at: '2026-11-13T12:00:00Z',
+    author_association: association, user: { login }
+  });
+
+  it('accepts an approved review by another authorized contributor of the exact head', () => {
+    expect(hasCurrentHeadIndependentApproval([review(1, 'qualified-reviewer', head)], 'pr-author', head)).toBe(true);
+  });
+
+  it('rejects author self-approval, outdated heads and unauthorized outsiders', () => {
+    expect(hasCurrentHeadIndependentApproval([review(1, 'pr-author', head)], 'pr-author', head)).toBe(false);
+    expect(hasCurrentHeadIndependentApproval([review(1, 'peer', previous)], 'pr-author', head)).toBe(false);
+    expect(hasCurrentHeadIndependentApproval([review(1, 'peer', head, 'APPROVED', 'NONE')], 'pr-author', head)).toBe(false);
+  });
+
+  it('rejects a later changes-requested review by the same reviewer', () => {
+    expect(hasCurrentHeadIndependentApproval([
+      review(1, 'peer', head),
+      review(2, 'peer', head, 'CHANGES_REQUESTED')
+    ], 'pr-author', head)).toBe(false);
+  });
+});
 
 describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
 
