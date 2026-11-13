@@ -7,6 +7,8 @@ on:
   pull_request:
     paths:
       - 'scripts/repository-scout.mjs'
+      - 'scripts/repository-integration-planner.mjs'
+      - 'tests/repository-integration-planner.test.mjs'
       - 'config/repository-scout.json'
       - 'tests/repository-scout.test.mjs'
       - '.github/workflows/repository-scout.yml'
@@ -27,7 +29,7 @@ jobs:
         with:
           node-version: '22'
       - name: Run offline tests
-        run: node --test tests/repository-scout.test.mjs
+        run: node --test tests/repository-scout.test.mjs tests/repository-integration.test.mjs tests/repository-integration-planner.test.mjs
 
   discover:
     name: Search public GitHub repositories
@@ -51,6 +53,15 @@ jobs:
           --max-queries 18
           --per-query 30
           --limit 100
+      - name: Draft source-pinned investigation queue (never executes external code)
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          node scripts/repository-integration-planner.mjs
+          --scout-report "$RUNNER_TEMP/repository-scout/latest.json"
+          --out-dir "$RUNNER_TEMP/repository-scout"
+          --limit 5
       - name: Upload unverified discovery report
         uses: actions/upload-artifact@v4
         with:
