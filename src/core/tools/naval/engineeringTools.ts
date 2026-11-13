@@ -115,7 +115,7 @@ export const ResistanceTool: EngineeringTool = {
       min: z.number().positive().max(1),
       max: z.number().positive().max(1)
     }).optional()
-  }).strict().superRefine((d, ctx) => {
+  }).passthrough().superRefine((d, ctx) => {
     const flag = (path: string, message: string) =>
       ctx.addIssue({ code: z.ZodIssueCode.custom, path: [path], message });
     if (d.displacementTonnes * 1000 > d.seawaterDensityKgM3 * d.lwlMeters * d.beamMeters * d.draftMeters) {
