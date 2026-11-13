@@ -36,7 +36,8 @@ class WorkerTest(unittest.TestCase):
             'manifestSha256':sha256(b'exact-sample-manifest-proxy-hash'),
             'qualityPlan':{'sourceReference':'UNIT_TEST_ONLY_NOT_ACTUAL_CONVERGENCE',
                 'residualThreshold':0.01,'gridUncertaintyMaxFraction':0.03,
-                'maxMeshSkewness':1.2,'maxNonOrthogonalityDeg':45}
+                'maxMeshSkewness':1.2,'maxNonOrthogonalityDeg':45,
+                'maxElementAspectRatio':5,'minScaledJacobian':0.2}
         }
     def tearDown(self):
         self.temp.cleanup()
