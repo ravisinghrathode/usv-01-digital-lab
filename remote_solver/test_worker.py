@@ -1,12 +1,14 @@
 """Worker tests use fake subprocesses only unless a dedicated commissioning job says otherwise."""
 import io
+import os
 import subprocess
 import tempfile
 import unittest
 import zipfile
+from unittest.mock import patch
 from pathlib import Path
 
-from worker import sha256, run_staged_case, unzip_restricted, validate_request
+from worker import sha256, run_staged_case, unzip_restricted, validate_request, resource_policy, _parse_c3d8_mesh_quality
 
 def bundle(mapping):
     bio=io.BytesIO()
@@ -160,6 +162,38 @@ class WorkerTest(unittest.TestCase):
             run_staged_case(manifest,self.staging,self.root/'work',{digest},runner=fake,
                 artifact_root=self.artifacts,isolation_mode='UNSHARE_NET')
         self.assertEqual(seen[0][:3],['unshare','--net','--'])
+
+    def test_resource_limits_are_host_configurable_but_bounded(self):
+        with patch.dict(os.environ,{
+            'USV_SOLVER_CPU_SECONDS':'3600',
+            'USV_SOLVER_ADDRESS_SPACE_BYTES':str(16*1024*1024*1024),
+            'USV_SOLVER_FILE_BYTES':str(4*1024*1024*1024),
+            'USV_SOLVER_OPEN_FILES':'2048',
+            'USV_SOLVER_PROCESSES':'128',
+            'USV_SOLVER_WALL_TIMEOUT_SECONDS':'5400'
+        },clear=False):
+            policy=resource_policy()
+            self.assertEqual(policy['cpuSeconds'],3600)
+            self.assertEqual(policy['addressSpaceBytes'],16*1024*1024*1024)
+            self.assertEqual(policy['wallTimeoutSeconds'],5400)
+        with patch.dict(os.environ,{'USV_SOLVER_ADDRESS_SPACE_BYTES':'1'},clear=False):
+            with self.assertRaisesRegex(RuntimeError,'outside allowed host range'):
+                resource_policy()
+        with patch.dict(os.environ,{'USV_SOLVER_CPU_SECONDS':'not-an-int'},clear=False):
+            with self.assertRaisesRegex(RuntimeError,'must be an integer'):
+                resource_policy()
+
+    def test_c3d8_jacobian_checks_corners_and_gauss_points_not_only_center(self):
+        distorted=(b'*HEADING\n*NODE\n'
+            b'1,0,0,0\n2,1,0,0\n3,1,1,0\n4,0,1,0\n'
+            b'5,0,0,1\n6,1,0,1\n7,0.8254245,-0.0889408,1.4746455\n8,0,1,1\n'
+            b'*ELEMENT,TYPE=C3D8,ELSET=EALL\n1,1,2,3,4,5,6,7,8\n')
+        model=self.root/'distorted.inp'
+        model.write_bytes(distorted)
+        q=_parse_c3d8_mesh_quality(model)
+        self.assertEqual(q['jacobianSamplesPerElement'],17)
+        self.assertLess(q['minimumScaledJacobian'],0)
+        self.assertIsNotNone(q['worstJacobianNaturalCoordinates'])
 
     def test_rejects_non_allowlisted_or_changed_archive(self):
         with self.assertRaises(ValueError):
