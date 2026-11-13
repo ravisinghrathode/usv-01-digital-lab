@@ -12,7 +12,8 @@
   ],
   "test_references": [
     "tests/autonomyColregsSafetyScreen.test.ts",
-    "tests/autonomySensorSilReplay.test.ts"
+    "tests/autonomySensorSilReplay.test.ts",
+    "tests/autonomySyntheticClosedLoop.test.ts"
   ],
   "requirements": [
     "AUT-REQ-001",
@@ -54,9 +55,9 @@
     },
     {
       "gate_id": "AUT-G05",
-      "name": "Vessel dynamics, multi-encounter closed-loop SIL and ODD coverage",
+      "name": "Full vessel-specific closed-loop dynamics SIL and ODD coverage (simplified synthetic demonstrator exists but insufficient)",
       "status": "NOT_EXECUTED",
-      "evidence_reference": null
+      "evidence_reference": "src/core/verification/AutonomySyntheticClosedLoop.ts (uncertified toy physics; NOT full SIL)"
     },
     {
       "gate_id": "AUT-G06",
@@ -84,9 +85,9 @@
     },
     {
       "gate_id": "AUT-G10",
-      "name": "Director Stage D signed approval and Stage E protected merge",
+      "name": "Director exact-SHA signature, Stage E enforcement and governance nonconformance disposition",
       "status": "NOT_SUBMITTED",
-      "evidence_reference": null
+      "evidence_reference": "Issue #43 documents the post-merge governance bypass; no valid Director signature submitted"
     }
   ],
   "autonomous_navigation_authorized": false,
@@ -94,5 +95,39 @@
   "physical_validation_complete": false,
   "release_authorized": false,
   "closure_authorized": false,
-  "evidence_rules": "No placeholder, synthetic, model-generated or code-only result satisfies an external gate; retain NOT_SUBMITTED/NOT_EXECUTED until independent evidence reviewed."
+  "evidence_rules": "No placeholder, synthetic, model-generated or code-only result satisfies an external gate; retain NOT_SUBMITTED/NOT_EXECUTED until independent evidence reviewed.",
+  "post_merge_nonconformance": {
+    "id": "NC-AUT01-20261113-001",
+    "issue_url": "https://github.com/ravisinghrathode/usv-01-digital-lab/issues/43",
+    "merged_pr_url": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/41",
+    "source_pr_head_sha": "efcc9b20007cefa35909988698a181795aceaca8",
+    "source_merge_commit_sha": "4f285f5a51afc18c4b7825569f3185401d3e0a73",
+    "observed_merge_time_utc": "2026-11-13T00:35:28Z",
+    "github_ci_conclusion_at_merge_head": "failure",
+    "independent_pr_reviewer_submissions_at_inspection": 0,
+    "director_signature_verified": false,
+    "effective_branch_protection_verified": true,
+    "engineering_release_hold": true,
+    "status": "OPEN_PENDING_HUMAN_SAFETY_REVIEW",
+    "note": "Do not interpret merged source, successful software tests or AI advice as qualified engineering/operational authorization.",
+    "repaired_control_provenance": "GitHub GITHUB_GET_BRANCH_PROTECTION after GITHUB_UPDATE_BRANCH_PROTECTION; verified enforced for administrators, 1 independent review, strict required CI, dismissed stale reviews, last-push approval and no force-push/delete"
+  },
+  "source_code_additions_unvalidated": [
+    "src/core/verification/AutonomySyntheticClosedLoop.ts"
+  ],
+  "branch_protection": {
+    "repository_branch": "main",
+    "verified_date_utc": "2026-11-13",
+    "verified_from": "Connected GitHub REST branch protection GET",
+    "enforce_admins": true,
+    "required_status_check": "Deterministic Quality & Governance Gate",
+    "require_branch_up_to_date": true,
+    "required_approving_pr_reviews": 1,
+    "dismiss_stale_reviews": true,
+    "require_last_push_approval": true,
+    "force_pushes_allowed": false,
+    "branch_deletion_allowed": false,
+    "rule_enforcement_verified": true,
+    "note": "This is repository branch governance only; it is not an Ed25519 Director signature or seagoing engineering approval."
+  }
 }

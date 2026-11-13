@@ -3,6 +3,7 @@
  *
  * npm run acceptance:campaign
  * npm run acceptance:campaign -- --baseline-sha <40-hex> --evidence-file references/evidence.json --benchmark-file references/measurements.json
+ * npm run acceptance:campaign -- --resistance-propulsion-file references/res01-evidence.json
  * npm run acceptance:campaign -- --require-approved
  *
  * Parsing evidence is not authenticating attestations or certifying naval physics.
@@ -33,10 +34,18 @@ try {
   const evidencePath = argument('--evidence-file');
   const benchmarkPath = argument('--benchmark-file');
   const configurationPath = argument('--configuration-evidence') || 'governance/evidence/USV01_GATE0_SEED.json';
+  const resistancePropulsionPath = argument('--resistance-propulsion-file');
   const evidence = evidencePath ? parseAcceptanceEvidence(readJson(evidencePath)) : [];
   const benchmarkMeasurements = benchmarkPath ? parseReferenceMeasurements(readJson(benchmarkPath)) : [];
   const evidenceDecisionInput = parseEvidenceDecisionInput(readJson(configurationPath));
-  const report = runAcceptanceCampaign({ baselineSha, evidence, benchmarkMeasurements, evidenceDecisionInput });
+  const resistancePropulsionEvidence = resistancePropulsionPath ? readJson(resistancePropulsionPath) : undefined;
+  const report = runAcceptanceCampaign({
+    baselineSha,
+    evidence,
+    benchmarkMeasurements,
+    evidenceDecisionInput,
+    resistancePropulsionEvidence,
+  });
   const markdown = acceptanceCampaignMarkdown(report);
 
   fs.mkdirSync(outDir, { recursive: true });

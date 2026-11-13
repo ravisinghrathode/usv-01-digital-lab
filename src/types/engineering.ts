@@ -257,7 +257,7 @@ export interface LoadCaseRecord {
   loadType: 'Bottom Slamming' | 'Hull Girder Bending' | 'Towing Bollard Pull' | 'Crane Lift' | 'Mast Wind Drag';
   governingStandard: string;
   designPressureOrForce: string;
-  safetyFactorTarget: number;
+  safetyFactorTarget: number | 'TBD';
   feaStatus: 'TBD' | 'Pending Meshing' | 'Solved - Criteria Met' | 'Solved - Criteria Met (7.0mm Plating)' | 'Failed Criteria' | string;
 }
 

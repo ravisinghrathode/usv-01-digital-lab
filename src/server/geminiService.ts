@@ -1,5 +1,6 @@
 import { GoogleGenAI, LiveServerMessage, Modality } from '@google/genai';
 import type { WebSocket, WebSocketServer } from 'ws';
+import { isPaidAiApiAllowed } from '../core/models/AiBillingPolicy.ts';
 
 let cachedAiClient: GoogleGenAI | null = null;
 
@@ -8,6 +9,7 @@ let cachedAiClient: GoogleGenAI | null = null;
  * and the mandatory 'User-Agent': 'aistudio-build' telemetry header.
  */
 export function getGeminiClient(): GoogleGenAI | null {
+  if (!isPaidAiApiAllowed()) return null;
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey || apiKey.trim().length === 0) {
     return null;
@@ -33,6 +35,7 @@ export function markGeminiQuotaExhausted(retryDelaySeconds?: number): void {
 }
 
 export function isGeminiAvailable(): boolean {
+  if (!isPaidAiApiAllowed()) return false;
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey || apiKey.trim().length === 0) return false;
   if (Date.now() < quotaExhaustedUntil) {
@@ -65,7 +68,7 @@ export async function generateGeminiContent(options: ServerGenerateOptions): Pro
 }> {
   const ai = getGeminiClient();
   if (!ai) {
-    throw new Error('GEMINI_API_KEY is not configured on the server runtime.');
+    throw new Error('Gemini API access is disabled or no GEMINI_API_KEY is configured. USV-01 defaults to zero paid AI API usage.');
   }
 
   const model = resolveServerGeminiModel(options.model);

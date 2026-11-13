@@ -85,12 +85,14 @@ export const HydrostaticsTool: EngineeringTool = {
   }
 };
 
-// 2. Hydrodynamic Resistance & Powering Tool
+// 2. Hydrodynamic Resistance & Powering Tool — RES-01 evidence-gated Rev B
+// PROVENANCE IS NOT VALIDATION. Evidence IDs are references for independent
+// verification; neither these inputs nor deterministic arithmetic approve a design.
 export const ResistanceTool: EngineeringTool = {
   id: 'TOOL-RESISTANCE-01',
-  name: 'Hydrodynamic Resistance & Effective Power Estimator',
+  name: 'Evidence-gated Resistance & Propulsive Power Screen',
   category: 'HYDRODYNAMICS',
-  description: 'Calculates Froude number, ITTC-57 skin friction, residual drag, total resistance (kN), effective power (PE), and required shaft brake power (PB).',
+  description: 'Calculates Froude number and optional ITTC-1957 smooth-plate friction. Total resistance and shaft power remain null until separately evidenced inputs are supplied; never substitutes fabricated residual coefficients or efficiency defaults.',
   deterministic: true,
   requiredPermissions: ['CALCULATION_EXEC'],
   inputSchema: z.object({
@@ -99,100 +101,132 @@ export const ResistanceTool: EngineeringTool = {
     draftMeters: z.number().positive(),
     displacementTonnes: z.number().positive(),
     speedKnots: z.number().positive(),
-    propulsiveEfficiencyEtaD: z.number().positive().max(1),
-    waterTempCelsius: z.number().refine(v => Math.abs(v - 15) < 1e-9, {
-      message: 'Only 15°C seawater viscosity is implemented. Other temperatures require a validated viscosity model.'
-    })
-  }).passthrough().superRefine((data, ctx) => {
-    const cb = data.displacementTonnes * 1000 / (1025 * data.lwlMeters * data.beamMeters * data.draftMeters);
-    if (!Number.isFinite(cb) || cb < 0.30 || cb > 0.95) {
-      ctx.addIssue({ code: 'custom', message: 'Inferred block coefficient outside 0.30–0.95 supported screening envelope.' });
+    // The default viscosity below is referenced only to 15 C; reject other
+    // water temperatures until a separately validated fluid-properties path exists.
+    waterTempCelsius: z.number().finite().refine(v => Math.abs(v - 15) < 1e-9, {
+      message: 'Only 15°C seawater viscosity is implemented. Other temperatures require validated viscosity data.'
+    }).optional(),
+    seawaterDensityKgM3: z.number().positive().default(1025),
+    kinematicViscosityM2S: z.number().positive().default(1.188e-6),
+    wettedSurfaceAreaM2: z.number().positive().optional(),
+    wettedAreaEvidenceRef: z.string().trim().min(8).optional(),
+    documentedTotalResistanceKn: z.number().positive().optional(),
+    resistanceEvidenceRef: z.string().trim().min(8).optional(),
+    totalResistanceRangeKn: z.object({
+      min: z.number().nonnegative(),
+      max: z.number().positive()
+    }).optional(),
+    propulsiveEfficiencyEtaD: z.number().positive().max(1).optional(),
+    efficiencyEvidenceRef: z.string().trim().min(8).optional(),
+    efficiencyRange: z.object({
+      min: z.number().positive().max(1),
+      max: z.number().positive().max(1)
+    }).optional()
+  }).passthrough().superRefine((d, ctx) => {
+    const flag = (path: string, message: string) =>
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: [path], message });
+    if (d.displacementTonnes * 1000 > d.seawaterDensityKgM3 * d.lwlMeters * d.beamMeters * d.draftMeters) {
+      flag('displacementTonnes', 'Mass exceeds the geometric enclosing prism; check dimensions, mass and reference water density.');
     }
-    const re = data.speedKnots * (1852 / 3600) * data.lwlMeters / 1.188e-6;
-    if (!Number.isFinite(re) || re < 1e6 || re > 1e10) {
-      ctx.addIssue({ code: 'custom', message: 'Reynolds number outside defensible turbulent friction screening range [1e6,1e10].' });
+    if (d.wettedSurfaceAreaM2 !== undefined && !d.wettedAreaEvidenceRef) {
+      flag('wettedAreaEvidenceRef', 'A source/revision identifier is required for wetted area.');
+    }
+    if (d.documentedTotalResistanceKn !== undefined && !d.resistanceEvidenceRef) {
+      flag('resistanceEvidenceRef', 'A source/revision identifier is required for externally derived total resistance.');
+    }
+    if (d.totalResistanceRangeKn !== undefined) {
+      if (d.documentedTotalResistanceKn === undefined) flag('documentedTotalResistanceKn', 'Bounds require a documented central resistance estimate.');
+      else if (d.totalResistanceRangeKn.min > d.documentedTotalResistanceKn || d.totalResistanceRangeKn.max < d.documentedTotalResistanceKn) {
+        flag('totalResistanceRangeKn', 'Resistance bounds must contain the central value.');
+      }
+    }
+    if (d.propulsiveEfficiencyEtaD !== undefined && !d.efficiencyEvidenceRef) {
+      flag('efficiencyEvidenceRef', 'A source/revision identifier is required for quasi-propulsive efficiency.');
+    }
+    if (d.efficiencyRange !== undefined) {
+      if (d.propulsiveEfficiencyEtaD === undefined) flag('propulsiveEfficiencyEtaD', 'Efficiency bounds require a documented central efficiency.');
+      else if (d.efficiencyRange.min > d.propulsiveEfficiencyEtaD || d.efficiencyRange.max < d.propulsiveEfficiencyEtaD) {
+        flag('efficiencyRange', 'Efficiency bounds must contain the central value.');
+      }
     }
   }),
   outputSchema: z.object({
     speedMps: z.number(),
     froudeNumberFn: z.number(),
-    hydrodynamicRegime: z.enum(['DISPLACEMENT', 'SEMI_DISPLACEMENT', 'PLANING']),
+    froudeSpeedBand: z.enum(['LOW', 'INTERMEDIATE', 'HIGH']),
+    hydrodynamicRegime: z.literal('UNVERIFIED'),
     reynoldsNumber: z.number(),
-    frictionalResistanceKn: z.number(),
-    residualResistanceKn: z.number(),
-    totalResistanceKn: z.number(),
-    effectivePowerPeKw: z.number(),
-    shaftBrakePowerPbKw: z.number(),
+    frictionCoefficientCf: z.number(),
+    frictionalResistanceKn: z.number().nullable(),
+    residualResistanceKn: z.null(),
+    totalResistanceKn: z.number().nullable(),
+    effectivePowerPeKw: z.number().nullable(),
+    shaftBrakePowerPbKw: z.number().nullable(),
+    effectivePowerRangeKw: z.object({ min: z.number(), max: z.number() }).nullable(),
+    shaftBrakePowerRangeKw: z.object({ min: z.number(), max: z.number() }).nullable(),
+    missingEvidence: z.array(z.string()),
     engineeringComplianceValidated: z.literal(false),
-    modelStatus: z.literal('PRELIMINARY_EMPIRICAL_ESTIMATE'),
     designUsePermitted: z.literal(false),
-    residualDragModelValidated: z.literal(false)
+    residualDragModelValidated: z.literal(false),
+    modelStatus: z.enum(['INSUFFICIENT_EVIDENCE', 'EVIDENCE_REFERENCED_UNVERIFIED'])
   }),
   execute: (input: any) => {
-    const { lwlMeters, beamMeters, draftMeters, displacementTonnes, speedKnots, propulsiveEfficiencyEtaD = 0.65 } = input;
+    // Defaults in the input schema are explicitly preliminary *fluid properties*,
+    // never hull-derived areas, residual drag, efficiency, or motor ratings.
     const g = 9.80665;
-    const rho = 1025;
-    const nu = 1.188e-6; // kinematic viscosity for seawater at 15C
-
-    const speedMps = speedKnots * 0.514444;
-    const froudeNumberFn = speedMps / Math.sqrt(g * lwlMeters);
-
-    let hydrodynamicRegime: 'DISPLACEMENT' | 'SEMI_DISPLACEMENT' | 'PLANING' = 'DISPLACEMENT';
-    if (froudeNumberFn > 0.9) {
-      hydrodynamicRegime = 'PLANING';
-    } else if (froudeNumberFn >= 0.4) {
-      hydrodynamicRegime = 'SEMI_DISPLACEMENT';
+    const speedMps = input.speedKnots * (1852 / 3600);
+    const fn = speedMps / Math.sqrt(g * input.lwlMeters);
+    const re = speedMps * input.lwlMeters / input.kinematicViscosityM2S;
+    if (re <= 100 || !Number.isFinite(re)) {
+      throw new Error('Reynolds number is outside the valid ITTC-1957 correlation range.');
     }
+    const cf = 0.075 / Math.pow(Math.log10(re) - 2, 2);
+    const q = 0.5 * input.seawaterDensityKgM3 * speedMps * speedMps;
+    const frictionKn = input.wettedSurfaceAreaM2 === undefined
+      ? null : q * input.wettedSurfaceAreaM2 * cf / 1000;
+    // External total-resistance data must already account for all relevant
+    // hull/appendage effects at the specified condition: do NOT add Rf again.
+    const totalKn = input.documentedTotalResistanceKn ?? null;
+    const powerKw = totalKn === null ? null : totalKn * speedMps;
+    const shaftKw = powerKw === null || input.propulsiveEfficiencyEtaD === undefined
+      ? null : powerKw / input.propulsiveEfficiencyEtaD;
+    const rRange = input.totalResistanceRangeKn;
+    const eRange = input.efficiencyRange;
+    const peRange = rRange ? { min: rRange.min * speedMps, max: rRange.max * speedMps } : null;
+    const pbRange = rRange && eRange
+      ? { min: rRange.min * speedMps / eRange.max, max: rRange.max * speedMps / eRange.min }
+      : null;
+    const missingEvidence: string[] = [];
+    if (frictionKn === null) missingEvidence.push('CAD/offset-derived wetted area and its provenance');
+    if (totalKn === null) missingEvidence.push('hull-specific total resistance curve from validated CFD, tow test, or accepted reference with uncertainty');
+    if (input.propulsiveEfficiencyEtaD === undefined) missingEvidence.push('propulsor/hull interaction and quasi-propulsive efficiency evidence');
+    if (peRange === null) missingEvidence.push('resistance uncertainty interval');
+    if (pbRange === null) missingEvidence.push('combined resistance and efficiency uncertainty intervals');
+    missingEvidence.push('verified wake/thrust-deduction, bollard pull, manoeuvring and cavitation/ventilation limits');
+    missingEvidence.push('motor/ESC/shaft and thermal ratings; duty cycle; sea-trial correlation; human approval');
 
-    // Wetted surface area (approximate Denny-Mumford formula): S = 1.7 * L * T + (Cb * L * B)
-    const cb = (displacementTonnes * 1000 / rho) / (lwlMeters * beamMeters * draftMeters);
-    const wettedSurfaceM2 = 1.7 * lwlMeters * draftMeters + (cb * lwlMeters * beamMeters);
-
-    // Reynolds number
-    const reynoldsNumber = (speedMps * lwlMeters) / nu;
-
-    // ITTC-57 friction coefficient
-    const cf = 0.075 / Math.pow(Math.log10(reynoldsNumber) - 2, 2);
-
-    // Residual resistance coefficient Cr (semi-empirical function of Fn and slenderness)
-    let cr = 0.0015;
-    if (froudeNumberFn > 0.4 && froudeNumberFn <= 0.8) {
-      cr = 0.0015 + 0.006 * Math.pow(froudeNumberFn - 0.4, 1.8);
-    } else if (froudeNumberFn > 0.8) {
-      // Preserve C0 continuity at Fn=0.8. This is still an UNVALIDATED
-      // residual estimate; it is not an accepted high-speed hull method.
-      const crAt08 = 0.0015 + 0.006 * Math.pow(0.4, 1.8);
-      cr = crAt08 + 0.002 * (froudeNumberFn - 0.8);
-    }
-
-    // Correlation allowance Ca
-    const ca = 0.0004;
-
-    const dynamicPressure = 0.5 * rho * Math.pow(speedMps, 2);
-    const frictionalResistanceKn = (cf * dynamicPressure * wettedSurfaceM2) / 1000;
-    const residualResistanceKn = ((cr + ca) * dynamicPressure * wettedSurfaceM2) / 1000;
-    const totalResistanceKn = frictionalResistanceKn + residualResistanceKn;
-
-    // Effective power Pe = Rt * V (kW)
-    const effectivePowerPeKw = totalResistanceKn * speedMps;
-
-    // Shaft brake power Pb = Pe / etaD (kW)
-    const shaftBrakePowerPbKw = effectivePowerPeKw / propulsiveEfficiencyEtaD;
-
+    const round = (x: number | null) => x === null ? null : Number(x.toFixed(6));
     return {
-      speedMps: Number(speedMps.toFixed(2)),
-      froudeNumberFn: Number(froudeNumberFn.toFixed(3)),
-      hydrodynamicRegime,
-      reynoldsNumber: Number(reynoldsNumber.toExponential(3)),
-      frictionalResistanceKn: Number(frictionalResistanceKn.toFixed(3)),
-      residualResistanceKn: Number(residualResistanceKn.toFixed(3)),
-      totalResistanceKn: Number(totalResistanceKn.toFixed(3)),
-      effectivePowerPeKw: Number(effectivePowerPeKw.toFixed(2)),
-      shaftBrakePowerPbKw: Number(shaftBrakePowerPbKw.toFixed(2)),
-      engineeringComplianceValidated: false,
-      modelStatus: 'PRELIMINARY_EMPIRICAL_ESTIMATE',
-      designUsePermitted: false,
-      residualDragModelValidated: false
+      speedMps: round(speedMps),
+      froudeNumberFn: round(fn),
+      froudeSpeedBand: fn < 0.4 ? 'LOW' : fn < 0.9 ? 'INTERMEDIATE' : 'HIGH',
+      hydrodynamicRegime: 'UNVERIFIED' as const,
+      reynoldsNumber: Number(re.toPrecision(9)),
+      frictionCoefficientCf: round(cf),
+      frictionalResistanceKn: round(frictionKn),
+      residualResistanceKn: null,
+      totalResistanceKn: round(totalKn),
+      effectivePowerPeKw: round(powerKw),
+      shaftBrakePowerPbKw: round(shaftKw),
+      effectivePowerRangeKw: peRange ? { min: round(peRange.min)!, max: round(peRange.max)! } : null,
+      shaftBrakePowerRangeKw: pbRange ? { min: round(pbRange.min)!, max: round(pbRange.max)! } : null,
+      missingEvidence,
+      engineeringComplianceValidated: false as const,
+      designUsePermitted: false as const,
+      residualDragModelValidated: false as const,
+      modelStatus: totalKn === null || shaftKw === null
+        ? 'INSUFFICIENT_EVIDENCE' as const
+        : 'EVIDENCE_REFERENCED_UNVERIFIED' as const
     };
   }
 };

@@ -1,0 +1,77 @@
+name: Project Lead — Merge Eligible Pull Requests
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: project-lead-bulk-merge
+  cancel-in-progress: false
+
+jobs:
+  merge-eligible:
+    name: Merge independently approved, gate-cleared PRs
+    if: github.actor == 'ravisinghrathode' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - name: Check authorization and merge only independently approved PRs
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "## Project Lead bulk-merge decision" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Requested by authenticated GitHub actor: ${GITHUB_ACTOR}" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          # PRs sorted by number keep the existing engineering-platform dependency
+          # chain (#48 -> #49 -> #50 -> #51 -> #52) in sequence.
+          mapfile -t prs < <(gh pr list --repo "$GH_REPO" --state open --limit 100 --json number --jq 'sort_by(.number) | .[].number')
+          if (( ${#prs[@]} == 0 )); then
+            echo "No open pull requests." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          merged=0
+          blocked=0
+          for number in "${prs[@]}"; do
+            # Fresh snapshot per PR: the prior merge may change eligibility.
+            details=$(gh pr view "$number" --repo "$GH_REPO" --json number,title,isDraft,baseRefName,reviewDecision,mergeStateStatus,headRefOid)
+            draft=$(jq -r '.isDraft' <<<"$details")
+            base=$(jq -r '.baseRefName' <<<"$details")
+            review=$(jq -r '.reviewDecision // "NONE"' <<<"$details")
+            state=$(jq -r '.mergeStateStatus // "UNKNOWN"' <<<"$details")
+            sha=$(jq -r '.headRefOid' <<<"$details")
+            title=$(jq -r '.title' <<<"$details" | tr '\n\r|' '   ')
+            # APPROVED means independent GitHub review requirements were met.
+            # CLEAN means GitHub says merge requirements are satisfied, including
+            # applicable required status checks and protected-branch rules.
+            # No permissions bypass, admin override, fake review or stage-D
+            # signature generation is ever attempted by this workflow.
+            if [[ "$draft" != "false" || "$base" != "main" || "$review" != "APPROVED" || "$state" != "CLEAN" ]]; then
+              printf '| #%s | HOLD | draft=%s, base=%s, review=%s, merge=%s |\n' "$number" "$draft" "$base" "$review" "$state" >> "$GITHUB_STEP_SUMMARY"
+              ((blocked+=1))
+              continue
+            fi
+            # An exact head SHA ensures the approved commit did not move.
+            # GitHub remains final authority for branch protections.
+            if result=$(gh api -X PUT "repos/$GH_REPO/pulls/$number/merge" -f merge_method=merge -f sha="$sha" 2>&1); then
+              if [[ "$(jq -r '.merged // false' <<<"$result")" == "true" ]]; then
+                printf '| #%s | MERGED | %s |\n' "$number" "$title" >> "$GITHUB_STEP_SUMMARY"
+                ((merged+=1))
+              else
+                printf '| #%s | HOLD | GitHub declined merge |\n' "$number" >> "$GITHUB_STEP_SUMMARY"
+                ((blocked+=1))
+              fi
+            else
+              printf '| #%s | HOLD | GitHub enforcement rejected merge |\n' "$number" >> "$GITHUB_STEP_SUMMARY"
+              ((blocked+=1))
+            fi
+          done
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Merged:** $merged. **Held:** $blocked." >> "$GITHUB_STEP_SUMMARY"
+          echo "A software PR merge is not an engineering baseline or vessel release authorization." >> "$GITHUB_STEP_SUMMARY"

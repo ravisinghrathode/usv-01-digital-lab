@@ -52,13 +52,13 @@ export const MechanicalStructuralView: React.FC<MechanicalStructuralViewProps> =
             Structural Integrity, Marine Materials & FEA Register
           </h2>
           <p className="text-xs text-slate-400 mt-0.5">
-            DNV-RU-HSLC scantling rules, marine 5083-H116 alloy database, slamming pressure panels, and FEA stress models.
+            Material candidates, structural load-case register, and FEA evidence status; illustrative records do not demonstrate structural compliance.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <button
-            onClick={() => onAskAi('Audit the Mechanical and Structural load cases and material selections against DNV High Speed Craft rules. Check for galvanic corrosion risks between aluminum framing and carbon fiber mast.')}
+            onClick={() => onAskAi('Audit the mechanical/structural candidate load cases and materials without assuming DNV/ISO applicability or verified CAD/FEA. Identify absent geometry, mass, CG, weld allowables, lift load paths, galvanic isolation and required validation evidence.')}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 text-sky-300 text-xs transition-colors"
           >
             <Sparkles className="w-3.5 h-3.5" />
@@ -118,7 +118,7 @@ export const MechanicalStructuralView: React.FC<MechanicalStructuralViewProps> =
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
               <h3 className="text-xs font-semibold text-slate-200 flex items-center gap-2">
                 <Database className="w-4 h-4 text-teal-400" />
-                <span>Certified Marine Material Properties Database</span>
+                <span>Material Candidate Register — Validate Manufacturer Certificates</span>
               </h3>
               <button
                 onClick={handleExportMaterials}
@@ -177,7 +177,7 @@ export const MechanicalStructuralView: React.FC<MechanicalStructuralViewProps> =
                     <th className="py-2 px-3">Title & Phenomenon</th>
                     <th className="py-2 px-3">Governing Code</th>
                     <th className="py-2 px-3">Design Pressure / Force</th>
-                    <th className="py-2 px-3">Safety Factor (Target)</th>
+                    <th className="py-2 px-3">Safety Factor (Approval Required)</th>
                     <th className="py-2 px-3">FEA Stress Status</th>
                   </tr>
                 </thead>
@@ -188,7 +188,7 @@ export const MechanicalStructuralView: React.FC<MechanicalStructuralViewProps> =
                       <td className="py-2.5 px-3 text-slate-200 font-medium">{lc.title}</td>
                       <td className="py-2.5 px-3 font-mono text-slate-400">{lc.governingStandard}</td>
                       <td className="py-2.5 px-3 font-mono text-amber-300">{lc.designPressureOrForce}</td>
-                      <td className="py-2.5 px-3 font-mono text-slate-300">SF ≥ {lc.safetyFactorTarget}</td>
+                      <td className="py-2.5 px-3 font-mono text-slate-300">{lc.safetyFactorTarget === 'TBD' ? 'TBD — not approved' : `SF ≥ ${lc.safetyFactorTarget} (illustrative)`}</td>
                       <td className="py-2.5 px-3">
                         <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">
                           {lc.feaStatus}
@@ -208,7 +208,7 @@ export const MechanicalStructuralView: React.FC<MechanicalStructuralViewProps> =
         <div className="space-y-4">
           <div className="bg-slate-900 border border-slate-800 rounded p-4">
             <h3 className="text-xs font-semibold text-slate-200 pb-3 border-b border-slate-800">
-              Finite Element Analysis (FEA) Stress & Fatigue Records
+              Finite Element Analysis (FEA) Register — Evidence Required
             </h3>
 
             <div className="space-y-3 mt-4">
@@ -216,7 +216,7 @@ export const MechanicalStructuralView: React.FC<MechanicalStructuralViewProps> =
                 <div key={sim.id} className="p-3.5 rounded bg-slate-950 border border-slate-800 text-xs space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-teal-400 font-bold">{sim.id} — {sim.name}</span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
                       {sim.runStatus}
                     </span>
                   </div>
@@ -237,7 +237,7 @@ export const MechanicalStructuralView: React.FC<MechanicalStructuralViewProps> =
       {activeTab === 'drawings' && (
         <div className="bg-slate-900 border border-slate-800 rounded p-4 text-xs font-mono space-y-3">
           <h3 className="text-xs font-semibold text-slate-200 pb-2 border-b border-slate-800">
-            Controlled Engineering Drawings Register (Google Drive Archive)
+            Illustrative Drawings Register — Actual Controlled CAD Not Verified
           </h3>
           <div className="space-y-2">
             <div className="p-2.5 rounded bg-slate-950 border border-slate-800 flex items-center justify-between">
@@ -245,21 +245,21 @@ export const MechanicalStructuralView: React.FC<MechanicalStructuralViewProps> =
                 <span className="text-teal-400 font-bold">DWG-HULL-001 Rev A [SAMPLE]</span>
                 <span className="text-slate-400 block text-[11px] mt-0.5">Lines Plan, Station Offsets, and Waterlines</span>
               </div>
-              <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">CONTROLLED CAD</span>
+              <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">ILLUSTRATIVE ONLY</span>
             </div>
             <div className="p-2.5 rounded bg-slate-950 border border-slate-800 flex items-center justify-between">
               <div>
                 <span className="text-teal-400 font-bold">DWG-STR-002 Rev B [SAMPLE]</span>
                 <span className="text-slate-400 block text-[11px] mt-0.5">Midship Section Scantlings, Keel Plating & Stiffeners</span>
               </div>
-              <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">CONTROLLED CAD</span>
+              <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">ILLUSTRATIVE ONLY</span>
             </div>
             <div className="p-2.5 rounded bg-slate-950 border border-slate-800 flex items-center justify-between">
               <div>
                 <span className="text-teal-400 font-bold">DWG-MAST-003 Rev A [SAMPLE]</span>
                 <span className="text-slate-400 block text-[11px] mt-0.5">Carbon Fiber Sensor Mast & Shock Mount Assembly</span>
               </div>
-              <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">CONTROLLED CAD</span>
+              <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">ILLUSTRATIVE ONLY</span>
             </div>
           </div>
         </div>
