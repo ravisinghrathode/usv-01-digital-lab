@@ -13,6 +13,7 @@ export interface AgentRunFinding {
   providerExecutionMode?: string;
   outputDigestSha256?: string;
   correlationId?: string;
+  failureReason?: string;
 }
 
 export interface AgentMatrixReport {
@@ -56,6 +57,10 @@ export async function runLiveAgentMatrix(
     try {
       const output = await run(spec.id, input);
       finding.correlationId = output.correlationId;
+      if (output.status === 'FAILED') {
+        const error = output.data?.error;
+        finding.failureReason = typeof error === 'string' ? error : 'Agent execution failed without a recorded reason';
+      }
       finding.provider = output.provider;
       finding.executionMode = output.executionMode;
       finding.providerExecutionMode = output.providerExecutionMode;

@@ -343,7 +343,12 @@ export class CodexCliProvider implements IModelProvider {
       'You are executing a bounded USV-01 specialist engineering agent synthesis task.',
       'Your output is advisory, cannot approve a design or claim independent verification.',
       'Never invent tools, test results, physical parameters or evidence. Preserve TBD.',
-      'Return ONLY one valid JSON object conforming to the requested agent output schema.',
+      'Return ONLY one valid JSON object with every required field in this exact structure:',
+      '{"disciplineSummary":"string","keyMetrics":{},"designDecisions":[],"assumptions":[],"openTbdItems":[],"requiresDirectorApproval":true}',
+      'keyMetrics values may only use supplied inputs or actual deterministic Tool Evidence. Use an empty object when no supported metric exists.',
+      'Every designDecisions item and every openTbdItems item must be a plain string, never an object or array. Every keyMetrics value must be one string, number, or boolean; omit unsupported values instead of returning null, objects, or arrays. In particular, omit unknown stability metrics; never use null as a placeholder.',
+      'Each assumption must contain id, category (ASSUMPTION|FACT|CALCULATION|TBD|PROPOSAL), description, sourceReference, impactIfViolated, and isBaseline. Never report unsupported FACT or CALCULATION claims; use TBD or PROPOSAL.',
+      'Include optional metricProvenance only when every cited source reference is present in the input or Tool Evidence. Never claim that a model ran a tool.',
       'SYSTEM INSTRUCTIONS:', request.systemInstructions,
       'USER TASK:', request.userPrompt,
       'CONTEXT JSON:', JSON.stringify(request.context)

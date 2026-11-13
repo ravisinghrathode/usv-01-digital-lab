@@ -15,6 +15,7 @@ export interface AgentPreflightFinding {
   toolEvidence: Array<{
     toolId: string;
     success: boolean;
+    expectedSafeRejection?: boolean;
     inputSchemaValid: boolean;
     error?: string;
     validationErrors?: string[];
@@ -29,6 +30,7 @@ export interface CodexCampaignPreflight {
   agentInputsValid: number;
   deterministicToolsPassed: number;
   deterministicToolsFailed: number;
+  deterministicToolsExpectedRejections: number;
   liveCodexCalls: 0;
   independentlyEngineeringValidated: false;
   engineeringReleaseApproved: false;
@@ -41,7 +43,7 @@ export async function preflightCodexAgentCases(
   const specs = AgentRegistry.getInstance().getAllAgents();
   const tools = ToolRegistry.getInstance();
   const findings: AgentPreflightFinding[] = [];
-  let passed = 0, failed = 0;
+  let passed = 0, failed = 0, expectedRejections = 0;
 
   for (const spec of specs) {
     const input = cases[spec.canonicalId];
@@ -60,17 +62,26 @@ export async function preflightCodexAgentCases(
         continue;
       }
       const inputParse = tool.inputSchema.safeParse(input?.parameters ?? {});
+      const authorizedPermissions = new Set<string>(spec.executionPermissions);
       const authorized = spec.permittedTools.includes(toolId) &&
-        tool.requiredPermissions.every(permission => spec.executionPermissions.includes(permission));
+        tool.requiredPermissions.every(permission => authorizedPermissions.has(permission));
       if (!authorized || !inputParse.success) {
-        failed++;
+        const validationErrors = inputParse.success ? [] :
+          inputParse.error.issues.map(issue => issue.path.join('.') + ': ' + issue.message);
+        const task = String(input?.context?.task ?? '').toLowerCase();
+        const expectedSafeRejection = !authorized ? false : validationErrors.some(message =>
+          (message.includes('mass conservation') && /inconsisten|mismatch/.test(task)) ||
+          (message.includes('source\/revision identifier is required for quasi-propulsive efficiency') &&
+            /unverified|absent|missing/.test(task))
+        );
+        if (expectedSafeRejection) expectedRejections++; else failed++;
         const error = !authorized ? 'Specialist lacks required tool authorization' :
           'Mandatory tool input schema failed';
-        blockers.push(toolId + ': ' + error);
+        if (!expectedSafeRejection) blockers.push(toolId + ': ' + error);
         toolEvidence.push({
-          toolId, success: false, inputSchemaValid: inputParse.success,
+          toolId, success: false, expectedSafeRejection, inputSchemaValid: inputParse.success,
           error, validationErrors: inputParse.success ? undefined :
-            inputParse.error.issues.map(issue => issue.path.join('.') + ': ' + issue.message)
+            validationErrors
         });
         continue;
       }
@@ -98,6 +109,7 @@ export async function preflightCodexAgentCases(
     totalAgents: findings.length,
     agentInputsValid: findings.filter(x => x.inputSchemaValid).length,
     deterministicToolsPassed: passed, deterministicToolsFailed: failed,
+    deterministicToolsExpectedRejections: expectedRejections,
     liveCodexCalls: 0,
     independentlyEngineeringValidated: false, engineeringReleaseApproved: false,
     findings

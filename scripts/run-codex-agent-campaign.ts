@@ -33,6 +33,7 @@ async function main() {
       validInputs: preflight.agentInputsValid,
       mandatoryToolsPassed: preflight.deterministicToolsPassed,
       mandatoryToolsFailed: preflight.deterministicToolsFailed,
+      mandatoryToolsExpectedRejections: preflight.deterministicToolsExpectedRejections,
       blockedAgents: preflight.findings
         .filter(finding => !finding.readyForModelAttempt)
         .map(finding => ({ agent: finding.canonicalId, blockers: finding.blockers })),

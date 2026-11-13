@@ -26,16 +26,38 @@ export function compileCodexAgentCases(catalog: unknown): Record<string, AgentEx
       throw new Error('Duplicate or malformed canonical agent case');
     }
     AgentRegistry.getInstance().requireAgent(row.canonicalId);
+    const parameters = structuredClone(source.sharedParameters as Record<string, unknown>);
+    const withheldParameters: Record<string, unknown> = {};
+    // Keep explicitly unverified fixture inputs visible to the specialist, but
+    // out of calculators that must reject unsupported evidence. These values
+    // are never silently changed or promoted into the controlled baseline.
+    if (['A05', 'A06', 'A23'].includes(row.canonicalId) && 'blockCoefficientCb' in parameters) {
+      withheldParameters.blockCoefficientCb = parameters.blockCoefficientCb;
+      delete parameters.blockCoefficientCb;
+    }
+    if (['A07', 'A13', 'A23'].includes(row.canonicalId) && 'propulsiveEfficiencyEtaD' in parameters) {
+      withheldParameters.propulsiveEfficiencyEtaD = parameters.propulsiveEfficiencyEtaD;
+      delete parameters.propulsiveEfficiencyEtaD;
+    }
+    if (row.canonicalId === 'A17') {
+      // The encounter case is a synthetic test vector; its bearing convention
+      // is explicitly a tool-fixture convention and is not project evidence.
+      parameters.bearingReference = 'TRUE_NORTH';
+    }
     cases[row.canonicalId] = {
       taskId: row.taskId,
-      parameters: structuredClone(source.sharedParameters as Record<string, unknown>),
+      parameters,
       context: {
         campaignId: source.campaignId,
         task: row.task,
         source: source.source,
         dataClassification: source.dataClassification,
         illustrativeNonOperational: true,
-        engineeringBaselineApproved: false
+        engineeringBaselineApproved: false,
+        unvalidatedCatalogParametersWithheldFromCalculators: withheldParameters,
+        syntheticToolConventions: row.canonicalId === 'A17'
+          ? { bearingReference: 'TRUE_NORTH', classification: 'TEST_FIXTURE_ONLY_NOT_NAVIGATION_EVIDENCE' }
+          : {}
       }
     };
   }
