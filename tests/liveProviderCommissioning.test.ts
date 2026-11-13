@@ -20,8 +20,18 @@ const liveProvider = (overrides: Partial<{ providerUsed: string; executionMode: 
 describe('Live provider credential verification (no network in unit tests)', () => {
   it('records response digest from an injected successful live provider', async () => {
     const result = await commissionLiveModel(sha,'gemini-3.8-flash', liveProvider());
-    expect(result.actualLiveApiCall).toBe(true);
+    expect(result.actualLiveProviderCall).toBe(true);
+    expect(result.transport).toBe('SDK_API_KEY');
     expect(result.responseDigest).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(result.independentEngineeringEvidence).toBe(false);
+    expect(result.authorizedDesignRelease).toBe(false);
+  });
+  it('accepts an injected operator-authenticated Gemini CLI transport without treating it as engineering evidence',async()=>{
+    const cli={...liveProvider(),name:'gemini_cli'};
+    const result=await commissionLiveModel(sha,'auto',cli);
+    expect(result.actualLiveProviderCall).toBe(true);
+    expect(result.transport).toBe('GEMINI_CLI_OPERATOR_AUTH');
+    expect(result.provider).toBe('gemini');
     expect(result.independentEngineeringEvidence).toBe(false);
     expect(result.authorizedDesignRelease).toBe(false);
   });
