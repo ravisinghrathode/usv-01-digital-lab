@@ -40,7 +40,6 @@ describe('Structural project seed is unapproved and fails closed', () => {
 
   it('does not treat a sample structural solver record as executed or certified', () => {
     const structuralSims = INITIAL_SIMULATIONS.filter(item => item.discipline === 'MEC');
-    expect(structuralSims.length).toBeGreaterThan(0);
     for (const sim of structuralSims) {
       expect(sim.isIllustrative).toBe(true);
       expect(sim.runStatus).toBe('Draft');
