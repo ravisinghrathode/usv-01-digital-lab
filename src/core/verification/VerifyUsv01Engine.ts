@@ -832,7 +832,7 @@ export class VerifyUsv01Engine {
         waterplaneCoefficientCwp: 0.65,
         kgMeters: 0.8,
         seawaterDensityKgM3: 1025,
-        propulsiveEfficiencyEtaD: 0.65,
+        // No fabricated propulsive efficiency; RES-01 is deliberately unverified.
         waterTempCelsius: 15,
         deadriseAngleDeg: 18,
         unsupportedPanelWidthMm: 500,
