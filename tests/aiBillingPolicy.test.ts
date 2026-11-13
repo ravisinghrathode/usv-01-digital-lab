@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { assertPaidAiApiAllowed, isPaidAiApiAllowed } from '../src/core/models/AiBillingPolicy.ts';
-import { CodexCliProvider, GeminiProvider, OpenAIProvider, resolveConfiguredProvider } from '../src/core/models/ModelProvider.ts';
+import { CodexCliProvider, GeminiProvider, OpenAIProvider, resolveConfiguredProvider, resolveModelProviderForTask } from '../src/core/models/ModelProvider.ts';
 
 const originalEnv = { ...process.env };
 afterEach(() => {
@@ -41,6 +41,16 @@ describe('AI billing policy', () => {
     expect(resolveConfiguredProvider()).toBe('openai');
     expect(new OpenAIProvider().isAvailable()).toBe(true);
   });
+  it('keeps ChatGPT-pinned agent routing on Codex even if Gemini CLI is selected globally', () => {
+    process.env.AI_REVIEW_PROVIDER = 'gemini_cli';
+    process.env.GEMINI_API_KEY = 'untrusted-legacy-test-key';
+    process.env.USV_ALLOW_PAID_AI_API = 'false';
+    expect(resolveModelProviderForTask({
+      preferredProvider: 'codex_cli',
+      fallbackToMock: false
+    }, process.env.AI_REVIEW_PROVIDER)).toBe('codex_cli');
+  });
+
   it('makes signed-in Codex an explicit, zero-paid-API opt-in', () => {
     process.env.AI_REVIEW_PROVIDER = 'codex_cli';
     delete process.env.USV_SUBSCRIPTION_PILOT;
