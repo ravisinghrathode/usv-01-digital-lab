@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { sanitizedSubscriptionEnvironment, validatePilotRequest, SubscriptionCliUnavailable } from '../src/core/mission-control/SubscriptionCliAdapter.ts';
+import { mkdtemp, rm } from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import { assertUsvRepositoryWorkingDirectory, sanitizedSubscriptionEnvironment, validatePilotRequest, SubscriptionCliUnavailable } from '../src/core/mission-control/SubscriptionCliAdapter.ts';
 
 const input = {
   role: 'reviewer' as const,
@@ -35,6 +38,15 @@ describe('Subscription CLI pilot guards', () => {
     expect(env.CUSTOM_API_TOKEN).toBeUndefined();
     expect(env.USV_NO_PAID_API).toBe('1');
   });
+  it('rejects arbitrary non-USV working directories', async () => {
+    const dir = await mkdtemp(path.join(os.tmpdir(), 'not-usv-repo-'));
+    try {
+      await expect(assertUsvRepositoryWorkingDirectory(dir)).rejects.toThrow(/USV-01 Digital Lab/);
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+
   it('rejects non-canonical task and agent IDs', () => {
     const original = process.env.USV_SUBSCRIPTION_PILOT;
     process.env.USV_SUBSCRIPTION_PILOT = 'enabled';
