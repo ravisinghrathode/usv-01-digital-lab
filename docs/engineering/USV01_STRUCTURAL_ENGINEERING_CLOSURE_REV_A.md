@@ -52,7 +52,16 @@ The earlier numerical result was **15 times smaller** than this particular compa
 For mass m (kg), gravitational acceleration g = 9.80665 m/s², and selected dynamic amplification A (>=1): `Fz = m*g*A`.
 For **externally verified** nonnegative vertical share r_i with sum r_i=1 and sling angle theta_i from the vertical: `Rz_i=Fz*r_i`, `T_i=Rz_i/cos(theta_i)`, and `|H_i|=T_i*sin(theta_i)`. All input forces are screening values. Reactions depend on actual 3D CG, geometry, sling stiffness, supporting structure and sequencing; especially for redundant multi-point rigs, shares cannot be inferred from point count. These formulas do not prove 3D force/moment balance or rate an attachment. A point allowable is only as trustworthy as its traceable strength basis. Angle-specific sling/hardware WLL, shackle bearing/prying, weld/HAZ, hull strength and proof test must be assessed independently.
 
-## Closure gate and evidence manifest
+## Additional 3D equilibrium check (non-certifying)
+
+The second analytical tool `TOOL-STRUCTURES-LIFT-3D-01` evaluates the **full global 3D static equilibrium residual** of externally supplied attachment coordinates, centre of gravity, sling direction unit vectors and tension values. Taking the 3D centre of gravity as moment reference:
+
+- Force residual: `Σ(T_i d_i) - (0,0,m g A)` (N)
+- Moment residual: `Σ((p_i - CG) × (T_i d_i))` (N·m)
+
+Both force and moment residuals must be small against **numerical arithmetic tolerances** (relative 10^-6), with strict unit-vector and finiteness checks. A result of `ARITHMETICALLY_BALANCED_ONLY` means the supplied forces are mutually consistent with a quasi-static balance at the supplied configuration, **not** that the inputs, sling lengths, elastic load shares, lifting-point capacities, dynamics or design strength have been established. Asymmetric 4-point lifting remains statically indeterminate and requires actual stiffness/rigging assessment. The tool will not infer missing sling tensions, certify any lifter or produce a safe-to-lift result. Tests include off-centre CG, horizontal residual, excessive moments and forged approval labels.
+
+
 
 - [ ] CM-01: Select and approve the single actual USV-01 configuration (120 kg proposal or another mass and hull), frozen CAD geometry revision and approved mass/CG.
 - [ ] MAT-01: Material certificates, corrosion/joining, laminate layup if relevant, plate thickness, weld heat-affected-zone allowable, fastener strength and traceable suppliers.
