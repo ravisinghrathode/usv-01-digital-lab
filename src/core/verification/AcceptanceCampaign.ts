@@ -57,7 +57,7 @@ export function runAcceptanceCampaign(input: CampaignInputs) {
     agentFindings.every(a => a.configurationValid);
   const acceptance = evaluateAcceptance(input.baselineSha, input.evidence);
   const benchmark = evaluateBenchmark(input.benchmarkMeasurements || []);
-  const resistancePropulsion = screenResistancePropulsionEvidence(input.resistancePropulsionEvidence);
+  const resistancePropulsion = screenResistancePropulsionEvidence(input.resistancePropulsionEvidence, input.baselineSha);
   const assigned = new Set(CAMPAIGN_WORKSTREAMS.flatMap(w => [...w.criteria]));
   const missingCriteria = ACCEPTANCE_REQUIREMENTS.filter(c => !assigned.has(c.id)).map(c => c.id);
   const workstreams = CAMPAIGN_WORKSTREAMS.map(w => {
