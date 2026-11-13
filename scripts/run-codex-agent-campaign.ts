@@ -7,6 +7,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { compileCodexAgentCases } from '../src/core/verification/CodexMatrixInput.ts';
 import { runLiveAgentMatrix } from '../src/core/verification/LiveAgentMatrix.ts';
+import { preflightCodexAgentCases } from '../src/core/verification/CodexCampaignPreflight.ts';
 
 async function main() {
   const sourcePath = path.resolve(
@@ -17,16 +18,35 @@ async function main() {
   if (fs.statSync(sourcePath).size > 2 * 1024 * 1024) throw new Error('Catalog too large');
   const catalog = JSON.parse(fs.readFileSync(sourcePath, 'utf8'));
   const cases = compileCodexAgentCases(catalog);
+  const preflight = await preflightCodexAgentCases(cases);
+  const preflightPath = path.resolve('governance/reports/codex-26-agent-preflight.json');
+  fs.mkdirSync(path.dirname(preflightPath), { recursive: true });
+  fs.writeFileSync(preflightPath, JSON.stringify({
+    ...preflight, catalogClassification: catalog.dataClassification,
+    illustrativeNonOperational: true, historicalCatalogBaseline: catalog.baselineSha
+  }, null, 2) + '\n');
+
   if (!process.argv.includes('--execute')) {
     console.log(JSON.stringify({
-      status: 'CASES_COMPILED_NO_LIVE_CALLS',
-      count: Object.keys(cases).length,
-      dataClassification: catalog.dataClassification,
-      independentlyEngineeringValidated: false,
-      engineeringReleaseApproved: false,
-      nextStep: 'Run with --execute only after an official signed-in Codex CLI session is available.'
+      status: preflight.status,
+      agents: preflight.totalAgents,
+      validInputs: preflight.agentInputsValid,
+      mandatoryToolsPassed: preflight.deterministicToolsPassed,
+      mandatoryToolsFailed: preflight.deterministicToolsFailed,
+      blockedAgents: preflight.findings
+        .filter(finding => !finding.readyForModelAttempt)
+        .map(finding => ({ agent: finding.canonicalId, blockers: finding.blockers })),
+      report: preflightPath,
+      liveCodexCalls: 0, independentlyEngineeringValidated: false,
+      engineeringReleaseApproved: false
     }, null, 2));
+    if (process.argv.includes('--require-ready') && preflight.status !== 'PREFLIGHT_READY_NO_AI_CALLS') {
+      process.exitCode = 1;
+    }
     return;
+  }
+  if (preflight.status !== 'PREFLIGHT_READY_NO_AI_CALLS') {
+    throw new Error('26-agent preflight has failed mandatory engineering inputs/tools. Fix exact recorded blockers before spending Codex tokens.');
   }
   if (process.env.AI_REVIEW_PROVIDER !== 'codex_cli' ||
       process.env.USV_SUBSCRIPTION_PILOT !== 'enabled' ||
