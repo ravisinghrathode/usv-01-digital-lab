@@ -1,6 +1,8 @@
 # USV-01 — Agent-led design discovery and Gate 0 (proposal)
 
-**Disposition:** Implementation proposed; NOT an approved hull baseline, not an actual vessel design, not engineering release. Project Lead may select a concept after evidence-backed comparison; safety engineering authorities retain independent review/signature obligations.
+**Disposition:** Historical implementation proposal, updated for the current canonical 26-agent role and Codex subscription-only runtime; NOT an approved hull baseline, actual vessel design or engineering release. Project Lead may select a concept after evidence-backed comparison; safety engineering authorities retain independent review/signature obligations.
+
+**Current scope limit:** This procedure prepares or executes 26 role-specific research cases; it does not establish a complete autonomous, cyclic 26-agent engineering optimizer. The separate actual design-revision loop is bounded to A01/A15; independent engineering validation remains open.
 
 ## Correct sequence
 
@@ -18,8 +20,8 @@
 # Prepare 26 discipline-specific real-engine input cases without inventing vessel particulars
 npm run concept:research -- --mission-file references/concept-mission-draft.json --source-sha <EXACT_40_HEX_SHA>
 
-# Execute actual 26 agents ONLY with configured authorized Gemini service
-GEMINI_API_KEY=... npm run concept:research -- --mission-file references/concept-mission-draft.json --source-sha <EXACT_40_HEX_SHA> --run-live
+# Current authorized live research route: signed-in local Codex CLI, no paid API fallback
+AI_REVIEW_PROVIDER=codex_cli USV_SUBSCRIPTION_PILOT=enabled USV_ALLOW_PAID_AI_API=false npm run concept:research -- --mission-file references/concept-mission-draft.json --source-sha <EXACT_40_HEX_SHA> --run-live
 
 # When independent source-referenced candidate records exist, re-evaluate their
 # input shape and research completeness (not physical approval):
