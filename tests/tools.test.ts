@@ -25,7 +25,8 @@ describe('STAGE E: Deterministic Naval Engineering Tools', () => {
     expect(res.success).toBe(true);
     expect(res.output.displacedVolumeM3).toBeCloseTo(10 * 2.5 * 0.6 * 0.45, 2);
     expect(res.output.displacementTonnes).toBeGreaterThan(6.0);
-    expect(res.output.metacentricHeightGmtM).toBeGreaterThan(0.35);
+    expect(res.output.metacentricHeightGmtM).toBeNull();
+    expect(res.output.preliminaryGmScreeningM).not.toBeNull();
     expect(res.output.stabilityStatus).toBe('UNVERIFIED_ESTIMATE');
       expect(res.output.engineeringComplianceValidated).toBe(false);
   });
@@ -37,7 +38,8 @@ describe('STAGE E: Deterministic Naval Engineering Tools', () => {
       draftMeters: 0.6,
       displacementTonnes: 7.0,
       speedKnots: 20.0,
-      propulsiveEfficiencyEtaD: 0.65
+      propulsiveEfficiencyEtaD: 0.65,
+      waterTempCelsius: 15
     };
 
     const res = await toolRegistry.executeTool('TOOL-RESISTANCE-01', input, ['CALCULATION_EXEC']);
@@ -84,8 +86,10 @@ describe('STAGE E: Deterministic Naval Engineering Tools', () => {
     const res = await toolRegistry.executeTool('TOOL-ELECTRICAL-01', input, ['CALCULATION_EXEC']);
     expect(res.success).toBe(true);
     expect(res.output.usableBatteryKwh).toBe(80);
-    expect(res.output.estimatedEnduranceHours).toBeGreaterThan(8);
-    expect(res.output.emergencyEnduranceHours).toBeGreaterThan(100);
+    expect(res.output.estimatedEnduranceHours).toBeNull();
+    expect(res.output.idealizedEnergyUpperBoundHours).toBeGreaterThan(8);
+    expect(res.output.emergencyEnduranceHours).toBeNull();
+    expect(res.output.recommendedMainFuseRatingAmps).toBeNull();
   });
 
   it('should calculate ISO/DNV slamming pressure and plating thickness', async () => {
@@ -102,9 +106,10 @@ describe('STAGE E: Deterministic Naval Engineering Tools', () => {
 
     const res = await toolRegistry.executeTool('TOOL-STRUCTURES-01', input, ['CALCULATION_EXEC']);
     expect(res.success).toBe(true);
-    expect(res.output.designSlammingPressureKpa).toBeGreaterThan(40);
-    expect(res.output.minPlatingThicknessMm).toBeGreaterThan(2.0);
-    expect(res.output.recommendedNominalThicknessMm).toBeGreaterThanOrEqual(res.output.minPlatingThicknessMm);
+    expect(res.output.designSlammingPressureKpa).toBeNull();
+    expect(res.output.designUsePermitted).toBe(false);
+    expect(res.output.minPlatingThicknessMm).toBeNull();
+    expect(res.output.recommendedNominalThicknessMm).toBeNull();
   });
 
   it('should evaluate COLREGS encounter geometry and recommend give-way action', async () => {
@@ -112,10 +117,10 @@ describe('STAGE E: Deterministic Naval Engineering Tools', () => {
     const input = {
       ownCourseDeg: 0,
       ownSpeedKnots: 12,
-      targetBearingDeg: 45,
+      targetBearingDeg: 45, bearingReference: 'TRUE_NORTH',
       targetRangeNm: 2.0,
       targetCourseDeg: 270,
-      targetSpeedKnots: 10
+      targetSpeedKnots: 10, visibilityMode: 'IN_SIGHT', ownVesselType: 'POWER_DRIVEN', targetVesselType: 'POWER_DRIVEN'
     };
 
     const res = await toolRegistry.executeTool('TOOL-COLREGS-01', input, ['CALCULATION_EXEC']);

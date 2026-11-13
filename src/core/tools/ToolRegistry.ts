@@ -68,10 +68,18 @@ export class ToolRegistry {
     callingAgentPermissions?: string[]
   ): Promise<ToolExecutionResult> {
     const startTime = performance.now();
+    // All direct ToolRegistry results MUST fail closed. No caller may turn
+    // mathematical execution success into naval release or actuator authority.
+    const safety = {
+      engineeringReleaseAuthorized: false as const,
+      independentReferenceValidated: false as const,
+      resultDisposition: 'ANALYSIS_ONLY_NEVER_ACTUATE' as const
+    };
     const tool = this.tools.get(toolId);
 
     if (!tool) {
       const result: ToolExecutionResult = {
+        ...safety,
         toolId,
         timestamp: new Date().toISOString(),
         success: false,
@@ -89,6 +97,7 @@ export class ToolRegistry {
       const hasPerm = tool.requiredPermissions.every(p => callingAgentPermissions.includes(p));
       if (!hasPerm) {
         const result: ToolExecutionResult = {
+        ...safety,
           toolId,
           timestamp: new Date().toISOString(),
           success: false,
@@ -106,6 +115,7 @@ export class ToolRegistry {
     const inputParse = tool.inputSchema.safeParse(input);
     if (!inputParse.success) {
       const result: ToolExecutionResult = {
+        ...safety,
         toolId,
         timestamp: new Date().toISOString(),
         success: false,
@@ -126,6 +136,7 @@ export class ToolRegistry {
       const outputParse = tool.outputSchema.safeParse(rawOutput);
       if (!outputParse.success) {
         const result: ToolExecutionResult = {
+        ...safety,
           toolId,
           timestamp: new Date().toISOString(),
           success: false,
@@ -140,6 +151,7 @@ export class ToolRegistry {
       }
 
       const result: ToolExecutionResult = {
+        ...safety,
         toolId,
         timestamp: new Date().toISOString(),
         success: true,
@@ -151,6 +163,7 @@ export class ToolRegistry {
       return result;
     } catch (err: any) {
       const result: ToolExecutionResult = {
+        ...safety,
         toolId,
         timestamp: new Date().toISOString(),
         success: false,

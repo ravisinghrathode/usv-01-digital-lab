@@ -1,0 +1,1669 @@
+{
+  "schemaVersion": "3.0",
+  "campaignId": "USV01-AGT02-HARDENED-NATIVE-LIVE-20261113",
+  "testClass": "SYNTHETIC_NON_OPERATIONAL_LIVE_ENGINE_COMMISSIONING",
+  "sourceBaseBeforeChanges": "50df101c9fed2f0ee15c10389f5075f66b6cd454",
+  "testedSourceIsPatchedWorkingTree": true,
+  "sourceFileSha256": {
+    "src/core/engine/BaseAgent.ts": "sha256:de72ac76de196a20508c07d700756ff8f751d90bace9bf4e098e7644e632d9c1",
+    "src/core/tools/naval/engineeringTools.ts": "sha256:45d8bf5f8ba1f3f5d60fc5b82832468ec3be38be8c2dbe9f402e15dc55f1a795",
+    "src/core/agents/definitions.ts": "sha256:3ee330dd4a91054b4c6978cb6b38338eb986784827c9286b4b613d635959a1d6",
+    "src/core/tools/ToolRegistry.ts": "sha256:af06f177306930043daae159393441b5408c91467332bd85e04c6ce81c83572e",
+    "src/core/models/ModelProvider.ts": "sha256:02ed7871ab7568df3279d175ff37fc4f734dc124c4d2145a45bf72a080d4192f",
+    "src/core/verification/RoleAccuracyObligations.ts": "sha256:35a54f3082a0fdc98ec1b72df5c8cb262423a3b31e5f83b9a4c6a5d9f48515b9",
+    "src/core/engine/ExecutionEngine.ts": "sha256:7f934ad119c2b65b6a48b1e4c87249a68d2e4fb30124e6c93bf7e1e2d6eab320",
+    "src/core/registry/AgentRegistry.ts": "sha256:e311e9014ee9185cd042796e8d36846e22b907a7f5d55748d57323d2518b2253",
+    "src/core/types/agent.ts": "sha256:9f89446dabecfb7f828d8209a743870e44ab9a9d002d1b3058df7d341581b06f",
+    "src/core/verification/AgentAccuracyScreen.ts": "sha256:c40f8f16c25208d1b0315fcfc008c2c5eea233ee1fd662a3c41187b371fe7a19"
+  },
+  "provider": "Connected Google Gemini 3.8 Flash via ephemeral localhost relay (not native production credentials)",
+  "providerAttestationType": "Observed response IDs and STOP finish reason; NOT provider-signed proof",
+  "generatedAtUtc": "2026-11-12T23:04:07.752495+00:00",
+  "nativeEngineAgentSuccesses": 26,
+  "liveProviderResponses": 26,
+  "distinctProviderResponseIds": 26,
+  "registeredOutputSchemaPasses": 26,
+  "successfulMandatoryTools": 10,
+  "agentExecutionFailures": 0,
+  "unapprovedModelBaselineClaimsInAuthoritativeFields": 0,
+  "noToolAgentPrimaryMetricsAllQuarantined": true,
+  "engineeringAccuracyIndependentlyValidated": false,
+  "regulatoryApprovalClaimed": false,
+  "engineeringReleaseApproved": false,
+  "caveats": [
+    "One transient A06 provider JSON completion failure was retried; only successful retry is in accepted 26 response set",
+    "All inputs are illustrative and NOT physical vessel measurements",
+    "Deterministic tool execution proves formula ran, not predictive accuracy or applicable standards compliance",
+    "No full-system hardware trials or independent marine engineer signoff",
+    "Ephemeral relay is not production Gemini CI credential"
+  ],
+  "results": [
+    {
+      "canonicalId": "A01",
+      "registeredId": "LEAD-SYS-01",
+      "roleName": "Lead Systems Architect & Orchestrator",
+      "taskId": "HARDENED-A01-20261113",
+      "correlationId": "hard-native-A01-20261113",
+      "status": "NEEDS_HUMAN_APPROVAL",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "NO_VERIFIED_QUANTITATIVE_METRICS",
+      "primaryMetrics": {},
+      "modelSuggestedMetrics": {
+        "lwlMeters": 10,
+        "beamMeters": 2.5,
+        "draftMeters": 0.6,
+        "displacementTonnes": 6.91875,
+        "speedKnots": 22,
+        "maxSpeedKnots": 28,
+        "busVoltageV": 48,
+        "batteryTotalKwh": 120
+      },
+      "toolEvidence": [],
+      "warnings": [
+        "UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.",
+        "UNVERIFIED MODEL METRICS: No deterministic tools were executed; primary quantitative metrics withheld."
+      ],
+      "openTbdItems": [
+        "TBD: Human Director engineering sign-off",
+        "TBD: Regulatory class compliance thresholds",
+        "TBD: Hydrodynamic resistance and power verification",
+        "TBD: Structural panel load certifications",
+        "Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.",
+        "Independently corroborate all model-proposed numerical quantities."
+      ],
+      "requiresDirectorApproval": true,
+      "error": null,
+      "modelProviderResponseId": "y0T2av3ZIvu-xdIPhuzrkQc",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:79805b053b6bd1006a78b0331351f6b8a032a389b6060f952fc60b65473ec87b",
+      "providerOutputSha256": "sha256:42bdf8eca3ea736663307a3367b96484f1ddc97baed8b4b7ceac89de44985fe5",
+      "providerUsage": {
+        "candidatesTokenCount": 410,
+        "promptTokenCount": 1346,
+        "thoughtsTokenCount": 513,
+        "totalTokenCount": 2269
+      }
+    },
+    {
+      "canonicalId": "A02",
+      "registeredId": "REQ-TRC-02",
+      "roleName": "Requirements & Traceability Engineer",
+      "taskId": "HARDENED-A02-20261113",
+      "correlationId": "hard-native-A02-20261113",
+      "status": "SUCCESS",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "NO_VERIFIED_QUANTITATIVE_METRICS",
+      "primaryMetrics": {},
+      "modelSuggestedMetrics": {
+        "displacementTonnes": 6.91875,
+        "safetyFactor": 2,
+        "busVoltageV": 48,
+        "requirementsDefined": 3,
+        "openTbdThresholds": 3
+      },
+      "toolEvidence": [],
+      "warnings": [
+        "UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.",
+        "UNVERIFIED MODEL METRICS: No deterministic tools were executed; primary quantitative metrics withheld."
+      ],
+      "openTbdItems": [
+        "REQ-001 loss-of-link timeout duration and holding waypoint protocol.",
+        "REQ-002 maximum allowable internal enclosure temperature threshold.",
+        "REQ-003 dynamic amplification factor and sling geometry for crane lifting.",
+        "Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.",
+        "Independently corroborate all model-proposed numerical quantities."
+      ],
+      "requiresDirectorApproval": false,
+      "error": null,
+      "modelProviderResponseId": "5kT2aoP1MIWOytMPzZ2uiQE",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:dd21e8fd628bdc7f24e786d814f5ae3003c6af06bd65083a79ee80cd18ae610b",
+      "providerOutputSha256": "sha256:22ffaa3f61654610690dc8bb70520f77942cc96613e2aa5dfa92653fbf50594c",
+      "providerUsage": {
+        "candidatesTokenCount": 534,
+        "promptTokenCount": 1313,
+        "thoughtsTokenCount": 1085,
+        "totalTokenCount": 2932
+      }
+    },
+    {
+      "canonicalId": "A03",
+      "registeredId": "CONOPS-03",
+      "roleName": "Operational Profile & CONOPS Specialist",
+      "taskId": "HARDENED-A03-20261113",
+      "correlationId": "hard-native-A03-20261113",
+      "status": "SUCCESS",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "NO_VERIFIED_QUANTITATIVE_METRICS",
+      "primaryMetrics": {},
+      "modelSuggestedMetrics": {
+        "lwlMeters": 10,
+        "beamMeters": 2.5,
+        "draftMeters": 0.6,
+        "displacementTonnes": 6.91875,
+        "transitSpeedKnots": 15,
+        "loiterSpeedKnots": 6,
+        "batteryTotalKwh": 120,
+        "usableDoD": 0.8,
+        "busVoltageV": 48,
+        "seaStateLimit": "TBD",
+        "transitEnduranceHours": "TBD"
+      },
+      "toolEvidence": [],
+      "warnings": [
+        "UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.",
+        "UNVERIFIED MODEL METRICS: No deterministic tools were executed; primary quantitative metrics withheld."
+      ],
+      "openTbdItems": [
+        "NATO sea state operational bounds",
+        "Operating water temperature envelope",
+        "Transit and loiter phase endurance durations",
+        "Propulsive power demand validation",
+        "Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.",
+        "Independently corroborate all model-proposed numerical quantities."
+      ],
+      "requiresDirectorApproval": false,
+      "error": null,
+      "modelProviderResponseId": "5kT2aoyCM--_uMYPoorQ-QQ",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:a9f99806332095140965ca7587740656cab6f9c8cb362a296fd3834a492ba37a",
+      "providerOutputSha256": "sha256:11d9360032c0ceb2d1c6121c9edf96d714ab269fae97b8ef0ea4f120753ced20",
+      "providerUsage": {
+        "candidatesTokenCount": 435,
+        "promptTokenCount": 1305,
+        "thoughtsTokenCount": 1014,
+        "totalTokenCount": 2754
+      }
+    },
+    {
+      "canonicalId": "A04",
+      "registeredId": "REG-STD-04",
+      "roleName": "Marine Regulatory & Class Standards Specialist",
+      "taskId": "HARDENED-A04-20261113",
+      "correlationId": "hard-native-A04-20261113",
+      "status": "NEEDS_HUMAN_APPROVAL",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "NO_VERIFIED_QUANTITATIVE_METRICS",
+      "primaryMetrics": {},
+      "modelSuggestedMetrics": {
+        "lwlMeters": 10,
+        "maxSpeedKnots": 28,
+        "busVoltageV": 48,
+        "batteryTotalKwh": 120,
+        "flagStateJurisdiction": "TBD",
+        "colregComplianceStatus": "Uncertified"
+      },
+      "toolEvidence": [],
+      "warnings": [
+        "UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.",
+        "UNVERIFIED MODEL METRICS: No deterministic tools were executed; primary quantitative metrics withheld."
+      ],
+      "openTbdItems": [
+        "Statutory flag-state and classification society selection",
+        "COLREG Rule 5 lookout compliance mechanism validation",
+        "IP enclosure ingress test standard identification",
+        "Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.",
+        "Independently corroborate all model-proposed numerical quantities."
+      ],
+      "requiresDirectorApproval": true,
+      "error": null,
+      "modelProviderResponseId": "5kT2au6KL7DExdIP8ZDh6Qs",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:a3a0079ffff0df96cacd19d0983ad437c9bd9ae71b698b5fbfe21e9336cd47b2",
+      "providerOutputSha256": "sha256:1bd440fc6024de0ce5ef125e396e4f95e10d4fca4c8804587d8a187c877e5e0f",
+      "providerUsage": {
+        "candidatesTokenCount": 385,
+        "promptTokenCount": 1297,
+        "thoughtsTokenCount": 508,
+        "totalTokenCount": 2190
+      }
+    },
+    {
+      "canonicalId": "A05",
+      "registeredId": "HULL-GEO-05",
+      "roleName": "Hull Form & Parametric Geometry Specialist",
+      "taskId": "HARDENED-A05-20261113",
+      "correlationId": "hard-native-A05-20261113",
+      "status": "NEEDS_HUMAN_APPROVAL",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "DETERMINISTIC_TOOL_OUTPUT_UNCERTIFIED",
+      "primaryMetrics": {
+        "TOOL-HYDROSTATICS-01.displacedVolumeM3": 6.75,
+        "TOOL-HYDROSTATICS-01.displacementTonnes": 6.919,
+        "TOOL-HYDROSTATICS-01.centerOfBuoyancyKbM": 0.362,
+        "TOOL-HYDROSTATICS-01.transverseMetacentricRadiusBmtM": 1.254,
+        "TOOL-HYDROSTATICS-01.transverseMetacenterKmtM": 1.615,
+        "TOOL-HYDROSTATICS-01.metacentricHeightGmtM": 0.815,
+        "TOOL-HYDROSTATICS-01.stabilityStatus": "UNVERIFIED_ESTIMATE",
+        "TOOL-HYDROSTATICS-01.isPreliminaryEstimate": true,
+        "TOOL-HYDROSTATICS-01.engineeringComplianceValidated": false,
+        "TOOL-HYDROSTATICS-01.kgSource": "USER_PROVIDED"
+      },
+      "modelSuggestedMetrics": {
+        "lwlMeters": 10,
+        "beamMeters": 2.5,
+        "draftMeters": 0.6,
+        "blockCoefficientCb": 0.45,
+        "displacedVolumeM3": 6.75,
+        "displacementTonnesTool": 6.919,
+        "targetDisplacementMismatchTonnes": 5.5,
+        "metacentricHeightGmtM": 0.815,
+        "engineeringComplianceValidated": false
+      },
+      "toolEvidence": [
+        {
+          "id": "TOOL-HYDROSTATICS-01",
+          "success": true,
+          "output": {
+            "displacedVolumeM3": 6.75,
+            "displacementTonnes": 6.919,
+            "centerOfBuoyancyKbM": 0.362,
+            "transverseMetacentricRadiusBmtM": 1.254,
+            "transverseMetacenterKmtM": 1.615,
+            "metacentricHeightGmtM": 0.815,
+            "stabilityStatus": "UNVERIFIED_ESTIMATE",
+            "isPreliminaryEstimate": true,
+            "engineeringComplianceValidated": false,
+            "kgSource": "USER_PROVIDED",
+            "complianceCheck": {
+              "minGmMet": true,
+              "morrishKbApproximationM": 0.362
+            }
+          }
+        }
+      ],
+      "warnings": [
+        "UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.",
+        "UNCERTIFIED CALCULATION: Tool executed, but engineering accuracy requires independent reference evidence."
+      ],
+      "openTbdItems": [
+        "Reconciliation of 5.5 t reference displacement versus 6.919 t calculated displacement",
+        "Final hull form lines plan and verified center of gravity",
+        "Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.",
+        "Correlate numerical tool outputs to approved independent reference data."
+      ],
+      "requiresDirectorApproval": true,
+      "error": null,
+      "modelProviderResponseId": "9UT2aqWtJITT0_gP0vTH4A8",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:e8520876cdeed0b488ef95f7a3b9a8e64a72959f811348233f29ad63ff2f5991",
+      "providerOutputSha256": "sha256:6ddc1ac7c33ec00bb70c8961067e4d4a7d411781eacb07c2688f59cea66406b5",
+      "providerUsage": {
+        "candidatesTokenCount": 626,
+        "promptTokenCount": 2594,
+        "thoughtsTokenCount": 612,
+        "totalTokenCount": 3832
+      }
+    },
+    {
+      "canonicalId": "A06",
+      "registeredId": "STAB-HYD-06",
+      "roleName": "Hydrostatics & Intact Stability Engineer",
+      "taskId": "HARDENED-A06-20261113",
+      "correlationId": "hard-native-A06-20261113",
+      "status": "NEEDS_HUMAN_APPROVAL",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "DETERMINISTIC_TOOL_OUTPUT_UNCERTIFIED",
+      "primaryMetrics": {
+        "TOOL-HYDROSTATICS-01.displacedVolumeM3": 6.75,
+        "TOOL-HYDROSTATICS-01.displacementTonnes": 6.919,
+        "TOOL-HYDROSTATICS-01.centerOfBuoyancyKbM": 0.362,
+        "TOOL-HYDROSTATICS-01.transverseMetacentricRadiusBmtM": 1.254,
+        "TOOL-HYDROSTATICS-01.transverseMetacenterKmtM": 1.615,
+        "TOOL-HYDROSTATICS-01.metacentricHeightGmtM": 0.815,
+        "TOOL-HYDROSTATICS-01.stabilityStatus": "UNVERIFIED_ESTIMATE",
+        "TOOL-HYDROSTATICS-01.isPreliminaryEstimate": true,
+        "TOOL-HYDROSTATICS-01.engineeringComplianceValidated": false,
+        "TOOL-HYDROSTATICS-01.kgSource": "USER_PROVIDED"
+      },
+      "modelSuggestedMetrics": {
+        "displacedVolumeM3": 6.75,
+        "displacementTonnes": 6.919,
+        "centerOfBuoyancyKbM": 0.362,
+        "transverseMetacentricRadiusBmtM": 1.254,
+        "transverseMetacenterKmtM": 1.615,
+        "metacentricHeightGmtM": 0.815,
+        "minGmMet": true,
+        "engineeringComplianceValidated": false
+      },
+      "toolEvidence": [
+        {
+          "id": "TOOL-HYDROSTATICS-01",
+          "success": true,
+          "output": {
+            "displacedVolumeM3": 6.75,
+            "displacementTonnes": 6.919,
+            "centerOfBuoyancyKbM": 0.362,
+            "transverseMetacentricRadiusBmtM": 1.254,
+            "transverseMetacenterKmtM": 1.615,
+            "metacentricHeightGmtM": 0.815,
+            "stabilityStatus": "UNVERIFIED_ESTIMATE",
+            "isPreliminaryEstimate": true,
+            "engineeringComplianceValidated": false,
+            "kgSource": "USER_PROVIDED",
+            "complianceCheck": {
+              "minGmMet": true,
+              "morrishKbApproximationM": 0.362
+            }
+          }
+        }
+      ],
+      "warnings": [
+        "UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.",
+        "UNCERTIFIED CALCULATION: Tool executed, but engineering accuracy requires independent reference evidence."
+      ],
+      "openTbdItems": [
+        "TBD: Detailed 3D hull lines plan and KN cross-curves.",
+        "TBD: Physical inclining test to determine true VCG/KG.",
+        "TBD: Dynamic and large-angle intact stability evaluation against governing code.",
+        "Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.",
+        "Correlate numerical tool outputs to approved independent reference data."
+      ],
+      "requiresDirectorApproval": true,
+      "error": null,
+      "modelProviderResponseId": "OUX2ap65HJOmxdIP8JG58Qg",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:50623ab96b5175b1d20aa6ac455f04a01824eef62f458fe3ae7c45bc48e129c9",
+      "providerOutputSha256": "sha256:1da43ce5eb3dd76256835e695ef6ca339082469ee67bcb1efd625d4ee2a12005",
+      "providerUsage": {
+        "candidatesTokenCount": 555,
+        "promptTokenCount": 2572,
+        "thoughtsTokenCount": 320,
+        "totalTokenCount": 3447
+      }
+    },
+    {
+      "canonicalId": "A07",
+      "registeredId": "RES-SEAK-07",
+      "roleName": "Hydrodynamic Resistance & Performance Engineer",
+      "taskId": "HARDENED-A07-20261113",
+      "correlationId": "hard-native-A07-20261113",
+      "status": "NEEDS_HUMAN_APPROVAL",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "DETERMINISTIC_TOOL_OUTPUT_UNCERTIFIED",
+      "primaryMetrics": {
+        "TOOL-RESISTANCE-01.speedMps": 11.32,
+        "TOOL-RESISTANCE-01.froudeNumberFn": 1.143,
+        "TOOL-RESISTANCE-01.hydrodynamicRegime": "PLANING",
+        "TOOL-RESISTANCE-01.reynoldsNumber": 95270000,
+        "TOOL-RESISTANCE-01.frictionalResistanceKn": 2.954,
+        "TOOL-RESISTANCE-01.residualResistanceKn": 7.865,
+        "TOOL-RESISTANCE-01.totalResistanceKn": 10.82,
+        "TOOL-RESISTANCE-01.effectivePowerPeKw": 122.46,
+        "TOOL-RESISTANCE-01.shaftBrakePowerPbKw": 188.39,
+        "TOOL-RESISTANCE-01.engineeringComplianceValidated": false,
+        "TOOL-RESISTANCE-01.modelStatus": "PRELIMINARY_EMPIRICAL_ESTIMATE"
+      },
+      "modelSuggestedMetrics": {
+        "lwlMeters": 10,
+        "beamMeters": 2.5,
+        "draftMeters": 0.6,
+        "speedKnots": 22,
+        "speedMps": 11.32,
+        "froudeNumberFn": 1.143,
+        "hydrodynamicRegime": "PLANING",
+        "totalResistanceKn": 10.82,
+        "effectivePowerPeKw": 122.46,
+        "shaftBrakePowerPbKw": 188.39,
+        "propulsiveEfficiencyEtaD": 0.65,
+        "engineeringComplianceValidated": false
+      },
+      "toolEvidence": [
+        {
+          "id": "TOOL-RESISTANCE-01",
+          "success": true,
+          "output": {
+            "speedMps": 11.32,
+            "froudeNumberFn": 1.143,
+            "hydrodynamicRegime": "PLANING",
+            "reynoldsNumber": 95270000,
+            "frictionalResistanceKn": 2.954,
+            "residualResistanceKn": 7.865,
+            "totalResistanceKn": 10.82,
+            "effectivePowerPeKw": 122.46,
+            "shaftBrakePowerPbKw": 188.39,
+            "engineeringComplianceValidated": false,
+            "modelStatus": "PRELIMINARY_EMPIRICAL_ESTIMATE"
+          }
+        }
+      ],
+      "warnings": [
+        "UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.",
+        "UNCERTIFIED CALCULATION: Tool executed, but engineering accuracy requires independent reference evidence."
+      ],
+      "openTbdItems": [
+        "TBD: Hull wetted surface area at running trim",
+        "TBD: Resistance and power validation data for 15-knot transit profile",
+        "TBD: Physical towing tank or validated CFD dataset",
+        "Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.",
+        "Correlate numerical tool outputs to approved independent reference data."
+      ],
+      "requiresDirectorApproval": true,
+      "error": null,
+      "modelProviderResponseId": "9UT2aoOTCY7gytMPy6f7-Ak",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:c4e1b29082b3d95bfc2e31613c04c074dc0ea7a1a154645c084680636602ed6a",
+      "providerOutputSha256": "sha256:2c270c22b0049c7041ca2943a33c035e6e7fa65161e0fbd1598416fe61963b92",
+      "providerUsage": {
+        "candidatesTokenCount": 439,
+        "promptTokenCount": 2574,
+        "thoughtsTokenCount": 388,
+        "totalTokenCount": 3401
+      }
+    },
+    {
+      "canonicalId": "A08",
+      "registeredId": "MAN-MOT-08",
+      "roleName": "Seakeeping & Manoeuvring Dynamics Specialist",
+      "taskId": "HARDENED-A08-20261113",
+      "correlationId": "hard-native-A08-20261113",
+      "status": "SUCCESS",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "NO_VERIFIED_QUANTITATIVE_METRICS",
+      "primaryMetrics": {},
+      "modelSuggestedMetrics": {
+        "lwlMeters": 10,
+        "beamMeters": 2.5,
+        "draftMeters": 0.6,
+        "sensorStackLcgMeters": 5.5,
+        "sensorStackVcgMeters": 2,
+        "conopsSeaStateSpectrum": "TBD",
+        "sensorVibrationLimitG": "TBD",
+        "accelerationLimitExceedanceFlagged": true
+      },
+      "toolEvidence": [],
+      "warnings": [
+        "UNVERIFIED MODEL METRICS: No deterministic tools were executed; primary quantitative metrics withheld."
+      ],
+      "openTbdItems": [
+        "CONOPS sea state operational wave spectra",
+        "Forward mast sensor vibration and shock acceleration limits",
+        "Hydrodynamic heave, pitch, and roll RAO screening computations",
+        "Independently corroborate all model-proposed numerical quantities."
+      ],
+      "requiresDirectorApproval": false,
+      "error": null,
+      "modelProviderResponseId": "AUX2aoW8HMDR0_gP64-O6QY",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:873e92f5362aa488892270505324e1baa5b297538a6a3672c954265d31f0ed76",
+      "providerOutputSha256": "sha256:f3bdf7c62a5347c808798b753dfa6cba4633cc97ad2cc2c233ace65c77456334",
+      "providerUsage": {
+        "candidatesTokenCount": 404,
+        "promptTokenCount": 1292,
+        "thoughtsTokenCount": 1226,
+        "totalTokenCount": 2922
+      }
+    },
+    {
+      "canonicalId": "A09",
+      "registeredId": "WGT-BAL-09",
+      "roleName": "Weight Distribution & Mass Balance Engineer",
+      "taskId": "HARDENED-A09-20261113",
+      "correlationId": "hard-native-A09-20261113",
+      "status": "NEEDS_HUMAN_APPROVAL",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "DETERMINISTIC_TOOL_OUTPUT_UNCERTIFIED",
+      "primaryMetrics": {
+        "TOOL-MASS-BALANCE-01.lightshipMassKg": 3200,
+        "TOOL-MASS-BALANCE-01.designMarginMassKg": 310,
+        "TOOL-MASS-BALANCE-01.totalDisplacementKg": 3510,
+        "TOOL-MASS-BALANCE-01.totalDisplacementTonnes": 3.51,
+        "TOOL-MASS-BALANCE-01.compositeLcgMeters": 4.041,
+        "TOOL-MASS-BALANCE-01.compositeTcgMeters": 0,
+        "TOOL-MASS-BALANCE-01.compositeKgMeters": 0.562
+      },
+      "modelSuggestedMetrics": {
+        "lightshipMassKg": 3200,
+        "designMarginMassKg": 310,
+        "totalDisplacementKg": 3510,
+        "totalDisplacementTonnes": 3.51,
+        "compositeLcgMeters": 4.041,
+        "compositeTcgMeters": 0,
+        "compositeKgMeters": 0.562,
+        "baselineLcbMetersFromTransom": 4.2,
+        "lcbAlignmentMeters": -0.159,
+        "inputDisplacementTonnes": 6.91875,
+        "taskTargetDisplacementKg": 5500,
+        "unallocatedMassKg": 1990
+      },
+      "toolEvidence": [
+        {
+          "id": "TOOL-MASS-BALANCE-01",
+          "success": true,
+          "output": {
+            "lightshipMassKg": 3200,
+            "designMarginMassKg": 310,
+            "totalDisplacementKg": 3510,
+            "totalDisplacementTonnes": 3.51,
+            "compositeLcgMeters": 4.041,
+            "compositeTcgMeters": 0,
+            "compositeKgMeters": 0.562,
+            "longitudinalTrimEvaluation": {
+              "lcbAlignmentMeters": -0.159,
+              "trimRisk": "ALIGNED"
+            }
+          }
+        }
+      ],
+      "warnings": [
+        "UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.",
+        "UNCERTIFIED CALCULATION: Tool executed, but engineering accuracy requires independent reference evidence."
+      ],
+      "openTbdItems": [
+        "TBD: Allocation and CG coordinates for 1990 kg unallocated mass.",
+        "TBD: Reconcile conflict between declared parameter displacementTonnes (6.91875 t) and task reference (5500 kg).",
+        "TBD: Final vertical center of gravity (KG) uncertainty quantification.",
+        "Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.",
+        "Correlate numerical tool outputs to approved independent reference data."
+      ],
+      "requiresDirectorApproval": true,
+      "error": null,
+      "modelProviderResponseId": "AUX2aqjeCbik5NoPp5X-wAc",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:51cff704835d2265c9582af78bdd3a8c1fdfb5efca08a22a4d280505c9aac9e0",
+      "providerOutputSha256": "sha256:87108b4ac4344f5323052b43d163eb4a0e2cd00863467acb4af7472faa03179b",
+      "providerUsage": {
+        "candidatesTokenCount": 689,
+        "promptTokenCount": 2535,
+        "totalTokenCount": 3224
+      }
+    },
+    {
+      "canonicalId": "A10",
+      "registeredId": "STR-MAT-10",
+      "roleName": "Hull Structural Scantlings & Composites Engineer",
+      "taskId": "HARDENED-A10-20261113",
+      "correlationId": "hard-native-A10-20261113",
+      "status": "NEEDS_HUMAN_APPROVAL",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "DETERMINISTIC_TOOL_OUTPUT_UNCERTIFIED",
+      "primaryMetrics": {
+        "TOOL-STRUCTURES-01.designSlammingPressureKpa": 52.8,
+        "TOOL-STRUCTURES-01.allowableStressMpa": 62.5,
+        "TOOL-STRUCTURES-01.aspectRatioCorrectionFactorK2": 0.5,
+        "TOOL-STRUCTURES-01.minPlatingThicknessMm": 9.25,
+        "TOOL-STRUCTURES-01.recommendedNominalThicknessMm": 9.5,
+        "TOOL-STRUCTURES-01.stiffenerSectionModulusCm3": 2.56,
+        "TOOL-STRUCTURES-01.engineeringComplianceValidated": false,
+        "TOOL-STRUCTURES-01.modelStatus": "UNVALIDATED_SCANTLING_SCREEN"
+      },
+      "modelSuggestedMetrics": {
+        "designSlammingPressureKpa": 52.8,
+        "allowableStressMpa": 62.5,
+        "aspectRatioCorrectionFactorK2": 0.5,
+        "minPlatingThicknessMm": 9.25,
+        "recommendedNominalThicknessMm": 9.5,
+        "stiffenerSectionModulusCm3": 2.56,
+        "engineeringComplianceValidated": false
+      },
+      "toolEvidence": [
+        {
+          "id": "TOOL-STRUCTURES-01",
+          "success": true,
+          "output": {
+            "designSlammingPressureKpa": 52.8,
+            "allowableStressMpa": 62.5,
+            "aspectRatioCorrectionFactorK2": 0.5,
+            "minPlatingThicknessMm": 9.25,
+            "recommendedNominalThicknessMm": 9.5,
+            "stiffenerSectionModulusCm3": 2.56,
+            "engineeringComplianceValidated": false,
+            "modelStatus": "UNVALIDATED_SCANTLING_SCREEN"
+          }
+        }
+      ],
+      "warnings": [
+        "UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.",
+        "UNCERTIFIED CALCULATION: Tool executed, but engineering accuracy requires independent reference evidence."
+      ],
+      "openTbdItems": [
+        "Ultimate tensile strength threshold TBD",
+        "Formal DNV/ISO 12215-5 class certification signoff TBD",
+        "Welded joint reduction factors TBD",
+        "Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.",
+        "Correlate numerical tool outputs to approved independent reference data."
+      ],
+      "requiresDirectorApproval": true,
+      "error": null,
+      "modelProviderResponseId": "AEX2auPpEIaCuMYPgrCs6QU",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:792ee1c2b39ee1cce7f598cd98d0daf37aa14a49703753d0507dc4e85f20c34a",
+      "providerOutputSha256": "sha256:f444550fdb0cbbce52098c9b16699e2e84fc35699e52a7bb49be54124dee813d",
+      "providerUsage": {
+        "candidatesTokenCount": 383,
+        "promptTokenCount": 2507,
+        "thoughtsTokenCount": 476,
+        "totalTokenCount": 3366
+      }
+    },
+    {
+      "canonicalId": "A11",
+      "registeredId": "ENV-ENV-11",
+      "roleName": "Marine Environmental & Thermal Specialist",
+      "taskId": "HARDENED-A11-20261113",
+      "correlationId": "hard-native-A11-20261113",
+      "status": "SUCCESS",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "NO_VERIFIED_QUANTITATIVE_METRICS",
+      "primaryMetrics": {},
+      "modelSuggestedMetrics": {
+        "wasteHeatW": 250,
+        "ambientTempCelsius": 40,
+        "enclosureRating": "IP67",
+        "batteryTotalKwh": 120,
+        "busVoltageV": 48,
+        "yieldStrengthMpa": 125,
+        "safetyFactor": 2,
+        "usableCapacityKwhPreliminary": 96,
+        "allowableInternalTempCelsius": "TBD"
+      },
+      "toolEvidence": [],
+      "warnings": [
+        "UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.",
+        "UNVERIFIED MODEL METRICS: No deterministic tools were executed; primary quantitative metrics withheld."
+      ],
+      "openTbdItems": [
+        "Maximum allowable internal electronics temperature",
+        "Enclosure overall thermal resistance (deg C/W)",
+        "Empirical sea trial thermal validation protocol",
+        "Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.",
+        "Independently corroborate all model-proposed numerical quantities."
+      ],
+      "requiresDirectorApproval": false,
+      "error": null,
+      "modelProviderResponseId": "U0X2apjaHNy5xdIP3fyIoQc",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:047a83071a84c14e00d3855dc483c6a8163516ebf7bcbe0de3a6e67402a25f72",
+      "providerOutputSha256": "sha256:ce2009bc768c5c360af161ab695572801f7bfb608d6f88bd8b75ba859225a059",
+      "providerUsage": {
+        "candidatesTokenCount": 474,
+        "promptTokenCount": 1312,
+        "thoughtsTokenCount": 1204,
+        "totalTokenCount": 2990
+      }
+    },
+    {
+      "canonicalId": "A12",
+      "registeredId": "MECH-APP-12",
+      "roleName": "Mechanical Appendages & Deck Equipment Engineer",
+      "taskId": "HARDENED-A12-20261113",
+      "correlationId": "hard-native-A12-20261113",
+      "status": "SUCCESS",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "NO_VERIFIED_QUANTITATIVE_METRICS",
+      "primaryMetrics": {},
+      "modelSuggestedMetrics": {
+        "representativeMassKg": 5500,
+        "dynamicAmplificationFactor": 2,
+        "preliminaryDesignLoadKn": 107.87,
+        "proofTestFactorRequirement": ">= 2.0 * Max Gross Weight",
+        "noCertificationClaimed": true
+      },
+      "toolEvidence": [],
+      "warnings": [
+        "UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.",
+        "UNVERIFIED MODEL METRICS: No deterministic tools were executed; primary quantitative metrics withheld."
+      ],
+      "openTbdItems": [
+        "Padeye FEA and local structure stress distribution TBD",
+        "Sling configuration, angles, and rigging hardware ratings TBD",
+        "Physical proof test test results TBD",
+        "Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.",
+        "Independently corroborate all model-proposed numerical quantities."
+      ],
+      "requiresDirectorApproval": false,
+      "error": null,
+      "modelProviderResponseId": "UkX2aq2bC6-H1sgP1vqdqAs",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:152d5160a04007519b76843a77f61bb8085ed692f33513dfd0068d932b6e637e",
+      "providerOutputSha256": "sha256:f90b6f3108424ac1f16b78a306da633bb8483667a47b37c08e5e93b185cfb2fc",
+      "providerUsage": {
+        "candidatesTokenCount": 362,
+        "promptTokenCount": 1287,
+        "thoughtsTokenCount": 504,
+        "totalTokenCount": 2153
+      }
+    },
+    {
+      "canonicalId": "A13",
+      "registeredId": "PROP-ENG-13",
+      "roleName": "Propulsion Plant & Drivetrain Engineer",
+      "taskId": "HARDENED-A13-20261113",
+      "correlationId": "hard-native-A13-20261113",
+      "status": "NEEDS_HUMAN_APPROVAL",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "DETERMINISTIC_TOOL_OUTPUT_UNCERTIFIED",
+      "primaryMetrics": {
+        "TOOL-RESISTANCE-01.speedMps": 11.32,
+        "TOOL-RESISTANCE-01.froudeNumberFn": 1.143,
+        "TOOL-RESISTANCE-01.hydrodynamicRegime": "PLANING",
+        "TOOL-RESISTANCE-01.reynoldsNumber": 95270000,
+        "TOOL-RESISTANCE-01.frictionalResistanceKn": 2.954,
+        "TOOL-RESISTANCE-01.residualResistanceKn": 7.865,
+        "TOOL-RESISTANCE-01.totalResistanceKn": 10.82,
+        "TOOL-RESISTANCE-01.effectivePowerPeKw": 122.46,
+        "TOOL-RESISTANCE-01.shaftBrakePowerPbKw": 188.39,
+        "TOOL-RESISTANCE-01.engineeringComplianceValidated": false,
+        "TOOL-RESISTANCE-01.modelStatus": "PRELIMINARY_EMPIRICAL_ESTIMATE"
+      },
+      "modelSuggestedMetrics": {
+        "speedKnots": 22,
+        "speedMps": 11.32,
+        "froudeNumberFn": 1.143,
+        "totalResistanceKn": 10.82,
+        "effectivePowerPeKw": 122.46,
+        "propulsiveEfficiencyEtaD": 0.65,
+        "shaftBrakePowerPbKw": 188.39,
+        "calmWaterThrustMarginPercent": 20,
+        "requiredThrustWithMarginKn": 12.98,
+        "engineeringComplianceValidated": false
+      },
+      "toolEvidence": [
+        {
+          "id": "TOOL-RESISTANCE-01",
+          "success": true,
+          "output": {
+            "speedMps": 11.32,
+            "froudeNumberFn": 1.143,
+            "hydrodynamicRegime": "PLANING",
+            "reynoldsNumber": 95270000,
+            "frictionalResistanceKn": 2.954,
+            "residualResistanceKn": 7.865,
+            "totalResistanceKn": 10.82,
+            "effectivePowerPeKw": 122.46,
+            "shaftBrakePowerPbKw": 188.39,
+            "engineeringComplianceValidated": false,
+            "modelStatus": "PRELIMINARY_EMPIRICAL_ESTIMATE"
+          }
+        }
+      ],
+      "warnings": [
+        "UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.",
+        "UNCERTIFIED CALCULATION: Tool executed, but engineering accuracy requires independent reference evidence."
+      ],
+      "openTbdItems": [
+        "TBD: Towing tank or CFD resistance curve validation",
+        "TBD: Propeller wake fraction and thrust deduction factors",
+        "TBD: Drive motor physical selection and battery discharge compatibility",
+        "Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.",
+        "Correlate numerical tool outputs to approved independent reference data."
+      ],
+      "requiresDirectorApproval": true,
+      "error": null,
+      "modelProviderResponseId": "UkX2auu3O5nExdIPlvOCmAc",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:74d31be0b491c4b4a3b2fff0f497f2dc923aec3b7652d1a4120f35d05d8150e8",
+      "providerOutputSha256": "sha256:73b00262b4531c000739588381cf07eaf708aac83ddd6084fe862a483ee329b0",
+      "providerUsage": {
+        "candidatesTokenCount": 638,
+        "promptTokenCount": 2510,
+        "thoughtsTokenCount": 497,
+        "totalTokenCount": 3645
+      }
+    },
+    {
+      "canonicalId": "A14",
+      "registeredId": "ELEC-PWR-14",
+      "roleName": "Electrical Architecture & Microgrid Engineer",
+      "taskId": "HARDENED-A14-20261113",
+      "correlationId": "hard-native-A14-20261113",
+      "status": "NEEDS_HUMAN_APPROVAL",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "DETERMINISTIC_TOOL_OUTPUT_UNCERTIFIED",
+      "primaryMetrics": {
+        "TOOL-ELECTRICAL-01.totalContinuousPowerW": 6680,
+        "TOOL-ELECTRICAL-01.averagePowerW": 6742,
+        "TOOL-ELECTRICAL-01.peakPowerW": 6820,
+        "TOOL-ELECTRICAL-01.nominalBusCurrentAmps": 140.46,
+        "TOOL-ELECTRICAL-01.usableBatteryKwh": 96,
+        "TOOL-ELECTRICAL-01.estimatedEnduranceHours": 14.24,
+        "TOOL-ELECTRICAL-01.emergencyLoadPowerW": 680,
+        "TOOL-ELECTRICAL-01.emergencyEnduranceHours": 141.18,
+        "TOOL-ELECTRICAL-01.recommendedMainFuseRatingAmps": 220
+      },
+      "modelSuggestedMetrics": {
+        "busVoltageV": 48,
+        "totalContinuousPowerW": 6680,
+        "averagePowerW": 6742,
+        "peakPowerW": 6820,
+        "nominalBusCurrentAmps": 140.46,
+        "usableBatteryKwh": 96,
+        "preliminaryLoiterEnduranceHours": 14.24,
+        "emergencyLoadPowerW": 680,
+        "preliminaryEmergencyEnduranceHours": 141.18,
+        "recommendedMainFuseRatingAmps": 220
+      },
+      "toolEvidence": [
+        {
+          "id": "TOOL-ELECTRICAL-01",
+          "success": true,
+          "output": {
+            "totalContinuousPowerW": 6680,
+            "averagePowerW": 6742,
+            "peakPowerW": 6820,
+            "nominalBusCurrentAmps": 140.46,
+            "usableBatteryKwh": 96,
+            "estimatedEnduranceHours": 14.24,
+            "emergencyLoadPowerW": 680,
+            "emergencyEnduranceHours": 141.18,
+            "recommendedMainFuseRatingAmps": 220
+          }
+        }
+      ],
+      "warnings": [
+        "UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.",
+        "UNCERTIFIED CALCULATION: Tool executed, but engineering accuracy requires independent reference evidence."
+      ],
+      "openTbdItems": [
+        "Transit mode propulsive electrical load profile across 22 to 28 knots",
+        "Detailed cable ampacity schedules, thermal derating, and conductor lengths per ABYC E-11 / IEC 60092 tables",
+        "Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.",
+        "Correlate numerical tool outputs to approved independent reference data."
+      ],
+      "requiresDirectorApproval": true,
+      "error": null,
+      "modelProviderResponseId": "ZUX2auvhD_vNytMPy9qhiAc",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:7326de359539e15615b7d7d1a32669376d85eb56d3bf78bb5f94745b703ad4ae",
+      "providerOutputSha256": "sha256:06858f4bf1e1796215348326b56c0a581cb87ec3c5c946567b5e5d113927c2f2",
+      "providerUsage": {
+        "candidatesTokenCount": 724,
+        "promptTokenCount": 2558,
+        "thoughtsTokenCount": 561,
+        "totalTokenCount": 3843
+      }
+    },
+    {
+      "canonicalId": "A15",
+      "registeredId": "INDEP-CRIT-15",
+      "roleName": "Independent Technical Critic",
+      "taskId": "HARDENED-A15-20261113",
+      "correlationId": "hard-native-A15-20261113",
+      "status": "NEEDS_HUMAN_APPROVAL",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "NO_VERIFIED_QUANTITATIVE_METRICS",
+      "primaryMetrics": {},
+      "modelSuggestedMetrics": {
+        "lwlMeters": 10,
+        "displacementTonnes": 6.91875,
+        "tabulatedComponentMassKg": 3200,
+        "preliminaryMassDeficitKg": 3718.75,
+        "batteryTotalKwh": 120,
+        "busVoltageV": 48
+      },
+      "toolEvidence": [],
+      "warnings": [
+        "UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.",
+        "UNVERIFIED MODEL METRICS: No deterministic tools were executed; primary quantitative metrics withheld."
+      ],
+      "openTbdItems": [
+        "Reconciliation of remaining 3718.75 kg displacement deficit (TBD)",
+        "Battery fire boundary and thermal containment proof (TBD)",
+        "Hydrodynamic drag curve deterministic validation (TBD)",
+        "Deterministic autonomy fail-safe state specification (TBD)",
+        "Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.",
+        "Independently corroborate all model-proposed numerical quantities."
+      ],
+      "requiresDirectorApproval": true,
+      "error": null,
+      "modelProviderResponseId": "ZUX2apO7Fb2eo_UPs4HEsQk",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:f7a72a039dd27ca68b227249e704a0b2283b32358bf415c62f3c982cbe921cef",
+      "providerOutputSha256": "sha256:4be9caa5120d3207a9dbfcb796ca2408edfe890091f370dd0b8f12c8b1ed6e18",
+      "providerUsage": {
+        "candidatesTokenCount": 488,
+        "promptTokenCount": 1315,
+        "thoughtsTokenCount": 1360,
+        "totalTokenCount": 3163
+      }
+    },
+    {
+      "canonicalId": "A16",
+      "registeredId": "SENS-PER-16",
+      "roleName": "Perception & Sensor Suite Integration Specialist",
+      "taskId": "HARDENED-A16-20261113",
+      "correlationId": "hard-native-A16-20261113",
+      "status": "SUCCESS",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "NO_VERIFIED_QUANTITATIVE_METRICS",
+      "primaryMetrics": {},
+      "modelSuggestedMetrics": {
+        "lwlMeters": 10,
+        "batteryTotalKwh": 120,
+        "preliminaryUsableKwh": 96,
+        "targetRangeNm": 2,
+        "targetBearingDeg": 45,
+        "losHorizonFormula": "1.17*(sqrt(h_mast_ft)+sqrt(h_target_ft))",
+        "requiredCoverageDeg": 360,
+        "criticalForwardBlindSpots": 0
+      },
+      "toolEvidence": [],
+      "warnings": [
+        "UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.",
+        "UNVERIFIED MODEL METRICS: No deterministic tools were executed; primary quantitative metrics withheld."
+      ],
+      "openTbdItems": [
+        "h_mast_ft measurement above waterline",
+        "Target reference height h_target_ft",
+        "Acceptable sensor fusion latency limits",
+        "Forward blind zone clearance distance",
+        "Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.",
+        "Independently corroborate all model-proposed numerical quantities."
+      ],
+      "requiresDirectorApproval": false,
+      "error": null,
+      "modelProviderResponseId": "ZEX2aoH0Ltaco_UP3vyH2Qk",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:0a2d4eb32376116e2930a179dd6c047c84eeea02d674166e722a6e17cf5f1cd2",
+      "providerOutputSha256": "sha256:548bffdae4cf4cd933d4a9f1c3351090fabc4807857dfae8d20ab50a6d2fa5b4",
+      "providerUsage": {
+        "candidatesTokenCount": 445,
+        "promptTokenCount": 1316,
+        "thoughtsTokenCount": 1326,
+        "totalTokenCount": 3087
+      }
+    },
+    {
+      "canonicalId": "A17",
+      "registeredId": "NAV-COL-17",
+      "roleName": "Navigation & COLREGS Collision Avoidance Specialist",
+      "taskId": "HARDENED-A17-20261113",
+      "correlationId": "hard-native-A17-20261113",
+      "status": "NEEDS_HUMAN_APPROVAL",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "DETERMINISTIC_TOOL_OUTPUT_UNCERTIFIED",
+      "primaryMetrics": {
+        "TOOL-COLREGS-01.relativeSpeedKnots": 19.21,
+        "TOOL-COLREGS-01.closestPointOfApproachCpaNm": 0.22,
+        "TOOL-COLREGS-01.timeToCpaMinutes": 6.2,
+        "TOOL-COLREGS-01.relativeBearingDeg": 45,
+        "TOOL-COLREGS-01.colregsRuleApplicable": "RULE_15_CROSSING_GIVE_WAY",
+        "TOOL-COLREGS-01.mandatedAction": "Crossing candidate (Rule 15): target on STARBOARD side; evaluate GIVE-WAY actions with verified CPA.",
+        "TOOL-COLREGS-01.visibilityMode": "IN_SIGHT",
+        "TOOL-COLREGS-01.legalApplicabilityValidated": false,
+        "TOOL-COLREGS-01.maneuverValidated": false
+      },
+      "modelSuggestedMetrics": {
+        "preliminaryRelativeSpeedKnots": 19.21,
+        "preliminaryCpaNm": 0.22,
+        "preliminaryTcpaMinutes": 6.2,
+        "relativeBearingDeg": 45,
+        "colregsRule": "RULE_15_CROSSING_GIVE_WAY",
+        "legalApplicabilityValidated": false,
+        "maneuverValidated": false
+      },
+      "toolEvidence": [
+        {
+          "id": "TOOL-COLREGS-01",
+          "success": true,
+          "output": {
+            "relativeSpeedKnots": 19.21,
+            "closestPointOfApproachCpaNm": 0.22,
+            "timeToCpaMinutes": 6.2,
+            "relativeBearingDeg": 45,
+            "colregsRuleApplicable": "RULE_15_CROSSING_GIVE_WAY",
+            "mandatedAction": "Crossing candidate (Rule 15): target on STARBOARD side; evaluate GIVE-WAY actions with verified CPA.",
+            "visibilityMode": "IN_SIGHT",
+            "legalApplicabilityValidated": false,
+            "maneuverValidated": false
+          }
+        }
+      ],
+      "warnings": [
+        "UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.",
+        "UNCERTIFIED CALCULATION: Tool executed, but engineering accuracy requires independent reference evidence."
+      ],
+      "openTbdItems": [
+        "Minimum acceptable CPA and TCPA safety thresholds TBD",
+        "Tracking uncertainty bounds and sensor filtering verification TBD",
+        "Maneuver trajectory selection and simulated verification gates TBD",
+        "Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.",
+        "Correlate numerical tool outputs to approved independent reference data."
+      ],
+      "requiresDirectorApproval": true,
+      "error": null,
+      "modelProviderResponseId": "eUX2au1VxsPF0g-E1NTJDQ",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:8e41bb4185c52c9eb791f96f7d3f1148a1fc07133fcb574f3ec4e845c4d29e36",
+      "providerOutputSha256": "sha256:cb4ccbf1aff5005d331567048e5095aef81569133ef27fe04ce5202e56107364",
+      "providerUsage": {
+        "candidatesTokenCount": 567,
+        "promptTokenCount": 2643,
+        "thoughtsTokenCount": 627,
+        "totalTokenCount": 3837
+      }
+    },
+    {
+      "canonicalId": "A18",
+      "registeredId": "TEST-DIR-18",
+      "roleName": "Test & Verification Director",
+      "taskId": "HARDENED-A18-20261113",
+      "correlationId": "hard-native-A18-20261113",
+      "status": "NEEDS_HUMAN_APPROVAL",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "NO_VERIFIED_QUANTITATIVE_METRICS",
+      "primaryMetrics": {},
+      "modelSuggestedMetrics": {
+        "batteryTotalKwh": 120,
+        "busVoltageV": 48,
+        "usableDepthOfDischarge": 0.8,
+        "speedKnots": 22,
+        "maxSpeedKnots": 28,
+        "verificationStatus": "UNVERIFIED"
+      },
+      "toolEvidence": [],
+      "warnings": [
+        "UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.",
+        "UNVERIFIED MODEL METRICS: No deterministic tools were executed; primary quantitative metrics withheld."
+      ],
+      "openTbdItems": [
+        "Formal pass/fail tolerances for AGT-02 solver-independent benchmarks",
+        "Calibrated physical sensor instrumentation specs and witness protocols",
+        "Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.",
+        "Independently corroborate all model-proposed numerical quantities."
+      ],
+      "requiresDirectorApproval": true,
+      "error": null,
+      "modelProviderResponseId": "d0X2aqrnEqaPytMP1dTi6Ak",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:4d557f87bcaefe0efd37cc4e4373958ed4ac1a2f98a8ac1c259c044561cd8794",
+      "providerOutputSha256": "sha256:6373ac04f7cc7e5d4ecfb140a2fc6fa963926660d2d039bc0bb80667c410a806",
+      "providerUsage": {
+        "candidatesTokenCount": 362,
+        "promptTokenCount": 1325,
+        "thoughtsTokenCount": 857,
+        "totalTokenCount": 2544
+      }
+    },
+    {
+      "canonicalId": "A19",
+      "registeredId": "COMM-RF-19",
+      "roleName": "Comms, RF & Telemetry Specialist",
+      "taskId": "HARDENED-A19-20261113",
+      "correlationId": "hard-native-A19-20261113",
+      "status": "SUCCESS",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "NO_VERIFIED_QUANTITATIVE_METRICS",
+      "primaryMetrics": {},
+      "modelSuggestedMetrics": {
+        "carrierFrequencyGHz": 2.4,
+        "targetRangeKm": 3,
+        "bandwidthRequirementKbps": "TBD",
+        "antennaStabilizationLossDb": "TBD",
+        "seaSprayAttenuationDb": "TBD",
+        "commsLossTimerSeconds": "TBD"
+      },
+      "toolEvidence": [],
+      "warnings": [
+        "UNVERIFIED MODEL METRICS: No deterministic tools were executed; primary quantitative metrics withheld."
+      ],
+      "openTbdItems": [
+        "Payload telemetry bandwidth requirement sizing",
+        "Antenna gain and radiation pattern characteristics",
+        "Sea spray and dynamic wave-blockage attenuation budgets",
+        "Deterministic Comms-Loss Timer duration threshold",
+        "Independently corroborate all model-proposed numerical quantities."
+      ],
+      "requiresDirectorApproval": false,
+      "error": null,
+      "modelProviderResponseId": "e0X2aoD5H8ndytMPqNCisAc",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:37492e6498fb4b542a811158a5af2f2eeb11ae5d1ac1aed5e5020fb0e145fa08",
+      "providerOutputSha256": "sha256:c8d82457aa503a502e67826819c7a16f5479a7a38c96df490c02370a121aa8e8",
+      "providerUsage": {
+        "candidatesTokenCount": 486,
+        "promptTokenCount": 1301,
+        "thoughtsTokenCount": 374,
+        "totalTokenCount": 2161
+      }
+    },
+    {
+      "canonicalId": "A20",
+      "registeredId": "CYBER-SEC-20",
+      "roleName": "Cyber-Physical Marine Security & Safe-State Engineer",
+      "taskId": "HARDENED-A20-20261113",
+      "correlationId": "hard-native-A20-20261113",
+      "status": "NEEDS_HUMAN_APPROVAL",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "NO_VERIFIED_QUANTITATIVE_METRICS",
+      "primaryMetrics": {},
+      "modelSuggestedMetrics": {
+        "lwlMeters": 10,
+        "beamMeters": 2.5,
+        "busVoltageV": 48,
+        "batteryTotalKwh": 120,
+        "usableDepthOfDischarge": 0.8,
+        "targetRangeNm": 2
+      },
+      "toolEvidence": [],
+      "warnings": [
+        "UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.",
+        "UNVERIFIED MODEL METRICS: No deterministic tools were executed; primary quantitative metrics withheld."
+      ],
+      "openTbdItems": [
+        "Bus cryptographic authentication protocol latency and controller overhead",
+        "Loss-of-link detection timer thresholds",
+        "Physical hardware E-stop circuit component specification",
+        "Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.",
+        "Independently corroborate all model-proposed numerical quantities."
+      ],
+      "requiresDirectorApproval": true,
+      "error": null,
+      "modelProviderResponseId": "hUX2avuGFeiM1sgP89ev0AY",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:4de196189a69a5edfa07c20497e45b7b0240c7aa739bf912c10b695371a9fec3",
+      "providerOutputSha256": "sha256:0199f2729b261f2f5b88f24362b4356a7162bc2f6ac8df5498d7e395a6573d56",
+      "providerUsage": {
+        "candidatesTokenCount": 495,
+        "promptTokenCount": 1290,
+        "thoughtsTokenCount": 977,
+        "totalTokenCount": 2762
+      }
+    },
+    {
+      "canonicalId": "A21",
+      "registeredId": "ICD-ENG-21",
+      "roleName": "Interface Control Document (ICD) Engineer",
+      "taskId": "HARDENED-A21-20261113",
+      "correlationId": "hard-native-A21-20261113",
+      "status": "SUCCESS",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "NO_VERIFIED_QUANTITATIVE_METRICS",
+      "primaryMetrics": {},
+      "modelSuggestedMetrics": {
+        "lwlMeters": 10,
+        "displacementTonnes": 6.91875,
+        "busVoltageV": 48,
+        "batteryTotalKwh": 120,
+        "maxSpeedKnots": 28
+      },
+      "toolEvidence": [],
+      "warnings": [
+        "UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.",
+        "UNVERIFIED MODEL METRICS: No deterministic tools were executed; primary quantitative metrics withheld."
+      ],
+      "openTbdItems": [
+        "Timing intervals for sensor heartbeat and link state watchdog",
+        "Formal pinout validation against physical connector standard",
+        "Director approval requirements for safe-state transitions",
+        "Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.",
+        "Independently corroborate all model-proposed numerical quantities."
+      ],
+      "requiresDirectorApproval": false,
+      "error": null,
+      "modelProviderResponseId": "okX2at-SKoTT0_gP0vTH4A8",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:fded9aa8b1b3f34a8d23fe6fa4f1837e67b25000fecbaa8a64881ef2dc1b1b7a",
+      "providerOutputSha256": "sha256:588f9ddb3de72b4b39617c4a7b8155ccf49afa4c7f541cc312281619d6969614",
+      "providerUsage": {
+        "candidatesTokenCount": 404,
+        "promptTokenCount": 1292,
+        "thoughtsTokenCount": 504,
+        "totalTokenCount": 2200
+      }
+    },
+    {
+      "canonicalId": "A22",
+      "registeredId": "FMEA-RSK-22",
+      "roleName": "FMEA & System Safety Specialist",
+      "taskId": "HARDENED-A22-20261113",
+      "correlationId": "hard-native-A22-20261113",
+      "status": "NEEDS_HUMAN_APPROVAL",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "NO_VERIFIED_QUANTITATIVE_METRICS",
+      "primaryMetrics": {},
+      "modelSuggestedMetrics": {
+        "unmitigatedBatteryLossSeverity": "High",
+        "sensorDropoutSeverity": "High",
+        "bilgeLeakSeverity": "Critical",
+        "c2LossSeverity": "Moderate",
+        "busVoltageV": 48,
+        "batteryTotalKwh": 120
+      },
+      "toolEvidence": [],
+      "warnings": [
+        "UNVERIFIED MODEL METRICS: No deterministic tools were executed; primary quantitative metrics withheld."
+      ],
+      "openTbdItems": [
+        "Quantitative Severity/Occurrence/Detection ratings and RPN calculations",
+        "Battery thermal runaway containment and fire suppression specifications",
+        "Bilge pump pumping rate and water-ingress detection threshold",
+        "Emergency stop and dead-reckoning protocols during sensor/link loss",
+        "Independently corroborate all model-proposed numerical quantities."
+      ],
+      "requiresDirectorApproval": true,
+      "error": null,
+      "modelProviderResponseId": "okX2avq4LICfuMYPn6PMwAs",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:fb779b00eb303d605ecb30a1a58b2584bc7d468c55c0a5b35289328b720a56b4",
+      "providerOutputSha256": "sha256:75d234c4fd884aa2f0ae830b537b3fc3f9210dda22eda9f4cb9371faba3de5ab",
+      "providerUsage": {
+        "candidatesTokenCount": 313,
+        "promptTokenCount": 1316,
+        "thoughtsTokenCount": 454,
+        "totalTokenCount": 2083
+      }
+    },
+    {
+      "canonicalId": "A23",
+      "registeredId": "INDEP-REV-23",
+      "roleName": "Independent Design Reviewer (Challenger / Red Team)",
+      "taskId": "HARDENED-A23-20261113",
+      "correlationId": "hard-native-A23-20261113",
+      "status": "NEEDS_HUMAN_APPROVAL",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "DETERMINISTIC_TOOL_OUTPUT_UNCERTIFIED",
+      "primaryMetrics": {
+        "TOOL-HYDROSTATICS-01.displacedVolumeM3": 6.75,
+        "TOOL-HYDROSTATICS-01.displacementTonnes": 6.919,
+        "TOOL-HYDROSTATICS-01.centerOfBuoyancyKbM": 0.362,
+        "TOOL-HYDROSTATICS-01.transverseMetacentricRadiusBmtM": 1.254,
+        "TOOL-HYDROSTATICS-01.transverseMetacenterKmtM": 1.615,
+        "TOOL-HYDROSTATICS-01.metacentricHeightGmtM": 0.815,
+        "TOOL-HYDROSTATICS-01.stabilityStatus": "UNVERIFIED_ESTIMATE",
+        "TOOL-HYDROSTATICS-01.isPreliminaryEstimate": true,
+        "TOOL-HYDROSTATICS-01.engineeringComplianceValidated": false,
+        "TOOL-HYDROSTATICS-01.kgSource": "USER_PROVIDED",
+        "TOOL-RESISTANCE-01.speedMps": 11.32,
+        "TOOL-RESISTANCE-01.froudeNumberFn": 1.143,
+        "TOOL-RESISTANCE-01.hydrodynamicRegime": "PLANING",
+        "TOOL-RESISTANCE-01.reynoldsNumber": 95270000,
+        "TOOL-RESISTANCE-01.frictionalResistanceKn": 2.954,
+        "TOOL-RESISTANCE-01.residualResistanceKn": 7.865,
+        "TOOL-RESISTANCE-01.totalResistanceKn": 10.82,
+        "TOOL-RESISTANCE-01.effectivePowerPeKw": 122.46,
+        "TOOL-RESISTANCE-01.shaftBrakePowerPbKw": 188.39,
+        "TOOL-RESISTANCE-01.engineeringComplianceValidated": false,
+        "TOOL-RESISTANCE-01.modelStatus": "PRELIMINARY_EMPIRICAL_ESTIMATE"
+      },
+      "modelSuggestedMetrics": {
+        "displacementTonnes": 6.919,
+        "itemizedComponentMassSumKg": 3200,
+        "blockCoefficientCb": 0.45,
+        "froudeNumberFn": 1.143,
+        "shaftBrakePowerPbKw": 188.39,
+        "preliminaryGmtM": 0.815,
+        "batteryCapacityKwh": 120,
+        "batterySpecificEnergyWhPerKg": 109.09
+      },
+      "toolEvidence": [
+        {
+          "id": "TOOL-HYDROSTATICS-01",
+          "success": true,
+          "output": {
+            "displacedVolumeM3": 6.75,
+            "displacementTonnes": 6.919,
+            "centerOfBuoyancyKbM": 0.362,
+            "transverseMetacentricRadiusBmtM": 1.254,
+            "transverseMetacenterKmtM": 1.615,
+            "metacentricHeightGmtM": 0.815,
+            "stabilityStatus": "UNVERIFIED_ESTIMATE",
+            "isPreliminaryEstimate": true,
+            "engineeringComplianceValidated": false,
+            "kgSource": "USER_PROVIDED",
+            "complianceCheck": {
+              "minGmMet": true,
+              "morrishKbApproximationM": 0.362
+            }
+          }
+        },
+        {
+          "id": "TOOL-RESISTANCE-01",
+          "success": true,
+          "output": {
+            "speedMps": 11.32,
+            "froudeNumberFn": 1.143,
+            "hydrodynamicRegime": "PLANING",
+            "reynoldsNumber": 95270000,
+            "frictionalResistanceKn": 2.954,
+            "residualResistanceKn": 7.865,
+            "totalResistanceKn": 10.82,
+            "effectivePowerPeKw": 122.46,
+            "shaftBrakePowerPbKw": 188.39,
+            "engineeringComplianceValidated": false,
+            "modelStatus": "PRELIMINARY_EMPIRICAL_ESTIMATE"
+          }
+        }
+      ],
+      "warnings": [
+        "UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.",
+        "UNCERTIFIED CALCULATION: Tool executed, but engineering accuracy requires independent reference evidence."
+      ],
+      "openTbdItems": [
+        "Reconciliation of 3718.75 kg mass discrepancy",
+        "Dynamic transverse stability and roll damping in seaway",
+        "Wave-added resistance and windage margins at 22-28 knots",
+        "Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.",
+        "Correlate numerical tool outputs to approved independent reference data."
+      ],
+      "requiresDirectorApproval": true,
+      "error": null,
+      "modelProviderResponseId": "okX2aoisLJK7xdIPhJuw2Ac",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:74b5dd89acbf775a56bd7239eec46db81f607c0f93718fe0a0417fa3975832a7",
+      "providerOutputSha256": "sha256:07a574b8355ac9a543a2ea5d3bc6e26a521eb4d36805378407d8a837e0628639",
+      "providerUsage": {
+        "candidatesTokenCount": 538,
+        "promptTokenCount": 3812,
+        "thoughtsTokenCount": 562,
+        "totalTokenCount": 4912
+      }
+    },
+    {
+      "canonicalId": "A24",
+      "registeredId": "VVT-VAL-24",
+      "roleName": "Verification, Validation & Test Specialist",
+      "taskId": "HARDENED-A24-20261113",
+      "correlationId": "hard-native-A24-20261113",
+      "status": "SUCCESS",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "NO_VERIFIED_QUANTITATIVE_METRICS",
+      "primaryMetrics": {},
+      "modelSuggestedMetrics": {
+        "lwlMeters": 10,
+        "beamMeters": 2.5,
+        "draftMeters": 0.6,
+        "displacementTonnes": 6.91875,
+        "speedKnots": 22,
+        "maxSpeedKnots": 28,
+        "batteryTotalKwh": 120
+      },
+      "toolEvidence": [],
+      "warnings": [
+        "UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.",
+        "UNVERIFIED MODEL METRICS: No deterministic tools were executed; primary quantitative metrics withheld."
+      ],
+      "openTbdItems": [
+        "Calibrated sensor package specifications and sampling rates",
+        "Trial sea conditions (sea state and wind speed ceilings) and run durations",
+        "Explicit numeric pass/fail tolerance thresholds for resistance and autonomy encounters",
+        "Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.",
+        "Independently corroborate all model-proposed numerical quantities."
+      ],
+      "requiresDirectorApproval": false,
+      "error": null,
+      "modelProviderResponseId": "rkX2atLOMbGvxdIPg57isQs",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:091707ed9cdc51940eb955bb66f8033310a67caaec6c1ce0b4315209e4f65a12",
+      "providerOutputSha256": "sha256:db1f997cff946a1073cacfb9a957d47a47fe66b41c7a4935c6aa895cb6f229f8",
+      "providerUsage": {
+        "candidatesTokenCount": 360,
+        "promptTokenCount": 1290,
+        "thoughtsTokenCount": 870,
+        "totalTokenCount": 2520
+      }
+    },
+    {
+      "canonicalId": "A25",
+      "registeredId": "DOC-OBS-25",
+      "roleName": "Documentation, BOM & Obsidian Knowledge Specialist",
+      "taskId": "HARDENED-A25-20261113",
+      "correlationId": "hard-native-A25-20261113",
+      "status": "SUCCESS",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "NO_VERIFIED_QUANTITATIVE_METRICS",
+      "primaryMetrics": {},
+      "modelSuggestedMetrics": {
+        "lwlMeters": 10,
+        "beamMeters": 2.5,
+        "draftMeters": 0.6,
+        "displacementTonnes": 6.91875,
+        "batteryTotalKwh": 120,
+        "busVoltageV": 48,
+        "preliminaryComponentMassKg": 3200
+      },
+      "toolEvidence": [],
+      "warnings": [
+        "UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.",
+        "UNVERIFIED MODEL METRICS: No deterministic tools were executed; primary quantitative metrics withheld."
+      ],
+      "openTbdItems": [
+        "Regulatory class signoff",
+        "Hydrodynamic towing tank or CFD validation",
+        "Physical battery endurance testing",
+        "Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.",
+        "Independently corroborate all model-proposed numerical quantities."
+      ],
+      "requiresDirectorApproval": false,
+      "error": null,
+      "modelProviderResponseId": "rkX2aqe4L8jCxdIPrsvJIA",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:5f70fd5f5c3d17f580ab0f033313a72b4d445eb8b881ddbf4fde6142ab354fb9",
+      "providerOutputSha256": "sha256:133af59506d62dd21bae951d60fea688219015ebff796f939bcf274fe72a2e89",
+      "providerUsage": {
+        "candidatesTokenCount": 344,
+        "promptTokenCount": 1296,
+        "thoughtsTokenCount": 871,
+        "totalTokenCount": 2511
+      }
+    },
+    {
+      "canonicalId": "A26",
+      "registeredId": "INTEL-USV-26",
+      "roleName": "Global Navy USV Fleet Intelligence & Benchmark Analyst",
+      "taskId": "HARDENED-A26-20261113",
+      "correlationId": "hard-native-A26-20261113",
+      "status": "SUCCESS",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "verificationStatus": "UNVERIFIED",
+      "outputSchemaValid": true,
+      "evidenceValid": false,
+      "allModelAssumptionsUnapproved": true,
+      "primaryMetricsOrigin": "NO_VERIFIED_QUANTITATIVE_METRICS",
+      "primaryMetrics": {},
+      "modelSuggestedMetrics": {
+        "lwlMeters": 10,
+        "beamMeters": 2.5,
+        "draftMeters": 0.6,
+        "displacementTonnes": 6.91875,
+        "speedKnots": 22,
+        "maxSpeedKnots": 28,
+        "batteryTotalKwh": 120,
+        "usableDod": 0.8,
+        "busVoltageV": 48,
+        "schemaDefined": true
+      },
+      "toolEvidence": [],
+      "warnings": [
+        "UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.",
+        "UNVERIFIED MODEL METRICS: No deterministic tools were executed; primary quantitative metrics withheld."
+      ],
+      "openTbdItems": [
+        "TBD: Verified open-source registry URLs and validation timestamps",
+        "TBD: Physical resistance and towing tank empirical trial data",
+        "Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.",
+        "Independently corroborate all model-proposed numerical quantities."
+      ],
+      "requiresDirectorApproval": false,
+      "error": null,
+      "modelProviderResponseId": "rkX2aueANbi6xdIPwOP10Qk",
+      "modelProviderVersion": "gemini-3.8-flash",
+      "providerFinishReason": "STOP",
+      "providerInputSha256": "sha256:11999d42c927e3fb091cb63c29ef44b05db203838c5e23cc06a657becdcc29af",
+      "providerOutputSha256": "sha256:b9504713cec5aff14e7548960de0c9a170785b29c1403992ba329eb10ba1fc44",
+      "providerUsage": {
+        "candidatesTokenCount": 355,
+        "promptTokenCount": 1365,
+        "thoughtsTokenCount": 739,
+        "totalTokenCount": 2459
+      }
+    }
+  ]
+}

@@ -31,10 +31,11 @@ describe('Deterministic Naval Engineering Tools: Physics Benchmarks & Analytical
       expect(res.output.centerOfBuoyancyKbM).toBeCloseTo(0.25, 2);
       expect(res.output.transverseMetacentricRadiusBmtM).toBeGreaterThan(0.5);
       expect(res.output.transverseMetacenterKmtM).toBeCloseTo(res.output.centerOfBuoyancyKbM + res.output.transverseMetacentricRadiusBmtM, 2);
-      expect(res.output.metacentricHeightGmtM).toBeCloseTo(res.output.transverseMetacenterKmtM - 0.4, 2);
+      expect(res.output.metacentricHeightGmtM).toBeNull();
+      expect(res.output.preliminaryGmScreeningM).toBeCloseTo(res.output.transverseMetacenterKmtM - 0.4, 2);
       expect(res.output.stabilityStatus).toBe('UNVERIFIED_ESTIMATE');
       expect(res.output.engineeringComplianceValidated).toBe(false);
-      expect(res.output.complianceCheck.minGmMet).toBe(true);
+      expect(res.output.complianceCheck.minGmMet).toBe(false);
     });
 
     it('should identify critical instability when KG exceeds KMt (negative GMt)', async () => {
@@ -50,7 +51,8 @@ describe('Deterministic Naval Engineering Tools: Physics Benchmarks & Analytical
 
       const res = await toolRegistry.executeTool('TOOL-HYDROSTATICS-01', input, ['CALCULATION_EXEC']);
       expect(res.success).toBe(true);
-      expect(res.output.metacentricHeightGmtM).toBeLessThan(0);
+      expect(res.output.metacentricHeightGmtM).toBeNull();
+      expect(res.output.preliminaryGmScreeningM).toBeLessThan(0);
       expect(res.output.stabilityStatus).toBe('UNSTABLE_CRITICAL');
       expect(res.output.complianceCheck.minGmMet).toBe(false);
     });
@@ -78,7 +80,8 @@ describe('Deterministic Naval Engineering Tools: Physics Benchmarks & Analytical
         beamMeters: 2.5,
         draftMeters: 0.6,
         displacementTonnes: 6.0,
-        propulsiveEfficiencyEtaD: 0.65
+        propulsiveEfficiencyEtaD: 0.65,
+        waterTempCelsius: 15
       };
 
       // Low speed: 5 knots -> Fn ~ 0.26 (< 0.4 => DISPLACEMENT)
@@ -108,7 +111,8 @@ describe('Deterministic Naval Engineering Tools: Physics Benchmarks & Analytical
         draftMeters: 0.6,
         displacementTonnes: 6.0,
         speedKnots: 20.0,
-        propulsiveEfficiencyEtaD: 0.65
+        propulsiveEfficiencyEtaD: 0.65,
+        waterTempCelsius: 15
       };
 
       const res = await toolRegistry.executeTool('TOOL-RESISTANCE-01', input, ['CALCULATION_EXEC']);
@@ -184,9 +188,12 @@ describe('Deterministic Naval Engineering Tools: Physics Benchmarks & Analytical
       const res = await toolRegistry.executeTool('TOOL-ELECTRICAL-01', input, ['CALCULATION_EXEC']);
       expect(res.success).toBe(true);
       expect(res.output.usableBatteryKwh).toBe(80);
-      expect(res.output.estimatedEnduranceHours).toBeCloseTo(80 / 10.1, 1); // 10.1 kW total
-      expect(res.output.emergencyEnduranceHours).toBeCloseTo(80 / 0.1, 0); // 800 hours emergency
-      expect(res.output.recommendedMainFuseRatingAmps).toBeGreaterThan(0);
+      expect(res.output.estimatedEnduranceHours).toBeNull();
+      expect(res.output.idealizedEnergyUpperBoundHours).toBeCloseTo(80 / 10.1, 1); // 10.1 kW total
+      expect(res.output.emergencyEnduranceHours).toBeNull();
+      expect(res.output.idealizedEmergencyEnergyUpperBoundHours).toBeCloseTo(800, 0); // 800 hours emergency
+      expect(res.output.recommendedMainFuseRatingAmps).toBeNull();
+      expect(res.output.protectiveDeviceSizingValidated).toBe(false);
     });
 
     it('should correctly scale nominal bus current inversely with bus voltage (P = V * I)', async () => {
@@ -195,11 +202,11 @@ describe('Deterministic Naval Engineering Tools: Physics Benchmarks & Analytical
       ];
 
       // At 24V: I = 2400 / 24 = 100A
-      const res24V = await toolRegistry.executeTool('TOOL-ELECTRICAL-01', { busVoltageV: 24, batteryTotalKwh: 50, consumers }, ['CALCULATION_EXEC']);
+      const res24V = await toolRegistry.executeTool('TOOL-ELECTRICAL-01', { busVoltageV: 24, batteryTotalKwh: 50, usableDepthOfDischarge: .8, consumers }, ['CALCULATION_EXEC']);
       expect(res24V.output.nominalBusCurrentAmps).toBeCloseTo(100, 1);
 
       // At 48V: I = 2400 / 48 = 50A
-      const res48V = await toolRegistry.executeTool('TOOL-ELECTRICAL-01', { busVoltageV: 48, batteryTotalKwh: 50, consumers }, ['CALCULATION_EXEC']);
+      const res48V = await toolRegistry.executeTool('TOOL-ELECTRICAL-01', { busVoltageV: 48, batteryTotalKwh: 50, usableDepthOfDischarge: .8, consumers: consumers.map(c => ({ ...c, voltageV: 48 })) }, ['CALCULATION_EXEC']);
       expect(res48V.output.nominalBusCurrentAmps).toBeCloseTo(50, 1);
     });
   });
@@ -225,8 +232,10 @@ describe('Deterministic Naval Engineering Tools: Physics Benchmarks & Analytical
 
       expect(resShallow.success).toBe(true);
       expect(resDeep.success).toBe(true);
-      expect(resDeep.output.designSlammingPressureKpa).toBeLessThan(resShallow.output.designSlammingPressureKpa);
-      expect(resDeep.output.minPlatingThicknessMm).toBeLessThan(resShallow.output.minPlatingThicknessMm);
+      expect(resDeep.output.designSlammingPressureKpa).toBeNull();
+      expect(resShallow.output.designSlammingPressureKpa).toBeNull();
+      expect(resDeep.output.minPlatingThicknessMm).toBeNull();
+      expect(resShallow.output.minPlatingThicknessMm).toBeNull();
     });
 
     it('should increase required plating thickness with wider unsupported panel span', async () => {
@@ -245,7 +254,8 @@ describe('Deterministic Naval Engineering Tools: Physics Benchmarks & Analytical
 
       expect(resNarrow.success).toBe(true);
       expect(resWide.success).toBe(true);
-      expect(resWide.output.minPlatingThicknessMm).toBeGreaterThan(resNarrow.output.minPlatingThicknessMm);
+      expect(resWide.output.minPlatingThicknessMm).toBeNull();
+      expect(resNarrow.output.minPlatingThicknessMm).toBeNull();
     });
   });
 
@@ -258,10 +268,10 @@ describe('Deterministic Naval Engineering Tools: Physics Benchmarks & Analytical
       const input = {
         ownCourseDeg: 0,
         ownSpeedKnots: 12,
-        targetBearingDeg: 0,
+        targetBearingDeg: 0, bearingReference: 'TRUE_NORTH',
         targetRangeNm: 2.0,
         targetCourseDeg: 180,
-        targetSpeedKnots: 12
+        targetSpeedKnots: 12, visibilityMode: 'IN_SIGHT', ownVesselType: 'POWER_DRIVEN', targetVesselType: 'POWER_DRIVEN'
       };
 
       const res = await toolRegistry.executeTool('TOOL-COLREGS-01', input, ['CALCULATION_EXEC']);
@@ -277,10 +287,10 @@ describe('Deterministic Naval Engineering Tools: Physics Benchmarks & Analytical
       const input = {
         ownCourseDeg: 0,
         ownSpeedKnots: 12,
-        targetBearingDeg: 45,
+        targetBearingDeg: 45, bearingReference: 'TRUE_NORTH',
         targetRangeNm: 2.0,
         targetCourseDeg: 270,
-        targetSpeedKnots: 10
+        targetSpeedKnots: 10, visibilityMode: 'IN_SIGHT', ownVesselType: 'POWER_DRIVEN', targetVesselType: 'POWER_DRIVEN'
       };
 
       const res = await toolRegistry.executeTool('TOOL-COLREGS-01', input, ['CALCULATION_EXEC']);
@@ -294,10 +304,10 @@ describe('Deterministic Naval Engineering Tools: Physics Benchmarks & Analytical
       const input = {
         ownCourseDeg: 0,
         ownSpeedKnots: 20,
-        targetBearingDeg: 5,
+        targetBearingDeg: 5, bearingReference: 'TRUE_NORTH',
         targetRangeNm: 1.0,
         targetCourseDeg: 0,
-        targetSpeedKnots: 8
+        targetSpeedKnots: 8, visibilityMode: 'IN_SIGHT', ownVesselType: 'POWER_DRIVEN', targetVesselType: 'POWER_DRIVEN'
       };
 
       const res = await toolRegistry.executeTool('TOOL-COLREGS-01', input, ['CALCULATION_EXEC']);
@@ -311,10 +321,10 @@ describe('Deterministic Naval Engineering Tools: Physics Benchmarks & Analytical
       const input = {
         ownCourseDeg: 0,
         ownSpeedKnots: 10,
-        targetBearingDeg: 180,
+        targetBearingDeg: 180, bearingReference: 'TRUE_NORTH',
         targetRangeNm: 8.0,
         targetCourseDeg: 180,
-        targetSpeedKnots: 12
+        targetSpeedKnots: 12, visibilityMode: 'IN_SIGHT', ownVesselType: 'POWER_DRIVEN', targetVesselType: 'POWER_DRIVEN'
       };
 
       const res = await toolRegistry.executeTool('TOOL-COLREGS-01', input, ['CALCULATION_EXEC']);
