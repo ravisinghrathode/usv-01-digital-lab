@@ -26,8 +26,11 @@ approved facts by any AI agent.
 path-based classifier assigns routine, restricted-lab software, protected
 software/security, or safety-critical vessel engineering routes. Restricted
 lab research changes use protected CI without a vessel ECR. Protected
-governance/authentication/execution changes additionally require an independent
-GitHub peer approval bound to the exact head and deterministic security review.
+governance/authentication/execution changes additionally require independent
+GitHub peer review on the exact head or explicit GitHub-authenticated repository-
+admin author acceptance with the exact head SHA. The admin-author route is
+an accountable single-maintainer exception, **not independent peer review**.
+Deterministic security review remains mandatory.
 Only changes affecting vessel engineering evidence, approved parameters,
 release authority or naval safety acceptance require a Director Ed25519 ECR.
 Stage E validates the correct route and source integrity; it never substitutes
