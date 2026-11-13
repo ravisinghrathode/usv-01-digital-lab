@@ -42,6 +42,7 @@ export interface DesignLoopRequirements {
   requirements: readonly { id: string; statement: string; source: string }[];
   sourceReferences: readonly { reference: string; description: string }[];
   objectives?: readonly PreliminaryObjective[];
+  specialistReviews?: 'AUTO' | 'OFF';
 }
 
 export interface ScreenedProposal {
@@ -56,6 +57,14 @@ export interface ScreenedProposal {
 
 export interface DesignRevision {
   index: number;
+  specialistReviews: Array<{
+    canonicalId: string;
+    agentId: string;
+    status: 'LIVE_REVIEW_UNVERIFIED' | 'FAILED_OR_NONLIVE';
+    trace: {status: string; provider: string | null; executionMode: string | null; outputDigest: string};
+    findings: string[];
+    openTbdItems: string[];
+  }>;
   proposalAgent: string;
   critiqueAgent: string;
   proposalTrace: { status: string; provider: string | null; executionMode: string | null; outputDigest: string };
@@ -77,6 +86,7 @@ export interface DesignLoopReport {
   stopReason: 'MAX_REVISIONS_REACHED' | 'AGENT_EXECUTION_FAILED' | 'NON_LIVE_PROVIDER' | 'INVALID_PROPOSAL' | 'NO_CHANGE';
   completedAgentCalls: number;
   completedToolScreens: number;
+  specialistReviewCount: number;
   comparison: {
     status: 'UNRANKED_NO_OBJECTIVES' | 'UNRANKED_INCOMPARABLE' | 'COMPARISON_READY_UNVERIFIED';
     rankings: { revisionIndex: number; relativeScore: number; objectiveValues: Record<string, number> }[];
@@ -166,6 +176,7 @@ function validateInput(x: DesignLoopRequirements) {
       throw new Error('Malformed source reference');
     }
   }
+  if (x.specialistReviews !== undefined && !['AUTO','OFF'].includes(x.specialistReviews)) throw new Error('Unrecognized specialist review mode');
   if (x.objectives !== undefined) {
     if (!Array.isArray(x.objectives) || x.objectives.length > 8) {
       throw new Error('Objectives must contain at most eight source-identified metrics');
@@ -275,7 +286,7 @@ export async function runAgentDesignLoop(
     },
     revisions: [],
     stopReason: 'MAX_REVISIONS_REACHED',
-    completedAgentCalls: 0, completedToolScreens: 0,
+    completedAgentCalls: 0, completedToolScreens: 0, specialistReviewCount: 0,
     comparison: compareRevisions([], input.objectives),
     independentEngineeringValidated: false,
     detailedDesignAuthorized: false, engineeringReleaseAuthorized: false
@@ -344,6 +355,48 @@ export async function runAgentDesignLoop(
       sourceKind: 'MODEL_PROPOSAL_UNVERIFIED', inputDigest: hash(numbers)
     };
 
+    // Discipline-specific challenges are actual provider calls, not synthetic
+    // votes. Only invoke specialists when the exact mandatory numerical
+    // tool has already succeeded. A05/A06 require hydrostatics; A07 requires
+    // resistance; A23 requires both. A09/A10/A14 remain TBD until component,
+    // structure and electrical input packages exist.
+    const successful = new Set(screenResults.filter(r => r.success).map(r => r.toolId));
+    const specialistPlan = input.specialistReviews === 'OFF' ? [] : [
+      { role: 'A05', required: ['TOOL-HYDROSTATICS-01'] },
+      { role: 'A06', required: ['TOOL-HYDROSTATICS-01'] },
+      { role: 'A07', required: ['TOOL-RESISTANCE-01'] },
+      { role: 'A23', required: ['TOOL-HYDROSTATICS-01','TOOL-RESISTANCE-01'] }
+    ].filter(entry => entry.required.every(toolId => successful.has(toolId)));
+    const specialistReviews: DesignRevision['specialistReviews'] = [];
+    for (const plan of specialistPlan) {
+      const specialist = registry.requireAgent(plan.role);
+      const reviewInput: AgentExecutionInput = {
+        taskId: input.runId+'-'+plan.role+'-REVIEW-'+index,
+        correlationId: input.runId+'-'+plan.role+'-REVIEW-'+index,
+        parameters: { ...numbers },
+        context: { mission: input.missionStatement, sourceCommit: input.sourceCommit,
+          question: 'Review the unverified proposal and explicitly challenge gaps in your discipline',
+          requirements: input.requirements, sourceReferences: input.sourceReferences,
+          hypothesisUnverified: screened, solverValidationStatus: 'NOT_ESTABLISHED',
+          physicalVerificationStatus: 'NOT_EXECUTED' },
+        priorAgentOutputs: {systemsProposalA01: screened},
+        userNotes: 'Never certify. Re-execute mandatory registered calculation and identify numerical inconsistencies, sources missing and design improvements. Report TBD for unsourced claims.'
+      };
+      const review = await executeAgent(specialist.id, reviewInput);
+      report.completedAgentCalls++;
+      const actualLive = live(review,specialist.id) && !failureOutput(review);
+      report.specialistReviewCount++;
+      specialistReviews.push({
+        canonicalId: plan.role, agentId: specialist.id,
+        status: actualLive ? 'LIVE_REVIEW_UNVERIFIED' : 'FAILED_OR_NONLIVE',
+        trace: trace(review),
+        findings: Array.isArray(review.data?.designDecisions) ?
+          review.data.designDecisions.filter((x: unknown): x is string => typeof x==='string') : [],
+        openTbdItems: review.openTbdItems || []
+      });
+      if (!actualLive) missingEngineeringInputs.push('Specialist '+plan.role+' review failed or lacked actual live provider evidence');
+    }
+
     const critiqueInput: AgentExecutionInput = {
       taskId: input.runId + '-CRITIQUE-' + index,
       correlationId: input.runId + '-CRITIQUE-' + index,
@@ -354,9 +407,10 @@ export async function runAgentDesignLoop(
         sourceReferences: input.sourceReferences,
         hypothesisUnverified: screened,
         rawAgentAssumptions: proposal.assumptions,
+        specialistReviews,
         noPhysicalOrReferenceValidation: true
       },
-      priorAgentOutputs: { proposerA01: { ...screened, openTbdItems: proposal.openTbdItems } },
+      priorAgentOutputs: { proposerA01: { ...screened, openTbdItems: proposal.openTbdItems }, specialists: specialistReviews },
       userNotes: 'Critically review uncertainty, unsupported data, hull assumptions, tool failure, alternative topology, hydrostatics and powering. Demand actual source verification and revised design; do not self-approve. All numbers are preliminary.'
     };
     const challenge = await executeAgent(critic.id, critiqueInput);
@@ -373,7 +427,7 @@ export async function runAgentDesignLoop(
       openTbdItems: [...challenge.openTbdItems, ...screened.missingEngineeringInputs]
     };
     report.revisions.push({
-      index, proposalAgent: proposer.id, critiqueAgent: critic.id,
+      index, proposalAgent: proposer.id, critiqueAgent: critic.id, specialistReviews,
       proposalTrace: trace(proposal), screened, critiqueTrace: trace(challenge), critique
     });
     previousProposal = numbers;
