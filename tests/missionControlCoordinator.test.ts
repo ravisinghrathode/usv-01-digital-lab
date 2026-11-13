@@ -83,7 +83,7 @@ describe('Mission Control coordination', () => {
       }));
     };
 
-    const coordinator = new MissionControlCoordinator(store, fakeRunner);
+    const coordinator = new MissionControlCoordinator(store, fakeRunner, async () => ({ clean: true }));
     const result = await coordinator.execute({
       taskId: 'MC-TEST-001',
       specialistAgentId: 'REQ-TRC-02',
@@ -127,7 +127,7 @@ describe('Mission Control coordination', () => {
       verifiedByHuman: false
     });
 
-    const coordinator = new MissionControlCoordinator(store, fakeRunner);
+    const coordinator = new MissionControlCoordinator(store, fakeRunner, async () => ({ clean: true }));
     const result = await coordinator.execute({
       taskId: 'MC-TEST-002',
       specialistAgentId: 'REQ-TRC-02',
