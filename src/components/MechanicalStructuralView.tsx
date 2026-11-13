@@ -52,7 +52,7 @@ export const MechanicalStructuralView: React.FC<MechanicalStructuralViewProps> =
             Structural Integrity, Marine Materials & FEA Register
           </h2>
           <p className="text-xs text-slate-400 mt-0.5">
-            DNV-RU-HSLC scantling rules, marine 5083-H116 alloy database, slamming pressure panels, and FEA stress models.
+            Material candidates, structural load-case register, and FEA evidence status; illustrative records do not demonstrate structural compliance.
           </p>
         </div>
 
@@ -118,7 +118,7 @@ export const MechanicalStructuralView: React.FC<MechanicalStructuralViewProps> =
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
               <h3 className="text-xs font-semibold text-slate-200 flex items-center gap-2">
                 <Database className="w-4 h-4 text-teal-400" />
-                <span>Certified Marine Material Properties Database</span>
+                <span>Material Candidate Register — Validate Manufacturer Certificates</span>
               </h3>
               <button
                 onClick={handleExportMaterials}
@@ -208,7 +208,7 @@ export const MechanicalStructuralView: React.FC<MechanicalStructuralViewProps> =
         <div className="space-y-4">
           <div className="bg-slate-900 border border-slate-800 rounded p-4">
             <h3 className="text-xs font-semibold text-slate-200 pb-3 border-b border-slate-800">
-              Finite Element Analysis (FEA) Stress & Fatigue Records
+              Finite Element Analysis (FEA) Register — Evidence Required
             </h3>
 
             <div className="space-y-3 mt-4">
@@ -216,7 +216,7 @@ export const MechanicalStructuralView: React.FC<MechanicalStructuralViewProps> =
                 <div key={sim.id} className="p-3.5 rounded bg-slate-950 border border-slate-800 text-xs space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-teal-400 font-bold">{sim.id} — {sim.name}</span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
                       {sim.runStatus}
                     </span>
                   </div>
