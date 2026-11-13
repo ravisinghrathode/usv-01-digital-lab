@@ -160,8 +160,19 @@ class WorkerTest(unittest.TestCase):
             return subprocess.CompletedProcess(args,1,stdout='',stderr='unshare unavailable')
         with self.assertRaises(RuntimeError):
             run_staged_case(manifest,self.staging,self.root/'work',{digest},runner=fake,
-                artifact_root=self.artifacts,isolation_mode='UNSHARE_NET')
+                artifact_root=self.artifacts,isolation_mode='UNSHARE_USER_NET')
         self.assertEqual(seen[0][:5],['unshare','--user','--map-root-user','--net','--'])
+
+    def test_privileged_network_namespace_backend_is_explicit_and_distinct(self):
+        manifest,digest=self._openfoam_fixture()
+        seen=[]
+        def fake(args,**kwargs):
+            seen.append(args)
+            return subprocess.CompletedProcess(args,1,stdout='',stderr='privileged namespace unavailable')
+        with self.assertRaises(RuntimeError):
+            run_staged_case(manifest,self.staging,self.root/'work',{digest},runner=fake,
+                artifact_root=self.artifacts,isolation_mode='UNSHARE_NET_PRIVILEGED')
+        self.assertEqual(seen[0][:3],['unshare','--net','--'])
 
     def test_resource_limits_are_host_configurable_but_bounded(self):
         with patch.dict(os.environ,{
