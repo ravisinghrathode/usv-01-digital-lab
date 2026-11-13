@@ -10,7 +10,7 @@ The **Repository Scout** discovers tools; this **Repository Integration Pipeline
 
 Requires Node.js >=20 and Git (for source staging). Docker is **only** required to execute explicitly requested reference cases on a **dedicated, disposable evaluation host**. Do not run untrusted candidates on a workstation containing project credentials or connected vessel controls. Docker hardening is defence in depth, not an assurance against container escape; for serious untrusted software use an additional ephemeral VM isolation boundary. GitHub's integration workflow intentionally never runs foreign project code.
 
-1. **Discovery (automated weekly, read-only)** — run `node scripts/repository-scout.mjs` to generate a ranked candidate queue.
+1. **Discovery (automated weekly, read-only)** — run `node scripts/repository-scout.mjs` to generate a ranked candidate queue. `node scripts/repository-integration-planner.mjs --scout-report /tmp/usv01-repository-scout/latest.json --limit 5 --out-dir /tmp/usv01-repository-scout` then resolves up to five exact public upstream commits/trees, maps reviewer roles, and writes `investigation-queue.json`. Missing interfaces, image digest, reference tests, license and security assessments remain `TBD`. The scheduled Scout workflow attempts this step on a best-effort basis; failure does not suppress the original discovery report.
 2. **Candidate specification (reviewed)** — add a deliberate source-commit-pinned JSON manifest under `references/third-party-candidates/<id>.json`, with purpose, assigned agents, digest-pinned evaluation image, command adapter and **independently selected expected reference results**. A26 coordinates; A05–A24 as applicable specify requirements. A15/A23 must not be replaced by the candidate's own test results.
 3. **Intake (no code execution):** `node scripts/repository-integration.mjs intake --spec <manifest.json> --out-dir /tmp/usv01-eval`; checks public repository and exact commit/tree through GitHub API, records advisory license metadata.
 4. **Stage (no code execution):** `node scripts/repository-integration.mjs stage --spec <manifest.json> --out-dir /tmp/usv01-eval`; fetches only exact Git commit without submodules, rejects symlinks/special files, caps source size and file count, records Git tree and manifest SHA256 hashes. Staging does not run `npm install`, `pip install`, hooks, upstream CI or source scripts.
@@ -45,7 +45,7 @@ The adapter must exist at the checked-out commit or be added as separately revie
 
 ## GitHub Actions: manual staged investigation
 
-Use **USV-01 Repository Integration Intake** with a manifest path under `references/third-party-candidates/`. This workflow runs the 16 offline Scout + Integration tests, checks exact public source pin, does static inspection, and generates a 30-day **unverified proposal** artifact without executing foreign code or automatically opening or merging PRs. PR events run the tests only. The dedicated-host `verify` command is intentionally not enabled in CI by default.
+Use **USV-01 Repository Integration Intake** with a manifest path under `references/third-party-candidates/`. This workflow runs the 19 offline Scout + Integration + Planner tests, checks exact public source pin, does static inspection, and generates a 30-day **unverified proposal** artifact without executing foreign code or automatically opening or merging PRs. PR events run the tests only. The dedicated-host `verify` command is intentionally not enabled in CI by default.
 
 ## Explicit gaps before production use
 
