@@ -98,6 +98,73 @@ describe('Reproducible legacy scenarios and real-agent iterative design screenin
     expect(result.independentEngineeringValidated).toBe(false);
   });
 
+  it('feeds quality-rejected solver evidence into critique and re-evaluates the revised candidate', async () => {
+    const sourceSha='sha256:'+'9'.repeat(64);
+    const solverMission={...mission,maxRevisions:2,
+      sourceReferences:[{reference:'TPL-SRC',description:'Fetched approved template source',
+        sha256:sourceSha,url:'https://example.org/template-source.json'}],
+      solverCampaign:{
+        templateId:'WIGLEY_CFD_V1',templateDigest:'sha256:'+'8'.repeat(64),
+        sourceReference:'TPL-SRC',requiredTopology:'MONOHULL' as const,
+        parameterKeys:['lwlMeters','beamMeters','draftMeters','speedKnots']
+      }};
+    const critiques:AgentExecutionInput[]=[];
+    const execute=async(id:string,input:AgentExecutionInput)=>{
+      if(id===critic){critiques.push(input);return makeOutput(id,input,{})}
+      const second=!input.taskId.endsWith('-0');
+      return makeOutput(id,input,{
+        lwlMeters:second?10.4:10,beamMeters:3,draftMeters:0.7,
+        blockCoefficientCb:0.55,displacementTonnes:(second?10.4:10)*3*0.7*0.55*1.025,
+        speedKnots:10,propulsiveEfficiencyEtaD:0.6,waterTempCelsius:15
+      });
+    };
+    let solverCalls=0;
+    const report=await runAgentDesignLoop(solverMission,execute,undefined,async req=>{
+      solverCalls++;
+      if(req.revisionIndex===0)return {
+        status:'QUALITY_REJECTED' as const,templateId:req.template.templateId,
+        outputDigest:'sha256:'+'1'.repeat(64),
+        issues:['mesh quality rejected; revise geometry/mesh inputs']
+      };
+      return {
+        status:'USABLE_UNVERIFIED' as const,templateId:req.template.templateId,
+        outputDigest:'sha256:'+'2'.repeat(64),issues:['grid convergence still pending'],
+        evidence:{solverVersion:'2606',dragCoefficient:0.012,engineeringReleaseAuthorized:false}
+      };
+    });
+    expect(solverCalls).toBe(2);
+    expect(report.completedSolverEvaluations).toBe(2);
+    expect(report.revisions[0].screened.solverEvaluations[0].status).toBe('QUALITY_REJECTED');
+    expect(report.revisions[0].critique.openTbdItems.join(' ')).toContain('mesh quality rejected');
+    expect(report.revisions[1].screened.solverEvaluations[0].status).toBe('USABLE_UNVERIFIED');
+    expect(report.revisions[1].screened.screenResults.some(x=>
+      x.toolId==='SOLVER-TEMPLATE:WIGLEY_CFD_V1'&&x.success)).toBe(true);
+    expect(critiques[0].context.hypothesisUnverified).toBeDefined();
+    expect(report.engineeringReleaseAuthorized).toBe(false);
+  });
+
+  it('never auto-runs a solver campaign without the authenticated template evaluator', async () => {
+    const sourceSha='sha256:'+'7'.repeat(64);
+    const solverMission={...mission,maxRevisions:1,
+      sourceReferences:[{reference:'TPL-SRC',description:'Fetched approved template source',
+        sha256:sourceSha,url:'https://example.org/template-source.json'}],
+      solverCampaign:{
+        templateId:'WIGLEY_CFD_V1',templateDigest:'sha256:'+'6'.repeat(64),
+        sourceReference:'TPL-SRC',requiredTopology:'MONOHULL' as const,
+        parameterKeys:['lwlMeters','beamMeters','draftMeters','speedKnots']
+      }};
+    const report=await runAgentDesignLoop(solverMission,async(id,input)=>
+      makeOutput(id,input,id===proposer?{
+        lwlMeters:10,beamMeters:3,draftMeters:0.7,blockCoefficientCb:0.55,
+        displacementTonnes:11.83875,speedKnots:10,
+        propulsiveEfficiencyEtaD:0.6,waterTempCelsius:15
+      }:{}));
+    expect(report.completedSolverEvaluations).toBe(0);
+    expect(report.revisions[0].screened.missingEngineeringInputs.join(' '))
+      .toContain('authenticated solver evaluator is not connected');
+    expect(report.engineeringReleaseAuthorized).toBe(false);
+  });
+
   it('activates four real registered specialist roles when both calculations pass', async () => {
     const calls: string[] = [];
     const result = await runAgentDesignLoop({...mission, maxRevisions:1,
