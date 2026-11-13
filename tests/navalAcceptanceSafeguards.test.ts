@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 import { HydrostaticsTool, ResistanceTool } from '../src/core/tools/naval/engineeringTools.ts';
+import { calculateSavitskyPlaning } from '../src/utils/navalCalculators.ts';
 
 const hull = { lwlMeters: 8, beamMeters: 2.4, draftMeters: 0.5 };
 describe('Naval estimator acceptance safeguards', () => {
@@ -47,5 +48,16 @@ describe('RES-01 dashboard provenance and motor sizing safeguard', () => {
     expect(ui).not.toContain('Installed Motor (with 25% margin)');
     expect(context).toContain('unverified historical screening figure');
     expect(propulsion).toContain('Propulsion Architecture Proposal — Not Released');
+  });
+});
+
+describe('Legacy planing heuristic release guard', () => {
+  it('declares non-validation even when illustrative numerical curves are generated', () => {
+    const result = calculateSavitskyPlaning({
+      massKg: 6200, beamM: 2.9, deadriseDeg: 20, lcgM: 4.11
+    });
+    expect(result.modelStatus).toBe('UNVALIDATED_HEURISTIC');
+    expect(result.engineeringComplianceValidated).toBe(false);
+    expect(result.curve.length).toBeGreaterThan(0);
   });
 });
