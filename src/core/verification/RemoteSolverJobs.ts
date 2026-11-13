@@ -37,16 +37,19 @@ export interface SolverServiceReceipt {
   outputArtifactUri?: string;
   outputSha256?: string;
   quality?: {
-    finalResidual: number;
-    gridUncertaintyFraction: number;
-    maximumMeshSkewness: number;
-    maximumNonOrthogonalityDeg: number;
+    finalResidual: number | null;
+    gridUncertaintyFraction: number | null;
+    maximumMeshSkewness: number | null;
+    maximumNonOrthogonalityDeg: number | null;
   };
+  keyResults?: Record<string, unknown>;
 }
 export interface SolverJobDisposition {
   status: 'SUBMITTED_UNVERIFIED' | 'COMPUTE_DONE_EVIDENCE_PENDING' | 'COMPLETED_UNVERIFIED' | 'REJECTED';
   jobId: string | null;
   qualityScreenPassed: boolean;
+  meshAndResidualScreenPassed: boolean;
+  gridConvergenceValidated: false;
   issues: string[];
   engineeringValidated: false;
   independentReferenceValidated: false;
@@ -96,6 +99,7 @@ export function evaluateSolverReceipt(
   const problems: string[] = [];
   const invalid: SolverJobDisposition = {
     status: 'REJECTED', jobId: null, qualityScreenPassed: false,
+    meshAndResidualScreenPassed: false, gridConvergenceValidated: false,
     issues: ['Untrusted or malformed solver service receipt'],
     engineeringValidated: false, independentReferenceValidated: false,
     engineeringReleaseAuthorized: false, receipt: null
@@ -108,25 +112,38 @@ export function evaluateSolverReceipt(
   const completed = r.state === 'COMPLETED';
   const computedWithoutConvergence = r.state === 'COMPUTE_DONE_EVIDENCE_PENDING';
   let qualityScreenPassed = false;
-  if (completed) {
+  let meshAndResidualScreenPassed = false;
+
+  if (completed || computedWithoutConvergence) {
     if (!r.outputArtifactUri || !httpsRef(r.outputArtifactUri) ||
         !r.outputSha256 || !SHA.test(r.outputSha256) ||
-        !r.solverVersion || !r.solverVersion.trim()) {
-      problems.push('Completed job lacks authenticated artifact link, output checksum or solver version');
+        !r.solverVersion || !r.solverVersion.trim() ||
+        r.solverVersion === 'NOT_RECORDED') {
+      problems.push('Computed job lacks retained HTTPS result artifact, checksum or actual solver version');
     }
     const q = r.quality;
     if (!q || !finiteNonnegative(q.finalResidual) ||
-        !finiteNonnegative(q.gridUncertaintyFraction) ||
         !finiteNonnegative(q.maximumMeshSkewness) ||
         !finiteNonnegative(q.maximumNonOrthogonalityDeg)) {
-      problems.push('Missing or nonfinite convergence, mesh or grid-refinement evidence');
+      problems.push('Computed job lacks final residual or mesh-quality evidence');
     } else {
-      qualityScreenPassed =
+      meshAndResidualScreenPassed =
         q.finalResidual <= manifest.qualityPlan.residualThreshold &&
-        q.gridUncertaintyFraction <= manifest.qualityPlan.gridUncertaintyMaxFraction &&
         q.maximumMeshSkewness <= manifest.qualityPlan.maxMeshSkewness &&
         q.maximumNonOrthogonalityDeg <= manifest.qualityPlan.maxNonOrthogonalityDeg;
-      if (!qualityScreenPassed) problems.push('Mesh/convergence screening thresholds not met');
+      if (!meshAndResidualScreenPassed) {
+        problems.push('Mesh or final-residual screening threshold not met');
+      }
+      if (completed) {
+        if (!finiteNonnegative(q.gridUncertaintyFraction)) {
+          problems.push('Completed job lacks nonnegative grid-refinement uncertainty');
+        } else {
+          qualityScreenPassed =
+            meshAndResidualScreenPassed &&
+            q.gridUncertaintyFraction <= manifest.qualityPlan.gridUncertaintyMaxFraction;
+          if (!qualityScreenPassed) problems.push('Grid-uncertainty threshold not met');
+        }
+      }
     }
   }
   const receipt = r as SolverServiceReceipt;
@@ -135,8 +152,10 @@ export function evaluateSolverReceipt(
       computedWithoutConvergence ? 'COMPUTE_DONE_EVIDENCE_PENDING' : 'SUBMITTED_UNVERIFIED',
     jobId: r.jobId,
     qualityScreenPassed: completed && qualityScreenPassed && problems.length === 0,
+    meshAndResidualScreenPassed: meshAndResidualScreenPassed && problems.length === 0,
+    gridConvergenceValidated: false,
     issues: problems.concat(computedWithoutConvergence ?
-      ['Solver subprocess reported completion, but grid convergence, result artifact, solver version and independent reference proof are still required'] :
+      ['Solver subprocess completed with retained results and mesh/residual screening; grid-convergence and independent reference proof remain required'] :
       ['Server receipt is self-reported; validate solver output, mesh convergence, independent benchmarks and technical authority externally']),
     engineeringValidated: false, independentReferenceValidated: false,
     engineeringReleaseAuthorized: false, receipt
@@ -205,4 +224,28 @@ export async function pollRemoteSolverJob(
     raw = await response.json();
   }
   return evaluateSolverReceipt(manifest,raw);
+}
+
+
+/**
+ * Data that agents may inspect as UNVERIFIED solver evidence. The helper never
+ * promotes it to a design baseline and refuses queued/rejected jobs.
+ */
+export function getAgentUsableSolverEvidence(disposition: SolverJobDisposition) {
+  if (!disposition.receipt ||
+      !['COMPUTE_DONE_EVIDENCE_PENDING','COMPLETED_UNVERIFIED'].includes(disposition.status) ||
+      !disposition.meshAndResidualScreenPassed) {
+    return null;
+  }
+  return {
+    sourceKind: 'REMOTE_SOLVER_OUTPUT_UNVERIFIED' as const,
+    jobId: disposition.receipt.jobId,
+    solverVersion: disposition.receipt.solverVersion,
+    outputArtifactUri: disposition.receipt.outputArtifactUri,
+    outputSha256: disposition.receipt.outputSha256,
+    quality: disposition.receipt.quality,
+    keyResults: disposition.receipt.keyResults ?? {},
+    gridConvergenceValidated: false as const,
+    engineeringReleaseAuthorized: false as const
+  };
 }
