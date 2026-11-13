@@ -368,6 +368,8 @@ export const StructuresTool: EngineeringTool = {
     minPlatingThicknessMm: z.number(),
     recommendedNominalThicknessMm: z.number(),
     stiffenerSectionModulusCm3: z.number(),
+    stiffenerPeakMomentNm: z.number(),
+    stiffenerBeamModel: z.literal('SIMPLY_SUPPORTED_UDL_ARITHMETIC_ONLY'),
     engineeringComplianceValidated: z.literal(false),
     modelStatus: z.literal('UNVALIDATED_SCANTLING_SCREEN')
   }),
@@ -400,10 +402,16 @@ export const StructuresTool: EngineeringTool = {
     const minPlatingThicknessMm = (unsupportedPanelWidthMm) * Math.sqrt((designSlammingPressureKpa * k2) / (1000 * allowableStressMpa));
     const recommendedNominalThicknessMm = Math.ceil(minPlatingThicknessMm * 2) / 2; // round up to nearest 0.5mm
 
-    // Stiffener section modulus: SM = (P * s * l^2) / (12 * sigma_all) (in cm^3)
+    // Transparent first-principles 1D beam arithmetic only. A simply supported
+    // beam of span l under uniform line load q = P*s is used as a comparison case.
+    // P [kPa] * 1000 = N/m²; q [N/m] = P*1000*s; Mmax [N*m] = q*l²/8.
+    // Z [cm³] = M [N*m]/sigma [MPa], using 1 MPa = 1 N/mm² and 1 cm³ = 1000 mm³.
+    // This is NOT a real panel support, weld, effective breadth, or code compliance check.
     const sMeters = unsupportedPanelWidthMm / 1000;
     const lMeters = unsupportedPanelLengthMm / 1000;
-    const stiffenerSectionModulusCm3 = (designSlammingPressureKpa * sMeters * Math.pow(lMeters, 2) * 1000) / (12 * allowableStressMpa * 10);
+    const lineLoadNPerM = designSlammingPressureKpa * 1000 * sMeters;
+    const stiffenerPeakMomentNm = lineLoadNPerM * Math.pow(lMeters, 2) / 8;
+    const stiffenerSectionModulusCm3 = stiffenerPeakMomentNm / allowableStressMpa;
 
     return {
       designSlammingPressureKpa: Number(designSlammingPressureKpa.toFixed(1)),
@@ -412,6 +420,8 @@ export const StructuresTool: EngineeringTool = {
       minPlatingThicknessMm: Number(minPlatingThicknessMm.toFixed(2)),
       recommendedNominalThicknessMm,
       stiffenerSectionModulusCm3: Number(stiffenerSectionModulusCm3.toFixed(2)),
+      stiffenerPeakMomentNm: Number(stiffenerPeakMomentNm.toFixed(3)),
+      stiffenerBeamModel: 'SIMPLY_SUPPORTED_UDL_ARITHMETIC_ONLY',
       engineeringComplianceValidated: false,
       modelStatus: 'UNVALIDATED_SCANTLING_SCREEN'
     };
