@@ -7,12 +7,12 @@
 - **Reason for Change:** Close numerical-tool and evidence-integrity defects found under HYD-01; preserve external acceptance gate.
 - **Affected Subsystem:** NA, HYD, VVT
 - **Affected Requirements:** HYD-01 in `docs/CONSOLIDATED_ACCEPTANCE_REGISTER.md` and `src/core/verification/AcceptanceGate.ts`; no new unapproved normative requirement implied.
-- **Architectural Impact:** Introduces `src/core/tools/naval/offsetHydrostatics.ts` without changing operational actuator interfaces or existing parametric tool contract. Future geometry-model wiring remains a separate change.
+- **Architectural Impact:** Introduces `src/core/tools/naval/offsetHydrostatics.ts` and its validated `TOOL-OFFSET-HYDROSTATICS-01` wrapper in ToolRegistry, with explicit permission enforcement; A06 is permitted to use it when offset inputs exist. No vessel actuator interface changed; approved geometry source attachment remains an external input.
 - **Safety Impact:** HIGH: a false stability certification could endanger craft and people. New outputs are expressly unverified, with no automatic `VERIFIED` state. The GUI removes unqualified green compliance labels.
 - **Cybersecurity Impact:** No new external APIs, credentials, actuator access or runtime privileges.
-- **Verification Plan:** Run `npx vitest run src/core/tools/naval/offsetHydrostatics.test.ts`, `npm run lint`, `npm test`, `npm run build` on the exact branch head. Check analytical monohull box and twin-hull offset benchmarks; positive initial GZ; free-surface corrections; overload, missing provenance and geometry rejections. Independent check must compare approved offset model against a second hydrostatics implementation, with applicable tolerance and mesh/station convergence.
-- **Risk Assessment:** HIGH
-- **Review Evidence:** Pending Stage B CI URL and Stage C independent domain review; test code included but passing CI not yet established.
+- **Verification Plan:** Run `npx vitest run src/core/tools/naval/offsetHydrostatics.test.ts src/core/tools/naval/offsetHydrostaticsTool.test.ts`, `npm run lint`, `npm test`, `npm run build` on the exact branch head. Check analytical rectangular barge and twin-hull offset benchmarks, tapered waterplane and second moments, positive initial GZ, free-surface effects, permission checks, overload, missing provenance, self-crossing/nested/overlapping geometry. Independent check must compare approved offset model against a second hydrostatics implementation with agreed tolerances and station-convergence.
+- **Risk Assessment:** CRITICAL (Stage A governance classifier); marine safety consequence requires Stage C/D/E
+- **Review Evidence:** Stage B typecheck, regression suite and production build passed at prior PR head SHA `68738766e08ba5cdbfc32878eda804a4d4b9e2ea` (GitHub Actions run 43337212995); current exact-head CI must be rechecked after subsequent commits. Stage C qualified independent domain review has not been completed. Historical Gemini A06 execution is not valid evidence for the revised prompt.
 - **Approval Record:** PENDING independent qualified naval-architecture review and Engineering Director signature; not claimed or simulated.
 - **Implementation Commit:** Pending final PR head SHA and controlled baseline digest.
 - **Closure Status:** UNDER_REVIEW — numerical remediation proposed; HYD-01 acceptance PENDING_EVIDENCE.
