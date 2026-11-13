@@ -1,6 +1,6 @@
 /**
  * Live research concept cycle. No simulated success or default vessel values.
- * Requires authorized server-side Gemini credentials, a source-identified
+ * Requires local subscription-authenticated Codex CLI, a source-identified
  * mission and exact source SHA. Produces local UNVERIFIED trade-study evidence.
  */
 import fs from 'node:fs';
