@@ -361,7 +361,9 @@ export class CodexCliProvider implements IModelProvider {
     const result = await runSubscriptionCli({
       role: 'worker',
       taskId: (request.correlationId || 'AGENT-CODEX').replace(/[^A-Za-z0-9_.-]/g, '-').slice(0, 80),
-      agentId: 'USV-AGENT',
+      agentId: typeof request.context?.agentId === 'string' &&
+        /^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$/.test(request.context.agentId)
+          ? request.context.agentId : 'USV-AGENT',
       prompt,
       workingDirectory: process.cwd()
     });
