@@ -262,7 +262,7 @@ if (process.argv[1] && process.argv[1].endsWith('stage-d-human-approval.ts')) {
   console.log(`Human Authority Required:    ${result.humanApprovalRequired ? 'YES (MANDATORY)' : 'NO'}`);
   console.log(`Approval records present:    ${result.ecrRecordFound ? 'YES' : 'NO'}`);
   console.log(`Signatory Authority:         ${result.approverAuthority || 'None'} [${result.approverRole || 'N/A'}]`);
-  console.log(`Ed25519 Signature:           ${result.signatureVerified ? '✅ VERIFIED (exact baseline)' : result.staleApproval ? '❌ STALE' : '❌ UNVERIFIED'}`);
+  console.log(`Vessel ECR Signature:        ${!result.humanApprovalRequired ? 'NOT APPLICABLE (software route)' : result.signatureVerified ? '✅ VERIFIED (exact baseline)' : result.staleApproval ? '❌ STALE' : '❌ UNVERIFIED'}`);
   console.log(`Review Status:               ${result.independentReviewStatus}\n`);
   console.log(`Summary: ${result.summary}\n`);
 
