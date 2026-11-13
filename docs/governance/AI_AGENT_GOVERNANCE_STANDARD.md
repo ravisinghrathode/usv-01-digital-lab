@@ -4,14 +4,14 @@
 **Programme:** NAVAL-USV  
 **Standard Reference:** AAGS-001  
 **Authority:** DevSecOps Architect & Multi-Agent Systems Lead  
-**Applicability:** Master Agents A01–A25 (HMEA v0.2)  
+**Applicability:** Current canonical agent IDs A01–A26 (8 functional divisions)  
 **Status:** APPROVED & ENFORCED  
 
 ---
 
 ### 1. Scope & Foundation
 
-The USV-01 Digital Engineering Lab employs 25 canonical specialist agents across 7 naval engineering divisions (Systems, Naval Architecture, Hydrodynamics, Mechanical/Structures, Electrical/Power, Propulsion, Autonomy/Software). 
+The current USV-01 registry defines **26 canonical agents across 8 functional divisions**: Directorate, Requirements/Baseline, Naval Architecture, Structures/Mechanical, Power/Propulsion, Autonomy/Electronics, Systems/V&V, and Operations/Deliverables. `src/core/agents/definitions.ts` is authoritative for roles, reporting lines and permissions; the original HMEA v0.2 / 25-agent designation is historical. This alignment changes no immutable invariants or approval authority. 
 
 This Standard defines the rigid boundary controls and permissions governing agent behavior to ensure full accountability, auditability, and safety.
 

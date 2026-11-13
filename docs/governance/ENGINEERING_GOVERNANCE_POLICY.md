@@ -15,7 +15,7 @@ This Policy establishes the binding engineering change-control, baseline authori
 
 This policy applies to:
 - All source code, schemas, and configurations in `ravisinghrathode/usv-01-digital-lab`.
-- All automated agents (A01–A25) within the 25-agent HMEA v0.2 organisation.
+- All 26 current canonical agents (A01–A26) and their configured roles, as defined by `src/core/agents/definitions.ts`. The former 25-agent HMEA v0.2 roster is historical; governance restrictions remain unchanged.
 - All AI assistant and reviewer interactions (Gemini, ChatGPT, Claude).
 - All engineering baseline artifacts, requirements, and design records.
 
@@ -42,7 +42,7 @@ This policy applies to:
 |---|---|---|
 | **Engineering Director** | Human Authority (`@ravisinghrathode`) | Sole authority for baseline freeze, safety gate decisions, ECR approvals, release sign-offs, and governance policy revisions. |
 | **Independent Technical Reviewer** | Designated Human Engineer / Multi-Role AI Suite | Advisory review, evidence generation, compliance audit, risk challenge. |
-| **Specialist Agents (A01–A25)** | Canonical HMEA v0.2 Agents | Deterministic tool execution, DAG task processing, change proposal generation. Barred from approval authority. |
+| **Specialist Agents (A01–A26)** | Current canonical role registry (`src/core/agents/definitions.ts`) | Deterministic tool execution, DAG task processing, change proposal generation. Barred from approval authority. |
 | **DevSecOps Pipeline** | GitHub Actions CI (`safety-governance-gate.yml`) | Automated verification, secret scanning, linting, build checks, tamper-detection audit. |
 
 ---

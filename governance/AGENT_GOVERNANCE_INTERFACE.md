@@ -3,13 +3,13 @@
 
 **Document Reference:** `AGI-SPEC-001`  
 **Classification:** Internal Controlled  
-**Applicability:** Master Agents A01–A25 across all 7 Engineering Divisions  
+**Applicability:** Canonical Agents A01–A26 across 8 functional divisions (current registry)  
 
 ---
 
 ### 1. Architectural Scope & Mandates
 
-The USV-01 Digital Engineering Lab incorporates 25 canonical specialist agents operating under the HMEA v0.2 specification. 
+The current USV-01 Digital Engineering Lab registers **26** canonical agents A01–A26. The HMEA v0.2 / 25-agent wording is a superseded historical architecture description, not an alternative live roster. Source authority: [`src/core/agents/definitions.ts`](../src/core/agents/definitions.ts) and `AgentRegistry`; A15 is the Independent Technical Critic and A18 is the Test & Verification Director. This documentary reconciliation does not alter any agent authority, approval gate, safety rule or release permission. 
 While agents are equipped to execute deterministic tools, schedule topological DAG tasks, and synthesize multi-disciplinary proposals, **agents operate strictly within an advisory capacity**.
 
 #### Non-Negotiable Agent Authority Invariants:

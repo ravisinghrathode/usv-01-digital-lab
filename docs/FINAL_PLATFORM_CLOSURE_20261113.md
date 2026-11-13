@@ -1,16 +1,18 @@
 # USV-01 engineering platform closure — 2026-11-13
 
+**Historical snapshot (13 November 2026):** This document records a development milestone and includes legacy Gemini-era implementation descriptions. For current roles and execution use `src/core/agents/definitions.ts`, `docs/CODEX_NATIVE_AGENT_RUNTIME.md`, `docs/AGENT_DESIGN_LOOP_AND_SOLVER_PROTOCOL_20261113.md`, and `docs/AGENT_READINESS_20261114.md`. Historical references here are not evidence that the latest Codex-based 26-agent iterative system has been independently commissioned.
+
 This document separates **implemented software capability** from **external engineering acceptance**.
 
 ## Implemented and regression-tested
 
 - Research-first, source-bound concept generation; model numbers remain hypotheses unless provenance is supplied.
 - Deterministic seeded/replayable concept screening; fabricated "agent consensus", fake Sobol indices and invented compliance defenses removed.
-- Iterative proposal → deterministic tools → discipline specialists → A15 critique → revision loop.
+- Implemented bounded A01 proposal → deterministic preliminary hydrostatics/resistance screening → A15 critique → A01 revision loop (up to five cycles). Other specialist/solver paths are separate, not a demonstrated autonomous 26-agent iterative design cycle.
 - A09/A10/A14 source-hashed mass/structure/electrical package paths.
 - Monohull screening plus a deliberately limited twin-demi-hull catamaran hydrostatic screen.
-- Authenticated provider commissioning with real Gemini API or operator-authenticated Gemini CLI; mock fallback prohibited.
-- One-command no-API live campaign: `npm run design:live-cli` checks Gemini CLI availability, refreshes hashed public sources, forces API-key transport off and executes the bounded design loop against the exact checkout SHA.
+- Historical Gemini API/CLI provider-path work was recorded. The subsequent current runtime specification uses operator-authenticated Codex CLI without paid API fallback; mock execution is not proof of live engineering.
+- Current `npm run design:live-cli` is the Codex CLI entry point for the bounded design loop; any historical description of Gemini CLI availability checks is superseded.
 - Restricted OpenFOAM / CalculiX execution with retained evidence, solver version, bounded artifacts, mesh/numerical screens and fail-closed states.
 - Real CalculiX Linux analytical known case in CI.
 - Real OpenFOAM v2606 V&V-family commissioning job in CI.
@@ -26,7 +28,7 @@ This document separates **implemented software capability** from **external engi
 
 ## Explicitly NOT established by software
 
-- A live Gemini design campaign has not been executed in repository CI because no authorized user/provider credential is present there. The remaining action is operator authentication, not repository software; once the CLI is signed in, `npm run design:live-cli` executes the campaign without an API key.
+- No currently source-pinned, independently accepted full 26-agent iterative design campaign is evidenced by repository CI. Operator-local Codex authentication and runtime execution are distinct from independent naval engineering validation.
 - A real free-surface USV hull resistance CFD case has not yet been independently validated.
 - Three-grid/GCI software exists, but a three-grid **vessel** campaign has not yet supplied accepted physical/model evidence.
 - Flat-plate/backward-step CFD commissioning is solver-path/V&V evidence, not validation of USV hull drag.

@@ -2,7 +2,7 @@
 
 **Canonical implementation:** `src/core/agents/definitions.ts` and `src/core/registry/AgentRegistry.ts`. This documentation MUST NOT be interpreted as an authoritative live agent performance certification.
 
-The live canonical registry currently defines **26** agent IDs, A01–A26. The earlier static role table was from a different generation of the architecture and no longer reliably maps each ID to its live role. Consult the canonical implementation rather than copying legacy labels.
+The current source registry defines **26** agent IDs, A01–A26, across 8 functional divisions. The architecture role table is maintained as a source-aligned **documentation snapshot**; it does not override the canonical implementation. In particular, A15 is `INDEP-CRIT-15` (Independent Technical Critic) and A18 is `TEST-DIR-18` (Test & Verification Director); earlier battery/autonomy labels are historical aliases, not additional live agents. Consult the canonical implementation for current assignments.
 
 ## What the implementation establishes
 
