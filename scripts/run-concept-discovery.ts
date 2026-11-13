@@ -76,6 +76,12 @@ async function main() {
     };
   }
   const dir = path.resolve(flag('--out-dir') || '.local-concept-research');
+  const ignoredRoot = path.resolve('.local-concept-research');
+  const insideCheckout = dir === process.cwd() || dir.startsWith(process.cwd() + path.sep);
+  const insideIgnoredRoot = dir === ignoredRoot || dir.startsWith(ignoredRoot + path.sep);
+  if (args.includes('--run-live') && insideCheckout && !insideIgnoredRoot) {
+    throw Error('Live agent research may contain controlled data; write only to ignored .local-concept-research/ or a path outside the checkout');
+  }
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, 'agent-cases.json'), JSON.stringify(cases, null, 2) + '\n');
   let findings: any[] = [];
@@ -85,15 +91,33 @@ async function main() {
       throw Error('Live agent research requires authorized GEMINI_API_KEY. Case matrix generated; no mock run substituted.');
     }
     const actualOutputs: Record<string, unknown> = {};
+    const researchRecords: Array<Record<string, unknown>> = [];
     const result = await runLiveAgentMatrix(cases, async (id, input) => {
       const output = await ExecutionEngine.getInstance().executeAgent(id, {
         ...input,
         priorAgentOutputs: actualOutputs
       }, 0);
-      // Explicitly untrusted agent research statements; never a baseline.
+      // These are REVIEW INPUTS, not independent source verification.
+      // Retain actual model proposals and TBDs locally so reviewers can compare
+      // alternatives; never mutate SharedMemory or promote numbers automatically.
+      researchRecords.push({
+        sourceCommit: commit,
+        agentRuntimeId: id,
+        taskId: output.taskId,
+        provider: output.provider || null,
+        providerExecutionMode: output.providerExecutionMode || null,
+        executionStatus: output.status,
+        evidenceClass: 'UNVERIFIED_AGENT_RESEARCH',
+        data: output.data,
+        assumptions: output.assumptions,
+        openTbdItems: output.openTbdItems,
+        warnings: output.warnings,
+        recommendations: output.recommendations
+      });
       if (output.status !== 'FAILED') {
         actualOutputs[id] = {
           disciplineSummary: String(output.data?.disciplineSummary || '').slice(0, 1000),
+          numericProposalsUnverified: output.data?.keyMetrics ?? {},
           openTbdItems: output.openTbdItems.slice(0, 20),
           verificationStatus: 'UNVERIFIED_RESEARCH'
         };
@@ -103,6 +127,11 @@ async function main() {
     operationalRuns = result.liveProviderRuns;
     findings = result.findings.map(f => ({ ...f, sourceCommit: commit }));
     fs.writeFileSync(path.join(dir, 'live-research-matrix.json'), JSON.stringify(result, null, 2) + '\n');
+    fs.writeFileSync(path.join(dir, 'agent-research-for-review.json'), JSON.stringify({
+      classification: 'UNVERIFIED_NOT_FOR_BASELINE',
+      sourceCommit: commit,
+      records: researchRecords
+    }, null, 2) + '\n', { mode: 0o600 });
   }
   const proposalFile = flag('--concept-file');
   const proposed = proposalFile ? readJson(proposalFile) : [];
