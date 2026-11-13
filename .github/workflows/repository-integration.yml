@@ -9,6 +9,9 @@ on:
       - 'tests/repository-integration-planner.test.mjs'
       - '.github/workflows/repository-integration.yml'
       - 'docs/REPOSITORY_INTEGRATION.md'
+      - 'integrations/candidates/fossen_python_vehicle_simulator_adapter.py'
+      - 'tests/test_fossen_candidate_adapter.py'
+      - 'references/third-party-investigations/**'
   workflow_dispatch:
     inputs:
       spec_path:
@@ -33,6 +36,8 @@ jobs:
           node-version: '22'
       - name: Tests (no remote execution)
         run: node --test tests/repository-scout.test.mjs tests/repository-integration.test.mjs tests/repository-integration-planner.test.mjs
+      - name: Contract-test first external candidate adapter (standard library only)
+        run: python3 -m unittest discover -s tests -p 'test_fossen_candidate_adapter.py' -v
 
   intake:
     name: Public source intake and staged proposal (NO execution)
