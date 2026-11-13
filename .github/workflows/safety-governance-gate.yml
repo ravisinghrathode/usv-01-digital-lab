@@ -176,6 +176,8 @@ jobs:
       - name: Stage B — REAL OpenFOAM Turbulent Flat-Plate Commissioning (Uncertified)
         run: |
           set -euo pipefail
+          sudo add-apt-repository -y universe
+          sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends openfoam openfoam-examples zip
           ROOT=/tmp/usv-openfoam-flatplate
           rm -rf "$ROOT"
