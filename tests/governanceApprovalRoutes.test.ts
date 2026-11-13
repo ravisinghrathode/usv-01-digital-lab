@@ -23,6 +23,11 @@ describe('USV-01 authority routing: distinguish lab software from vessel design'
       'src/core/models/ModelProvider.ts',
       '.github/workflows/usv01-26-agent-commissioning.yml',
       'src/core/auth/credentialStore.ts',
+      'src/core/verification/NewApprovalGate.ts',
+      'src/core/verification/VerifyUsv01Engine.ts',
+      'src/core/tools/ToolRegistry.ts',
+      'src/core/orchestrator/CentralOrchestrator.ts',
+      'src/core/registry/AgentRegistry.ts',
       'package.json'
     ];
     for (const file of protectedFiles) {
