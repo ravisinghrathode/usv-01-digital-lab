@@ -37,18 +37,20 @@ export interface LiftingScreenResult {
 }
 
 const validNumber = (x: unknown): x is number => typeof x === 'number' && Number.isFinite(x);
+const validId = (x: unknown): x is string => typeof x === 'string' && x.trim().length > 0 &&
+  !/^(TBD|pending|unknown|none|n\/a)$/i.test(x.trim());
 const validRef = (x: unknown): x is string => typeof x === 'string' &&
   x.trim().length > 2 && !/^(TBD|pending|unknown|none|n\/a|example|test)$/i.test(x.trim());
 
 export function screenLiftingLoadCase(input: LiftingScreenInput): LiftingScreenResult {
   const errors: string[] = [];
-  if (!validRef(input?.caseId) || !validRef(input?.loadCaseSource)) errors.push('missing load case identity or independent design load source');
+  if (!validId(input?.caseId) || !validRef(input?.loadCaseSource)) errors.push('missing load case identity or independent design load source');
   if (!validNumber(input?.designVerticalLoadN) || input.designVerticalLoadN <= 0) errors.push('positive design vertical force in N required');
   if (!Array.isArray(input?.legs) || input.legs.length === 0) errors.push('at least one substantiated lifting leg required');
   const seen = new Set<string>();
   let shareSum = 0;
   for (const leg of input?.legs ?? []) {
-    if (!validRef(leg?.legId) || seen.has(leg.legId)) errors.push('invalid or duplicate lifting leg ID');
+    if (!validId(leg?.legId) || seen.has(leg.legId)) errors.push('invalid or duplicate lifting leg ID');
     seen.add(leg?.legId);
     if (!validNumber(leg?.verticalLoadShare) || leg.verticalLoadShare < 0 || leg.verticalLoadShare > 1) {
       errors.push('leg load share must be within [0,1]');
@@ -114,12 +116,12 @@ export interface ThermalScreenResult {
 
 export function screenThermalSteadyState(input: ThermalScreenInput): ThermalScreenResult {
   const errors: string[] = [];
-  if (!validRef(input?.caseId) || !validRef(input?.sinkConditionSource)) errors.push('missing thermal case or sink condition source');
+  if (!validId(input?.caseId) || !validRef(input?.sinkConditionSource)) errors.push('missing thermal case or sink condition source');
   if (!validNumber(input?.worstCaseSinkTemperatureK) || input.worstCaseSinkTemperatureK <= 0) errors.push('positive absolute sink temperature in K required');
   if (!Array.isArray(input?.components) || !input.components.length) errors.push('at least one heat source with approved limit required');
   const seen = new Set<string>();
   for (const c of input?.components ?? []) {
-    if (!validRef(c?.componentId) || seen.has(c.componentId)) errors.push('invalid or duplicate component ID');
+    if (!validId(c?.componentId) || seen.has(c.componentId)) errors.push('invalid or duplicate component ID');
     seen.add(c?.componentId);
     if (!validNumber(c?.dissipationW) || c.dissipationW < 0) errors.push('nonnegative component heat load in W required');
     if (!validNumber(c?.totalResistanceKPerW) || c.totalResistanceKPerW <= 0) errors.push('positive thermal resistance in K/W required');
