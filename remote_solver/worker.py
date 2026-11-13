@@ -458,7 +458,10 @@ def _selected_artifacts(case: Path) -> Iterable[Path]:
         if not file.is_file() or file.is_symlink():
             continue
         rel = file.relative_to(case).as_posix()
-        if rel in exact or rel.startswith("postProcessing/"):
+        time_field = bool(re.fullmatch(
+            r"(?:[0-9]+(?:\\.[0-9]+)?)/(?:(?:Cx)|(?:wallShearStress)|(?:yPlus))", rel
+        ))
+        if rel in exact or rel.startswith("postProcessing/") or time_field:
             yield file
 
 def _persist_artifacts(case: Path, artifact_root: Path, job_ref: str, summary: dict) -> tuple[Path,str]:
