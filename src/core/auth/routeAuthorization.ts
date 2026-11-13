@@ -58,7 +58,7 @@ export function authorizeLabRoute(method: string, urlPath: string, role: string)
   // All other API paths are available to authenticated, recognized staff.
   // New mutating routes MUST be explicitly allowed, not silently opened.
   if (!['GET','HEAD','OPTIONS'].includes(verb)) {
-    const permitted = new Set(['/auth/verify-gate', '/notebook-lm/chat', '/gemini/generate',
+    const permitted = new Set(['/auth/verify-gate', '/notebook-lm/chat', '/assistant/assist', '/gemini/generate',
       '/gemini/stream', '/gemini/assist']);
     return verb === 'POST' && permitted.has(path);
   }
