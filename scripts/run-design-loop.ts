@@ -34,7 +34,8 @@ async function main() {
     runId, sourceCommit, seed, maxRevisions,
     missionStatement: mission.missionStatement as string,
     requirements: mission.requirements as { id: string; statement: string; source: string }[],
-    sourceReferences: (mission.researchSources || []) as { reference: string; description: string }[]
+    sourceReferences: (mission.researchSources || []) as { reference: string; description: string }[],
+    objectives: (mission.objectives || []) as import('../src/core/optimizer/AgentDesignLoop.ts').PreliminaryObjective[]
   });
   const filename = path.join(outDir, runId + '-UNVERIFIED.json');
   fs.writeFileSync(filename, JSON.stringify(report, null, 2) + '\n', { mode: 0o600 });
@@ -42,6 +43,8 @@ async function main() {
     runId, sourceCommit, seed, revisionCount: report.revisions.length,
     completedAgentCalls: report.completedAgentCalls,
     preliminaryToolScreens: report.completedToolScreens,
+    preliminaryComparisonStatus: report.comparison.status,
+    preliminaryRankedRevisionCount: report.comparison.rankings.length,
     stopReason: report.stopReason,
     independentEngineeringValidated: report.independentEngineeringValidated,
     engineeringReleaseAuthorized: report.engineeringReleaseAuthorized,
