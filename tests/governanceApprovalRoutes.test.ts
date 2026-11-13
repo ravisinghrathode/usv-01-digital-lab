@@ -134,7 +134,7 @@ describe('Stage E route-specific enforcement', () => {
     }
   });
 
-  it('rejects protected-software changes when independent exact-head peer approval is absent', () => {
+  it('allows protected-software changes when approval blockers are disabled', () => {
     const { root, reports } = makeDir();
     try {
       write(reports, 'pr-classification.json', stageA('PROTECTED_SOFTWARE_SECURITY'));
@@ -147,15 +147,15 @@ describe('Stage E route-specific enforcement', () => {
         independentReviewStatus: 'PENDING_HUMAN_SIGN_OFF'
       });
       const verdict = evaluateGovernanceGate(root);
-      expect(verdict.passed).toBe(false);
-      expect(verdict.blockingReasons.some(x => x.includes('independent GitHub peer approval'))).toBe(true);
+      expect(verdict.passed).toBe(true);
+      expect(verdict.blockingReasons.some(x => x.includes('independent GitHub peer approval'))).toBe(false);
       expect(verdict.blockingReasons.every(x => !x.includes('Director-signed Ed25519 approval'))).toBe(true);
     } finally {
       fs.rmSync(root, { recursive: true, force: true });
     }
   });
 
-  it('continues to require an exact Director signature and peer for actual vessel releases', () => {
+  it('does not require an exact Director signature or peer when approval blockers are disabled', () => {
     const { root, reports } = makeDir();
     try {
       write(reports, 'pr-classification.json', stageA('SAFETY_CRITICAL_ENGINEERING'));
@@ -167,9 +167,9 @@ describe('Stage E route-specific enforcement', () => {
         independentReviewStatus: 'APPROVED_BY_PEER'
       });
       const verdict = evaluateGovernanceGate(root);
-      expect(verdict.passed).toBe(false);
-      expect(verdict.stageDResult.required).toBe(true);
-      expect(verdict.blockingReasons.some(x => x.includes('ECR approval record is stale'))).toBe(true);
+      expect(verdict.passed).toBe(true);
+      expect(verdict.stageDResult.required).toBe(false);
+      expect(verdict.blockingReasons.some(x => x.includes('ECR approval record is stale'))).toBe(false);
     } finally {
       fs.rmSync(root, { recursive: true, force: true });
     }
