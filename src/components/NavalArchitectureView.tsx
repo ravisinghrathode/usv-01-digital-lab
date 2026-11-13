@@ -30,7 +30,6 @@ interface NavalArchitectureViewProps {
 export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
   particulars,
   weightItems,
-  onUpdateParticulars,
   onUpdateWeightItem,
   onAddWeightItem,
   onAskAi
@@ -53,23 +52,7 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
     setDepthM(0);
     setVcgM(0);
     setBlockCoeffCb(0);
-    if (onUpdateParticulars) {
-      onUpdateParticulars({
-        loa: 'TBD',
-        lwl: 'TBD',
-        beamOverall: 'TBD',
-        beamWaterline: 'TBD',
-        depthMolded: 'TBD',
-        draftDesign: 'TBD',
-        draftScantling: 'TBD',
-        freeboardDesign: 'TBD',
-        blockCoefficientCb: 'TBD',
-        prismaticCoefficientCp: 'TBD',
-        displacementMolded: 'TBD',
-        deadweightCapacity: 'TBD',
-        validationState: 'Unverified / TBD'
-      });
-    }
+    // Reset only the local interactive scenario. Never wipe a controlled baseline.
   };
 
   // Compute live GZ stability results
@@ -91,24 +74,25 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
   };
 
   const handleExportGzCsv = () => {
-    const headers = ['Heel Angle (deg)', 'GZ Lever (m)', 'Righting Moment (kNm)', 'Deck Immersed'];
-    const rows = stabilityResult.curve.map(pt => [pt.heelDeg, pt.gzM, pt.rightingMomentKNm, pt.isDeckImmersed ? 'YES' : 'NO']);
+    const headers = ['Heel Angle (deg)', 'GZ Estimate (m)', 'Righting Moment Estimate (kNm)', 'Deck Immersion Estimate', 'Compliance Status'];
+    const rows = stabilityResult.curve.map(pt => [pt.heelDeg, pt.gzM, pt.rightingMomentKNm, pt.isDeckImmersed ? 'YES' : 'NO', 'UNVERIFIED PARAMETRIC SCREEN — NOT FOR CERTIFICATION']);
     downloadCsv(`USV01_GZ_Stability_Curve_${new Date().toISOString().split('T')[0]}.csv`, headers, rows);
   };
 
-  const handleCommitToBaseline = () => {
-    if (onUpdateParticulars) {
-      onUpdateParticulars({
-        beamOverall: `${beamM.toFixed(2)} m`,
-        beamWaterline: `${(beamM * 0.92).toFixed(2)} m`,
-        draftDesign: `${draftM.toFixed(2)} m`,
-        depthMolded: `${depthM.toFixed(2)} m`,
-        freeboardDesign: `${(depthM - draftM).toFixed(2)} m`,
-        displacementMolded: `${displacementKg} kg (${(displacementKg / 1000).toFixed(2)} t)`,
-        blockCoefficientCb: `${blockCoeffCb.toFixed(2)}`,
-        validationState: 'Preliminary Calculations'
-      });
-    }
+  const handleExportScreeningScenario = () => {
+    // An estimate must not write to the source-of-truth particulars register.
+    // Export supports review without upgrading a synthetic scenario to a baseline.
+    const headers = ['Parameter', 'Numeric value', 'Unit', 'Provenance'];
+    const rows = [
+      ['Displacement assumption', displacementKg, 'kg', 'UNVERIFIED PARAMETRIC SCREEN'],
+      ['Waterline beam assumption', beamM, 'm', 'UNVERIFIED PARAMETRIC SCREEN'],
+      ['Draft assumption', draftM, 'm', 'UNVERIFIED PARAMETRIC SCREEN'],
+      ['Moulded depth assumption', depthM, 'm', 'UNVERIFIED PARAMETRIC SCREEN'],
+      ['KG assumption', vcgM, 'm', 'UNVERIFIED PARAMETRIC SCREEN'],
+      ['Cb assumption', blockCoeffCb, '-', 'UNVERIFIED PARAMETRIC SCREEN'],
+      ['Regulatory compliance validated', false, '-', 'NO — requires approved hull geometry and loading']
+    ];
+    downloadCsv(`USV01_Unverified_Hydrostatic_Screen_${new Date().toISOString().split('T')[0]}.csv`, headers, rows);
     setSaveSuccessMsg(true);
     setTimeout(() => setSaveSuccessMsg(false), 3000);
   };
@@ -343,17 +327,17 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
               {/* Actions */}
               <div className="pt-2 border-t border-slate-800 flex flex-wrap gap-2">
                 <button
-                  onClick={handleCommitToBaseline}
+                  onClick={handleExportScreeningScenario}
                   className="flex-1 py-1.5 px-3 rounded bg-teal-500/20 hover:bg-teal-500/30 border border-teal-500/40 text-teal-300 text-xs font-mono font-medium transition-colors"
                 >
-                  {saveSuccessMsg ? 'Committed to Baseline!' : 'Stage to Particulars'}
+                  {saveSuccessMsg ? 'Unverified scenario exported' : 'Export screening scenario'}
                 </button>
                 <button
                   onClick={handleResetToZero}
                   className="py-1.5 px-3 rounded bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/30 text-rose-300 text-xs font-mono transition-colors"
-                  title="Reset all numerical parameters to zero / TBD"
+                  title="Reset local interactive scenario only; approved records are not modified"
                 >
-                  Reset to 0 / TBD
+                  Reset scenario to 0
                 </button>
                 <button
                   onClick={handleExportGzCsv}
