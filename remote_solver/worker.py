@@ -562,8 +562,29 @@ def run_staged_case(manifest: dict, stage: Path, work_root: Path,
         for argv in commands:
             try:
                 p = _run(runner,argv,case,isolation_mode=isolation_mode)
-            except (OSError, subprocess.TimeoutExpired) as exc:
-                raise RuntimeError("Actual solver execution unavailable or timed out") from exc
+            except subprocess.TimeoutExpired as exc:
+                stdout = exc.stdout.decode(errors="replace") if isinstance(exc.stdout,bytes) else (exc.stdout or "")
+                stderr = exc.stderr.decode(errors="replace") if isinstance(exc.stderr,bytes) else (exc.stderr or "")
+                combined = stdout + "\n" + stderr
+                (case / (argv[0] + ".log")).write_text(combined)
+                logs.append({"executable":argv[0],"returnCode":None,
+                             "timedOut":True,"logSha256":sha256(combined.encode())})
+                summary={
+                    "jobId":manifest["jobRef"],
+                    "acceptedInputDigest":manifest["manifestSha256"],
+                    "family":manifest["family"],"solverVersion":solver_version,
+                    "state":"COMPUTE_TIMEOUT_REJECTED","failedExecutable":argv[0],
+                    "executionLogs":logs,"resourcePolicy":resource_policy(),
+                    "networkIsolationMode":isolation_mode,
+                    "engineeringValidated":False,"engineeringReleaseAuthorized":False
+                }
+                evidence_path,evidence_sha=_persist_artifacts(
+                    case,artifact_root,manifest["jobRef"],summary)
+                return {**summary,"outputArtifactLocalPath":str(evidence_path),
+                        "outputSha256":evidence_sha,
+                        "independentReferenceValidated":False}
+            except OSError as exc:
+                raise RuntimeError("Actual solver executable unavailable") from exc
             combined = (p.stdout or "") + "\n" + (p.stderr or "")
             command_text[argv[0]] = combined
             (case / (argv[0] + ".log")).write_text(combined)
