@@ -59,7 +59,7 @@ export const HydrodynamicsView: React.FC<HydrodynamicsViewProps> = ({
   };
 
   const handleExportSavitskyCsv = () => {
-    const headers = ['Speed (kn)', 'Speed (m/s)', 'Fn Beam', 'Trim (deg)', 'Wetted Ratio', 'Rf (kN)', 'Rp (kN)', 'R_total (kN)', 'Power PE (kW)', 'Regime'];
+    const headers = ['Speed (kn)', 'Speed (m/s)', 'Fn Beam', 'Trim (deg)', 'Wetted Ratio', 'Rf (kN)', 'Rp (kN)', 'R_total (kN)', 'Power PE (kW)', 'Regime', 'Evidence status'];
     const rows = savitskyResult.curve.map(pt => [
       pt.speedKnots,
       pt.speedMs,
@@ -70,9 +70,10 @@ export const HydrodynamicsView: React.FC<HydrodynamicsViewProps> = ({
       pt.pressureDragKN,
       pt.totalResistanceKN,
       pt.effectivePowerKW,
-      pt.planingRegime
+      pt.planingRegime,
+      'UNVALIDATED_HEURISTIC_DO_NOT_USE_FOR_PROPULSION_SELECTION'
     ]);
-    downloadCsv(`USV01_Savitsky_Planing_Curve_${new Date().toISOString().split('T')[0]}.csv`, headers, rows);
+    downloadCsv(`USV01_UNVERIFIED_HEURISTIC_${new Date().toISOString().split('T')[0]}.csv`, headers, rows);
   };
 
   // SVG Chart Dimensions
@@ -111,16 +112,16 @@ export const HydrodynamicsView: React.FC<HydrodynamicsViewProps> = ({
             <span className="text-xs text-slate-500 font-mono">HYDRODYNAMICS & RESISTANCE WORKSPACE</span>
           </div>
           <h2 className="text-xl font-bold text-slate-100 mt-1">
-            Savitsky Planing Hydrodynamics & High-Fidelity CFD Register
+            Unvalidated Planing Sketch & Hydrodynamics Evidence Register
           </h2>
           <p className="text-xs text-slate-400 mt-0.5">
-            Classical Savitsky (1964) empirical equations, speed-power estimation, OpenFOAM interFoam VOF cases, and wave interaction.
+            Legacy approximate planing visualization only; results are not calibrated Savitsky solutions or verified resistance and cannot establish propulsion ratings.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <button
-            onClick={() => onAskAi('Review the hydrodynamics Savitsky results against the active hull particulars. What propulsion motor rating (continuous kW) is required to overcome the pre-planing resistance hump with a 25% sea margin?')}
+            onClick={() => onAskAi('Audit what CAD, validated resistance, propulsor, propulsion-efficiency and motor duty evidence is required under RES-01. Do not derive motor ratings from unvalidated planing heuristics.')}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 text-sky-300 text-xs transition-colors"
           >
             <Sparkles className="w-3.5 h-3.5" />
@@ -135,7 +136,7 @@ export const HydrodynamicsView: React.FC<HydrodynamicsViewProps> = ({
         <div>
           <h4 className="font-semibold text-slate-200">Analytical vs High-Performance Compute (HPC) Architecture</h4>
           <p className="text-slate-400 mt-0.5 leading-relaxed">
-            The interactive Savitsky solver below provides classical empirical speed-power estimates for initial trade studies. Complex viscous free-surface simulations (OpenFOAM v2312, Star-CCM+) are executed on dedicated HPC Linux clusters and recorded in the CFD job register with boundary mesh and convergence evidence.
+            The interactive curve below is a non-calibrated historical heuristic, not a validated Savitsky equilibrium solver. Apparent drag, onset, trim, and power values cannot support motor or hull selection. No completed CFD, towing-tank correlation, or physical validation is asserted merely by this display.
           </p>
         </div>
       </div>
@@ -150,7 +151,7 @@ export const HydrodynamicsView: React.FC<HydrodynamicsViewProps> = ({
               : 'border-transparent text-slate-400 hover:text-slate-200'
           }`}
         >
-          Interactive Savitsky Planing Solver
+          Unvalidated Planing Heuristic (DO NOT SIZE)
         </button>
         <button
           onClick={() => setActiveTab('cfd_jobs')}
@@ -204,9 +205,9 @@ export const HydrodynamicsView: React.FC<HydrodynamicsViewProps> = ({
               <div className="flex items-center justify-between pb-2 border-b border-slate-800">
                 <h3 className="text-xs font-semibold text-slate-200 flex items-center gap-2">
                   <Sliders className="w-4 h-4 text-teal-400" />
-                  <span>Savitsky (1964) Input Variables</span>
+                  <span>Unvalidated Heuristic Inputs</span>
                 </h3>
-                <span className="text-[10px] font-mono text-slate-400">PLANING MATH</span>
+                <span className="text-[10px] font-mono text-slate-400">NOT VERIFIED</span>
               </div>
 
               {/* Mass Slider */}
@@ -218,7 +219,7 @@ export const HydrodynamicsView: React.FC<HydrodynamicsViewProps> = ({
                 <input
                   type="range"
                   min="800"
-                  max="6000"
+                  max="8000"
                   step="50"
                   value={massKg}
                   onChange={(e) => setMassKg(Number(e.target.value))}
@@ -270,7 +271,7 @@ export const HydrodynamicsView: React.FC<HydrodynamicsViewProps> = ({
                 <input
                   type="range"
                   min="1.00"
-                  max="3.00"
+                  max="7.00"
                   step="0.05"
                   value={lcgM}
                   onChange={(e) => setLcgM(Number(e.target.value))}
@@ -282,12 +283,12 @@ export const HydrodynamicsView: React.FC<HydrodynamicsViewProps> = ({
               {/* Quick Solver Stats */}
               <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800 text-xs font-mono">
                 <div className="p-2 rounded bg-slate-950 border border-slate-800">
-                  <span className="text-slate-500 text-[10px] block">PLANING ONSET</span>
+                  <span className="text-slate-500 text-[10px] block">BEAM FN=1 ONLY</span>
                   <span className="text-sm font-bold text-teal-400">{savitskyResult.planingSpeedKnots} knots</span>
                   <span className="text-[9px] text-slate-500 block">Fn_b ≥ 1.0</span>
                 </div>
                 <div className="p-2 rounded bg-slate-950 border border-slate-800">
-                  <span className="text-slate-500 text-[10px] block">HUMP RESISTANCE</span>
+                  <span className="text-slate-500 text-[10px] block">HEURISTIC DRAG PEAK</span>
                   <span className="text-sm font-bold text-amber-400">{savitskyResult.peakHumpResistanceKN} kN</span>
                   <span className="text-[9px] text-slate-500 block">At ~{savitskyResult.peakHumpSpeedKnots} kn</span>
                 </div>
@@ -299,7 +300,7 @@ export const HydrodynamicsView: React.FC<HydrodynamicsViewProps> = ({
                   className="w-full py-1.5 px-3 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono flex items-center justify-center gap-1.5 transition-colors"
                 >
                   <Download className="w-3.5 h-3.5" />
-                  <span>Export Savitsky Data (CSV)</span>
+                  <span>Export UNVERIFIED Curve (CSV)</span>
                 </button>
               </div>
             </div>
@@ -310,7 +311,7 @@ export const HydrodynamicsView: React.FC<HydrodynamicsViewProps> = ({
                 <div className="flex items-center justify-between pb-2 border-b border-slate-800">
                   <h3 className="text-xs font-semibold text-slate-200 flex items-center gap-2">
                     <TrendingUp className="w-4 h-4 text-teal-400" />
-                    <span>Speed vs Resistance $R_T$ & Effective Power $P_E$</span>
+                    <span>Illustrative Uncalibrated Curve — NOT Total Resistance</span>
                   </h3>
                   <div className="flex items-center gap-3 text-[10px] font-mono">
                     <span className="flex items-center gap-1 text-teal-400">
@@ -363,42 +364,15 @@ export const HydrodynamicsView: React.FC<HydrodynamicsViewProps> = ({
 
                   <div className="flex justify-between text-[10px] font-mono text-slate-500 mt-1">
                     <span>Forward Speed (knots)</span>
-                    <span className="text-slate-400">Planing onset speed marked at {savitskyResult.planingSpeedKnots} kn</span>
+                    <span className="text-amber-400">Beam-Froude crossing ≠ verified planing onset</span>
                   </div>
                 </div>
               </div>
 
-              {/* Recommended Propulsion Motor Sizing Readout */}
-              <div className="p-3 rounded bg-slate-950 border border-slate-800 text-xs font-mono">
-                <div className="flex items-center justify-between pb-1.5 border-b border-slate-800 text-[11px]">
-                  <span className="text-slate-400 flex items-center gap-1.5">
-                    <Gauge className="w-3.5 h-3.5 text-teal-400" />
-                    <span>Propulsion Motor Sizing Synthesis (at 28 knots Sprint):</span>
-                  </span>
-                  <span className="text-teal-400 font-bold">
-                    Effective $P_E$: {(savitskyResult.curve.find(c => c.speedKnots === 28)?.effectivePowerKW || 0).toFixed(1)} kW
-                  </span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-2 text-[11px]">
-                  <div>
-                    <span className="text-slate-500 block">Shaft Power (η_prop ≈ 0.62):</span>
-                    <strong className="text-slate-200">
-                      {(((savitskyResult.curve.find(c => c.speedKnots === 28)?.effectivePowerKW || 0) / 0.62)).toFixed(1)} kW
-                    </strong>
-                  </div>
-                  <div>
-                    <span className="text-slate-500 block">Installed Motor (with 25% margin):</span>
-                    <strong className="text-teal-400">
-                      {(((savitskyResult.curve.find(c => c.speedKnots === 28)?.effectivePowerKW || 0) / 0.62) * 1.25).toFixed(1)} kW Total
-                    </strong>
-                  </div>
-                  <div>
-                    <span className="text-slate-500 block">Twin Outboard Split:</span>
-                    <strong className="text-sky-400">
-                      2× {((((savitskyResult.curve.find(c => c.speedKnots === 28)?.effectivePowerKW || 0) / 0.62) * 1.25) / 2).toFixed(1)} kW Motors
-                    </strong>
-                  </div>
-                </div>
+              {/* RES-01: Unverified drag is prohibited from sizing propulsion. */}
+              <div className="p-3 rounded bg-slate-950 border border-amber-600/60 text-xs font-mono" role="status">
+                <h4 className="text-amber-300 font-bold">RES-01 — PROPULSION POWER NOT ESTABLISHED</h4>
+                <p className="text-slate-300 mt-1">Required shaft and motor ratings: TBD. The previous 28-knot heuristic, assumed efficiency, and blanket margin are prohibited for sizing. Use a documented resistance-power curve, quasi-propulsive efficiency evidence, and vendor motor/ESC thermal data at approved operating conditions.</p>
               </div>
             </div>
           </div>
@@ -406,7 +380,7 @@ export const HydrodynamicsView: React.FC<HydrodynamicsViewProps> = ({
           {/* Full Tabular Savitsky Hydrodynamic Output Table */}
           <div className="bg-slate-900 border border-slate-800 rounded p-4 text-xs font-mono">
             <h3 className="text-xs font-semibold text-slate-200 pb-3 border-b border-slate-800">
-              Parametric Savitsky Hydrodynamic Resistance Calculation Matrix
+              UNVALIDATED Parametric Sketch — Not an Engineering Resistance Curve
             </h3>
 
             <div className="overflow-x-auto mt-3 max-h-64 overflow-y-auto">
