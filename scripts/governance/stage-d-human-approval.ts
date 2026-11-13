@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { execFileSync, execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import { generateClassificationReport } from './classify-change.ts';
 import { validateECRFile } from './ecr-tool.ts';
 import { computeBaselineDigest, loadApprovalRecords, resolveDirectorPublicKey, verifyApproval } from './ecr-approval.ts';
@@ -47,6 +47,78 @@ export interface StageDOptions {
   publicKeyPem?: string;
   rootDir?: string;
   forceRisk?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+}
+
+
+/**
+ * A GitHub peer approval is independent only if its reviewer is an authorized
+ * collaborator (not the author), their latest review remains APPROVED, and it
+ * was submitted on the exact PR head being evaluated. An earlier approval
+ * cannot authorize subsequent code changes.
+ */
+export function hasCurrentHeadIndependentApproval(
+  reviews: ReadonlyArray<{
+    id?: number;
+    state?: string;
+    commit_id?: string;
+    submitted_at?: string;
+    author_association?: string;
+    user?: { login?: string };
+  }>,
+  authorLogin: string,
+  exactHeadSha: string
+): boolean {
+  if (!authorLogin || !/^[0-9a-f]{40}$/i.test(exactHeadSha)) return false;
+  const latest = new Map<string, (typeof reviews)[number]>();
+  for (const review of [...reviews].sort((a, b) => (a.id ?? 0) - (b.id ?? 0))) {
+    const login = review.user?.login?.toLowerCase();
+    if (login) latest.set(login, review);
+  }
+  return [...latest.entries()].some(([login, review]) =>
+    login !== authorLogin.toLowerCase() &&
+    review.state === 'APPROVED' &&
+    review.commit_id === exactHeadSha &&
+    !!review.submitted_at &&
+    ['OWNER', 'MEMBER', 'COLLABORATOR'].includes(review.author_association || '')
+  );
+}
+
+function hasLiveIndependentApproval(exactHeadSha: string): boolean {
+  const repository = process.env.GITHUB_REPOSITORY;
+  const eventPath = process.env.GITHUB_EVENT_PATH;
+  // Outside a real authenticated PR job, fail closed rather than trusting
+  // stale fixture reviews or branch-local claims.
+  if (!repository || !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repository) || !eventPath) {
+    return false;
+  }
+  try {
+    const event = JSON.parse(fs.readFileSync(eventPath, 'utf-8'));
+    const pr = event.pull_request;
+    if (!Number.isSafeInteger(pr?.number) || pr.number <= 0 ||
+        pr.head?.sha !== exactHeadSha || !pr.user?.login) return false;
+    const reviews: Array<{
+      id?: number;
+      state?: string;
+      commit_id?: string;
+      submitted_at?: string;
+      author_association?: string;
+      user?: { login?: string };
+    }> = [];
+    for (let page = 1; page <= 10; page++) {
+      const endpoint = `repos/${repository}/pulls/${pr.number}/reviews?per_page=100&page=${page}`;
+      const response = execFileSync('gh', ['api', endpoint], { encoding: 'utf-8' });
+      const batch = JSON.parse(response);
+      if (!Array.isArray(batch)) return false;
+      reviews.push(...batch);
+      if (batch.length < 100) {
+        return hasCurrentHeadIndependentApproval(reviews, pr.user.login, exactHeadSha);
+      }
+    }
+    // Never silently accept truncated history.
+    return false;
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -96,13 +168,11 @@ export function evaluateStageDHumanApproval(baseRef = 'origin/main', opts: Stage
   const signatureError = signatureVerified ? undefined : (errors.join(' | ') || 'No Director approval records found in governance/approvals/.');
 
   let reviewStatus: StageDResult['independentReviewStatus'] = signatureVerified ? 'ECR_DIRECTOR_SIGNED' : 'PENDING_HUMAN_SIGN_OFF';
-  try {
-    const prData = JSON.parse(execSync('gh pr view --json reviews,author 2>/dev/null', { encoding: 'utf-8' }));
-    if (prData.reviews?.some((r: any) => r.state === 'APPROVED' && r.author?.login !== prData.author?.login)) {
-      reviewStatus = 'APPROVED_BY_PEER';
-    }
-  } catch {
-    // Local execution or no PR context
+  // A peer reviewer is mandatory for HIGH/CRITICAL changes. Verify the
+  // authenticated GitHub review against the current PR head; do not let
+  // a prior approval, self-review or untrusted contributor satisfy this gate.
+  if (isCriticalOrHigh && hasLiveIndependentApproval(evaluatedRef)) {
+    reviewStatus = 'APPROVED_BY_PEER';
   }
 
   let summary: string;
