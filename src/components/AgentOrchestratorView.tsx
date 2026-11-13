@@ -159,7 +159,7 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
   // Approval Gate Director Notes
   const [directorNote, setDirectorNote] = useState<string>('Verified against USV-01 preliminary design criteria.');
 
-  // Exploratory Parametric Study Inputs (Defaults to standard USV-01 preliminary dimensions)
+  // Illustrative parametric study inputs, never an approved vessel baseline.
   const [studyLwl, setStudyLwl] = useState<number>(11.8);
   const [studyBeam, setStudyBeam] = useState<number>(4.2);
   const [studyDraft, setStudyDraft] = useState<number>(0.85);
@@ -279,29 +279,16 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
     setServerPendingGates(null);
     orchestrator.clearTasks();
 
-    // Inspect baseline vessel particulars in SharedMemory
-    const lwlParam = sharedMemory.getParameter('USV-NA-001');
-    const beamParam = sharedMemory.getParameter('USV-NA-002');
-    const draftParam = sharedMemory.getParameter('USV-NA-003');
-    const displParam = sharedMemory.getParameter('USV-NA-004');
-
-    const hasCertifiedBaselines =
-      lwlParam && lwlParam.value !== 'TBD' && typeof lwlParam.value === 'number' &&
-      beamParam && beamParam.value !== 'TBD' && typeof beamParam.value === 'number' &&
-      draftParam && draftParam.value !== 'TBD' && typeof draftParam.value === 'number';
-
-    const lwlVal = hasCertifiedBaselines ? Number(lwlParam!.value) : (studyLwl > 0 ? studyLwl : 11.2);
-    const beamVal = hasCertifiedBaselines ? Number(beamParam!.value) : (studyBeam > 0 ? studyBeam : 2.9);
-    const draftVal = hasCertifiedBaselines ? Number(draftParam!.value) : (studyDraft > 0 ? studyDraft : 0.68);
-    const displVal = hasCertifiedBaselines && displParam && typeof displParam.value === 'number'
-      ? Number(displParam.value)
-      : (studyDisplacement > 0 ? studyDisplacement : 6.2);
+    // These are unverified demonstration inputs, not an authenticated vessel baseline.
+    // Numeric presence in browser SharedMemory never implies an approved design.
+    const lwlVal = studyLwl > 0 ? studyLwl : 11.2;
+    const beamVal = studyBeam > 0 ? studyBeam : 2.9;
+    const draftVal = studyDraft > 0 ? studyDraft : 0.68;
+    const displVal = studyDisplacement > 0 ? studyDisplacement : 6.2;
     const speedVal = studySpeed > 0 ? studySpeed : 22.0;
 
-    const titlePrefix = hasCertifiedBaselines ? '[CERTIFIED BASELINE] ' : '[UNVERIFIED PARAMETRIC STUDY] ';
-    const studyNotice = hasCertifiedBaselines
-      ? 'Executing certified vessel baseline.'
-      : 'Executing exploratory sensitivity study. Dimensions are NOT approved project baseline.';
+    const titlePrefix = '[UNVERIFIED PARAMETRIC STUDY] ';
+    const studyNotice = 'Illustrative study only; no authenticated vessel baseline or independent physics verification.';
 
     const timestampSuffix = Date.now().toString().slice(-4);
     const hullTaskId = `TASK-HULL-${timestampSuffix}`;
@@ -319,10 +306,10 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
       dependencies: [],
       input: {
         taskId: 'TASK-HULL-PARAM',
-        context: { isExploratoryStudy: !hasCertifiedBaselines },
+        context: { isExploratoryStudy: true },
         parameters: {
-          isExploratoryStudy: !hasCertifiedBaselines,
-          baselineStatus: hasCertifiedBaselines ? 'CERTIFIED' : 'UNVERIFIED_PARAMETRIC_STUDY',
+          isExploratoryStudy: true,
+          baselineStatus: 'UNVERIFIED_PARAMETRIC_STUDY',
           lwlMeters: lwlVal,
           beamMeters: beamVal,
           draftMeters: draftVal,
@@ -349,7 +336,7 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
       dependencies: [hullTaskId],
       input: {
         taskId: 'TASK-MASS-EST',
-        context: { isExploratoryStudy: !hasCertifiedBaselines },
+        context: { isExploratoryStudy: true },
         parameters: {
           components: [
             { name: 'Bare Hull Composite Structure', massKg: Math.round(displVal * 280), lcgMetersFromTransom: Number((lwlVal * 0.45).toFixed(2)), tcgMetersFromCl: 0, vcgMetersFromKeel: Number((draftVal * 0.9).toFixed(2)), designMarginPercent: 10 },
@@ -358,7 +345,7 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
             { name: 'Avionics, Doppler Radar & Sensors', massKg: 180, lcgMetersFromTransom: Number((lwlVal * 0.55).toFixed(2)), tcgMetersFromCl: 0, vcgMetersFromKeel: 2.1, designMarginPercent: 15 }
           ],
           baselineLcbMetersFromTransom: Number((lwlVal * 0.42).toFixed(2)),
-          isExploratoryStudy: !hasCertifiedBaselines
+          isExploratoryStudy: true
         }
       },
       status: 'PENDING',
@@ -377,10 +364,10 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
       dependencies: [massTaskId],
       input: {
         taskId: 'TASK-STAB-AUDIT',
-        context: { isExploratoryStudy: !hasCertifiedBaselines },
+        context: { isExploratoryStudy: true },
         parameters: {
-          isExploratoryStudy: !hasCertifiedBaselines,
-          baselineStatus: hasCertifiedBaselines ? 'CERTIFIED' : 'UNVERIFIED_PARAMETRIC_STUDY',
+          isExploratoryStudy: true,
+          baselineStatus: 'UNVERIFIED_PARAMETRIC_STUDY',
           lwlMeters: lwlVal,
           beamMeters: beamVal,
           draftMeters: draftVal,
@@ -666,7 +653,7 @@ export const AgentOrchestratorView: React.FC<AgentOrchestratorViewProps> = ({ on
                 </span>
               </div>
               <p className="text-amber-200/80 text-[11px]">
-                Principal vessel dimensions in SharedMemory are currently uncertified (TBD). Sizing workflows execute strictly under
+                Historical values in SharedMemory are unverified assumptions, not an approved baseline. All sample tasks execute strictly under
                 explicit <code className="text-amber-300 font-mono">[UNVERIFIED PARAMETRIC STUDY]</code> tags and do NOT alter certified vessel baseline
                 without Engineering Director gate sign-off.
               </p>
