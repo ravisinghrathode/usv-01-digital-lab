@@ -49,15 +49,34 @@ export function classifyFile(filePath: string): { categories: ChangeCategory[]; 
     categories.push('CONFIGURATION');
   }
 
-  if (norm.includes('src/core/safety/') || norm.includes('src/core/auth/')) {
+  // Never silently downgrade marine verification, evidence acceptance, or
+  // governance enforcement changes to ordinary MEDIUM-risk software/docs.
+  // These files can alter whether an unsafe naval design is reported as accepted.
+  if (
+    norm.includes('src/core/safety/') ||
+    norm.includes('src/core/auth/') ||
+    norm.startsWith('scripts/governance/')
+  ) {
     categories.push('SECURITY');
   }
 
-  if (norm.includes('src/core/safety/') || norm.includes('src/core/tools/naval/') || norm.includes('types/safety.ts')) {
+  if (
+    norm.includes('src/core/safety/') ||
+    norm.includes('src/core/tools/naval/') ||
+    norm.includes('types/safety.ts') ||
+    norm.startsWith('src/core/verification/') ||
+    /^tests\/(marineSystems|acceptanceGate|acceptanceCampaign)/.test(norm)
+  ) {
     categories.push('SAFETY');
   }
 
-  if (norm.includes('USV01_PROJECT_CONTEXT.md') || norm.startsWith('data/') || norm.includes('src/data/')) {
+  if (
+    norm.includes('USV01_PROJECT_CONTEXT.md') ||
+    norm.startsWith('data/') ||
+    norm.includes('src/data/') ||
+    /^docs\/MAR[0-9]+_/.test(norm) ||
+    norm.startsWith('governance/ecr/')
+  ) {
     categories.push('REQUIREMENTS');
   }
 
