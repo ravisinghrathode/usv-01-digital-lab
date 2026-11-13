@@ -22,6 +22,8 @@ export interface SolverJobRequest {
     gridUncertaintyMaxFraction: number;
     maxMeshSkewness: number;
     maxNonOrthogonalityDeg: number;
+    maxElementAspectRatio?: number;
+    minScaledJacobian?: number;
   };
 }
 export interface SolverJobManifest extends SolverJobRequest {
@@ -41,6 +43,8 @@ export interface SolverServiceReceipt {
     gridUncertaintyFraction: number | null;
     maximumMeshSkewness: number | null;
     maximumNonOrthogonalityDeg: number | null;
+    maximumElementAspectRatio?: number | null;
+    minimumScaledJacobian?: number | null;
   };
   keyResults?: Record<string, unknown>;
 }
@@ -81,7 +85,13 @@ export function createSolverJobManifest(raw: SolverJobRequest): SolverJobManifes
       !finiteNonnegative(raw.qualityPlan.maxMeshSkewness) ||
       !finiteNonnegative(raw.qualityPlan.maxNonOrthogonalityDeg) ||
       raw.qualityPlan.gridUncertaintyMaxFraction > 1 ||
-      raw.qualityPlan.maxNonOrthogonalityDeg > 180) {
+      raw.qualityPlan.maxNonOrthogonalityDeg > 180 ||
+      (raw.family === 'CALCULIX_FEA' &&
+        (!finiteNonnegative(raw.qualityPlan.maxElementAspectRatio) ||
+         raw.qualityPlan.maxElementAspectRatio! < 1 ||
+         !finiteNonnegative(raw.qualityPlan.minScaledJacobian) ||
+         raw.qualityPlan.minScaledJacobian! <= 0 ||
+         raw.qualityPlan.minScaledJacobian! > 1))) {
     throw new Error('Solver job invalid: exact source/artifact digests, HTTPS input, mesh and externally referenced quality criteria required');
   }
   const source = { ...raw };
@@ -122,27 +132,39 @@ export function evaluateSolverReceipt(
       problems.push('Computed job lacks retained HTTPS result artifact, checksum or actual solver version');
     }
     const q = r.quality;
-    if (!q || !finiteNonnegative(q.finalResidual) ||
-        !finiteNonnegative(q.maximumMeshSkewness) ||
-        !finiteNonnegative(q.maximumNonOrthogonalityDeg)) {
-      problems.push('Computed job lacks final residual or mesh-quality evidence');
-    } else {
-      meshAndResidualScreenPassed =
-        q.finalResidual <= manifest.qualityPlan.residualThreshold &&
-        q.maximumMeshSkewness <= manifest.qualityPlan.maxMeshSkewness &&
-        q.maximumNonOrthogonalityDeg <= manifest.qualityPlan.maxNonOrthogonalityDeg;
-      if (!meshAndResidualScreenPassed) {
-        problems.push('Mesh or final-residual screening threshold not met');
+    if (manifest.family === 'OPENFOAM_CFD') {
+      if (!q || !finiteNonnegative(q.finalResidual) ||
+          !finiteNonnegative(q.maximumMeshSkewness) ||
+          !finiteNonnegative(q.maximumNonOrthogonalityDeg)) {
+        problems.push('Computed CFD job lacks final residual or mesh-quality evidence');
+      } else {
+        meshAndResidualScreenPassed =
+          q.finalResidual <= manifest.qualityPlan.residualThreshold &&
+          q.maximumMeshSkewness <= manifest.qualityPlan.maxMeshSkewness &&
+          q.maximumNonOrthogonalityDeg <= manifest.qualityPlan.maxNonOrthogonalityDeg;
+        if (!meshAndResidualScreenPassed) problems.push('CFD mesh or residual threshold not met');
       }
-      if (completed) {
-        if (!finiteNonnegative(q.gridUncertaintyFraction)) {
-          problems.push('Completed job lacks nonnegative grid-refinement uncertainty');
-        } else {
-          qualityScreenPassed =
-            meshAndResidualScreenPassed &&
-            q.gridUncertaintyFraction <= manifest.qualityPlan.gridUncertaintyMaxFraction;
-          if (!qualityScreenPassed) problems.push('Grid-uncertainty threshold not met');
-        }
+    } else {
+      if (!q || !finiteNonnegative(q.maximumElementAspectRatio) ||
+          !finiteNonnegative(q.minimumScaledJacobian) ||
+          !finiteNonnegative(manifest.qualityPlan.maxElementAspectRatio) ||
+          !finiteNonnegative(manifest.qualityPlan.minScaledJacobian)) {
+        problems.push('Computed FEA job lacks C3D8 aspect/scaled-Jacobian quality evidence');
+      } else {
+        meshAndResidualScreenPassed =
+          q.maximumElementAspectRatio <= manifest.qualityPlan.maxElementAspectRatio! &&
+          q.minimumScaledJacobian >= manifest.qualityPlan.minScaledJacobian!;
+        if (!meshAndResidualScreenPassed) problems.push('FEA mesh-quality threshold not met');
+      }
+    }
+    if (completed) {
+      if (!q || !finiteNonnegative(q.gridUncertaintyFraction)) {
+        problems.push('Completed job lacks nonnegative grid/mesh-refinement uncertainty');
+      } else {
+        qualityScreenPassed =
+          meshAndResidualScreenPassed &&
+          q.gridUncertaintyFraction <= manifest.qualityPlan.gridUncertaintyMaxFraction;
+        if (!qualityScreenPassed) problems.push('Grid/mesh-refinement uncertainty threshold not met');
       }
     }
   }
