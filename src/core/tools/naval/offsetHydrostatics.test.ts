@@ -112,3 +112,34 @@ describe('HYD-01 section-derived hydrostatics', () => {
     expect(r.engineeringComplianceValidated).toBe(false);
   });
 });
+
+describe('HYD-01 regression: offset topology and varying waterplane', () => {
+  it('integrates linearly tapered rectangular sections and longitudinal moments', () => {
+    const input = boxInput();
+    input.hull.stations[0].loops = [rectangle(-0.5, 0.5, 0, 1)];
+    input.hull.stations[1].loops = [rectangle(-1.5, 1.5, 0, 1)];
+    input.load.lcgM = 35 / 6;
+    const r = calculateOffsetHydrostatics(input);
+    expect(r.equilibriumDraftM).toBeCloseTo(0.5, 8);
+    expect(r.displacedVolumeM3).toBeCloseTo(10, 8);
+    expect(r.lcbM).toBeCloseTo(35 / 6, 8);
+    expect(r.lcfM).toBeCloseTo(35 / 6, 8);
+    expect(r.bmlM).toBeCloseTo(55 / 3 - 55 / 18, 8); // 15.27778 m; central waterplane moment / 10 m³
+  });
+
+  it('rejects crossing polygons, nested loops, and double-counted overlapping hulls', () => {
+    const crossing = boxInput();
+    crossing.hull.stations[0].loops = [[[0,0],[2,2],[0,2],[2,0],[3,-1]]];
+    expect(() => calculateOffsetHydrostatics(crossing)).toThrow(/Self-intersecting/);
+    const nested = boxInput();
+    nested.hull.stations = [0, 10].map(xM => ({
+      xM, loops: [rectangle(-1,1,0,1), rectangle(-0.3,0.3,0.2,0.8)]
+    }));
+    expect(() => calculateOffsetHydrostatics(nested)).toThrow(/Nested/);
+    const overlapping = boxInput();
+    overlapping.hull.stations = [0, 10].map(xM => ({
+      xM, loops: [rectangle(-1,1,0,1), rectangle(0.5,1.5,0,1)]
+    }));
+    expect(() => calculateOffsetHydrostatics(overlapping)).toThrow(/Overlapping/);
+  });
+});
