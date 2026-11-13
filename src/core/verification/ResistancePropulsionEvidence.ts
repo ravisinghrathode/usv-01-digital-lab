@@ -237,8 +237,10 @@ export function screenResistancePropulsionEvidence(raw: unknown, expectedBaselin
   if (issues.some(i => i.includes('environment'))) unresolved.add('RES-01-C');
   const hasNumerics = cases.length === 2 && speedTrialChecks.length === 2;
   const numericalChecksPassed = hasNumerics && issues.length === 0;
-  const status = !hasNumerics ? 'MISSING_EVIDENCE' :
-    issues.length ? 'NUMERIC_FAIL' : 'NUMERIC_PASS_UNCERTIFIED';
+  const missingRequiredSamples = issues.some(i => i.startsWith('Expected exactly one '));
+  const status = missingRequiredSamples ? 'MISSING_EVIDENCE' :
+    issues.length ? 'NUMERIC_FAIL' :
+    hasNumerics ? 'NUMERIC_PASS_UNCERTIFIED' : 'MISSING_EVIDENCE';
   // Data submitted by the same system are NEVER independent proof. Every physical
   // gate stays unclosed until authenticated sources and qualified external review.
   // `unresolved` records numerical defects but is NOT a replacement for authorization.
