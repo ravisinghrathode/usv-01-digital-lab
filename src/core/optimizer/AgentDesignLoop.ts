@@ -22,7 +22,7 @@ const REQUIRED_CAT_HYDRO = [
 ];
 const REQUIRED_RESISTANCE = [
   'lwlMeters', 'beamMeters', 'draftMeters', 'displacementTonnes',
-  'speedKnots', 'propulsiveEfficiencyEtaD', 'waterTempCelsius'
+  'speedKnots', 'waterTempCelsius'
 ];
 
 export interface PreliminaryObjective {
@@ -367,11 +367,15 @@ async function fixedConditionCompare(
         reason='Unvalidated topology or unsupported objective tool';break;
       }
       const fixed = {...rev.screened.parameters,...o.fixedInputParameters};
-      const result=await executeTool(o.toolId,fixed,['CALCULATION_EXEC']);
+      // Same boundary as the normal screen: a comparison condition may carry
+      // an eta_D hypothesis, but without an evidence reference it must not be
+      // passed into the evidence-gated resistance calculation.
+      const { propulsiveEfficiencyEtaD: _modelEtaHypothesis, ...fixedScreenInput } = fixed;
+      const result=await executeTool(o.toolId,fixedScreenInput,['CALCULATION_EXEC']);
       const metric=result.success?result.output[o.outputMetric]:undefined;
       const good=typeof metric==='number'&&Number.isFinite(metric);
       screens.push({revisionIndex:rev.index,objectiveId:o.id,toolId:o.toolId,
-        inputDigest:hash(fixed),outputDigest:hash(result),success:good,
+        inputDigest:hash(fixedScreenInput),outputDigest:hash(result),success:good,
         reason:good?undefined:result.error||'Metric missing from actual deterministic screen'});
       if(!good){reason='Fixed-condition tool screening failed: '+o.id;break;}
       values[o.id]=metric;
@@ -494,11 +498,18 @@ export async function runAgentDesignLoop(
       missingEngineeringInputs.push('Hydrostatics: topology-specific geometry/form inputs are incomplete or unsourced');
     }
     if (monohullTopology && has(REQUIRED_RESISTANCE)) {
-      toolCases.push(['TOOL-RESISTANCE-01', ['CALCULATION_EXEC'], numbers]);
+      // The evidence-gated resistance tool can safely compute V/Fn/Re without
+      // total-resistance or efficiency evidence. Never pass a model-suggested
+      // eta_D as if it were an independently sourced efficiency input.
+      const { propulsiveEfficiencyEtaD: _modelEtaHypothesis, ...kinematicResistanceInput } = numbers;
+      toolCases.push(['TOOL-RESISTANCE-01', ['CALCULATION_EXEC'], kinematicResistanceInput]);
+      if (numbers.propulsiveEfficiencyEtaD !== undefined) {
+        missingEngineeringInputs.push('Propulsive efficiency remains an unverified model hypothesis; shaft power requires an evidence reference and uncertainty bounds');
+      }
     } else if (catamaranTopology) {
       missingEngineeringInputs.push('Catamaran resistance: validated demi-hull interference/wave resistance model or actual CFD evidence required; monohull resistance model is forbidden');
     } else {
-      missingEngineeringInputs.push('Resistance: incomplete vessel/displacement/speed/efficiency/15C conditions');
+      missingEngineeringInputs.push('Resistance screen: incomplete monohull geometry/displacement/speed/15C conditions');
     }
     for (const [toolId, permissions, values] of toolCases) {
       // Explicit screening service permission is NOT attributed to A05 or A15.
@@ -508,7 +519,15 @@ export async function runAgentDesignLoop(
         toolId, success: result.success, outputDigest: hash(result),
         result: result.success ? result.output : undefined, error: result.error
       });
-      if (!result.success) missingEngineeringInputs.push(toolId + ': ' + (result.error || 'screen failed'));
+      if (!result.success) {
+        missingEngineeringInputs.push(toolId + ': ' + (result.error || 'screen failed'));
+      } else if (toolId === 'TOOL-RESISTANCE-01' && Array.isArray(result.output?.missingEvidence)) {
+        missingEngineeringInputs.push(
+          ...result.output.missingEvidence
+            .filter((item: unknown): item is string => typeof item === 'string')
+            .map((item: string) => 'TOOL-RESISTANCE-01 evidence gap: ' + item)
+        );
+      }
     }
     const disciplineParameters = new Map<string,Record<string,unknown>>();
     for (const pkg of input.disciplinePackages ?? []) {
@@ -580,11 +599,17 @@ export async function runAgentDesignLoop(
     };
 
     // Discipline-specific challenges are actual provider calls, not synthetic
-    // votes. Only invoke specialists when the exact mandatory numerical
-    // tool has already succeeded. A05/A06 require hydrostatics; A07 requires
-    // resistance; A23 requires both. A09/A10/A14 remain TBD until component,
-    // structure and electrical input packages exist.
-    const successful = new Set(screenResults.filter(r => r.success).map(r => r.toolId));
+    // votes. A successful execution of the evidence-gated resistance tool is
+    // only a V/Fn/Re screen unless a sourced total resistance is actually
+    // present; do not activate A07/A23 from a null resistance/power result.
+    const successful = new Set(screenResults.filter(r => {
+      if (!r.success) return false;
+      if (r.toolId === 'TOOL-RESISTANCE-01') {
+        const totalResistance = r.result?.totalResistanceKn;
+        return typeof totalResistance === 'number' && Number.isFinite(totalResistance);
+      }
+      return true;
+    }).map(r => r.toolId));
     const baseSpecialists = monohullTopology ? [
       { role: 'A05', required: ['TOOL-HYDROSTATICS-01'], parameters: numbers as Record<string,unknown> },
       { role: 'A06', required: ['TOOL-HYDROSTATICS-01'], parameters: numbers as Record<string,unknown> },
