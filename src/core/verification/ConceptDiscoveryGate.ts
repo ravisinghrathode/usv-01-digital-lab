@@ -110,7 +110,10 @@ export function assessConceptDiscovery(raw: unknown) {
     if (r.sourceCommit !== x.sourceCommit) issues.push('Agent run has stale or mismatched source SHA: ' + r.canonicalId);
     const liveClaim = r.status === 'LIVE_PROVIDER_EXECUTED_UNCERTIFIED' &&
       r.providerExecutionMode === 'LIVE_AI_GENERATION' &&
-      typeof r.provider === 'string' && ['gemini', 'ollama', 'openai'].includes(r.provider) &&
+      // The live-agent matrix's authenticated ChatGPT/Codex adapter emits
+      // 'codex_cli'. This checks record shape only, NOT proof of execution,
+      // source authentication or engineering approval.
+      typeof r.provider === 'string' && ['codex_cli', 'gemini', 'ollama', 'openai'].includes(r.provider) &&
       typeof r.outputDigestSha256 === 'string' && DIGEST.test(r.outputDigestSha256);
     if (!liveClaim) issues.push('No complete live-provider research trace for ' + r.canonicalId);
     else claimedLive++;
