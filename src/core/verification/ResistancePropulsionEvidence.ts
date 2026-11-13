@@ -205,7 +205,9 @@ export function screenResistancePropulsionEvidence(raw: unknown, expectedBaselin
       }
     }
     if (trial) {
-      // VVP-001 compares observed speed against curve prediction at the same\n      // measured shaft-power condition, NOT merely against nominal design speed.\n      const error = Math.abs(trial.measuredSpeedThroughWaterKnots - trial.predictedSpeedAtMeasuredShaftPowerKnots);
+      // VVP-001 compares observed speed against curve prediction at the same
+      // measured shaft-power condition, NOT merely against nominal design speed.
+      const error = Math.abs(trial.measuredSpeedThroughWaterKnots - trial.predictedSpeedAtMeasuredShaftPowerKnots);
       speedTrialChecks.push({
         caseId: role, nominalKnots: target,
         measuredKnots: trial.measuredSpeedThroughWaterKnots,
