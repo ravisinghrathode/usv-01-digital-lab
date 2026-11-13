@@ -34,3 +34,7 @@
 5. Stage C review, Stage D Director approval and Stage E exact-digest closure according to ECCP-001.
 
 This change is a **computational improvement**, not safety/certification acceptance of USV-01.
+
+## Baseline contamination regression
+
+The original React "Stage to Particulars" action wrote arbitrary 6,200 kg demo-slider assumptions and an invented `beamWaterline = 0.92*beamM` into controlled particulars. The action has been replaced with a provenance-marked **unverified scenario CSV export**; resetting the slider no longer overwrites the controlled register. `tests/hydroBaselineIntegrity.test.ts` asserts this boundary. Synthetic GZ CSV exports identify their non-certification status.
