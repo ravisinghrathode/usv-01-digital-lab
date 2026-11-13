@@ -9,5 +9,13 @@
   "requiredLoadCaseIds": [],
   "evidence": [],
   "status": "BLOCKED_MISSING_EVIDENCE",
-  "whyEmpty": "No approved hull offsets, verified CG and loading case matrix, independent hydrostatic reference, signed naval review or Director digest was available. Never supply a dummy SHA or fabricate a measurement."
+  "whyEmpty": "No approved hull offsets, verified CG and loading case matrix, independent hydrostatic reference, signed naval review or Director digest was available. Never supply a dummy SHA or fabricate a measurement.",
+  "controlledDriveSourceLocations": {
+    "searchedDate": "2026-11-13",
+    "cadFolder": "https://drive.google.com/drive/folders/1jiD8ovY8dEBIHDNWPbPJXz8czGjP_mmM",
+    "cadSourceControlProcedure": "https://drive.google.com/file/d/1BBtzquDTI2eoRnzRXlEhFzs48E6Ysrpq/view?usp=drivesdk",
+    "hydrostaticsProcedure": "https://drive.google.com/file/d/1i2lc-KsdRX9Pt1myBTSogq57aGeSuDTq/view?usp=drivesdk",
+    "evidenceAcquisitionRegister": "https://drive.google.com/file/d/1i-mHJiWBhcwkqgA5cNu9ysv0uImkaqXN/view?usp=drivesdk",
+    "checkedFoldersFinding": "Protocol documents only in designated CAD/HYD-01 locations; no approved geometry/CG/independent reference produced by scoped listing"
+  }
 }
