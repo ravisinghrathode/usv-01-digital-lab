@@ -14,6 +14,7 @@ const archive=value('--archive');
 const mesh=value('--mesh');
 const output=value('--out');
 const family=value('--family');
+const benchmark=args.includes('--benchmark')?value('--benchmark'):null;
 if(family!=='CALCULIX_FEA'&&family!=='OPENFOAM_CFD') throw new Error('Unsupported family');
 const manifest=createSolverJobManifest({
   jobRef:value('--job-ref'),
@@ -22,15 +23,23 @@ const manifest=createSolverJobManifest({
   inputArtifactUri:'https://ci-known-case.invalid/'+encodeURIComponent(value('--job-ref'))+'.zip',
   inputArtifactSha256:digest(archive),
   meshArtifactSha256:digest(mesh),
-  qualityPlan: family==='OPENFOAM_CFD' ? {
-    sourceReference:'https://gitlab.com/openfoam/core/openfoam/-/raw/OpenFOAM-v2606/tutorials/incompressible/simpleFoam/backwardFacingStep2D/system/fvSolution',
-    residualThreshold:1e-4,
-    initialResidualThresholds:{p:1e-4,'U*':1e-6,k:1e-5,omega:1e-5},
-    requireSolverDeclaredConvergence:true,
-    gridUncertaintyMaxFraction:0.05,
-    maxMeshSkewness:4,
-    maxNonOrthogonalityDeg:70
-  } : {
+  qualityPlan: family==='OPENFOAM_CFD' ? (
+    benchmark==='flat-plate-zpg-v2606' ? {
+      sourceReference:'CI_OPENFOAM_FLAT_PLATE_COMMISSIONING_PLAN; https://doc.openfoam.com/2606/examples/verification-validation/turbulent/flat-plate-zpg/',
+      residualThreshold:1e-2,
+      gridUncertaintyMaxFraction:0.05,
+      maxMeshSkewness:4,
+      maxNonOrthogonalityDeg:70
+    } : {
+      sourceReference:'https://gitlab.com/openfoam/core/openfoam/-/raw/OpenFOAM-v2606/tutorials/incompressible/simpleFoam/backwardFacingStep2D/system/fvSolution',
+      residualThreshold:1e-4,
+      initialResidualThresholds:{p:1e-4,'U*':1e-6,k:1e-5,omega:1e-5},
+      requireSolverDeclaredConvergence:true,
+      gridUncertaintyMaxFraction:0.05,
+      maxMeshSkewness:4,
+      maxNonOrthogonalityDeg:70
+    }
+  ) : {
     sourceReference:'CI_CALCULIX_AXIAL_BAR_ANALYTICAL_COMMISSIONING_PLAN',
     residualThreshold:1e-4,
     gridUncertaintyMaxFraction:0.05,
