@@ -37,7 +37,7 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'solver' | 'particulars' | 'stability' | 'weight_cg' | 'subdivision'>('solver');
 
-  // Interactive Sizing & Stability Solver State (Initialized to Rev 0.4 Baselined Particulars)
+  // Preliminary parametric sizing workspace, NOT approved hull input
   const [displacementKg, setDisplacementKg] = useState<number>(6200);
   const [beamM, setBeamM] = useState<number>(2.90);
   const [draftM, setDraftM] = useState<number>(0.65);
@@ -198,7 +198,7 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
               : 'border-transparent text-slate-400 hover:text-slate-200'
           }`}
         >
-          IMO MSC.267(85) Standard Audit
+          Indicative Stability Thresholds
         </button>
         <button
           onClick={() => setActiveTab('weight_cg')}
@@ -375,9 +375,7 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
                   <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
                     displacementKg === 0
                       ? 'bg-slate-500/10 text-slate-400 border-slate-500/30'
-                      : stabilityResult.audit.criteria.overallPass
-                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                      : 'bg-rose-500/10 text-rose-400 border-rose-500/30'
+                      : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
                   }`}>
                     {displacementKg === 0
                       ? 'PENDING INPUTS (0 / TBD)'
@@ -483,7 +481,7 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
                   <span className={`text-base font-bold ${stabilityResult.audit.gm0M >= 0.15 ? 'text-teal-400' : 'text-rose-400'}`}>
                     {stabilityResult.audit.gm0M} m
                   </span>
-                  <span className="text-[9px] text-slate-500 block">Req ≥ 0.15 m</span>
+                  <span className="text-[9px] text-slate-500 block">Reference 0.15 m (applicability TBD)</span>
                 </div>
 
                 <div className="p-2.5 rounded bg-slate-950 border border-slate-800">
@@ -527,11 +525,11 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
               <table className="w-full text-left">
                 <thead>
                   <tr className="bg-slate-950 border-b border-slate-800 text-slate-400 text-[10px]">
-                    <th className="py-2 px-3">Regulatory Stability Criterion</th>
-                    <th className="py-2 px-3">Mandatory Threshold</th>
+                    <th className="py-2 px-3">Screening comparison (not certification)</th>
+                    <th className="py-2 px-3">Example reference value</th>
                     <th className="py-2 px-3">Calculated Value</th>
                     <th className="py-2 px-3">Margin Ratio</th>
-                    <th className="py-2 px-3 text-right">Pass / Fail</th>
+                    <th className="py-2 px-3 text-right">Estimate relation</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800">
@@ -575,7 +573,7 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
                     </td>
                   </tr>
                   <tr>
-                    <td className="py-2.5 px-3 text-slate-200">Initial Metacentric Height (GM₀)</td>
+                    <td className="py-2.5 px-3 text-slate-200">Estimated Initial Metacentric Height (GM₀)</td>
                     <td className="py-2.5 px-3 text-slate-400">≥ 0.150 m</td>
                     <td className="py-2.5 px-3 text-teal-400 font-bold">{stabilityResult.audit.gm0M} m</td>
                     <td className="py-2.5 px-3 text-slate-300">{(stabilityResult.audit.gm0M / 0.150).toFixed(2)}x</td>
