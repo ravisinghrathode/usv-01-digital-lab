@@ -11,7 +11,7 @@
 | GOV-02 | Independent technical scrutiny | Named independent reviewer + recorded findings | Not substitutable by deterministic static output |
 | AGT-01 | All 26 registered roles match canonical code | Machine-readable registry reconciliation | Readiness API available; operational proof pending |
 | AGT-02 | Each agent produces reproducible domain results | Golden input/output tests, actual provider/tool traces | Pending capability-by-capability validation |
-| HYD-01 | Hydrostatics / stability | Approved hull offsets, hydrostatic tables, verified KG, GZ curves, loading cases, reference comparison | Preliminary only |
+| HYD-01 | Hydrostatics / stability | Approved source-referenced CAD/offsets, verified mass/KG and loading cases, equilibrium trim/GZ and downflooding, independent benchmark tolerances, reviewer and Director digest | PR #40 software merged; 425 tests passed at merger. Self-audit PR #46 corrects trim screening and machine-readable evidence ledger. **PHYSICAL ACCEPTANCE BLOCKED** until external evidence is independently verified |
 | RES-01 | Resistance / power | Actual hull geometry, wetted area, vessel regime, towing tank/CFD or accepted reference dataset with uncertainty | Preliminary only |
 | STR-01 | Structures | Load envelopes, class-rule citations, FEA correlations, fatigue and buckling | Pending |
 | AUT-01 | Safety-critical autonomy | Non-actuating COLREG screen, synthetic sensor evidence and advisory SIL replay in PR #41; full closed-loop SIL, physical HIL, qualified independent review, regulated sea trials and Director release evidence required | Software controls implemented; physical and governance acceptance OPEN |
