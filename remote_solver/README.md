@@ -8,7 +8,7 @@
 - `service.py` is a loopback-only (`127.0.0.1:8707`) token-gated HTTP queue. It accepts `POST /jobs` and returns actual status through `GET /jobs/<id>`. It processes at most one case simultaneously.
 - `RemoteSolverJobs.ts` is the authenticated HTTPS client. A reverse proxy with real TLS and authorization must forward traffic from the approved application host to this loopback service. Never expose port 8707 publicly.
 - **Results are retained:** before the temporary case directory is deleted, selected result files, solver logs, mesh checks and a machine-readable summary are written to an immutable permission-restricted ZIP in `USV_SOLVER_ARTIFACT_DIR`. The authenticated gateway can serve it at `/artifacts/<job>` and persists a receipt JSON for restart/review.
-- OpenFOAM `checkMesh` skewness/non-orthogonality and final solver residuals are parsed and compared with the source-defined job thresholds. CalculiX C3D8 meshes receive a center scaled-Jacobian and edge-aspect screen. Threshold failure aborts the job.
+- OpenFOAM `checkMesh` skewness/non-orthogonality and final solver residuals are parsed and compared with the source-defined job thresholds. CalculiX C3D8 meshes receive an edge-aspect screen plus scaled-Jacobian sampling at the element centre, all 8 integration/Gauss points and all 8 natural-coordinate corners (17 samples per element). Other element families remain unsupported and fail closed. Threshold failure aborts the job.
 - Actual solver version is queried before execution. Key results expose OpenFOAM force-coefficient tables when the case generates them; CalculiX ASCII `model.dat` stress/displacement output is reduced to auditable maximum-component/magnitude screens while the original DAT/FRD is retained.
 - **Solver completion is not convergence:** a real successful subprocess exits into `COMPUTE_DONE_EVIDENCE_PENDING`. Single-run mesh/residual quality can pass, but grid/mesh refinement uncertainty and independent model validation remain false.
 
@@ -26,9 +26,23 @@ USV_SOLVER_ARTIFACT_DIR=/var/lib/usv-solver/artifacts
 USV_SOLVER_OUTPUT_BASE_URI=https://solver-gateway.example.org
 USV_SOLVER_APPROVED_ARTIFACT_DIGESTS=sha256:<EXACT_OPERATOR_APPROVED_ZIP_BYTES_HASH>
 USV_SOLVER_BIN_PATH=/opt/openfoam/bin:/usr/bin:/bin
+USV_SOLVER_CPU_SECONDS=1800
+USV_SOLVER_ADDRESS_SPACE_BYTES=8589934592
+USV_SOLVER_FILE_BYTES=2147483648
+USV_SOLVER_OPEN_FILES=1024
+USV_SOLVER_PROCESSES=64
+USV_SOLVER_WALL_TIMEOUT_SECONDS=1800
 ```
 
-Store these in restricted service-manager secrets, never git or logs. Strong token must be independent of the Director signing key.
+Store secrets in the restricted service manager, never git or logs. Strong token must be independent of the Director signing key. Resource ceilings are configuration, not secrets: every value is range-validated at runtime and recorded in the solver receipt. A malformed or out-of-range setting fails closed.
+
+Before accepting jobs on a new host, run the preflight **as the same service account**:
+
+```bash
+python3 remote_solver/host_probe.py --require-openfoam --require-calculix --require-network-isolation
+```
+
+The probe verifies solver binaries, configured directories, parsed resource policy and an actual `unshare --net` operation. Passing on GitHub Actions does not prove that a production host permits unprivileged network namespaces; the target host must pass independently.
 
 1. Engineer prepares and verifies one **pre-meshed, immutably signed case** using a qualified model plan. For OpenFOAM include `constant/polyMesh/points`, solver dictionaries and all related mesh data; for CalculiX include `model.inp`. Audit all OpenFOAM dictionaries—including `#codeStream`, `coded` functions and any system-call hooks—because solver configurations are executable code. Treat a case hash as approved only *after* source/security review.
 2. The operator stages `<ZIP_DIGEST_HEX>.zip` in the staging directory, adds that exact digest to `USV_SOLVER_APPROVED_ARTIFACT_DIGESTS`, then starts `python3 remote_solver/service.py` as the isolated service account.
