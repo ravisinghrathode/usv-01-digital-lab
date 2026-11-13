@@ -40,8 +40,11 @@ export async function runIttcIdentityOracle(
   cases: readonly IttcIdentityCase[],
   execute: (data: IttcIdentityCase)=>Promise<{success:boolean;output:Record<string,unknown>}> =
     async x => {
+      // The identity oracle checks only V/Fn/Re. eta_D is not part of those
+      // identities and must not be passed without an independent evidence ref.
+      const { propulsiveEfficiencyEtaD: _unusedEta, id: _caseId, ...identityInput } = x;
       const r = await ToolRegistry.getInstance().executeTool(
-        'TOOL-RESISTANCE-01', {...x}, ['CALCULATION_EXEC']);
+        'TOOL-RESISTANCE-01', identityInput, ['CALCULATION_EXEC']);
       return {success:r.success,output:r.output};
     }
 ):Promise<IttcIdentityReport>{
