@@ -175,7 +175,7 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
     blockingReasons.push(
       stageDRequired
         ? 'Stage D human authority verification report is missing.'
-        : 'Independent GitHub review verification report is missing.'
+        : 'Stage D routine verification report is missing.'
     );
   } else {
     if (stageDRequired && expectedBaselineDigest && stageD.baselineDigest && stageD.baselineDigest !== expectedBaselineDigest) {
@@ -193,11 +193,12 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
         );
       }
     }
-    if (!independentPeerApproved) {
+    // Solo-maintainer route: LOW/MEDIUM changes need required CI and a
+    // human Project Lead merge decision, but not an impossible self-review.
+    // HIGH/CRITICAL changes never use this exception.
+    if (stageDRequired && !independentPeerApproved) {
       blockingReasons.push(
-        stageDRequired
-          ? 'Stage D rejected: Safety-critical change requires an independent GitHub peer approval from someone other than the PR author.'
-          : 'Routine change requires an independent GitHub peer approval from someone other than the PR author.'
+        'Stage D rejected: Safety-critical change requires an independent GitHub peer approval from someone other than the PR author.'
       );
     }
   }
