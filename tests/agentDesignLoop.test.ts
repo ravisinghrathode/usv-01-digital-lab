@@ -93,6 +93,66 @@ describe('Reproducible legacy scenarios and real-agent iterative design screenin
     expect(result.independentEngineeringValidated).toBe(false);
   });
 
+  it('ranks only source-defined, same-condition preliminary tool outputs, never design acceptance', async () => {
+    const caseMission = {
+      ...mission,
+      objectives: [{
+        id: 'MIN_SHAFT_POWER', toolId: 'TOOL-RESISTANCE-01',
+        outputMetric: 'shaftBrakePowerPbKw',
+        direction: 'MINIMIZE' as const, weight: 1,
+        unit: 'kW', sourceReference: 'SYNTHETIC_TEST_CONDITION_NOT_AN_APPROVED_MISSION',
+        fixedInputParameters: { speedKnots: 10, propulsiveEfficiencyEtaD: 0.6, waterTempCelsius: 15 }
+      }]
+    };
+    const execute = async (id: string, input: AgentExecutionInput) => {
+      if (id !== proposer) return makeOutput(id, input, {});
+      const length = input.taskId.endsWith('-0') ? 10 : 10.5;
+      return makeOutput(id, input, {
+        lwlMeters: length, beamMeters: 3, draftMeters: 0.7,
+        displacementTonnes: length * 3 * 0.7 * 0.55 * 1.025,
+        blockCoefficientCb: 0.55,
+        speedKnots: 10, propulsiveEfficiencyEtaD: 0.6, waterTempCelsius: 15
+      });
+    };
+    const result = await runAgentDesignLoop(caseMission, execute);
+    expect(result.comparison.status).toBe('COMPARISON_READY_UNVERIFIED');
+    expect(result.comparison.rankings).toHaveLength(2);
+    expect(result.comparison.rankings[0].relativeScore).toBeGreaterThanOrEqual(
+      result.comparison.rankings[1].relativeScore);
+    expect(result.comparison.rankings[0].objectiveValues.MIN_SHAFT_POWER).toBeGreaterThan(0);
+    expect(result.comparison.externallyValidated).toBe(false);
+    expect(result.comparison.approvedDesignSelected).toBe(false);
+    expect(result.engineeringReleaseAuthorized).toBe(false);
+  });
+
+  it('refuses to compare two powering runs at different speeds', async () => {
+    const caseMission = {
+      ...mission,
+      objectives: [{
+        id: 'FAIR_RESISTANCE', toolId: 'TOOL-RESISTANCE-01',
+        outputMetric: 'totalResistanceKn', direction: 'MINIMIZE' as const,
+        weight: 1, unit: 'kN', sourceReference: 'SYNTHETIC_CONDITION_ONLY',
+        fixedInputParameters: { speedKnots: 10 }
+      }]
+    };
+    const run = await runAgentDesignLoop(caseMission, async (id, input) => {
+      if (id !== proposer) return makeOutput(id, input, {});
+      const second = !input.taskId.endsWith('-0');
+      const length = second ? 10.5 : 10;
+      return makeOutput(id, input, {
+        lwlMeters: length, beamMeters: 3, draftMeters: 0.7,
+        blockCoefficientCb: 0.55,
+        displacementTonnes: length * 3 * 0.7 * 0.55 * 1.025,
+        speedKnots: second ? 11 : 10, propulsiveEfficiencyEtaD: 0.6, waterTempCelsius: 15
+      });
+    });
+    expect(run.revisions).toHaveLength(2);
+    expect(run.comparison.status).toBe('UNRANKED_INCOMPARABLE');
+    expect(run.comparison.rankings).toHaveLength(0);
+    expect(run.comparison.excluded).toHaveLength(1);
+    expect(run.comparison.excluded[0].reason).toMatch(/Different.*conditions/);
+  });
+
   it('fails closed on mock provider and never substitutes a synthetic "agent vote"', async () => {
     let attempts = 0;
     const result = await runAgentDesignLoop(mission, async (id, input) => {
