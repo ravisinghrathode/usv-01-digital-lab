@@ -13,7 +13,7 @@ describe('Fail-closed separation of synthetic concept scenarios from the approve
   it('does not claim certification, real 26-agent voting or IMO compliance in the exported dossier', () => {
     const source = fs.readFileSync('src/core/optimizer/GenerativeDesignOptimizer.ts', 'utf8');
     expect(source).toContain('**UNVERIFIED EXPLORATORY CANDIDATE:**');
-    expect(source).toContain('Synthetic Heuristic Voting Matrix');
+    expect(source).toContain('Synthetic Input Screening Matrix');
     expect(source).not.toContain('**Certified Candidate:**');
     expect(source).not.toContain('ISO 12215 / IMO MSC.267 compliant.');
     expect(source).toContain('NOT certified, NOT independently verified');
