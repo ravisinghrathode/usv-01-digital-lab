@@ -9,9 +9,9 @@ The legacy `GenerativeDesignOptimizer` now uses a deterministic Mulberry32 seed,
 The new `AgentDesignLoop` performs up to five *real*, sequential proposal–screen–critique–revision cycles:
 
 1. Provide the exact 40-hex source commit, named run, 32-bit seed, source-identified mission requirements, review/reference index, and revision budget (1–5).
-2. A05 Hull Form Agent proposes explicit `keyMetrics` hypotheses, source references or TBDs through `ExecutionEngine`. `BaseAgent` preserves LLM suggestions only as `modelSuggestedKeyMetrics`; no automatic design baselining occurs. The actual mission context and previous critique now reach the model prompt, with untrusted-content labeling.
+2. A01 Lead Systems Architect proposes explicit `keyMetrics` hypotheses, source references or TBDs through `ExecutionEngine`. `BaseAgent` preserves LLM suggestions only as `modelSuggestedKeyMetrics`; no automatic design baselining occurs. The actual mission context and previous critique now reach the model prompt, with untrusted-content labeling.
 3. The controller extracts **only** supported finite numeric hypotheses and screens complete inputs through actual registered `TOOL-HYDROSTATICS-01` and/or `TOOL-RESISTANCE-01`. These are service-executed preliminary calculations, not A05's fabricated tool executions or engineering validation. Missing or failed calculations are recorded and given to the critic.
-4. Actual A15 Independent Technical Critic receives the exact hypothesis, method output, assumption and TBD lists and challenges missing engineering evidence. The next A05 call receives prior A15 feedback and must propose a revision.
+4. Actual A15 Independent Technical Critic receives the exact hypothesis, method output, assumption and TBD lists and challenges missing engineering evidence. The next A01 call receives prior A15 feedback and must propose a revision.
 5. Stop at budget, failure, unavailable live model, invalid numbers or unchanged proposal. Report each input/output digest and trace. Never mark result independently validated, selected, detailed-design authorized, production ready or safe to actuate.
 
 This loop is an **initial live design core**, not a complete automated naval architecture design engine. It still requires actual missions, external source checking, numerical reference validation, robust optimizer integration and specialist verification. Its seed only makes the legacy starting hypothesis repeatable; nondeterministic live LLM output cannot be guaranteed reproducible. Actual provider/model response IDs and snapshots should be retained by a trusted orchestration log before formal evidence acceptance.
@@ -28,7 +28,7 @@ GEMINI_API_KEY=... npm run design:iterate -- \
   --source-sha <EXACT_40_HEX_COMMIT_SHA> --seed 1337 --revisions 3
 ```
 
-Research case generation for all 26 roles remains in `npm run concept:research`. Only the live design loop uses A05 and A15 directly; it does **not** pretend to have made all 26 work together yet. Store live evidence under ignored `.local-concept-research/design-loops/` with restrictive file permissions. Never commit secrets or restricted model responses by default.
+Research case generation for all 26 roles remains in `npm run concept:research`. Only the live design loop uses A01 and A15 directly; it does **not** pretend to have made all 26 work together yet. Store live evidence under ignored `.local-concept-research/design-loops/` with restrictive file permissions. Never commit secrets or restricted model responses by default.
 
 ## Computation / solver expansion
 
