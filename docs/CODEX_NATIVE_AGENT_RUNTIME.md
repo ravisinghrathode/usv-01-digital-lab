@@ -1,23 +1,44 @@
-# USV-01 subscription-only Codex agent runtime
+# USV-01 — subscription-only Codex operational cutover
 
-**Status:** a guarded native `BaseAgent` synthesis transport is implemented, but **26/26 authenticated live execution and engineering verification remain unproven**.
+**Release status:** source-code cutover to Codex has been implemented for the normal assistant UI, 26-specialist model router, live-provider probe and live design loop. **It is not a certified 26/26 live-agent commissioning record.**
 
-## How it works
+## Supported mode
 
-The existing 26 specialist definitions and mandatory deterministic tool paths are unchanged. The `ModelProviderRouter` accepts `AI_REVIEW_PROVIDER=codex_cli` only when `USV_SUBSCRIPTION_PILOT=enabled` and `USV_ALLOW_PAID_AI_API` is not `true`. The override is intentional because historical specialist role definitions prefer Gemini. The new provider invokes the existing fixed-command, read-only Codex CLI adapter in a USV-01 repository working directory, strips API key and billing-related environment variables, and rejects nonzero exits, missing login, overlong inputs, or non-JSON output. No paid API fallback is available. Model identity is *not* asserted from a CLI response without attestation.
+The user signs into the officially supported **Codex CLI with their ChatGPT account**, on an operator-controlled workstation. No extra OpenAI API credential, separate API billing, Gemini API, scraping of browser sessions or re-exporting auth tokens is supported.
 
-## Required boundaries
+- Local interactive engineering and review: ChatGPT/Codex desktop, Codex CLI or ChatGPT Work.
+- Twenty-six specialist agents: existing `BaseAgent` and deterministic naval tools, with `AI_REVIEW_PROVIDER=codex_cli` and `USV_SUBSCRIPTION_PILOT=enabled`. The service fails closed without a valid CLI session or required engineering inputs.
+- Web Engineering Assistant: `/api/assistant/assist` uses the authenticated local Codex CLI, and is additionally restricted to requests from **loopback**; the original Gemini generation, streaming, assistant and voice routes return retired status or do not accept upgrades. The UI explicitly shows voice unavailable.
+- NotebookLM-style grounded research remains local deterministic source synthesis. It is not silently presented as live ChatGPT.
+- Model identity reported by Codex CLI is **unverified** unless backed by trusted provider metadata. No code asserts GPT-6 Astra merely from an account sign-in.
+- `@google/genai`, old provider classes, historic unit fixtures, `src/server/geminiService.ts` and research evidence are retained for legacy source compatibility / audit preservation, but are **not used by the migrated web service**. Old manual Gemini scripts remain historical only; `npm run design:live-cli` now uses Codex.
 
-- An operator must authenticate with **ChatGPT sign-in** in the officially supported Codex CLI. Do not provide or harvest a session token, manipulate local credential stores, or use an API key.
-- This adapter supports **local operator-controlled execution only**, not unattended GitHub-hosted GitHub Actions or a deployed web server using a personal ChatGPT subscription.
-- Use `AI_REVIEW_PROVIDER=codex_cli USV_SUBSCRIPTION_PILOT=enabled USV_ALLOW_PAID_AI_API=false` only in an authenticated, controlled development environment, never as a public-service credential.
-- `CodexCliProvider` is for **advisory synthesis** within the existing engineering agent pipeline. Its model output cannot independently establish calculated physics, independent reviewer identity, certified evidence, or engineering approval.
-- A completed Codex CLI command is not proof that GPT-6 Astra was selected. Verify the actual session model separately before describing specific model attribution.
-- Failed or malformed outputs must remain failures; never relabel deterministic output, mocks, previous Gemini artifacts, or missing calls as live Codex evidence.
-- Historic Gemini SDK endpoints, server stream routes and Gemini CLI testing artifacts remain in the code for compatibility and audit provenance. They are **not** migrated and should be retired only after the remaining callers and web UI functions have tested replacements.
+## Operator-local commissioning (no credentials in GitHub)
 
-## Acceptance still outstanding
+Once the official `codex` CLI is installed and its ChatGPT sign-in completed, an operator can run in a local checked-out USV-01 repository:
 
-Run the full automated build, safety/governance gates and 26 native agent cases on an operator-authenticated Codex CLI installation. Check that all mandatory tool traces genuinely executed, schemas passed, provenance is preserved, no outputs approve vessel baselines, and independent technical acceptance remains outstanding where required. No CI pass or this document alone closes AGT-02, engineering blockers or Director approval gates.
+```bash
+export AI_REVIEW_PROVIDER=codex_cli
+export USV_SUBSCRIPTION_PILOT=enabled
+export USV_ALLOW_PAID_AI_API=false
+npm run mission-control:preflight
+npm run acceptance:codex-agents
+npm run design:live-cli -- --revisions 3 --seed 1337
+```
 
-This change does not require an OpenAI API key or a new AI subscription, but remains subject to Codex account entitlements and usage limits.
+The design command first authenticates a **real response** through the Codex CLI; missing login, usage restriction or invalid structured output causes a failed run. All live outputs are **unverified agent proposals** and the release baseline stays on HOLD until qualified external verification.
+
+GitHub-hosted CI must not pretend to inherit the operator's personal ChatGPT subscription. It runs deterministic verification and can test the source code, Docker build, permissions, numerical gates, and governance. Actual live 26-agent provider commissioning remains a separate operator-authenticated test. Do not label deterministic CI as 26 live AI runs.
+
+## Non-negotiable safety rules
+
+The preserved gates require exact revision provenance, mandatory deterministic calculations, no fabricated numerical input or tool evidence, independent technical review where safety critical, and Project Lead signature where required. A signed-in Codex session cannot supply an independent peer review merely by using the same provider twice. No code path may approve naval design release by itself.
+
+## Required evidence for full operational closeout
+
+1. CI quality checks pass on the exact merged code.
+2. A real operator-authenticated Codex CLI run produces 26/26 valid nonmock `LIVE_AI_GENERATION` outputs with tool traces for the approved case matrix, clearly labeled *uncertified*.
+3. An independent engineering reviewer validates the physical source inputs and closes any safety-critical holds.
+4. Project Lead signs the exact approved release digest.
+
+Until those exist, the Gemini-to-Codex **software path** may be integrated, but operational certification remains **NOT COMPLETE**. This distinction is intentional and must not be elided.
