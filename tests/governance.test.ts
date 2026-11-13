@@ -669,11 +669,53 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
             timestamp: new Date().toISOString()
           })
         );
+        fs.writeFileSync(path.join(reportsDir, 'stage-d-approval.json'), JSON.stringify({
+          humanApprovalRequired: false,
+          signatureVerified: false,
+          staleApproval: false,
+          independentReviewStatus: 'APPROVED_BY_PEER'
+        }));
 
         const evalRes = evaluateGovernanceGate(tmpDir, 'origin/main');
         expect(evalRes.passed).toBe(true);
         expect(evalRes.overallVerdict).toBe('APPROVED');
         expect(evalRes.stageAResult.approvalRoute).toBe('ROUTINE_SOFTWARE');
+      } finally {
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+      }
+    });
+
+    it('blocks a routine change when the independent GitHub approval is missing', () => {
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'egs-routine-no-peer-'));
+      const reportsDir = path.join(tmpDir, 'governance', 'reports');
+      fs.mkdirSync(reportsDir, { recursive: true });
+
+      try {
+        fs.writeFileSync(path.join(reportsDir, 'pr-classification.json'), JSON.stringify({
+          summary: {
+            overallRisk: 'LOW',
+            approvalRoute: 'ROUTINE_SOFTWARE',
+            requiresIndependentEngineeringReview: false,
+            requiresDesignatedAuthorityApproval: false,
+            totalFilesChanged: 1,
+            totalLinesAdded: 1,
+            totalLinesDeleted: 0,
+            dominantCategories: ['DOCUMENTATION'],
+            requiresECR: false
+          },
+          fileDetails: [],
+          timestamp: new Date().toISOString()
+        }));
+        fs.writeFileSync(path.join(reportsDir, 'stage-d-approval.json'), JSON.stringify({
+          humanApprovalRequired: false,
+          signatureVerified: false,
+          staleApproval: false,
+          independentReviewStatus: 'PENDING_HUMAN_SIGN_OFF'
+        }));
+
+        const evalRes = evaluateGovernanceGate(tmpDir, 'origin/main');
+        expect(evalRes.passed).toBe(false);
+        expect(evalRes.blockingReasons.some(r => r.includes('Routine change requires an independent GitHub peer approval'))).toBe(true);
       } finally {
         fs.rmSync(tmpDir, { recursive: true, force: true });
       }
