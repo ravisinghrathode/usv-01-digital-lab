@@ -13,11 +13,13 @@ the AI lab can investigate them.
 | Dashboard claim | Machine evidence necessary | Still does not establish |
 | --- | --- | --- |
 | All 26 operational on current infrastructure | Same exact source SHA, 26 unique completed authenticated `codex_cli` outputs, mandatory tool traces, recent independently signed host health bound to that campaign | 26 continuously running processes; vessel fitness or safety |
-| Fully automated 26-agent engineering campaign | Above **plus** dependency-ordered specialist handoffs; actual controlled vessel input catalog (not the synthetic sample); 26/26 valid deterministic preflight with zero failed/expected-rejected calculations | Independent correctness of every specialist conclusion |
+| Dependency-ordered 26-agent engineering campaign | Above **plus** dependency-ordered specialist handoffs; actual controlled vessel input catalog (not the synthetic sample); 26/26 valid deterministic preflight with zero failed/expected-rejected calculations | Autonomous multi-cycle 26-role optimization; independent correctness of specialist conclusions |
 | Independently validated engineering outputs | Above **plus** external reviewer attestations for all 26 roles; each signature covers the exact agent output digest, same code SHA, and independently sourced reference artifact whose bytes are hashed and checked | Formal regulatory certification or Engineering Director release |
 
 The implementation is deliberately strict: an offline/mock matrix and stale
 model trace **never** count as a verified operational campaign.
+
+**Iteration is a separate acceptance claim:** Even an authenticated, fully completed 26-agent dependency campaign is a single engineering execution campaign, not proof of repeated cross-discipline design-build-test-review convergence. The separately implemented `AgentDesignLoop` permits at most five A01/A15 proposal/critique cycles with preliminary deterministic screening; a complete autonomous 26-agent first-principles design loop remains **NOT DEMONSTRATED**. Neither software workflow implies verified hull geometry, validated simulation, a selected vessel concept or Engineering Director approval.
 
 ## Ready-to-use commands
 

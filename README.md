@@ -9,7 +9,7 @@ Engineering software workspace and deterministic multi-agent platform for the **
 ## 1. System Overview
 
 The USV-01 Digital Engineering Lab is an operational, modular multi-agent platform combining:
-- **26 Specialist Engineering Agents** across 7 naval engineering divisions (A01–A26).
+- **26 Specialist Engineering Agents** across 8 source-defined functional divisions (A01–A26).
 - **Central DAG Orchestrator** managing topological task execution, parallel computation, and message passing.
 - **Deterministic Naval Tools Suite** for hydrostatics ($KM_T, GM_T$), hydrodynamic resistance ($P_E, P_B$), mass balance ($KG, LCG, TCG$), DC electrical load sheets, bottom slamming scantlings, and COLREGS 1972 encounter kinematics.
 - **Human Authority Approval Gates** requiring explicit Engineering Director sign-off on safety-critical decisions.
@@ -17,6 +17,8 @@ The USV-01 Digital Engineering Lab is an operational, modular multi-agent platfo
 - **Interactive Command Dashboard** (Vite + React + Tailwind + Lucide).
 
 ---
+
+**Current autonomy boundary:** 26 configured specialist roles and dependency-ordered execution do **not** prove an autonomous, repeatable 26-agent full-project design-and-optimization loop. The currently implemented `AgentDesignLoop` provides bounded A01 proposal / A15 critique iterations with preliminary deterministic screens; a complete multi-disciplinary iterative vessel design, live 3D/simulation binding, independent validation and vessel release remain separate and unverified. See [agent architecture](docs/ARCHITECTURE.md), [design-loop protocol](docs/AGENT_DESIGN_LOOP_AND_SOLVER_PROTOCOL_20261113.md) and [readiness](docs/AGENT_READINESS_20261114.md).
 
 ## 2. Quickstart & Commands
 
