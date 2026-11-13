@@ -1,51 +1,50 @@
 import { describe, expect, it } from 'vitest';
 import { ToolRegistry } from '../src/core/tools/ToolRegistry.ts';
 
-// ECR-20261113-004 — synthetic arithmetic benchmark only.
-// No hull geometry, scantling rule pressure, weld design or class compliance inferred.
-const input = {
-  displacementTonnes: 0.12,
-  speedKnots: 4,
-  lwlMeters: 2.3,
-  deadriseAngleDeg: 18,
-  unsupportedPanelWidthMm: 450,
-  unsupportedPanelLengthMm: 900,
-  materialYieldStrengthMpa: 125,
-  safetyFactor: 2
-};
+const sample=()=>({
+  pressurePa: 35000,
+  tributaryWidthMeters: 0.45,
+  unsupportedSpanMeters: 0.9,
+  stressDivisorMPa: 62.5,
+  inputBasis:'ILLUSTRATIVE',
+  pressureSourceRef:'SYNTHETIC-PRESSURE',
+  spanSourceRef:'SYNTHETIC-GEOMETRY',
+  stressSourceRef:'SYNTHETIC-STRESS'
+});
+const run=(v:unknown)=>ToolRegistry.getInstance().executeTool('TOOL-STRUCTURES-BEAM-01',v,['CALCULATION_EXEC']);
 
-const run = (overrides: Record<string, unknown> = {}) =>
-  ToolRegistry.getInstance().executeTool('TOOL-STRUCTURES-01', { ...input, ...overrides }, ['CALCULATION_EXEC']);
-
-describe('Preliminary structure screening: consistent beam units', () => {
-  it('matches simple support UDL bending benchmark in N*m and cm^3', async () => {
-    const r = await run();
+describe('Generic beam arithmetic, separated from unvalidated hull scantlings',()=>{
+  it('matches SI-units simply supported UDL worked example',async()=>{
+    const r=await run(sample());
     expect(r.success).toBe(true);
-    expect(r.output.designSlammingPressureKpa).toBe(35);
-    expect(r.output.allowableStressMpa).toBe(62.5);
-    // 35 kPa * 0.45 m = 15,750 N/m; 0.9m span; M = q*l*l/8 = 1594.6875 N*m.
-    expect(r.output.stiffenerPeakMomentNm).toBeCloseTo(1594.688, 3);
-    // Z[cm^3] = M[N*m] / allowable[MPa] = 1594.6875 / 62.5 = 25.515 cm^3.
-    expect(r.output.stiffenerSectionModulusCm3).toBeCloseTo(25.52, 2);
-    expect(r.output.stiffenerBeamModel).toBe('SIMPLY_SUPPORTED_UDL_ARITHMETIC_ONLY');
-    expect(r.output.engineeringComplianceValidated).toBe(false);
-    expect(r.output.modelStatus).toBe('UNVALIDATED_SCANTLING_SCREEN');
+    expect(r.output.uniformLineLoadNPerMeter).toBeCloseTo(15750,8);
+    expect(r.output.peakSimplySupportedMomentNm).toBeCloseTo(1594.6875,8);
+    expect(r.output.sectionModulusCm3).toBeCloseTo(25.515,8);
+    expect(r.output.modelStatus).toBe('UNVERIFIED_SIMPLY_SUPPORTED_BEAM_ARITHMETIC');
+    expect(r.output.structuralComplianceValidated).toBe(false);
+    expect(r.output.designUsePermitted).toBe(false);
   });
-
-  it('scales section modulus with tributary width and span squared', async () => {
-    const narrow = await run({ unsupportedPanelWidthMm: 300 });
-    const wide = await run({ unsupportedPanelWidthMm: 600 });
-    expect(wide.success).toBe(true);
-    expect(wide.output.stiffenerPeakMomentNm).toBeCloseTo(narrow.output.stiffenerPeakMomentNm * 2, 1);
-
-    const shortSpan = await run({ unsupportedPanelLengthMm: 600 });
-    const longSpan = await run({ unsupportedPanelLengthMm: 1200 });
-    expect(longSpan.output.stiffenerPeakMomentNm).toBeCloseTo(shortSpan.output.stiffenerPeakMomentNm * 4, 1);
+  it('scales linearly with input load and quadratically with span',async()=>{
+    const normal=await run(sample());
+    const twicePressure=await run({...sample(),pressurePa:70000});
+    const twiceSpan=await run({...sample(),unsupportedSpanMeters:1.8});
+    expect(twicePressure.output.sectionModulusCm3).toBeCloseTo(2*normal.output.sectionModulusCm3,8);
+    expect(twiceSpan.output.peakSimplySupportedMomentNm).toBeCloseTo(4*normal.output.peakSimplySupportedMomentNm,8);
   });
-
-  it('does not use beam arithmetic as a certification or a released plating thickness', async () => {
-    const r = await run();
-    expect(r.output.engineeringComplianceValidated).toBe(false);
-    expect(r.output.stiffenerBeamModel).toContain('ARITHMETIC_ONLY');
+  it.each([
+    ['no design pressure',{...sample(),pressurePa:undefined}],
+    ['zero span',{...sample(),unsupportedSpanMeters:0}],
+    ['missing stress divisor',{...sample(),stressDivisorMPa:undefined}],
+    ['fabricated approved basis',{...sample(),inputBasis:'APPROVED'}],
+    ['unknown source',{...sample(),inputBasis:'PROPOSED',pressureSourceRef:'TBD'}],
+  ])('rejects %s',async(_label,v)=>{
+    const r=await run(v);
+    expect(r.success).toBe(false);
+    expect(r.error).toContain('Validation');
+  });
+  it('respects tool permission and never issues a design certificate',async()=>{
+    const r=await ToolRegistry.getInstance().executeTool('TOOL-STRUCTURES-BEAM-01',sample(),[]);
+    expect(r.success).toBe(false);
+    expect(r.error).toContain('Permission Denied');
   });
 });
