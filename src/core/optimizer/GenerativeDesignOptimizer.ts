@@ -134,6 +134,16 @@ export class GenerativeDesignOptimizer {
     this.seedBaselineInvariants();
   }
 
+  /**
+   * Per-campaign instance: avoids corrupting another user's interactive
+   * optimizer state or interleaving seeded random draws between design runs.
+   */
+  public static createIsolated(seed: number): GenerativeDesignOptimizer {
+    const optimizer = new GenerativeDesignOptimizer();
+    optimizer.resetOptimizer(seed);
+    return optimizer;
+  }
+
   public static getInstance(): GenerativeDesignOptimizer {
     if (!GenerativeDesignOptimizer.instance) {
       GenerativeDesignOptimizer.instance = new GenerativeDesignOptimizer();
@@ -174,7 +184,7 @@ export class GenerativeDesignOptimizer {
   }
 
   /**
-   * Run a single generative trial with physics evaluation and agent dialectical debate
+   * Run a single seeded exploratory trial with unverified heuristic screening
    */
   public runIteration(targetPhilosophy: DesignPhilosophy = 'BALANCED_PATROL'): CandidateDesign {
     this.currentGeneration += 1;
