@@ -1,0 +1,52 @@
+{
+  "status": "REFERENCE_PLAN_ONLY_NOT_VALIDATION",
+  "governingSource": {
+    "title": "ITTC 7.5-03-02-02 Benchmark Database for CFD Validation for Resistance and Propulsion",
+    "revision": "2024 Revision 03",
+    "url": "https://ittc.info/media/11956/75-03-02-02.pdf",
+    "sha256Status": "FETCH_AND_HASH_BEFORE_CONTROLLED_USE"
+  },
+  "benchmarkSequence": [
+    {
+      "id": "OPENFOAM-ZPG-FLAT-PLATE-V2606",
+      "role": "building-block viscous CFD execution and wall-shear correlation",
+      "currentStatus": "CI_COMMISSIONING",
+      "hullResistanceValidated": false
+    },
+    {
+      "id": "DTMB-5415",
+      "role": "primary surface-combatant free-surface resistance/RANS validation target",
+      "rationale": "ITTC lists DTMB model 5415 as a combatant benchmark with towing-tank and free-surface datasets and extensive past use.",
+      "requiredEvidence": [
+        "controlled geometry",
+        "experimental resistance data",
+        "test conditions",
+        "three-grid CFD campaign",
+        "force/resistance extraction",
+        "uncertainty/correlation report"
+      ],
+      "currentStatus": "REFERENCE_SELECTED_DATA_NOT_YET_IMPORTED",
+      "hullResistanceValidated": false
+    },
+    {
+      "id": "KCS",
+      "role": "secondary free-surface resistance cross-check for solver methodology",
+      "rationale": "ITTC lists KCS with towing-tank/wind-tunnel and free-surface datasets and extensive CFD-workshop use.",
+      "requiredEvidence": [
+        "controlled geometry",
+        "experimental resistance data",
+        "test conditions",
+        "three-grid CFD campaign",
+        "force/resistance extraction",
+        "uncertainty/correlation report"
+      ],
+      "currentStatus": "REFERENCE_SELECTED_DATA_NOT_YET_IMPORTED",
+      "hullResistanceValidated": false
+    }
+  ],
+  "usvApplicationGate": {
+    "rule": "No candidate-USV CFD resistance result becomes agent-usable validation evidence until at least one controlled ITTC benchmark campaign has passed its source-defined numerical and experimental-correlation criteria.",
+    "actualUsvHullCfdValidated": false,
+    "engineeringReleaseAuthorized": false
+  }
+}
