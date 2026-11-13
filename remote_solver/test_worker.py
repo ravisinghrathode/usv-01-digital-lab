@@ -162,9 +162,11 @@ class WorkerTest(unittest.TestCase):
                 return subprocess.CompletedProcess(args,0,stdout=p.stdout.replace(
                     'SIMPLE solution converged in 321 iterations\n',''),stderr='')
             return p
-        with self.assertRaisesRegex(RuntimeError,'did not declare SIMPLE'):
-            run_staged_case(manifest2,self.staging,self.root/'work2',{digest},runner=no_declaration,
-                artifact_root=self.artifacts/'no-convergence',isolation_mode='TEST_NO_NAMESPACE')
+        rejected=run_staged_case(manifest2,self.staging,self.root/'work2',{digest},runner=no_declaration,
+            artifact_root=self.artifacts/'no-convergence',isolation_mode='TEST_NO_NAMESPACE')
+        self.assertEqual(rejected['state'],'COMPUTE_DONE_QUALITY_REJECTED')
+        self.assertIn('did not declare SIMPLE',rejected['qualityGateIssue'])
+        self.assertFalse(rejected['engineeringReleaseAuthorized'])
 
     def test_openfoam_rejects_mesh_or_residual_over_threshold(self):
         manifest,digest=self._openfoam_fixture()
