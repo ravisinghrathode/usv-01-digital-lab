@@ -183,20 +183,26 @@ describe('Reproducible legacy scenarios and real-agent iterative design screenin
     expect(run.comparison.excluded[0].reason).toMatch(/Different.*conditions/);
   });
 
-  it('never applies a single-hull empirical calculator to catamaran numerical hypotheses', async () => {
+  it('screens catamaran hydrostatics without applying the monohull resistance model', async () => {
     const report = await runAgentDesignLoop({...mission,maxRevisions:1,specialistReviews:'AUTO' as const},
       async (id,input) => {
-        const out = makeOutput(id,input,{lwlMeters:10,beamMeters:3,draftMeters:0.7,
-          blockCoefficientCb:0.55,displacementTonnes:11.83875,speedKnots:10,
-          propulsiveEfficiencyEtaD:0.6,waterTempCelsius:15});
+        if (id !== proposer) return makeOutput(id,input,{});
+        const out = makeOutput(id,input,{lwlMeters:10,demiHullBeamMeters:1.1,
+          demiHullCenterlineSeparationMeters:3.4,draftMeters:0.7,
+          blockCoefficientCb:0.55,waterplaneCoefficientCwp:0.73,
+          speedKnots:10,propulsiveEfficiencyEtaD:0.6,waterTempCelsius:15});
         out.data.conceptTopology='CATAMARAN';
         return out;
       });
     expect(report.revisions).toHaveLength(1);
-    expect(report.revisions[0].screened.conceptTopology).toBe('CATAMARAN');
-    expect(report.completedToolScreens).toBe(0);
+    const screened=report.revisions[0].screened;
+    expect(screened.conceptTopology).toBe('CATAMARAN');
+    expect(report.completedToolScreens).toBe(1);
+    expect(screened.screenResults[0].toolId).toBe('TOOL-CATAMARAN-HYDROSTATICS-01');
+    expect(screened.screenResults[0].success).toBe(true);
+    expect(screened.screenResults.some(x=>x.toolId==='TOOL-RESISTANCE-01')).toBe(false);
     expect(report.specialistReviewCount).toBe(0);
-    expect(report.revisions[0].critique.openTbdItems.join(' ')).toContain('single-hull empirical calculators');
+    expect(report.revisions[0].critique.openTbdItems.join(' ')).toContain('Catamaran resistance');
     expect(report.engineeringReleaseAuthorized).toBe(false);
   });
 
