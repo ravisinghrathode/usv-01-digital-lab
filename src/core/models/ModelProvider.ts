@@ -689,7 +689,19 @@ export function resolveModelProviderForTask(
   config: ModelConfig,
   explicitProvider?: string
 ): NonNullable<ModelConfig['preferredProvider']> {
-  if (config.preferredProvider === 'codex_cli') return 'codex_cli';
+  if (config.preferredProvider === 'codex_cli') {
+    // Offline Vitest fixtures are not live AI agents. Allow the explicit
+    // deterministic test-only provider to exercise existing engineering checks.
+    // A production server can never redirect a Codex-pinned role to Gemini
+    // or silently switch it to an offline/no-model implementation.
+    if (explicitProvider === 'deterministic' &&
+        typeof process !== 'undefined' &&
+        process.env.NODE_ENV === 'test' &&
+        process.env.VITEST === 'true') {
+      return 'deterministic';
+    }
+    return 'codex_cli';
+  }
   if (explicitProvider === 'gemini_cli' || explicitProvider === 'codex_cli') {
     return resolveConfiguredProvider();
   }
