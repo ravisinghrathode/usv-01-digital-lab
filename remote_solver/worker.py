@@ -502,7 +502,31 @@ def run_staged_case(manifest: dict, stage: Path, work_root: Path,
             logs.append({"executable":argv[0],"returnCode":p.returncode,
                          "logSha256":sha256(combined.encode())})
             if p.returncode != 0:
-                raise RuntimeError("Solver command failed: "+argv[0])
+                failure_summary = {
+                    "jobId":manifest["jobRef"],
+                    "acceptedInputDigest":manifest["manifestSha256"],
+                    "family":manifest["family"],
+                    "solverVersion":solver_version,
+                    "state":"SOLVER_COMMAND_FAILED",
+                    "failedExecutable":argv[0],
+                    "executionLogs":logs,
+                    "resourcePolicy":resource_policy(),
+                    "networkIsolationMode":isolation_mode,
+                    "engineeringValidated":False,
+                    "engineeringReleaseAuthorized":False,
+                }
+                evidence_path,evidence_sha = _persist_artifacts(
+                    case,artifact_root,manifest["jobRef"]+"-FAILED",failure_summary)
+                # Keep the exception bounded. It is visible only to the
+                # authenticated operator and CI, and avoids discarding the
+                # actual reason a trusted, allowlisted case failed.
+                tail = " ".join(combined[-1800:].splitlines())
+                raise RuntimeError(
+                    "Solver command failed: "+argv[0]+
+                    "; failureEvidenceSha256="+evidence_sha+
+                    "; failureEvidencePath="+str(evidence_path)+
+                    "; boundedLogTail="+tail
+                )
 
         quality = {
             "finalResidual":None,
