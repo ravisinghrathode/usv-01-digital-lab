@@ -333,12 +333,14 @@ export class MissionControlCoordinator {
           continue;
         }
 
+        const validatedWorkerData = validatedWorker.data as Record<string, unknown>;
+
         await this.transition(input.taskId, 'REVIEWING', { reviewCycle: cycle });
         const reviewer = await this.cliRunner({
           role: 'reviewer',
           taskId: input.taskId,
           agentId: 'INDEP-REV-23',
-          prompt: this.buildReviewerPrompt(spec, input, plan, deterministicEvidence, validatedWorker.data),
+          prompt: this.buildReviewerPrompt(spec, input, plan, deterministicEvidence, validatedWorkerData),
           workingDirectory: input.workingDirectory
         });
         requireCompleted(reviewer, 'GPT reviewer');
@@ -361,8 +363,8 @@ export class MissionControlCoordinator {
           worker: {
             provider: 'gemini-antigravity-subscription-cli',
             cycle,
-            outputDigest: digest(validatedWorker.data),
-            output: validatedWorker.data
+            outputDigest: digest(validatedWorkerData),
+            output: validatedWorkerData
           },
           reviewer: {
             provider: 'openai-codex-chatgpt-subscription-cli',
