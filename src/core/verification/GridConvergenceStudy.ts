@@ -1,3 +1,4 @@
+import { getAgentUsableSolverEvidence, type SolverJobDisposition } from './RemoteSolverJobs.ts';
 /**
  * Three-grid scalar verification screen for solver outputs.
  *
@@ -81,5 +82,51 @@ export function evaluateThreeGridConvergence(
     apparentRelativeErrorFineMedium:rel,monotonic,
     sourceDigests:all.map(x=>x.sourceDigest),externallyValidated:false,
     engineeringReleaseAuthorized:false,issues
+  };
+}
+
+
+const readNumericPath=(root:unknown,path:string):number|null=>{
+  if(!/^[A-Za-z0-9_]+(?:\.[A-Za-z0-9_]+)*$/.test(path))return null;
+  let cursor:unknown=root;
+  for(const segment of path.split('.')){
+    if(!cursor||typeof cursor!=='object'||Array.isArray(cursor)||
+       !(segment in (cursor as Record<string,unknown>)))return null;
+    cursor=(cursor as Record<string,unknown>)[segment];
+  }
+  return typeof cursor==='number'&&Number.isFinite(cursor)?cursor:null;
+};
+
+export interface SolverGridSample {
+  id:string;
+  characteristicGridSize:number;
+  disposition:SolverJobDisposition;
+}
+export function evaluateSolverGridConvergence(
+  fine:SolverGridSample,medium:SolverGridSample,coarse:SolverGridSample,
+  metricPath:string,maxGciFraction:number
+){
+  const samples=[fine,medium,coarse].map(sample=>{
+    const evidence=getAgentUsableSolverEvidence(sample.disposition);
+    if(!evidence||!evidence.outputSha256)throw new Error(
+      'All three solver grids must pass single-run mesh/residual screening and retain exact evidence');
+    const value=readNumericPath(evidence.keyResults,metricPath);
+    if(value===null)throw new Error('Requested GCI scalar metric missing from retained solver evidence: '+metricPath);
+    return {id:sample.id,characteristicGridSize:sample.characteristicGridSize,
+      scalarMetric:value,sourceDigest:evidence.outputSha256};
+  });
+  const report=evaluateThreeGridConvergence(samples[0],samples[1],samples[2],maxGciFraction);
+  return {
+    metricPath,report,
+    agentEvidence:report.status==='GCI_SCREEN_PASS_UNCERTIFIED'?{
+      sourceKind:'THREE_GRID_GCI_SCREEN_UNCERTIFIED' as const,
+      metricPath,
+      fineGridMetric:samples[0].scalarMetric,
+      extrapolatedMetric:report.extrapolatedMetric,
+      gridUncertaintyFraction:report.fineGridGciFraction,
+      sourceDigests:report.sourceDigests,
+      independentlyValidated:false as const,
+      engineeringReleaseAuthorized:false as const
+    }:null
   };
 }
