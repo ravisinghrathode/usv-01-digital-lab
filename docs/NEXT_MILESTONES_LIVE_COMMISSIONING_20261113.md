@@ -6,7 +6,17 @@
 
 The Project Lead requested agent-led research and concept selection before detailed CAD. The mission template `references/concept-mission-draft.json` contains process/mission hypotheses and no fabricated dimensions, motors, loads or acceptance envelope.
 
-The secure host with actual provider authorization runs:
+The secure host with actual provider authorization first collects **actual bytes** of official ITTC source PDFs (no LLM-generated citation is treated as a fetched document):
+
+```bash
+npm run research:collect-public
+# Produces an ignored mission bundle and SHA-256-indexed PDFs:
+# .local-concept-research/publications/mission-with-fetched-publications.json
+```
+
+The exact PDF SHA-256 and HTTPS source URL must be present in the local source index before `SOURCE_DOCUMENT` numeric attribution can reach the engineering screen. Document retrieval/hashing does not independently establish whether a formula is applicable to the eventual hull.
+
+The secure host then runs:
 
 ```bash
 # Source checkout must exactly match the SHA supplied (non-negotiable).
@@ -26,7 +36,7 @@ The runner:
 - rejects unsourced numerical proposals: every number must state an exact indexed source reference or explicit unverified hypothesis;
 - retains only locally ignored files in `.local-concept-research/design-loops/`; never commits provider responses or service credentials;
 - calls A01 for the initial proposal; conditionally A05 (hull), A06 (stability), A07 (resistance) and A23 (red-team) only when their actual mandatory tool screens succeeded; finally A15 independently critiques, then A01 revises;
-- forbids monohull-only empirical equations from being applied to catamaran/trimaran candidates without separate validated models;
+- forbids monohull-only empirical equations from being applied to catamaran/trimaran candidates without separate validated models;\n- preserves separate candidate topology and numerical assumptions for traceable source comparison;
 - supports fixed mission `comparisonMode: "FIXED_CONDITIONS_RESCREEN"` using explicit objective operating conditions (speed, propulsion efficiency, water temperature). Does not rewrite any candidate hull particulars.
 
 **Commissioning gate:** record exact model ID, real provider run digest, non-mock status, nonempty revisions, tool screens and specialist findings, tracked uncertainties, any failure, artifacts and model limits. A provider responding successfully is **not** naval engineering validation. No Gemini credential is configured in ordinary CI: the real run remains **NOT EXECUTED** until an authorized host supplies it.
