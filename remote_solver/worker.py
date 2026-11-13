@@ -33,6 +33,16 @@ DEFAULT_ADDRESS_SPACE_BYTES = 8 * 1024 * 1024 * 1024
 DEFAULT_FILE_BYTES = 2 * 1024 * 1024 * 1024
 DEFAULT_OPEN_FILES = 1024
 DEFAULT_PROCESSES = 64
+DEFAULT_WALL_TIMEOUT_SECONDS = 1800
+
+RESOURCE_BOUNDS = {
+    "USV_SOLVER_CPU_SECONDS": (30, 24 * 3600),
+    "USV_SOLVER_ADDRESS_SPACE_BYTES": (512 * 1024 * 1024, 256 * 1024 * 1024 * 1024),
+    "USV_SOLVER_FILE_BYTES": (16 * 1024 * 1024, 64 * 1024 * 1024 * 1024),
+    "USV_SOLVER_OPEN_FILES": (64, 65536),
+    "USV_SOLVER_PROCESSES": (1, 4096),
+    "USV_SOLVER_WALL_TIMEOUT_SECONDS": (30, 24 * 3600),
+}
 FLOAT = r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[Ee][-+]?\d+)?"
 
 def sha256(payload: bytes) -> str:
@@ -40,6 +50,30 @@ def sha256(payload: bytes) -> str:
 
 def _finite_number(value) -> bool:
     return type(value) in (float, int) and math.isfinite(float(value))
+
+def _env_int(name: str, default: int) -> int:
+    raw = os.environ.get(name)
+    if raw is None or raw == "":
+        return default
+    try:
+        value = int(raw)
+    except ValueError as exc:
+        raise RuntimeError(f"{name} must be an integer") from exc
+    low, high = RESOURCE_BOUNDS[name]
+    if value < low or value > high:
+        raise RuntimeError(f"{name} outside allowed host range [{low},{high}]")
+    return value
+
+def resource_policy() -> dict[str, int]:
+    """Validated host-configurable ceilings; defaults preserve prior behavior."""
+    return {
+        "cpuSeconds": _env_int("USV_SOLVER_CPU_SECONDS", DEFAULT_CPU_SECONDS),
+        "addressSpaceBytes": _env_int("USV_SOLVER_ADDRESS_SPACE_BYTES", DEFAULT_ADDRESS_SPACE_BYTES),
+        "fileBytes": _env_int("USV_SOLVER_FILE_BYTES", DEFAULT_FILE_BYTES),
+        "openFiles": _env_int("USV_SOLVER_OPEN_FILES", DEFAULT_OPEN_FILES),
+        "processes": _env_int("USV_SOLVER_PROCESSES", DEFAULT_PROCESSES),
+        "wallTimeoutSeconds": _env_int("USV_SOLVER_WALL_TIMEOUT_SECONDS", DEFAULT_WALL_TIMEOUT_SECONDS),
+    }
 
 def validate_request(manifest: dict, approved: set[str]) -> None:
     if not isinstance(manifest, dict) or not JOB.fullmatch(str(manifest.get("jobRef", ""))):
@@ -103,18 +137,19 @@ def unzip_restricted(data: bytes, dest: Path) -> None:
                     target.write(chunk)
 
 def _limit_resources() -> None:
-    """Hard child-process resource ceilings. Production execution is Linux/POSIX only."""
+    """Hard child-process ceilings from validated host policy."""
+    policy = resource_policy()
     limits = (
-        (resource.RLIMIT_CPU, DEFAULT_CPU_SECONDS, DEFAULT_CPU_SECONDS + 5),
-        (resource.RLIMIT_AS, DEFAULT_ADDRESS_SPACE_BYTES, DEFAULT_ADDRESS_SPACE_BYTES),
-        (resource.RLIMIT_FSIZE, DEFAULT_FILE_BYTES, DEFAULT_FILE_BYTES),
-        (resource.RLIMIT_NOFILE, DEFAULT_OPEN_FILES, DEFAULT_OPEN_FILES),
+        (resource.RLIMIT_CPU, policy["cpuSeconds"], policy["cpuSeconds"] + 5),
+        (resource.RLIMIT_AS, policy["addressSpaceBytes"], policy["addressSpaceBytes"]),
+        (resource.RLIMIT_FSIZE, policy["fileBytes"], policy["fileBytes"]),
+        (resource.RLIMIT_NOFILE, policy["openFiles"], policy["openFiles"]),
         (resource.RLIMIT_CORE, 0, 0),
     )
     for kind, soft, hard in limits:
         resource.setrlimit(kind, (soft, hard))
     if hasattr(resource, "RLIMIT_NPROC"):
-        resource.setrlimit(resource.RLIMIT_NPROC, (DEFAULT_PROCESSES, DEFAULT_PROCESSES))
+        resource.setrlimit(resource.RLIMIT_NPROC, (policy["processes"], policy["processes"]))
     os.setsid()
 
 def _wrapped_argv(argv: list[str], isolation_mode: str) -> list[str]:
@@ -125,10 +160,11 @@ def _wrapped_argv(argv: list[str], isolation_mode: str) -> list[str]:
     raise ValueError("Unsupported network-isolation mode")
 
 def _run(runner: Callable[..., subprocess.CompletedProcess], argv: list[str], case: Path,
-         timeout: int = 1800, isolation_mode: str = "UNSHARE_NET") -> subprocess.CompletedProcess:
+         timeout: int | None = None, isolation_mode: str = "UNSHARE_NET") -> subprocess.CompletedProcess:
+    effective_timeout = resource_policy()["wallTimeoutSeconds"] if timeout is None else timeout
     return runner(
         _wrapped_argv(argv, isolation_mode), cwd=str(case), capture_output=True,
-        text=True, timeout=timeout, check=False, preexec_fn=_limit_resources,
+        text=True, timeout=effective_timeout, check=False, preexec_fn=_limit_resources,
         env={
             "PATH": os.environ.get("USV_SOLVER_BIN_PATH", "/usr/bin:/bin"),
             "HOME": str(case), "LC_ALL": "C",
@@ -261,8 +297,36 @@ def _parse_calculix_dat(case: Path) -> dict:
         result["maxDisplacementMagnitude"] = max_disp
     return result if len(result) > 1 else {}
 
+def _scaled_jacobian_at(
+    pts: list[tuple[float,float,float]], xi: float, eta: float, zeta: float
+) -> float:
+    signs = [(-1,-1,-1),(1,-1,-1),(1,1,-1),(-1,1,-1),
+             (-1,-1,1),(1,-1,1),(1,1,1),(-1,1,1)]
+    cols: list[list[float]] = []
+    for axis in range(3):
+        col: list[float] = []
+        for coord in range(3):
+            total = 0.0
+            for i,(sx,sy,sz) in enumerate(signs):
+                if axis == 0:
+                    d = sx * (1 + sy*eta) * (1 + sz*zeta) / 8
+                elif axis == 1:
+                    d = sy * (1 + sx*xi) * (1 + sz*zeta) / 8
+                else:
+                    d = sz * (1 + sx*xi) * (1 + sy*eta) / 8
+                total += pts[i][coord] * d
+            col.append(total)
+        cols.append(col)
+    a,b,c = cols
+    det = (a[0]*(b[1]*c[2]-b[2]*c[1])
+           - b[0]*(a[1]*c[2]-a[2]*c[1])
+           + c[0]*(a[1]*b[2]-a[2]*b[1]))
+    norms = [math.sqrt(sum(x*x for x in v)) for v in cols]
+    denom = norms[0]*norms[1]*norms[2]
+    return det/denom if denom > 0 else -1.0
+
 def _parse_c3d8_mesh_quality(model: Path) -> dict:
-    """Basic center-Jacobian/aspect check for C3D8 meshes. Other element types fail closed."""
+    """C3D8 aspect + scaled-Jacobian screen at centre, 8 Gauss points and 8 corners."""
     nodes: dict[int,tuple[float,float,float]] = {}
     elements: list[list[int]] = []
     mode = None
@@ -286,13 +350,18 @@ def _parse_c3d8_mesh_quality(model: Path) -> dict:
             continue
     if not elements:
         raise RuntimeError("CalculiX mesh quality currently supports explicit C3D8 elements only")
-    signs = [(-1,-1,-1),(1,-1,-1),(1,1,-1),(-1,1,-1),
-             (-1,-1,1),(1,-1,1),(1,1,1),(-1,1,1)]
     edges = [(0,1),(1,2),(2,3),(3,0),(4,5),(5,6),(6,7),(7,4),
              (0,4),(1,5),(2,6),(3,7)]
+    signs = [(-1,-1,-1),(1,-1,-1),(1,1,-1),(-1,1,-1),
+             (-1,-1,1),(1,-1,1),(1,1,1),(-1,1,1)]
+    g = 1 / math.sqrt(3)
+    gauss = [(sx*g,sy*g,sz*g) for sx,sy,sz in signs]
+    samples = [(0.0,0.0,0.0), *gauss, *[(float(x),float(y),float(z)) for x,y,z in signs]]
     max_aspect = 0.0
     min_scaled = 1.0
-    for element in elements:
+    worst_element = None
+    worst_location = None
+    for element_index, element in enumerate(elements, start=1):
         coords = [nodes.get(n) for n in element]
         if any(c is None for c in coords):
             raise RuntimeError("C3D8 element references missing node")
@@ -304,21 +373,19 @@ def _parse_c3d8_mesh_quality(model: Path) -> dict:
         if min(lengths) <= 0:
             raise RuntimeError("Degenerate C3D8 edge")
         max_aspect=max(max_aspect,max(lengths)/min(lengths))
-        cols=[]
-        for axis in range(3):
-            col=[]
-            for coord in range(3):
-                col.append(sum(pts[i][coord]*signs[i][axis]/8 for i in range(8)))
-            cols.append(col)
-        a,b,c=cols
-        det=(a[0]*(b[1]*c[2]-b[2]*c[1])
-             -b[0]*(a[1]*c[2]-a[2]*c[1])
-             +c[0]*(a[1]*b[2]-a[2]*b[1]))
-        norms=[math.sqrt(sum(x*x for x in v)) for v in cols]
-        denom=norms[0]*norms[1]*norms[2]
-        scaled=det/denom if denom>0 else -1
-        min_scaled=min(min_scaled,scaled)
-    return {"maximumElementAspectRatio":max_aspect,"minimumScaledJacobian":min_scaled}
+        for location in samples:
+            scaled = _scaled_jacobian_at(pts,*location)
+            if scaled < min_scaled:
+                min_scaled = scaled
+                worst_element = element_index
+                worst_location = location
+    return {
+        "maximumElementAspectRatio":max_aspect,
+        "minimumScaledJacobian":min_scaled,
+        "jacobianSamplesPerElement":len(samples),
+        "worstJacobianElementOrdinal":worst_element,
+        "worstJacobianNaturalCoordinates":worst_location,
+    }
 
 def _quality_gate_calculix(metrics: dict, plan: dict) -> None:
     aspect=metrics.get("maximumElementAspectRatio")
@@ -461,6 +528,8 @@ def run_staged_case(manifest: dict, stage: Path, work_root: Path,
             "independentReferenceValidated":False,
             "engineeringReleaseAuthorized":False,
             "executionLogs":logs,
+            "resourcePolicy":resource_policy(),
+            "networkIsolationMode":isolation_mode,
             "limitations":[
                 "Retained solver output and parsed metrics do not establish model validity.",
                 "Grid uncertainty remains pending an independently reviewed multi-grid study.",
