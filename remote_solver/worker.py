@@ -293,7 +293,9 @@ def command_plan(family: str) -> tuple[list[list[str]],str]:
 
 def run_staged_case(manifest: dict, stage: Path, work_root: Path,
                     approved: set[str],
-                    runner: Callable[..., subprocess.CompletedProcess] = subprocess.run) -> dict:
+                    runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,
+                    *, artifact_root: Path | None = None,
+                    isolation_mode: str = "UNSHARE_NET") -> dict:
     validate_request(manifest,approved)
     archive_path = stage / (manifest["inputArtifactSha256"][7:] + ".zip")
     if archive_path.is_symlink() or not archive_path.is_file():
@@ -302,44 +304,86 @@ def run_staged_case(manifest: dict, stage: Path, work_root: Path,
     if sha256(data) != manifest["inputArtifactSha256"]:
         raise ValueError("Staged case checksum mismatch")
     commands, mesh_name = command_plan(manifest["family"])
-    work_root.mkdir(parents=True,exist_ok=True)
+    work_root.mkdir(parents=True,exist_ok=True,mode=0o700)
+    artifact_root = artifact_root or (work_root.parent / "artifacts")
     with tempfile.TemporaryDirectory(prefix="usvsolver_",dir=work_root) as sandbox:
         case = Path(sandbox)
         unzip_restricted(data,case)
         mesh = case / mesh_name
         if not mesh.is_file() or mesh.is_symlink():
-            raise ValueError("Required pre-generated mesh file absent")
+            raise ValueError("Required pre-generated mesh/model file absent")
         if sha256(mesh.read_bytes()) != manifest["meshArtifactSha256"]:
             raise ValueError("Mesh checksum mismatch")
+
+        version_run = _run(runner,_version_command(manifest["family"]),case,
+                           timeout=30,isolation_mode=isolation_mode)
+        version_text = (version_run.stdout or "") + "\n" + (version_run.stderr or "")
+        (case / "version.log").write_text(version_text)
+        if version_run.returncode != 0:
+            raise RuntimeError("Unable to query actual solver version")
+        solver_version = _parse_version(version_text,manifest["family"])
+        if solver_version == "NOT_RECORDED":
+            raise RuntimeError("Solver version not recorded")
+
         logs: list[dict] = []
+        command_text: dict[str,str] = {}
         for argv in commands:
             try:
-                p = runner(argv,cwd=str(case),capture_output=True,text=True,
-                           timeout=1800,check=False,env={
-                               "PATH":os.environ.get("USV_SOLVER_BIN_PATH","/usr/bin:/bin"),
-                               "HOME":str(case),"LC_ALL":"C"
-                           })
+                p = _run(runner,argv,case,isolation_mode=isolation_mode)
             except (OSError, subprocess.TimeoutExpired) as exc:
                 raise RuntimeError("Actual solver execution unavailable or timed out") from exc
             combined = (p.stdout or "") + "\n" + (p.stderr or "")
+            command_text[argv[0]] = combined
+            (case / (argv[0] + ".log")).write_text(combined)
             logs.append({"executable":argv[0],"returnCode":p.returncode,
                          "logSha256":sha256(combined.encode())})
             if p.returncode != 0:
                 raise RuntimeError("Solver command failed: "+argv[0])
-        # No fake GCI/mesh convergence: a single CFD/FEA run cannot certify it.
-        receipt = {
+
+        quality = {
+            "finalResidual":None,
+            "gridUncertaintyFraction":None,
+            "maximumMeshSkewness":None,
+            "maximumNonOrthogonalityDeg":None
+        }
+        key_results: dict = {}
+        if manifest["family"] == "OPENFOAM_CFD":
+            quality.update(_parse_check_mesh(command_text.get("checkMesh",""),case))
+            residual, residuals_by_field = _parse_final_residuals(command_text.get("simpleFoam",""))
+            quality["finalResidual"] = residual
+            _quality_gate_openfoam(quality,manifest["qualityPlan"])
+            key_results = {
+                "finalResidualsByField":residuals_by_field,
+                "forceCoefficients":_parse_force_coefficients(case)
+            }
+        else:
+            key_results = _parse_calculix_dat(case)
+
+        summary = {
             "jobId":manifest["jobRef"],
             "acceptedInputDigest":manifest["manifestSha256"],
-            "state":"COMPLETED",
-            "solverVersion":"NOT_RECORDED",
-            "quality":None,
+            "family":manifest["family"],
+            "solverVersion":solver_version,
+            "quality":quality,
+            "keyResults":key_results,
             "engineeringValidated":False,
             "independentReferenceValidated":False,
             "engineeringReleaseAuthorized":False,
             "executionLogs":logs,
-            "limitations":["Actual solver ran but externally hosted output, validated mesh-refinement uncertainty and independent witness are NOT established"]
+            "limitations":[
+                "Retained solver output and parsed metrics do not establish model validity.",
+                "Grid uncertainty remains pending an independently reviewed multi-grid study.",
+                "Physical/reference validation and qualified engineering review remain mandatory."
+            ]
         }
-        return receipt
+        evidence_path,evidence_sha = _persist_artifacts(
+            case,artifact_root,manifest["jobRef"],summary)
+        return {
+            **summary,
+            "state":"COMPUTE_DONE_EVIDENCE_PENDING",
+            "outputArtifactLocalPath":str(evidence_path),
+            "outputSha256":evidence_sha
+        }
 
 if __name__ == "__main__":
     import argparse
@@ -353,4 +397,7 @@ if __name__ == "__main__":
     approved = set(filter(None,os.environ.get("USV_SOLVER_APPROVED_ARTIFACT_DIGESTS","").split(",")))
     stage = Path(os.environ.get("USV_SOLVER_STAGING_DIR","/var/lib/usv-solver/staged"))
     root = Path(os.environ.get("USV_SOLVER_WORK_DIR","/var/lib/usv-solver/work"))
-    print(json.dumps(run_staged_case(manifest,stage,root,approved),indent=2))
+    artifacts = Path(os.environ.get("USV_SOLVER_ARTIFACT_DIR","/var/lib/usv-solver/artifacts"))
+    print(json.dumps(run_staged_case(
+        manifest,stage,root,approved,artifact_root=artifacts,
+        isolation_mode="UNSHARE_NET"),indent=2))
