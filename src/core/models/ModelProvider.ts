@@ -681,6 +681,21 @@ export function resolveConfiguredProvider(): 'gemini' | 'gemini_cli' | 'codex_cl
   return 'deterministic';
 }
 
+/**
+ * Resolve model routing while keeping ChatGPT/Codex-pinned engineering roles
+ * isolated from legacy Gemini CLI and paid API provider overrides.
+ */
+export function resolveModelProviderForTask(
+  config: ModelConfig,
+  explicitProvider?: string
+): NonNullable<ModelConfig['preferredProvider']> {
+  if (config.preferredProvider === 'codex_cli') return 'codex_cli';
+  if (explicitProvider === 'gemini_cli' || explicitProvider === 'codex_cli') {
+    return resolveConfiguredProvider();
+  }
+  return config.preferredProvider || resolveConfiguredProvider();
+}
+
 // -----------------------------------------------------------------------------------------
 // Model Provider Router / Dispatcher
 // -----------------------------------------------------------------------------------------
@@ -715,16 +730,12 @@ export class ModelProviderRouter {
 
   public async generate(request: ModelPromptRequest, config: ModelConfig): Promise<ModelPromptResponse> {
     const isTestMode = isTestExecutionEnvironment();
-    // Only the operator-authenticated CLI transport needs to override the
-    // 26 legacy per-agent Gemini SDK preferences. Other deployment values keep
-    // the original preference/fail-closed behavior so governance tests and
-    // explicit provider selections cannot be silently bypassed.
+    // A role explicitly pinned to the signed-in ChatGPT/Codex CLI cannot be
+    // redirected to Gemini (or a billable API) by deployment environment flags.
+    // A missing CLI/login/pilot fails closed; it never falls back to Gemini.
     const explicitProvider =
       typeof process !== 'undefined' ? process.env?.AI_REVIEW_PROVIDER?.toLowerCase() : undefined;
-    let providerName =
-      (explicitProvider === 'gemini_cli' || explicitProvider === 'codex_cli')
-        ? resolveConfiguredProvider()
-        : (config.preferredProvider || resolveConfiguredProvider());
+    let providerName = resolveModelProviderForTask(config, explicitProvider);
     const hasGeminiKey = typeof process !== 'undefined' && !!process.env?.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim().length > 0;
     if (providerName === 'gemini' && !hasGeminiKey) {
       providerName = resolveConfiguredProvider();
