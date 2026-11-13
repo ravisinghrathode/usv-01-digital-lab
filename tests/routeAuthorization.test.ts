@@ -23,6 +23,13 @@ describe('USV-01 server-side route authorization', () => {
     expect(authorizeLabRoute('POST', '/verify/execute', 'ELECTRICAL_ENGINEER')).toBe(false);
   });
 
+  it('allows authenticated staff to consult Codex but rejects unknown write routes', () => {
+    expect(authorizeLabRoute('POST', '/assistant/assist', 'LEAD_SYSTEMS_ENGINEER')).toBe(true);
+    expect(authorizeLabRoute('POST', '/assistant/assist', 'NAVAL_ARCHITECT')).toBe(true);
+    expect(authorizeLabRoute('POST', '/assistant/assist', 'UNKNOWN')).toBe(false);
+    expect(authorizeLabRoute('POST', '/assistant/approve-baseline', 'ENGINEERING_DIRECTOR')).toBe(false);
+  });
+
   it('fails closed on unknown roles and new write routes', () => {
     expect(authorizeLabRoute('GET', '/context', 'UNRECOGNIZED')).toBe(false);
     expect(authorizeLabRoute('POST', '/new-sensitive-feature', 'ENGINEERING_DIRECTOR')).toBe(false);

@@ -159,113 +159,9 @@ How can I assist your engineering evaluation today?`,
     };
   }, [isOpen]);
 
-  const toggleLiveSession = async () => {
-    if (isLiveActive) {
-      stopLiveSession();
-      return;
-    }
-
-    try {
-      setLiveStatusText('Connecting to server Live bridge...');
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsUrl = `${protocol}//${window.location.host}/api/gemini/live`;
-      const ws = new WebSocket(wsUrl);
-      liveWsRef.current = ws;
-
-      const outCtx = new (window.AudioContext || (window as any).webkitAudioContext)({
-        sampleRate: 24000
-      });
-      audioOutContextRef.current = outCtx;
-      nextPlayTimeRef.current = { current: outCtx.currentTime };
-
-      ws.onopen = async () => {
-        setIsLiveActive(true);
-        setLiveStatusText('Live session connected');
-
-        // Request microphone access for real-time streaming
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          micStreamRef.current = stream;
-
-          const inCtx = new (window.AudioContext || (window as any).webkitAudioContext)({
-            sampleRate: 16000
-          });
-          audioInContextRef.current = inCtx;
-
-          const source = inCtx.createMediaStreamSource(stream);
-          const processor = inCtx.createScriptProcessor(4096, 1, 1);
-          source.connect(processor);
-          processor.connect(inCtx.destination);
-
-          processor.onaudioprocess = (e) => {
-            if (ws.readyState === WebSocket.OPEN) {
-              const inputData = e.inputBuffer.getChannelData(0);
-              const pcmBase64 = floatTo16BitPCM(inputData);
-              ws.send(JSON.stringify({ audio: pcmBase64 }));
-            }
-          };
-          setLiveStatusText('Live audio streaming (16kHz in / 24kHz out)');
-        } catch {
-          setLiveStatusText('Live audio active (mic blocked, text input available)');
-        }
-      };
-
-      ws.onmessage = (event) => {
-        try {
-          const msg = JSON.parse(event.data);
-          if (msg.audio && audioOutContextRef.current) {
-            play24kPcmChunk(audioOutContextRef.current, msg.audio, nextPlayTimeRef.current);
-          }
-          if (msg.transcript) {
-            setMessages((prev) => [
-              ...prev,
-              {
-                id: `live-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
-                sender: 'assistant',
-                text: msg.transcript,
-                timestamp: new Date().toTimeString().substring(0, 5)
-              }
-            ]);
-          }
-          if (msg.message && msg.type === 'status') {
-            setLiveStatusText(msg.message);
-          }
-        } catch {}
-      };
-
-      ws.onerror = () => {
-        setLiveStatusText('WebSocket connection error');
-      };
-
-      ws.onclose = () => {
-        setIsLiveActive(false);
-        setLiveStatusText('');
-      };
-    } catch (err: any) {
-      setLiveStatusText(`Connection failed: ${err.message}`);
-      setIsLiveActive(false);
-    }
-  };
-
   const handleSendMessage = async (textToSend?: string) => {
     const prompt = (textToSend || inputPrompt).trim();
     if (!prompt || isLoading) return;
-
-    // If Live API session is open, send real-time text input
-    if (isLiveActive && liveWsRef.current && liveWsRef.current.readyState === WebSocket.OPEN) {
-      liveWsRef.current.send(JSON.stringify({ text: prompt }));
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `usr-${Date.now()}`,
-          sender: 'user',
-          text: prompt,
-          timestamp: new Date().toTimeString().substring(0, 5)
-        }
-      ]);
-      setInputPrompt('');
-      return;
-    }
 
     const userMsg: Message = {
       id: `usr-${Date.now()}`,
@@ -279,7 +175,7 @@ How can I assist your engineering evaluation today?`,
     setIsLoading(true);
 
     try {
-      const response = await authenticatedFetch('/api/gemini/assist?stream=true', {
+      const response = await authenticatedFetch('/api/assistant/assist?stream=true', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -396,31 +292,22 @@ How can I assist your engineering evaluation today?`,
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-xs font-bold font-mono text-slate-100 tracking-wider">
-                GEMINI ENGINEERING ASSISTANT
+                CODEX ENGINEERING ASSISTANT
               </h3>
               <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-sky-500/10 text-sky-300 border border-sky-500/20">
-                gemini-3.8-flash
+                ChatGPT sign-in
               </span>
             </div>
             <p className="text-[10px] text-slate-400">
-              Context: {currentWorkstream} • Server-Side Proxy
+              Context: {currentWorkstream} • Local subscription CLI
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            onClick={toggleLiveSession}
-            title={isLiveActive ? 'Disconnect Live API Audio' : 'Start Gemini Live API Real-Time Audio (gemini-3.8-live)'}
-            className={`px-2.5 py-1 rounded text-[10px] font-mono font-bold flex items-center gap-1.5 transition-all border ${
-              isLiveActive
-                ? 'bg-rose-500/20 text-rose-300 border-rose-500/50 animate-pulse'
-                : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
-            }`}
-          >
-            {isLiveActive ? <Mic className="w-3 h-3 text-rose-400" /> : <MicOff className="w-3 h-3 text-emerald-400" />}
-            <span>{isLiveActive ? 'LIVE ACTIVE' : 'LIVE API VOICE'}</span>
-          </button>
+          <span title="Codex CLI does not support real-time voice" className="px-2 py-1 text-[10px] font-mono text-slate-500">
+            VOICE UNAVAILABLE
+          </span>
 
           <button
             onClick={onClose}

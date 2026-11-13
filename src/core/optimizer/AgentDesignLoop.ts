@@ -187,7 +187,7 @@ const live = (x: AgentExecutionOutput, expectedId: string) =>
   x.agentId === expectedId &&
   ['SUCCESS', 'NEEDS_HUMAN_APPROVAL'].includes(x.status) &&
   x.providerExecutionMode === 'LIVE_AI_GENERATION' &&
-  ['gemini', 'openai', 'ollama'].includes(x.provider || '') &&
+  ['gemini', 'openai', 'ollama', 'codex_cli'].includes(x.provider || '') &&
   x.evidenceValid !== true; // Independent engineering proof is not produced by a model.
 
 const trace = (x: AgentExecutionOutput) => ({

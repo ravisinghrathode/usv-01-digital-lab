@@ -12,6 +12,11 @@ on:
       - 'tests/aiBillingPolicy.test.ts'
       - 'src/core/models/AiBillingPolicy.ts'
       - 'src/core/models/ModelProvider.ts'
+      - 'src/core/verification/CodexCampaignPreflight.ts'
+      - 'src/core/verification/CodexMatrixInput.ts'
+      - 'scripts/run-codex-agent-campaign.ts'
+      - 'tests/codexCampaignPreflight.test.ts'
+      - 'tests/codexMatrixInput.test.ts'
       - 'src/server/geminiService.ts'
       - 'Dockerfile'
       - '.dockerignore'
@@ -58,6 +63,19 @@ jobs:
 
       - name: Mission Control regression tests
         run: npm run mission-control:test
+
+      - name: Test 26-agent no-token commissioning readiness
+        run: |
+          npx vitest run tests/codexCampaignPreflight.test.ts tests/codexMatrixInput.test.ts
+          npm run acceptance:codex-agents
+
+      - name: Upload non-certified 26-agent deterministic readiness report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: usv01-codex-agent-readiness-no-live-model
+          path: governance/reports/codex-26-agent-preflight.json
+          if-no-files-found: ignore
 
       - name: Validate Docker Compose
         run: docker compose config --quiet

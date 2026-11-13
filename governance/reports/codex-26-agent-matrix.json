@@ -1,0 +1,274 @@
+{
+  "generatedAt": "2026-11-13T15:32:08.647Z",
+  "totalAgents": 26,
+  "liveProviderRuns": 26,
+  "findings": [
+    {
+      "canonicalId": "A01",
+      "runtimeId": "LEAD-SYS-01",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-LEAD-SYS-01-1794583606913",
+      "provider": "codex_cli",
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:caae96d5410e0df13395dc81656dd704dc76859c0f36acd7b9ebc642b9afd009"
+    },
+    {
+      "canonicalId": "A02",
+      "runtimeId": "REQ-TRC-02",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-REQ-TRC-02-1794583617283",
+      "provider": "codex_cli",
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:e0f56df41938e6508cc5e44ff9725ab9094476ee8b2c97b72ddf299a614e67a7"
+    },
+    {
+      "canonicalId": "A03",
+      "runtimeId": "CONOPS-03",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-CONOPS-03-1794583628744",
+      "provider": "codex_cli",
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:c3252289787c3c3cf765f1d9565d292960fa6b45caa8206c5574286a85a70af4"
+    },
+    {
+      "canonicalId": "A04",
+      "runtimeId": "REG-STD-04",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-REG-STD-04-1794583638531",
+      "provider": "codex_cli",
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:74151851e3b09864b09da1cd06a9c8228e313be711f11672483e9a02a7ce2ada"
+    },
+    {
+      "canonicalId": "A05",
+      "runtimeId": "HULL-GEO-05",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-HULL-GEO-05-1794583653462",
+      "provider": "codex_cli",
+      "executionMode": "DETERMINISTIC_CALCULATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:996f735e2e13872173e3b72b46bdfb57a21d3d9e2ae6db4ae0f6bce9945d260f"
+    },
+    {
+      "canonicalId": "A06",
+      "runtimeId": "STAB-HYD-06",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-STAB-HYD-06-1794583666101",
+      "provider": "codex_cli",
+      "executionMode": "DETERMINISTIC_CALCULATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:40cb515ac1846dbce767b671e240e84c582b79564ef15438a0951caa46b351dc"
+    },
+    {
+      "canonicalId": "A07",
+      "runtimeId": "RES-SEAK-07",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-RES-SEAK-07-1794583677452",
+      "provider": "codex_cli",
+      "executionMode": "DETERMINISTIC_CALCULATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:dd3c94e9f1c9871ad31702e53d3634dd83bd20160f29a52fd220cffa352cd57e"
+    },
+    {
+      "canonicalId": "A08",
+      "runtimeId": "MAN-MOT-08",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-MAN-MOT-08-1794583690873",
+      "provider": "codex_cli",
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:56d03ac3b7f1e4cb72239d2f265d7cf69b66447a759d985720a8f18ee1be09a7"
+    },
+    {
+      "canonicalId": "A09",
+      "runtimeId": "WGT-BAL-09",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-WGT-BAL-09-1794583701543",
+      "provider": "codex_cli",
+      "executionMode": "DETERMINISTIC_CALCULATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:7c951ee4ab68f5876d5d600b6378a2992c543406c8c3b7925f023f6f3e7fe27d"
+    },
+    {
+      "canonicalId": "A10",
+      "runtimeId": "STR-MAT-10",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-STR-MAT-10-1794583714397",
+      "provider": "codex_cli",
+      "executionMode": "DETERMINISTIC_CALCULATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:b0f35fa32c2fd12f5d5611046858fd667cde4c8ae594a7adf4454eab8900472f"
+    },
+    {
+      "canonicalId": "A11",
+      "runtimeId": "ENV-ENV-11",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-ENV-ENV-11-1794583725005",
+      "provider": "codex_cli",
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:0ad7a1d1fdd39199d738005349b9f2623277627c1088888203bf48a0c5eea5be"
+    },
+    {
+      "canonicalId": "A12",
+      "runtimeId": "MECH-APP-12",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-MECH-APP-12-1794583738439",
+      "provider": "codex_cli",
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:cb389aef11341b9795eb0bcdfb47066e953f25c0ac0a5b010678b80e6e58a7aa"
+    },
+    {
+      "canonicalId": "A13",
+      "runtimeId": "PROP-ENG-13",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-PROP-ENG-13-1794583752692",
+      "provider": "codex_cli",
+      "executionMode": "DETERMINISTIC_CALCULATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:5c4fe3222ae60657319c2c70ae8e0782662943abbb9805325b2254cc0cb4bab8"
+    },
+    {
+      "canonicalId": "A14",
+      "runtimeId": "ELEC-PWR-14",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-ELEC-PWR-14-1794583764086",
+      "provider": "codex_cli",
+      "executionMode": "DETERMINISTIC_CALCULATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:56a197301836f644584553eed1e7be27be1d86c7721081d850d3669acb6f4a76"
+    },
+    {
+      "canonicalId": "A15",
+      "runtimeId": "INDEP-CRIT-15",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-INDEP-CRIT-15-1794583776987",
+      "provider": "codex_cli",
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:a85eeba166ae2e544daa919c378e514af74825fdf58c24659cb95b3a63ebaabe"
+    },
+    {
+      "canonicalId": "A16",
+      "runtimeId": "SENS-PER-16",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-SENS-PER-16-1794583790251",
+      "provider": "codex_cli",
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:2efa8b2f7a5ecf3565567fd3158e8a9a84ca3ec3a5a674d31c80f3d1aa81dfac"
+    },
+    {
+      "canonicalId": "A17",
+      "runtimeId": "NAV-COL-17",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-NAV-COL-17-1794583802518",
+      "provider": "codex_cli",
+      "executionMode": "DETERMINISTIC_CALCULATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:847be217e3727d9b13dc8305cc3c2f65642a7c71877ce3437211296f8ea9c69d"
+    },
+    {
+      "canonicalId": "A18",
+      "runtimeId": "TEST-DIR-18",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-TEST-DIR-18-1794583815440",
+      "provider": "codex_cli",
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:965489dca3e040e3b86793fc8c18f1137b75b9e7d5d1e41fa07b30d426556c26"
+    },
+    {
+      "canonicalId": "A19",
+      "runtimeId": "COMM-RF-19",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-COMM-RF-19-1794583827895",
+      "provider": "codex_cli",
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:bdca02b4bbdfe7db9acd160e78bcf8137729bb01ca1ae3d9da3a3a5174768958"
+    },
+    {
+      "canonicalId": "A20",
+      "runtimeId": "CYBER-SEC-20",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-CYBER-SEC-20-1794583842324",
+      "provider": "codex_cli",
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:ad14ccdfef5d5d1b8110a1283d572b53173bf6f65991203283b4bd40cc809f28"
+    },
+    {
+      "canonicalId": "A21",
+      "runtimeId": "ICD-ENG-21",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-ICD-ENG-21-1794583854824",
+      "provider": "codex_cli",
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:735a3bdb304e1361d056668bb92c82ba28c9c72b5637cfa2359f4f3b39dea686"
+    },
+    {
+      "canonicalId": "A22",
+      "runtimeId": "FMEA-RSK-22",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-FMEA-RSK-22-1794583867229",
+      "provider": "codex_cli",
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:6381e83f1a41435cc03c89786219a05d959c686f2c2fa9cf291965a9a457a9a4"
+    },
+    {
+      "canonicalId": "A23",
+      "runtimeId": "INDEP-REV-23",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-INDEP-REV-23-1794583879310",
+      "provider": "codex_cli",
+      "executionMode": "DETERMINISTIC_CALCULATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:ca9a2cc326e263f147856ad198532b43eaae50ea825fad6f4a6714c0bb6f287c"
+    },
+    {
+      "canonicalId": "A24",
+      "runtimeId": "VVT-VAL-24",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-VVT-VAL-24-1794583892361",
+      "provider": "codex_cli",
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:dbf5772c01ccdc6f89c8a839930390411ad203cb4c31e239ea939e3a48aa0e4a"
+    },
+    {
+      "canonicalId": "A25",
+      "runtimeId": "DOC-OBS-25",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-DOC-OBS-25-1794583909861",
+      "provider": "codex_cli",
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:d1a1c5011a5ea6d2f2a06362ca3bf13ee058e95b327a8bddb6e12f80e011fda8"
+    },
+    {
+      "canonicalId": "A26",
+      "runtimeId": "INTEL-USV-26",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-INTEL-USV-26-1794583919492",
+      "provider": "codex_cli",
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:004ab92357ad2a4791ad2b4a93f550a195bf1a5a7b635f790e12ede9ee2d17a0"
+    }
+  ],
+  "providerOperationalMatrixComplete": true,
+  "independentlyEngineeringValidated": false,
+  "engineeringReleaseApproved": false,
+  "dataClassification": "SYNTHETIC_TEST_ONLY_NON_OPERATIONAL",
+  "illustrativeNonOperational": true,
+  "historicalCatalogBaseline": "854812812f02ab232a506957572c2944be63c7a5",
+  "sourceCommitSha": "4cf2b52ca3091083227bbb3265d8c402a8c6da0d"
+}

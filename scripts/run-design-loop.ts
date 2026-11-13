@@ -1,6 +1,6 @@
 /**
  * Live research concept cycle. No simulated success or default vessel values.
- * Requires authorized server-side Gemini credentials, a source-identified
+ * Requires local subscription-authenticated Codex CLI, a source-identified
  * mission and exact source SHA. Produces local UNVERIFIED trade-study evidence.
  */
 import fs from 'node:fs';
@@ -23,9 +23,9 @@ const requireObject = (raw: unknown): Record<string, unknown> => {
 };
 async function main() {
   const providerMode=process.env.AI_REVIEW_PROVIDER?.toLowerCase();
-  const usingCli=providerMode==='gemini_cli';
-  if (!usingCli && !process.env.GEMINI_API_KEY?.trim()) {
-    throw new Error('Actual agent design iterations require an authenticated Gemini CLI with AI_REVIEW_PROVIDER=gemini_cli, or GEMINI_API_KEY; no offline simulation is substituted.');
+  if (providerMode !== 'codex_cli' || process.env.USV_SUBSCRIPTION_PILOT !== 'enabled' ||
+      process.env.USV_ALLOW_PAID_AI_API === 'true') {
+    throw new Error('Actual agent design iterations require authenticated Codex CLI with AI_REVIEW_PROVIDER=codex_cli, USV_SUBSCRIPTION_PILOT=enabled, paid API disabled; no simulation or Gemini fallback.');
   }
   const missionPath = path.resolve(value('--mission-file'));
   if (fs.statSync(missionPath).size > 2 * 1024 * 1024) throw new Error('Mission brief exceeds 2 MiB');
@@ -39,8 +39,7 @@ async function main() {
   fs.mkdirSync(outDir, { recursive: true, mode: 0o700 });
   const runId = 'USV01-LIVE-CONCEPT-' + sourceCommit.slice(0, 12) + '-S' + seed;
   // Authenticate an actual provider response before spending the research budget.
-  if (!process.env.GEMINI_MODEL?.trim()) throw new Error('Specify a current authorized GEMINI_MODEL; no guessed model name');
-  const preflight = await commissionLiveModel(sourceCommit, process.env.GEMINI_MODEL);
+  const preflight = await commissionLiveModel(sourceCommit, 'codex-session-model-unverified');
   const missionDigest = 'sha256:' + createHash('sha256').update(fs.readFileSync(missionPath)).digest('hex');
   const solverCampaign=(mission.solverCampaign || undefined) as
     import('../src/core/optimizer/AgentDesignLoop.ts').SolverCampaign|undefined;

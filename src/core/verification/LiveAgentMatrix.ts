@@ -13,6 +13,7 @@ export interface AgentRunFinding {
   providerExecutionMode?: string;
   outputDigestSha256?: string;
   correlationId?: string;
+  failureReason?: string;
 }
 
 export interface AgentMatrixReport {
@@ -56,12 +57,16 @@ export async function runLiveAgentMatrix(
     try {
       const output = await run(spec.id, input);
       finding.correlationId = output.correlationId;
+      if (output.status === 'FAILED') {
+        const error = output.data?.error;
+        finding.failureReason = typeof error === 'string' ? error : 'Agent execution failed without a recorded reason';
+      }
       finding.provider = output.provider;
       finding.executionMode = output.executionMode;
       finding.providerExecutionMode = output.providerExecutionMode;
       finding.outputDigestSha256 = 'sha256:' + createHash('sha256')
         .update(JSON.stringify(output.data)).digest('hex');
-      const realProvider = ['gemini','openai','ollama'].includes(output.provider || '');
+      const realProvider = ['gemini','openai','ollama','codex_cli'].includes(output.provider || '');
       const live = output.providerExecutionMode === 'LIVE_AI_GENERATION' && realProvider &&
         output.agentId === spec.id && output.taskId === input.taskId &&
         !['FAILED','PARTIAL'].includes(output.status) && !!output.correlationId;

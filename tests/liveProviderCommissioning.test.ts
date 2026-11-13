@@ -35,6 +35,19 @@ describe('Live provider credential verification (no network in unit tests)', () 
     expect(result.independentEngineeringEvidence).toBe(false);
     expect(result.authorizedDesignRelease).toBe(false);
   });
+  it('accepts a genuine operator-authenticated Codex CLI probe but never certifies engineering', async () => {
+    const codex = {
+      ...liveProvider({ providerUsed: 'codex_cli', modelUsed: 'codex-signed-in-session-model-unverified' }),
+      name: 'codex_cli'
+    };
+    const result = await commissionLiveModel(sha, 'signed-in-model-unverified', codex);
+    expect(result.actualLiveProviderCall).toBe(true);
+    expect(result.provider).toBe('codex_cli');
+    expect(result.transport).toBe('CODEX_CLI_OPERATOR_AUTH');
+    expect(result.independentEngineeringEvidence).toBe(false);
+    expect(result.authorizedDesignRelease).toBe(false);
+  });
+
   it('rejects deterministic fallback, mock, model claiming evidence and wrong token', async () => {
     for (const override of [
       { providerUsed: 'deterministic' },
