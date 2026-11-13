@@ -46,6 +46,20 @@ export interface DisciplineInputPackage {
   input: Record<string, unknown>;
 }
 
+export interface SolverCampaign {
+  templateId:string;
+  templateDigest:string;
+  sourceReference:string;
+  requiredTopology:'MONOHULL'|'CATAMARAN';
+  parameterKeys:readonly string[];
+}
+export interface SolverEvaluation {
+  status:'USABLE_UNVERIFIED'|'QUALITY_REJECTED'|'FAILED';
+  templateId:string;
+  outputDigest:string;
+  issues:string[];
+  evidence?:Record<string,unknown>;
+}
 export interface DesignLoopRequirements {
   runId: string;
   sourceCommit: string;
@@ -58,6 +72,7 @@ export interface DesignLoopRequirements {
   specialistReviews?: 'AUTO' | 'OFF';
   comparisonMode?: 'STRICT' | 'FIXED_CONDITIONS_RESCREEN';
   disciplinePackages?: readonly DisciplineInputPackage[];
+  solverCampaign?: SolverCampaign;
 }
 
 export interface ScreenedProposal {
@@ -67,6 +82,7 @@ export interface ScreenedProposal {
   unverifiedMetricProvenance: Record<string, {sourceKind: string; sourceReference: string; justification: string}>;
   missingEngineeringInputs: string[];
   screenResults: { toolId: string; success: boolean; outputDigest: string; result?: Record<string, unknown>; error?: string }[];
+  solverEvaluations: SolverEvaluation[];
   sourceKind: 'MODEL_PROPOSAL_UNVERIFIED';
   inputDigest: string;
 }
@@ -102,6 +118,7 @@ export interface DesignLoopReport {
   stopReason: 'MAX_REVISIONS_REACHED' | 'AGENT_EXECUTION_FAILED' | 'NON_LIVE_PROVIDER' | 'INVALID_PROPOSAL' | 'NO_CHANGE';
   completedAgentCalls: number;
   completedToolScreens: number;
+  completedSolverEvaluations: number;
   specialistReviewCount: number;
   fixedConditionScreens: Array<{revisionIndex:number;objectiveId:string;toolId:string;inputDigest:string;outputDigest:string;success:boolean;reason?:string}>;
   comparison: {
@@ -119,6 +136,11 @@ export interface DesignLoopReport {
 
 export type AgentExecutor = (agentId: string, input: AgentExecutionInput) => Promise<AgentExecutionOutput>;
 export type ScreeningToolExecutor = (toolId: string, input: Record<string, unknown>, permissions: string[]) => Promise<ToolExecutionResult>;
+export type SolverEvaluator = (input:{
+  revisionIndex:number; runId:string; sourceCommit:string;
+  topology:ScreenedProposal['conceptTopology']; template:SolverCampaign;
+  parameters:Record<string,number>;
+})=>Promise<SolverEvaluation>;
 
 const hash = (v: unknown) => 'sha256:' + createHash('sha256').update(JSON.stringify(v)).digest('hex');
 const supported = new Set([
@@ -198,6 +220,22 @@ function validateInput(x: DesignLoopRequirements) {
   }
   if (x.specialistReviews !== undefined && !['AUTO','OFF'].includes(x.specialistReviews)) throw new Error('Unrecognized specialist review mode');
   if (x.comparisonMode !== undefined && !['STRICT','FIXED_CONDITIONS_RESCREEN'].includes(x.comparisonMode)) throw new Error('Unrecognized comparison mode');
+  if (x.solverCampaign !== undefined) {
+    const c=x.solverCampaign;
+    if(!c||typeof c.templateId!=='string'||!/^[A-Za-z0-9_-]{3,64}$/.test(c.templateId)||
+      typeof c.templateDigest!=='string'||!/^sha256:[0-9a-f]{64}$/.test(c.templateDigest)||
+      typeof c.sourceReference!=='string'||!c.sourceReference.trim()||
+      !['MONOHULL','CATAMARAN'].includes(c.requiredTopology)||
+      !Array.isArray(c.parameterKeys)||!c.parameterKeys.length||c.parameterKeys.length>16||
+      new Set(c.parameterKeys).size!==c.parameterKeys.length||
+      c.parameterKeys.some(k=>!supported.has(k))) {
+      throw new Error('Invalid approved solver campaign template/envelope');
+    }
+    const source=x.sourceReferences.find(ref=>ref.reference===c.sourceReference);
+    if(!source||!source.sha256||!source.url?.startsWith('https://')){
+      throw new Error('Solver campaign must reference an authenticated fetched source record');
+    }
+  }
   if (x.disciplinePackages !== undefined) {
     if (!Array.isArray(x.disciplinePackages) || x.disciplinePackages.length > 3) {
       throw new Error('At most one source-bound package each for A09/A10/A14');
@@ -372,7 +410,8 @@ export async function runAgentDesignLoop(
   input: DesignLoopRequirements,
   executeAgent: AgentExecutor = (agentId, params) => ExecutionEngine.getInstance().executeAgent(agentId, params, 0),
   executeTool: ScreeningToolExecutor = (toolId, params, permissions) =>
-    ToolRegistry.getInstance().executeTool(toolId, params, permissions)
+    ToolRegistry.getInstance().executeTool(toolId, params, permissions),
+  evaluateSolver?: SolverEvaluator
 ): Promise<DesignLoopReport> {
   validateInput(input);
   const registry = AgentRegistry.getInstance();
@@ -391,7 +430,7 @@ export async function runAgentDesignLoop(
     },
     revisions: [],
     stopReason: 'MAX_REVISIONS_REACHED',
-    completedAgentCalls: 0, completedToolScreens: 0, specialistReviewCount: 0,
+    completedAgentCalls: 0, completedToolScreens: 0, completedSolverEvaluations: 0, specialistReviewCount: 0,
     fixedConditionScreens: [],
     comparison: compareRevisions([], input.objectives),
     independentEngineeringValidated: false,
@@ -488,8 +527,55 @@ export async function runAgentDesignLoop(
       }
     }
 
+    const solverEvaluations:SolverEvaluation[]=[];
+    if(input.solverCampaign) {
+      const campaign=input.solverCampaign;
+      if(topology!==campaign.requiredTopology) {
+        missingEngineeringInputs.push('Solver template '+campaign.templateId+' is approved only for '+campaign.requiredTopology+'; candidate is '+topology);
+      } else {
+        const solverParams:Record<string,number>={};
+        const missing=campaign.parameterKeys.filter(k=>numbers[k]===undefined);
+        if(missing.length) {
+          missingEngineeringInputs.push('Solver template '+campaign.templateId+' missing sourced parameters: '+missing.join(', '));
+        } else if(!evaluateSolver) {
+          missingEngineeringInputs.push('Approved solver template configured but authenticated solver evaluator is not connected');
+        } else {
+          for(const key of campaign.parameterKeys)solverParams[key]=numbers[key];
+          try {
+            const evaluation=await evaluateSolver({
+              revisionIndex:index,runId:input.runId,sourceCommit:input.sourceCommit,
+              topology,template:campaign,parameters:solverParams
+            });
+            report.completedSolverEvaluations++;
+            solverEvaluations.push(evaluation);
+            screenResults.push({
+              toolId:'SOLVER-TEMPLATE:'+campaign.templateId,
+              success:evaluation.status==='USABLE_UNVERIFIED',
+              outputDigest:evaluation.outputDigest,
+              result:evaluation.evidence,
+              error:evaluation.status==='USABLE_UNVERIFIED'?undefined:evaluation.issues.join('; ')
+            });
+            if(evaluation.status!=='USABLE_UNVERIFIED') {
+              missingEngineeringInputs.push('Solver '+campaign.templateId+' '+evaluation.status+': '+evaluation.issues.join('; '));
+            }
+          } catch(error) {
+            report.completedSolverEvaluations++;
+            const issue=error instanceof Error?error.message:String(error);
+            const evaluation:SolverEvaluation={
+              status:'FAILED',templateId:campaign.templateId,outputDigest:hash({issue}),issues:[issue]
+            };
+            solverEvaluations.push(evaluation);
+            screenResults.push({toolId:'SOLVER-TEMPLATE:'+campaign.templateId,success:false,
+              outputDigest:evaluation.outputDigest,error:issue});
+            missingEngineeringInputs.push('Solver '+campaign.templateId+' FAILED: '+issue);
+          }
+        }
+      }
+    }
+
     const screened: ScreenedProposal = {
-      parameters: numbers, conceptTopology: topology, unverifiedMetricProvenance: claims, missingEngineeringInputs, screenResults,
+      parameters: numbers, conceptTopology: topology, unverifiedMetricProvenance: claims,
+      missingEngineeringInputs, screenResults, solverEvaluations,
       sourceKind: 'MODEL_PROPOSAL_UNVERIFIED', inputDigest: hash(numbers)
     };
 
