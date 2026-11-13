@@ -283,6 +283,23 @@ class WorkerTest(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     unzip_restricted(bundle({malicious:'bad'}),Path(temp))
 
+    def test_solver_timeout_retains_partial_evidence_and_stays_rejected(self):
+        manifest,digest=self._openfoam_fixture()
+        def timeout(args,**kwargs):
+            if args==['simpleFoam','-help']:
+                return subprocess.CompletedProcess(args,0,stdout='Using: OpenFOAM-2606 (2606)',stderr='')
+            if args[0]=='checkMesh':
+                return subprocess.CompletedProcess(args,0,stdout=
+                    'Mesh non-orthogonality Max: 20 average: 5\nMax skewness = 0.4 OK.\n',stderr='')
+            raise subprocess.TimeoutExpired(args,kwargs.get('timeout',1),
+                output='Solving for Ux, Initial residual = 0.1',stderr='partial timeout')
+        result=run_staged_case(manifest,self.staging,self.root/'work',{digest},runner=timeout,
+            artifact_root=self.artifacts/'timeout',isolation_mode='TEST_NO_NAMESPACE')
+        self.assertEqual(result['state'],'COMPUTE_TIMEOUT_REJECTED')
+        self.assertTrue(Path(result['outputArtifactLocalPath']).is_file())
+        self.assertTrue(result['outputSha256'].startswith('sha256:'))
+        self.assertFalse(result['engineeringReleaseAuthorized'])
+
     def test_solver_failure_does_not_return_fake_results(self):
         def failed(args,**kw):
             if args==['ccx','-v']:
