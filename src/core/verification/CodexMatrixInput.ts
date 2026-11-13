@@ -15,6 +15,16 @@ export function compileCodexAgentCases(catalog: unknown): Record<string, AgentEx
       Array.isArray(source.sharedParameters)) {
     throw new Error('Expected exactly 26 agents and sharedParameters map');
   }
+  const synthetic = source.dataClassification === 'SYNTHETIC_TEST_ONLY_NON_OPERATIONAL';
+  const controlled = source.dataClassification === 'CONTROLLED_ENGINEERING_EVIDENCE';
+  if (!synthetic && !controlled) {
+    throw new Error('Unknown catalog data classification. Synthetic fixtures and controlled engineering evidence must not be conflated.');
+  }
+  if (controlled && (typeof source.controlledVesselConfigurationId !== 'string' ||
+      !source.controlledVesselConfigurationId.trim() || typeof source.source !== 'string' ||
+      !source.source.trim())) {
+    throw new Error('Controlled engineering campaigns require a traceable draft vessel configuration identifier and input source');
+  }
   const cases: Record<string, AgentExecutionInput> = {};
   for (const item of source.agents) {
     if (!item || typeof item !== 'object') throw new Error('Malformed agent entry');
@@ -31,11 +41,11 @@ export function compileCodexAgentCases(catalog: unknown): Record<string, AgentEx
     // Keep explicitly unverified fixture inputs visible to the specialist, but
     // out of calculators that must reject unsupported evidence. These values
     // are never silently changed or promoted into the controlled baseline.
-    if (['A05', 'A06', 'A23'].includes(row.canonicalId) && 'blockCoefficientCb' in parameters) {
+    if (synthetic && ['A05', 'A06', 'A23'].includes(row.canonicalId) && 'blockCoefficientCb' in parameters) {
       withheldParameters.blockCoefficientCb = parameters.blockCoefficientCb;
       delete parameters.blockCoefficientCb;
     }
-    if (['A07', 'A13', 'A23'].includes(row.canonicalId) && 'propulsiveEfficiencyEtaD' in parameters) {
+    if (synthetic && ['A07', 'A13', 'A23'].includes(row.canonicalId) && 'propulsiveEfficiencyEtaD' in parameters) {
       withheldParameters.propulsiveEfficiencyEtaD = parameters.propulsiveEfficiencyEtaD;
       delete parameters.propulsiveEfficiencyEtaD;
     }
@@ -52,7 +62,9 @@ export function compileCodexAgentCases(catalog: unknown): Record<string, AgentEx
         task: row.task,
         source: source.source,
         dataClassification: source.dataClassification,
-        illustrativeNonOperational: true,
+        illustrativeNonOperational: synthetic,
+        nonOperationalResearch: true,
+        controlledVesselConfigurationId: controlled ? source.controlledVesselConfigurationId : undefined,
         engineeringBaselineApproved: false,
         unvalidatedCatalogParametersWithheldFromCalculators: withheldParameters,
         syntheticToolConventions: row.canonicalId === 'A17'
