@@ -165,6 +165,17 @@ export class BaseAgent {
       }
     }
 
+    // Model-only numeric hypotheses are never released; attach a declared
+    // reference/assumption for EACH value so the design-loop screen can
+    // reject unsupported parameters rather than laundering LLM guesses.
+    const structuredContract =
+      '\\nReturn strict JSON with: disciplineSummary (string), keyMetrics (object of finite numbers or strings), ' +
+      'designDecisions (string array), assumptions (array of {id,category,description,sourceReference,impactIfViolated,isBaseline:false}), ' +
+      'openTbdItems (string array), requiresDirectorApproval (true), approvalRationale (string). ' +
+      'When proposing numbers include metricProvenance as a map keyed by EXACT keyMetrics key; each item must be ' +
+      '{sourceKind:"SOURCE_DOCUMENT" or "HYPOTHESIS", sourceReference:"exact source reference or explicit hypothesis ID", justification:"why"}. ' +
+      'Do not pretend a URL was read or a calculation run. Set unsubstantiated values TBD.';
+
     // 3. Synthesize via Model Provider Router
     const promptRequest = {
       systemInstructions: this.spec.systemInstructions + '\nAccuracy rules: Do not invent test outcomes, regulatory thresholds, hardware parameters, tool invocations or numeric requirements. Only cite numeric values from explicit inputs or actual Tool Evidence, and label computations as preliminary. Flag unknowns TBD. Do not claim engineering certification.',
