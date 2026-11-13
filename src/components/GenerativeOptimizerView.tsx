@@ -30,7 +30,7 @@ import {
   CandidateDesign,
   LearnedInvariant,
   DesignPhilosophy,
-  AgentEvaluation25
+  ScenarioRuleCheck
 } from '../core/optimizer/GenerativeDesignOptimizer';
 import { downloadCsv } from '../utils/engineeringUtils';
 import { Vessel3DVisualizer } from './Vessel3DVisualizer';
@@ -43,7 +43,7 @@ interface GenerativeOptimizerViewProps {
 export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = ({ onAskAi, onNavigateToSimulator }) => {
   const optimizer = GenerativeDesignOptimizer.getInstance();
 
-  const [activeTab, setActiveTab] = useState<'ledger' | 'studio' | 'agents25' | 'seastates' | 'pareto' | 'invariants' | 'redteam'>('ledger');
+  const [activeTab, setActiveTab] = useState<'ledger' | 'studio' | 'rules' | 'seastates' | 'pareto' | 'invariants' | 'redteam'>('ledger');
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [philosophy, setPhilosophy] = useState<DesignPhilosophy>('BALANCED_PATROL');
   const [history, setHistory] = useState<CandidateDesign[]>(() => {
@@ -62,7 +62,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [appliedToast, setAppliedToast] = useState<{ id: string; message: string; lwl: number; beam: number; disp: number } | null>(null);
 
-  // 25-Agent tab filters
+  // Synthetic rule tab filters
   const [agentDivisionFilter, setAgentDivisionFilter] = useState<string>('ALL');
   const [agentSearch, setAgentSearch] = useState<string>('');
 
@@ -344,10 +344,10 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
 
   const redTeamQuestions = optimizer.generateRedTeamChallenge();
 
-  // Filtered 25 agents
-  const filtered25Agents = useMemo(() => {
-    if (!activeCandidate || !activeCandidate.agentEvaluations25) return [];
-    return activeCandidate.agentEvaluations25.filter(a => {
+  // Filtered scenario rules
+  const filteredRules = useMemo(() => {
+    if (!activeCandidate || !activeCandidate.scenarioRuleChecks) return [];
+    return activeCandidate.scenarioRuleChecks.filter(a => {
       const matchDivision = agentDivisionFilter === 'ALL' || a.division === agentDivisionFilter;
       const matchSearch = agentSearch.trim() === '' ||
         a.agentId.toLowerCase().includes(agentSearch.toLowerCase()) ||
@@ -357,12 +357,11 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
     });
   }, [activeCandidate, agentDivisionFilter, agentSearch]);
 
-  const agentVoteSummary = useMemo(() => {
-    if (!activeCandidate || !activeCandidate.agentEvaluations25) return { concur: 0, reservation: 0, veto: 0 };
+  const ruleSummary = useMemo(() => {
+    if (!activeCandidate || !activeCandidate.scenarioRuleChecks) return { pass: 0, fail: 0 };
     return {
-      concur: activeCandidate.agentEvaluations25.filter(a => a.vote === 'CONCUR').length,
-      reservation: activeCandidate.agentEvaluations25.filter(a => a.vote === 'RESERVATION').length,
-      veto: activeCandidate.agentEvaluations25.filter(a => a.vote === 'VETO').length
+      pass: activeCandidate.scenarioRuleChecks.filter(a => a.vote === 'SCREEN_PASS_UNVERIFIED').length,
+      fail: activeCandidate.scenarioRuleChecks.filter(a => a.vote === 'SCREEN_FAIL_UNVERIFIED').length
     };
   }, [activeCandidate]);
 
@@ -414,7 +413,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
             </div>
             <h1 className="text-xl font-bold text-slate-100 flex items-center gap-2">
               <Cpu className="w-5 h-5 text-purple-400" />
-              Generative Multi-Agent Design Optimization & Defense
+              Legacy Heuristic Scenario Explorer (Unverified)
             </h1>
             <p className="text-xs text-slate-400 max-w-3xl leading-relaxed">
               Exploratory synthetic heuristic scenarios, NOT live 26-agent engineering reviews or validated naval calculations. Results are unverified and cannot establish design compliance.
@@ -734,9 +733,9 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-1.5 text-[11px] font-mono">
                   <span className="text-slate-400">Sign-off:</span>
-                  <span className="text-emerald-400 font-bold">{agentVoteSummary.concur}C</span>
-                  <span className="text-amber-400 font-bold">{agentVoteSummary.reservation}R</span>
-                  <span className="text-rose-400 font-bold">{agentVoteSummary.veto}V</span>
+                  <span className="text-emerald-400 font-bold">{ruleSummary.pass}P</span>
+                  <span className="text-amber-400 font-bold">{0}R</span>
+                  <span className="text-rose-400 font-bold">{ruleSummary.fail}F</span>
                 </div>
 
                 <button
@@ -780,15 +779,15 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
         </button>
 
         <button
-          onClick={() => setActiveTab('agents25')}
+          onClick={() => setActiveTab('rules')}
           className={`px-4 py-2.5 font-bold border-b-2 flex items-center gap-1.5 transition-colors whitespace-nowrap ${
-            activeTab === 'agents25'
+            activeTab === 'rules'
               ? 'border-purple-500 text-purple-400 bg-purple-500/5'
               : 'border-transparent text-slate-400 hover:text-slate-200'
           }`}
         >
           <Users className="w-3.5 h-3.5 text-blue-400" />
-          25-Agent Concurrence Matrix ({agentVoteSummary.concur} / 25)
+          Synthetic Rule Checks ({ruleSummary.pass} / {activeCandidate?.scenarioRuleChecks.length || 0})
         </button>
 
         <button
@@ -853,7 +852,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                 className="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200 focus:outline-none"
               >
                 <option value="ALL">Show All Iterations</option>
-                <option value="SURVIVED">Survived Only (Passed All Gates)</option>
+                <option value="SURVIVED">Heuristic Survivor Only (Not Design-Approved)</option>
                 <option value="CATAMARAN">Catamaran Hulls Only</option>
                 <option value="MONOHULL">Monohull Hulls Only</option>
                 <option value="REJECTED">Rejected Only</option>
@@ -1226,25 +1225,25 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
         </div>
       )}
 
-      {/* TAB 3: 25-AGENT CONCURRENCE & VETO MATRIX */}
-      {activeTab === 'agents25' && (
+      {/* TAB 3: SYNTHETIC INPUT RULE CHECK MATRIX */}
+      {activeTab === 'rules' && (
         <div className="space-y-4">
           <div className="p-4 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-300 leading-relaxed flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
             <div>
-              <strong className="text-slate-100 font-semibold">Synthetic Voting Matrix (not 26-agent execution):</strong>
+              <strong className="text-slate-100 font-semibold">Synthetic Input Checks (not agent execution):</strong>
               <p className="text-slate-400 mt-0.5">
-                Full governance sign-off record for Candidate <strong>{activeCandidate?.id}</strong>. Every specialized agent across all 5 engineering divisions evaluates their statutory criteria.
+                Unverified rules for Candidate <strong>{activeCandidate?.id}</strong>. No registered agent reviewed this scenario and no class/stability/structure standard was independently evaluated.
               </p>
             </div>
             <div className="flex items-center gap-2 font-mono text-xs">
               <span className="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">
-                {agentVoteSummary.concur} CONCUR
+                {ruleSummary.pass} SCREEN PASS (UNVERIFIED)
               </span>
               <span className="px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
-                {agentVoteSummary.reservation} RESERVATION
+                {0} RESERVATION
               </span>
               <span className="px-2.5 py-1 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold">
-                {agentVoteSummary.veto} VETO
+                {ruleSummary.fail} SCREEN FAIL
               </span>
             </div>
           </div>
@@ -1271,7 +1270,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
               <Search className="w-3.5 h-3.5 text-slate-400" />
               <input
                 type="text"
-                placeholder="Search agent ID, metric, name..."
+                placeholder="Search screening rule ID or metric..."
                 value={agentSearch}
                 onChange={(e) => setAgentSearch(e.target.value)}
                 className="bg-transparent text-slate-200 text-xs focus:outline-none placeholder-slate-500"
@@ -1279,15 +1278,15 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
             </div>
           </div>
 
-          {/* 25 Agents Grid */}
+          {/* 12 Synthetic Rule Checks */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 font-mono text-xs">
-            {filtered25Agents.map((agent) => (
+            {filteredRules.map((agent) => (
               <div
                 key={agent.agentId}
                 className={`p-3.5 rounded-lg border flex flex-col justify-between space-y-2.5 ${
-                  agent.vote === 'CONCUR'
+                  agent.vote === 'SCREEN_PASS_UNVERIFIED'
                     ? 'bg-slate-900/90 border-slate-800'
-                    : agent.vote === 'RESERVATION'
+                    : agent.vote === 'SCREEN_FAIL_UNVERIFIED'
                     ? 'bg-amber-500/5 border-amber-500/30'
                     : 'bg-rose-500/5 border-rose-500/30'
                 }`}
@@ -1296,9 +1295,9 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                   <div className="flex items-center justify-between pb-1.5 border-b border-slate-800/80">
                     <span className="font-bold text-slate-200">{agent.agentId}</span>
                     <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                      agent.vote === 'CONCUR'
+                      agent.vote === 'SCREEN_PASS_UNVERIFIED'
                         ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                        : agent.vote === 'RESERVATION'
+                        : agent.vote === 'SCREEN_FAIL_UNVERIFIED'
                         ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
                         : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
                     }`}>
@@ -1332,7 +1331,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
             <div>
               <strong className="text-slate-100 font-semibold">Multi-Sea-State Dynamics & Dynamic Resonance Audit:</strong>
               <p className="mt-1 text-slate-400">
-                Senior naval architects require proof that hull performance is not confined to calm-water equations. This module evaluates vertical accelerations (a_cg), slamming shock loads, and synchronous roll resonance across Sea States 1 through 5.
+                Senior naval architects require proof that hull performance is not confined to calm-water equations. This legacy heuristic displays illustrative vertical acceleration, slamming and roll indicators across Sea States 1–5; no measured RAO or certified dynamic response is demonstrated.
               </p>
             </div>
           </div>
@@ -1572,10 +1571,10 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                 </div>
 
                 <div className="p-3 bg-slate-950 rounded border border-slate-800 space-y-1.5">
-                  <div className="font-mono text-[10px] text-teal-400 font-bold uppercase">Certified Engineering Defense:</div>
+                  <div className="font-mono text-[10px] text-teal-400 font-bold uppercase">Unverified Heuristic Explanation:</div>
                   <p className="text-slate-200 leading-relaxed">{q.engineeringDefense}</p>
                   <div className="pt-2 border-t border-slate-800 text-[11px] font-mono text-slate-400">
-                    Math Proof: <strong className="text-slate-200">{q.verifiedMath}</strong>
+                    Unverified Formula: <strong className="text-slate-200">{q.verifiedMath}</strong>
                   </div>
                 </div>
               </div>
