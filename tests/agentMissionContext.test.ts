@@ -26,7 +26,7 @@ describe('Research mission actually reaches live agent prompt without becoming b
       }
     };
     const result = await agent.execute({
-      taskId: 'TEST-CONTEXT-A05',
+      taskId: 'TEST-CONTEXT-A01',
       parameters: { conceptStage: 'HYPOTHESIS_SCREENING_ONLY' },
       context: {
         mission: 'SOURCE_IDENTIFIED_HARBOR_MISSION',
