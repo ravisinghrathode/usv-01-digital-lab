@@ -51,7 +51,15 @@ npm run dev
 3. **Unknowns as TBD:** Never fabricate vessel particulars. All open parameters are preserved as `TBD`.
 4. **Deterministic Separation:** Deterministic naval calculations are strictly separated from probabilistic LLM synthesis.
 
-## ChatGPT-only agent runtime (NOT certified vessel design)\n\nAll 26 canonical agent role definitions now use the operator-authenticated ChatGPT Codex CLI (`codex_cli`) for AI synthesis. The CLI must be installed and signed in on the execution machine. Set `AI_REVIEW_PROVIDER=codex_cli`, `USV_SUBSCRIPTION_PILOT=enabled` and `USV_ALLOW_PAID_AI_API=false` before invoking live agents. The repository does not itself deploy or continuously run the agents. If authentication or runtime is unavailable, live agent tasks fail rather than using Gemini. All outputs remain unverified until independent review and engineering acceptance.\n\n## Design-and-innovation development (NOT certified vessel design)
+## ChatGPT-only agent runtime (NOT certified vessel design)\n\nAll 26 canonical agent role definitions now use the operator-authenticated ChatGPT Codex CLI (`codex_cli`) for AI synthesis. The CLI must be installed and signed in on the execution machine. Set `AI_REVIEW_PROVIDER=codex_cli`, `USV_SUBSCRIPTION_PILOT=enabled` and `USV_ALLOW_PAID_AI_API=false` before invoking live agents. The repository does not itself deploy or continuously run the agents. If authentication or runtime is unavailable, live agent tasks fail rather than using Gemini. All outputs remain unverified until independent review and engineering acceptance.\n\n## Two-stage authority model
+
+**Lab commissioning:** The existing subscription-pilot opt-in permits bounded, non-operational ChatGPT/Codex research even while vessel particulars are TBD. This is not vessel-baseline approval and does not authorize physical actuators or an engineering release.
+
+**Vessel baseline:** Independent numerical/physical evidence and Engineering Director approval are required only when accepting a candidate vessel design. Separately, HIGH/CRITICAL source-code PRs retain their exact Git source-digest signature and independent review requirements: signing a source revision does not certify the vessel design.
+
+See [Lab Commissioning and Evidence Release Protocol](docs/LAB_COMMISSIONING_PROTOCOL.md). The 26-agent campaign is offline by default; `--execute` triggers real model calls only after repository/research preflight and authenticated Codex availability.
+
+## Design-and-innovation development (NOT certified vessel design)
 
 - `npm run audit:capabilities` — derive the current 26-role tool/rubric capability report from live source.
 - `npm run concept:research -- --mission-file references/concept-mission-draft.json --source-sha <SOURCE_SHA>` — prepare research cases for all 26 roles.
