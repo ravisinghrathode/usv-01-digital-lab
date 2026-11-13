@@ -13,3 +13,6 @@ data/*.json
 .secrets/
 *.pem
 !tests/fixtures/*.pem
+
+# Unreviewed mission briefs and provider-generated research (never commit by default)
+.local-concept-research/

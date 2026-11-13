@@ -1,4 +1,4 @@
-# USV-01 Multi-Agent Digital Engineering Lab — Verification & Acceptance Report
+> **HISTORICAL VERIFICATION SNAPSHOT — NOT CURRENT SOURCE OF TRUTH.** Agent counts, test totals, Vitest version and 'ACCEPTED' wording below reflect an older historical run only. Current repository acceptance is tracked by the 13-workstream campaign and exact-head GitHub Actions results. Generated current capability metrics: `npm run audit:capabilities`. No historic test pass establishes physical or independent engineering acceptance.\n\n# USV-01 Multi-Agent Digital Engineering Lab — Verification & Acceptance Report
 
 **Date of Verification:** 2026-11-11  
 **Test Harness:** Vitest v3.2.7 / TypeScript 5.8 / Node v24.22  

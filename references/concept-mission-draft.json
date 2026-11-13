@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "0.1",
+  "status": "PROVISIONAL_UNAPPROVED_MISSION_INPUT",
+  "missionStatement": "Investigate and compare feasible USV-01 concepts for coastal and harbor autonomous patrol; do not assume dimensions, mass, power, range or endurance are approved.",
+  "requirements": [
+    {
+      "id": "CONCEPT-REQ-001",
+      "statement": "Prepare independently reviewable alternatives and trace every proposed parameter to a source, a calculation, a stated assumption or TBD.",
+      "source": "Project Lead discussion on 2026-11-13; concept process instruction, not final vessel mission specification"
+    },
+    {
+      "id": "CONCEPT-REQ-002",
+      "statement": "Preserve simulation-only safety boundaries; no vessel actuation or sea-trial authority in the Digital Lab.",
+      "source": "USV01_PROJECT_CONTEXT.md Rev 0.4, engineering rule 10 (status subject to configuration review)"
+    }
+  ],
+  "researchSources": []
+}
