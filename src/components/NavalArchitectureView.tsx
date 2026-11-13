@@ -30,14 +30,13 @@ interface NavalArchitectureViewProps {
 export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
   particulars,
   weightItems,
-  onUpdateParticulars,
   onUpdateWeightItem,
   onAddWeightItem,
   onAskAi
 }) => {
   const [activeTab, setActiveTab] = useState<'solver' | 'particulars' | 'stability' | 'weight_cg' | 'subdivision'>('solver');
 
-  // Interactive Sizing & Stability Solver State (Initialized to Rev 0.4 Baselined Particulars)
+  // Preliminary parametric sizing workspace, NOT approved hull input
   const [displacementKg, setDisplacementKg] = useState<number>(6200);
   const [beamM, setBeamM] = useState<number>(2.90);
   const [draftM, setDraftM] = useState<number>(0.65);
@@ -53,23 +52,7 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
     setDepthM(0);
     setVcgM(0);
     setBlockCoeffCb(0);
-    if (onUpdateParticulars) {
-      onUpdateParticulars({
-        loa: 'TBD',
-        lwl: 'TBD',
-        beamOverall: 'TBD',
-        beamWaterline: 'TBD',
-        depthMolded: 'TBD',
-        draftDesign: 'TBD',
-        draftScantling: 'TBD',
-        freeboardDesign: 'TBD',
-        blockCoefficientCb: 'TBD',
-        prismaticCoefficientCp: 'TBD',
-        displacementMolded: 'TBD',
-        deadweightCapacity: 'TBD',
-        validationState: 'Unverified / TBD'
-      });
-    }
+    // Reset only the local interactive scenario. Never wipe a controlled baseline.
   };
 
   // Compute live GZ stability results
@@ -91,24 +74,25 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
   };
 
   const handleExportGzCsv = () => {
-    const headers = ['Heel Angle (deg)', 'GZ Lever (m)', 'Righting Moment (kNm)', 'Deck Immersed'];
-    const rows = stabilityResult.curve.map(pt => [pt.heelDeg, pt.gzM, pt.rightingMomentKNm, pt.isDeckImmersed ? 'YES' : 'NO']);
+    const headers = ['Heel Angle (deg)', 'GZ Estimate (m)', 'Righting Moment Estimate (kNm)', 'Deck Immersion Estimate', 'Compliance Status'];
+    const rows = stabilityResult.curve.map(pt => [pt.heelDeg, pt.gzM, pt.rightingMomentKNm, pt.isDeckImmersed ? 'YES' : 'NO', 'UNVERIFIED PARAMETRIC SCREEN — NOT FOR CERTIFICATION']);
     downloadCsv(`USV01_GZ_Stability_Curve_${new Date().toISOString().split('T')[0]}.csv`, headers, rows);
   };
 
-  const handleCommitToBaseline = () => {
-    if (onUpdateParticulars) {
-      onUpdateParticulars({
-        beamOverall: `${beamM.toFixed(2)} m`,
-        beamWaterline: `${(beamM * 0.92).toFixed(2)} m`,
-        draftDesign: `${draftM.toFixed(2)} m`,
-        depthMolded: `${depthM.toFixed(2)} m`,
-        freeboardDesign: `${(depthM - draftM).toFixed(2)} m`,
-        displacementMolded: `${displacementKg} kg (${(displacementKg / 1000).toFixed(2)} t)`,
-        blockCoefficientCb: `${blockCoeffCb.toFixed(2)}`,
-        validationState: 'Preliminary Calculations'
-      });
-    }
+  const handleExportScreeningScenario = () => {
+    // An estimate must not write to the source-of-truth particulars register.
+    // Export supports review without upgrading a synthetic scenario to a baseline.
+    const headers = ['Parameter', 'Numeric value', 'Unit', 'Provenance'];
+    const rows = [
+      ['Displacement assumption', displacementKg, 'kg', 'UNVERIFIED PARAMETRIC SCREEN'],
+      ['Waterline beam assumption', beamM, 'm', 'UNVERIFIED PARAMETRIC SCREEN'],
+      ['Draft assumption', draftM, 'm', 'UNVERIFIED PARAMETRIC SCREEN'],
+      ['Moulded depth assumption', depthM, 'm', 'UNVERIFIED PARAMETRIC SCREEN'],
+      ['KG assumption', vcgM, 'm', 'UNVERIFIED PARAMETRIC SCREEN'],
+      ['Cb assumption', blockCoeffCb, '-', 'UNVERIFIED PARAMETRIC SCREEN'],
+      ['Regulatory compliance validated', 'NO', '-', 'NO — requires approved hull geometry and loading']
+    ];
+    downloadCsv(`USV01_Unverified_Hydrostatic_Screen_${new Date().toISOString().split('T')[0]}.csv`, headers, rows);
     setSaveSuccessMsg(true);
     setTimeout(() => setSaveSuccessMsg(false), 3000);
   };
@@ -142,7 +126,7 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
             Vessel Geometry, Hydrostatics & Interactive GZ Stability Solver
           </h2>
           <p className="text-xs text-slate-400 mt-0.5">
-            Real-time hydrostatic equilibrium, IMO Resolution MSC.267(85) intact stability code audit, and weight/CG management.
+            Parametric screening estimates only. Geometry-derived hydrostatics, validated GZ and regulatory applicability remain unverified.
           </p>
         </div>
 
@@ -198,7 +182,7 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
               : 'border-transparent text-slate-400 hover:text-slate-200'
           }`}
         >
-          IMO MSC.267(85) Standard Audit
+          Indicative Stability Thresholds
         </button>
         <button
           onClick={() => setActiveTab('weight_cg')}
@@ -343,17 +327,17 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
               {/* Actions */}
               <div className="pt-2 border-t border-slate-800 flex flex-wrap gap-2">
                 <button
-                  onClick={handleCommitToBaseline}
+                  onClick={handleExportScreeningScenario}
                   className="flex-1 py-1.5 px-3 rounded bg-teal-500/20 hover:bg-teal-500/30 border border-teal-500/40 text-teal-300 text-xs font-mono font-medium transition-colors"
                 >
-                  {saveSuccessMsg ? 'Committed to Baseline!' : 'Stage to Particulars'}
+                  {saveSuccessMsg ? 'Unverified scenario exported' : 'Export screening scenario'}
                 </button>
                 <button
                   onClick={handleResetToZero}
                   className="py-1.5 px-3 rounded bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/30 text-rose-300 text-xs font-mono transition-colors"
-                  title="Reset all numerical parameters to zero / TBD"
+                  title="Reset local interactive scenario only; approved records are not modified"
                 >
-                  Reset to 0 / TBD
+                  Reset scenario to 0
                 </button>
                 <button
                   onClick={handleExportGzCsv}
@@ -375,15 +359,13 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
                   <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
                     displacementKg === 0
                       ? 'bg-slate-500/10 text-slate-400 border-slate-500/30'
-                      : stabilityResult.audit.criteria.overallPass
-                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                      : 'bg-rose-500/10 text-rose-400 border-rose-500/30'
+                      : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
                   }`}>
                     {displacementKg === 0
                       ? 'PENDING INPUTS (0 / TBD)'
                       : stabilityResult.audit.criteria.overallPass
-                      ? 'IMO 2008 IS COMPLIANT'
-                      : 'STABILITY CRITERIA FAILED'}
+                      ? 'PRELIMINARY SCREEN ONLY'
+                      : 'PRELIMINARY SCREEN ONLY'}
                   </span>
                 </div>
 
@@ -483,7 +465,7 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
                   <span className={`text-base font-bold ${stabilityResult.audit.gm0M >= 0.15 ? 'text-teal-400' : 'text-rose-400'}`}>
                     {stabilityResult.audit.gm0M} m
                   </span>
-                  <span className="text-[9px] text-slate-500 block">Req ≥ 0.15 m</span>
+                  <span className="text-[9px] text-slate-500 block">Reference 0.15 m (applicability TBD)</span>
                 </div>
 
                 <div className="p-2.5 rounded bg-slate-950 border border-slate-800">
@@ -518,20 +500,20 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
             <h3 className="text-xs font-semibold text-slate-200 pb-2 border-b border-slate-800 flex items-center justify-between">
               <span className="flex items-center gap-2">
                 <FileCheck2 className="w-4 h-4 text-teal-400" />
-                <span>IMO MSC.267(85) Intact Stability Code Automated Compliance Matrix</span>
+                <span>Indicative GZ Threshold Comparison — NOT COMPLIANCE VALIDATION</span>
               </span>
-              <span className="text-[10px] text-slate-400">INTERNATIONAL MANDATE</span>
+              <span className="text-[10px] text-amber-400">NOT A COMPLIANCE DETERMINATION</span>
             </h3>
 
-            <div className="overflow-x-auto mt-3">
+            <p className="text-amber-300 mt-2">These approximate GZ/GM values are not validated against approved hull offsets, free-surface moments, all loading conditions, flooding openings, trim equilibrium, or independent reference calculations. The pass/fail threshold comparisons are numerical only; HYD-01 remains open.</p>\n            <div className="overflow-x-auto mt-3">
               <table className="w-full text-left">
                 <thead>
                   <tr className="bg-slate-950 border-b border-slate-800 text-slate-400 text-[10px]">
-                    <th className="py-2 px-3">Regulatory Stability Criterion</th>
-                    <th className="py-2 px-3">Mandatory Threshold</th>
+                    <th className="py-2 px-3">Screening comparison (not certification)</th>
+                    <th className="py-2 px-3">Example reference value</th>
                     <th className="py-2 px-3">Calculated Value</th>
                     <th className="py-2 px-3">Margin Ratio</th>
-                    <th className="py-2 px-3 text-right">Pass / Fail</th>
+                    <th className="py-2 px-3 text-right">Estimate relation</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800">
@@ -542,9 +524,9 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
                     <td className="py-2.5 px-3 text-slate-300">{(stabilityResult.audit.area0To30DegMrad / 0.055).toFixed(2)}x</td>
                     <td className="py-2.5 px-3 text-right">
                       {stabilityResult.audit.criteria.area0To30Pass ? (
-                        <span className="inline-flex items-center gap-1 text-emerald-400 font-bold"><Check className="w-3.5 h-3.5" /> PASS</span>
+                        <span className="inline-flex items-center gap-1 text-emerald-400 font-bold"><Check className="w-3.5 h-3.5" /> EST. ABOVE</span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-rose-400 font-bold"><XCircle className="w-3.5 h-3.5" /> FAIL</span>
+                        <span className="inline-flex items-center gap-1 text-rose-400 font-bold"><XCircle className="w-3.5 h-3.5" /> EST. BELOW</span>
                       )}
                     </td>
                   </tr>
@@ -555,9 +537,9 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
                     <td className="py-2.5 px-3 text-slate-300">{(stabilityResult.audit.area0To40DegMrad / 0.090).toFixed(2)}x</td>
                     <td className="py-2.5 px-3 text-right">
                       {stabilityResult.audit.criteria.area0To40Pass ? (
-                        <span className="inline-flex items-center gap-1 text-emerald-400 font-bold"><Check className="w-3.5 h-3.5" /> PASS</span>
+                        <span className="inline-flex items-center gap-1 text-emerald-400 font-bold"><Check className="w-3.5 h-3.5" /> EST. ABOVE</span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-rose-400 font-bold"><XCircle className="w-3.5 h-3.5" /> FAIL</span>
+                        <span className="inline-flex items-center gap-1 text-rose-400 font-bold"><XCircle className="w-3.5 h-3.5" /> EST. BELOW</span>
                       )}
                     </td>
                   </tr>
@@ -568,22 +550,22 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
                     <td className="py-2.5 px-3 text-slate-300">{(stabilityResult.audit.area30To40DegMrad / 0.030).toFixed(2)}x</td>
                     <td className="py-2.5 px-3 text-right">
                       {stabilityResult.audit.criteria.area30To40Pass ? (
-                        <span className="inline-flex items-center gap-1 text-emerald-400 font-bold"><Check className="w-3.5 h-3.5" /> PASS</span>
+                        <span className="inline-flex items-center gap-1 text-emerald-400 font-bold"><Check className="w-3.5 h-3.5" /> EST. ABOVE</span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-rose-400 font-bold"><XCircle className="w-3.5 h-3.5" /> FAIL</span>
+                        <span className="inline-flex items-center gap-1 text-rose-400 font-bold"><XCircle className="w-3.5 h-3.5" /> EST. BELOW</span>
                       )}
                     </td>
                   </tr>
                   <tr>
-                    <td className="py-2.5 px-3 text-slate-200">Initial Metacentric Height (GM₀)</td>
+                    <td className="py-2.5 px-3 text-slate-200">Estimated Initial Metacentric Height (GM₀)</td>
                     <td className="py-2.5 px-3 text-slate-400">≥ 0.150 m</td>
                     <td className="py-2.5 px-3 text-teal-400 font-bold">{stabilityResult.audit.gm0M} m</td>
                     <td className="py-2.5 px-3 text-slate-300">{(stabilityResult.audit.gm0M / 0.150).toFixed(2)}x</td>
                     <td className="py-2.5 px-3 text-right">
                       {stabilityResult.audit.criteria.gm0Pass ? (
-                        <span className="inline-flex items-center gap-1 text-emerald-400 font-bold"><Check className="w-3.5 h-3.5" /> PASS</span>
+                        <span className="inline-flex items-center gap-1 text-emerald-400 font-bold"><Check className="w-3.5 h-3.5" /> EST. ABOVE</span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-rose-400 font-bold"><XCircle className="w-3.5 h-3.5" /> FAIL</span>
+                        <span className="inline-flex items-center gap-1 text-rose-400 font-bold"><XCircle className="w-3.5 h-3.5" /> EST. BELOW</span>
                       )}
                     </td>
                   </tr>
@@ -594,9 +576,9 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
                     <td className="py-2.5 px-3 text-slate-300">{(stabilityResult.audit.gzMaxM / 0.200).toFixed(2)}x</td>
                     <td className="py-2.5 px-3 text-right">
                       {stabilityResult.audit.criteria.gzMaxPass ? (
-                        <span className="inline-flex items-center gap-1 text-emerald-400 font-bold"><Check className="w-3.5 h-3.5" /> PASS</span>
+                        <span className="inline-flex items-center gap-1 text-emerald-400 font-bold"><Check className="w-3.5 h-3.5" /> EST. ABOVE</span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-rose-400 font-bold"><XCircle className="w-3.5 h-3.5" /> FAIL</span>
+                        <span className="inline-flex items-center gap-1 text-rose-400 font-bold"><XCircle className="w-3.5 h-3.5" /> EST. BELOW</span>
                       )}
                     </td>
                   </tr>
@@ -651,10 +633,10 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
         <div className="space-y-4">
           <div className="bg-slate-900 border border-slate-800 rounded p-4 text-xs font-mono space-y-3">
             <h3 className="text-xs font-semibold text-slate-200 pb-2 border-b border-slate-800">
-              IMO MSC.267(85) Statutory Stability Regulatory Background
+              Intact Stability — Informative Code Comparison (Applicability TBD)
             </h3>
             <p className="text-slate-300 leading-relaxed font-sans">
-              The 2008 Intact Stability Code applies to all commercial and autonomous marine craft. It mandates positive dynamic stability reserves against gusting cross-winds and dynamic sea states.
+              Applicability of IMO MSC.267(85) to this particular small unmanned craft must be established by the responsible flag authority, class and project design basis. The numerical thresholds shown here are comparison references, NOT an asserted mandatory certification standard for USV-01.
             </p>
             <div className="p-3 bg-slate-950 rounded border border-slate-800 text-[11px] space-y-1.5">
               <div><strong className="text-teal-400">Area under GZ (0°-30°):</strong> Minimum 0.055 m-rad to prevent capsize under sudden gust heeling moments.</div>

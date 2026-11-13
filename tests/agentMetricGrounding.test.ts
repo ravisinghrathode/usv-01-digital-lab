@@ -39,9 +39,11 @@ describe('AGT-02 model-output numerical grounding', () => {
     expect(r.status).toBe('NEEDS_HUMAN_APPROVAL');
     expect(r.deterministicToolEvidence).toHaveLength(1);
     expect(r.deterministicToolEvidence[0].verified).toBe(true);
-    expect(r.data.keyMetricsOrigin).toBe('DETERMINISTIC_TOOL_OUTPUT_UNCERTIFIED');
-    expect(r.data.keyMetrics['TOOL-ELECTRICAL-01.averagePowerW']).toBe(6742);
-    expect(r.data.keyMetrics['TOOL-ELECTRICAL-01.estimatedEnduranceHours']).toBeCloseTo(14.24, 2);
+    expect(r.data.keyMetricsOrigin).toBe('NO_RELEASE_AUTHORIZED_METRICS');
+    expect(r.data.keyMetrics).toEqual({});
+    expect(r.data.preliminaryToolMetrics['TOOL-ELECTRICAL-01.averagePowerW']).toBe(6742);
+    expect(r.data.preliminaryToolMetrics['TOOL-ELECTRICAL-01.idealizedEnergyUpperBoundHours']).toBeCloseTo(14.24, 2);
+    expect(r.data.engineeringReleaseBlocked).toBe(true);
     expect(r.data.modelSuggestedKeyMetrics.preliminaryEndurance_h).toBe(999);
     expect(r.data.keyMetrics.preliminaryEndurance_h).toBeUndefined();
     expect(r.evidenceValid).toBe(false);

@@ -14,7 +14,7 @@
 | HYD-01 | Hydrostatics / stability | Approved hull offsets, hydrostatic tables, verified KG, GZ curves, loading cases, reference comparison | Preliminary only |
 | RES-01 | Resistance / power and twin-electric propulsion | Controlled hull offsets, appended resistance curve with uncertainty, installed pod/thrust/shaft/thermal/energy maps, matched-power VVP-001 sea trials and independent approval | Unsafe numerical inference fixed on proposed PR #39; physical evidence and review remain open. Evidence intake and checks: `docs/RES01_RESISTANCE_PROPULSION_TEST_PROCEDURE.md` and `src/core/verification/ResistancePropulsionEvidence.ts` |
 | STR-01 | Structures | Load envelopes, class-rule citations, FEA correlations, fatigue and buckling | Pending |
-| AUT-01 | Safety-critical autonomy | COLREG encounter suite, sensing uncertainty, controlled loss-of-link simulation and tests | Pending |
+| AUT-01 | Safety-critical autonomy | Non-actuating COLREG screen, synthetic sensor evidence and advisory SIL replay in PR #41; full closed-loop SIL, physical HIL, qualified independent review, regulated sea trials and Director release evidence required | Software controls implemented; physical and governance acceptance OPEN |
 | MAR-01 | Marine systems integration | Launch/recovery loads, acoustics wet-end, thermal, corrosion/fouling, condensation/bilge evidence | Pending |
 | INT-01 | Google AI Studio source sync | Live deployed revision/commit digest matching accepted GitHub SHA | Not yet observed |
 | INT-02 | Google Drive | Authenticated read/write test of controlled project artifact and role controls | Not yet observed |
@@ -29,7 +29,7 @@
 4. External connection readiness requires authenticated handshake and matching commit provenance. A configured UI button or local interface is insufficient.
 5. A human engineering authority must verify acceptance material; AI agents may prepare and check evidence but cannot sign on their behalf.
 
-**RES-01 acceptance status:** The new numeric screen, if supplied with externally obtained measurements, reports `NUMERIC_PASS_UNCERTIFIED` rather than automatic closure. Do not interpret a metadata hash, GitHub CI green Stage B, or entered test numbers as proof of engineering approval. PR #39 requires independent expert verification and final source-digest-bound human sign-off.
+**RES-01 acceptance status:**The new numeric screen, if supplied with externally obtained measurements, reports `NUMERIC_PASS_UNCERTIFIED` rather than automatic closure. Do not interpret a metadata hash, GitHub CI green Stage B, or entered test numbers as proof of engineering approval. PR #39 requires independent expert verification and final source-digest-bound human sign-off.
 
 ## Follow-up evidence collection
 

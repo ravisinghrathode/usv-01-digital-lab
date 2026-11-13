@@ -86,7 +86,8 @@ describe('AGT-02 reproducible first-principles worked-example checks', () => {
     expect(r.output.averagePowerW).toBe(6742);
     expect(r.output.nominalBusCurrentAmps).toBeCloseTo(6742/48, 2);
     expect(r.output.usableBatteryKwh).toBe(96);
-    expect(r.output.estimatedEnduranceHours).toBeCloseTo(96000/6742, 2);
+    expect(r.output.estimatedEnduranceHours).toBeNull();
+    expect(r.output.idealizedEnergyUpperBoundHours).toBeCloseTo(96000/6742, 2);
     expect((await calc('TOOL-ELECTRICAL-01',{busVoltageV:0,consumers:[]})).success).toBe(false);
   });
 
@@ -97,15 +98,17 @@ describe('AGT-02 reproducible first-principles worked-example checks', () => {
     const r = await calc('TOOL-STRUCTURES-01',example);
     expect(r.success).toBe(true);
     expect(r.output.engineeringComplianceValidated).toBe(false);
-    expect(r.output.modelStatus).toBe('UNVALIDATED_SCANTLING_SCREEN');
+    expect(r.output.modelStatus).toBe('BLOCKED_UNVALIDATED_SCANTLING_FORMULA');
+    expect(r.output.minPlatingThicknessMm).toBeNull();
+    expect(r.output.recommendedNominalThicknessMm).toBeNull();
     expect((await calc('TOOL-STRUCTURES-01',{...example,safetyFactor:0})).success).toBe(false);
     expect((await calc('TOOL-STRUCTURES-01',{...example,materialYieldStrengthMpa:-1})).success).toBe(false);
   });
 
   it('checks head-on CPA geometry without issuing a purported safe helm course', async () => {
     const r = await calc('TOOL-COLREGS-01', {
-      ownCourseDeg:0,ownSpeedKnots:12,targetBearingDeg:0,targetRangeNm:2,
-      targetCourseDeg:180,targetSpeedKnots:12
+      ownCourseDeg:0,ownSpeedKnots:12,targetBearingDeg:0, bearingReference: 'TRUE_NORTH',targetRangeNm:2,
+      targetCourseDeg:180,targetSpeedKnots:12, visibilityMode: 'IN_SIGHT', ownVesselType: 'POWER_DRIVEN', targetVesselType: 'POWER_DRIVEN'
     });
     expect(r.success).toBe(true);
     expect(r.output.relativeSpeedKnots).toBeCloseTo(24,1);

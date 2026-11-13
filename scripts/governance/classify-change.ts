@@ -44,20 +44,59 @@ export function classifyFile(filePath: string): { categories: ChangeCategory[]; 
   const categories: ChangeCategory[] = [];
   let risk: RiskClassification = 'LOW';
 
+  // A change to the autonomy/safety-evidence path or the authority gate
+  // is safety-critical even when it sits in a generic verification or docs
+  // directory. Do not infer risk solely from filename extension.
+  const autonomyOrSafetyAcceptance = (
+    /^src\/core\/verification\/(Autonomy[^/]*|SafetyScenarioSuite|MarineSystemsSuite|AcceptanceGate)\.ts$/i.test(norm) ||
+    norm === 'src/components/SoftwareAutonomyView.tsx' ||
+    /^tests\/(autonomy[^/]*|governance)\.test\.ts$/i.test(norm) ||
+    /^docs\/AUT01_/i.test(norm) ||
+    norm === 'docs/CONSOLIDATED_ACCEPTANCE_REGISTER.md' ||
+    norm.startsWith('evidence/aut01/')
+  );
+  const governanceAuthorityControl = (
+    norm.startsWith('scripts/governance/') ||
+    norm.startsWith('governance/approvals/') ||
+    norm.startsWith('governance/ecr/')
+  );
+
   // Category matching
+  if (autonomyOrSafetyAcceptance || governanceAuthorityControl) {
+    categories.push('SAFETY');
+  }
   if (norm.startsWith('.github/') || norm.includes('package.json') || norm.includes('tsconfig.json') || norm.includes('vite.config.ts')) {
     categories.push('CONFIGURATION');
   }
 
-  if (norm.includes('src/core/safety/') || norm.includes('src/core/auth/')) {
+  // Never silently downgrade marine verification, evidence acceptance, or
+  // governance enforcement changes to ordinary MEDIUM-risk software/docs.
+  // These files can alter whether an unsafe naval design is reported as accepted.
+  if (
+    norm.includes('src/core/safety/') ||
+    norm.includes('src/core/auth/') ||
+    norm.startsWith('scripts/governance/')
+  ) {
     categories.push('SECURITY');
   }
 
-  if (norm.includes('src/core/safety/') || norm.includes('src/core/tools/naval/') || norm.includes('types/safety.ts')) {
+  if (
+    norm.includes('src/core/safety/') ||
+    norm.includes('src/core/tools/naval/') ||
+    norm.includes('types/safety.ts') ||
+    norm.startsWith('src/core/verification/') ||
+    /^tests\/(marineSystems|acceptanceGate|acceptanceCampaign)/.test(norm)
+  ) {
     categories.push('SAFETY');
   }
 
-  if (norm.includes('USV01_PROJECT_CONTEXT.md') || norm.startsWith('data/') || norm.includes('src/data/')) {
+  if (
+    norm.includes('USV01_PROJECT_CONTEXT.md') ||
+    norm.startsWith('data/') ||
+    norm.includes('src/data/') ||
+    /^docs\/MAR[0-9]+_/.test(norm) ||
+    norm.startsWith('governance/ecr/')
+  ) {
     categories.push('REQUIREMENTS');
   }
 

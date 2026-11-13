@@ -832,7 +832,7 @@ export class VerifyUsv01Engine {
         waterplaneCoefficientCwp: 0.65,
         kgMeters: 0.8,
         seawaterDensityKgM3: 1025,
-        // No fabricated propulsive efficiency; RES-01 is deliberately unverified.
+        // RES-01: no artificial propulsive efficiency in the verification fixture.
         waterTempCelsius: 15,
         deadriseAngleDeg: 18,
         unsupportedPanelWidthMm: 500,
@@ -850,7 +850,7 @@ export class VerifyUsv01Engine {
         ],
         ownCourseDeg: 0,
         ownSpeedKnots: 20,
-        targetBearingDeg: 45,
+        targetBearingDeg: 45, bearingReference: 'TRUE_NORTH',
         targetRangeNm: 2.5,
         targetCourseDeg: 270,
         targetSpeedKnots: 15

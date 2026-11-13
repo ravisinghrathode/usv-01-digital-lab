@@ -204,24 +204,25 @@ Never fabricate dimensions if marked TBD.`,
     speciality: 'Hydrostatics, transverse/longitudinal metacentric heights (GM, GML), GZ curve, intact stability',
     responsibilities: [
       'Compute transverse center of buoyancy (KB), metacentric radius (BMt), and transverse metacentric height (GMt = KB + BMt - KG)',
-      'Assess intact stability compliance against IMO A.749 / HSC Code criteria',
-      'Execute deterministic Simpson integration hydrostatic calculations'
+      'Assess stability against only the documented rules applicable to the chosen USV configuration; never assume IMO HSC/IS Code applicability',
+      'Compare source-referenced geometry-integrated hydrostatics with independent software and document errors, free-surface moments and loading cases'
     ],
     systemInstructions: `You are the Hydrostatics & Stability Engineer.
-You MUST invoke TOOL-HYDROSTATICS-01 to compute displacement, KB, BMt, and GMt.
-GMt must be strictly positive (GMt > 0.35m minimum for small USVs). Any negative or borderline GM is a SAFETY_CRITICAL alert.`,
+For source-referenced actual hull offset stations, use TOOL-OFFSET-HYDROSTATICS-01 to calculate displacement, buoyancy centers, metacentric estimates and fixed-trim preliminary righting arms.
+When approved hull offsets or mass/CG evidence are absent, use TOOL-HYDROSTATICS-01 for parametric screening only; NEVER present screening GM/GZ as a compliance certificate.
+Do not invent a mandatory GM threshold: first establish the applicable standard, load cases and accepted criterion. Negative GM, inadequate reserve, unverified KG or missing geometry are safety review flags. HYD-01 release remains subject to independent review and Director sign-off.`,
     inputSchema: genericInputSchema,
     outputSchema: genericOutputSchema,
     requiredKnowledgeSources: ['IMO_HSC_CODE_2000', 'ISO_12217_SMALL_CRAFT_STABILITY'],
-    permittedTools: ['TOOL-HYDROSTATICS-01', 'TOOL-MASS-BALANCE-01'],
+    permittedTools: ['TOOL-HYDROSTATICS-01', 'TOOL-OFFSET-HYDROSTATICS-01', 'TOOL-MASS-BALANCE-01'],
     modelConfig: { preferredProvider: 'gemini', modelName: 'gemini-3.8-flash', temperature: 0.0, maxTokens: 4096, fallbackToMock: true },
     reportingTo: 'LEAD-SYS-01',
     dependencies: ['HULL-GEO-05', 'WGT-BAL-09'],
     executionPermissions: ['CALCULATION_EXEC', 'VVT_REVIEW'],
     verificationCriteria: {
-      requiredChecklist: ['Run deterministic hydrostatic tool', 'Verify GMt > 0.35m', 'Check GZ area requirements'],
+      requiredChecklist: ['Trace source geometry and loading revision', 'Run geometry-integrated hydrostatics where offsets exist', 'Compare independent GZ and hydrostatic reference evidence', 'Confirm stability regulatory applicability and relevant margins'],
       mandatoryDeterministicTools: ['TOOL-HYDROSTATICS-01'],
-      acceptanceThresholds: { minGMtMeters: 0.35 },
+      acceptanceThresholds: {},
       independentReviewRequired: true
     },
     auditRequirement: { logLevel: 'SAFETY_CRITICAL', retainExecutionTrace: true, recordAssumptions: true, traceableToRequirementIds: true }

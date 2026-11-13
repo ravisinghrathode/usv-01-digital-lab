@@ -35,6 +35,34 @@ describe('USV-01 comprehensive acceptance is fail-closed', () => {
     expect(evaluateAcceptance('unknown', [record]).baselineValid).toBe(false);
   });
 
+  it('fails closed on malformed untrusted evidence without throwing', () => {
+    const malformed = [
+      null, undefined, 7, [], { requirementId: 'HYD-01' },
+      { ...record, reviewedBy: null },
+      { ...record, referenceUri: null },
+      { ...record, referenceSha256: 12 },
+      { ...record, sourceType: 'UNTRUSTED' },
+      { ...record, independentlyVerified: 'yes' },
+      { ...record, attestationVerified: 'yes' },
+      { ...record, referenceUri: 'https://user:secret@example.org/evidence' },
+      { ...record, referenceUri: 'https://example.org@attacker.test/ref' }
+    ] as unknown as AcceptanceEvidence[];
+    const report = evaluateAcceptance(sha, malformed);
+    const hydro = report.requirements.find(r => r.id === 'HYD-01');
+    expect(hydro?.status).toBe('PENDING_EVIDENCE');
+    expect(hydro?.matchingArtifacts).toBe(0);
+    expect(report.engineeringReleaseAccepted).toBe(false);
+    expect(evaluateAcceptance(sha, null as unknown as AcceptanceEvidence[]).pendingCount).toBe(15);
+    expect(evaluateAcceptance(null as unknown as string, [record]).baselineValid).toBe(false);
+  });
+
+  it('accepts well-formed submissions only as unverified, never certified', () => {
+    const result = evaluateAcceptance(sha, [record]);
+    expect(result.requirements.find(r => r.id === 'HYD-01')?.status).toBe('SUBMITTED_UNVERIFIED');
+    expect(result.verifiedCount).toBe(0);
+    expect(result.engineeringReleaseAccepted).toBe(false);
+  });
+
   it('rejects untraceable evidence records', () => {
     const report = evaluateAcceptance(sha, [{ ...record, referenceSha256: 'no-checksum', referenceUri: 'file:///private/path' }]);
     expect(report.requirements.find(r => r.id === 'HYD-01')?.status).toBe('PENDING_EVIDENCE');

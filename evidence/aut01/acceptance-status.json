@@ -1,0 +1,98 @@
+{
+  "schema_version": "AUT01-ACCEPTANCE-1.0",
+  "blocker_id": "AUT-01",
+  "status": "SOFTWARE_REMEDIATED_PHYSICAL_VALIDATION_OPEN",
+  "record_date": "2026-11-13",
+  "source_of_truth": "https://github.com/ravisinghrathode/usv-01-digital-lab",
+  "evidence_class": "SIMULATED_ONLY",
+  "code_references": [
+    "src/core/verification/AutonomyColregsSafetyScreen.ts",
+    "src/core/verification/AutonomySensorEvidence.ts",
+    "src/core/verification/AutonomySilReplay.ts"
+  ],
+  "test_references": [
+    "tests/autonomyColregsSafetyScreen.test.ts",
+    "tests/autonomySensorSilReplay.test.ts"
+  ],
+  "requirements": [
+    "AUT-REQ-001",
+    "AUT-REQ-002",
+    "AUT-REQ-003",
+    "AUT-REQ-004",
+    "AUT-REQ-005",
+    "AUT-REQ-006",
+    "AUT-REQ-007",
+    "AUT-REQ-008",
+    "AUT-REQ-009",
+    "AUT-REQ-010",
+    "AUT-REQ-011"
+  ],
+  "gate_evidence": [
+    {
+      "gate_id": "AUT-G01",
+      "name": "Static analysis plus synthetic unit tests",
+      "status": "CI_REQUIRED_FINAL_SHA",
+      "evidence_reference": "GitHub Actions PR #41 required check; verify latest SHA"
+    },
+    {
+      "gate_id": "AUT-G02",
+      "name": "Qualified COLREG maritime and systems independent review",
+      "status": "NOT_SUBMITTED",
+      "evidence_reference": null
+    },
+    {
+      "gate_id": "AUT-G03",
+      "name": "Gemini second-AI engineering review against final SHA",
+      "status": "NOT_SUBMITTED",
+      "evidence_reference": null
+    },
+    {
+      "gate_id": "AUT-G04",
+      "name": "Calibrated sensor package and integrity characterization",
+      "status": "NOT_SUBMITTED",
+      "evidence_reference": null
+    },
+    {
+      "gate_id": "AUT-G05",
+      "name": "Vessel dynamics, multi-encounter closed-loop SIL and ODD coverage",
+      "status": "NOT_EXECUTED",
+      "evidence_reference": null
+    },
+    {
+      "gate_id": "AUT-G06",
+      "name": "Physical sensor and independent MCU hardware-in-the-loop",
+      "status": "NOT_EXECUTED",
+      "evidence_reference": null
+    },
+    {
+      "gate_id": "AUT-G07",
+      "name": "Supervised authorized sea-trial campaign",
+      "status": "NOT_EXECUTED",
+      "evidence_reference": null
+    },
+    {
+      "gate_id": "AUT-G08",
+      "name": "Lights, sound signals and local COLREG applicability audit",
+      "status": "NOT_SUBMITTED",
+      "evidence_reference": null
+    },
+    {
+      "gate_id": "AUT-G09",
+      "name": "Stage C independent review and finding closure",
+      "status": "NOT_SUBMITTED",
+      "evidence_reference": null
+    },
+    {
+      "gate_id": "AUT-G10",
+      "name": "Director Stage D signed approval and Stage E protected merge",
+      "status": "NOT_SUBMITTED",
+      "evidence_reference": null
+    }
+  ],
+  "autonomous_navigation_authorized": false,
+  "colregs_compliance_certified": false,
+  "physical_validation_complete": false,
+  "release_authorized": false,
+  "closure_authorized": false,
+  "evidence_rules": "No placeholder, synthetic, model-generated or code-only result satisfies an external gate; retain NOT_SUBMITTED/NOT_EXECUTED until independent evidence reviewed."
+}
