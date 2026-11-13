@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { MissionControlCoordinator } from '../../src/core/mission-control/MissionControlCoordinator.ts';
 import { MissionControlStore } from '../../src/core/mission-control/MissionControlStore.ts';
+import { requireLabCommissioningPolicy } from '../../src/core/mission-control/LabCommissioningPolicy.ts';
 
 const args = process.argv.slice(2);
 const readArg = (name: string): string | undefined => {
@@ -18,10 +19,9 @@ if (!commitSha) {
   process.exit(2);
 }
 
-if (process.env.USV_SUBSCRIPTION_PILOT !== 'enabled') {
-  console.error('Set USV_SUBSCRIPTION_PILOT=enabled only after local CLI login is confirmed.');
-  process.exit(2);
-}
+// Existing subscription pilot opt-in permits non-operational research only;
+ // it cannot authorize baseline release, even if a reviewer approves a draft.
+const commissioning = requireLabCommissioningPolicy(process.env);
 
 const store = new MissionControlStore(path.join(workingDirectory, 'data', 'mission_control_state.json'));
 const coordinator = new MissionControlCoordinator(store);
@@ -36,12 +36,12 @@ const result = await coordinator.execute({
     'Unknown engineering values remain TBD.'
   ],
   parameters: {},
-  context: { pilot: true, nonBaseline: true },
+  context: { pilot: true, nonBaseline: true, commissioningScope: commissioning.scope, engineeringReleaseApproved: false },
   commitSha,
   workingDirectory,
   safetyCritical: false,
   maxReviewCycles: 2
 });
 
-console.log(JSON.stringify(result, null, 2));
+console.log(JSON.stringify({ ...result, commissioning }, null, 2));
 if (result.state === 'FAILED' || result.state === 'BLOCKED') process.exitCode = 1;
