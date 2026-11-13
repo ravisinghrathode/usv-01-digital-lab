@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "1.0",
+  "requirementId": "HYD-01",
+  "purpose": "Controlled missing-evidence ledger; not a source of verified physical measurements",
+  "vesselConfigurationId": null,
+  "geometryRevision": null,
+  "designBasisId": null,
+  "baselineSha": null,
+  "requiredLoadCaseIds": [],
+  "evidence": [],
+  "status": "BLOCKED_MISSING_EVIDENCE",
+  "whyEmpty": "No approved hull offsets, verified CG and loading case matrix, independent hydrostatic reference, signed naval review or Director digest was available. Never supply a dummy SHA or fabricate a measurement."
+}
