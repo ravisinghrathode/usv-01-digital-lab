@@ -599,10 +599,14 @@ def run_staged_case(manifest: dict, stage: Path, work_root: Path,
         key_results: dict = {}
         if manifest["family"] == "OPENFOAM_CFD":
             quality.update(_parse_check_mesh(command_text.get("checkMesh",""),case))
-            residual, residuals_by_field = _parse_final_residuals(command_text.get("simpleFoam",""))
-            quality["finalResidual"] = residual
+            residual_info = _parse_openfoam_residuals(command_text.get("simpleFoam",""))
+            quality["finalResidual"] = residual_info["maximumFinalResidual"]
+            quality["initialResidualsByField"] = residual_info["initialResidualsByField"]
+            quality["solverDeclaredConverged"] = residual_info["solverDeclaredConverged"]
+            quality["convergedIterations"] = residual_info["convergedIterations"]
             key_results = {
-                "finalResidualsByField":residuals_by_field,
+                "initialResidualsByField":residual_info["initialResidualsByField"],
+                "finalResidualsByField":residual_info["finalResidualsByField"],
                 "forceCoefficients":_parse_force_coefficients(case)
             }
             try:
@@ -627,7 +631,8 @@ def run_staged_case(manifest: dict, stage: Path, work_root: Path,
                     case,artifact_root,manifest["jobRef"]+"-FAILED",failure_summary)
                 raise RuntimeError(
                     str(exc)+"; quality="+json.dumps(quality,sort_keys=True)+
-                    "; residualsByField="+json.dumps(residuals_by_field,sort_keys=True)+
+                    "; initialResidualsByField="+json.dumps(residual_info["initialResidualsByField"],sort_keys=True)+
+                    "; finalResidualsByField="+json.dumps(residual_info["finalResidualsByField"],sort_keys=True)+
                     "; failureEvidenceSha256="+evidence_sha+
                     "; failureEvidencePath="+str(evidence_path)
                 ) from exc
