@@ -2,6 +2,7 @@ import { AgentRegistry } from '../registry/AgentRegistry.ts';
 import { ToolRegistry } from '../tools/ToolRegistry.ts';
 import { ACCEPTANCE_REQUIREMENTS, evaluateAcceptance, type AcceptanceId, type AcceptanceEvidence } from './AcceptanceGate.ts';
 import { evaluateBenchmark, type ReferenceMeasurement } from './EngineeringBenchmarks.ts';
+import { screenResistancePropulsionEvidence } from './ResistancePropulsionEvidence.ts';
 
 /**
  * Integrated software-observable acceptance campaign. This is NOT an engineering
@@ -29,6 +30,7 @@ export interface CampaignInputs {
   baselineSha: string;
   evidence?: readonly AcceptanceEvidence[];
   benchmarkMeasurements?: readonly ReferenceMeasurement[];
+  resistancePropulsionEvidence?: unknown;
 }
 
 export function runAcceptanceCampaign(input: CampaignInputs) {
@@ -55,6 +57,7 @@ export function runAcceptanceCampaign(input: CampaignInputs) {
     agentFindings.every(a => a.configurationValid);
   const acceptance = evaluateAcceptance(input.baselineSha, input.evidence);
   const benchmark = evaluateBenchmark(input.benchmarkMeasurements || []);
+  const resistancePropulsion = screenResistancePropulsionEvidence(input.resistancePropulsionEvidence);
   const assigned = new Set(CAMPAIGN_WORKSTREAMS.flatMap(w => [...w.criteria]));
   const missingCriteria = ACCEPTANCE_REQUIREMENTS.filter(c => !assigned.has(c.id)).map(c => c.id);
   const workstreams = CAMPAIGN_WORKSTREAMS.map(w => {
@@ -83,6 +86,7 @@ export function runAcceptanceCampaign(input: CampaignInputs) {
     agentFindings,
     registryErrors: registryCheck.errors,
     benchmark,
+    resistancePropulsion,
     missingCriteria,
     workstreams,
     pendingWorkstreams: workstreams.filter(w => !w.accepted).length,
@@ -108,6 +112,8 @@ export function acceptanceCampaignMarkdown(
       (report.structurallyValid ? 'PASS' : 'FAIL') + ')',
     'External acceptance: **NOT APPROVED**',
     'Benchmark comparison: ' + report.benchmark.status,
+    'RES-01 numerical evidence screening: ' + report.resistancePropulsion.status + ' (not a physical acceptance or release signature)',
+    'RES-01 unclosed external engineering/review gates: ' + report.resistancePropulsion.missingGates.join(', '),
     '',
     '| Workstream | Requirement | Disposition |',
     '|---|---|---|',
