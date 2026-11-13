@@ -14,6 +14,11 @@ const genericOutputSchema = z.object({
   disciplineSummary: z.string(),
   keyMetrics: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
   designDecisions: z.array(z.string()),
+  metricProvenance: z.record(z.string(), z.object({
+    sourceKind: z.enum(['SOURCE_DOCUMENT','HYPOTHESIS']),
+    sourceReference: z.string().min(3),
+    justification: z.string().min(5)
+  })).optional(),
   assumptions: z.array(z.object({
     id: z.string(),
     category: z.enum(['ASSUMPTION', 'FACT', 'CALCULATION', 'TBD', 'PROPOSAL']),
