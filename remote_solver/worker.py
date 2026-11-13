@@ -251,16 +251,29 @@ def _parse_check_mesh(check_log: str, case: Path) -> dict:
         "maximumNonOrthogonalityDeg": float(max_non_orth) if isinstance(max_non_orth, (int, float)) else None,
     }
 
-def _parse_final_residuals(solver_log: str) -> tuple[float | None, dict[str, float]]:
-    last: dict[str, float] = {}
+def _parse_openfoam_residuals(solver_log: str) -> dict:
+    """Last initial/final residual per field plus explicit SIMPLE convergence."""
+    initial: dict[str,float] = {}
+    final: dict[str,float] = {}
     pattern = re.compile(
-        rf"Solving\s+for\s+([^,\s]+).*?Final\s+residual\s*=\s*({FLOAT})",
+        rf"Solving\s+for\s+([^,\s]+).*?Initial\s+residual\s*=\s*({FLOAT}).*?"
+        rf"Final\s+residual\s*=\s*({FLOAT})",
         re.IGNORECASE)
-    for field, value in pattern.findall(solver_log):
-        number = float(value)
-        if math.isfinite(number):
-            last[field] = number
-    return (max(last.values()) if last else None, last)
+    for field, initial_value, final_value in pattern.findall(solver_log):
+        iv=float(initial_value); fv=float(final_value)
+        if math.isfinite(iv) and math.isfinite(fv):
+            initial[field]=iv
+            final[field]=fv
+    convergence = re.findall(
+        r"SIMPLE\s+solution\s+converged\s+in\s+([0-9.]+)\s+iterations",
+        solver_log,re.IGNORECASE)
+    return {
+        "initialResidualsByField":initial,
+        "finalResidualsByField":final,
+        "maximumFinalResidual":max(final.values()) if final else None,
+        "solverDeclaredConverged":bool(convergence),
+        "convergedIterations":float(convergence[-1]) if convergence else None,
+    }
 
 def _parse_force_coefficients(case: Path) -> dict:
     for file in reversed(sorted(case.glob("postProcessing/**/coefficient.dat"))):
