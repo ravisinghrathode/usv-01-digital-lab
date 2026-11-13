@@ -210,11 +210,19 @@ def _version_command(family: str) -> list[str]:
     return ["simpleFoam", "-help"] if family == "OPENFOAM_CFD" else ["ccx", "-v"]
 
 def _parse_version(text: str, family: str) -> str:
-    patterns = (
-        [r"OpenFOAM[^\n]*?(?:v|version[ :=-]*)([A-Za-z0-9_.+-]+)", r"OpenFOAM[- ]([A-Za-z0-9_.+-]+)"]
-        if family == "OPENFOAM_CFD"
-        else [r"(?:CalculiX(?: CrunchiX)?[^\n]*?(?:version|Version)?[ :=-]*|This\s+is\s+Version\s+)([0-9]+(?:\.[0-9]+)+)"]
-    )
+    if family == "OPENFOAM_CFD":
+        # Real v2606 package banner: "Using: OpenFOAM-2606 (2606)".
+        # Restrict to numeric release identifiers so the generic letter "v"
+        # in nearby prose can never become a bogus version such as "isit".
+        patterns = [
+            r"Using:\s*OpenFOAM[- ]v?([0-9]{4,6})(?:\s*\([0-9]{4,6}\))?",
+            r"OpenFOAM[- ]v([0-9]{4,6})",
+            r"Version:\s*v?([0-9]{4,6})",
+        ]
+    else:
+        patterns = [
+            r"(?:CalculiX(?: CrunchiX)?[^\n]*?(?:version|Version)?[ :=-]*|This\s+is\s+Version\s+)([0-9]+(?:\.[0-9]+)+)"
+        ]
     for pattern in patterns:
         m = re.search(pattern, text, re.IGNORECASE)
         if m:
