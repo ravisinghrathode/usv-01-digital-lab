@@ -48,6 +48,7 @@ export interface DesignLoopRequirements {
 export interface ScreenedProposal {
   /** These are raw untrusted suggestions, NEVER released particulars. */
   parameters: Record<string, number>;
+  conceptTopology: 'MONOHULL'|'CATAMARAN'|'TRIMARAN'|'OTHER'|'UNSPECIFIED';
   unverifiedMetricProvenance: Record<string, {sourceKind: string; sourceReference: string; justification: string}>;
   missingEngineeringInputs: string[];
   screenResults: { toolId: string; success: boolean; outputDigest: string; result?: Record<string, unknown>; error?: string }[];
@@ -307,10 +308,11 @@ export async function runAgentDesignLoop(
         previousCritique: feedback,
         mustReviseWeaknesses: index > 0,
         numericKeysIfSourcedOrExplicitlyAssumed: [...supported],
+        requiredConceptTopology: 'MONOHULL or CATAMARAN or TRIMARAN or OTHER; must disclose topology, do not assume hull type from dimensions',
         requiredNumericEvidenceFormat: {metricProvenance:{'<metricName>':{sourceKind:'SOURCE_DOCUMENT or HYPOTHESIS',sourceReference:'exact registered source ID or explicit assumption ID',justification:'why this numerical claim is proposed'}}}
       },
       priorAgentOutputs: feedback ? { criticA15: feedback } : undefined,
-      userNotes: 'For EACH numeric keyMetrics value provide metricProvenance with sourceKind SOURCE_DOCUMENT (exact sourceReference from mission list) or HYPOTHESIS (explicit assumption identifier), sourceReference, justification. Missing or mismatched provenance prevents screening. You must not invent source inspection or authority. Use only named supported keys; missing info is TBD, not guessed baseline. Treat legacy heuristic as an unverified brainstorm; do not claim compliance, CFD/FEA or approval.'
+      userNotes: 'Declare conceptTopology as MONOHULL, CATAMARAN, TRIMARAN or OTHER. For EACH numeric keyMetrics value provide metricProvenance with sourceKind SOURCE_DOCUMENT (exact sourceReference from mission list) or HYPOTHESIS (explicit assumption identifier), sourceReference, justification. Missing or mismatched provenance prevents screening. You must not invent source inspection or authority. Use only named supported keys; missing info is TBD, not guessed baseline. Treat legacy heuristic as an unverified brainstorm; do not claim compliance, CFD/FEA or approval.'
     };
     const proposal = await executeAgent(proposer.id, proposalInput);
     report.completedAgentCalls++;
@@ -318,24 +320,32 @@ export async function runAgentDesignLoop(
     if (!live(proposal, proposer.id)) { report.stopReason = 'NON_LIVE_PROVIDER'; break; }
 
     const {numbers, claims, unsubstantiated} = extractUnverifiedNumbers(proposal, input.sourceReferences);
+    const rawTopology: unknown = proposal.data?.conceptTopology;
+    const topology: ScreenedProposal['conceptTopology'] =
+      ['MONOHULL','CATAMARAN','TRIMARAN','OTHER'].includes(String(rawTopology))
+        ? rawTopology as ScreenedProposal['conceptTopology'] : 'UNSPECIFIED';
     if (!Object.keys(numbers).length) { report.stopReason = 'INVALID_PROPOSAL'; break; }
     if (previousProposal && hash(previousProposal) === hash(numbers)) {
       report.stopReason = 'NO_CHANGE'; break;
     }
 
     const missingEngineeringInputs: string[] = [...unsubstantiated];
+    const supportedTopology = topology === 'MONOHULL';
+    if (!supportedTopology) {
+      missingEngineeringInputs.push('Topology '+topology+': single-hull empirical calculators are NOT applicable; independently approved multihull model or actual CFD/FEA required');
+    }
     for (const [key,claim] of Object.entries(claims)) if (claim.sourceKind === 'HYPOTHESIS') {
       missingEngineeringInputs.push(key+': unverified assumption ('+claim.sourceReference+')');
     }
     const screenResults: ScreenedProposal['screenResults'] = [];
     const has = (names: string[]) => names.every(key => numbers[key] !== undefined);
     const toolCases: Array<[string, string[], Record<string, number>]> = [];
-    if (has(REQUIRED_HYDRO) && (numbers.blockCoefficientCb !== undefined || numbers.displacementTonnes !== undefined)) {
+    if (supportedTopology && has(REQUIRED_HYDRO) && (numbers.blockCoefficientCb !== undefined || numbers.displacementTonnes !== undefined)) {
       toolCases.push(['TOOL-HYDROSTATICS-01', ['CALCULATION_EXEC'], numbers]);
     } else {
       missingEngineeringInputs.push('Hydrostatics: LWL/beam/draft and Cb or displacement not all source-identified');
     }
-    if (has(REQUIRED_RESISTANCE)) {
+    if (supportedTopology && has(REQUIRED_RESISTANCE)) {
       toolCases.push(['TOOL-RESISTANCE-01', ['CALCULATION_EXEC'], numbers]);
     } else {
       missingEngineeringInputs.push('Resistance: incomplete vessel/displacement/speed/efficiency/15C conditions');
@@ -351,7 +361,7 @@ export async function runAgentDesignLoop(
       if (!result.success) missingEngineeringInputs.push(toolId + ': ' + (result.error || 'screen failed'));
     }
     const screened: ScreenedProposal = {
-      parameters: numbers, unverifiedMetricProvenance: claims, missingEngineeringInputs, screenResults,
+      parameters: numbers, conceptTopology: topology, unverifiedMetricProvenance: claims, missingEngineeringInputs, screenResults,
       sourceKind: 'MODEL_PROPOSAL_UNVERIFIED', inputDigest: hash(numbers)
     };
 
