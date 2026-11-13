@@ -34,6 +34,20 @@ const create = (): ConceptDiscoverySubmission => ({
   }))
 });
 
+// Mirrors the metadata contract emitted by runLiveAgentMatrix: only the
+// provider identifier differs from the legacy Gemini fixture. These tests
+// verify input validation, NOT the existence of an authenticated live session.
+const createCodex = (): ConceptDiscoverySubmission => {
+  const submitted = create();
+  return {
+    ...submitted,
+    agentRuns: submitted.agentRuns.map(record => ({
+      ...record,
+      provider: 'codex_cli'
+    }))
+  };
+};
+
 describe('Agent-led concept discovery gate', () => {
   it('rejects missing or forged JSON instead of accepting guessed baselines', () => {
     expect(assessConceptDiscovery(null).status).toBe('INVALID_INPUT');
@@ -109,4 +123,62 @@ describe('Agent-led concept discovery gate', () => {
     expect(result.issues.join(' ')).toContain('mismatched source SHA');
     expect(result.issues.join(' ')).toContain('lacks HTTPS citation and checksum');
   });
+  it('recognizes all 26 Codex CLI runner traces as research-ready but never design-approved', () => {
+    const result = assessConceptDiscovery(createCodex());
+    expect(result.status).toBe('TRADE_STUDY_READY_UNVERIFIED');
+    expect(result.totalAgentRuns).toBe(26);
+    expect(result.genuineProviderClaims).toBe(26);
+    expect(result.projectLeadDecisionVerified).toBe(false);
+    expect(result.detailedDesignAuthorized).toBe(false);
+    expect(result.engineeringReleaseAuthorized).toBe(false);
+  });
+
+  it('rejects fake, non-live and misspelled Codex provider identities', () => {
+    for (const provider of ['deterministic', 'mock_deterministic', 'gemini_cli', 'codex', 'CODEX_CLI', '']) {
+      const x = createCodex();
+      const invalid = { ...x, agentRuns: x.agentRuns.map(record =>
+        record.canonicalId === 'A06' ? { ...record, provider } : record) };
+      const result = assessConceptDiscovery(invalid);
+      expect(result.status).toBe('RESEARCH_REQUIRED');
+      expect(result.genuineProviderClaims).toBe(25);
+      expect(result.engineeringReleaseAuthorized).toBe(false);
+    }
+  });
+
+  it('fails closed on missing or corrupt Codex execution mode, status and output digest', () => {
+    const attempts = [
+      { providerExecutionMode: 'SYNTHETIC_TEST_MOCK' },
+      { providerExecutionMode: undefined },
+      { outputDigestSha256: 'sha256:deadbeef' },
+      { outputDigestSha256: undefined },
+      { status: 'SUCCESS' },
+      { status: 'EXECUTION_FAILED' }
+    ];
+    for (const changes of attempts) {
+      const x = createCodex();
+      const invalid = { ...x, agentRuns: x.agentRuns.map(record =>
+        record.canonicalId === 'A06' ? { ...record, ...changes } : record) };
+      const result = assessConceptDiscovery(invalid);
+      expect(result.status).toBe('RESEARCH_REQUIRED');
+      expect(result.genuineProviderClaims).toBe(25);
+      expect(result.projectLeadDecisionVerified).toBe(false);
+      expect(result.detailedDesignAuthorized).toBe(false);
+    }
+  });
+
+  it('rejects Codex traces from stale source SHAs or the wrong canonical runtime', () => {
+    for (const changes of [
+      { sourceCommit: 'd'.repeat(40) },
+      { runtimeId: 'UNREGISTERED-CODEX-AGENT' }
+    ]) {
+      const x = createCodex();
+      const invalid = { ...x, agentRuns: x.agentRuns.map(record =>
+        record.canonicalId === 'A06' ? { ...record, ...changes } : record) };
+      const result = assessConceptDiscovery(invalid);
+      expect(result.status).toBe('EVIDENCE_INCOMPLETE');
+      expect(result.issues.join(' ')).toMatch(/stale|mismatched|runtime identity/);
+      expect(result.engineeringReleaseAuthorized).toBe(false);
+    }
+  });
+
 });
