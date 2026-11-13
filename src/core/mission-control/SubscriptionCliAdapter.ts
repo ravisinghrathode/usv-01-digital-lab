@@ -11,6 +11,7 @@
 import { spawn } from 'node:child_process';
 import { readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
+import { requireLabCommissioningPolicy } from './LabCommissioningPolicy.ts';
 
 export type PilotRole = 'orchestrator' | 'worker' | 'reviewer';
 
@@ -67,6 +68,9 @@ export function validatePilotRequest(input: PilotRequest): void {
       'Subscription CLI pilot disabled (set USV_SUBSCRIPTION_PILOT=enabled).'
     );
   }
+  // Operator opt-in authorizes research-only commissioning, never a design
+  // baseline or vessel release. Reject unsafe environment declarations.
+  requireLabCommissioningPolicy(process.env);
   if (!SAFE_ROLES[input.role]) throw new Error('Unknown role');
   if (!/^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$/.test(input.taskId)) throw new Error('Invalid taskId');
   if (!/^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$/.test(input.agentId)) throw new Error('Invalid agentId');
