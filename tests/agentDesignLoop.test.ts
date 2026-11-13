@@ -200,6 +200,41 @@ describe('Reproducible legacy scenarios and real-agent iterative design screenin
     expect(report.engineeringReleaseAuthorized).toBe(false);
   });
 
+  it('rescreens two concepts at the same declared speed without modifying their original hypotheses',async()=>{
+    const missionAtSpeed = {...mission,comparisonMode:'FIXED_CONDITIONS_RESCREEN' as const,
+      objectives:[{
+        id:'POWER_FIXED_SPEED',toolId:'TOOL-RESISTANCE-01',
+        outputMetric:'shaftBrakePowerPbKw',
+        direction:'MINIMIZE' as const,weight:1,unit:'kW',
+        sourceReference:'SYNTHETIC_COMPARISON_CONDITION_NOT_REAL_REQUIREMENT',
+        fixedInputParameters:{speedKnots:10,propulsiveEfficiencyEtaD:0.6,waterTempCelsius:15}
+      }]};
+    const report=await runAgentDesignLoop(missionAtSpeed,async (id,input)=>{
+      if(id!==proposer)return makeOutput(id,input,{});
+      const second=!input.taskId.endsWith('-0');
+      const length=second?10.5:10;
+      return makeOutput(id,input,{lwlMeters:length,beamMeters:3,draftMeters:0.7,
+        blockCoefficientCb:0.55,displacementTonnes:length*3*0.7*0.55*1.025,
+        speedKnots:second?11:10,propulsiveEfficiencyEtaD:0.6,waterTempCelsius:15});
+    });
+    expect(report.revisions).toHaveLength(2);
+    expect(report.revisions[1].screened.parameters.speedKnots).toBe(11);
+    expect(report.fixedConditionScreens).toHaveLength(2);
+    expect(report.fixedConditionScreens.every(s=>s.success)).toBe(true);
+    expect(report.comparison.status).toBe('COMPARISON_READY_UNVERIFIED');
+    expect(report.comparison.rankings).toHaveLength(2);
+    expect(report.comparison.approvedDesignSelected).toBe(false);
+  });
+
+  it('refuses to overwrite hull geometry through fixed objective conditions',async()=>{
+    const invalid={...mission,comparisonMode:'FIXED_CONDITIONS_RESCREEN' as const,objectives:[{
+      id:'FAKE',toolId:'TOOL-RESISTANCE-01',outputMetric:'shaftBrakePowerPbKw',
+      direction:'MINIMIZE' as const,weight:1,unit:'kW',sourceReference:'SYNTHETIC',
+      fixedInputParameters:{lwlMeters:999}
+    }]};
+    await expect(runAgentDesignLoop(invalid)).rejects.toThrow(/objective/);
+  });
+
   it('rejects model-suggested dimensions without independently declared provenance', async () => {
     const result = await runAgentDesignLoop(mission, async (id, input) => {
       const output = makeOutput(id, input, { lwlMeters: 10, beamMeters: 3, draftMeters: 0.6 });
