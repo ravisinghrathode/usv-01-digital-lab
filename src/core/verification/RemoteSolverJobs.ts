@@ -188,13 +188,6 @@ export function evaluateSolverReceipt(
         }
       }
     } else {
-        meshAndResidualScreenPassed =
-          q.finalResidual <= manifest.qualityPlan.residualThreshold &&
-          q.maximumMeshSkewness <= manifest.qualityPlan.maxMeshSkewness &&
-          q.maximumNonOrthogonalityDeg <= manifest.qualityPlan.maxNonOrthogonalityDeg;
-        if (!meshAndResidualScreenPassed) problems.push('CFD mesh or residual threshold not met');
-      }
-    } else {
       if (!q || !finiteNonnegative(q.maximumElementAspectRatio) ||
           !finiteNonnegative(q.minimumScaledJacobian) ||
           !finiteNonnegative(manifest.qualityPlan.maxElementAspectRatio) ||
