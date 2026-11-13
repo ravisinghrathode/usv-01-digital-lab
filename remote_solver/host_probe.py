@@ -60,7 +60,7 @@ def main() -> int:
     if args.require_openfoam and openfoam_wrapper and Path(openfoam_wrapper).is_file():
         command=[openfoam_wrapper,"simpleFoam","-help"]
         if args.require_network_isolation:
-            command=["unshare","--net","--",*command]
+            command=["unshare","--user","--map-root-user","--net","--",*command]
         p=subprocess.run(command,capture_output=True,text=True,check=False,timeout=20)
         banner=(p.stdout or "")+"\n"+(p.stderr or "")
         checks["openfoamExecutionProbe"]={
@@ -71,7 +71,7 @@ def main() -> int:
             failures.append("Versioned OpenFOAM wrapper did not execute simpleFoam help")
 
     if args.require_network_isolation and shutil.which("unshare"):
-        p=subprocess.run(["unshare","--net","--","sh","-c","test -r /proc/self/ns/net"],
+        p=subprocess.run(["unshare","--user","--map-root-user","--net","--","sh","-c","test -r /proc/self/ns/net"],
                          capture_output=True,text=True,check=False,timeout=10)
         checks["networkIsolation"]={
             "required":True,"passed":p.returncode==0,
@@ -79,7 +79,7 @@ def main() -> int:
             "stderr":(p.stderr or "")[:500]
         }
         if p.returncode!=0:
-            failures.append("unshare --net failed for this service account")
+            failures.append("unprivileged user+network namespace failed for this service account")
     elif not args.require_network_isolation:
         checks["networkIsolation"]={"required":False,"passed":None}
 
