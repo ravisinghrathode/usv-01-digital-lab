@@ -53,6 +53,14 @@ try {
   if (check.error || check.status !== 0) {
     throw new Error('Codex executable is unavailable on this execution host');
   }
+  const auth = spawnSync('codex', ['login', 'status'], {
+    encoding: 'utf8', timeout: 8000
+  });
+  const mode = ((auth.stdout || '') + ' ' + (auth.stderr || '')).toLowerCase();
+  if (auth.error || auth.status !== 0 || !mode.includes('chatgpt') ||
+      /api[- ]?key|access token/.test(mode)) {
+    throw new Error('Cannot attest an unauthenticated or API-key-based Codex host');
+  }
   const registeredAgents = AgentRegistry.getInstance().getCount();
   if (registeredAgents !== 26) throw new Error('Current runtime does not register all 26 roles');
   const hostId = process.env.USV01_HOST_ID || '';
