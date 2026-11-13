@@ -41,6 +41,18 @@ MAX_GENERATED_FILES = 2000
 def _canonical_json(value: object) -> bytes:
     return json.dumps(value, sort_keys=True, separators=(",", ":")).encode()
 
+def _js_json(value: object) -> bytes:
+    """Match JSON.stringify ordering for dictionaries we construct explicitly."""
+    return json.dumps(value, separators=(",", ":"), ensure_ascii=False).encode()
+
+def _ordered_quality_plan(raw: dict) -> dict:
+    keys=(
+        "sourceReference","residualThreshold","gridUncertaintyMaxFraction",
+        "maxMeshSkewness","maxNonOrthogonalityDeg","initialResidualThresholds",
+        "requireSolverDeclaredConvergence","maxElementAspectRatio","minScaledJacobian"
+    )
+    return {key:raw[key] for key in keys if key in raw}
+
 
 def load_catalog(path: Path) -> dict:
     if path.is_symlink() or not path.is_file() or path.stat().st_size > 2 * 1024 * 1024:
@@ -182,7 +194,7 @@ def materialize_template_job(
         else:
             shutil.copyfile(archive,staged)
             os.chmod(staged,0o600)
-        quality=json.loads(json.dumps(template["qualityPlan"]))
+        quality=_ordered_quality_plan(template["qualityPlan"])
         materialization={
             "templateId":template["id"],
             "templateDigest":template["generatorSha256"],
@@ -201,7 +213,9 @@ def materialize_template_job(
             "qualityPlan":quality,
             "templateMaterialization":materialization,
         }
-        manifest_digest=sha256(_canonical_json(manifest_seed))
+        # The TypeScript client recomputes createSolverJobManifest() from these
+        # exact base fields. Preserve insertion order to match JSON.stringify.
+        manifest_digest=sha256(_js_json(manifest_seed))
         manifest={**manifest_seed,"manifestSha256":manifest_digest,
                   "releaseAuthorized":False,"engineeringValidated":False}
         return manifest,{archive_digest}
