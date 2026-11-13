@@ -5,6 +5,9 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import { commissionLiveModel } from '../src/core/verification/LiveProviderCommissioning.ts';
 import { runAgentDesignLoop } from '../src/core/optimizer/AgentDesignLoop.ts';
 
 const args = process.argv.slice(2);
@@ -25,11 +28,16 @@ async function main() {
   if (fs.statSync(missionPath).size > 2 * 1024 * 1024) throw new Error('Mission brief exceeds 2 MiB');
   const mission = requireObject(JSON.parse(fs.readFileSync(missionPath, 'utf8')));
   const sourceCommit = value('--source-sha');
+  const checkout = execFileSync('git', ['rev-parse', 'HEAD'], {encoding:'utf8',timeout:5000}).trim();
+  if (sourceCommit !== checkout) throw new Error('Source SHA is not the checked-out source revision');
   const seed = Number(value('--seed'));
   const maxRevisions = Number(value('--revisions'));
   const outDir = path.resolve('.local-concept-research/design-loops');
   fs.mkdirSync(outDir, { recursive: true, mode: 0o700 });
   const runId = 'USV01-LIVE-CONCEPT-' + sourceCommit.slice(0, 12) + '-S' + seed;
+  // Authenticate an actual provider response before spending the research budget.
+  const preflight = await commissionLiveModel(sourceCommit, process.env.GEMINI_MODEL || 'gemini-3.8-flash');
+  const missionDigest = 'sha256:' + createHash('sha256').update(fs.readFileSync(missionPath)).digest('hex');
   const report = await runAgentDesignLoop({
     runId, sourceCommit, seed, maxRevisions,
     missionStatement: mission.missionStatement as string,
@@ -38,9 +46,9 @@ async function main() {
     objectives: (mission.objectives || []) as import('../src/core/optimizer/AgentDesignLoop.ts').PreliminaryObjective[]
   });
   const filename = path.join(outDir, runId + '-UNVERIFIED.json');
-  fs.writeFileSync(filename, JSON.stringify(report, null, 2) + '\n', { mode: 0o600 });
+  fs.writeFileSync(filename, JSON.stringify({missionDigest,preflight,report}, null, 2) + '\n', { mode: 0o600 });
   console.log(JSON.stringify({
-    runId, sourceCommit, seed, revisionCount: report.revisions.length,
+    runId, sourceCommit, seed, missionDigest, preflight: preflight.status, model: preflight.modelUsed, revisionCount: report.revisions.length,
     completedAgentCalls: report.completedAgentCalls,
     preliminaryToolScreens: report.completedToolScreens,
     preliminaryComparisonStatus: report.comparison.status,
