@@ -22,6 +22,8 @@ describe('Single-pass USV-01 acceptance campaign', () => {
     expect(result.structurallyValid).toBe(true);
     expect(result.agentFindings.every(x => x.configurationValid)).toBe(true);
     expect(result.agentFindings.every(x => !x.liveProviderExecutionVerified && !x.independentlyValidated)).toBe(true);
+    expect(result.marineEvidence.status).toBe('NO_EVIDENCE');
+    expect(result.marineEvidence.missingRequirements).toHaveLength(13);
     expect(result.acceptedWorkstreams).toBe(0);
     expect(result.pendingWorkstreams).toBe(13);
     expect(result.releaseApproved).toBe(false);
