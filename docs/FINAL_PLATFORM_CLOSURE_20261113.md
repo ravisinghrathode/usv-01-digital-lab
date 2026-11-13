@@ -10,6 +10,7 @@ This document separates **implemented software capability** from **external engi
 - A09/A10/A14 source-hashed mass/structure/electrical package paths.
 - Monohull screening plus a deliberately limited twin-demi-hull catamaran hydrostatic screen.
 - Authenticated provider commissioning with real Gemini API or operator-authenticated Gemini CLI; mock fallback prohibited.
+- One-command no-API live campaign: `npm run design:live-cli` checks Gemini CLI availability, refreshes hashed public sources, forces API-key transport off and executes the bounded design loop against the exact checkout SHA.
 - Restricted OpenFOAM / CalculiX execution with retained evidence, solver version, bounded artifacts, mesh/numerical screens and fail-closed states.
 - Real CalculiX Linux analytical known case in CI.
 - Real OpenFOAM v2606 V&V-family commissioning job in CI.
@@ -25,7 +26,7 @@ This document separates **implemented software capability** from **external engi
 
 ## Explicitly NOT established by software
 
-- A live Gemini design campaign has not been executed in repository CI because no authorized user/provider credential is present there.
+- A live Gemini design campaign has not been executed in repository CI because no authorized user/provider credential is present there. The remaining action is operator authentication, not repository software; once the CLI is signed in, `npm run design:live-cli` executes the campaign without an API key.
 - A real free-surface USV hull resistance CFD case has not yet been independently validated.
 - Three-grid/GCI software exists, but a three-grid **vessel** campaign has not yet supplied accepted physical/model evidence.
 - Flat-plate/backward-step CFD commissioning is solver-path/V&V evidence, not validation of USV hull drag.
