@@ -7,7 +7,7 @@
 
 ## 1. Change Summary
 
-- **Description:** Remove unsupported structural compliance and FEA claims from the sample UI; introduce non-certifying, deterministic multi-point lifting statics screen with source references, invalid-input rejection, and unit tests; document load-case and closure evidence.
+- **Description:** Remove unsupported structural compliance, false controlled-CAD labels and FEA claims from the sample UI; introduce non-certifying deterministic multi-point sling-force arithmetic plus full 3D force/moment residual audits, source references, invalid-input rejection, and unit tests; document load cases and closure evidence.
 - **Reason for Change:** Avoid false approval of scantlings, lifting points or FEA based on synthetic data.
 - **Affected Subsystem:** STR / SYS / VVT
 
@@ -20,7 +20,7 @@
 
 ## 3. Verification & Evidence Plan
 
-- **Verification Plan:** Automated analytic reaction/tension tests (including 60° slings and unequal shares); duplicate/missing/invalid inputs; missing WLL and exceedance; permission denial; TS checks, full Vitest suite, production build, Stage C independent review. Engineering closure also requires approved CAD, mass/CG, rule applicability, complete load combinations, independent structural checks, load ratings and test evidence.
+- **Verification Plan:** Automated analytic reaction/tension tests (including 60° slings and unequal shares), 3D force/moment equilibrium synthetic benchmarks (off-centre CG and opposing/incorrect sling directions); duplicate/missing/invalid inputs, unknown capacity, exceeded WLL, forged approval and permission denial; TS checks, full Vitest suite, production build and Stage C independent review. Engineering closure also requires approved CAD, mass/CG, rule applicability, full load combinations, independent structural checks, ratings and physical test evidence.
 - **Risk Assessment:** HIGH
 - **Review Evidence:** Feature branch `fix/structural-engineering-blocker-20261113`; review PR and CI evidence pending.
 
