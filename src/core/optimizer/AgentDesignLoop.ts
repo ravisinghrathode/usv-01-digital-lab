@@ -605,7 +605,8 @@ export async function runAgentDesignLoop(
     const successful = new Set(screenResults.filter(r => {
       if (!r.success) return false;
       if (r.toolId === 'TOOL-RESISTANCE-01') {
-        return typeof r.result?.totalResistanceKn === 'number' && Number.isFinite(r.result.totalResistanceKn);
+        const totalResistance = r.result?.totalResistanceKn;
+        return typeof totalResistance === 'number' && Number.isFinite(totalResistance);
       }
       return true;
     }).map(r => r.toolId));
