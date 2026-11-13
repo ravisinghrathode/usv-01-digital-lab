@@ -37,6 +37,15 @@ export interface PreliminaryObjective {
   fixedInputParameters: Record<string, number>;
 }
 
+export interface DisciplineInputPackage {
+  id: string;
+  canonicalAgent: 'A09' | 'A10' | 'A14';
+  toolId: 'TOOL-MASS-BALANCE-01' | 'TOOL-STRUCTURES-01' | 'TOOL-ELECTRICAL-01';
+  sourceReference: string;
+  sourceSha256: string;
+  input: Record<string, unknown>;
+}
+
 export interface DesignLoopRequirements {
   runId: string;
   sourceCommit: string;
@@ -48,6 +57,7 @@ export interface DesignLoopRequirements {
   objectives?: readonly PreliminaryObjective[];
   specialistReviews?: 'AUTO' | 'OFF';
   comparisonMode?: 'STRICT' | 'FIXED_CONDITIONS_RESCREEN';
+  disciplinePackages?: readonly DisciplineInputPackage[];
 }
 
 export interface ScreenedProposal {
@@ -108,7 +118,7 @@ export interface DesignLoopReport {
 }
 
 export type AgentExecutor = (agentId: string, input: AgentExecutionInput) => Promise<AgentExecutionOutput>;
-export type ScreeningToolExecutor = (toolId: string, input: Record<string, number>, permissions: string[]) => Promise<ToolExecutionResult>;
+export type ScreeningToolExecutor = (toolId: string, input: Record<string, unknown>, permissions: string[]) => Promise<ToolExecutionResult>;
 
 const hash = (v: unknown) => 'sha256:' + createHash('sha256').update(JSON.stringify(v)).digest('hex');
 const supported = new Set([
@@ -188,6 +198,30 @@ function validateInput(x: DesignLoopRequirements) {
   }
   if (x.specialistReviews !== undefined && !['AUTO','OFF'].includes(x.specialistReviews)) throw new Error('Unrecognized specialist review mode');
   if (x.comparisonMode !== undefined && !['STRICT','FIXED_CONDITIONS_RESCREEN'].includes(x.comparisonMode)) throw new Error('Unrecognized comparison mode');
+  if (x.disciplinePackages !== undefined) {
+    if (!Array.isArray(x.disciplinePackages) || x.disciplinePackages.length > 3) {
+      throw new Error('At most one source-bound package each for A09/A10/A14');
+    }
+    const expected: Record<string,string> = {
+      A09:'TOOL-MASS-BALANCE-01', A10:'TOOL-STRUCTURES-01', A14:'TOOL-ELECTRICAL-01'
+    };
+    const roles = new Set<string>();
+    for (const pkg of x.disciplinePackages) {
+      if (!pkg || typeof pkg.id !== 'string' || !pkg.id.trim() ||
+          !expected[pkg.canonicalAgent] || pkg.toolId !== expected[pkg.canonicalAgent] ||
+          roles.has(pkg.canonicalAgent) ||
+          typeof pkg.sourceSha256 !== 'string' || !/^sha256:[0-9a-f]{64}$/.test(pkg.sourceSha256) ||
+          typeof pkg.sourceReference !== 'string' || !pkg.sourceReference.trim() ||
+          !pkg.input || typeof pkg.input !== 'object' || Array.isArray(pkg.input)) {
+        throw new Error('Invalid, duplicate or mismatched discipline input package');
+      }
+      const source = x.sourceReferences.find(ref => ref.reference === pkg.sourceReference);
+      if (!source || source.sha256 !== pkg.sourceSha256 || !source.url?.startsWith('https://')) {
+        throw new Error('Discipline input package lacks matching fetched source record');
+      }
+      roles.add(pkg.canonicalAgent);
+    }
+  }
   if (x.objectives !== undefined) {
     if (!Array.isArray(x.objectives) || x.objectives.length > 8) {
       throw new Error('Objectives must contain at most eight source-identified metrics');
@@ -437,6 +471,23 @@ export async function runAgentDesignLoop(
       });
       if (!result.success) missingEngineeringInputs.push(toolId + ': ' + (result.error || 'screen failed'));
     }
+    const disciplineParameters = new Map<string,Record<string,unknown>>();
+    for (const pkg of input.disciplinePackages ?? []) {
+      const result = await executeTool(pkg.toolId,pkg.input,['CALCULATION_EXEC']);
+      report.completedToolScreens++;
+      screenResults.push({
+        toolId:pkg.toolId, success:result.success, outputDigest:hash(result),
+        result:result.success?result.output:undefined, error:result.error
+      });
+      if (result.success) disciplineParameters.set(pkg.canonicalAgent,pkg.input);
+      else missingEngineeringInputs.push(pkg.canonicalAgent+' source-bound package failed '+pkg.toolId+': '+(result.error||'screen failed'));
+    }
+    for (const role of ['A09','A10','A14']) {
+      if (!(input.disciplinePackages ?? []).some(p=>p.canonicalAgent===role)) {
+        missingEngineeringInputs.push(role+': source-bound discipline package not supplied; specialist remains advisory/TBD');
+      }
+    }
+
     const screened: ScreenedProposal = {
       parameters: numbers, conceptTopology: topology, unverifiedMetricProvenance: claims, missingEngineeringInputs, screenResults,
       sourceKind: 'MODEL_PROPOSAL_UNVERIFIED', inputDigest: hash(numbers)
@@ -448,20 +499,29 @@ export async function runAgentDesignLoop(
     // resistance; A23 requires both. A09/A10/A14 remain TBD until component,
     // structure and electrical input packages exist.
     const successful = new Set(screenResults.filter(r => r.success).map(r => r.toolId));
+    const baseSpecialists = monohullTopology ? [
+      { role: 'A05', required: ['TOOL-HYDROSTATICS-01'], parameters: numbers as Record<string,unknown> },
+      { role: 'A06', required: ['TOOL-HYDROSTATICS-01'], parameters: numbers as Record<string,unknown> },
+      { role: 'A07', required: ['TOOL-RESISTANCE-01'], parameters: numbers as Record<string,unknown> },
+      { role: 'A23', required: ['TOOL-HYDROSTATICS-01','TOOL-RESISTANCE-01'], parameters: numbers as Record<string,unknown> }
+    ] : [];
+    const packageSpecialists = [
+      {role:'A09',required:['TOOL-MASS-BALANCE-01']},
+      {role:'A10',required:['TOOL-STRUCTURES-01']},
+      {role:'A14',required:['TOOL-ELECTRICAL-01']}
+    ].filter(x=>disciplineParameters.has(x.role)).map(x=>({
+      ...x,parameters:disciplineParameters.get(x.role)!
+    }));
     const specialistPlan = input.specialistReviews === 'OFF' ? [] :
-      (monohullTopology ? [
-        { role: 'A05', required: ['TOOL-HYDROSTATICS-01'] },
-        { role: 'A06', required: ['TOOL-HYDROSTATICS-01'] },
-        { role: 'A07', required: ['TOOL-RESISTANCE-01'] },
-        { role: 'A23', required: ['TOOL-HYDROSTATICS-01','TOOL-RESISTANCE-01'] }
-      ] : []).filter(entry => entry.required.every(toolId => successful.has(toolId)));
+      [...baseSpecialists,...packageSpecialists]
+        .filter(entry => entry.required.every(toolId => successful.has(toolId)));
     const specialistReviews: DesignRevision['specialistReviews'] = [];
     for (const plan of specialistPlan) {
       const specialist = registry.requireAgent(plan.role);
       const reviewInput: AgentExecutionInput = {
         taskId: input.runId+'-'+plan.role+'-REVIEW-'+index,
         correlationId: input.runId+'-'+plan.role+'-REVIEW-'+index,
-        parameters: { ...numbers },
+        parameters: plan.parameters,
         context: { mission: input.missionStatement, sourceCommit: input.sourceCommit,
           question: 'Review the unverified proposal and explicitly challenge gaps in your discipline',
           requirements: input.requirements, sourceReferences: input.sourceReferences,
