@@ -124,11 +124,6 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
   const protectedSoftware = approvalRoute === 'PROTECTED_SOFTWARE_SECURITY';
   const peerRequired = directorEcrRequired || protectedSoftware;
   const requiresReviewEvidence = directorEcrRequired || protectedSoftware;
-  const authorSignoff = protectedSoftware &&
-    stageD?.adminAuthorSignoffVerified === true &&
-    // In CI, recheck the live GitHub-authenticated signoff independently of
-    // branch-produced Stage D JSON. Never trust a PR-authored marker alone.
-    (process.env.GITHUB_ACTIONS !== 'true' || hasLiveAdminAuthorSignoff(expectedCommitSha));
 
   // CI must reclassify the ACTUAL Git diff, not trust a branch-supplied JSON
   // artifact. This prevents PR metadata or a forged Stage A report from
@@ -139,6 +134,13 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
       cwd: rootDir, encoding: 'utf-8', stdio: ['ignore', 'pipe', 'ignore']
     }).trim()) === path.resolve(rootDir);
   } catch {}
+  // Fake unit-test report folders are not Git checkouts; production CI MUST
+  // authenticate owner comments against GitHub before accepting a software
+  // author-signoff. A signed-off branch-controlled JSON flag is insufficient.
+  const authorSignoff = protectedSoftware &&
+    stageD?.adminAuthorSignoffVerified === true &&
+    (process.env.GITHUB_ACTIONS !== 'true' || !isRealGitCheckout ||
+      hasLiveAdminAuthorSignoff(expectedCommitSha));
   // Isolated unit-test fixtures lack a Git checkout. Production PR CI must
   // always verify a real source diff before allowing any protected merge.
   if (process.env.GITHUB_ACTIONS === 'true' && isRealGitCheckout) {
