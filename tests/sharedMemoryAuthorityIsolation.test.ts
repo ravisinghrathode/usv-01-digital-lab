@@ -38,7 +38,9 @@ describe('B01: historical parameters cannot become an approved engineering basel
     source.status = 'APPROVED';
     source.assumptions.push('mutated from view');
     const list = memory.getAllParameters();
-    list[0].status = 'DIRECTOR_APPROVED';
+    const listed = list.find(x => x.id === 'USV-NA-001');
+    expect(listed).toBeDefined();
+    listed!.status = 'DIRECTOR_APPROVED';
     expect(memory.getParameter('USV-NA-001')?.status).toBe('ASSUMED');
     expect(memory.getParameter('USV-NA-001')?.assumptions).not.toContain('mutated from view');
 
