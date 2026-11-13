@@ -45,6 +45,7 @@ const trialPoint = z.strictObject({
   id: reference,
   nominalDesignSpeedKnots: speed,
   measuredSpeedThroughWaterKnots: speed,
+  predictedSpeedAtMeasuredShaftPowerKnots: speed,
   measuredShaftPowerKw: positive,
   matchingPowerConditionSourceRef: reference,
   trialSourceRef: reference,
@@ -199,7 +200,7 @@ export function screenResistancePropulsionEvidence(raw: unknown): ResistanceProp
       }
     }
     if (trial) {
-      const error = Math.abs(trial.measuredSpeedThroughWaterKnots - target);
+      // VVP-001 compares observed speed against curve prediction at the same\n      // measured shaft-power condition, NOT merely against nominal design speed.\n      const error = Math.abs(trial.measuredSpeedThroughWaterKnots - trial.predictedSpeedAtMeasuredShaftPowerKnots);
       speedTrialChecks.push({
         caseId: role, nominalKnots: target,
         measuredKnots: trial.measuredSpeedThroughWaterKnots,
@@ -207,7 +208,7 @@ export function screenResistancePropulsionEvidence(raw: unknown): ResistanceProp
         withinProjectTolerance: error <= 0.5 // VVP-001 project criterion, not a generic ITTC threshold
       });
       if (error > 0.5) {
-        issues.push(role + ' trial differs from the project nominal by more than VVP-001 ±0.5 kn');
+        issues.push(role + ' measured-versus-predicted speed differs by more than VVP-001 ±0.5 kn at matched shaft power');
         unresolved.add('VVP-001');
       }
     }
@@ -231,8 +232,11 @@ export function screenResistancePropulsionEvidence(raw: unknown): ResistanceProp
   const numericalChecksPassed = hasNumerics && issues.length === 0;
   const status = !hasNumerics ? 'MISSING_EVIDENCE' :
     issues.length ? 'NUMERIC_FAIL' : 'NUMERIC_PASS_UNCERTIFIED';
+  // Data submitted by the same system are NEVER independent proof. Every physical
+  // gate stays unclosed until authenticated sources and qualified external review.
+  // `unresolved` records numerical defects but is NOT a replacement for authorization.
   return {
-    status, issues, missingGates: [...unresolved],
+    status, issues, missingGates: [...RES01_GATES],
     cases, speedTrialChecks, numericalChecksPassed,
     independentlyValidated: false, releaseApproved: false
   };
