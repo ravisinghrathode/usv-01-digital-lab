@@ -298,7 +298,8 @@ if (process.argv[1] && process.argv[1].endsWith('stage-d-human-approval.ts')) {
   fs.writeFileSync(path.join(outDir, 'stage-d-approval.json'), JSON.stringify(result, null, 2));
 
   if ((result.humanApprovalRequired && !result.signatureVerified) ||
-      (result.peerApprovalRequired && !softwareHumanAuthorized)) {
+      (result.peerApprovalRequired &&
+       !result.independentPeerApproved && !result.adminAuthorSignoffVerified)) {
     console.log('ℹ️  STAGE D: Required human authorization remains pending; Stage E will fail closed.\n');
     process.exit(0);
   }
