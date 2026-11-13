@@ -1,5 +1,5 @@
 import { isPaidAiApiAllowed } from './AiBillingPolicy.ts';
-import { runSubscriptionCli } from '../mission-control/SubscriptionCliAdapter.ts';
+
 
 export type ExecutionMode =
   | 'DETERMINISTIC_CALCULATION'
@@ -351,6 +351,13 @@ export class CodexCliProvider implements IModelProvider {
     if (prompt.length > 24_000) {
       throw new Error('Codex CLI prompt exceeds bounded 24,000-character input; refuse truncated evidence.');
     }
+    // This provider is shared with browser-side agent types: NEVER bundle Node CLI modules.
+    // Vite leaves the guarded runtime-only import unresolved, whereas Node resolves it.
+    if (typeof window !== 'undefined') {
+      throw new Error('Codex CLI is a local Node-only provider; no browser CLI execution is allowed.');
+    }
+    const serverOnlyAdapter = '../mission-control/' + 'SubscriptionCliAdapter.ts';
+    const { runSubscriptionCli } = await import(/* @vite-ignore */ serverOnlyAdapter);
     const result = await runSubscriptionCli({
       role: 'worker',
       taskId: (request.correlationId || 'AGENT-CODEX').replace(/[^A-Za-z0-9_.-]/g, '-').slice(0, 80),
