@@ -61,7 +61,7 @@ export async function runLiveAgentMatrix(
       finding.providerExecutionMode = output.providerExecutionMode;
       finding.outputDigestSha256 = 'sha256:' + createHash('sha256')
         .update(JSON.stringify(output.data)).digest('hex');
-      const realProvider = ['gemini','openai','ollama'].includes(output.provider || '');
+      const realProvider = ['gemini','openai','ollama','codex_cli'].includes(output.provider || '');
       const live = output.providerExecutionMode === 'LIVE_AI_GENERATION' && realProvider &&
         output.agentId === spec.id && output.taskId === input.taskId &&
         !['FAILED','PARTIAL'].includes(output.status) && !!output.correlationId;
