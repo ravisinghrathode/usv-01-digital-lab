@@ -1,4 +1,5 @@
 import { isPaidAiApiAllowed } from './AiBillingPolicy.ts';
+import { runSubscriptionCli } from '../mission-control/SubscriptionCliAdapter.ts';
 
 export type ExecutionMode =
   | 'DETERMINISTIC_CALCULATION'
@@ -9,7 +10,7 @@ export type ExecutionMode =
   | 'INDEPENDENTLY_VERIFIED';
 
 export interface ModelConfig {
-  preferredProvider?: 'gemini' | 'gemini_cli' | 'openai' | 'deterministic' | 'ollama' | 'mock_deterministic';
+  preferredProvider?: 'gemini' | 'gemini_cli' | 'codex_cli' | 'openai' | 'deterministic' | 'ollama' | 'mock_deterministic';
   modelName?: string;
   temperature?: number;
   maxTokens?: number;
@@ -322,6 +323,68 @@ export class GeminiCliProvider implements IModelProvider {
 }
 
 // -----------------------------------------------------------------------------------------
+// Subscription-authenticated Codex CLI (local, read-only; NO model API credential).
+// Codex is an advisory synthesis provider, never independent engineering acceptance.
+// -----------------------------------------------------------------------------------------
+export class CodexCliProvider implements IModelProvider {
+  name = 'codex_cli';
+
+  isAvailable(): boolean {
+    return typeof process !== 'undefined' &&
+      process.env.USV_SUBSCRIPTION_PILOT === 'enabled' &&
+      !isPaidAiApiAllowed();
+  }
+
+  async generateText(request: ModelPromptRequest): Promise<ModelPromptResponse> {
+    if (!this.isAvailable()) {
+      throw new Error('Codex CLI requires an explicitly enabled subscription pilot with paid API disabled.');
+    }
+    const prompt = [
+      'You are executing a bounded USV-01 specialist engineering agent synthesis task.',
+      'Your output is advisory, cannot approve a design or claim independent verification.',
+      'Never invent tools, test results, physical parameters or evidence. Preserve TBD.',
+      'Return ONLY one valid JSON object conforming to the requested agent output schema.',
+      'SYSTEM INSTRUCTIONS:', request.systemInstructions,
+      'USER TASK:', request.userPrompt,
+      'CONTEXT JSON:', JSON.stringify(request.context)
+    ].join('\n\n');
+    if (prompt.length > 24_000) {
+      throw new Error('Codex CLI prompt exceeds bounded 24,000-character input; refuse truncated evidence.');
+    }
+    const result = await runSubscriptionCli({
+      role: 'worker',
+      taskId: (request.correlationId || 'AGENT-CODEX').replace(/[^A-Za-z0-9_.-]/g, '-').slice(0, 80),
+      agentId: 'USV-AGENT',
+      prompt,
+      workingDirectory: process.cwd()
+    });
+    if (result.status !== 'COMPLETED') {
+      throw new Error('Codex subscription CLI failed or is unavailable. No AI synthesis completed.');
+    }
+    const content = result.stdout.trim();
+    let parsedJson: Record<string, any>;
+    try {
+      const unwrapped = content.match(/^\x60\x60\x60(?:json)?\s*([\s\S]*?)\s*\x60\x60\x60$/i)?.[1] || content;
+      parsedJson = JSON.parse(unwrapped);
+      if (!parsedJson || typeof parsedJson !== 'object' || Array.isArray(parsedJson)) {
+        throw new Error('Expected a JSON object');
+      }
+    } catch {
+      throw new Error('Codex CLI output was not one valid agent JSON object; rejected without fallback.');
+    }
+    return {
+      content, parsedJson, providerUsed: 'codex_cli',
+      modelUsed: 'codex-signed-in-session-model-unverified',
+      executionMode: 'LIVE_AI_GENERATION',
+      isMock: false, isAiReview: true, evidenceValid: false,
+      correlationId: request.correlationId,
+      timestamp: new Date().toISOString(),
+      statusMessage: 'Local signed-in Codex CLI output; model identity and engineering evidence not independently attested.'
+    };
+  }
+}
+
+// -----------------------------------------------------------------------------------------
 // Provider C — Local Ollama Provider (Future-compatible local model interface)
 // -----------------------------------------------------------------------------------------
 export class OllamaProvider implements IModelProvider {
@@ -578,10 +641,13 @@ export function isTestExecutionEnvironment(): boolean {
  * Resolves the default provider from runtime environment variables.
  * Never requires or defaults to paid OpenAI.
  */
-export function resolveConfiguredProvider(): 'gemini' | 'gemini_cli' | 'deterministic' | 'ollama' | 'openai' {
+export function resolveConfiguredProvider(): 'gemini' | 'gemini_cli' | 'codex_cli' | 'deterministic' | 'ollama' | 'openai' {
   if (typeof process === 'undefined') return 'deterministic';
 
   const configured = process.env.AI_REVIEW_PROVIDER?.toLowerCase();
+  if (configured === 'codex_cli') {
+    return process.env.USV_SUBSCRIPTION_PILOT === 'enabled' && !isPaidAiApiAllowed() ? 'codex_cli' : 'deterministic';
+  }
   if (configured === 'deterministic' || configured === 'ollama' || configured === 'gemini_cli') {
     return configured;
   }
@@ -612,6 +678,7 @@ export class ModelProviderRouter {
     this.registerProvider(new DeterministicProvider());
     this.registerProvider(new GeminiProvider());
     this.registerProvider(new GeminiCliProvider());
+    this.registerProvider(new CodexCliProvider());
     this.registerProvider(new OllamaProvider());
     this.registerProvider(new OpenAIProvider());
     this.registerProvider(new MockDeterministicProvider());
@@ -641,8 +708,8 @@ export class ModelProviderRouter {
     const explicitProvider =
       typeof process !== 'undefined' ? process.env?.AI_REVIEW_PROVIDER?.toLowerCase() : undefined;
     let providerName =
-      explicitProvider === 'gemini_cli'
-        ? 'gemini_cli'
+      (explicitProvider === 'gemini_cli' || explicitProvider === 'codex_cli')
+        ? resolveConfiguredProvider()
         : (config.preferredProvider || resolveConfiguredProvider());
     const hasGeminiKey = typeof process !== 'undefined' && !!process.env?.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim().length > 0;
     if (providerName === 'gemini' && !hasGeminiKey) {
