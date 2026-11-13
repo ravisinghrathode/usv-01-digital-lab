@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createSolverJobManifest, evaluateSolverReceipt, submitRemoteSolverJob } from '../src/core/verification/RemoteSolverJobs.ts';
+import { createSolverJobManifest, evaluateSolverReceipt, submitRemoteSolverJob, pollRemoteSolverJob } from '../src/core/verification/RemoteSolverJobs.ts';
 
 const d = 'sha256:' + 'a'.repeat(64);
 const raw = () => ({
@@ -39,6 +39,26 @@ describe('Remote CFD/FEA job evidence', () => {
     expect(result.independentReferenceValidated).toBe(false);
     expect(result.engineeringReleaseAuthorized).toBe(false);
   });
+  it('distinguishes real subprocess completion from independently validated solver quality', async () => {
+    const manifest=createSolverJobManifest(raw());
+    const result=await pollRemoteSolverJob(manifest,async jobId=>({
+      jobId,acceptedInputDigest:manifest.manifestSha256,
+      state:'COMPUTE_DONE_EVIDENCE_PENDING',quality:null,solverVersion:'NOT_RECORDED'
+    }));
+    expect(result.status).toBe('COMPUTE_DONE_EVIDENCE_PENDING');
+    expect(result.qualityScreenPassed).toBe(false);
+    expect(result.independentReferenceValidated).toBe(false);
+    expect(result.engineeringReleaseAuthorized).toBe(false);
+    expect(result.issues.join(' ')).toMatch(/grid convergence/);
+  });
+  it('cannot turn a failed remote run into a queued success',async()=>{
+    const manifest=createSolverJobManifest(raw());
+    const result=await pollRemoteSolverJob(manifest,async jobId=>({
+      jobId,acceptedInputDigest:manifest.manifestSha256,state:'FAILED'
+    }));
+    expect(result.status).toBe('REJECTED');
+  });
+
   it('fails closed on dishonest digests, absent mesh convergence or malformed receipts', () => {
     const m = createSolverJobManifest(raw());
     expect(evaluateSolverReceipt(m, { jobId: 'RUN_001', state: 'COMPLETED', acceptedInputDigest: d }).status).toBe('REJECTED');
