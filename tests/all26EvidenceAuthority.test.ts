@@ -17,6 +17,9 @@ const shared = {
   displacementTonnes: 6.91875,
   bearingReference: 'TRUE_NORTH'
 };
+// Synthetic common payload has no measured propulsive-efficiency provenance.
+// Allow the mandatory resistance screen to run with null total/shaft power.
+delete (shared as { propulsiveEfficiencyEtaD?: number }).propulsiveEfficiencyEtaD;
 const injectedUntrustedResult = {
   content: '{ "keyMetrics": { "gm": 999 } }',
   parsedJson: {

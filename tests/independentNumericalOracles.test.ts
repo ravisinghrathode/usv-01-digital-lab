@@ -35,21 +35,30 @@ describe('Independent reference vectors: Python Decimal and geometric cross-prod
     }
   });
 
-  it('150 resistance dimensional/Froude/Reynolds cross-checks; never claims validated power', async () => {
+  it('150 resistance dimensional/Froude/Reynolds and ITTC friction cross-checks; no invented total power', async () => {
     for (const c of reference.resistance) {
-      const r = await execute('TOOL-RESISTANCE-01', c.input);
+      // Old reference vectors carry an arbitrary eta; discard it. The original
+      // Python Decimal speed/Froude/Reynolds oracle remains independent.
+      const input = { ...c.input };
+      delete input.propulsiveEfficiencyEtaD;
+      const r = await execute('TOOL-RESISTANCE-01', {
+        ...input,
+        wettedSurfaceAreaM2: 20,
+        wettedAreaEvidenceRef: 'ORACLE-UNIT-TEST-ONLY-WETTED-AREA'
+      });
       expect(r.success,c.id + ': '+String(r.error)).toBe(true);
       accurate(r.output.speedMps,c.reference.speedMps,.0051,c.id+':speed');
       accurate(r.output.froudeNumberFn,c.reference.froudeNumberFn,.00055,c.id+':Fn');
       accurate(r.output.reynoldsNumber,c.reference.reynoldsNumber,
         .00055 * c.reference.reynoldsNumber,c.id+':Re');
-      accurate(r.output.totalResistanceKn,
-        r.output.frictionalResistanceKn+r.output.residualResistanceKn,
-        .0011,c.id+':sum');
-      accurate(r.output.effectivePowerPeKw,
-        r.output.totalResistanceKn*c.reference.speedMps,.015,c.id+':Pe');
-      accurate(r.output.shaftBrakePowerPbKw,
-        r.output.effectivePowerPeKw / c.reference.eta,.020,c.id+':Pb');
+      const cfOracle = 0.075 / (Math.log10(c.reference.reynoldsNumber) - 2) ** 2;
+      const frictionOracleKn = 0.5 * 1025 * c.reference.speedMps ** 2 * 20 * cfOracle / 1000;
+      accurate(r.output.frictionCoefficientCf,cfOracle,.000002,c.id+':Cf');
+      accurate(r.output.frictionalResistanceKn,frictionOracleKn,.012,c.id+':Rf');
+      expect(r.output.residualResistanceKn,c.id).toBeNull();
+      expect(r.output.totalResistanceKn,c.id).toBeNull();
+      expect(r.output.effectivePowerPeKw,c.id).toBeNull();
+      expect(r.output.shaftBrakePowerPbKw,c.id).toBeNull();
       expect(r.output.designUsePermitted,c.id).toBe(false);
       expect(r.output.residualDragModelValidated,c.id).toBe(false);
     }
@@ -111,7 +120,8 @@ describe('Safety-critical numeric boundary and metamorphic checks', () => {
   const hydro = { lwlMeters:10,beamMeters:2.5,draftMeters:.6,blockCoefficientCb:.45,
     seawaterDensityKgM3:1025 };
   const resistance = { lwlMeters:10,beamMeters:2.5,draftMeters:.6,displacementTonnes:6.91875,
-    speedKnots:12,propulsiveEfficiencyEtaD:.65,waterTempCelsius:15 };
+    speedKnots:12,waterTempCelsius:15,
+    wettedSurfaceAreaM2:20,wettedAreaEvidenceRef:'ORACLE-UNIT-TEST-ONLY-WETTED-AREA' };
   const electrical = { busVoltageV:48,batteryTotalKwh:120,usableDepthOfDischarge:.8,
     consumers:[{name:'LOAD-1',voltageV:48,continuousPowerW:6000,intermittentPowerW:300,
        dutyCycle:.5,isEmergencyLoad:true}] };
@@ -131,13 +141,16 @@ describe('Safety-critical numeric boundary and metamorphic checks', () => {
     expect(r.success).toBe(false);
   });
 
-  it('resistance is continuous near Fn=0.8 instead of jumping 10kW at the boundary',async () => {
+  it('ITTC smooth-plate friction remains continuous at Fn=0.8 with no made-up total power',async () => {
     const speedAt=(Fn:number)=>Fn*Math.sqrt(9.80665*resistance.lwlMeters)/(1852/3600);
     const a=await execute('TOOL-RESISTANCE-01',{...resistance,speedKnots:speedAt(.8-1e-6)});
     const b=await execute('TOOL-RESISTANCE-01',{...resistance,speedKnots:speedAt(.8+1e-6)});
     expect(a.success && b.success).toBe(true);
-    accurate(b.output.totalResistanceKn,a.output.totalResistanceKn,.009,'Fn=0.8 continuity');
-    accurate(b.output.effectivePowerPeKw,a.output.effectivePowerPeKw,.09,'Fn=0.8 power continuity');
+    accurate(b.output.frictionalResistanceKn,a.output.frictionalResistanceKn,.001,'Fn=0.8 friction continuity');
+    expect(a.output.totalResistanceKn).toBeNull();
+    expect(b.output.totalResistanceKn).toBeNull();
+    expect(a.output.shaftBrakePowerPbKw).toBeNull();
+    expect(b.output.shaftBrakePowerPbKw).toBeNull();
   });
 
   it('rejects unsupported seawater temperature rather than using a hidden 15C viscosity',async () => {
@@ -211,8 +224,10 @@ describe('Safety-critical numeric boundary and metamorphic checks', () => {
   it('missing reference parameters fail closed; no default 120kWh battery, 125MPa yield or propulsive efficiency',async () => {
     const {batteryTotalKwh, ...unratedBattery} = electrical;
     expect((await execute('TOOL-ELECTRICAL-01',unratedBattery)).success).toBe(false);
-    const {propulsiveEfficiencyEtaD, ...unratedPropulsion} = resistance;
-    expect((await execute('TOOL-RESISTANCE-01',unratedPropulsion)).success).toBe(false);
+    const unratedPropulsion = await execute('TOOL-RESISTANCE-01',resistance);
+    expect(unratedPropulsion.success).toBe(true);
+    expect(unratedPropulsion.output.totalResistanceKn).toBeNull();
+    expect(unratedPropulsion.output.shaftBrakePowerPbKw).toBeNull();
     const example = { displacementTonnes:6.5,speedKnots:15,lwlMeters:10,
       unsupportedPanelWidthMm:400,unsupportedPanelLengthMm:800,
       deadriseAngleDeg:18,safetyFactor:2 };

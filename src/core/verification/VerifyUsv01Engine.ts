@@ -832,7 +832,7 @@ export class VerifyUsv01Engine {
         waterplaneCoefficientCwp: 0.65,
         kgMeters: 0.8,
         seawaterDensityKgM3: 1025,
-        propulsiveEfficiencyEtaD: 0.65,
+        // RES-01: no artificial propulsive efficiency in the verification fixture.
         waterTempCelsius: 15,
         deadriseAngleDeg: 18,
         unsupportedPanelWidthMm: 500,
