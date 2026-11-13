@@ -150,7 +150,7 @@ function analyzeContact(own: Ownship, c: Contact, ctx: SafetyContext): ContactFi
   if (!validKind(c.vesselKind)) concerns.push('UNSUPPORTED_VESSEL_TYPE');
   if (!finite(c.trackAgeSeconds) || c.trackAgeSeconds < 0 || c.trackAgeSeconds > ctx.limits.maxTrackAgeSeconds) concerns.push('TRACK_STALE_OR_INVALID');
   if (!Array.isArray(c.sources) || c.sources.length === 0 || c.sources.some(x => !allSources.has(x))) concerns.push('SENSOR_SOURCE_UNVERIFIED');
-  if (c.sources.length === 1 && c.sources[0] === 'AIS') concerns.push('AIS_ONLY_CANNOT_SUBSTITUTE_LOOKOUT');
+  if (Array.isArray(c.sources) && c.sources.length === 1 && c.sources[0] === 'AIS') concerns.push('AIS_ONLY_CANNOT_SUBSTITUTE_LOOKOUT');
   if (c.vesselKind === 'UNKNOWN') concerns.push('VESSEL_TYPE_UNVERIFIED');
   if (!finite(c.rangeStdNm!) || c.rangeStdNm! <= 0 ||
       !finite(c.bearingStdDeg!) || c.bearingStdDeg! <= 0 ||
@@ -198,7 +198,8 @@ export function evaluateAutonomyColregsScreen(ctx: SafetyContext): SafetyScreenR
   const findings = safeToScreen ? ctx.contacts.map(c=>analyzeContact(ctx.ownship,c,ctx)) : [];
   const ids = new Set<string>();
   for (const f of findings) {if (ids.has(f.id)) concerns.push('DUPLICATE_CONTACT_ID');ids.add(f.id);}
-  const anyUnsafe = findings.some(f=> f.proximity !== 'CPA_SCREEN_NEGATIVE' || f.concerns.length > 0);
+  const anyUnsafe = ctx.contacts?.length === 0 || findings.some(f=> f.proximity !== 'CPA_SCREEN_NEGATIVE' || f.concerns.length > 0);
+  if (findings.length > 1 && findings.some(f=>f.proximity !== 'CPA_SCREEN_NEGATIVE')) concerns.push('MULTI_CONTACT_CONSTRAINTS_UNRESOLVED');
   if (anyUnsafe) concerns.push('UNRESOLVED_ENCOUNTER_RISK');
   if (!ctx.linkHealthy) concerns.push('SUPERVISORY_LINK_LOST_REJECT_STALE_COMMANDS');
   if (ctx.contacts?.length === 0) concerns.push('NO_CONTACTS_DOES_NOT_PROVE_CLEAR_WATER');
@@ -206,7 +207,7 @@ export function evaluateAutonomyColregsScreen(ctx: SafetyContext): SafetyScreenR
     'MISSING_EVIDENCE_ID','MISSING_OR_INVALID_SCREENING_PROFILE','OWN_NAVIGATION_STATE_INVALID','VISIBILITY_INVALID',
     'VISIBILITY_UNKNOWN','LOOKOUT_NOT_DEMONSTRATED','NAVIGATION_OR_SENSING_DEGRADED',
     'PROPULSION_OR_ENERGY_DEGRADED','GEOFENCE_OR_ODD_UNSAFE','DUPLICATE_CONTACT_ID',
-    'CONTACT_LIST_INVALID','RESTRICTED_VISIBILITY_SAFE_SPEED_AND_RULE_19_REVIEW',
+    'CONTACT_LIST_INVALID','NO_CONTACTS_DOES_NOT_PROVE_CLEAR_WATER','MULTI_CONTACT_CONSTRAINTS_UNRESOLVED','RESTRICTED_VISIBILITY_SAFE_SPEED_AND_RULE_19_REVIEW',
     'LOCAL_NAVIGATION_RULE_REVIEW_REQUIRED'
   ].includes(x));
   let disposition: SupervisoryDisposition = 'NON_ACTUATING_SUPERVISION';
