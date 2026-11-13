@@ -195,13 +195,22 @@ export function evaluateEvidenceDecision(
   const reviewsWithUnknownEvidence = input.reviews.filter(x => !knownEvidenceIds.has(x.evidenceId))
     .map(x => x.reviewId);
   if (reviewsWithUnknownEvidence.length) problems.push('UNBOUND_INDEPENDENT_REVIEW_REFERENCES');
+  const duplicateReviewIds = input.reviews.map(x => x.reviewId).filter((id, i, ids) => ids.indexOf(id) !== i);
+  if (duplicateReviewIds.length) problems.push('DUPLICATE_REVIEW_ID');
+  const duplicateReviewRoles: string[] = [];
   const reviewConflicts: string[] = [];
   for (const record of acceptedMetadata) {
     const perRecord = input.reviews.filter(r => r.evidenceId === record.evidenceId);
-    const chatgpt = perRecord.find(x => x.reviewerRole === 'CHATGPT')?.verdict;
-    const gemini = perRecord.find(x => x.reviewerRole === 'GEMINI')?.verdict;
-    if (chatgpt && gemini && chatgpt !== gemini) reviewConflicts.push(record.evidenceId);
+    const roles = perRecord.map(r => r.reviewerRole);
+    if (new Set(roles).size !== roles.length) duplicateReviewRoles.push(record.evidenceId);
+    const modelVerdicts = perRecord.filter(x =>
+      x.reviewerRole === 'CHATGPT' || x.reviewerRole === 'GEMINI');
+    if (modelVerdicts.length >= 2 &&
+        new Set(modelVerdicts.map(x => x.verdict)).size > 1) {
+      reviewConflicts.push(record.evidenceId);
+    }
   }
+  if (duplicateReviewRoles.length) problems.push('DUPLICATE_REVIEWER_ROLE');
   if (reviewConflicts.length) problems.push('DUAL_AI_DISAGREEMENT');
   const findings = required.map(requirementId => {
     const obligations = EVIDENCE_OBLIGATIONS[requirementId];
@@ -256,6 +265,8 @@ export function evaluateEvidenceDecision(
     quarantinedCriteria,
     rejectedEvidence,
     reviewsWithUnknownEvidence,
+    duplicateReviewIds: [...new Set(duplicateReviewIds)],
+    duplicateReviewRoles,
     dualAiDisagreements: reviewConflicts,
     findings,
     allEvidenceIndependentlyAccepted: false as const,
