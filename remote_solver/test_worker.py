@@ -22,7 +22,10 @@ class WorkerTest(unittest.TestCase):
         self.staging=self.root/'staged'
         self.staging.mkdir()
         self.artifacts=self.root/'artifacts'
-        self.model=b'*HEADING\n*NODE\n1,0,0,0\n'
+        self.model=(b'*HEADING\n*NODE\n'
+            b'1,0,0,0\n2,1,0,0\n3,1,1,0\n4,0,1,0\n'
+            b'5,0,0,1\n6,1,0,1\n7,1,1,1\n8,0,1,1\n'
+            b'*ELEMENT,TYPE=C3D8,ELSET=EALL\n1,1,2,3,4,5,6,7,8\n')
         self.payload=bundle({'model.inp':self.model})
         self.datahash=sha256(self.payload)
         (self.staging/(self.datahash[7:]+'.zip')).write_bytes(self.payload)
