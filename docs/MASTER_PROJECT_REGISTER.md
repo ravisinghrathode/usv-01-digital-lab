@@ -50,12 +50,12 @@ Evidence grades: **E0** plan/claim → **E1** source/test code → **E2** exact-
 
 ## 4. Fifteen-action recovery plan — do one action at a time
 
-**Sequence rule:** Do not advance until the named action has a documented closure check. A01 is already verified. A02 is **ACTIVE while this document is in PR**; upon its protected merge, verified main SHA and passing required check, A02 may be marked complete with a dated entry. A03 remains PLANNED until then.
+**Sequence rule:** Do not advance until the named action has a documented closure check. **A01 and A02 are VERIFIED COMPLETE.** A02's initial snapshot was recorded before its protected merge; the independently checked closure is in the dated update below. **A03 remains PLANNED and requires separate Project Lead authorization.**
 
 | ID / phase | Action and accountable lead | Snapshot status | Specific closure test / evidence |
 |---|---|---|---|
 | **A01 / Recovery** | Confirm GitHub baseline — ChatGPT / Project Lead | **VERIFIED (source baseline audit)** | Exact `main` SHA, PR/issue inventory, required branch protections and main governance CI; public-source policy. [PR #70](https://github.com/ravisinghrathode/usv-01-digital-lab/pull/70), [#77](https://github.com/ravisinghrathode/usv-01-digital-lab/pull/77), [#76](https://github.com/ravisinghrathode/usv-01-digital-lab/pull/76). Historical engineering HOLD retained. |
-| **A02 / Recovery** | **Create Master Project Register** — ChatGPT/Codex custodian, Project Lead | **ACTIVE — awaiting controlled publication at audit** | This file on protected `main`; accurate platform/vessel split, 15 actions, owners, evidence links, blocker/decision logs; exact-head required CI PASS. |
+| **A02 / Recovery** | **Create Master Project Register** — ChatGPT/Codex custodian, Project Lead | **VERIFIED (14 Nov 2026)** | [PR #81](https://github.com/ravisinghrathode/usv-01-digital-lab/pull/81) merged into protected `main` at [`038c4d2`](https://github.com/ravisinghrathode/usv-01-digital-lab/commit/038c4d2dfb384051c3203943672cc4a3abd29df8); README link verified; exact-main deterministic governance gate [PASS](https://github.com/ravisinghrathode/usv-01-digital-lab/actions/runs/43520682981). |
 | **A03 / Recovery** | Audit architecture / deployed and undeployed modules — Codex + engineering lead | PLANNED | Source-derived **built/tested/blocked/missing** matrix of dashboard, 26 agents, orchestrator, model routes, numerical tools, solvers, connectors, duplication and dependency graph. No implicit acceptance from inventory. |
 | **A04 / Lab** | Verify trusted execution host — authorized operator / platform engineer | PLANNED | Authenticated Codex CLI, clean exact-SHA checkout, permissions, configured host and bounded resource/security preconditions. |
 | **A05 / Lab** | 26-agent deterministic preflight — Codex / verification lead | PLANNED | Same-SHA 26 valid role envelopes, mandatory tool preflight, zero unreported blockers, no mock evidence promoted to live. |
@@ -122,9 +122,18 @@ The [15 acceptance criteria](CONSOLIDATED_ACCEPTANCE_REGISTER.md) are collected 
 
 ## 7. Next authorized move and register maintenance
 
-**Only A02 is authorized as active in this register authoring session.** Complete it by merging the register through the protected documentation route, checking its exact merged main SHA and required governance job, and recording the result. **Then** the Project Lead may authorize **A03: source-derived architecture/module inventory**. Do not auto-start A03, an engineering campaign, solver commissioning or 26-agent live run based on the existence of this register.
+**A02 completion was verified on 14 November 2026:** the register was merged on protected `main` in PR #81, the README points to it, and the required governance job passed at its exact merge SHA. **The next action is A03 (source-derived architecture/module inventory), still PLANNED pending Project Lead authorization.** Do not automatically begin A03, solver commissioning, a vessel campaign or a live 26-agent run.
 
 At every subsequent authorized action: (a) read the latest `main` SHA and PR/CI/issue status; (b) preserve this file's prior dated snapshot and add a dated delta for materially changed decisions; (c) update the action's status and closure evidence via protected PR; (d) cross-link the underlying technical/engineering register rather than copying private artifacts into public GitHub; (e) reject stale-head, unqualified or non-independent “success” evidence.
+
+### Dated completion and change log
+
+| Date (IST) | Control event | Evidence / disposition |
+|---|---|---|
+| 2026-11-14 | **A02 VERIFIED COMPLETE** — initial register publication | [PR #81](https://github.com/ravisinghrathode/usv-01-digital-lab/pull/81) merged at exact main SHA [`038c4d2dfb384051c3203943672cc4a3abd29df8`](https://github.com/ravisinghrathode/usv-01-digital-lab/commit/038c4d2dfb384051c3203943672cc4a3abd29df8); required [Deterministic Quality & Governance Gate job](https://github.com/ravisinghrathode/usv-01-digital-lab/actions/runs/43520682981/job/132213855572) succeeded, README link and register present on `main`. This entry updates the original A02 **pre-merge** status, not the underlying historical source audit cut-off. |
+| 2026-11-14 | CI housekeeping | The separately triggered OpenFOAM jobs in PR #81 and the resulting `main` push had cancellation requests accepted **after** both required governance jobs passed. A cancelled overall workflow is not a failed required governance check, and a solver known case is not vessel certification. [PR #79](https://github.com/ravisinghrathode/usv-01-digital-lab/pull/79) proposes making OpenFOAM commissioning manual opt-in; review/merge status must be checked live. |
+| 2026-11-14 | Post-snapshot governance watch | [PR #80](https://github.com/ravisinghrathode/usv-01-digital-lab/pull/80) was opened after the pinned A02 audit snapshot and proposes removal of the optional Stage E human-approval switch. It is a distinct protected-software change and **not** accepted until separately authorized and merged. |
+| 2026-11-14 | Action sequencing | **A01  verified + A02 verified = 2 of 15 recovery actions complete.** A03 remains PLANNED. Existing engineering RELEASE / Gate 0 HOLDs remain. |
 
 ### Canonical supporting references
 
