@@ -28,7 +28,7 @@ describe('26-agent operating charter v1: specification and current evidence boun
     }
     expect(charter).toContain('no agent-side, UI-side or optimizer-side auto-promotion');
     expect(charter).toContain('Link loss is not automatically');
-    expect(charter).toContain('not authoritative parametric CAD');
+    expect(charter).toContain('**not** authoritative parametric CAD');
   });
 
   it('marks missing coupled solver/CAD/validation capabilities as unresolved', () => {
