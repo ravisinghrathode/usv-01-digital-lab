@@ -4,7 +4,7 @@ import { BaseAgent } from '../src/core/engine/BaseAgent.ts';
 
 describe('Research mission actually reaches live agent prompt without becoming baseline authority', () => {
   it('passes mission context and prior critique to model, quarantines returned numeric proposals', async () => {
-    const agent = new BaseAgent(AgentRegistry.getInstance().requireAgent('A05'));
+    const agent = new BaseAgent(AgentRegistry.getInstance().requireAgent('A01'));
     let request: any = null;
     (agent as any).modelRouter = {
       generate: async (submitted: any) => {
