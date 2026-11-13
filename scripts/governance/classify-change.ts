@@ -171,7 +171,7 @@ export function classifyFile(filePath: string): { categories: ChangeCategory[]; 
  * engineering baseline has been changed.
  */
 export function isVesselEngineeringAuthorityPath(file: string): boolean {
-  const p = file.replace(/\\/g, '/');
+  const p = file.replaceAll('\\\\', '/');
   return p.startsWith('src/core/tools/naval/') ||
     p.startsWith('governance/ecr/') ||
     p.startsWith('governance/approvals/') ||
@@ -180,17 +180,19 @@ export function isVesselEngineeringAuthorityPath(file: string): boolean {
     p === 'USV01_PROJECT_CONTEXT.md' ||
     p.startsWith('data/') ||
     p.startsWith('src/data/') ||
-    /^docs\\/MAR[0-9]+_/.test(p) ||
-    /^docs\\/AUT01_/.test(p) ||
+    (p.startsWith('docs/MAR') && /^MAR[0-9]+_/.test(p.slice(5))) ||
+    p.startsWith('docs/AUT01_') ||
     p === 'docs/CONSOLIDATED_ACCEPTANCE_REGISTER.md' ||
     p.startsWith('evidence/aut01/') ||
-    /^src\\/core\\/verification\\/(Autonomy[^/]*|SafetyScenarioSuite|MarineSystemsSuite|AcceptanceGate)\\.ts$/i.test(p) ||
+    (p.startsWith('src/core/verification/') &&
+      /^(Autonomy[^/]*|SafetyScenarioSuite|MarineSystemsSuite|AcceptanceGate)\\.ts$/i.test(p.slice('src/core/verification/'.length))) ||
     p === 'src/components/SoftwareAutonomyView.tsx' ||
-    /^tests\\/(autonomy[^/]*|marineSystems|acceptanceGate|acceptanceCampaign)/i.test(p);
+    (p.startsWith('tests/') &&
+      /^(autonomy[^/]*|marineSystems|acceptanceGate|acceptanceCampaign)/i.test(p.slice(6)));
 }
 
 export function isProtectedSoftwareAuthorityPath(file: string): boolean {
-  const p = file.replace(/\\/g, '/');
+  const p = file.replaceAll('\\\\', '/');
   return p.startsWith('scripts/governance/') ||
     p.startsWith('.github/') ||
     p.startsWith('src/core/auth/') ||
@@ -210,7 +212,7 @@ export function isProtectedSoftwareAuthorityPath(file: string): boolean {
 }
 
 export function isRestrictedLabResearchPath(file: string): boolean {
-  const p = file.replace(/\\/g, '/');
+  const p = file.replaceAll('\\\\', '/');
   return p.startsWith('src/core/agents/') ||
     p.startsWith('src/core/registry/') ||
     p.startsWith('src/core/orchestrator/') ||
@@ -227,15 +229,14 @@ export function isRestrictedLabResearchPath(file: string): boolean {
 }
 
 export function approvalRouteForChangedFiles(files: readonly string[]): ApprovalRoute {
-  // Missing/damaged diff data must never implicitly certify a software change
-  // as low risk. The final Stage E gate additionally requires real Git diff.
+  // Missing/damaged diff data cannot implicitly become a routine change.
   if (!files.length) return 'PROTECTED_SOFTWARE_SECURITY';
   if (files.some(isVesselEngineeringAuthorityPath)) return 'SAFETY_CRITICAL_ENGINEERING';
   if (files.some(isProtectedSoftwareAuthorityPath)) return 'PROTECTED_SOFTWARE_SECURITY';
   if (files.some(p => {
     const risk = classifyFile(p).risk;
-    return risk === 'HIGH' || risk === 'CRITICAL';
-  } && !isRestrictedLabResearchPath(p))) return 'PROTECTED_SOFTWARE_SECURITY';
+    return (risk === 'HIGH' || risk === 'CRITICAL') && !isRestrictedLabResearchPath(p);
+  })) return 'PROTECTED_SOFTWARE_SECURITY';
   if (files.some(isRestrictedLabResearchPath)) return 'RESTRICTED_LAB_SOFTWARE';
   return 'ROUTINE_SOFTWARE';
 }
