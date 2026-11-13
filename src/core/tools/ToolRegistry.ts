@@ -1,4 +1,5 @@
 import type { EngineeringTool, ToolExecutionResult } from '../types/tools.ts';
+import { OffsetHydrostaticsTool } from './naval/offsetHydrostaticsTool.ts';
 import {
   HydrostaticsTool,
   ResistanceTool,
@@ -27,6 +28,7 @@ export class ToolRegistry {
   private registerDefaults(): void {
     const defaultTools = [
       HydrostaticsTool,
+      OffsetHydrostaticsTool,
       ResistanceTool,
       MassBalanceTool,
       ElectricalLoadTool,

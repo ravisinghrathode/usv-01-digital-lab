@@ -40,7 +40,7 @@ describe('Externally observed live Gemini role execution evidence (NOT full agen
       'A' + String(i + 1).padStart(2, '0'))));
   });
 
-  it('ties each live role to the registered source instructions and representative case', () => {
+  it('ties unmodified roles to current instructions and preserves A06 historical provenance after HYD-01', () => {
     const registry = AgentRegistry.getInstance();
     for (const c of evidence.cases) {
       const spec = registry.requireAgent(c.canonicalId);
@@ -50,8 +50,23 @@ describe('Externally observed live Gemini role execution evidence (NOT full agen
       expect(c.taskId).toBe(caseDefinition?.taskId);
       expect(c.inputTask).toBe(caseDefinition?.task);
       expect(c.sourceCommit).toBe(catalog.baselineSha);
-      expect(c.registeredInstructionsSha256).toBe('sha256:' +
-        createHash('sha256').update(spec.systemInstructions).digest('hex'));
+      const currentInstructionsDigest = 'sha256:' +
+        createHash('sha256').update(spec.systemInstructions).digest('hex');
+      if (c.canonicalId === 'A06') {
+        // The live campaign belongs to source commit 8548128; its A06 prompt has
+        // been corrected by HYD-01. Retain evidence unchanged but mark it stale
+        // for the current agent. Never rewrite historical provider provenance.
+        const archivedA06Instructions = `You are the Hydrostatics & Stability Engineer.
+You MUST invoke TOOL-HYDROSTATICS-01 to compute displacement, KB, BMt, and GMt.
+GMt must be strictly positive (GMt > 0.35m minimum for small USVs). Any negative or borderline GM is a SAFETY_CRITICAL alert.`;
+        const archivedDigest = 'sha256:' +
+          createHash('sha256').update(archivedA06Instructions).digest('hex');
+        expect(c.registeredInstructionsSha256).toBe(archivedDigest);
+        expect(c.registeredInstructionsSha256).not.toBe(currentInstructionsDigest);
+        expect(evidence.engineeringReleaseApproved).toBe(false);
+      } else {
+        expect(c.registeredInstructionsSha256).toBe(currentInstructionsDigest);
+      }
       const parsed = spec.outputSchema.safeParse(c.parsedOutput);
       expect(parsed.success, 'Output schema for ' + c.canonicalId).toBe(true);
       expect(c.parsedOutput.requiresDirectorApproval).toBe(true);
