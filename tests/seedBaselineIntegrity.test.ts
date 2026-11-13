@@ -6,7 +6,11 @@ import {
   INITIAL_RESISTANCE,
   INITIAL_SIMULATIONS,
   INITIAL_TEST_RECORDS,
-  INITIAL_LOAD_CASES
+  INITIAL_LOAD_CASES,
+  INITIAL_POWER_LOADS,
+  INITIAL_ACTIVITY_LOG,
+  INITIAL_MATERIALS,
+  INITIAL_KNOWLEDGE_NOTES
 } from '../src/data/initialProjectData.ts';
 
 describe('No fabricated engineering baseline or physical acceptance in starter fixtures', () => {
@@ -23,6 +27,8 @@ describe('No fabricated engineering baseline or physical acceptance in starter f
     expect(INITIAL_WEIGHT_CG).toHaveLength(0);
     expect(INITIAL_RESISTANCE).toHaveLength(0);
     expect(INITIAL_TEST_RECORDS).toHaveLength(0);
+    expect(INITIAL_POWER_LOADS).toHaveLength(0);
+    expect(INITIAL_ACTIVITY_LOG).toHaveLength(0);
   });
 
   it('treats planned synthetic simulations and structural loads as unevaluated', () => {
@@ -36,5 +42,8 @@ describe('No fabricated engineering baseline or physical acceptance in starter f
       expect(load.designPressureOrForce).toBe('TBD');
       expect(load.feaStatus).toBe('TBD');
     }
+    expect(INITIAL_MATERIALS.every(m => m.isIllustrative)).toBe(true);
+    expect(INITIAL_KNOWLEDGE_NOTES[0].contentMarkdown).toContain('Applicability Not Established');
+    expect(INITIAL_KNOWLEDGE_NOTES.every(n => !n.googleDriveRef)).toBe(true);
   });
 });
