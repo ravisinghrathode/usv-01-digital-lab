@@ -178,6 +178,7 @@ These are maturity **states of a particular configuration**, not a platform-wide
 - [Live agent matrix](../../src/core/verification/LiveAgentMatrix.ts) — provider traces subject to authentication
 - [Design loop and solver protocol](../AGENT_DESIGN_LOOP_AND_SOLVER_PROTOCOL_20261113.md) — limited implemented capability and external solver limits
 - [Dated 26-agent readiness evidence](../AGENT_READINESS_20261114.md) — snapshot, not live attestation
+- [Charter v1.1 AI self-critique and residual-risk disposition](USV01_OPERATING_CHARTER_V11_AI_SELF_CRITIQUE.md) — non-normative author review, not independent verification
 - [PR #76 historical baseline safety](https://github.com/ravisinghrathode/usv-01-digital-lab/pull/76), [PR #79 manual OpenFOAM](https://github.com/ravisinghrathode/usv-01-digital-lab/pull/79), [PR #83 Codex evidence](https://github.com/ravisinghrathode/usv-01-digital-lab/pull/83), [PR #86 initial charter](https://github.com/ravisinghrathode/usv-01-digital-lab/pull/86), [PR #78 Repository Scout](https://github.com/ravisinghrathode/usv-01-digital-lab/pull/78).
 
 ## 10. ChatGPT operating charter — advisory and orchestration contract
