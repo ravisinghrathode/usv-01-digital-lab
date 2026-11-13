@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { execFileSync } from 'child_process';
-import { generateClassificationReport } from './classify-change.ts';
+import { generateClassificationReport, type ApprovalRoute } from './classify-change.ts';
 import { validateECRFile } from './ecr-tool.ts';
 import { computeBaselineDigest, loadApprovalRecords, resolveDirectorPublicKey, verifyApproval } from './ecr-approval.ts';
 
@@ -23,7 +23,10 @@ function loadEnv() {
 loadEnv();
 
 export interface StageDResult {
+  approvalRoute: ApprovalRoute;
   humanApprovalRequired: boolean;
+  peerApprovalRequired: boolean;
+  independentPeerApproved: boolean;
   highestRisk: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   ecrRecordFound: boolean;
   ecrRecordValid: boolean;
@@ -132,7 +135,13 @@ export function evaluateStageDHumanApproval(baseRef = 'origin/main', opts: Stage
 
   const diffReport = generateClassificationReport(baseRef, rootDir);
   const highestRisk = opts.forceRisk ?? diffReport.summary.overallRisk;
-  const isCriticalOrHigh = highestRisk === 'CRITICAL' || highestRisk === 'HIGH';
+  const approvalRoute = diffReport.summary.approvalRoute;
+  // Only isolated legacy tests pass forceRisk explicitly; no PR flag or CI
+  // variable may modify the authoritative path-based approval route.
+  const forcedEngineeringTest = !!opts.rootDir && !!opts.forceRisk &&
+    (opts.forceRisk === 'CRITICAL' || opts.forceRisk === 'HIGH');
+  const directorEcrRequired = approvalRoute === 'SAFETY_CRITICAL_ENGINEERING' || forcedEngineeringTest;
+  const peerApprovalRequired = directorEcrRequired || approvalRoute === 'PROTECTED_SOFTWARE_SECURITY';
 
   const baselineDigest = computeBaselineDigest(evaluatedRef, rootDir);
   const publicKeyPem = opts.publicKeyPem ?? resolveDirectorPublicKey();
@@ -167,30 +176,36 @@ export function evaluateStageDHumanApproval(baseRef = 'origin/main', opts: Stage
   const signatureVerified = !!accepted;
   const signatureError = signatureVerified ? undefined : (errors.join(' | ') || 'No Director approval records found in governance/approvals/.');
 
-  let reviewStatus: StageDResult['independentReviewStatus'] = signatureVerified ? 'ECR_DIRECTOR_SIGNED' : 'PENDING_HUMAN_SIGN_OFF';
-  // A peer reviewer is mandatory for HIGH/CRITICAL changes. Verify the
-  // authenticated GitHub review against the current PR head; do not let
-  // a prior approval, self-review or untrusted contributor satisfy this gate.
-  if (isCriticalOrHigh && hasLiveIndependentApproval(evaluatedRef)) {
-    reviewStatus = 'APPROVED_BY_PEER';
-  }
+  const independentPeerApproved = peerApprovalRequired && hasLiveIndependentApproval(evaluatedRef);
+  const reviewStatus: StageDResult['independentReviewStatus'] = independentPeerApproved
+    ? 'APPROVED_BY_PEER'
+    : signatureVerified ? 'ECR_DIRECTOR_SIGNED' : 'PENDING_HUMAN_SIGN_OFF';
 
   let summary: string;
-  if (!isCriticalOrHigh) {
-    summary = `Stage D not required: change classified as ${highestRisk} risk.`;
+  if (!directorEcrRequired && !peerApprovalRequired) {
+    summary = `Stage D vessel ECR not applicable: ${approvalRoute}, risk ${highestRisk}. Normal protected-branch controls still apply.`;
+  } else if (!directorEcrRequired) {
+    summary = independentPeerApproved
+      ? `Stage D protected software review passed: independent peer approved exact source head ${evaluatedRef.substring(0, 7)}. No vessel ECR required.`
+      : `Stage D Gate Blocked: protected software/security change requires an independent GitHub peer approval on exact source head ${evaluatedRef.substring(0, 7)}. No vessel ECR required.`;
   } else if (!publicKeyPem) {
-    summary = `Stage D Gate Blocked: ${highestRisk} risk change, but DIRECTOR_PUBLIC_KEY is not provisioned. There is no fallback trust anchor.`;
+    summary = `Stage D Gate Blocked: vessel engineering change requires DIRECTOR_PUBLIC_KEY and independent exact-head peer approval.`;
   } else if (signatureVerified) {
     const r = accepted!.record!;
-    summary = `Stage D Gate Passed: ${highestRisk} risk change. Director approval ${r.changeId} (${r.authorityName} [${r.authorityId}]) is Ed25519-verified and covers baseline ${baselineDigest} at ${evaluatedRef.substring(0, 7)}.`;
+    summary = independentPeerApproved
+      ? `Stage D Gate Passed: vessel engineering Director approval ${r.changeId} and independent peer review cover baseline ${baselineDigest}.`
+      : `Stage D Gate Blocked: valid Director signature ${r.changeId} but independent GitHub peer approval missing.`;
   } else if (staleApproval) {
-    summary = `Stage D Gate Blocked: ${highestRisk} risk change. ${signatureError}`;
+    summary = `Stage D Gate Blocked: vessel engineering change requires current source signature. ${signatureError}`;
   } else {
-    summary = `Stage D Gate Blocked: ${highestRisk} risk change requires a Director-signed approval covering baseline ${baselineDigest}. ${signatureError}`;
+    summary = `Stage D Gate Blocked: vessel engineering change requires a Director-signed approval covering baseline ${baselineDigest}. ${signatureError}`;
   }
 
   return {
-    humanApprovalRequired: isCriticalOrHigh,
+    approvalRoute,
+    humanApprovalRequired: directorEcrRequired,
+    peerApprovalRequired,
+    independentPeerApproved,
     highestRisk,
     ecrRecordFound: approvals.length > 0,
     ecrRecordValid: signatureVerified,
@@ -209,11 +224,13 @@ export function evaluateStageDHumanApproval(baseRef = 'origin/main', opts: Stage
 }
 
 export function formatStageDMarkdown(result: StageDResult): string {
-  const statusBadge = result.signatureVerified
-    ? '🟢 APPROVED & VERIFIED (Ed25519)'
-    : result.staleApproval
-    ? '🔴 STALE APPROVAL'
-    : '🟡 PENDING HUMAN SIGN-OFF';
+  const statusBadge = !result.humanApprovalRequired
+    ? result.peerApprovalRequired
+      ? result.independentPeerApproved ? '🟢 SOFTWARE PEER APPROVED' : '🟡 SOFTWARE PEER REVIEW PENDING'
+      : '⚪ VESSEL ECR NOT APPLICABLE'
+    : result.signatureVerified && result.independentPeerApproved
+    ? '🟢 DIRECTOR SIGNATURE + PEER VERIFIED'
+    : result.staleApproval ? '🔴 VESSEL ECR STALE' : '🟡 VESSEL ENGINEERING APPROVAL PENDING';
 
   return `## 🏛️ NAVAL-USV Stage D: Human Authority & Baseline Verification
 
@@ -221,7 +238,10 @@ export function formatStageDMarkdown(result: StageDResult): string {
 - **Evaluated Commit:** \`${result.evaluatedRef}\`
 - **Baseline Content Digest:** \`${result.baselineDigest}\`
 - **Risk Classification:** \`${result.highestRisk}\`
-- **Human Authority Required:** \`${result.humanApprovalRequired ? 'YES (MANDATORY)' : 'NO'}\`
+- **Approval Route:** \`${result.approvalRoute}\`
+- **Director Vessel ECR Required:** \`${result.humanApprovalRequired ? 'YES' : 'NO'}\`
+- **Independent Peer Required:** \`${result.peerApprovalRequired ? 'YES' : 'NO'}\`
+- **Independent Peer Verified:** \`${result.independentPeerApproved ? 'YES' : 'NO'}\`
 - **Signatory Authority:** ${result.approverAuthority || 'None'} [${result.approverRole || 'N/A'}]
 - **Review / Signature Status:** \`${result.independentReviewStatus}\`
 - **Assessment Summary:** ${result.summary}
@@ -236,6 +256,9 @@ if (process.argv[1] && process.argv[1].endsWith('stage-d-human-approval.ts')) {
   console.log(`Evaluated commit:            ${result.evaluatedRef}`);
   console.log(`Baseline digest:             ${result.baselineDigest}`);
   console.log(`Risk Regime:                 ${result.highestRisk}`);
+  console.log(`Approval route:              ${result.approvalRoute}`);
+  console.log(`Exact-head peer required:    ${result.peerApprovalRequired}`);
+  console.log(`Exact-head peer approved:    ${result.independentPeerApproved}`);
   console.log(`Human Authority Required:    ${result.humanApprovalRequired ? 'YES (MANDATORY)' : 'NO'}`);
   console.log(`Approval records present:    ${result.ecrRecordFound ? 'YES' : 'NO'}`);
   console.log(`Signatory Authority:         ${result.approverAuthority || 'None'} [${result.approverRole || 'N/A'}]`);
@@ -257,8 +280,9 @@ if (process.argv[1] && process.argv[1].endsWith('stage-d-human-approval.ts')) {
   }
   fs.writeFileSync(path.join(outDir, 'stage-d-approval.json'), JSON.stringify(result, null, 2));
 
-  if (result.humanApprovalRequired && !result.signatureVerified) {
-    console.log('ℹ️  STAGE D: Human authority confirmation required via interactive prompt prior to merge.\n');
+  if ((result.humanApprovalRequired && !result.signatureVerified) ||
+      (result.peerApprovalRequired && !result.independentPeerApproved)) {
+    console.log('ℹ️  STAGE D: Required human authorization remains pending; Stage E will fail closed.\n');
     process.exit(0);
   }
   console.log('✅ STAGE D ACCEPTED.\n');
