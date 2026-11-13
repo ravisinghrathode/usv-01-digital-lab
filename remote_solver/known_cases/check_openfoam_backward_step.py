@@ -20,12 +20,24 @@ for key in ("finalResidual","maximumMeshSkewness","maximumNonOrthogonalityDeg"):
     value=q.get(key)
     if not isinstance(value,(int,float)) or not math.isfinite(value):
         raise SystemExit("Missing CFD quality metric: "+key)
-if q["finalResidual"] > 1e-4:
-    raise SystemExit("Final residual exceeds commissioning threshold")
 if q["maximumMeshSkewness"] > 4:
     raise SystemExit("Mesh skewness exceeds commissioning threshold")
 if q["maximumNonOrthogonalityDeg"] > 70:
     raise SystemExit("Mesh non-orthogonality exceeds commissioning threshold")
+residuals=q.get("initialResidualsByField") or {}
+rules={"p":1e-4,"U*":1e-6,"k":1e-5,"omega":1e-5}
+for selector,threshold in rules.items():
+    if selector.endswith("*"):
+        matches=[(k,v) for k,v in residuals.items() if k.startswith(selector[:-1])]
+    else:
+        matches=[(selector,residuals[selector])] if selector in residuals else []
+    if not matches:
+        raise SystemExit("Missing source-required residual field: "+selector)
+    for field,value in matches:
+        if not isinstance(value,(int,float)) or not math.isfinite(value) or value>threshold:
+            raise SystemExit(f"Initial residual {field}={value} exceeds {selector} threshold {threshold}")
+if q.get("solverDeclaredConverged") is not True:
+    raise SystemExit("OpenFOAM did not declare SIMPLE residualControl convergence")
 archive=Path(result["outputArtifactLocalPath"])
 if not archive.is_file():
     raise SystemExit("Retained evidence archive missing")
@@ -40,7 +52,10 @@ print(json.dumps({
     "solverVersion":version,
     "benchmark":"Driver & Seegmiller backward-facing step, Re_h=36000",
     "publishedReattachmentLengthXoverH":"6.26 +/- 0.1",
-    "finalResidual":q["finalResidual"],
+    "maximumFinalLinearResidual":q["finalResidual"],
+    "initialResidualsByField":residuals,
+    "solverDeclaredConverged":q.get("solverDeclaredConverged"),
+    "convergedIterations":q.get("convergedIterations"),
     "maximumMeshSkewness":q["maximumMeshSkewness"],
     "maximumNonOrthogonalityDeg":q["maximumNonOrthogonalityDeg"],
     "gridUncertaintyFraction":q.get("gridUncertaintyFraction"),
