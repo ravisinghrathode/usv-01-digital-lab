@@ -55,6 +55,31 @@ npm run dev
 
 All 26 canonical agent role definitions now use the operator-authenticated ChatGPT Codex CLI (`codex_cli`) for AI synthesis. The CLI must be installed and signed in on the execution machine. Set `AI_REVIEW_PROVIDER=codex_cli`, `USV_SUBSCRIPTION_PILOT=enabled` and `USV_ALLOW_PAID_AI_API=false` before invoking live agents. The repository does not itself deploy or continuously run the agents. If authentication or runtime is unavailable, live agent tasks fail rather than using Gemini. All outputs remain unverified until independent review and engineering acceptance.
 
+## Full 26-agent campaign and independent evidence gates
+
+The three operational claims are **separate** and evidence-gated. They must not
+be inferred from registration, a CI mock, or an AI self-review.
+
+- `npm run acceptance:codex-agents` — zero-model 26-role deterministic preflight.
+- `npm run acceptance:codex-agents -- --execute` — real ChatGPT/Codex
+  specialist execution in engineering dependency order; source-pinned and
+  journaled per role; requires an authenticated trusted execution host.
+- `npm run mission-control:attest-host` — time-limited signed live host evidence
+  after 26 authenticated executions, using operator-held private key.
+- `npm run acceptance:full-26` — fail-closed three-gate operational,
+  engineering-campaign and independent-reference evidence report. Add
+  `--require-all` to fail exit status until all evidence is present.
+- `npm run acceptance:sign-independent` — separate qualified reviewer
+  signature tool; it does not run automatically or fabricate technical proof.
+
+The protected-main `USV-01 26-Agent Authenticated ChatGPT Commissioning` GitHub
+workflow has offline and trusted-self-hosted-live modes. A synthetic catalog
+can verify model execution but cannot establish real engineering accuracy or
+baseline release.
+
+See [26-Agent Operational Acceptance Protocol](docs/USV01_26_AGENT_OPERATIONAL_ACCEPTANCE.md)
+and [Laboratory Commissioning Protocol](docs/LAB_COMMISSIONING_PROTOCOL.md).
+
 ## Two-stage authority model
 
 **Lab commissioning:** The existing subscription-pilot opt-in permits bounded, non-operational ChatGPT/Codex research even while vessel particulars are TBD. This is not vessel-baseline approval and does not authorize physical actuators or an engineering release.
