@@ -9,6 +9,11 @@ const ledger = JSON.parse(readFileSync(path.join(process.cwd(),'evidence/aut01/a
   gate_evidence:Gate[]; autonomous_navigation_authorized:boolean;
   colregs_compliance_certified:boolean; physical_validation_complete:boolean;
   release_authorized:boolean; closure_authorized:boolean;
+  post_merge_nonconformance: {
+    status:string; source_pr_head_sha:string; github_ci_conclusion_at_merge_head:string;
+    independent_pr_reviewer_submissions_at_inspection:number; director_signature_verified:boolean;
+    engineering_release_hold:boolean; effective_branch_protection_verified:boolean;
+  };
 };
 describe('AUT-01 immutable-evidence posture (no unearned approval)',()=>{
  it('binds the correct acceptance ID and non-operational evidence class',()=>{
@@ -32,8 +37,18 @@ describe('AUT-01 immutable-evidence posture (no unearned approval)',()=>{
    for(const gate of ledger.gate_evidence) {
      expect(gate.gate_id).toMatch(/^AUT-G\d{2}$/);
      expect(['CI_REQUIRED_FINAL_SHA','NOT_SUBMITTED','NOT_EXECUTED']).toContain(gate.status);
-     if(gate.gate_id!=='AUT-G01')expect(gate.evidence_reference).toBeNull();
+     if(!['AUT-G01','AUT-G10'].includes(gate.gate_id))expect(gate.evidence_reference).toBeNull();
    }
+ });
+ it('records the post-merge AUT-01 governance nonconformance without claiming Director sign-off',()=>{
+   const n=ledger.post_merge_nonconformance;
+   expect(n.status).toBe('OPEN_PENDING_HUMAN_SAFETY_REVIEW');
+   expect(n.source_pr_head_sha).toMatch(/^[a-f0-9]{40}$/);
+   expect(n.github_ci_conclusion_at_merge_head).toBe('failure');
+   expect(n.independent_pr_reviewer_submissions_at_inspection).toBe(0);
+   expect(n.director_signature_verified).toBe(false);
+   expect(n.effective_branch_protection_verified).toBe(false);
+   expect(n.engineering_release_hold).toBe(true);
  });
  it('never approves control, compliance, physical validation or blocker closure from synthetic tests',()=>{
    expect(ledger.autonomous_navigation_authorized).toBe(false);
