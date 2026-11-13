@@ -141,7 +141,11 @@ describe('Deterministic Naval Engineering Tools: Physics Benchmarks & Analytical
       expect((await run({ ...common, totalResistanceRangeKn: { min: 9, max: 10 } })).success).toBe(false);
       expect((await run({ ...common, efficiencyRange: { min: 0.6, max: 0.7 } })).success).toBe(false);
       expect((await run({ ...common, propulsiveEfficiencyEtaD: 1.2 })).success).toBe(false);
-      expect((await run({ ...base, arbitraryResidualCoeff: 0.01 })).success).toBe(false);
+      // Composite agents may pass unrelated fields; such values must never drive drag or powering.
+      const withExtraneous = await run({ ...base, arbitraryResidualCoeff: 0.01 });
+      expect(withExtraneous.success).toBe(true);
+      expect(withExtraneous.output.totalResistanceKn).toBeNull();
+      expect(withExtraneous.output.shaftBrakePowerPbKw).toBeNull();
     });
   });
 
