@@ -13,7 +13,8 @@ describe('B01: historical parameters cannot become an approved engineering basel
     expect(entries.every(x => x.sourceDocOrCalculation?.includes('historical, unverified'))).toBe(true);
     expect(memory.getAllAdrs().find(x => x.id === 'ADR-002')?.status).toBe('SUPERSEDED');
     expect(CONFIGURATION_CATALOG.some(x => x.approvalState === 'NOT_APPROVED')).toBe(true);
-    expect(CONFIGURATION_CATALOG.every(x => x.approvalState !== 'APPROVED')).toBe(true);
+    const states: string[] = CONFIGURATION_CATALOG.map(x => x.approvalState);
+    expect(states).not.toContain('APPROVED');
   });
 
   it('refuses client-side promotion to both approval statuses', () => {
