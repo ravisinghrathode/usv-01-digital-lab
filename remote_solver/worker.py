@@ -396,11 +396,12 @@ def run_staged_case(manifest: dict, stage: Path, work_root: Path,
                            timeout=30,isolation_mode=isolation_mode)
         version_text = (version_run.stdout or "") + "\n" + (version_run.stderr or "")
         (case / "version.log").write_text(version_text)
-        if version_run.returncode != 0:
-            raise RuntimeError("Unable to query actual solver version")
         solver_version = _parse_version(version_text,manifest["family"])
-        if solver_version == "NOT_RECORDED":
-            raise RuntimeError("Solver version not recorded")
+        # Some packaged solver CLIs use a non-zero status for informational
+        # version/help modes. Trust only a parser-recognized solver banner;
+        # unshare/binary failures do not contain one and therefore fail closed.
+        if solver_version == "NOT_RECORDED" or solver_version.startswith("UNPARSED:"):
+            raise RuntimeError("Unable to query a parseable actual solver version")
 
         logs: list[dict] = []
         command_text: dict[str,str] = {}
