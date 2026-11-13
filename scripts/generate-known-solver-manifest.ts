@@ -27,7 +27,9 @@ const manifest=createSolverJobManifest({
     residualThreshold:1e-4,
     gridUncertaintyMaxFraction:0.05,
     maxMeshSkewness:4,
-    maxNonOrthogonalityDeg:70
+    maxNonOrthogonalityDeg:70,
+    maxElementAspectRatio:5,
+    minScaledJacobian:0.2
   }
 });
 fs.writeFileSync(output,JSON.stringify(manifest,null,2)+'\n');
