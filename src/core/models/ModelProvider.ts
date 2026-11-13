@@ -1,4 +1,5 @@
 import { isPaidAiApiAllowed } from './AiBillingPolicy.ts';
+import { evaluateLabCommissioningPolicy } from '../mission-control/LabCommissioningPolicy.ts';
 
 
 export type ExecutionMode =
@@ -331,8 +332,8 @@ export class CodexCliProvider implements IModelProvider {
 
   isAvailable(): boolean {
     return typeof process !== 'undefined' &&
-      process.env.USV_SUBSCRIPTION_PILOT === 'enabled' &&
-      !isPaidAiApiAllowed();
+      !isPaidAiApiAllowed() &&
+      evaluateLabCommissioningPolicy(process.env).permitted;
   }
 
   async generateText(request: ModelPromptRequest): Promise<ModelPromptResponse> {
