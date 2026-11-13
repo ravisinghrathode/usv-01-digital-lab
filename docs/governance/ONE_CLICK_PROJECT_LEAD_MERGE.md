@@ -7,12 +7,14 @@ In the USV-01 Project Overview, a signed-in Engineering Director sees **Approve 
 The GitHub workflow visits open PRs by ascending number (including the platform stack #48–#52 in dependency order), and merges **only** when:
 
 - The PR is not a draft and targets `main`.
-- The latest independent GitHub review decision is `APPROVED`.
-- GitHub's merge state is `CLEAN`, respecting protected-branch checks and merge policy.
+- GitHub's current review decision is `APPROVED`.
+- At least one independent reviewer other than the PR author submitted `APPROVED` against the **exact current head SHA**.
+- The latest **Deterministic Quality & Governance Gate** check run on that exact head SHA is completed with `success`.
+- GitHub's merge state is `CLEAN`.
 - The PR head commit SHA remains unchanged at merge time.
 - GitHub's merge endpoint accepts the merge without an administrator override.
 
-It skips all other PRs, records **HOLD** for each, and publishes merged/held counts in the Actions job summary. It never adds a review, signs ECR evidence, disables CI, alters rulesets, or claims engineering release acceptance. GitHub may temporarily report `UNKNOWN` after an earlier merge: a later click can re-evaluate skipped PRs.
+It skips all other PRs, records **HOLD** for each, and publishes merged/held counts in the Actions job summary. The workflow does not depend on branch-protection configuration alone: exact-head peer approval and exact-head governance success are mandatory in its own logic. It never adds a review, signs ECR evidence, disables CI, alters rulesets, or claims engineering release acceptance. GitHub may temporarily report `UNKNOWN` after an earlier merge: a later click can re-evaluate skipped PRs.
 
 ## Deployment prerequisites
 

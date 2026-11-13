@@ -47,18 +47,33 @@ jobs:
             state=$(jq -r '.mergeStateStatus // "UNKNOWN"' <<<"$details")
             sha=$(jq -r '.headRefOid' <<<"$details")
             title=$(jq -r '.title' <<<"$details" | tr '\n\r|' '   ')
-            # APPROVED means independent GitHub review requirements were met.
-            # CLEAN means GitHub says merge requirements are satisfied, including
-            # applicable required status checks and protected-branch rules.
-            # No permissions bypass, admin override, fake review or stage-D
-            # signature generation is ever attempted by this workflow.
-            if [[ "$draft" != "false" || "$base" != "main" || "$review" != "APPROVED" || "$state" != "CLEAN" ]]; then
-              printf '| #%s | HOLD | draft=%s, base=%s, review=%s, merge=%s |\n' "$number" "$draft" "$base" "$review" "$state" >> "$GITHUB_STEP_SUMMARY"
+            author=$(gh pr view "$number" --repo "$GH_REPO" --json author --jq '.author.login')
+            # Do not rely on repository protection being configured correctly.
+            # Require an independent APPROVED review anchored to this exact head SHA.
+            exact_peer_approval=$(gh api "repos/$GH_REPO/pulls/$number/reviews?per_page=100" --paginate | jq -s --arg sha "$sha" --arg author "$author" '
+              add
+              | sort_by(.submitted_at // "")
+              | group_by(.user.login)
+              | map(last)
+              | any(.state == "APPROVED" and .commit_id == $sha and .user.login != $author)
+            ')
+            # Require the latest governance check on the exact head to be completed/success.
+            governance=$(gh api -H "Accept: application/vnd.github+json" "repos/$GH_REPO/commits/$sha/check-runs?per_page=100")
+            governance_status=$(jq -r '
+              [.check_runs[] | select(.name == "Deterministic Quality & Governance Gate")]
+              | sort_by(.completed_at // .started_at // "")
+              | last
+              | if . == null then "MISSING" else (.status + ":" + (.conclusion // "NONE")) end
+            ' <<<"$governance")
+            # reviewDecision remains an additional GitHub-level guard against an
+            # outstanding change request. CLEAN remains an additional mergeability guard.
+            if [[ "$draft" != "false" || "$base" != "main" || "$review" != "APPROVED" || "$state" != "CLEAN" || "$exact_peer_approval" != "true" || "$governance_status" != "completed:success" ]]; then
+              printf '| #%s | HOLD | draft=%s, base=%s, review=%s, exact-peer=%s, governance=%s, merge=%s |\n' "$number" "$draft" "$base" "$review" "$exact_peer_approval" "$governance_status" "$state" >> "$GITHUB_STEP_SUMMARY"
               ((blocked+=1))
               continue
             fi
-            # An exact head SHA ensures the approved commit did not move.
-            # GitHub remains final authority for branch protections.
+            # The merge request is anchored to the reviewed/check-cleared head SHA.
+            # No permissions bypass, admin override, fake review or signature generation is attempted.
             if result=$(gh api -X PUT "repos/$GH_REPO/pulls/$number/merge" -f merge_method=merge -f sha="$sha" 2>&1); then
               if [[ "$(jq -r '.merged // false' <<<"$result")" == "true" ]]; then
                 printf '| #%s | MERGED | %s |\n' "$number" "$title" >> "$GITHUB_STEP_SUMMARY"

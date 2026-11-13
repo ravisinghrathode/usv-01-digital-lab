@@ -42,32 +42,22 @@ export interface CliSpec {
   args: (prompt: string) => string[];
 }
 
+const codexArgs = (prompt: string): string[] => [
+  'exec',
+  '--sandbox', 'read-only',
+  prompt
+];
+
+/**
+ * One signed-in Codex CLI is sufficient for the subscription pilot.
+ * The three logical roles remain separate. If worker and reviewer resolve to
+ * the same executable/provider, MissionControlCoordinator records that review
+ * as non-independent and requires a human review before release.
+ */
 export const SAFE_ROLES: Record<PilotRole, CliSpec> = {
-  orchestrator: {
-    executable: 'claude',
-    args: prompt => [
-      '-p', prompt,
-      '--output-format', 'json',
-      '--permission-mode', 'plan',
-      '--max-turns', '4'
-    ]
-  },
-  worker: {
-    executable: 'agy',
-    args: prompt => [
-      '-p', prompt,
-      '--output-format', 'json',
-      '--mode', 'plan'
-    ]
-  },
-  reviewer: {
-    executable: 'codex',
-    args: prompt => [
-      'exec',
-      '--sandbox', 'read-only',
-      prompt
-    ]
-  }
+  orchestrator: { executable: 'codex', args: codexArgs },
+  worker: { executable: 'codex', args: codexArgs },
+  reviewer: { executable: 'codex', args: codexArgs }
 };
 
 /** Explicit opt-in prevents accidental live subscription use from the existing application. */
@@ -136,8 +126,8 @@ export function getSubscriptionCliSpecs(): Record<PilotRole, Pick<CliSpec, 'exec
 }
 
 /**
- * Run exactly one allowlisted local CLI. Any missing executable, missing cached login,
- * quota exhaustion, permission denial, or non-zero exit is surfaced; there is no API fallback.
+ * Run exactly one allowlisted local subscription CLI. Any missing executable, missing cached login,
+ * quota exhaustion, permission denial, or non-zero exit is surfaced; there is no paid API fallback.
  */
 export async function runSubscriptionCli(input: PilotRequest): Promise<PilotResult> {
   validatePilotRequest(input);

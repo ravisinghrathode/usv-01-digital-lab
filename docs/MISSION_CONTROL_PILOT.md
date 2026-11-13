@@ -1,14 +1,14 @@
 # USV-01 Mission Control — subscription-only orchestration
 
-**Status:** implementation complete in PR #53; live subscription authentication still requires one local Mac preflight.
+**Status:** bounded Codex subscription pilot implemented; live subscription authentication still requires one local Mac preflight.
 
 ## Purpose
 
 Mission Control coordinates the existing **26 specialist agents** without replacing, renaming, merging, or weakening them.
 
-- **Claude Code** — chief orchestrator/planner.
-- **Google Antigravity CLI (Gemini)** — execution/synthesis worker operating under the selected specialist agent's mandate.
-- **OpenAI Codex CLI (GPT)** — independent technical reviewer aligned with `INDEP-REV-23`.
+- **OpenAI Codex CLI** — signed-in subscription client used for the logical orchestrator, specialist worker and review roles.
+- **Review independence guard** — when worker and reviewer use the same Codex provider, the review is recorded as non-independent and the task stops at human review.
+- **No paid API fallback** — Mission Control strips API/provider credentials before child execution.
 - **Deterministic USV tools** — calculations and test evidence.
 - **Existing human authority gate** — remains the only Project Lead / Engineering Director approval mechanism.
 
@@ -22,7 +22,7 @@ Paid AI API access is denied by default by `AiBillingPolicy.ts`.
 USV_ALLOW_PAID_AI_API=false
 ```
 
-Merely having `GEMINI_API_KEY` or `OPENAI_API_KEY` in a shell does not authorize provider use. Mission Control additionally strips API/provider credential environment variables before invoking the three local CLIs.
+Merely having `GEMINI_API_KEY` or `OPENAI_API_KEY` in a shell does not authorize provider use. Mission Control additionally strips API/provider credential environment variables before invoking the local Codex CLI.
 
 Governance CI is deterministic-only. It must not invoke Claude, Gemini, Codex, Gemini API, or OpenAI API.
 
@@ -34,7 +34,7 @@ Project Lead
     v
 MissionControlCoordinator
     |
-    +--> Claude Code (-p, plan mode)
+    +--> Codex logical orchestrator (read-only sandbox)
     |       |
     |       v
     |   task plan
@@ -43,12 +43,12 @@ MissionControlCoordinator
     |       |
     |       +--> mandatory deterministic tools
     |       |
-    |       +--> Antigravity / Gemini worker (-p, plan mode)
+    |       +--> Codex logical worker (read-only sandbox)
     |
-    +--> Codex reviewer (exec, read-only sandbox)
+    +--> Codex logical reviewer (read-only sandbox)
             |
-            +--> APPROVE -> next governance stage
-            +--> REQUEST_CHANGES -> bounded Gemini rework
+            +--> APPROVE -> READY_FOR_HUMAN_REVIEW when same provider
+            +--> REQUEST_CHANGES -> bounded specialist rework
             +--> BLOCK -> task blocked
 
 No AI result satisfies human approval.
@@ -73,13 +73,13 @@ Every successful review record contains:
 - specialist ID and canonical A01-A26 ID;
 - exact Git commit SHA;
 - objective digest;
-- Claude plan digest;
+- orchestrator plan digest;
 - deterministic tool inputs/outputs and verification state;
-- Gemini worker output digest;
-- GPT review decision and findings;
+- specialist worker output digest;
+- review decision, findings and whether the provider was actually independent;
 - `humanApprovalSatisfied: false`.
 
-This prevents a GPT/Claude/Gemini statement from being mistaken for Project Lead authorization.
+This prevents a model role split from being mistaken for independent engineering review or Project Lead authorization.
 
 ## Docker
 
@@ -106,22 +106,22 @@ The subscription CLIs remain on the host Mac so their desktop/account authentica
 
 ## Local Mac preflight
 
-Install/sign in to the three CLIs using the intended subscription/account. Then, from the repository:
+Install Codex CLI and sign in using the intended ChatGPT subscription/account. Then, from the repository:
 
 ```bash
 npm run mission-control:preflight
 ```
 
-This checks that `claude`, `agy`, and `codex` executables exist. It does not consume model usage or test authentication.
+This checks that the `codex` executable is available for all three logical roles. It does not consume model usage or test authentication.
 
-Authenticate interactively once with each provider. Do not configure API keys for Mission Control.
+Authenticate Codex interactively once. Do not configure API keys for Mission Control.
 
 Current supported non-interactive mechanisms used by the adapter:
 
 ```text
-Claude Code:        claude -p ... --output-format json --permission-mode plan
-Antigravity CLI:    agy -p ... --output-format json --mode plan
-Codex CLI:          codex exec --sandbox read-only ...
+Orchestrator role:  codex exec --sandbox read-only ...
+Worker role:        codex exec --sandbox read-only ...
+Reviewer role:      codex exec --sandbox read-only ...
 ```
 
 ## Run the bounded pilot
@@ -136,7 +136,7 @@ npm run mission-control:pilot -- \
   --objective "Verify one bounded requirements-traceability package."
 ```
 
-The initial pilot deliberately uses a non-safety-critical specialist with no mandatory numerical tool so that cross-provider coordination can be tested independently of missing vessel particulars.
+The initial pilot deliberately uses a non-safety-critical specialist with no mandatory numerical tool so that orchestration, specialist execution and review-state handling can be tested independently of missing vessel particulars.
 
 After that succeeds, select a real engineering workstream. Any mandatory deterministic tool failure blocks the task before reviewer acceptance.
 
@@ -152,10 +152,10 @@ The regression suite verifies:
 
 1. all 26 specialist agents remain registered;
 2. provider envelopes are parsed without trusting vendor-specific shapes;
-3. a reviewer rejection routes work back to Gemini;
+3. a reviewer rejection routes work back to the specialist worker;
 4. the correction cycle is bounded;
 5. human approval is never inferred from AI review;
-6. unavailable CLIs fail closed;
+6. an unavailable Codex CLI fails closed;
 7. paid AI APIs are denied unless explicitly opted in;
 8. API/provider credentials are stripped from Mission Control child processes.
 
@@ -173,4 +173,4 @@ Mission Control must not:
 
 ## Remaining local prerequisite
 
-Repository implementation and deterministic CI can be completed remotely. The only unavoidable local prerequisite is **verifying that the user's Mac is signed into Claude Code, Antigravity CLI, and Codex CLI with the intended subscription/account**. That credential state cannot be created or verified from GitHub CI without either the user's interactive login or introducing machine/API credentials, which this design intentionally forbids.
+Repository implementation and deterministic CI can be completed remotely. The only unavoidable local prerequisite is **verifying that the user's Mac is signed into Codex CLI with the intended ChatGPT subscription/account**. That credential state cannot be created or verified from GitHub CI without either the user's interactive login or introducing machine/API credentials, which this design intentionally forbids.

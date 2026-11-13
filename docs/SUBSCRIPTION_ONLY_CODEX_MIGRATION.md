@@ -1,6 +1,6 @@
 # Subscription-only Codex migration — USV-01
 
-**Status:** Codex-assisted engineering operating procedure proposed; native 26-agent AI-runtime replacement **not complete**. Do not use this document to close AGT-02 or other independent engineering acceptance obligations.
+**Status:** Codex-assisted engineering operating procedure active for the bounded local Mission Control pilot; native in-process model-provider replacement **not complete**. Do not use this document to close AGT-02 or other independent engineering acceptance obligations.
 
 ## Objective
 
@@ -44,3 +44,10 @@ A valid migration PR must pass repository checks and identify its exact commit S
 - https://learn.chatgpt.com/docs/auth?surface=cli
 - https://help.openai.com/en/articles/11369540-using-codex-with-your-chatgpt-plan
 - https://learn.chatgpt.com/docs/github-action
+
+
+## Bounded Mission Control implementation
+
+The local Mission Control pilot can now use one signed-in Codex CLI for its logical orchestrator, specialist worker and reviewer roles. This removes mandatory Claude/Antigravity CLI dependencies and preserves the existing 26 specialist contracts and deterministic tools.
+
+Because all three logical roles may use the same provider, the resulting reviewer record is explicitly marked non-independent. Same-provider approval therefore advances only to human review; it cannot satisfy independent engineering review, Stage D authorization or vessel release.
