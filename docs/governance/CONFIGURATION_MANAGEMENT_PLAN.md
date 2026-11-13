@@ -24,7 +24,7 @@ The following items are under strict configuration control:
 | **System Architecture** | `docs/ARCHITECTURE.md` | Version-controlled markdown specification |
 | **Requirements** | `REQ-[SYS|NA|HYD|STR|ELEC|PROP|SWA|VVT]-NNN` | `USV01_PROJECT_CONTEXT.md` & `data/project_store.json` |
 | **Design Decisions** | `ADR-NNN` | Architecture Decision Records in repository |
-| **Agent Specifications** | `A01`–`A25` | `src/core/agents/definitions.ts` (Canonical HMEA v0.2) |
+| **Agent Specifications** | `A01`–`A26` | `src/core/agents/definitions.ts` (Canonical HMEA v0.2) |
 | **Engineering Parameters** | `USV-[SUBSYSTEM]-NNN` | `SharedMemory.ts` Parameter Register |
 | **Test Procedures** | `tests/*.test.ts` | Vitest automated test suite |
 | **Verification Evidence** | Test execution reports & logs | GitHub Actions CI artifacts & release manifests |
@@ -35,7 +35,7 @@ The following items are under strict configuration control:
 ### 3. Baseline Management
 
 1. **Functional Baseline (FBL):** Defined by `USV01_PROJECT_CONTEXT.md` and initial requirements. Identifies target vessel mission constraints and explicit `TBD` markers.
-2. **Allocated Baseline (ABL):** Defined by the 25-agent HMEA v0.2 division charter and deterministic naval tool specifications.
+2. **Allocated Baseline (ABL):** Defined by the 26-agent HMEA v0.2 division charter and deterministic naval tool specifications.
 3. **Product Baseline (PBL):** Defined by frozen, tested git commits on `main` that have successfully cleared the 4-stage Independent Review Pipeline.
 
 ---
