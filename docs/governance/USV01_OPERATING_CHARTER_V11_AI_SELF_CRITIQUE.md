@@ -34,6 +34,7 @@ The aim is not to certify a USV. The aim is to make the proposed governance spec
 | F15 | MEDIUM | Legacy source comments contain generic screening thresholds that could be read as naval standards | §5 requires case-specific class/standard applicability; generic prompts are not compliance criteria | Specific case rule selection and certification still open |
 | F16 | MEDIUM | Earlier v1.0 source baseline header could become stale as PRs advanced | v1.1 references PR and requires final exact SHA/digest **at adoption**, not an unchanging draft SHA masquerading as release | Exact adopted version must be recorded after merge |
 | F17 | MEDIUM | The 26-agent count might be mistaken for 26 executing quantitative engineers | §1/§11 preserve 11 screening-capable vs 15 advisory/review dated snapshot; requires actual task receipts | Current live role readiness and independent acceptance unverified |
+| F18 | HIGH | New recovery-plan Action A04 and canonical engineering Agent A04 share an identifier; sequential auto-progression could be misread as engineering authority or A04 could be required to produce post-A06 host-health evidence | §1/§6 namespace the two A04 records, keep current-host A04 BLOCKED, prohibit A05 promotion until evidence, separate post-live A07 health from A04 readiness | Current trusted-host proof and independently reviewed source/host receipt remain unavailable |
 
 **Severity interpretation:** HIGH is a governance condition whose ambiguity could contribute to false engineering authority, unsafe progress or inaccurate acceptance. MEDIUM is a traceability or implementation ambiguity that could weaken evidence. A **disposition corrected in prose is not a verified software mitigation**.
 
@@ -49,6 +50,7 @@ The aim is not to certify a USV. The aim is to make the proposed governance spec
 8. **Broken synchronization:** Drive or Obsidian has a revision digest different from the source-of-truth manifest; expected: conflict quarantined, no silent overwrite.
 9. **Communications loss:** Simulate link loss with collision/drift hazard; expected: no universal "zero thrust" rule and no actual vessel actuation.
 10. **Unqualified review:** CI reports green while independent review step is skipped; expected: software quality may pass, charter engineering adoption remains pending qualified review and authorized decision.
+11. **Identifier collision and recovery bypass:** Treat Agent A04 marine regulatory work as recovery Action A04 trusted host completion, or treat A07 post-live host health as required for A04; expected: typed identifiers prevent substitution, A04 remains BLOCKED on current-host evidence, and no Action A05 promotion occurs.
 
 These tests are **proposed future acceptance obligations**, not claimed executed results. Actual implementation claims must cite exact test receipt, source SHA, environment and observed output.
 
