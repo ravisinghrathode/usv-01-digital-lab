@@ -51,11 +51,11 @@ npm run dev
 3. **Unknowns as TBD:** Never fabricate vessel particulars. All open parameters are preserved as `TBD`.
 4. **Deterministic Separation:** Deterministic naval calculations are strictly separated from probabilistic LLM synthesis.
 
-## Design-and-innovation development (NOT certified vessel design)
+## ChatGPT-only agent runtime (NOT certified vessel design)\n\nAll 26 canonical agent role definitions now use the operator-authenticated ChatGPT Codex CLI (`codex_cli`) for AI synthesis. The CLI must be installed and signed in on the execution machine. Set `AI_REVIEW_PROVIDER=codex_cli`, `USV_SUBSCRIPTION_PILOT=enabled` and `USV_ALLOW_PAID_AI_API=false` before invoking live agents. The repository does not itself deploy or continuously run the agents. If authentication or runtime is unavailable, live agent tasks fail rather than using Gemini. All outputs remain unverified until independent review and engineering acceptance.\n\n## Design-and-innovation development (NOT certified vessel design)
 
 - `npm run audit:capabilities` — derive the current 26-role tool/rubric capability report from live source.
 - `npm run concept:research -- --mission-file references/concept-mission-draft.json --source-sha <SOURCE_SHA>` — prepare research cases for all 26 roles.
-- `npm run design:iterate -- --mission-file references/concept-mission-draft.json --source-sha <SOURCE_SHA> --seed 1337 --revisions 3` — run actual A01 proposal / A15 critique cycles on an authorized backend with `GEMINI_API_KEY`. No fallback success is accepted.
+- `AI_REVIEW_PROVIDER=codex_cli USV_SUBSCRIPTION_PILOT=enabled USV_ALLOW_PAID_AI_API=false npm run design:iterate -- --mission-file references/concept-mission-draft.json --source-sha <SOURCE_SHA> --seed 1337 --revisions 3` — run real A01 proposal / A15 critique cycles via a locally installed, signed-in ChatGPT Codex CLI. No Gemini, paid API or mock fallback.
 - `RemoteSolverJobs` and `ToolBenchmarkCampaign` support explicit CFD/FEA job manifests and externally sourced numerical comparison only; neither establishes solver commissioning or marine certification.
 
 The legacy heuristic optimizer uses a replayable seed and **12 synthetic rule checks**, not agent votes. Its old hard-coded Sobol indices and fictitious safety/sea-trial proof are removed. The authentic, bounded A01 ↔ A15 design loop is a separate unverified research process. See [Design loop and solver protocol](docs/AGENT_DESIGN_LOOP_AND_SOLVER_PROTOCOL_20261113.md) and the 13-workstream acceptance report. Safety-critical PRs require independent review and exact-baseline human approval before merge.
