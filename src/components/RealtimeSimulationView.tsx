@@ -82,7 +82,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
   const radarCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const hydroCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  // Internal Animation Refs — Synchronized with Rev 0.4 Baseline (14 kt cruise speed)
+  // Historical scenario values only; not a controlled engineering baseline.
   const stateRef = useRef({
     usv: { x: 0, y: -350, heading: 0, speed: 14.0, baseHeading: 0, rudder: 0 },
     obstacles: [] as ObstacleVessel[],
@@ -94,7 +94,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
     activeRule: 'Rule 10 (Traffic Lane)' as string
   });
 
-  // Hydrostatics & Closed-Loop Simulation State — Synchronized with SharedMemory & Generative Optimizer
+  // Unverified preview state seeded from historical assumptions; NOT a baseline.
   const sharedMemory = SharedMemory.getInstance();
   const lwlParam = sharedMemory.getParameter('USV-NA-001');
   const beamParam = sharedMemory.getParameter('USV-NA-002');
@@ -111,20 +111,18 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
   const [vesselGmt, setVesselGmt] = useState<number>(typeof gmtParam?.value === 'number' && gmtParam.value > 0 ? Number(gmtParam.value) : 1.32);
   const [hydroKg, setHydroKg] = useState<number>(typeof kgParam?.value === 'number' && kgParam.value > 0 ? Number(kgParam.value) : 0.66);
   const [vesselSprint, setVesselSprint] = useState<number>(typeof sprintParam?.value === 'number' && sprintParam.value > 0 ? Number(sprintParam.value) : 22.0);
-  const [activeDesignLabel, setActiveDesignLabel] = useState<string>('REV 0.4 HISTORICAL PROPOSAL — UNVERIFIED');
+  const [activeDesignLabel, setActiveDesignLabel] = useState<string>('REV 0.4 HISTORICAL PREVIEW — UNVERIFIED');
 
   const [waveAmp, setWaveAmp] = useState<number>(0.4); // meters
   const [waveFreq, setWaveFreq] = useState<number>(1.2); // rad/s
   const [heelAngle, setHeelAngle] = useState<number>(0); // dynamic heel deg
 
-  // Reactive subscription: auto-update simulation whenever any agent or optimizer writes to SharedMemory
+  // React to exploratory SharedMemory changes for visual preview only; no certification.
   useEffect(() => {
     const unsubscribe = sharedMemory.subscribe((param) => {
       if (param.id === 'USV-NA-001' && typeof param.value === 'number') {
         setVesselLwl(param.value);
-        if (param.assumptions?.[0]?.includes('Applied from Optimizer')) {
-          setActiveDesignLabel(param.assumptions[0].replace('Applied from Optimizer candidate ', ''));
-        }
+        setActiveDesignLabel('EXPLORATORY SHARED INPUT PREVIEW — UNVERIFIED');
       } else if (param.id === 'USV-NA-002' && typeof param.value === 'number') {
         setVesselBeam(param.value);
       } else if (param.id === 'USV-NA-003' && typeof param.value === 'number') {
@@ -145,7 +143,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
     return unsubscribe;
   }, [sharedMemory]);
 
-  // Design Presets Switcher
+  // Demonstration presets update React view state ONLY, never SharedMemory or Gate 0.
   const handleApplyDesignPreset = (preset: 'REV04' | 'CHAMPION' | 'SPRINT' | 'GUARDIAN') => {
     if (preset === 'REV04') {
       setVesselLwl(10.5);
@@ -155,14 +153,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
       setVesselGmt(1.32);
       setHydroKg(0.66);
       setVesselSprint(22.0);
-      setActiveDesignLabel('REV 0.4 HISTORICAL PROPOSAL — UNVERIFIED');
-      sharedMemory.updateParameter('USV-NA-001', { value: 10.5, assumptions: ['Rev 0.4 Planing Monohull'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-NA-002', { value: 2.9, assumptions: ['Molded beam 2.9m'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-NA-003', { value: 0.65, assumptions: ['Design draft 0.65m'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-NA-004', { value: 6.2, assumptions: ['6.20 t displacement'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-NA-005', { value: 1.32, assumptions: ['GMt 1.32m'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-NA-006', { value: 0.66, assumptions: ['KG 0.66m'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-PROP-001', { value: 22.0, assumptions: ['22.0 kt sprint'] }, 'SIM-PRESET');
+      setActiveDesignLabel('REV 0.4 HISTORICAL PREVIEW — UNVERIFIED');
     } else if (preset === 'CHAMPION') {
       setVesselLwl(10.8);
       setVesselBeam(2.85);
@@ -171,14 +162,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
       setVesselGmt(1.38);
       setHydroKg(0.64);
       setVesselSprint(23.8);
-      setActiveDesignLabel('OPTIMIZER CHAMPION');
-      sharedMemory.updateParameter('USV-NA-001', { value: 10.8, assumptions: ['Applied from Optimizer champion'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-NA-002', { value: 2.85, assumptions: ['Applied from Optimizer champion'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-NA-003', { value: 0.63, assumptions: ['Applied from Optimizer champion'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-NA-004', { value: 6.1, assumptions: ['Applied from Optimizer champion'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-NA-005', { value: 1.38, assumptions: ['Applied from Optimizer champion'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-NA-006', { value: 0.64, assumptions: ['Applied from Optimizer champion'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-PROP-001', { value: 23.8, assumptions: ['Applied from Optimizer champion'] }, 'SIM-PRESET');
+      setActiveDesignLabel('HEURISTIC CHAMPION PREVIEW — UNVERIFIED');
     } else if (preset === 'SPRINT') {
       setVesselLwl(9.8);
       setVesselBeam(2.45);
@@ -187,14 +171,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
       setVesselGmt(1.18);
       setHydroKg(0.62);
       setVesselSprint(26.4);
-      setActiveDesignLabel('ALPHA SPRINT (26.4kt)');
-      sharedMemory.updateParameter('USV-NA-001', { value: 9.8, assumptions: ['Alpha Sprint variant'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-NA-002', { value: 2.45, assumptions: ['Narrow beam for sprint'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-NA-003', { value: 0.58, assumptions: ['Shallow draft'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-NA-004', { value: 5.2, assumptions: ['Lightweight 5.2t'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-NA-005', { value: 1.18, assumptions: ['GMt 1.18m'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-NA-006', { value: 0.62, assumptions: ['KG 0.62m'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-PROP-001', { value: 26.4, assumptions: ['26.4 kt sprint'] }, 'SIM-PRESET');
+      setActiveDesignLabel('ALPHA SPRINT PREVIEW — UNVERIFIED');
     } else if (preset === 'GUARDIAN') {
       setVesselLwl(11.4);
       setVesselBeam(3.15);
@@ -203,14 +180,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
       setVesselGmt(1.52);
       setHydroKg(0.68);
       setVesselSprint(20.5);
-      setActiveDesignLabel('CHARLIE GUARDIAN (SS5)');
-      sharedMemory.updateParameter('USV-NA-001', { value: 11.4, assumptions: ['Charlie Guardian SS5'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-NA-002', { value: 3.15, assumptions: ['Wide beam for high sea state'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-NA-003', { value: 0.72, assumptions: ['Deep draft 0.72m'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-NA-004', { value: 7.4, assumptions: ['Heavy displacement 7.4t'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-NA-005', { value: 1.52, assumptions: ['High GMt 1.52m'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-NA-006', { value: 0.68, assumptions: ['KG 0.68m'] }, 'SIM-PRESET');
-      sharedMemory.updateParameter('USV-PROP-001', { value: 20.5, assumptions: ['20.5 kt sprint'] }, 'SIM-PRESET');
+      setActiveDesignLabel('CHARLIE GUARDIAN PREVIEW — UNVERIFIED');
     }
   };
 
@@ -1069,7 +1039,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
           }`}
         >
           <Rotate3d className="w-4 h-4 text-cyan-400" />
-          <span>1. 3D Boat Design & CAD Mesh</span>
+          <span>1. Illustrative 3D Design Preview</span>
         </button>
 
         <button
@@ -1081,7 +1051,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
           }`}
         >
           <Waves className="w-4 h-4 text-cyan-400" />
-          <span>2. Flotation & Intact Stability Wave Tank</span>
+          <span>2. Illustrative Wave & Stability Preview</span>
         </button>
 
         <button
@@ -1093,11 +1063,11 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
           }`}
         >
           <Radio className="w-4 h-4 text-teal-400" />
-          <span>3. Tactical Radar & Autonomous COLREGs View</span>
+          <span>3. Synthetic Radar & COLREGs Preview</span>
         </button>
       </div>
 
-      {/* TAB 1: 3D BOAT DESIGN & CAD MESH */}
+      {/* TAB 1: ILLUSTRATIVE 3D PREVIEW */}
       {activeTab === 'design3d' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-lg p-4 space-y-3">
@@ -1114,7 +1084,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
 
               {/* Quick Design Switcher */}
               <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="text-[10px] text-slate-400 font-mono">LOAD DESIGN:</span>
+                <span className="text-[10px] text-slate-400 font-mono">PREVIEW SCENARIO:</span>
                 <button
                   onClick={() => handleApplyDesignPreset('REV04')}
                   className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold transition ${
@@ -1133,7 +1103,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
                       : 'bg-slate-800 text-slate-400 hover:text-slate-200'
                   }`}
                 >
-                  Optimizer Champion
+                  Heuristic Champion
                 </button>
                 <button
                   onClick={() => handleApplyDesignPreset('SPRINT')}
@@ -1174,7 +1144,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
                 beamMeters={vesselBeam}
                 draftMeters={vesselDraft}
                 displacementTonnes={hydroMass}
-                status="VALIDATED"
+                status="UNVERIFIED_PREVIEW"
                 candidateId={activeDesignLabel}
                 className="w-full h-[480px]"
               />
@@ -1185,11 +1155,11 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
             <div className="bg-slate-900 border border-slate-800 rounded-lg p-4 space-y-3">
               <div className="border-b border-slate-800 pb-2 flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] uppercase tracking-wider text-slate-500 block">DESIGN SPECIFICATIONS</span>
+                  <span className="text-[10px] uppercase tracking-wider text-slate-500 block">ILLUSTRATIVE DESIGN INPUTS (NOT VERIFIED)</span>
                   <span className="text-cyan-400 font-bold text-sm">USV-01 PLANING MONOHULL</span>
                 </div>
                 <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
-                  CLOSED-LOOP SYNC
+                  PREVIEW ONLY
                 </span>
               </div>
               <div className="space-y-2 text-slate-300">
@@ -1208,7 +1178,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
             <div className="bg-slate-900 border border-slate-800 rounded-lg p-4 space-y-3">
               <div className="border-b border-slate-800 pb-2">
                 <span className="text-[10px] uppercase tracking-wider text-slate-500 block">INTEGRATED PERCEPTION SUITE</span>
-                <span className="text-purple-400 font-bold text-sm">GATE 1 SENSOR MAST</span>
+                <span className="text-purple-400 font-bold text-sm">CONCEPT SENSOR MAST — UNVERIFIED</span>
               </div>
               <div className="space-y-2 text-slate-300 text-[11px]">
                 <div className="flex justify-between"><span>Radar:</span> <strong className="text-white">Simrad HALO24 (60 RPM)</strong></div>
@@ -1219,8 +1189,8 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
             </div>
 
             <div className="p-3 rounded-lg bg-teal-950/40 border border-teal-500/30 text-[11px] text-teal-300">
-              <CheckCircle2 className="w-3.5 h-3.5 inline mr-1 text-teal-400" />
-              Direct closed-loop rendering: 3D CAD mesh, wave tank physics, and SharedMemory update in real time when agents or the optimizer find new validated parameters.
+              <Info className="w-3.5 h-3.5 inline mr-1 text-teal-400" />
+              ILLUSTRATIVE PREVIEW ONLY. Presets and sliders do not change SharedMemory, controlled engineering geometry, Gate 0 evidence or approved parameters. The rendered mesh and simulation are NOT independently validated CAD, CFD or stability evidence.
             </div>
           </div>
         </div>
@@ -1624,7 +1594,7 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
                 />
               </div>
 
-              {/* Reset to Rev 0.4 Baseline */}
+              {/* Preview historical Rev 0.4 unverified proposal */}
               <button
                 onClick={() => handleApplyDesignPreset('REV04')}
                 className="w-full py-1.5 rounded bg-cyan-600/20 hover:bg-cyan-600/30 border border-cyan-500/40 text-cyan-300 text-xs font-mono font-bold flex items-center justify-center gap-1.5 transition-colors"
@@ -1634,13 +1604,13 @@ export const RealtimeSimulationView: React.FC<RealtimeSimulationViewProps> = ({ 
                 <span>Load historical Rev 0.4 proposal (10.5m)</span>
               </button>
 
-              {/* Sync with Optimizer Champion */}
+              {/* Preview heuristic example, no shared-memory synchronization */}
               <button
                 onClick={() => handleApplyDesignPreset('CHAMPION')}
                 className="w-full py-1.5 rounded bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 text-xs font-mono font-bold flex items-center justify-center gap-1.5 transition-colors"
               >
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Sync with Optimizer Champion</span>
+                <span>Preview heuristic champion (not approved)</span>
               </button>
             </div>
           </div>

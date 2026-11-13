@@ -44,7 +44,7 @@ interface Polygon3D {
   color: string;
   wireColor?: string;
   component: 'HULL' | 'DECK' | 'CABIN' | 'WINDOW' | 'MAST' | 'RADAR' | 'FLIR' | 'WATERJET' | 'WATERLINE' | 'INTERNAL';
-  cfdPressure?: number; // 0 (low/suction) to 1 (high stagnation)
+  cfdPressure?: number; // Illustrative color scalar ONLY: not actual CFD pressure evidence.
   opacity?: number;
 }
 
@@ -55,7 +55,7 @@ export const Vessel3DVisualizer: React.FC<Vessel3DVisualizerProps> = ({
   deadriseDeg = 20,
   displacementTonnes = 6.2,
   candidateId = 'USV-01-REV-0.4',
-  status = 'BASELINED',
+  status = 'UNVERIFIED_PREVIEW',
   initialHullType = 'MONOHULL',
   showPhotoRenderToggle = true,
   className = ''
@@ -738,7 +738,7 @@ export const Vessel3DVisualizer: React.FC<Vessel3DVisualizerProps> = ({
       }
     }
 
-    // CFD Streamline Particle Ribbons
+    // Schematic streamline ribbons: NOT computed fluid solution
     if (renderMode === 'CFD_PRESSURE') {
       const numLines = 10;
       const L = lwlMeters;
@@ -753,7 +753,7 @@ export const Vessel3DVisualizer: React.FC<Vessel3DVisualizerProps> = ({
         const pStart = projectPoint({ x: currentX, y: lateralOffset, z: zPos });
         const pEnd = projectPoint({ x: currentX - 1.2, y: lateralOffset, z: zPos });
 
-        // Streamline color based on velocity/pressure
+        // Schematic visual-only color, not pressure/velocity from a solver
         const grad = ctx.createLinearGradient(pStart.x, pStart.y, pEnd.x, pEnd.y);
         grad.addColorStop(0, '#06b6d4');
         grad.addColorStop(1, 'rgba(6, 182, 212, 0)');
@@ -805,7 +805,7 @@ export const Vessel3DVisualizer: React.FC<Vessel3DVisualizerProps> = ({
         ctx.stroke();
       } else if (renderMode === 'CFD_PRESSURE') {
         const press = poly.cfdPressure ?? 0.5;
-        // CFD Heatmap: 0.0 (Blue) -> 0.4 (Cyan) -> 0.7 (Yellow) -> 1.0 (Red Stagnation)
+        // Illustrative color gradient, NOT CFD field data or validation
         let fill = '#06b6d4';
         if (press > 0.8) fill = '#ef4444';
         else if (press > 0.6) fill = '#f59e0b';
@@ -919,7 +919,7 @@ export const Vessel3DVisualizer: React.FC<Vessel3DVisualizerProps> = ({
               </span>
             </div>
             <span className="text-[10px] font-mono text-slate-400 block">
-              REAL-TIME PARAMETRIC CAD SYNTHESIS • 360° ORBIT CONTROLS
+              ILLUSTRATIVE PARAMETRIC MESH • NOT ENGINEERING CAD OR PHYSICS EVIDENCE
             </span>
           </div>
         </div>
@@ -1117,9 +1117,9 @@ export const Vessel3DVisualizer: React.FC<Vessel3DVisualizerProps> = ({
                     ? 'bg-teal-500/20 text-teal-300 font-bold border border-teal-500/40'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
-                title="Hydrodynamic Pressure & Streamlines"
+                title="Illustrative pressure-style coloring; no CFD solution or measured field"
               >
-                CFD Pressure
+                Schematic Pressure
               </button>
               <button
                 onClick={() => setRenderMode('XRAY_STRUCTURAL')}
@@ -1139,16 +1139,16 @@ export const Vessel3DVisualizer: React.FC<Vessel3DVisualizerProps> = ({
                     ? 'bg-teal-500/20 text-teal-300 font-bold border border-teal-500/40'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
-                title="CAD Lines & Wireframe Mesh"
+                title="Display-only wireframe; not authoritative CAD geometry"
               >
-                CAD Mesh
+                Wireframe
               </button>
             </div>
           </div>
         )}
       </div>
 
-      {/* Live Physical Dimensions & Spatial Telemetry Footer */}
+      {/* Unverified geometry preview dimensions only; no physical verification */}
       <div className="mt-3 pt-3 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs font-mono">
         <div className="p-2 bg-slate-950 rounded border border-slate-800/60">
           <span className="text-[10px] text-slate-500 block">LENGTH OVERALL (LOA)</span>
