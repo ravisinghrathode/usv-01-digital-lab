@@ -84,6 +84,13 @@ class WorkerTest(unittest.TestCase):
             self.assertIn('model.frd',evidence.namelist())
             self.assertIn('solver-summary.json',evidence.namelist())
 
+    def test_openfoam_version_parser_matches_real_v2606_banner_not_prose(self):
+        from worker import _parse_version
+        banner='''Usage: simpleFoam [OPTIONS]\nSteady-state solver for incompressible, turbulent flows.\n\nUsing: OpenFOAM-2606 (2606) - visit www.openfoam.com\nBuild: _481094f-20260618\n'''
+        self.assertEqual(_parse_version(banner,'OPENFOAM_CFD'),'2606')
+        self.assertEqual(_parse_version('OpenFOAM-v2506 help','OPENFOAM_CFD'),'2506')
+        self.assertTrue(_parse_version('OpenFOAM visit documentation','OPENFOAM_CFD').startswith('UNPARSED:'))
+
     def _openfoam_fixture(self):
         points=b'pre-generated points'
         payload=bundle({'constant/polyMesh/points':points})
