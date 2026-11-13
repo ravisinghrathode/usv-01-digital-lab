@@ -25,9 +25,9 @@ export const INITIAL_PROJECT: ProjectInfo = {
   code: 'USV-01',
   description: 'Autonomous maritime surface vessel digital engineering lifecycle platform, requirements baseline, and physics simulation registry.',
   status: 'Active',
-  governanceState: 'Approved',
-  baselineRev: 'REV 0.4-BASELINED',
-  leadEngineer: 'Chief Systems Architect',
+  governanceState: 'Draft',
+  baselineRev: 'NO APPROVED VESSEL BASELINE — DEMO DATA ONLY',
+  leadEngineer: 'Unassigned — no attributed engineering approval',
   securityClassification: 'Engineering Controlled Baseline',
   lastUpdated: '2026-11-12 17:00 UTC'
 };
@@ -36,97 +36,97 @@ export const INITIAL_WORKSTREAMS: WorkstreamSummary[] = [
   {
     code: 'SYS',
     name: 'Systems Engineering',
-    lead: 'Dr. M. Lindqvist (Lead Systems Eng)',
-    status: 'Nominal',
-    completionPercent: 42,
+    lead: 'Unassigned — demo workstream',
+    status: 'Pending Inputs',
+    completionPercent: 0,
     openItemsCount: 5,
     openDecisionsCount: 2,
     openRisksCount: 3,
-    lastActivity: 'Updated requirements baseline Rev 0.2',
+    lastActivity: 'No independently verified workstream evidence loaded',
     description: 'Top-level mission CONOPS, requirements decomposition, ICD registers, and cross-discipline verification matrix.'
   },
   {
     code: 'NAV',
     name: 'Naval Architecture',
-    lead: 'K. Tanaka (Senior Naval Architect)',
+    lead: 'Unassigned — demo workstream',
     status: 'Pending Inputs',
-    completionPercent: 28,
+    completionPercent: 0,
     openItemsCount: 8,
     openDecisionsCount: 1,
     openRisksCount: 2,
-    lastActivity: 'Hydrostatics baseline marked TBD pending towing tank validation',
+    lastActivity: 'No independently verified workstream evidence loaded',
     description: 'Hull form geometry, principal particulars, intact/damage stability under IMO 2008 IS Code, and weight/LCG tracking.'
   },
   {
     code: 'HYD',
     name: 'Hydrodynamics',
-    lead: 'A. Boucher (Hydrodynamics Lead)',
-    status: 'Under Review',
-    completionPercent: 35,
+    lead: 'Unassigned — demo workstream',
+    status: 'Pending Inputs',
+    completionPercent: 0,
     openItemsCount: 4,
     openDecisionsCount: 2,
     openRisksCount: 1,
-    lastActivity: 'OpenFOAM VOF calm-water resistance mesh peer review submitted',
+    lastActivity: 'No independently verified workstream evidence loaded',
     description: 'Calm-water resistance, speed-power estimation, seakeeping RAO analyses, cavitation margins, and CFD HPC job registry.'
   },
   {
     code: 'MEC',
     name: 'Mechanical & Structural',
-    lead: 'H. Richter (Structures Lead)',
-    status: 'Nominal',
-    completionPercent: 31,
+    lead: 'Unassigned — demo workstream',
+    status: 'Pending Inputs',
+    completionPercent: 0,
     openItemsCount: 6,
     openDecisionsCount: 1,
     openRisksCount: 2,
-    lastActivity: 'Marine 5083-H116 slamming panel load case DNV-RU-HSLC logged',
+    lastActivity: 'No independently verified workstream evidence loaded',
     description: 'Hull girder longitudinal strength, transverse frames, material database, component CAD registry, and FEA stress runs.'
   },
   {
     code: 'ELE',
     name: 'Electrical & Power',
-    lead: 'S. Patel (Power Systems Eng)',
-    status: 'Nominal',
-    completionPercent: 38,
+    lead: 'Unassigned — demo workstream',
+    status: 'Pending Inputs',
+    completionPercent: 0,
     openItemsCount: 7,
     openDecisionsCount: 1,
     openRisksCount: 2,
-    lastActivity: '24h mission load budget preliminary model compiled',
+    lastActivity: 'No independently verified workstream evidence loaded',
     description: 'Isolated DC bus topology, LiFePO4 battery energy storage, 24h operational duty-cycle load balance, and galvanic protection.'
   },
   {
     code: 'PRP',
     name: 'Propulsion',
-    lead: 'J. O\'Connor (Propulsion Specialist)',
-    status: 'Under Review',
-    completionPercent: 24,
+    lead: 'Unassigned — demo workstream',
+    status: 'Pending Inputs',
+    completionPercent: 0,
     openItemsCount: 5,
     openDecisionsCount: 1,
     openRisksCount: 1,
-    lastActivity: 'Twin electric outboard vs waterjet trade study trade-space defined',
+    lastActivity: 'No independently verified workstream evidence loaded',
     description: 'Electric drive motors, ESC inverter cooling, propeller blade cavitation margins, and drive integration verification.'
   },
   {
     code: 'AUT',
     name: 'Software & Autonomy',
-    lead: 'E. Chen (Autonomy Architect)',
-    status: 'Nominal',
-    completionPercent: 45,
+    lead: 'Unassigned — demo workstream',
+    status: 'Pending Inputs',
+    completionPercent: 0,
     openItemsCount: 9,
     openDecisionsCount: 3,
     openRisksCount: 3,
-    lastActivity: 'COLREGs Rule 14/15 encounter avoidance state-machine mapped in ROS2',
+    lastActivity: 'No independently verified workstream evidence loaded',
     description: 'Dual-redundant autonomy stack, RTK GNSS/INS sensor fusion, radar/LiDAR perception, fail-safe watchdogs, and ICDs.'
   },
   {
     code: 'VNV',
     name: 'Verification & Validation',
-    lead: 'T. Vance (V&V Manager)',
-    status: 'Nominal',
-    completionPercent: 20,
+    lead: 'Unassigned — demo workstream',
+    status: 'Pending Inputs',
+    completionPercent: 0,
     openItemsCount: 4,
     openDecisionsCount: 0,
     openRisksCount: 1,
-    lastActivity: 'FAT test procedure for electrical distribution board staged',
+    lastActivity: 'No independently verified workstream evidence loaded',
     description: 'Test procedure register, HIL test environments, calibrated instrumentation logs, non-conformance deviations, and approvals.'
   }
 ];
@@ -158,12 +158,12 @@ export const INITIAL_REQUIREMENTS: Requirement[] = [
     projectId: 'PRJ-USV-01',
     subsystemCode: 'NAV',
     title: '[SAMPLE] Intact Stability Envelope Compliance',
-    description: 'The vessel hull geometry and mass distribution shall comply with IMO Resolution MSC.267(85) (2008 IS Code) intact stability criteria across all operational loading conditions (lightship to full load).',
+    description: 'The vessel shall satisfy the intact-stability design basis applicable to its approved configuration, service and jurisdiction. Flag/class applicability and acceptance thresholds remain TBD.',
     category: 'Naval Architecture',
     priority: 'Critical',
     subsystemAllocation: 'Naval Architecture',
     verificationMethod: 'Analysis',
-    acceptanceCriteria: 'Positive GZ area under curve between 0° and 30° >= 0.055 m-rad; initial GM0 >= 0.15 m; maximum GZ >= 0.20 m at angle >= 30°.',
+    acceptanceCriteria: 'TBD — approved hull offsets, measured KG, loading cases, downflooding, independently verified GZ and class/flag rules required before determining limits.',
     owner: 'K. Tanaka',
     revision: 'Rev 1.0',
     status: 'Draft',
@@ -424,13 +424,13 @@ export const INITIAL_SIMULATIONS: SimulationJob[] = [
     unitsAndReferenceFrame: 'SI (m, s, kg); Origin at Transom centerline AP, X+ forward, Z+ up.',
     assumptions: 'Incompressible isothermal seawater (rho=1025 kg/m3, nu=1.18e-6 m2/s), fixed trim and sinkage.',
     computeEnvironment: 'Dedicated HPC Node: Dual AMD EPYC 7763 (128 cores), 256GB RAM.',
-    runStatus: 'Under Review',
-    outputFiles: 'VTK surface contours, forceCoeffs.dat, log.interFoam (420 MB raw)',
-    resultsSummary: 'Numerical convergence reached at iteration 12,000. Wave elevation patterns consistent with Kelvin wake. Quantitative drag force remains under peer review; certified number TBD.',
-    reviewer: 'A. Boucher (Hydrodynamics Lead)',
-    validationStatus: 'Peer Review In Progress — Pending Towing Tank Cross-Check',
+    runStatus: 'Draft',
+    outputFiles: 'TBD — no actual solver output uploaded',
+    resultsSummary: 'TBD — synthetic scenario only; no run or result verified',
+    reviewer: 'Unassigned',
+    validationStatus: 'UNVERIFIED — no independently authenticated result',
     isIllustrative: true,
-    externalRefUrl: 'https://drive.google.com/drive/folders/sample-cfd-sim-hyd-001',
+
     createdAt: '2026-11-02',
     updatedAt: '2026-11-08'
   },
@@ -446,11 +446,11 @@ export const INITIAL_SIMULATIONS: SimulationJob[] = [
     unitsAndReferenceFrame: 'SI (mm, N, MPa); Global ship coordinates.',
     assumptions: 'Marine Aluminum 5083-H116 isotropic linear elastic behavior below yield (E=71 GPa, Poisson=0.33).',
     computeEnvironment: 'Engineering Workstation Linux (32 threads, 64GB RAM).',
-    runStatus: 'Completed',
-    outputFiles: 'slam_stress_von_mises.rmed, displacement_field.vtu',
-    resultsSummary: 'Peak Von Mises stress occurs at chine stiffener intersection. Maximum stress ratio to yield: [TBD ratio]. No plastic deformation predicted for design load case.',
-    reviewer: 'H. Richter (Structures Lead)',
-    validationStatus: 'Complies with DNV-RU-HSLC allowable stress margins.',
+    runStatus: 'Draft',
+    outputFiles: 'TBD — no actual solver output uploaded',
+    resultsSummary: 'TBD — synthetic scenario only; no run or result verified',
+    reviewer: 'Unassigned',
+    validationStatus: 'UNVERIFIED — no independently authenticated result',
     isIllustrative: true,
     createdAt: '2026-11-04',
     updatedAt: '2026-11-07'
@@ -467,11 +467,11 @@ export const INITIAL_SIMULATIONS: SimulationJob[] = [
     unitsAndReferenceFrame: 'WGS84 / UTM Zone 31N; NED local navigation frame.',
     assumptions: 'Target vessels navigate at constant speed & course (non-cooperative yet predictable).',
     computeEnvironment: 'Autonomy Sim Server (Nvidia RTX 4090).',
-    runStatus: 'Ready',
-    outputFiles: 'rosbag2_mc_eval.db3, collision_metrics.json',
-    resultsSummary: 'Job configured and verified on test scenario. Scheduled for overnight execution.',
-    reviewer: 'E. Chen',
-    validationStatus: 'Ready for batch execution',
+    runStatus: 'Draft',
+    outputFiles: 'TBD — no actual solver output uploaded',
+    resultsSummary: 'TBD — synthetic scenario only; no run or result verified',
+    reviewer: 'Unassigned',
+    validationStatus: 'UNVERIFIED — no independently authenticated result',
     isIllustrative: true,
     createdAt: '2026-11-06',
     updatedAt: '2026-11-10'
@@ -526,22 +526,9 @@ export const INITIAL_VERIFICATION_PLANS: VerificationPlan[] = [
   }
 ];
 
-export const INITIAL_TEST_RECORDS: TestRecord[] = [
-  {
-    id: 'TEST-REC-001',
-    planId: 'VER-FAT-001',
-    testDate: '2026-11-06',
-    executingEngineer: 'S. Patel',
-    resultStatus: 'Passed',
-    measuredDataSummary: 'Isolation measured at 48.2 MOhm at 500V DC. Voltage sag on 48V bus was 3.1% under 100A step load (within 5% threshold).',
-    deviationsAndCorrectiveActions: 'None. All criteria fulfilled.',
-    evidenceAttachments: ['FAT_Report_PDB_Rev1.pdf', 'Chroma_Scope_Trace_StepLoad.png'],
-    isIllustrative: true,
-    approvalStatus: 'In Review',
-    approver: 'Lead Systems Architect',
-    createdAt: '2026-11-07'
-  }
-];
+// Previous starter record claimed a passed 48.2 MOhm FAT and nonexistent attachments.
+// Real test results must be imported through authenticated evidence workflows.
+export const INITIAL_TEST_RECORDS: TestRecord[] = [];
 
 export const INITIAL_COMPONENTS_BOM: ComponentBOM[] = [
   {
@@ -617,35 +604,27 @@ export const INITIAL_COMPONENTS_BOM: ComponentBOM[] = [
 ];
 
 export const INITIAL_NAVAL_PARTICULARS: PrincipalParticulars = {
-  loa: '11.2 m',
-  lwl: '10.5 m',
-  beamOverall: '2.9 m',
-  beamWaterline: '2.7 m',
-  depthMolded: '1.45 m',
-  draftDesign: '0.65 m',
-  draftScantling: '0.75 m',
-  freeboardDesign: '0.80 m',
-  blockCoefficientCb: '0.42',
-  prismaticCoefficientCp: '0.66',
-  displacementMolded: '6.20 tonnes',
-  deadweightCapacity: '2.10 tonnes',
-  validationState: 'Verified (Rev 0.4 Baseline - GMt 1.32m)'
+  loa: 'TBD',
+  lwl: 'TBD',
+  beamOverall: 'TBD',
+  beamWaterline: 'TBD',
+  depthMolded: 'TBD',
+  draftDesign: 'TBD',
+  draftScantling: 'TBD',
+  freeboardDesign: 'TBD',
+  blockCoefficientCb: 'TBD',
+  prismaticCoefficientCp: 'TBD',
+  displacementMolded: 'TBD',
+  deadweightCapacity: 'TBD',
+  validationState: 'Unverified / TBD'
 };
 
-export const INITIAL_WEIGHT_CG: WeightCGItem[] = [
-  { id: 'W-01', name: 'Bare Hull Structure (Composite Carbon/Epoxy)', subsystem: 'MEC', massKg: 1850, lcgM: 4.60, vcgM: 0.65, tcgM: 0.0, confidence: 'Calculated', isIllustrative: false },
-  { id: 'W-02', name: 'Superstructure & Sensor Mast', subsystem: 'MEC', massKg: 280, lcgM: 5.40, vcgM: 1.85, tcgM: 0.0, confidence: 'Calculated', isIllustrative: false },
-  { id: 'W-03', name: '54 kWh LiFePO4 Traction Battery Pack', subsystem: 'ELE', massKg: 650, lcgM: 4.20, vcgM: 0.28, tcgM: 0.0, confidence: 'Calculated', isIllustrative: false },
-  { id: 'W-04', name: 'Twin PMSM Pod Thrusters & Drives', subsystem: 'PRP', massKg: 420, lcgM: 0.85, vcgM: 0.35, tcgM: 0.0, confidence: 'Calculated', isIllustrative: false },
-  { id: 'W-05', name: 'Auxiliary Systems, Cooling & Bilge', subsystem: 'MEC', massKg: 240, lcgM: 3.10, vcgM: 0.45, tcgM: 0.0, confidence: 'Calculated', isIllustrative: false },
-  { id: 'W-06', name: 'Outfitting, Deck Hardware & LARS Lugs', subsystem: 'MEC', massKg: 310, lcgM: 4.80, vcgM: 0.95, tcgM: 0.0, confidence: 'Calculated', isIllustrative: false },
-  { id: 'W-07', name: 'Design Growth Margin (8-12%)', subsystem: 'SYS', massKg: 346.6, lcgM: 4.11, vcgM: 0.66, tcgM: 0.0, confidence: 'Calculated', isIllustrative: false }
-];
+// Real vessel mass and CG entries must be sourced from weighed/verified records.
+// Synthetic 6.2-tonne sample values were removed from the live project baseline.
+export const INITIAL_WEIGHT_CG: WeightCGItem[] = [];
 
-export const INITIAL_RESISTANCE: ResistanceEstimate[] = [
-  { id: 'RES-01', speedKnots: 14.0, method: 'ITTC-57 Cruise Planing', bareHullResistanceKN: 4.8, appendageResistanceKN: 0.4, effectivePowerKW: 37.5, status: 'Verified', notes: 'Nominal cruise speed; 8.5h operational loiter profile' },
-  { id: 'RES-02', speedKnots: 22.0, method: 'ITTC-57 Sprint Planing (Fn=1.115)', bareHullResistanceKN: 9.8, appendageResistanceKN: 0.65, effectivePowerKW: 118.28, status: 'Verified', notes: 'Required shaft brake power Pb = 182.0 kW (Twin PMSM Pods)' }
-];
+// No source-backed towing tank, CFD or measured total resistance records provided.
+export const INITIAL_RESISTANCE: ResistanceEstimate[] = [];
 
 export const INITIAL_MATERIALS: MaterialRecord[] = [
   { id: 'MAT-01', materialName: 'Marine Aluminum 5083-H116', specification: 'ASTM B928 / DNV Grade 5083', yieldStrengthMPa: 215, ultimateStrengthMPa: 305, densityKgM3: 2660, corrosionResistanceMarine: 'Excellent in saltwater; highly resistant to intergranular attack', notes: 'Authoritative choice for primary hull bottom plating and stringers', isIllustrative: true },
@@ -654,9 +633,9 @@ export const INITIAL_MATERIALS: MaterialRecord[] = [
 ];
 
 export const INITIAL_LOAD_CASES: LoadCaseRecord[] = [
-  { id: 'LC-01', title: 'Bottom Slamming Pressure on Keel Plating (ISO 12215-5)', loadType: 'Bottom Slamming', governingStandard: 'ISO 12215-5 / DNV-RU-HSLC', designPressureOrForce: '45.0 kPa', safetyFactorTarget: 2.2, feaStatus: 'Solved - Criteria Met (7.0mm Plating)' },
-  { id: 'LC-02', title: 'Hull Girder Sagging & Hogging Bending', loadType: 'Hull Girder Bending', governingStandard: 'IMO HSC Code / DNV', designPressureOrForce: '14.2 kN*m', safetyFactorTarget: 2.0, feaStatus: 'Solved - Criteria Met' },
-  { id: 'LC-03', title: 'Single-Point Crane Lift Acceleration', loadType: 'Crane Lift', governingStandard: 'ISO 12215-6', designPressureOrForce: '2.5g Dynamic Factor', safetyFactorTarget: 3.0, feaStatus: 'Solved - Criteria Met' }
+  { id: 'LC-01', title: '[SAMPLE — NOT VERIFIED] Bottom Slamming Pressure on Keel Plating (ISO 12215-5)', loadType: 'Bottom Slamming', governingStandard: 'ISO 12215-5 / DNV-RU-HSLC', designPressureOrForce: 'TBD', safetyFactorTarget: 2.2, feaStatus: 'TBD' },
+  { id: 'LC-02', title: '[SAMPLE — NOT VERIFIED] Hull Girder Sagging & Hogging Bending', loadType: 'Hull Girder Bending', governingStandard: 'IMO HSC Code / DNV', designPressureOrForce: 'TBD', safetyFactorTarget: 2.0, feaStatus: 'TBD' },
+  { id: 'LC-03', title: '[SAMPLE — NOT VERIFIED] Single-Point Crane Lift Acceleration', loadType: 'Crane Lift', governingStandard: 'ISO 12215-6', designPressureOrForce: 'TBD', safetyFactorTarget: 3.0, feaStatus: 'TBD' }
 ];
 
 export const INITIAL_POWER_LOADS: PowerLoadItem[] = [
