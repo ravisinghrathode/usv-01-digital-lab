@@ -198,7 +198,7 @@ function validateInput(x: DesignLoopRequirements) {
           !o.fixedInputParameters || typeof o.fixedInputParameters !== 'object' ||
           Array.isArray(o.fixedInputParameters) ||
           Object.entries(o.fixedInputParameters).length === 0 ||
-          Object.entries(o.fixedInputParameters).some(([k,v]) => !supported.has(k) || !Number.isFinite(v))) {
+          Object.entries(o.fixedInputParameters).some(([k,v]) => !['speedKnots','propulsiveEfficiencyEtaD','waterTempCelsius'].includes(k) || !Number.isFinite(v))) {
         throw new Error('Invalid, duplicate or unsourced comparison objective');
       }
       ids.add(o.id);
