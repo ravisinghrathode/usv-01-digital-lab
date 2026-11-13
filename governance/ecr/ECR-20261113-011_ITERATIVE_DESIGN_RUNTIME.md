@@ -31,6 +31,18 @@ Changes on this PR:
 - Actual 26-role discovery artifacts and source-derived current dependency/test inventory.
 - Stage C qualified independent engineering/software review, Stage D Ed25519 exact-digest Director authorization, Stage E governance and merge protection.
 
+
+## Mandatory ECR disposition fields
+
+- **Description:** Implement seeded legacy screening and a genuine bounded agent/tool design iteration, capability audits, numeric references and external solver interface without claiming physical verification.
+- **Reason for Change:** Claude's external review and repository code inspection identified fabricated synthetic agent consensus, irreproducibility, unsupported design claims and a missing proposal/evaluation/revision loop.
+- **Affected Subsystem:** Naval architecture, propulsion, structure, agent engine and safety governance.
+- **Architectural Impact:** New bounded A05→ToolRegistry→A15 loop; source-anchored solver and benchmark interfaces; reproducible heuristic scenario sampling; no actuator integration.
+- **Safety Impact:** CRITICAL; removes misleading numeric compliance assertions and retains non-certification states, with independent peer verification required.
+- **Cybersecurity Impact:** Solver transport restricted to authenticated HTTPS and source-digested jobs. Live agent outputs remain local, not written to versioned baseline. Protect provider/service tokens.
+- **Verification Plan:** Complete Vitest, TypeScript, production bundle, actual agent trace negative tests, source/digest/mesh-convergence benchmark checks, independent Stage C review and signed Stage D/E checks.
+- **Review Evidence:** PR #49 and its latest exact-head GitHub CI results; human technical review pending.
+
 ## Limitations and formal acceptance
 
 Live 26-agent design collaboration, externally verified reference numbers, approved mission constraints, controlled hull CAD/offsets, external solver service provisioning, CFD/FEA convergence validation, physical testing, supplier documentation and 13-workstream engineering acceptance remain **NOT PROVIDED**. The A05↔A15 loop is an initial **live runtime component**, not evidence that model outputs are numerically accurate. No sea-trial or actuator capability was added. The Project Lead's project direction does not substitute for a genuine signed high-risk engineering release.
