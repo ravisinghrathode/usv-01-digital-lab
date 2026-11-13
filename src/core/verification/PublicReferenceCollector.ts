@@ -8,7 +8,8 @@ import { createHash } from 'node:crypto';
 const MAX_BYTES = 8 * 1024 * 1024;
 export const CURATED_NAVAL_PUBLICATIONS = [
   {reference:'ITTC-2024-HS-RESISTANCE',uri:'https://www.ittc.info/media/11846/75-02-05-01.pdf',title:'ITTC 7.5-02-05-01 High Speed Marine Vehicles Resistance Test (2024)'},
-  {reference:'ITTC-2024-CFD-PRACTICE',uri:'https://www.ittc.info/media/11958/75-03-02-03.pdf',title:'ITTC 7.5-03-02-03 Practical Guidelines for Ship CFD Applications (2024)'}
+  {reference:'ITTC-2024-CFD-PRACTICE',uri:'https://www.ittc.info/media/11958/75-03-02-03.pdf',title:'ITTC 7.5-03-02-03 Practical Guidelines for Ship CFD Applications (2024)'},
+  {reference:'ITTC-2024-CFD-BENCHMARK-DB',uri:'https://www.ittc.info/media/11956/75-03-02-02.pdf',title:'ITTC 7.5-03-02-02 Benchmark Database for CFD Validation for Resistance and Propulsion (2024)'}
 ] as const;
 export type CuratedPublication = typeof CURATED_NAVAL_PUBLICATIONS[number];
 export type RawSourceGetter = (uri:string)=>Promise<{status:number;contentType:string;bytes:Uint8Array}>;
