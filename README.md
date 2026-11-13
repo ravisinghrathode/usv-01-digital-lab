@@ -2,7 +2,7 @@
 
 Engineering software workspace and deterministic multi-agent platform for the **USV-01 unmanned surface vessel project**.
 
-> **Repository visibility notice (verified 14 November 2026):** GitHub currently reports this repository as **PUBLIC**. This is a factual access state, **not** authorization to publish confidential drawings, client data, vessel engineering evidence, credentials, or controlled design baselines. Keep restricted material in access-controlled systems (including the project's Google Drive) until an authorized classification and publication decision is recorded. Public Git history may already have been copied. The owner visibility decision and exposure review are tracked in [B03 — repository visibility](https://github.com/ravisinghrathode/usv-01-digital-lab/issues/73).
+> **Publication policy — owner decision, 14 November 2026:** This GitHub repository is intentionally **PUBLIC for source code and non-sensitive development material only**. Public visibility does **not** authorize publishing confidential Navy/client information, controlled CAD/drawings, restricted vessel baselines or test evidence, credentials, private operational data, or contract material. Keep these in access-controlled systems (including the project's Google Drive) and review material before adding it to Git. Public Git history may already have been copied. The remaining disclosure review is tracked in [B03 — public-source boundary](https://github.com/ravisinghrathode/usv-01-digital-lab/issues/73).
 
 ---
 
