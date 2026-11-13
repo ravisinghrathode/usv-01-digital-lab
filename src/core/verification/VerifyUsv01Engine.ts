@@ -628,6 +628,7 @@ export class VerifyUsv01Engine {
         humanApprovalRequired: stageARequiresDirector,
         peerApprovalRequired: stageAPeerRequired,
         independentPeerApproved: false,
+        adminAuthorSignoffVerified: false,
         highestRisk: stageARisk,
         ecrRecordFound: false,
         ecrRecordValid: false,
@@ -645,9 +646,11 @@ export class VerifyUsv01Engine {
     const stageDStale = stageDResult.staleApproval;
     const stageDDigestMatches = stageDResult.baselineDigest === baselineDigest;
     const peerApproved = stageDResult.independentPeerApproved;
+    const authorSignoff = stageAReport.summary.approvalRoute === 'PROTECTED_SOFTWARE_SECURITY' &&
+      stageDResult.adminAuthorSignoffVerified;
     const directorSatisfied = !stageARequiresDirector ||
       (stageDSignatureVerified && !stageDStale && stageDDigestMatches);
-    const peerSatisfied = !stageAPeerRequired || peerApproved;
+    const peerSatisfied = !stageAPeerRequired || peerApproved || authorSignoff;
 
     // Check 2.4: Director ECR only for vessel design, peer review for
     // protected software. Never infer design-signature obligations from risk.
@@ -673,12 +676,15 @@ export class VerifyUsv01Engine {
           : 'PENDING: vessel engineering change needs current Director ECR and independent exact-head peer review.'
         : peerApproved && stageDDigestMatches
           ? 'Protected software exact-head independent human peer approval verified; vessel ECR not required.'
-          : 'PENDING: protected governance/security software requires independent exact-head peer approval, not a Director vessel ECR.',
+          : authorSignoff && stageDDigestMatches
+          ? 'Protected software accepted by repository-admin PR author on the exact GitHub head; explicitly NOT independent review or vessel ECR.'
+          : 'PENDING: protected software needs an independent exact-head peer approval OR repository-admin author software signoff.',
       evidence: {
         approvalRoute: stageAReport.summary.approvalRoute,
         directorEcrRequired: stageARequiresDirector,
         independentPeerRequired: stageAPeerRequired,
         independentPeerApproved: peerApproved,
+        adminAuthorSignoffVerified: authorSignoff,
         signatureVerified: stageDSignatureVerified,
         staleApproval: stageARequiresDirector && stageDStale,
         digestMatches: stageDDigestMatches,
@@ -689,8 +695,8 @@ export class VerifyUsv01Engine {
       },
       remediation: stageARequiresDirector && !stageDSignatureVerified
         ? 'Qualified Engineering Director must sign the current vessel engineering ECR over the exact source digest.'
-        : stageAPeerRequired && !peerApproved
-          ? 'Obtain an authorized independent GitHub reviewer APPROVED on the exact PR head.'
+        : stageAPeerRequired && !peerApproved && !authorSignoff
+          ? 'Obtain independent peer APPROVED review or a repo-admin PR author COMMENTED review with exact-head software signoff token.'
           : undefined,
       timestamp: new Date().toISOString()
     });
@@ -719,6 +725,7 @@ export class VerifyUsv01Engine {
           required: stageARequiresDirector,
           peerRequired: stageAPeerRequired,
           independentPeerApproved: false,
+          adminAuthorSignoffVerified: false,
           signatureVerified: stageDSignatureVerified,
           staleApproval: stageDStale
         },
