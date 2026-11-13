@@ -3,8 +3,9 @@
 **Baseline:** `docs/CONSOLIDATED_ACCEPTANCE_REGISTER.md`, criterion AUT-01.
 **Disposition:** SOFTWARE SCREEN IMPLEMENTED; INTEGRATION/SIL/HIL/SEA-TRIAL ACCEPTANCE OPEN.
 **Owner:** USV-01 navigation/safety engineering; **independent review:** Gemini + qualified maritime reviewer; **approval:** Director, signed against final source SHA.
-**Code:** `src/core/verification/AutonomyColregsSafetyScreen.ts`
-**Tests:** `tests/autonomyColregsSafetyScreen.test.ts`
+**Code:** `src/core/verification/AutonomyColregsSafetyScreen.ts`, `AutonomySensorEvidence.ts`, `AutonomySilReplay.ts`
+**Tests:** `tests/autonomyColregsSafetyScreen.test.ts`, `tests/autonomySensorSilReplay.test.ts`, `tests/autonomyAcceptanceEvidence.test.ts`
+**Protocol:** `docs/AUT01_SIL_HIL_SEA_TRIAL_PROTOCOL.md`; **live acceptance register:** `evidence/aut01/acceptance-status.json`
 **Authority:** Engineering decision-support ONLY. No helm/thrust output, autopilot connection, release permission or regulatory certification.
 
 ## Governing regulatory context
@@ -24,7 +25,7 @@ It does **not** authorize this craft to navigate autonomously. Flag-state, naval
 | AUT-REQ-007 | Human emergency override and sensing/propulsion safety inhibit mission autonomy; no unvalidated command actuation | Override/sensor fault/always-null command tests | Software screen only |
 | AUT-REQ-008 | Multi-target ambiguity, duplicates and missing or stale evidence trigger escalation | Duplicate and invalid evidence tests | Synthetic logic only |
 | AUT-REQ-009 | Every result must preserve source evidence, configuration version, review requirement and uncertified status | Type-level and assertion tests | Synthetic logic only |
-| AUT-REQ-010 | Runtime supervisory state, independent low-level MCU and human command arbitration shall be proved in SIL/HIL | No evidence submitted | OPEN |
+| AUT-REQ-010 | Runtime supervisory state, independent low-level MCU and human command arbitration shall be proved in SIL/HIL | Synthetic advisory latch replay present; physical MCU/command arbitration and full dynamic SIL absent | OPEN |
 | AUT-REQ-011 | Repeated COLREG encounter performance, collision avoidance, lights/sound signals, safe speed and all ODD constraints shall be validated | No sea trials submitted | OPEN |
 
 ## Signal and authority architecture
@@ -73,4 +74,7 @@ Never interpret 'human override' as an unconditional unsafe maneuver. Independen
 7. No claim of operational autonomy, 'COLREG compliant', or AUT-01 **CLOSED** before all relevant gates pass.
 
 ## Outstanding integration boundary
-The existing `TOOL-COLREGS-01` remains an analytical, separately governed tool. This new module is **not** wired to the mission dashboard, Guidance/Navigation/Control, ROS, or propulsion. PR #36 includes further overlapping AGT-02 safety changes; reconcile in review before merge and rerun all tests on the resulting baseline.
+The existing `TOOL-COLREGS-01` remains an analytical, separately governed tool. Synthetic sensor evidence and advisory SIL replay now exist, but **no full sensor-fusion implementation, closed-loop dynamic controller, physical HIL or sea trial exists**. None of these modules is wired to the mission dashboard, Guidance/Navigation/Control, ROS, or propulsion. PR #36 includes further overlapping AGT-02 safety changes; reconcile in review before merge and rerun all tests on the resulting baseline.
+
+## Follow-on safety regression results and limitations
+The follow-on AUT-01 code adds strict disagreement/age checks to externally supplied sensor samples (never claiming fusion), a monotonic synthetic replay with latched unsafe supervisory dispositions, and a machine-readable acceptance ledger that deliberately refuses release. The sensor gateway rejects contradictory target identity, relative geometry and freshness; a rejected contact makes the whole frame degraded rather than disappearing silently. The open-loop SIL replay has no vessel dynamics, cannot check Rule 8 manoeuvre effectiveness and cannot clear a latched condition without a separate approved controller. All published statuses remain provisional until the final pull-request CI result is checked.
