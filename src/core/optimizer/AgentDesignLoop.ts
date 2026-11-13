@@ -47,6 +47,7 @@ export interface DesignLoopRequirements {
 export interface ScreenedProposal {
   /** These are raw untrusted suggestions, NEVER released particulars. */
   parameters: Record<string, number>;
+  unverifiedMetricProvenance: Record<string, {sourceKind: string; sourceReference: string; justification: string}>;
   missingEngineeringInputs: string[];
   screenResults: { toolId: string; success: boolean; outputDigest: string; result?: Record<string, unknown>; error?: string }[];
   sourceKind: 'MODEL_PROPOSAL_UNVERIFIED';
@@ -99,14 +100,35 @@ const supported = new Set([
   'speedKnots', 'propulsiveEfficiencyEtaD', 'waterTempCelsius'
 ]);
 
-function extractUnverifiedNumbers(output: AgentExecutionOutput): Record<string, number> {
+function extractUnverifiedNumbers(output: AgentExecutionOutput, sourceReferences: readonly { reference: string; description: string }[]) {
   const raw: unknown = output.data?.modelSuggestedKeyMetrics;
-  if (!raw || Array.isArray(raw) || typeof raw !== 'object') return {};
-  const result: Record<string, number> = {};
-  for (const [key, value] of Object.entries(raw)) {
-    if (supported.has(key) && typeof value === 'number' && Number.isFinite(value)) result[key] = value;
+  const rawClaims: unknown = output.data?.metricProvenance;
+  const numbers: Record<string, number> = {};
+  const claims: ScreenedProposal['unverifiedMetricProvenance'] = {};
+  const unsubstantiated: string[] = [];
+  if (!raw || Array.isArray(raw) || typeof raw !== 'object') return {numbers, claims, unsubstantiated};
+  const ledger = rawClaims && !Array.isArray(rawClaims) && typeof rawClaims === 'object'
+    ? rawClaims as Record<string, unknown> : {};
+  for (const [key,value] of Object.entries(raw)) {
+    if (!supported.has(key) || typeof value !== 'number' || !Number.isFinite(value)) continue;
+    const claim = ledger[key];
+    if (!claim || typeof claim !== 'object' || Array.isArray(claim)) {
+      unsubstantiated.push(key+': missing provenance for model-suggested number'); continue;
+    }
+    const c = claim as Record<string,unknown>;
+    const sourceKind = c.sourceKind, sourceReference = c.sourceReference, justification = c.justification;
+    const authenticShape = (sourceKind === 'SOURCE_DOCUMENT' || sourceKind === 'HYPOTHESIS') &&
+      typeof sourceReference === 'string' && sourceReference.trim().length >= 3 &&
+      typeof justification === 'string' && justification.trim().length >= 5;
+    if (!authenticShape || (sourceKind === 'SOURCE_DOCUMENT' &&
+      !sourceReferences.some(src => src.reference === sourceReference))) {
+      unsubstantiated.push(key+': malformed/undisclosed source, not eligible even for screening'); continue;
+    }
+    // Metadata is never proof: source claims require independent authentication.
+    numbers[key] = value;
+    claims[key] = {sourceKind,sourceReference,justification};
   }
-  return result;
+  return {numbers, claims, unsubstantiated};
 }
 
 const live = (x: AgentExecutionOutput, expectedId: string) =>
@@ -273,23 +295,27 @@ export async function runAgentDesignLoop(
         previousUnverifiedProposal: previousProposal,
         previousCritique: feedback,
         mustReviseWeaknesses: index > 0,
-        numericKeysIfSourcedOrExplicitlyAssumed: [...supported]
+        numericKeysIfSourcedOrExplicitlyAssumed: [...supported],
+        requiredNumericEvidenceFormat: {metricProvenance:{'<metricName>':{sourceKind:'SOURCE_DOCUMENT or HYPOTHESIS',sourceReference:'exact registered source ID or explicit assumption ID',justification:'why this numerical claim is proposed'}}}
       },
       priorAgentOutputs: feedback ? { criticA15: feedback } : undefined,
-      userNotes: 'Research and propose explicit numeric hypotheses only with traceable provenance or label TBD. Use only the named keys when numerical parameters are defensible. Treat legacy heuristic as an unverified brainstorm, not a baseline. Never fabricate source inspection, compliance, CFD/FEA or approval.'
+      userNotes: 'For EACH numeric keyMetrics value provide metricProvenance with sourceKind SOURCE_DOCUMENT (exact sourceReference from mission list) or HYPOTHESIS (explicit assumption identifier), sourceReference, justification. Missing or mismatched provenance prevents screening. You must not invent source inspection or authority. Use only named supported keys; missing info is TBD, not guessed baseline. Treat legacy heuristic as an unverified brainstorm; do not claim compliance, CFD/FEA or approval.'
     };
     const proposal = await executeAgent(proposer.id, proposalInput);
     report.completedAgentCalls++;
     if (failureOutput(proposal)) { report.stopReason = 'AGENT_EXECUTION_FAILED'; break; }
     if (!live(proposal, proposer.id)) { report.stopReason = 'NON_LIVE_PROVIDER'; break; }
 
-    const numbers = extractUnverifiedNumbers(proposal);
+    const {numbers, claims, unsubstantiated} = extractUnverifiedNumbers(proposal, input.sourceReferences);
     if (!Object.keys(numbers).length) { report.stopReason = 'INVALID_PROPOSAL'; break; }
     if (previousProposal && hash(previousProposal) === hash(numbers)) {
       report.stopReason = 'NO_CHANGE'; break;
     }
 
-    const missingEngineeringInputs: string[] = [];
+    const missingEngineeringInputs: string[] = [...unsubstantiated];
+    for (const [key,claim] of Object.entries(claims)) if (claim.sourceKind === 'HYPOTHESIS') {
+      missingEngineeringInputs.push(key+': unverified assumption ('+claim.sourceReference+')');
+    }
     const screenResults: ScreenedProposal['screenResults'] = [];
     const has = (names: string[]) => names.every(key => numbers[key] !== undefined);
     const toolCases: Array<[string, string[], Record<string, number>]> = [];
@@ -314,7 +340,7 @@ export async function runAgentDesignLoop(
       if (!result.success) missingEngineeringInputs.push(toolId + ': ' + (result.error || 'screen failed'));
     }
     const screened: ScreenedProposal = {
-      parameters: numbers, missingEngineeringInputs, screenResults,
+      parameters: numbers, unverifiedMetricProvenance: claims, missingEngineeringInputs, screenResults,
       sourceKind: 'MODEL_PROPOSAL_UNVERIFIED', inputDigest: hash(numbers)
     };
 
