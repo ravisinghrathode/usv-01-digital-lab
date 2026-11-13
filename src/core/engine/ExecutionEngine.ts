@@ -2,6 +2,7 @@ import { AgentRegistry } from '../registry/AgentRegistry.ts';
 import { BaseAgent } from './BaseAgent.ts';
 import type { AgentExecutionInput, AgentExecutionOutput, AgentStatus } from '../types/agent.ts';
 import { AuditLogger } from '../safety/AuditLogger.ts';
+import { getSessionToken } from '../auth/authClient.ts';
 
 export class ExecutionEngine {
   private static instance: ExecutionEngine;
@@ -60,7 +61,6 @@ export class ExecutionEngine {
     if (typeof window !== 'undefined') {
       this.agentStatuses.set(agentId, 'EXECUTING');
       try {
-        const { getSessionToken } = await import('../auth/authClient.ts');
         const token = getSessionToken();
         const res = await fetch('/api/agents/execute', {
           method: 'POST',

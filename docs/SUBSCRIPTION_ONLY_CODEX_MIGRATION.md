@@ -1,6 +1,6 @@
 # Subscription-only Codex migration — USV-01
 
-**Status:** Codex-assisted engineering operating procedure active for the bounded local Mission Control pilot; native in-process model-provider replacement **not complete**. Do not use this document to close AGT-02 or other independent engineering acceptance obligations.
+**Status:** Historical migration assessment from 13 November 2026. The native Codex CLI software cutover has since landed. Use [the current runtime guide](CODEX_NATIVE_AGENT_RUNTIME.md) and [the 26-agent acceptance protocol](USV01_26_AGENT_OPERATIONAL_ACCEPTANCE.md) for operation. This historical assessment does not close AGT-02 or other independent engineering acceptance obligations.
 
 ## Objective
 

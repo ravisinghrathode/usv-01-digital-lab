@@ -56,7 +56,7 @@ jobs:
         with:
           name: usv01-26-agent-zero-model-preflight
           path: |
-            governance/reports/codex-26-agent-preflight.json
+            data/codex-26-agent-preflight.json
             governance/reports/26-agent-engineering-campaign-status.json
           if-no-files-found: warn
           retention-days: 30
