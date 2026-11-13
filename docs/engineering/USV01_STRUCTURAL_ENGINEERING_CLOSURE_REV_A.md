@@ -15,6 +15,15 @@
 4. New `TOOL-STRUCTURES-LIFT-01` provides traceable gravity, vertical reaction, sling tension and horizontal component magnitude calculations for **externally established** reaction fractions and sling angles. It never verifies 3D equilibrium, lifting safety or local structural capacity.
 5. Existing `TOOL-STRUCTURES-01` slamming scantling output remains an **uncorrelated preliminary empirical screen**, not ISO/DNV verified.
 
+## Corrected stiffener section-modulus unit defect
+
+The legacy screening formula for stiffener section modulus divided by an unexplained extra factor of 10 and presumed an unsupported 1/12 end-fixity moment factor. For the **synthetic** fixture P = 35 kPa, tributary width = 0.45 m, span = 0.90 m and allowable stress = 62.5 MPa it returned about **1.701 cm³**. The now explicit **simply supported** uniformly distributed-load arithmetic produces:
+- q = P × 1000 × width = **15,750 N/m**
+- M_max = q × span² / 8 = **1,594.6875 N·m**
+- Z = M_max / allowable_MPa = **25.515 cm³**
+
+The earlier numerical result was **15 times smaller** than this particular comparison benchmark. This fixes dimensional arithmetic, **not** panel boundary realism, pressure model, local buckling, effective breadth, welding, or section strength approval; the synthetic calculation is not a structural scantling prescription. Automated regression checks now assert the N·m and cm³ values and ensure all compliance outputs remain false.
+
 ## Structural reference standards — verified source catalogue (not approval)
 
 - **ISO 12215-5:2019, corrected 2024-03** — current ISO edition for monohull small-craft pressures, design stresses and scantlings up to 24 m; explicitly includes commercial small craft/workboats. Candidate if the actual hull is monohull, subject to regulatory/project applicability: https://committee.iso.org/cms/live/live/en/sites/isoorg/contents/data/standard/06/95/69552.html?browse=ics
