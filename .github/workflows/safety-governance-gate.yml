@@ -111,6 +111,21 @@ jobs:
           path: governance/reports/concept-research/
           if-no-files-found: ignore
 
+      - name: Stage B — Source-Derived Agent/Tool/Documentation Capability Audit
+        run: |
+          set -euo pipefail
+          npm run audit:capabilities
+
+      - name: Upload Source-Derived Capability Matrix
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: usv01-live-capabilities-unverified
+          path: |
+            governance/reports/agent-capability-audit.json
+            governance/reports/agent-capability-audit.md
+          if-no-files-found: ignore
+
       - name: Stage B — Consolidated 13-Workstream Acceptance Campaign
         run: |
           set -euo pipefail
