@@ -12,6 +12,7 @@ import { compileCodexAgentCases } from '../src/core/verification/CodexMatrixInpu
 import { runLiveAgentMatrix } from '../src/core/verification/LiveAgentMatrix.ts';
 import { preflightCodexAgentCases } from '../src/core/verification/CodexCampaignPreflight.ts';
 import { requireLabCommissioningPolicy } from '../src/core/mission-control/LabCommissioningPolicy.ts';
+import { assessEngineeringCampaign } from '../src/core/verification/EngineeringCampaignAcceptance.ts';
 
 async function main() {
   const sourcePath = path.resolve(
@@ -64,19 +65,48 @@ async function main() {
   // This authorization is to gather research evidence, not to accept a vessel
   // baseline. Source-revision governance is independent of this runtime gate.
   const commissioning = requireLabCommissioningPolicy(process.env);
-  const report = await runLiveAgentMatrix(cases);
+  // A single command runs the entire engineering DAG. Every transition is
+  // journaled atomically so a CLI crash cannot erase prior attempted agents.
+  const progressFile = path.resolve('data/codex-26-agent-progress.json');
+  fs.mkdirSync(path.dirname(progressFile), { recursive: true });
+  const report = await runLiveAgentMatrix(cases, undefined, {
+    dependencyAware: true,
+    onFinding: async (_finding, completed) => {
+      const progress = {
+        ...provenance, commissioningScope: commissioning.scope,
+        dataClassification: catalog.dataClassification,
+        dependencyAware: true, completedCount: completed.length,
+        completed, engineeringReleaseApproved: false,
+        independentlyEngineeringValidated: false
+      };
+      const temporary = progressFile + '.tmp';
+      fs.writeFileSync(temporary, JSON.stringify(progress, null, 2) + '\n');
+      fs.renameSync(temporary, progressFile);
+    }
+  });
   await assertPinnedCleanGitRevision(process.cwd(), implementationSha);
   const location = path.resolve('data/codex-26-agent-matrix.json');
   fs.mkdirSync(path.dirname(location), { recursive: true });
-  fs.writeFileSync(location, JSON.stringify({
+  const campaignEvidence = {
     ...report, ...provenance,
     commissioning,
+    dependencyAware: true,
+    controlledVesselConfigurationId: catalog.controlledVesselConfigurationId,
     dataClassification: catalog.dataClassification,
-    illustrativeNonOperational: true,
+    illustrativeNonOperational: catalog.dataClassification === 'SYNTHETIC_TEST_ONLY_NON_OPERATIONAL',
     historicalCatalogBaseline: catalog.baselineSha,
-    independentlyEngineeringValidated: false,
-    engineeringReleaseApproved: false
-  }, null, 2) + '\n');
+    independentlyEngineeringValidated: false as const,
+    engineeringReleaseApproved: false as const
+  };
+  fs.writeFileSync(location, JSON.stringify(campaignEvidence, null, 2) + '\n');
+  const assessment = assessEngineeringCampaign(campaignEvidence, {
+    expectedCommit: implementationSha,
+    campaignReportSha256: 'sha256:' + createHash('sha256').update(fs.readFileSync(location)).digest('hex'),
+    preflight
+  });
+  const assessmentPath = path.resolve('governance/reports/26-agent-engineering-campaign-status.json');
+  fs.mkdirSync(path.dirname(assessmentPath), { recursive: true });
+  fs.writeFileSync(assessmentPath, JSON.stringify(assessment, null, 2) + '\n');
   const complete = report.providerOperationalMatrixComplete && report.findings.every(row => row.provider === 'codex_cli');
   console.log(JSON.stringify({
     status: complete
@@ -85,6 +115,10 @@ async function main() {
     liveProviderRuns: report.liveProviderRuns,
     commissioningScope: commissioning.scope,
     report: location,
+    acceptanceReport: assessmentPath,
+    operationalOnCurrentInfrastructure: assessment.operationalOnCurrentInfrastructure,
+    fullyAutomatedEngineeringCampaign: assessment.fullyAutomatedEngineeringCampaign,
+    independentlyValidatedEngineeringOutputs: assessment.independentlyValidatedEngineeringOutputs,
     engineeringReleaseApproved: false
   }, null, 2));
   if (!complete) process.exitCode = 1;
