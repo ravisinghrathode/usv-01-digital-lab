@@ -177,7 +177,7 @@ export const MechanicalStructuralView: React.FC<MechanicalStructuralViewProps> =
                     <th className="py-2 px-3">Title & Phenomenon</th>
                     <th className="py-2 px-3">Governing Code</th>
                     <th className="py-2 px-3">Design Pressure / Force</th>
-                    <th className="py-2 px-3">Safety Factor (Target)</th>
+                    <th className="py-2 px-3">Safety Factor (Approval Required)</th>
                     <th className="py-2 px-3">FEA Stress Status</th>
                   </tr>
                 </thead>
@@ -188,7 +188,7 @@ export const MechanicalStructuralView: React.FC<MechanicalStructuralViewProps> =
                       <td className="py-2.5 px-3 text-slate-200 font-medium">{lc.title}</td>
                       <td className="py-2.5 px-3 font-mono text-slate-400">{lc.governingStandard}</td>
                       <td className="py-2.5 px-3 font-mono text-amber-300">{lc.designPressureOrForce}</td>
-                      <td className="py-2.5 px-3 font-mono text-slate-300">SF ≥ {lc.safetyFactorTarget}</td>
+                      <td className="py-2.5 px-3 font-mono text-slate-300">{lc.safetyFactorTarget === 'TBD' ? 'TBD — not approved' : `SF ≥ ${lc.safetyFactorTarget} (illustrative)`}</td>
                       <td className="py-2.5 px-3">
                         <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">
                           {lc.feaStatus}
