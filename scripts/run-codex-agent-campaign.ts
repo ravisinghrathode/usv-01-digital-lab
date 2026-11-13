@@ -11,6 +11,7 @@ import path from 'node:path';
 import { compileCodexAgentCases } from '../src/core/verification/CodexMatrixInput.ts';
 import { runLiveAgentMatrix } from '../src/core/verification/LiveAgentMatrix.ts';
 import { preflightCodexAgentCases } from '../src/core/verification/CodexCampaignPreflight.ts';
+import { requireLabCommissioningPolicy } from '../src/core/mission-control/LabCommissioningPolicy.ts';
 
 async function main() {
   const sourcePath = path.resolve(
@@ -60,17 +61,16 @@ async function main() {
   if (preflight.status !== 'PREFLIGHT_READY_NO_AI_CALLS') {
     throw new Error('26-agent preflight has failed mandatory engineering inputs/tools. Fix exact recorded blockers before spending Codex tokens.');
   }
-  if (process.env.AI_REVIEW_PROVIDER !== 'codex_cli' ||
-      process.env.USV_SUBSCRIPTION_PILOT !== 'enabled' ||
-      process.env.USV_ALLOW_PAID_AI_API === 'true') {
-    throw new Error('Codex campaign needs explicit subscription CLI mode; paid API fallback forbidden');
-  }
+  // This authorization is to gather research evidence, not to accept a vessel
+  // baseline. Source-revision governance is independent of this runtime gate.
+  const commissioning = requireLabCommissioningPolicy(process.env);
   const report = await runLiveAgentMatrix(cases);
   await assertPinnedCleanGitRevision(process.cwd(), implementationSha);
   const location = path.resolve('data/codex-26-agent-matrix.json');
   fs.mkdirSync(path.dirname(location), { recursive: true });
   fs.writeFileSync(location, JSON.stringify({
     ...report, ...provenance,
+    commissioning,
     dataClassification: catalog.dataClassification,
     illustrativeNonOperational: true,
     historicalCatalogBaseline: catalog.baselineSha,
@@ -83,6 +83,7 @@ async function main() {
       ? 'CODEX_26_PROVIDER_RUNS_OBSERVED_UNCERTIFIED' : 'CODEX_CAMPAIGN_INCOMPLETE',
     agents: report.totalAgents,
     liveProviderRuns: report.liveProviderRuns,
+    commissioningScope: commissioning.scope,
     report: location,
     engineeringReleaseApproved: false
   }, null, 2));
