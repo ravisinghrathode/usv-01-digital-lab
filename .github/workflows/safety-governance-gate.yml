@@ -180,6 +180,7 @@ jobs:
             governance/reports/calculix-known-case-evidence.zip
             governance/reports/calculix-host-probe-nonroot.json
             governance/reports/calculix-host-probe-privileged.json
+            /tmp/usv-calculix-known/artifacts/*-FAILED-solver-evidence.zip
           if-no-files-found: ignore
       - name: Stage B — Source-Derived Agent/Tool/Documentation Capability Audit
         run: |
@@ -406,5 +407,6 @@ jobs:
             governance/reports/openfoam-backward-step-evidence.zip
             governance/reports/openfoam-host-probe-nonroot.json
             governance/reports/openfoam-host-probe-privileged.json
+            /tmp/usv-openfoam-backward-step/artifacts/*-FAILED-solver-evidence.zip
           if-no-files-found: ignore
 
