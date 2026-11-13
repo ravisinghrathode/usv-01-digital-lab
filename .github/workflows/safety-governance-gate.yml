@@ -21,9 +21,10 @@ jobs:
     env:
       DIRECTOR_PUBLIC_KEY: ${{ vars.DIRECTOR_PUBLIC_KEY || secrets.DIRECTOR_PUBLIC_KEY || secrets.DIRECTOR_SIGNING_KEY }}
       PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-      AI_REVIEW_PROVIDER: ${{ vars.AI_REVIEW_PROVIDER || (secrets.GEMINI_API_KEY != '' && 'gemini' || 'deterministic') }}
-      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-2.5-flash' }}
+      # Subscription-only CI: run deterministic checks without an external model credential.
+      # Live AI-assisted engineering is performed separately through signed-in Codex,
+      # and cannot be represented as a completed independent model review.
+      AI_REVIEW_PROVIDER: deterministic
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout Source Code
