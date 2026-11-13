@@ -9,6 +9,7 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { commissionLiveModel } from '../src/core/verification/LiveProviderCommissioning.ts';
 import { runAgentDesignLoop } from '../src/core/optimizer/AgentDesignLoop.ts';
+import { runApprovedTemplateSolverJob } from '../src/core/verification/ApprovedTemplateSolver.ts';
 
 const args = process.argv.slice(2);
 const value = (name: string) => {
@@ -39,16 +40,38 @@ async function main() {
   if (!process.env.GEMINI_MODEL?.trim()) throw new Error('Specify a current authorized GEMINI_MODEL; no guessed model name');
   const preflight = await commissionLiveModel(sourceCommit, process.env.GEMINI_MODEL);
   const missionDigest = 'sha256:' + createHash('sha256').update(fs.readFileSync(missionPath)).digest('hex');
+  const solverCampaign=(mission.solverCampaign || undefined) as
+    import('../src/core/optimizer/AgentDesignLoop.ts').SolverCampaign|undefined;
+  const solverEvaluator=solverCampaign ? async(input:Parameters<
+    import('../src/core/optimizer/AgentDesignLoop.ts').SolverEvaluator>[0])=>{
+      const jobRef=(runId+'-R'+input.revisionIndex).replace(/[^A-Za-z0-9_-]/g,'_').slice(0,64);
+      const solved=await runApprovedTemplateSolverJob({
+        jobRef,sourceCommit:input.sourceCommit,
+        templateId:input.template.templateId,templateDigest:input.template.templateDigest,
+        parameters:input.parameters
+      });
+      const outputDigest='sha256:'+createHash('sha256').update(
+        JSON.stringify({disposition:solved.disposition,agentEvidence:solved.agentEvidence})
+      ).digest('hex');
+      if(solved.agentEvidence){
+        return {status:'USABLE_UNVERIFIED' as const,templateId:input.template.templateId,
+          outputDigest,issues:solved.disposition.issues,
+          evidence:solved.agentEvidence as unknown as Record<string,unknown>};
+      }
+      return {status:solved.disposition.status==='REJECTED'?'QUALITY_REJECTED' as const:'FAILED' as const,
+        templateId:input.template.templateId,outputDigest,issues:solved.disposition.issues};
+    } : undefined;
   const report = await runAgentDesignLoop({
     runId, sourceCommit, seed, maxRevisions,
     missionStatement: mission.missionStatement as string,
     requirements: mission.requirements as { id: string; statement: string; source: string }[],
-    sourceReferences: (mission.researchSources || []) as { reference: string; description: string }[],
+    sourceReferences: (mission.researchSources || []) as { reference: string; description: string; sha256?:string; url?:string }[],
     objectives: (mission.objectives || []) as import('../src/core/optimizer/AgentDesignLoop.ts').PreliminaryObjective[],
     comparisonMode: mission.comparisonMode === 'FIXED_CONDITIONS_RESCREEN' ? 'FIXED_CONDITIONS_RESCREEN' : 'STRICT',
     specialistReviews: 'AUTO',
-    disciplinePackages: (mission.disciplinePackages || []) as import('../src/core/optimizer/AgentDesignLoop.ts').DisciplineInputPackage[]
-  });
+    disciplinePackages: (mission.disciplinePackages || []) as import('../src/core/optimizer/AgentDesignLoop.ts').DisciplineInputPackage[],
+    solverCampaign
+  },undefined,undefined,solverEvaluator);
   const filename = path.join(outDir, runId + '-UNVERIFIED.json');
   fs.writeFileSync(filename, JSON.stringify({missionDigest,preflight,report}, null, 2) + '\n', { mode: 0o600 });
   console.log(JSON.stringify({
@@ -56,6 +79,7 @@ async function main() {
     completedAgentCalls: report.completedAgentCalls,
     specialistReviewCount: report.specialistReviewCount,
     preliminaryToolScreens: report.completedToolScreens,
+    solverEvaluations: report.completedSolverEvaluations,
     preliminaryComparisonStatus: report.comparison.status,
     preliminaryRankedRevisionCount: report.comparison.rankings.length,
     stopReason: report.stopReason,
