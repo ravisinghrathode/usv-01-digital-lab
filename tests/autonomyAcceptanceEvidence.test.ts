@@ -37,7 +37,7 @@ describe('AUT-01 immutable-evidence posture (no unearned approval)',()=>{
    for(const gate of ledger.gate_evidence) {
      expect(gate.gate_id).toMatch(/^AUT-G\d{2}$/);
      expect(['CI_REQUIRED_FINAL_SHA','NOT_SUBMITTED','NOT_EXECUTED']).toContain(gate.status);
-     if(!['AUT-G01','AUT-G10'].includes(gate.gate_id))expect(gate.evidence_reference).toBeNull();
+     if(!['AUT-G01','AUT-G05','AUT-G10'].includes(gate.gate_id))expect(gate.evidence_reference).toBeNull();
    }
  });
  it('records the post-merge AUT-01 governance nonconformance without claiming Director sign-off',()=>{
@@ -47,8 +47,20 @@ describe('AUT-01 immutable-evidence posture (no unearned approval)',()=>{
    expect(n.github_ci_conclusion_at_merge_head).toBe('failure');
    expect(n.independent_pr_reviewer_submissions_at_inspection).toBe(0);
    expect(n.director_signature_verified).toBe(false);
-   expect(n.effective_branch_protection_verified).toBe(false);
+   expect(n.effective_branch_protection_verified).toBe(true);
    expect(n.engineering_release_hold).toBe(true);
+ });
+ it('records actual GitHub branch protection without promoting it into vessel approval',()=>{
+   const p=(ledger as unknown as {branch_protection:{enforce_admins:boolean;require_branch_up_to_date:boolean;
+    required_approving_pr_reviews:number;dismiss_stale_reviews:boolean;
+    require_last_push_approval:boolean;rule_enforcement_verified:boolean}}).branch_protection;
+   expect(p.enforce_admins).toBe(true);
+   expect(p.required_approving_pr_reviews).toBeGreaterThanOrEqual(1);
+   expect(p.require_branch_up_to_date).toBe(true);
+   expect(p.dismiss_stale_reviews).toBe(true);
+   expect(p.require_last_push_approval).toBe(true);
+   expect(p.rule_enforcement_verified).toBe(true);
+   expect(ledger.release_authorized).toBe(false);
  });
  it('never approves control, compliance, physical validation or blocker closure from synthetic tests',()=>{
    expect(ledger.autonomous_navigation_authorized).toBe(false);
