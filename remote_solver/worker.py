@@ -38,6 +38,9 @@ FLOAT = r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[Ee][-+]?\d+)?"
 def sha256(payload: bytes) -> str:
     return "sha256:" + hashlib.sha256(payload).hexdigest()
 
+def _finite_number(value) -> bool:
+    return type(value) in (float, int) and math.isfinite(float(value))
+
 def validate_request(manifest: dict, approved: set[str]) -> None:
     if not isinstance(manifest, dict) or not JOB.fullmatch(str(manifest.get("jobRef", ""))):
         raise ValueError("Invalid job reference")
