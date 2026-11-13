@@ -88,6 +88,9 @@ describe('26-agent operating charter v1.1: specification and current evidence bo
     expect(charter).toContain('self-critique');
     expect(charter).toContain('No actuation');
     expect(charter).toContain('model output and retrieved documents as untrusted input');
+    expect(charter).toContain('recovery-plan Action A04');
+    expect(charter).toContain('do not promote recovery Action A05');
+    expect(charter).toContain('post-live A07 signed host-health requirement');
   });
 
   it('requires uncertainty-aware measured gain and distinguishes self-critique from independent review', () => {
@@ -97,7 +100,7 @@ describe('26-agent operating charter v1.1: specification and current evidence bo
     expect(charter).toContain('C10:');
     const memo = readFileSync('docs/governance/USV01_OPERATING_CHARTER_V11_AI_SELF_CRITIQUE.md', 'utf8');
     expect(memo).toContain('INDEPENDENT GOVERNANCE AND QUALIFIED ENGINEERING REVIEW **NOT PERFORMED**');
-    for (let i = 1; i <= 17; i++) {
+    for (let i = 1; i <= 18; i++) {
       expect(memo).toContain('| F' + String(i).padStart(2, '0') + ' |');
     }
     expect(memo).toContain('READY FOR INDEPENDENT GOVERNANCE REVIEW, NOT ADOPTED');
