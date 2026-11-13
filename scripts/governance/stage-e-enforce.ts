@@ -246,7 +246,7 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
     if (peerRequired && !independentPeerApproved && !(protectedSoftware && authorSignoff)) {
       blockingReasons.push(directorEcrRequired
         ? 'Stage D rejected: vessel engineering changes require an independent GitHub peer approval of the exact source head.'
-        : 'Stage D rejected: protected software requires an exact-head independent peer approval OR an explicit authenticated repo-admin PR-author signoff. An author signoff is not independent review.');
+        : 'Stage D rejected: protected software requires independent GitHub peer approval on the exact PR head OR an explicit authenticated repo-admin PR-author signoff. An author signoff is not independent review.');
     }
   }
 
