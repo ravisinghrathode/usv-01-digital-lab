@@ -71,55 +71,83 @@ describe('Deterministic Naval Engineering Tools: Physics Benchmarks & Analytical
   });
 
   // =========================================================================
-  // 2. TOOL-RESISTANCE-01: Hydrodynamic Resistance & Effective Power
+  // 2. TOOL-RESISTANCE-01 — evidence gating and physical identities
   // =========================================================================
-  describe('TOOL-RESISTANCE-01: Hydrodynamic Resistance Benchmark', () => {
-    it('should correctly classify displacement, semi-displacement, and planing regimes based on Froude number', async () => {
-      const base = {
-        lwlMeters: 10.0,
-        beamMeters: 2.5,
-        draftMeters: 0.6,
-        displacementTonnes: 6.0,
-        propulsiveEfficiencyEtaD: 0.65,
-        waterTempCelsius: 15
-      };
+  describe('TOOL-RESISTANCE-01: resistance and propulsion evidence gates', () => {
+    const base = {
+      lwlMeters: 10.5, beamMeters: 2.9, draftMeters: 0.65,
+      displacementTonnes: 6.2, speedKnots: 22
+    };
+    const run = (input: Record<string, unknown>) =>
+      toolRegistry.executeTool('TOOL-RESISTANCE-01', input, ['CALCULATION_EXEC']);
 
-      // Low speed: 5 knots -> Fn ~ 0.26 (< 0.4 => DISPLACEMENT)
-      const resDisp = await toolRegistry.executeTool('TOOL-RESISTANCE-01', { ...base, speedKnots: 5.0 }, ['CALCULATION_EXEC']);
-      expect(resDisp.success).toBe(true);
-      expect(resDisp.output.froudeNumberFn).toBeLessThan(0.4);
-      expect(resDisp.output.hydrodynamicRegime).toBe('DISPLACEMENT');
-
-      // Mid speed: 12 knots -> Fn ~ 0.63 (0.4 <= Fn <= 0.9 => SEMI_DISPLACEMENT)
-      const resSemi = await toolRegistry.executeTool('TOOL-RESISTANCE-01', { ...base, speedKnots: 12.0 }, ['CALCULATION_EXEC']);
-      expect(resSemi.success).toBe(true);
-      expect(resSemi.output.froudeNumberFn).toBeGreaterThanOrEqual(0.4);
-      expect(resSemi.output.froudeNumberFn).toBeLessThanOrEqual(0.9);
-      expect(resSemi.output.hydrodynamicRegime).toBe('SEMI_DISPLACEMENT');
-
-      // High speed: 25 knots -> Fn ~ 1.30 (> 0.9 => PLANING)
-      const resPlane = await toolRegistry.executeTool('TOOL-RESISTANCE-01', { ...base, speedKnots: 25.0 }, ['CALCULATION_EXEC']);
-      expect(resPlane.success).toBe(true);
-      expect(resPlane.output.froudeNumberFn).toBeGreaterThan(0.9);
-      expect(resPlane.output.hydrodynamicRegime).toBe('PLANING');
+    it('fails closed without hull geometry, resistance evidence and propulsor efficiency', async () => {
+      const result = await run(base);
+      expect(result.success).toBe(true);
+      expect(result.output.frictionalResistanceKn).toBeNull();
+      expect(result.output.residualResistanceKn).toBeNull();
+      expect(result.output.totalResistanceKn).toBeNull();
+      expect(result.output.effectivePowerPeKw).toBeNull();
+      expect(result.output.shaftBrakePowerPbKw).toBeNull();
+      expect(result.output.modelStatus).toBe('INSUFFICIENT_EVIDENCE');
+      expect(result.output.engineeringComplianceValidated).toBe(false);
+      expect(result.output.hydrodynamicRegime).toBe('UNVERIFIED');
     });
 
-    it('should satisfy powering conservation: shaft brake power PB = PE / etaD > PE', async () => {
+    it('calculates ITTC-1957 friction with documented wetted area but never infers total drag', async () => {
       const input = {
-        lwlMeters: 10.0,
-        beamMeters: 2.5,
-        draftMeters: 0.6,
-        displacementTonnes: 6.0,
-        speedKnots: 20.0,
-        propulsiveEfficiencyEtaD: 0.65,
-        waterTempCelsius: 15
+        ...base, wettedSurfaceAreaM2: 22,
+        wettedAreaEvidenceRef: 'CAD-OFFSETS-REV-A'
       };
+      const result = await run(input);
+      expect(result.success).toBe(true);
+      const speed = 22 * (1852 / 3600);
+      const re = speed * 10.5 / 1.188e-6;
+      const cf = 0.075 / (Math.log10(re) - 2) ** 2;
+      const rf = 0.5 * 1025 * speed ** 2 * 22 * cf / 1000;
+      expect(result.output.frictionalResistanceKn).toBeCloseTo(rf, 5);
+      expect(result.output.totalResistanceKn).toBeNull();
+      expect(result.output.shaftBrakePowerPbKw).toBeNull();
+    });
 
-      const res = await toolRegistry.executeTool('TOOL-RESISTANCE-01', input, ['CALCULATION_EXEC']);
-      expect(res.success).toBe(true);
-      const { effectivePowerPeKw, shaftBrakePowerPbKw } = res.output;
-      expect(shaftBrakePowerPbKw).toBeCloseTo(effectivePowerPeKw / 0.65, 0);
-      expect(shaftBrakePowerPbKw).toBeGreaterThan(effectivePowerPeKw);
+    it('requires source references for total resistance and propulsive efficiency', async () => {
+      expect((await run({ ...base, documentedTotalResistanceKn: 8 })).success).toBe(false);
+      expect((await run({ ...base, propulsiveEfficiencyEtaD: 0.62 })).success).toBe(false);
+      expect((await run({ ...base, wettedSurfaceAreaM2: 22 })).success).toBe(false);
+    });
+
+    it('accepts documented resistance only as an unverified input and preserves power identity', async () => {
+      // Hypothetical test values, NOT USV-01 performance evidence.
+      const result = await run({
+        ...base,
+        documentedTotalResistanceKn: 8, resistanceEvidenceRef: 'TANK-EXAMPLE-REV-1',
+        totalResistanceRangeKn: { min: 6, max: 10 },
+        propulsiveEfficiencyEtaD: 0.5, efficiencyEvidenceRef: 'PROP-EXAMPLE-REV-1',
+        efficiencyRange: { min: 0.4, max: 0.6 }
+      });
+      expect(result.success).toBe(true);
+      const speed = 22 * (1852 / 3600);
+      expect(result.output.effectivePowerPeKw).toBeCloseTo(8 * speed, 5);
+      expect(result.output.shaftBrakePowerPbKw).toBeCloseTo(8 * speed / 0.5, 5);
+      expect(result.output.effectivePowerRangeKw.min).toBeCloseTo(6 * speed, 5);
+      expect(result.output.shaftBrakePowerRangeKw.max).toBeCloseTo(10 * speed / 0.4, 5);
+      expect(result.output.modelStatus).toBe('EVIDENCE_REFERENCED_UNVERIFIED');
+      expect(result.output.engineeringComplianceValidated).toBe(false);
+    });
+
+    it('rejects invalid resistance/efficiency intervals and unsupported extra fields', async () => {
+      const common = {
+        ...base, documentedTotalResistanceKn: 8, resistanceEvidenceRef: 'TANK-EXAMPLE-REV-1',
+        propulsiveEfficiencyEtaD: 0.5, efficiencyEvidenceRef: 'PROP-EXAMPLE-REV-1'
+      };
+      expect((await run({ ...common, totalResistanceRangeKn: { min: 9, max: 10 } })).success).toBe(false);
+      expect((await run({ ...common, efficiencyRange: { min: 0.6, max: 0.7 } })).success).toBe(false);
+      expect((await run({ ...common, propulsiveEfficiencyEtaD: 1.2 })).success).toBe(false);
+      // Composite agents may pass unrelated fields; such values must never drive drag or powering.
+      const withExtraneous = await run({ ...base, arbitraryResidualCoeff: 0.01 });
+      expect(withExtraneous.success).toBe(true);
+      expect(withExtraneous.output.totalResistanceKn).toBeNull();
+      expect(withExtraneous.output.shaftBrakePowerPbKw).toBeNull();
     });
   });
 

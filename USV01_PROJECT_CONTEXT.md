@@ -2,7 +2,7 @@
 
 **Context revision:** 0.4  
 **Last updated:** 2026-11-12  
-**Project state:** Baselined Multi-Disciplinary Engineering Directorate Dossier
+**Project state:** Baselined project dossier with unresolved physical verification gates; evidence status overrides historical approval claims
 
 ## Mission
 
@@ -54,7 +54,7 @@ The local development Mac is Apple Silicon with 8 GB unified memory. Use it for 
 - **Vessel Scale & Hull Concept:** Medium Tactical Craft (LOA ~11.2m, LWL 10.5m, Beam 2.9m, Draft 0.65m), Deep-V composite planing monohull (20° transom deadrise).
 - **Displacement & Mass Properties:** 6.2 tonnes design displacement; lightship mass 3,750 kg (+ 346 kg design growth margin); composite LCG 4.11m from transom (aligned with LCB 4.41m); KG 0.66m.
 - **Hydrostatics & Intact Stability:** Transverse metacentric height $GM_T = 1.32\,\text{m}$ (exceeds IMO MSC.267(85) minimum 0.35m; compliant).
-- **Propulsion & Powering Architecture:** 100% Pure Electric twin steerable azimuth pod thrusters (PMSM); required shaft brake power $P_B = 182\,\text{kW}$ at 22 knot sprint.
+- **Propulsion & Powering Architecture:** twin electric steerable azimuth pod thrusters (PMSM) remain an architecture *proposal*. The previously stated $P_B = 182\,\text{kW}$ at 22 knots is an **unverified historical screening figure**, not an approved shaft or motor rating. See `docs/RES01_RESISTANCE_PROPULSION_CLOSURE_20261113.md` and acceptance gate `RES-01` for the evidence required.
 - **Energy Storage System:** Lithium Iron Phosphate (LiFePO4) 48V modular traction battery bank (60 kWh nominal, 54 kWh usable energy, IP67 sealed with cell runaway containment barrier).
 - **Speed, Range & Endurance:** Cruise speed 14 knots; sprint speed 22 knots; 8.5–12 hour operational loiter/patrol endurance.
 - **Autonomy & Navigation Basis:** IMO COLREGs 1972 statutory rules (Rules 13, 14, 15), ROS 2 Humble executive stack, micro-ROS CAN FD motor controllers.

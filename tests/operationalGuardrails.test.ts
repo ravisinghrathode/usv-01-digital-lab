@@ -22,7 +22,7 @@ describe('Operational engineering guardrails', () => {
   });
 
   it('rejects displacement outside the physical enclosing prism', () => {
-    const valid = { lwlMeters: 10, beamMeters: 2.5, draftMeters: 0.6, speedKnots: 15, displacementTonnes: 5, propulsiveEfficiencyEtaD: 0.65, waterTempCelsius: 15 };
+    const valid = { lwlMeters: 10, beamMeters: 2.5, draftMeters: 0.6, speedKnots: 15, displacementTonnes: 5, waterTempCelsius: 15 };
     expect(ResistanceTool.inputSchema.safeParse(valid).success).toBe(true);
     expect(ResistanceTool.inputSchema.safeParse({ ...valid, displacementTonnes: 30 }).success).toBe(false);
   });

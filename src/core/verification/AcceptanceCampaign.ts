@@ -2,7 +2,9 @@ import { AgentRegistry } from '../registry/AgentRegistry.ts';
 import { ToolRegistry } from '../tools/ToolRegistry.ts';
 import { ACCEPTANCE_REQUIREMENTS, evaluateAcceptance, type AcceptanceId, type AcceptanceEvidence } from './AcceptanceGate.ts';
 import { evaluateBenchmark, type ReferenceMeasurement } from './EngineeringBenchmarks.ts';
+import { screenResistancePropulsionEvidence } from './ResistancePropulsionEvidence.ts';
 import { assessMarineEvidence, type MarineEvidenceSubmission } from './MarineSystemsEvidenceGate.ts';
+import { evaluateEvidenceDecision, type EvidenceDecisionInput } from './EvidenceDecisionGate.ts';
 import { screenLiftingLoadCase, screenThermalSteadyState, type LiftingScreenInput, type ThermalScreenInput } from './MarineSystemsSizing.ts';
 
 /**
@@ -29,8 +31,10 @@ export const CAMPAIGN_WORKSTREAMS = [
 export type CampaignStatus = 'SOFTWARE_CHECK_PASSED_EXTERNAL_EVIDENCE_PENDING' | 'BLOCKED_MISSING_EVIDENCE' | 'BLOCKED_SOFTWARE_DEFECT';
 export interface CampaignInputs {
   baselineSha: string;
+  evidenceDecisionInput?: EvidenceDecisionInput;
   evidence?: readonly AcceptanceEvidence[];
   benchmarkMeasurements?: readonly ReferenceMeasurement[];
+  resistancePropulsionEvidence?: unknown;
   marineEvidenceSubmissions?: readonly MarineEvidenceSubmission[];
   marineLiftingCases?: readonly LiftingScreenInput[];
   marineThermalCases?: readonly ThermalScreenInput[];
@@ -59,7 +63,11 @@ export function runAcceptanceCampaign(input: CampaignInputs) {
     agents.length === 26 &&
     agentFindings.every(a => a.configurationValid);
   const acceptance = evaluateAcceptance(input.baselineSha, input.evidence);
+  const configurationEvidence = evaluateEvidenceDecision(input.evidenceDecisionInput ?? {
+    schemaVersion: '1.0', selectedBaseline: null, criteria: [], evidence: [], reviews: []
+  }, input.baselineSha);
   const benchmark = evaluateBenchmark(input.benchmarkMeasurements || []);
+  const resistancePropulsion = screenResistancePropulsionEvidence(input.resistancePropulsionEvidence, input.baselineSha);
   const marineEvidence = assessMarineEvidence(input.baselineSha, input.marineEvidenceSubmissions || []);
   const marineScreens = {
     liftingCases: (input.marineLiftingCases || []).map(screenLiftingLoadCase),
@@ -95,6 +103,8 @@ export function runAcceptanceCampaign(input: CampaignInputs) {
     agentFindings,
     registryErrors: registryCheck.errors,
     benchmark,
+    configurationEvidence,
+    resistancePropulsion,
     marineEvidence,
     marineScreens,
     missingCriteria,
@@ -122,6 +132,11 @@ export function acceptanceCampaignMarkdown(
       (report.structurallyValid ? 'PASS' : 'FAIL') + ')',
     'External acceptance: **NOT APPROVED**',
     'Benchmark comparison: ' + report.benchmark.status,
+    'Gate 0 configuration authority: ' + report.configurationEvidence.gate0Status +
+      ' (independent baseline AUTHORITY NOT VERIFIED)',
+    'Design identity: ' + (report.configurationEvidence.selectedConfiguration ?? 'NONE — HOLD'),
+    'RES-01 numerical evidence screening: ' + report.resistancePropulsion.status + ' (not a physical acceptance or release signature)',
+    'RES-01 unclosed external engineering/review gates: ' + report.resistancePropulsion.missingGates.join(', '),
     'Marine MAR-01 intake: ' + report.marineEvidence.status +
       ' (' + report.marineEvidence.missingRequirements.length + ' missing evidence entries; NOT APPROVED)',
     'Marine numerical screens: ' + report.marineScreens.liftingCases.length +

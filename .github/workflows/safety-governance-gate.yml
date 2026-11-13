@@ -19,11 +19,16 @@ jobs:
       run:
         shell: bash
     env:
-      DIRECTOR_PUBLIC_KEY: ${{ vars.DIRECTOR_PUBLIC_KEY || secrets.DIRECTOR_PUBLIC_KEY || secrets.DIRECTOR_SIGNING_KEY }}
+      DIRECTOR_PUBLIC_KEY: |-
+        -----BEGIN PUBLIC KEY-----
+        MCowBQYDK2VwAyEAIOeq3HldPxgffVE9m5+MNqtVvUD0JfwQhvVVQFVfaDA=
+        -----END PUBLIC KEY-----
       PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-      AI_REVIEW_PROVIDER: ${{ vars.AI_REVIEW_PROVIDER || (secrets.GEMINI_API_KEY != '' && 'gemini' || 'deterministic') }}
-      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-2.5-flash' }}
+      # Governance CI must never incur external model/API usage. Live subscription
+      # review is performed locally through Mission Control and remains advisory.
+      AI_REVIEW_PROVIDER: deterministic
+      USV_ALLOW_PAID_AI_API: "false"
+      USV_SUBSCRIPTION_PILOT: disabled
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout Source Code
@@ -98,7 +103,17 @@ jobs:
           if-no-files-found: ignore
 
 
+      - name: Stage A — PR Change Classification
+        id: stage_a
+        if: github.event_name == 'pull_request'
+        run: |
+          set -euo pipefail
+          npx tsx scripts/governance/classify-change.ts origin/main >> $GITHUB_STEP_SUMMARY
+          route="$(node -e "const r=require('./governance/reports/pr-classification.json'); process.stdout.write(r.summary.approvalRoute)")"
+          echo "approval_route=$route" >> "$GITHUB_OUTPUT"
+
       - name: Stage B — Consolidated 13-Workstream Acceptance Campaign
+        if: github.event_name != 'pull_request' || steps.stage_a.outputs.approval_route == 'SAFETY_CRITICAL_ENGINEERING'
         run: |
           set -euo pipefail
           npx tsx scripts/run-acceptance-campaign.ts
@@ -113,7 +128,23 @@ jobs:
             governance/reports/acceptance-campaign.md
           if-no-files-found: ignore
 
+      - name: Stage B — Gate 0 Vessel Configuration and Evidence Decision Report
+        run: |
+          set -euo pipefail
+          npm run evidence:gate0 -- --baseline-sha "$PR_HEAD_SHA"
+
+      - name: Upload Gate 0 Configuration and Evidence Findings
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: usv01-gate0-configuration-evidence
+          path: |
+            governance/reports/evidence-gate0.json
+            governance/reports/evidence-gate0.md
+          if-no-files-found: ignore
+
       - name: Stage B — Offline Commissioning Preconditions (External Evidence Pending)
+        if: github.event_name != 'pull_request' || steps.stage_a.outputs.approval_route == 'SAFETY_CRITICAL_ENGINEERING'
         run: |
           set -euo pipefail
           npm run acceptance:commission -- --baseline-sha "$PR_HEAD_SHA"
@@ -129,6 +160,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Stage B — Agent Accuracy Screen (Source-Backed)
+        if: github.event_name != 'pull_request' || steps.stage_a.outputs.approval_route == 'SAFETY_CRITICAL_ENGINEERING'
         run: |
           set -euo pipefail
           npm run acceptance:accuracy
@@ -142,6 +174,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Stage B — All 26 Accuracy Obligations and Evidence Provenance
+        if: github.event_name != 'pull_request' || steps.stage_a.outputs.approval_route == 'SAFETY_CRITICAL_ENGINEERING'
         env:
           USV01_AUDIT_COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
@@ -157,6 +190,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Stage B — 800 Independent Numerical Reference Vectors and Design Release Blocking
+        if: github.event_name != 'pull_request' || steps.stage_a.outputs.approval_route == 'SAFETY_CRITICAL_ENGINEERING'
         run: |
           set -euo pipefail
           mkdir -p governance/reports
@@ -181,15 +215,9 @@ jobs:
             exit 1
           }
 
-      - name: Stage A — PR Change Classification
-        if: github.event_name == 'pull_request'
-        run: |
-          set -euo pipefail
-          npx tsx scripts/governance/classify-change.ts origin/main >> $GITHUB_STEP_SUMMARY
-
       - name: Stage C — Independent Technical Review
         id: stage_c
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.stage_a.outputs.approval_route == 'SAFETY_CRITICAL_ENGINEERING'
         run: |
           set -euo pipefail
           echo "" >> $GITHUB_STEP_SUMMARY

@@ -9,7 +9,7 @@ const base = (): SafetyContext => ({
     vesselKind:'POWER_DRIVEN',trackAgeSeconds:1,rangeStdNm:0.02,bearingStdDeg:1,
     speedStdKnots:0.2,sources:['RADAR','CAMERA']
   }],
-  visibility:'IN_SIGHT',lookoutAssessment:'ASSESSED_ADEQUATE',sensorsHealthy:true,
+  headingAspectVerified:true,visibility:'IN_SIGHT',lookoutAssessment:'ASSESSED_ADEQUATE',sensorsHealthy:true,
   navigationIntegrityValid:true,propulsionHealthy:true,geofenceValid:true,
   energyReserveAdequate:true,insideOperationalDesignDomain:true,
   narrowChannelOrTrafficScheme:false,linkHealthy:true,humanEmergencyOverride:false,
@@ -111,6 +111,30 @@ describe('AUT-01 conservative non-actuating safety screen', () => {
   it('gives human emergency override highest supervisory priority',()=>{
     const r=run(x=>{x.linkHealthy=false;x.humanEmergencyOverride=true;x.sensorsHealthy=false;});
     expect(r.disposition).toBe('HUMAN_EMERGENCY_OVERRIDE_REQUEST');
+  });
+  it('does not misclassify AIS COG as visually verified heading/aspect',()=>{
+    const r=run(x=>{x.headingAspectVerified=false;});
+    expect(r.findings[0].encounter).toBe('UNDETERMINED');
+    expect(r.concerns).toContain('HEADING_AND_VISUAL_ASPECT_UNVERIFIED');
+    expect(r.disposition).toBe('DEGRADED_RESPONSE_REQUIRES_APPROVED_HAZARD_PLAN');
+  });
+  it('flags immediate close range even when TCPA is zero (parallel motion)',()=>{
+    const r=run(x=>{
+      x.contacts[0].bearingTrueDeg=90;x.contacts[0].rangeNm=0.1;
+      x.contacts[0].courseTrueDeg=0;x.contacts[0].speedKnots=12;
+    });
+    expect(r.findings[0].tcpaMinutes).toBe(0);
+    expect(r.findings[0].proximity).toBe('CPA_ALERT');
+  });
+  it('does not clear two individually CPA-negative targets without a multi-target solver',()=>{
+    const r=run(x=>{
+      x.contacts[0].bearingTrueDeg=90;x.contacts[0].rangeNm=4;
+      x.contacts[0].courseTrueDeg=90;
+      x.contacts.push({...x.contacts[0],id:'T02',bearingTrueDeg:270});
+    });
+    expect(r.findings.map(f=>f.proximity)).toEqual(['CPA_SCREEN_NEGATIVE','CPA_SCREEN_NEGATIVE']);
+    expect(r.concerns).toContain('MULTI_CONTACT_CONSTRAINTS_UNRESOLVED');
+    expect(r.disposition).toBe('DEGRADED_RESPONSE_REQUIRES_APPROVED_HAZARD_PLAN');
   });
   it('keeps absolute actuation and compliance prohibitions in every tested fault state',()=>{
     const transforms: Array<(x: SafetyContext)=>void> = [

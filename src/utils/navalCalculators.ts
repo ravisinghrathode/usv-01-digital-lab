@@ -1,7 +1,9 @@
 /**
- * USV-01 Digital Engineering Lab — Naval Architecture & Hydrodynamics Solvers
- * Preliminary empirical screening implementations. They are not validated Savitsky
- * resistance predictions or an IMO/flag/class stability compliance certificate.
+ * USV-01 Digital Engineering Lab — EXPERIMENTAL naval visualizations.
+ * IMPORTANT: The planing routine below is a legacy uncalibrated heuristic, not
+ * a classical Savitsky trim/force/moment equilibrium solver. Its apparent
+ * resistance, trim, transition and power outputs are NOT engineering predictions.
+ * Do not use for design release, motor sizing, acceptance or certification.
  */
 
 export interface SavitskyInputs {
@@ -28,6 +30,8 @@ export interface SpeedResistancePoint {
 }
 
 export interface SavitskyResult {
+  engineeringComplianceValidated: false;
+  modelStatus: 'UNVALIDATED_HEURISTIC';
   inputs: SavitskyInputs;
   curve: SpeedResistancePoint[];
   planingSpeedKnots: number; // Speed where Fn_b >= 1.0
@@ -36,7 +40,7 @@ export interface SavitskyResult {
 }
 
 /**
- * Solve Savitsky (1964) planing resistance curve across speed spectrum (2 to 40 knots)
+ * Plot a legacy illustrative planing heuristic across 4 to 40 knots; NOT Savitsky validation
  */
 export function calculateSavitskyPlaning(inputs: SavitskyInputs): SavitskyResult {
   const g = 9.80665;
@@ -137,6 +141,8 @@ export function calculateSavitskyPlaning(inputs: SavitskyInputs): SavitskyResult
   }
 
   return {
+    engineeringComplianceValidated: false,
+    modelStatus: 'UNVALIDATED_HEURISTIC',
     inputs,
     curve,
     planingSpeedKnots: Math.round(1.0 * Math.sqrt(g * b) * 1.94384),

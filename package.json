@@ -14,6 +14,7 @@
     "verify": "tsx scripts/verify-usv01.ts",
     "chatgpt:verify": "tsx scripts/chatgpt-verify.ts",
     "acceptance:campaign": "tsx scripts/run-acceptance-campaign.ts",
+    "evidence:gate0": "tsx scripts/run-evidence-decision-gate.ts",
     "acceptance:accuracy": "tsx scripts/assess-agent-accuracy.ts",
     "acceptance:agt02-audit": "tsx scripts/run-agent-accuracy-audit.ts",
     "acceptance:numerical": "vitest run tests/independentNumericalOracles.test.ts",
@@ -31,7 +32,11 @@
     "governance:sign": "tsx scripts/governance/sign-ecr.ts",
     "admin:provision-staff": "tsx scripts/admin/provision-staff-credential.ts",
     "governance:manifest": "tsx scripts/governance/release-manifest.ts",
-    "prepare": "node -e \"const fs = require('fs'); try { fs.copyFileSync('scripts/pre-push.sh', '.git/hooks/pre-push'); fs.chmodSync('.git/hooks/pre-push', 0o755); } catch {}\" || true"
+    "prepare": "node -e \"const fs = require('fs'); try { fs.copyFileSync('scripts/pre-push.sh', '.git/hooks/pre-push'); fs.chmodSync('.git/hooks/pre-push', 0o755); } catch {}\" || true",
+    "mission-control:test": "vitest run tests/subscriptionCliAdapter.test.ts tests/gitRevisionGuard.test.ts tests/missionControlCoordinator.test.ts tests/aiBillingPolicy.test.ts",
+    "mission-control:preflight": "tsx scripts/mission-control/preflight.ts",
+    "mission-control:pilot": "tsx scripts/mission-control/run-pilot.ts",
+    "mission-control:docker:validate": "docker compose config --quiet"
   },
   "dependencies": {
     "@google/genai": "^3.1.0",
