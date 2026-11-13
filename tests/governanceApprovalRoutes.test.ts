@@ -78,6 +78,11 @@ describe('USV-01 authority routing: distinguish lab software from vessel design'
 });
 
 describe('Stage E route-specific enforcement', () => {
+  it('cannot be disabled by a human-approval bypass flag', () => {
+    const source = fs.readFileSync(path.resolve(process.cwd(), 'scripts/governance/stage-e-enforce.ts'), 'utf8');
+    expect(source).not.toMatch(/ENFORCE_HUMAN_APPROVALS/);
+  });
+
   const makeDir = (): { root: string; reports: string } => {
     const root = fs.mkdtempSync(path.join(os.tmpdir(), 'usv-route-gate-'));
     const reports = path.join(root, 'governance', 'reports');
