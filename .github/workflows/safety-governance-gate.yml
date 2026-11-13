@@ -116,6 +116,47 @@ jobs:
           set -euo pipefail
           python3 -m unittest discover -s remote_solver -p 'test_*.py' -v
 
+      - name: Stage B — REAL CalculiX Linux Known-Case Commissioning (Uncertified)
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends calculix-ccx zip
+          ROOT=/tmp/usv-calculix-known
+          rm -rf "$ROOT"
+          mkdir -p "$ROOT/case" "$ROOT/staged" "$ROOT/work" "$ROOT/artifacts"
+          python3 remote_solver/known_cases/make_calculix_axial_bar.py "$ROOT/case"
+          (cd "$ROOT/case" && zip -q "$ROOT/case.zip" model.inp)
+          npm exec -- tsx scripts/generate-known-solver-manifest.ts -- \
+            --source-sha "$PR_HEAD_SHA" \
+            --archive "$ROOT/case.zip" \
+            --mesh "$ROOT/case/model.inp" \
+            --out "$ROOT/manifest.json" \
+            --family CALCULIX_FEA \
+            --job-ref CI_CALCULIX_AXIAL_BAR
+          ARCHIVE_DIGEST="sha256:$(sha256sum "$ROOT/case.zip" | awk '{print $1}')"
+          cp "$ROOT/case.zip" "$ROOT/staged/${ARCHIVE_DIGEST#sha256:}.zip"
+          sudo env \
+            USV_SOLVER_APPROVED_ARTIFACT_DIGESTS="$ARCHIVE_DIGEST" \
+            USV_SOLVER_STAGING_DIR="$ROOT/staged" \
+            USV_SOLVER_WORK_DIR="$ROOT/work" \
+            USV_SOLVER_ARTIFACT_DIR="$ROOT/artifacts" \
+            USV_SOLVER_BIN_PATH="/usr/bin:/bin" \
+            python3 "$GITHUB_WORKSPACE/remote_solver/worker.py" \
+              --manifest "$ROOT/manifest.json" > "$ROOT/result.json"
+          python3 remote_solver/known_cases/check_calculix_axial_bar.py "$ROOT/result.json"
+          cp "$ROOT/result.json" governance/reports/calculix-known-case-result.json
+          cp "$ROOT/artifacts/CI_CALCULIX_AXIAL_BAR-solver-evidence.zip" \
+            governance/reports/calculix-known-case-evidence.zip
+
+      - name: Upload Real CalculiX Known-Case Evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: usv01-real-calculix-known-case-unverified
+          path: |
+            governance/reports/calculix-known-case-result.json
+            governance/reports/calculix-known-case-evidence.zip
+          if-no-files-found: ignore
       - name: Stage B — Source-Derived Agent/Tool/Documentation Capability Audit
         run: |
           set -euo pipefail
