@@ -22,11 +22,16 @@ Director signoff before it can be accepted or released. Safety-critical
 decisions, missing measurements and unverified physics cannot be promoted to
 approved facts by any AI agent.
 
-**Source-code protection remains independent of both gates.** The repository
-requires exact Git source-content digest verification and protected-branch
-reviews for HIGH/CRITICAL software changes. A Director signature of the source
-revision is not proof that the vessel's design has been validated. Restricted
-commissioning does not bypass GitHub CI, peer-review or source ECR controls.
+**Source-code protection remains independent of both gates.** The Stage A
+path-based classifier assigns routine, restricted-lab software, protected
+software/security, or safety-critical vessel engineering routes. Restricted
+lab research changes use protected CI without a vessel ECR. Protected
+governance/authentication/execution changes additionally require an independent
+GitHub peer approval bound to the exact head and deterministic security review.
+Only changes affecting vessel engineering evidence, approved parameters,
+release authority or naval safety acceptance require a Director Ed25519 ECR.
+Stage E validates the correct route and source integrity; it never substitutes
+for authorization. No agent may approve its own code or vessel design.
 
 See [Laboratory Commissioning Protocol](LAB_COMMISSIONING_PROTOCOL.md) for
 machine-enforced constraints, authenticated live acceptance and evidence rules.
