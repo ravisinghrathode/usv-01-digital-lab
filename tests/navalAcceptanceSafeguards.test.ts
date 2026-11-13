@@ -19,12 +19,17 @@ describe('Naval estimator acceptance safeguards', () => {
 
   it('enforces power/unit consistency without implying resistance validation', async () => {
     const output = await ResistanceTool.execute(ResistanceTool.inputSchema.parse({
-      ...hull, displacementTonnes: 3.5, speedKnots: 12, propulsiveEfficiencyEtaD: 0.65
+      ...hull, displacementTonnes: 3.5, speedKnots: 12,
+      documentedTotalResistanceKn: 3,
+      resistanceEvidenceRef: 'TEST-SYNTHETIC-RESISTANCE',
+      propulsiveEfficiencyEtaD: 0.65,
+      efficiencyEvidenceRef: 'TEST-SYNTHETIC-ETA-065'
     }));
     expect(ResistanceTool.outputSchema.safeParse(output).success).toBe(true);
-    expect(output.totalResistanceKn).toBeGreaterThan(0);
+    expect(output.totalResistanceKn).toBe(3);
+    expect(output.effectivePowerPeKw).toBeCloseTo(3 * 12 * 1852 / 3600, 5);
     expect(output.shaftBrakePowerPbKw).toBeGreaterThan(output.effectivePowerPeKw);
     expect(output.engineeringComplianceValidated).toBe(false);
-    expect(output.modelStatus).toBe('PRELIMINARY_EMPIRICAL_ESTIMATE');
+    expect(output.modelStatus).toBe('EVIDENCE_REFERENCED_UNVERIFIED');
   });
 });
