@@ -102,7 +102,7 @@ def validate_request(manifest: dict, approved: set[str]) -> None:
         if manifest.get("family") != "OPENFOAM_CFD" or not isinstance(field_thresholds, dict) or not field_thresholds:
             raise ValueError("Field-specific residual thresholds require a nonempty OpenFOAM mapping")
         for selector, threshold in field_thresholds.items():
-            if not isinstance(selector, str) or not re.fullmatch(r"[A-Za-z][A-Za-z0-9_]*(?:\\*)?", selector):
+            if not isinstance(selector, str) or not re.fullmatch(r"[A-Za-z][A-Za-z0-9_]*(?:\*)?", selector):
                 raise ValueError("Malformed residual field selector")
             if not _finite_number(threshold) or float(threshold) <= 0:
                 raise ValueError("Malformed field-specific residual threshold")
