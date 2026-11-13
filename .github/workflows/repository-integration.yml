@@ -5,6 +5,8 @@ on:
     paths:
       - 'scripts/repository-integration.mjs'
       - 'tests/repository-integration.test.mjs'
+      - 'scripts/repository-integration-planner.mjs'
+      - 'tests/repository-integration-planner.test.mjs'
       - '.github/workflows/repository-integration.yml'
       - 'docs/REPOSITORY_INTEGRATION.md'
   workflow_dispatch:
@@ -30,7 +32,7 @@ jobs:
         with:
           node-version: '22'
       - name: Tests (no remote execution)
-        run: node --test tests/repository-scout.test.mjs tests/repository-integration.test.mjs
+        run: node --test tests/repository-scout.test.mjs tests/repository-integration.test.mjs tests/repository-integration-planner.test.mjs
 
   intake:
     name: Public source intake and staged proposal (NO execution)
