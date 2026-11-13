@@ -163,8 +163,10 @@ def _host_solver_argv(argv: list[str]) -> list[str]:
 
 def _wrapped_argv(argv: list[str], isolation_mode: str) -> list[str]:
     host_argv = _host_solver_argv(argv)
-    if isolation_mode == "UNSHARE_NET":
+    if isolation_mode == "UNSHARE_USER_NET":
         return ["unshare", "--user", "--map-root-user", "--net", "--", *host_argv]
+    if isolation_mode == "UNSHARE_NET_PRIVILEGED":
+        return ["unshare", "--net", "--", *host_argv]
     if isolation_mode == "TEST_NO_NAMESPACE":
         return host_argv
     raise ValueError("Unsupported network-isolation mode")
@@ -185,7 +187,7 @@ def _solver_environment(case: Path) -> dict[str, str]:
     }
 
 def _run(runner: Callable[..., subprocess.CompletedProcess], argv: list[str], case: Path,
-         timeout: int | None = None, isolation_mode: str = "UNSHARE_NET") -> subprocess.CompletedProcess:
+         timeout: int | None = None, isolation_mode: str = "UNSHARE_USER_NET") -> subprocess.CompletedProcess:
     effective_timeout = resource_policy()["wallTimeoutSeconds"] if timeout is None else timeout
     return runner(
         _wrapped_argv(argv, isolation_mode), cwd=str(case), capture_output=True,
@@ -468,7 +470,7 @@ def run_staged_case(manifest: dict, stage: Path, work_root: Path,
                     approved: set[str],
                     runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,
                     *, artifact_root: Path | None = None,
-                    isolation_mode: str = "UNSHARE_NET") -> dict:
+                    isolation_mode: str = "UNSHARE_USER_NET") -> dict:
     validate_request(manifest,approved)
     archive_path = stage / (manifest["inputArtifactSha256"][7:] + ".zip")
     if archive_path.is_symlink() or not archive_path.is_file():
@@ -604,4 +606,4 @@ if __name__ == "__main__":
     artifacts = Path(os.environ.get("USV_SOLVER_ARTIFACT_DIR","/var/lib/usv-solver/artifacts"))
     print(json.dumps(run_staged_case(
         manifest,stage,root,approved,artifact_root=artifacts,
-        isolation_mode="UNSHARE_NET"),indent=2))
+        isolation_mode=os.environ.get("USV_SOLVER_ISOLATION_MODE","UNSHARE_USER_NET")),indent=2))
