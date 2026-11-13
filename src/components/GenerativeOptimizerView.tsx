@@ -823,7 +823,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
           }`}
         >
           <BookOpen className="w-3.5 h-3.5" />
-          Learned Invariants ({invariants.length})
+          Registered Heuristic Rules ({invariants.length}; Unverified)
         </button>
 
         <button
@@ -835,7 +835,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
           }`}
         >
           <ShieldAlert className="w-3.5 h-3.5 text-rose-400" />
-          Senior Leadership Red Team
+          Static Critique Checklist
         </button>
       </div>
 
@@ -1453,28 +1453,28 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
             </div>
           </div>
 
-          {/* Sobol Parameter Sensitivity Decomposition */}
+          {/* Local finite difference sensitivity */}
           <div className="bg-slate-900 border border-slate-800 rounded-lg p-5 space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-slate-800">
               <div className="space-y-0.5">
                 <h3 className="text-xs font-semibold text-slate-200">
-                  Sobol Global Sensitivity Analysis (S_i & S_Ti Decomposition)
+                  Local +1% Finite-Difference Heuristic Influence (Unverified)
                 </h3>
                 <p className="text-[11px] text-slate-400">
-                  Quantifies which parameters most heavily dictate stability, drag, and mission success.
+                  Shows sensitivity of the legacy simplified model to a +1% input change; not true Sobol indices, independent physics or global robustness.
                 </p>
               </div>
-              <span className="text-[10px] font-mono text-purple-400">VARIANCE DECOMPOSITION</span>
+              <span className="text-[10px] font-mono text-purple-400">LOCAL SCENARIO SCREEN</span>
             </div>
 
             <div className="space-y-3 font-mono text-xs">
-              {activeCandidate?.sobolSensitivities?.map((s) => (
+              {activeCandidate?.localSensitivities?.map((s) => (
                 <div key={s.parameter} className="p-3.5 bg-slate-950 rounded border border-slate-800 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-slate-200">{s.displayName}</span>
                     <div className="flex items-center gap-3 text-[11px]">
-                      <span>First-Order S_i: <strong className="text-teal-400">{s.firstOrderIndex}</strong></span>
-                      <span>Total-Effect S_Ti: <strong className="text-purple-400">{s.totalEffectIndex}</strong></span>
+                      <span>Target response: <strong className="text-teal-400">{s.targetChangePercent === null ? 'N/A' : s.targetChangePercent + '%'}</strong></span>
+                      <span>Input perturbation: <strong className="text-purple-400">{s.inputPerturbationPercent + '%'}</strong></span>
                     </div>
                   </div>
 
@@ -1482,13 +1482,13 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                   <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden flex">
                     <div
                       className="bg-teal-400 h-full"
-                      style={{ width: `${s.firstOrderIndex * 100}%` }}
-                      title={`First Order: ${s.firstOrderIndex}`}
+                      style={{ width: `${Math.min(100, Math.abs(s.targetChangePercent ?? 0) * 10)}%` }}
+                      title={`First Order: ${s.targetChangePercent === null ? 'N/A' : s.targetChangePercent + '%'}`}
                     />
                     <div
                       className="bg-purple-500 h-full opacity-60"
-                      style={{ width: `${(s.totalEffectIndex - s.firstOrderIndex) * 100}%` }}
-                      title={`Interaction Effect: ${(s.totalEffectIndex - s.firstOrderIndex).toFixed(2)}`}
+                      style={{ width: '0%' }}
+                      title={'Interactions not measured'}
                     />
                   </div>
 
@@ -1508,11 +1508,11 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
         </div>
       )}
 
-      {/* TAB 6: PERMANENT LEARNED INVARIANTS */}
+      {/* TAB 6: HISTORICAL HEURISTIC RULES */}
       {activeTab === 'invariants' && (
         <div className="space-y-4">
           <div className="p-4 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-300 leading-relaxed">
-            <strong className="text-slate-100 font-semibold">How Invariant Learning Works:</strong> Whenever an agent rejects a trial design, it performs an automated Root Cause Analysis (RCA) and synthesizes a permanent boundary rule. All future trials inherit these constraints, guaranteeing the multi-agent system never repeats past mistakes.
+            <strong className="text-slate-100 font-semibold">How Invariant Learning Works:</strong> No real agent performed root-cause analysis in this legacy scenario. Unsupported normative invariants were removed; actual validated engineering rules require externally established evidence and review.
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 font-mono text-xs">
@@ -1539,9 +1539,9 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
             <div className="flex items-start gap-3">
               <ShieldAlert className="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
               <div>
-                <strong className="text-slate-100 font-semibold">Senior Leadership Defense Dossier:</strong>
+                <strong className="text-slate-100 font-semibold">Unverified Concept Critique Checklist:</strong>
                 <p className="mt-0.5 text-slate-400 leading-relaxed">
-                  Aggressive cross-examination compiled by <strong>INDEP-REV-24 (Independent Red Team Reviewer)</strong>. Prepares the engineering team for adversarial scrutiny from Chief Naval Architects, Executives, and Classification Societies.
+                  Static questions only; no real A15/A23 specialist agent has reviewed these heuristic numbers in this interface. The separate live design loop must produce authentic critic traces.
                 </p>
               </div>
             </div>
@@ -1551,7 +1551,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
               className="px-3.5 py-1.5 rounded text-xs font-mono font-bold bg-teal-600 hover:bg-teal-500 text-white flex items-center gap-1.5 shadow-sm whitespace-nowrap"
             >
               <Download className="w-3.5 h-3.5" />
-              Download Formal Dossier (.md)
+              Download Unverified Scenario (.md)
             </button>
           </div>
 
