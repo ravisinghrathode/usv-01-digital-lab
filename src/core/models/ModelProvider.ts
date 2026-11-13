@@ -1,4 +1,5 @@
 import { isPaidAiApiAllowed } from './AiBillingPolicy.ts';
+import { evaluateLabCommissioningPolicy } from '../mission-control/LabCommissioningPolicy.ts';
 
 
 export type ExecutionMode =
@@ -331,8 +332,8 @@ export class CodexCliProvider implements IModelProvider {
 
   isAvailable(): boolean {
     return typeof process !== 'undefined' &&
-      process.env.USV_SUBSCRIPTION_PILOT === 'enabled' &&
-      !isPaidAiApiAllowed();
+      !isPaidAiApiAllowed() &&
+      evaluateLabCommissioningPolicy(process.env).permitted;
   }
 
   async generateText(request: ModelPromptRequest): Promise<ModelPromptResponse> {
@@ -681,6 +682,33 @@ export function resolveConfiguredProvider(): 'gemini' | 'gemini_cli' | 'codex_cl
   return 'deterministic';
 }
 
+/**
+ * Resolve model routing while keeping ChatGPT/Codex-pinned engineering roles
+ * isolated from legacy Gemini CLI and paid API provider overrides.
+ */
+export function resolveModelProviderForTask(
+  config: ModelConfig,
+  explicitProvider?: string
+): NonNullable<ModelConfig['preferredProvider']> {
+  if (config.preferredProvider === 'codex_cli') {
+    // Offline Vitest fixtures are not live AI agents. Allow the explicit
+    // deterministic test-only provider to exercise existing engineering checks.
+    // A production server can never redirect a Codex-pinned role to Gemini
+    // or silently switch it to an offline/no-model implementation.
+    if (explicitProvider === 'deterministic' &&
+        typeof process !== 'undefined' &&
+        process.env.NODE_ENV === 'test' &&
+        process.env.VITEST === 'true') {
+      return 'deterministic';
+    }
+    return 'codex_cli';
+  }
+  if (explicitProvider === 'gemini_cli' || explicitProvider === 'codex_cli') {
+    return resolveConfiguredProvider();
+  }
+  return config.preferredProvider || resolveConfiguredProvider();
+}
+
 // -----------------------------------------------------------------------------------------
 // Model Provider Router / Dispatcher
 // -----------------------------------------------------------------------------------------
@@ -715,16 +743,12 @@ export class ModelProviderRouter {
 
   public async generate(request: ModelPromptRequest, config: ModelConfig): Promise<ModelPromptResponse> {
     const isTestMode = isTestExecutionEnvironment();
-    // Only the operator-authenticated CLI transport needs to override the
-    // 26 legacy per-agent Gemini SDK preferences. Other deployment values keep
-    // the original preference/fail-closed behavior so governance tests and
-    // explicit provider selections cannot be silently bypassed.
+    // A role explicitly pinned to the signed-in ChatGPT/Codex CLI cannot be
+    // redirected to Gemini (or a billable API) by deployment environment flags.
+    // A missing CLI/login/pilot fails closed; it never falls back to Gemini.
     const explicitProvider =
       typeof process !== 'undefined' ? process.env?.AI_REVIEW_PROVIDER?.toLowerCase() : undefined;
-    let providerName =
-      (explicitProvider === 'gemini_cli' || explicitProvider === 'codex_cli')
-        ? resolveConfiguredProvider()
-        : (config.preferredProvider || resolveConfiguredProvider());
+    let providerName = resolveModelProviderForTask(config, explicitProvider);
     const hasGeminiKey = typeof process !== 'undefined' && !!process.env?.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim().length > 0;
     if (providerName === 'gemini' && !hasGeminiKey) {
       providerName = resolveConfiguredProvider();

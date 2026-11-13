@@ -488,6 +488,8 @@ export class VerifyUsv01Engine {
           overallRisk: 'LOW',
           approvalRoute: 'ROUTINE_SOFTWARE',
           requiresIndependentEngineeringReview: false,
+          requiresIndependentSoftwareReview: false,
+          requiresIndependentPeerApproval: false,
           requiresDesignatedAuthorityApproval: false,
           requiresECR: false
         },
@@ -497,7 +499,10 @@ export class VerifyUsv01Engine {
     }
 
     const stageARisk = stageAReport.summary.overallRisk;
-    const stageARequiresDirector = stageAReport.summary.requiresDesignatedAuthorityApproval;
+    const stageARequiresDirector = stageAReport.summary.approvalRoute === 'SAFETY_CRITICAL_ENGINEERING';
+    const stageAPeerRequired = stageARequiresDirector ||
+      stageAReport.summary.approvalRoute === 'PROTECTED_SOFTWARE_SECURITY';
+    const stageCTechnicalReviewRequired = stageAPeerRequired;
     const stageADigestMatches = !stageAReport.baselineDigest || stageAReport.baselineDigest === baselineDigest;
     const stageACommitMatches = !stageAReport.commitSha || stageAReport.commitSha === commitSha;
 
@@ -509,11 +514,13 @@ export class VerifyUsv01Engine {
       status: stageADigestMatches && stageACommitMatches ? 'PASS' : 'FAIL',
       mandatory: true,
       summary: stageADigestMatches && stageACommitMatches
-        ? `Change risk classified as ${stageARisk}. Director approval required: ${stageARequiresDirector ? 'YES' : 'NO'}. Categories: ${stageAReport.summary.dominantCategories.join(', ')}.`
+        ? `Change risk ${stageARisk}, approval route ${stageAReport.summary.approvalRoute}. Vessel Director ECR: ${stageARequiresDirector ? 'YES' : 'NO'}. Exact-head peer required: ${stageAPeerRequired ? 'YES' : 'NO'}.`
         : `Stage A report digest or commit mismatch (expected ${baselineDigest.substring(0, 8)} / ${commitSha.substring(0, 8)}).`,
       evidence: {
         overallRisk: stageARisk,
+        approvalRoute: stageAReport.summary.approvalRoute,
         requiresDirector: stageARequiresDirector,
+        peerRequired: stageAPeerRequired,
         filesChanged: stageAReport.summary.totalFilesChanged,
         linesAdded: stageAReport.summary.totalLinesAdded,
         linesDeleted: stageAReport.summary.totalLinesDeleted,
@@ -542,7 +549,9 @@ export class VerifyUsv01Engine {
     const stageCCommitMatches = stageCReport?.evaluatedCommitSha === commitSha;
 
     // Check 2.2: Stage C Independent Technical Review
-    const stageCStatus: CheckStatus = !stageCReport
+    const stageCStatus: CheckStatus = !stageCTechnicalReviewRequired
+      ? 'PASS'
+      : !stageCReport
       ? 'FAIL'
       : stageCHasMockFallback
       ? 'FAIL'
@@ -557,9 +566,11 @@ export class VerifyUsv01Engine {
       category: 'GOVERNANCE_STAGES',
       title: 'Stage C: Independent Multi-Role Technical Review',
       status: stageCStatus,
-      mandatory: true,
-      summary: !stageCReport
-        ? 'Stage C independent review evidence report is missing.'
+      mandatory: stageCTechnicalReviewRequired,
+      summary: !stageCTechnicalReviewRequired
+        ? 'Routine/restricted non-operational lab software: additional Stage C technical review is not mandatory.'
+        : !stageCReport
+        ? 'Stage C technical/security review evidence report is missing.'
         : stageCHasMockFallback
         ? 'REJECTED: Mock reviewer fallback detected in Stage C.'
         : !stageCDigestMatches || !stageCCommitMatches
@@ -613,7 +624,11 @@ export class VerifyUsv01Engine {
       stageDResult = evaluateStageDHumanApproval('origin/main', { rootDir: this.rootDir });
     } catch {
       stageDResult = {
+        approvalRoute: stageAReport.summary.approvalRoute,
         humanApprovalRequired: stageARequiresDirector,
+        peerApprovalRequired: stageAPeerRequired,
+        independentPeerApproved: false,
+        adminAuthorSignoffVerified: false,
         highestRisk: stageARisk,
         ecrRecordFound: false,
         ecrRecordValid: false,
@@ -626,48 +641,63 @@ export class VerifyUsv01Engine {
       };
     }
 
-    const stageDRequired = stageARequiresDirector || stageARisk === 'CRITICAL' || stageARisk === 'HIGH';
+    const stageDRequired = stageARequiresDirector || stageAPeerRequired;
     const stageDSignatureVerified = stageDResult.signatureVerified;
     const stageDStale = stageDResult.staleApproval;
     const stageDDigestMatches = stageDResult.baselineDigest === baselineDigest;
+    const peerApproved = stageDResult.independentPeerApproved;
+    const authorSignoff = stageAReport.summary.approvalRoute === 'PROTECTED_SOFTWARE_SECURITY' &&
+      stageDResult.adminAuthorSignoffVerified;
+    const directorSatisfied = !stageARequiresDirector ||
+      (stageDSignatureVerified && !stageDStale && stageDDigestMatches);
+    const peerSatisfied = !stageAPeerRequired || peerApproved || authorSignoff;
 
-    // Check 2.4: Stage D Human Authority & Ed25519 Signature
-    const stageDStatus: CheckStatus = !stageDRequired
-      ? 'PASS'
-      : stageDSignatureVerified && stageDDigestMatches && !stageDStale
-      ? 'PASS'
-      : stageDStale || (!stageDDigestMatches && stageDSignatureVerified)
+    // Check 2.4: Director ECR only for vessel design, peer review for
+    // protected software. Never infer design-signature obligations from risk.
+    const stageDStatus: CheckStatus = stageDRequired && !stageDDigestMatches
       ? 'FAIL'
-      : 'BLOCKED'; // Pending director sign-off blocks merge in fail-closed governance
+      : stageARequiresDirector && stageDStale
+      ? 'FAIL'
+      : directorSatisfied && peerSatisfied
+      ? 'PASS'
+      : 'BLOCKED';
 
     phase2Checks.push({
       id: 'CHK-GOV-04',
       category: 'GOVERNANCE_STAGES',
-      title: 'Stage D: Human Authority & Cryptographic Director Authorization',
+      title: 'Stage D: Route-Specific Human Authority (Software Peer / Vessel ECR)',
       status: stageDStatus,
       mandatory: stageDRequired,
       summary: !stageDRequired
-        ? 'Low-risk change: Director authorization not mandatory per governance policy.'
-        : stageDSignatureVerified && stageDDigestMatches && !stageDStale
-        ? `Director authorization VERIFIED by ${stageDResult.approverAuthority || 'Engineering Director'} over exact baseline digest.`
-        : stageDStale
-        ? 'REJECTED: Director approval signature is STALE; does not match current baseline digest.'
-        : !stageDDigestMatches && stageDSignatureVerified
-        ? `REJECTED: Director signature digest mismatch (signed ${stageDResult.baselineDigest?.substring(0, 8)}, current ${baselineDigest.substring(0, 8)}).`
-        : 'PENDING: Safety-critical / High-risk change requires Director Ed25519 signature over exact baseline digest.',
+        ? 'Routine/restricted laboratory software: no Director vessel ECR or heightened peer approval required.'
+        : stageARequiresDirector
+        ? stageDSignatureVerified && peerApproved && stageDDigestMatches && !stageDStale
+          ? 'Exact-content vessel Director Ed25519 ECR plus independent peer review verified.'
+          : 'PENDING: vessel engineering change needs current Director ECR and independent exact-head peer review.'
+        : peerApproved && stageDDigestMatches
+          ? 'Protected software exact-head independent human peer approval verified; vessel ECR not required.'
+          : authorSignoff && stageDDigestMatches
+          ? 'Protected software accepted by repository-admin PR author on the exact GitHub head; explicitly NOT independent review or vessel ECR.'
+          : 'PENDING: protected software needs an independent exact-head peer approval OR repository-admin author software signoff.',
       evidence: {
-        approvalRequired: stageDRequired,
+        approvalRoute: stageAReport.summary.approvalRoute,
+        directorEcrRequired: stageARequiresDirector,
+        independentPeerRequired: stageAPeerRequired,
+        independentPeerApproved: peerApproved,
+        adminAuthorSignoffVerified: authorSignoff,
         signatureVerified: stageDSignatureVerified,
-        staleApproval: stageDStale,
+        staleApproval: stageARequiresDirector && stageDStale,
         digestMatches: stageDDigestMatches,
         approverAuthority: stageDResult.approverAuthority,
         evaluatedBaselineDigest: stageDResult.baselineDigest,
         currentBaselineDigest: baselineDigest,
-        error: stageDResult.signatureError
+        error: stageARequiresDirector ? stageDResult.signatureError : undefined
       },
-      remediation: stageDRequired && !stageDSignatureVerified
-        ? 'Engineering Director must authenticate on secure TTY and sign ECR over current baseline digest (`npm run governance:sign`)'
-        : undefined,
+      remediation: stageARequiresDirector && !stageDSignatureVerified
+        ? 'Qualified Engineering Director must sign the current vessel engineering ECR over the exact source digest.'
+        : stageAPeerRequired && !peerApproved && !authorSignoff
+          ? 'Obtain independent peer APPROVED review or a repo-admin PR author COMMENTED review with exact-head software signoff token.'
+          : undefined,
       timestamp: new Date().toISOString()
     });
 
@@ -681,8 +711,8 @@ export class VerifyUsv01Engine {
         overallVerdict: 'BLOCKED',
         stageAResult: {
           overallRisk: stageARisk,
-          approvalRoute: stageDRequired ? 'SAFETY_CRITICAL_ENGINEERING' : 'ROUTINE_SOFTWARE',
-          requiresDirector: stageDRequired
+          approvalRoute: stageAReport.summary.approvalRoute,
+          requiresDirector: stageARequiresDirector
         },
         stageCResult: {
           provider: stageCProvider,
@@ -692,8 +722,10 @@ export class VerifyUsv01Engine {
           verdict: stageCReport?.compositeAdvisoryRecommendation || 'UNKNOWN'
         },
         stageDResult: {
-          required: stageDRequired,
+          required: stageARequiresDirector,
+          peerRequired: stageAPeerRequired,
           independentPeerApproved: false,
+          adminAuthorSignoffVerified: false,
           signatureVerified: stageDSignatureVerified,
           staleApproval: stageDStale
         },

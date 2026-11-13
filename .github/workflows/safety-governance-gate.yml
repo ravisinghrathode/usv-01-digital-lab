@@ -5,6 +5,10 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  # An exact-head human approval must re-evaluate Stage D/E without a new
+  # source push (which would otherwise invalidate the review it depends on).
+  pull_request_review:
+    types: [submitted]
 
 permissions:
   contents: read
@@ -204,7 +208,7 @@ jobs:
 
       - name: Stage A — PR Change Classification
         id: stage_a
-        if: github.event_name == 'pull_request'
+        if: (github.event_name == 'pull_request' || github.event_name == 'pull_request_review')
         run: |
           set -euo pipefail
           npx tsx scripts/governance/classify-change.ts origin/main >> $GITHUB_STEP_SUMMARY
@@ -212,7 +216,7 @@ jobs:
           echo "approval_route=$route" >> "$GITHUB_OUTPUT"
 
       - name: Stage B — Consolidated 13-Workstream Acceptance Campaign
-        if: github.event_name != 'pull_request' || steps.stage_a.outputs.approval_route == 'SAFETY_CRITICAL_ENGINEERING'
+        if: (github.event_name != 'pull_request' && github.event_name != 'pull_request_review') || steps.stage_a.outputs.approval_route == 'SAFETY_CRITICAL_ENGINEERING'
         run: |
           set -euo pipefail
           npx tsx scripts/run-acceptance-campaign.ts
@@ -243,7 +247,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Stage B — Offline Commissioning Preconditions (External Evidence Pending)
-        if: github.event_name != 'pull_request' || steps.stage_a.outputs.approval_route == 'SAFETY_CRITICAL_ENGINEERING'
+        if: (github.event_name != 'pull_request' && github.event_name != 'pull_request_review') || steps.stage_a.outputs.approval_route == 'SAFETY_CRITICAL_ENGINEERING'
         run: |
           set -euo pipefail
           npm run acceptance:commission -- --baseline-sha "$PR_HEAD_SHA"
@@ -259,7 +263,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Stage B — Agent Accuracy Screen (Source-Backed)
-        if: github.event_name != 'pull_request' || steps.stage_a.outputs.approval_route == 'SAFETY_CRITICAL_ENGINEERING'
+        if: (github.event_name != 'pull_request' && github.event_name != 'pull_request_review') || steps.stage_a.outputs.approval_route == 'SAFETY_CRITICAL_ENGINEERING'
         run: |
           set -euo pipefail
           npm run acceptance:accuracy
@@ -273,7 +277,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Stage B — All 26 Accuracy Obligations and Evidence Provenance
-        if: github.event_name != 'pull_request' || steps.stage_a.outputs.approval_route == 'SAFETY_CRITICAL_ENGINEERING'
+        if: (github.event_name != 'pull_request' && github.event_name != 'pull_request_review') || steps.stage_a.outputs.approval_route == 'SAFETY_CRITICAL_ENGINEERING'
         env:
           USV01_AUDIT_COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
@@ -289,7 +293,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Stage B — 800 Independent Numerical Reference Vectors and Design Release Blocking
-        if: github.event_name != 'pull_request' || steps.stage_a.outputs.approval_route == 'SAFETY_CRITICAL_ENGINEERING'
+        if: (github.event_name != 'pull_request' && github.event_name != 'pull_request_review') || steps.stage_a.outputs.approval_route == 'SAFETY_CRITICAL_ENGINEERING'
         run: |
           set -euo pipefail
           mkdir -p governance/reports
@@ -316,7 +320,7 @@ jobs:
 
       - name: Stage C — Independent Technical Review
         id: stage_c
-        if: github.event_name == 'pull_request' && steps.stage_a.outputs.approval_route == 'SAFETY_CRITICAL_ENGINEERING'
+        if: (github.event_name == 'pull_request' || github.event_name == 'pull_request_review') && (steps.stage_a.outputs.approval_route == 'SAFETY_CRITICAL_ENGINEERING' || steps.stage_a.outputs.approval_route == 'PROTECTED_SOFTWARE_SECURITY')
         run: |
           set -euo pipefail
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -324,14 +328,14 @@ jobs:
 
       - name: Stage D — Human Authority & ECR Authorization Verification
         id: stage_d
-        if: github.event_name == 'pull_request'
+        if: (github.event_name == 'pull_request' || github.event_name == 'pull_request_review')
         run: |
           set -euo pipefail
           echo "" >> $GITHUB_STEP_SUMMARY
           npx tsx scripts/governance/stage-d-human-approval.ts origin/main
 
       - name: Stage E — Governance Gate Enforcement
-        if: github.event_name == 'pull_request'
+        if: (github.event_name == 'pull_request' || github.event_name == 'pull_request_review')
         run: |
           set -euo pipefail
           npx tsx scripts/governance/stage-e-enforce.ts origin/main

@@ -11,6 +11,8 @@ import path from 'node:path';
 import { compileCodexAgentCases } from '../src/core/verification/CodexMatrixInput.ts';
 import { runLiveAgentMatrix } from '../src/core/verification/LiveAgentMatrix.ts';
 import { preflightCodexAgentCases } from '../src/core/verification/CodexCampaignPreflight.ts';
+import { requireLabCommissioningPolicy } from '../src/core/mission-control/LabCommissioningPolicy.ts';
+import { assessEngineeringCampaign } from '../src/core/verification/EngineeringCampaignAcceptance.ts';
 
 async function main() {
   const sourcePath = path.resolve(
@@ -18,6 +20,12 @@ async function main() {
       ? process.argv[process.argv.indexOf('--catalog') + 1]
       : 'evidence/live-agents/representative-cases.json'
   );
+  const rootDir = process.cwd();
+  if (!sourcePath.startsWith(rootDir + path.sep) ||
+      !['evidence', 'references'].some(folder =>
+        sourcePath.startsWith(path.join(rootDir, folder) + path.sep))) {
+    throw new Error('Commissioning catalog must be a controlled file under evidence/ or references/ in the pinned source tree');
+  }
   if (fs.statSync(sourcePath).size > 2 * 1024 * 1024) throw new Error('Catalog too large');
   const source = fs.readFileSync(sourcePath);
   const catalog = JSON.parse(source.toString('utf8'));
@@ -60,30 +68,63 @@ async function main() {
   if (preflight.status !== 'PREFLIGHT_READY_NO_AI_CALLS') {
     throw new Error('26-agent preflight has failed mandatory engineering inputs/tools. Fix exact recorded blockers before spending Codex tokens.');
   }
-  if (process.env.AI_REVIEW_PROVIDER !== 'codex_cli' ||
-      process.env.USV_SUBSCRIPTION_PILOT !== 'enabled' ||
-      process.env.USV_ALLOW_PAID_AI_API === 'true') {
-    throw new Error('Codex campaign needs explicit subscription CLI mode; paid API fallback forbidden');
-  }
-  const report = await runLiveAgentMatrix(cases);
+  // This authorization is to gather research evidence, not to accept a vessel
+  // baseline. Source-revision governance is independent of this runtime gate.
+  const commissioning = requireLabCommissioningPolicy(process.env);
+  // A single command runs the entire engineering DAG. Every transition is
+  // journaled atomically so a CLI crash cannot erase prior attempted agents.
+  const progressFile = path.resolve('data/codex-26-agent-progress.json');
+  fs.mkdirSync(path.dirname(progressFile), { recursive: true });
+  const report = await runLiveAgentMatrix(cases, undefined, {
+    dependencyAware: true,
+    onFinding: async (_finding, completed) => {
+      const progress = {
+        ...provenance, commissioningScope: commissioning.scope,
+        dataClassification: catalog.dataClassification,
+        dependencyAware: true, completedCount: completed.length,
+        completed, engineeringReleaseApproved: false,
+        independentlyEngineeringValidated: false
+      };
+      const temporary = progressFile + '.tmp';
+      fs.writeFileSync(temporary, JSON.stringify(progress, null, 2) + '\n');
+      fs.renameSync(temporary, progressFile);
+    }
+  });
   await assertPinnedCleanGitRevision(process.cwd(), implementationSha);
   const location = path.resolve('data/codex-26-agent-matrix.json');
   fs.mkdirSync(path.dirname(location), { recursive: true });
-  fs.writeFileSync(location, JSON.stringify({
+  const campaignEvidence = {
     ...report, ...provenance,
+    commissioning,
+    dependencyAware: true,
+    controlledVesselConfigurationId: catalog.controlledVesselConfigurationId,
     dataClassification: catalog.dataClassification,
-    illustrativeNonOperational: true,
+    illustrativeNonOperational: catalog.dataClassification === 'SYNTHETIC_TEST_ONLY_NON_OPERATIONAL',
     historicalCatalogBaseline: catalog.baselineSha,
-    independentlyEngineeringValidated: false,
-    engineeringReleaseApproved: false
-  }, null, 2) + '\n');
+    independentlyEngineeringValidated: false as const,
+    engineeringReleaseApproved: false as const
+  };
+  fs.writeFileSync(location, JSON.stringify(campaignEvidence, null, 2) + '\n');
+  const assessment = assessEngineeringCampaign(campaignEvidence, {
+    expectedCommit: implementationSha,
+    campaignReportSha256: 'sha256:' + createHash('sha256').update(fs.readFileSync(location)).digest('hex'),
+    preflight
+  });
+  const assessmentPath = path.resolve('governance/reports/26-agent-engineering-campaign-status.json');
+  fs.mkdirSync(path.dirname(assessmentPath), { recursive: true });
+  fs.writeFileSync(assessmentPath, JSON.stringify(assessment, null, 2) + '\n');
   const complete = report.providerOperationalMatrixComplete && report.findings.every(row => row.provider === 'codex_cli');
   console.log(JSON.stringify({
     status: complete
       ? 'CODEX_26_PROVIDER_RUNS_OBSERVED_UNCERTIFIED' : 'CODEX_CAMPAIGN_INCOMPLETE',
     agents: report.totalAgents,
     liveProviderRuns: report.liveProviderRuns,
+    commissioningScope: commissioning.scope,
     report: location,
+    acceptanceReport: assessmentPath,
+    operationalOnCurrentInfrastructure: assessment.operationalOnCurrentInfrastructure,
+    fullyAutomatedEngineeringCampaign: assessment.fullyAutomatedEngineeringCampaign,
+    independentlyValidatedEngineeringOutputs: assessment.independentlyValidatedEngineeringOutputs,
     engineeringReleaseApproved: false
   }, null, 2));
   if (!complete) process.exitCode = 1;

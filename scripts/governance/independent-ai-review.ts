@@ -701,11 +701,15 @@ export async function generateMultiRoleReview(baseRef = 'origin/main'): Promise<
     aiReviewStatus = 'AI_REVIEW_UNAVAILABLE';
   }
 
-  // Get change classification risk
-  let changeRisk: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' = 'CRITICAL';
+  // Independent review needs a human peer for protected software and a
+  // qualified engineering authority for vessel releases. Severity alone
+  // is not evidence that the vessel baseline has changed.
+  let protectedReviewRequired = true; // fail closed if classification unavailable
   try {
     const classReport = generateClassificationReport(baseRef);
-    changeRisk = classReport.summary.overallRisk;
+    protectedReviewRequired =
+      classReport.summary.approvalRoute === 'PROTECTED_SOFTWARE_SECURITY' ||
+      classReport.summary.approvalRoute === 'SAFETY_CRITICAL_ENGINEERING';
   } catch {}
 
   // Compute composite recommendation
@@ -716,8 +720,9 @@ export async function generateMultiRoleReview(baseRef = 'origin/main'): Promise<
   } else if (hasHighFindings) {
     composite = 'ADVISORY_REQUEST_CHANGES';
   } else if (aiReviewStatus === 'AI_REVIEW_UNAVAILABLE') {
-    // If AI review was unavailable on a safety-critical / high-risk change:
-    if (changeRisk === 'CRITICAL' || changeRisk === 'HIGH') {
+    // AI unavailability triggers human peer review for protected software
+    // and engineering changes; restricted research remains advisory only.
+    if (protectedReviewRequired) {
       composite = 'PENDING_HUMAN_REVIEW';
     } else {
       composite = 'ADVISORY_APPROVE';
@@ -734,7 +739,8 @@ export async function generateMultiRoleReview(baseRef = 'origin/main'): Promise<
    ${isDeterministicOnly
      ? 'DETERMINISTIC STATIC RULE ENGINE REVIEW ONLY (AI MODEL-BACKED REVIEW IS UNAVAILABLE).\n   DETERMINISTIC REVIEWS MUST NEVER BE REPRESENTED AS INDEPENDENT MODEL-BACKED REVIEWS.'
      : 'SEVEN INDEPENDENT MODEL-BACKED REVIEWERS CONCURRENTLY EVALUATING CHANGE SET.'}
-   FINAL ACCEPTANCE REQUIRES SIGNED HUMAN AUTHORITY PER ENGINEERING GOVERNANCE POLICY.
+   DIRECTOR-SIGNED ECR APPLIES ONLY TO VESSEL ENGINEERING BASELINES.
+   PROTECTED SOFTWARE REQUIRES INDEPENDENT EXACT-HEAD PEER REVIEW.
 ========================================================================================
 `;
 
@@ -782,7 +788,7 @@ export function formatReviewReportMarkdown(report: MultiRoleReviewReport): strin
 ${isDeterministicOnly
   ? `> **DETERMINISTIC TRANSPARENCY NOTICE:** Review executed via static deterministic rule heuristics. Independent AI model-backed review was **UNAVAILABLE** (no live AI provider configured). Deterministic static checks must **NEVER** be represented as independent model-backed reviews.`
   : `> Seven independent model-backed technical reviewers concurrently assess all application, governance, and test changes.`}
-> Mandatory human sign-off by designated Engineering Authority is required prior to baseline merge.
+> Required approval is route-specific: protected software needs exact-head human peer review; vessel engineering baseline updates additionally need Director Ed25519 ECR.
 
 **Composite Advisory Verdict:** **${recBadge[report.compositeAdvisoryRecommendation]}**  
 **Review Execution Mode:** \`${report.executionMode}\`  

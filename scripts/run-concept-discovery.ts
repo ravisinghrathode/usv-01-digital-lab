@@ -1,7 +1,7 @@
 /**
  * Research-first concept phase. No CAD, mass, propulsion or speed values are
  * assumed here. "Plan" produces actual 26-agent ExecutionEngine case inputs;
- * --run-live requires a configured Gemini service and never uses mock fallback
+ * --run-live requires an authenticated, explicitly enabled ChatGPT/Codex CLI and never uses mock fallback
  * as engineering evidence. All outputs remain UNVERIFIED.
  */
 import fs from 'node:fs';
@@ -87,8 +87,10 @@ async function main() {
   let findings: any[] = [];
   let operationalRuns = 0;
   if (args.includes('--run-live')) {
-    if (!process.env.GEMINI_API_KEY?.trim()) {
-      throw Error('Live agent research requires authorized GEMINI_API_KEY. Case matrix generated; no mock run substituted.');
+    if (process.env.AI_REVIEW_PROVIDER !== 'codex_cli' ||
+        process.env.USV_SUBSCRIPTION_PILOT !== 'enabled' ||
+        process.env.USV_ALLOW_PAID_AI_API === 'true') {
+      throw Error('Live agent research requires AI_REVIEW_PROVIDER=codex_cli, USV_SUBSCRIPTION_PILOT=enabled, paid API disabled and an authenticated ChatGPT Codex CLI. No Gemini or mock fallback.');
     }
     const actualOutputs: Record<string, unknown> = {};
     const researchRecords: Array<Record<string, unknown>> = [];

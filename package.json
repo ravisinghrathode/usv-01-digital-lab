@@ -45,7 +45,10 @@
     "mission-control:test": "vitest run tests/subscriptionCliAdapter.test.ts tests/gitRevisionGuard.test.ts tests/missionControlCoordinator.test.ts tests/aiBillingPolicy.test.ts",
     "mission-control:preflight": "tsx scripts/mission-control/preflight.ts",
     "mission-control:pilot": "tsx scripts/mission-control/run-pilot.ts",
-    "mission-control:docker:validate": "docker compose config --quiet"
+    "mission-control:docker:validate": "docker compose config --quiet",
+    "acceptance:full-26": "tsx scripts/assess-engineering-campaign.ts",
+    "mission-control:attest-host": "tsx scripts/mission-control/attest-codex-host.ts",
+    "acceptance:sign-independent": "tsx scripts/engineering/sign-external-review.ts"
   },
   "dependencies": {
     "@google/genai": "^3.1.0",

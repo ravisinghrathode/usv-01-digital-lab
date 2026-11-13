@@ -38,6 +38,37 @@ describe('Subscription CLI pilot guards', () => {
     expect(env.CUSTOM_API_TOKEN).toBeUndefined();
     expect(env.USV_NO_PAID_API).toBe('1');
   });
+  it('allows the bounded research pilot, but rejects an attempted design release', () => {
+    const saved = {
+      pilot: process.env.USV_SUBSCRIPTION_PILOT,
+      provider: process.env.AI_REVIEW_PROVIDER,
+      paidApi: process.env.USV_ALLOW_PAID_AI_API,
+      scope: process.env.USV_LAB_SCOPE,
+      release: process.env.USV_ENGINEERING_RELEASE_AUTHORIZED
+    };
+    try {
+      process.env.USV_SUBSCRIPTION_PILOT = 'enabled';
+      process.env.AI_REVIEW_PROVIDER = 'codex_cli';
+      process.env.USV_ALLOW_PAID_AI_API = 'false';
+      delete process.env.USV_LAB_SCOPE;
+      delete process.env.USV_ENGINEERING_RELEASE_AUTHORIZED;
+      expect(() => validatePilotRequest(input)).not.toThrow();
+      process.env.USV_ENGINEERING_RELEASE_AUTHORIZED = 'true';
+      expect(() => validatePilotRequest(input)).toThrow(/restricted lab commissioning refused/);
+    } finally {
+      for (const [key, value] of [
+        ['USV_SUBSCRIPTION_PILOT', saved.pilot],
+        ['AI_REVIEW_PROVIDER', saved.provider],
+        ['USV_ALLOW_PAID_AI_API', saved.paidApi],
+        ['USV_LAB_SCOPE', saved.scope],
+        ['USV_ENGINEERING_RELEASE_AUTHORIZED', saved.release]
+      ] as Array<[string, string | undefined]>) {
+        if (value === undefined) delete process.env[key];
+        else process.env[key] = value;
+      }
+    }
+  });
+
   it('rejects arbitrary non-USV working directories', async () => {
     const dir = await mkdtemp(path.join(os.tmpdir(), 'not-usv-repo-'));
     try {

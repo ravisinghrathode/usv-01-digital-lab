@@ -8,9 +8,11 @@
  * - read-only / plan execution modes for orchestration and review;
  * - never grants engineering approval or merge authority.
  */
-import { spawn } from 'node:child_process';
-import { readFile, stat } from 'node:fs/promises';
+import { spawn, spawnSync } from 'node:child_process';
+import { mkdtemp, readFile, rm, stat } from 'node:fs/promises';
 import path from 'node:path';
+import os from 'node:os';
+import { requireLabCommissioningPolicy } from './LabCommissioningPolicy.ts';
 
 export type PilotRole = 'orchestrator' | 'worker' | 'reviewer';
 
@@ -39,12 +41,14 @@ export class SubscriptionCliUnavailable extends Error {}
 
 export interface CliSpec {
   executable: string;
-  args: (prompt: string) => string[];
+  args: (prompt: string, finalMessageFile: string) => string[];
 }
 
-const codexArgs = (prompt: string): string[] => [
+const codexArgs = (prompt: string, finalMessageFile: string): string[] => [
   'exec',
   '--sandbox', 'read-only',
+  '--ephemeral',
+  '--output-last-message', finalMessageFile,
   prompt
 ];
 
@@ -67,6 +71,9 @@ export function validatePilotRequest(input: PilotRequest): void {
       'Subscription CLI pilot disabled (set USV_SUBSCRIPTION_PILOT=enabled).'
     );
   }
+  // Operator opt-in authorizes research-only commissioning, never a design
+  // baseline or vessel release. Reject unsafe environment declarations.
+  requireLabCommissioningPolicy(process.env);
   if (!SAFE_ROLES[input.role]) throw new Error('Unknown role');
   if (!/^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$/.test(input.taskId)) throw new Error('Invalid taskId');
   if (!/^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$/.test(input.agentId)) throw new Error('Invalid agentId');
@@ -137,6 +144,24 @@ export async function runSubscriptionCli(input: PilotRequest): Promise<PilotResu
 
   const spec = SAFE_ROLES[input.role];
   const timeoutMs = Math.min(Math.max(input.timeoutMs ?? 180_000, 1000), 600_000);
+  const childEnv = sanitizedSubscriptionEnvironment();
+
+  // Codex can also be signed in using a separately billable API key. A
+  // successful login-status exit alone is insufficient: require ChatGPT mode.
+  // This status command makes NO model call and does not consume tokens.
+  const auth = spawnSync(spec.executable, ['login', 'status'], {
+    cwd: input.workingDirectory, env: childEnv, encoding: 'utf8', timeout: 8000
+  });
+  const authText = ((auth.stdout || '') + ' ' + (auth.stderr || '')).toLowerCase();
+  if (auth.error || auth.status !== 0 ||
+      !authText.includes('chatgpt') || /api[- ]?key|access token/.test(authText)) {
+    throw new SubscriptionCliUnavailable(
+      'Codex must be signed in with a ChatGPT subscription, not an API key or access token.'
+    );
+  }
+
+  const tmpDirectory = await mkdtemp(path.join(os.tmpdir(), 'usv-codex-final-'));
+  const finalMessageFile = path.join(tmpDirectory, 'final-message.json');
 
   return await new Promise<PilotResult>((resolve) => {
     let stdout = '';
@@ -144,36 +169,40 @@ export async function runSubscriptionCli(input: PilotRequest): Promise<PilotResu
     let done = false;
     let timedOut = false;
 
-    const finish = (status: PilotResult['status'], exitCode: number | null) => {
+    const finish = async (status: PilotResult['status'], exitCode: number | null) => {
       if (done) return;
       done = true;
       clearTimeout(timer);
+      if (status === 'COMPLETED') {
+        try {
+          // Codex stdout can contain progress events. The supported
+          // --output-last-message file captures only the final model answer.
+          stdout = (await readFile(finalMessageFile, 'utf8')).slice(0, 500_000);
+          if (!stdout.trim()) throw new Error('Empty final response');
+        } catch {
+          status = 'FAILED';
+          stderr = 'Codex finished without a parseable final-message artifact';
+        }
+      }
+      await rm(tmpDirectory, { recursive: true, force: true }).catch(() => {});
       resolve({
-        role: input.role,
-        taskId: input.taskId,
-        agentId: input.agentId,
-        status,
-        stdout,
-        stderr,
-        exitCode,
-        executable: spec.executable,
+        role: input.role, taskId: input.taskId, agentId: input.agentId,
+        status, stdout, stderr, exitCode, executable: spec.executable,
         verifiedByHuman: false
       });
     };
 
-    const child = spawn(spec.executable, spec.args(input.prompt), {
-      cwd: input.workingDirectory,
-      env: sanitizedSubscriptionEnvironment(),
-      shell: false,
+    const child = spawn(spec.executable, spec.args(input.prompt, finalMessageFile), {
+      cwd: input.workingDirectory, env: childEnv, shell: false,
       stdio: ['ignore', 'pipe', 'pipe']
     });
-
     const timer = setTimeout(() => {
       timedOut = true;
       child.kill('SIGKILL');
     }, timeoutMs);
 
     child.stdout?.on('data', (chunk: Buffer) => {
+      // Retain bounded diagnostics only. Never parse progress text as JSON.
       stdout = (stdout + chunk.toString('utf8')).slice(0, 500_000);
     });
     child.stderr?.on('data', (chunk: Buffer) => {
@@ -181,10 +210,10 @@ export async function runSubscriptionCli(input: PilotRequest): Promise<PilotResu
     });
     child.on('error', err => {
       stderr = err.message;
-      finish('UNAVAILABLE', null);
+      void finish('UNAVAILABLE', null);
     });
     child.on('close', code => {
-      finish(timedOut ? 'FAILED' : code === 0 ? 'COMPLETED' : 'FAILED', code);
+      void finish(timedOut ? 'FAILED' : code === 0 ? 'COMPLETED' : 'FAILED', code);
     });
   });
 }

@@ -31,7 +31,7 @@ const output = (agentId: string, provider: string, executionMode: AgentExecution
 
 describe('Live agent operational matrix', () => {
   it('tracks all 26 runtime invocations without falsely certifying outputs', async () => {
-    const result = await runLiveAgentMatrix(suiteCases, async (id, input) => output(id, 'gemini', 'LIVE_AI_GENERATION', input.taskId));
+    const result = await runLiveAgentMatrix(suiteCases, async (id, input) => output(id, 'codex_cli', 'LIVE_AI_GENERATION', input.taskId));
     expect(result.totalAgents).toBe(26);
     expect(result.liveProviderRuns).toBe(26);
     expect(result.providerOperationalMatrixComplete).toBe(true);
@@ -39,9 +39,9 @@ describe('Live agent operational matrix', () => {
     expect(result.engineeringReleaseApproved).toBe(false);
     expect(result.findings.every(f => f.outputDigestSha256?.startsWith('sha256:'))).toBe(true);
   });
-  it('accepts a real LLM trace when deterministic tools also executed', async () => {
+  it('recognizes a simulated Codex trace when deterministic tools also executed', async () => {
     const result = await runLiveAgentMatrix(suiteCases, async (id, input) => ({
-      ...output(id, 'gemini', 'LIVE_AI_GENERATION', input.taskId),
+      ...output(id, 'codex_cli', 'LIVE_AI_GENERATION', input.taskId),
       executionMode: 'DETERMINISTIC_CALCULATION'
     }));
     expect(result.liveProviderRuns).toBe(26);
@@ -53,6 +53,12 @@ describe('Live agent operational matrix', () => {
       deterministicToolEvidence: []
     }));
     expect(result.findings.find(f => f.canonicalId === 'A05')?.requiredToolsVerified).toBe(false);
+    expect(result.providerOperationalMatrixComplete).toBe(false);
+  });
+  it('rejects legacy Gemini as proof of a ChatGPT-only campaign', async () => {
+    const result = await runLiveAgentMatrix(suiteCases,
+      async (id, input) => output(id, 'gemini', 'LIVE_AI_GENERATION', input.taskId));
+    expect(result.liveProviderRuns).toBe(0);
     expect(result.providerOperationalMatrixComplete).toBe(false);
   });
   it('rejects mock/static providers as live evidence', async () => {

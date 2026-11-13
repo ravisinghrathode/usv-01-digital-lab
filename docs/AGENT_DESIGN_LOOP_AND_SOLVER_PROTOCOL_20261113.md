@@ -49,13 +49,13 @@ This loop is an **initial live design core**, not a complete automated naval arc
 # Inspect source-derived tool/advisory capability and documentation drift (no credentials required):
 npm run audit:capabilities
 
-# An authorized server runs actual A05/A15 cycles; all outputs are unverified:
-GEMINI_API_KEY=... npm run design:iterate -- \
+# An authorized server runs actual A01/A15 cycles; all outputs are unverified:
+AI_REVIEW_PROVIDER=codex_cli USV_SUBSCRIPTION_PILOT=enabled USV_ALLOW_PAID_AI_API=false npm run design:iterate -- \
   --mission-file references/concept-mission-draft.json \
   --source-sha <EXACT_40_HEX_COMMIT_SHA> --seed 1337 --revisions 3
 ```
 
-Research case generation for all 26 roles remains in `npm run concept:research`. Only the live design loop uses A01 and A15 directly; it does **not** pretend to have made all 26 work together yet. Store live evidence under ignored `.local-concept-research/design-loops/` with restrictive file permissions. Never commit secrets or restricted model responses by default.
+Research case generation for all 26 roles remains in `npm run concept:research`. Use `--run-live` with a locally authenticated ChatGPT Codex CLI and the same subscription-only environment for live research. No Gemini key, paid API or mock fallback is accepted. Only the live design loop uses A01 and A15 directly; it does **not** pretend to have made all 26 work together yet. Store live evidence under ignored `.local-concept-research/design-loops/` with restrictive file permissions. Never commit secrets or restricted model responses by default.
 
 ## Computation / solver expansion
 

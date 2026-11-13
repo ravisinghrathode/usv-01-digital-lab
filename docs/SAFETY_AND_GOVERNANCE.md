@@ -8,3 +8,33 @@
 - Record assumptions, units, coordinate frames, data provenance and solver versions.
 - Safety-critical analysis requires independent review and appropriate physical verification.
 - Unknown vessel particulars and acceptance criteria remain `TBD`.
+## Two distinct approval gates
+
+**Gate L: restricted laboratory commissioning.** An operator can opt in to a
+research-only, non-operational ChatGPT/Codex subscription pilot without first
+approving unknown vessel parameters or a vessel engineering baseline. Research
+tasks may plan, calculate, compare, critique and assemble traceable candidate
+design evidence; a successful AI invocation is never a design approval.
+
+**Gate E: evidence-based vessel engineering release.** A vessel design revision
+requires independently reviewed engineering evidence and explicit Engineering
+Director signoff before it can be accepted or released. Safety-critical
+decisions, missing measurements and unverified physics cannot be promoted to
+approved facts by any AI agent.
+
+**Source-code protection remains independent of both gates.** The Stage A
+path-based classifier assigns routine, restricted-lab software, protected
+software/security, or safety-critical vessel engineering routes. Restricted
+lab research changes use protected CI without a vessel ECR. Protected
+governance/authentication/execution changes additionally require independent
+GitHub peer review on the exact head or explicit GitHub-authenticated repository-
+admin author acceptance with the exact head SHA. The admin-author route is
+an accountable single-maintainer exception, **not independent peer review**.
+Deterministic security review remains mandatory.
+Only changes affecting vessel engineering evidence, approved parameters,
+release authority or naval safety acceptance require a Director Ed25519 ECR.
+Stage E validates the correct route and source integrity; it never substitutes
+for authorization. No agent may approve its own code or vessel design.
+
+See [Laboratory Commissioning Protocol](LAB_COMMISSIONING_PROTOCOL.md) for
+machine-enforced constraints, authenticated live acceptance and evidence rules.

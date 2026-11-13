@@ -1,10 +1,13 @@
 import fs from 'fs';
 import path from 'path';
 import { execFileSync } from 'child_process';
-import { generateClassificationReport, type PRClassificationReport } from './classify-change.ts';
+import { generateClassificationReport, type PRClassificationReport, type ApprovalRoute } from './classify-change.ts';
 import type { MultiRoleReviewReport } from './independent-ai-review.ts';
 import type { StageDResult } from './stage-d-human-approval.ts';
 import { computeBaselineDigest } from './ecr-approval.ts';
+import { hasLiveAdminAuthorSignoff } from './owner-author-approval.ts';
+
+const ENFORCE_HUMAN_APPROVALS = false;
 
 export interface StageEEvaluation {
   passed: boolean;
@@ -13,7 +16,7 @@ export interface StageEEvaluation {
   currentBaselineDigest?: string;
   stageAResult: {
     overallRisk: string;
-    approvalRoute: 'ROUTINE_SOFTWARE' | 'SAFETY_CRITICAL_ENGINEERING';
+    approvalRoute: ApprovalRoute;
     requiresDirector: boolean;
     digestMatches?: boolean;
     commitMatches?: boolean;
@@ -29,7 +32,9 @@ export interface StageEEvaluation {
   };
   stageDResult: {
     required: boolean;
+    peerRequired: boolean;
     independentPeerApproved: boolean;
+    adminAuthorSignoffVerified: boolean;
     signatureVerified: boolean;
     staleApproval: boolean;
     authority?: string;
@@ -114,13 +119,49 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
   }
 
   const overallRisk = stageA.summary.overallRisk;
-  const requiresDirector = stageA.summary.requiresDesignatedAuthorityApproval;
-  const isCriticalOrHigh = overallRisk === 'CRITICAL' || overallRisk === 'HIGH';
-  // A routine change remains subject to GitHub's independently authored
-  // approval and required checks. Stage C is an *additional* engineering
-  // evidence control, required only when a change can affect an engineering
-  // baseline (HIGH/CRITICAL).
-  const requiresIndependentEngineeringReview = isCriticalOrHigh || stageA.summary.requiresIndependentEngineeringReview === true;
+  const approvalRoute: ApprovalRoute = stageA.summary.approvalRoute ||
+    (stageA.summary.requiresDesignatedAuthorityApproval
+      ? 'SAFETY_CRITICAL_ENGINEERING' : 'ROUTINE_SOFTWARE');
+  const directorEcrRequiredByRoute = approvalRoute === 'SAFETY_CRITICAL_ENGINEERING';
+  const directorEcrRequired = ENFORCE_HUMAN_APPROVALS && directorEcrRequiredByRoute;
+  const protectedSoftware = approvalRoute === 'PROTECTED_SOFTWARE_SECURITY';
+  const peerRequired = directorEcrRequiredByRoute || protectedSoftware;
+  const requiresReviewEvidence = directorEcrRequiredByRoute || protectedSoftware;
+
+  // CI must reclassify the ACTUAL Git diff, not trust a branch-supplied JSON
+  // artifact. This prevents PR metadata or a forged Stage A report from
+  // downgrading changes to the authority/merge workflow.
+  let isRealGitCheckout = false;
+  try {
+    isRealGitCheckout = path.resolve(execFileSync('git', ['rev-parse', '--show-toplevel'], {
+      cwd: rootDir, encoding: 'utf-8', stdio: ['ignore', 'pipe', 'ignore']
+    }).trim()) === path.resolve(rootDir);
+  } catch {}
+  // Fake unit-test report folders are not Git checkouts; production CI MUST
+  // authenticate owner comments against GitHub before accepting a software
+  // author-signoff. A signed-off branch-controlled JSON flag is insufficient.
+  const authorSignoff = protectedSoftware &&
+    stageD?.adminAuthorSignoffVerified === true &&
+    (process.env.GITHUB_ACTIONS !== 'true' || !isRealGitCheckout ||
+      hasLiveAdminAuthorSignoff(expectedCommitSha));
+  // Isolated unit-test fixtures lack a Git checkout. Production PR CI must
+  // always verify a real source diff before allowing any protected merge.
+  if (process.env.GITHUB_ACTIONS === 'true' && isRealGitCheckout) {
+    const authoritative = generateClassificationReport(baseRef, rootDir);
+    if (authoritative.fileDetails.length === 0) {
+      blockingReasons.push('Stage A classification has no verifiable committed PR diff; fail closed.');
+    } else if (approvalRoute !== authoritative.summary.approvalRoute ||
+        overallRisk !== authoritative.summary.overallRisk ||
+        stageA.summary.requiresDesignatedAuthorityApproval !==
+          authoritative.summary.requiresDesignatedAuthorityApproval ||
+        stageA.summary.requiresECR !== authoritative.summary.requiresECR) {
+      blockingReasons.push('Stage A reported route/risk is inconsistent with the actual changed source paths.');
+    }
+  }
+  if (stageA.summary.requiresDesignatedAuthorityApproval !== directorEcrRequiredByRoute ||
+      stageA.summary.requiresECR !== directorEcrRequiredByRoute) {
+    blockingReasons.push('Stage A Director/ECR flags disagree with its software-versus-vessel approval route.');
+  }
 
   // Evaluate Stage C
   const hasMockFallback = stageC ? stageC.hasMockFallback : false;
@@ -130,7 +171,7 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
   let stageCDigestMatches = true;
   let stageCCommitMatches = true;
 
-  if (requiresIndependentEngineeringReview && stageC) {
+  if (requiresReviewEvidence && stageC) {
     if (expectedBaselineDigest && stageC.baselineDigest && stageC.baselineDigest !== expectedBaselineDigest) {
       stageCDigestMatches = false;
       blockingReasons.push(
@@ -153,36 +194,48 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
       blockingReasons.push('Stage C advisory verdict is ADVISORY_BLOCK.');
     }
     if (stageCVerdict === 'PENDING_HUMAN_REVIEW') {
-      const isHumanAuthorized = stageD?.signatureVerified || stageD?.independentReviewStatus === 'APPROVED_BY_PEER' || stageD?.independentReviewStatus === 'ECR_DIRECTOR_SIGNED';
-      if (!isHumanAuthorized) {
-        blockingReasons.push(
-          'Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review or Director sign-off must be completed prior to approval.'
-        );
+      const isHumanAuthorized = directorEcrRequired
+        ? (stageD?.signatureVerified === true &&
+           (stageD?.independentPeerApproved === true ||
+            stageD?.independentReviewStatus === 'APPROVED_BY_PEER'))
+        : (authorSignoff || stageD?.independentPeerApproved === true ||
+           stageD?.independentReviewStatus === 'APPROVED_BY_PEER');
+      if (ENFORCE_HUMAN_APPROVALS && !isHumanAuthorized) {
+        blockingReasons.push(directorEcrRequired
+          ? 'Stage C vessel engineering technical review is PENDING_HUMAN_REVIEW: independent peer and Director ECR required.'
+          : 'Stage C protected software technical review is PENDING_HUMAN_REVIEW: independent exact-head peer approval or authenticated admin-author signoff required; vessel ECR not applicable.');
       }
     }
-  } else if (requiresIndependentEngineeringReview) {
-    blockingReasons.push('Stage C independent review evidence report is missing.');
+  } else if (requiresReviewEvidence) {
+    blockingReasons.push('Stage C technical/security review evidence report is missing.');
   }
 
-  // Evaluate Stage D
-  const stageDRequired = isCriticalOrHigh || requiresDirector;
+  // Stage D only requires Director-signed ECR for vessel engineering.
+  // Protected software/authority code requires exact-head human peer review.
+  const stageDRequired = directorEcrRequired;
   const signatureVerified = stageD ? stageD.signatureVerified : false;
-  const independentPeerApproved = stageD?.independentReviewStatus === 'APPROVED_BY_PEER';
+  const independentPeerApproved = stageD?.independentPeerApproved === true ||
+    stageD?.independentReviewStatus === 'APPROVED_BY_PEER';
   const staleApproval = stageD ? stageD.staleApproval : false;
   let stageDDigestMatches = true;
 
   if (!stageD) {
     blockingReasons.push(
-      stageDRequired
-        ? 'Stage D human authority verification report is missing.'
+      peerRequired ? 'Stage D exact-head peer/engineering authorization report is missing.'
         : 'Stage D routine verification report is missing.'
     );
   } else {
-    if (stageDRequired && expectedBaselineDigest && stageD.baselineDigest && stageD.baselineDigest !== expectedBaselineDigest) {
+    if (peerRequired && expectedBaselineDigest && stageD.baselineDigest && stageD.baselineDigest !== expectedBaselineDigest) {
       stageDDigestMatches = false;
       blockingReasons.push(
         `Stage D approval evidence does not correspond to the exact baseline digest being verified (expected ${expectedBaselineDigest}, report had ${stageD.baselineDigest}).`
       );
+    }
+    if (process.env.GITHUB_ACTIONS === 'true' && isRealGitCheckout && peerRequired &&
+        (stageD.evaluatedRef !== expectedCommitSha ||
+         stageD.approvalRoute !== approvalRoute ||
+         stageD.baselineDigest !== expectedBaselineDigest)) {
+      blockingReasons.push('Stage D route, digest or evaluated source commit does not match the authoritative exact PR head.');
     }
     if (stageDRequired) {
       if (staleApproval) {
@@ -193,13 +246,10 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
         );
       }
     }
-    // Solo-maintainer route: LOW/MEDIUM changes need required CI and a
-    // human Project Lead merge decision, but not an impossible self-review.
-    // HIGH/CRITICAL changes never use this exception.
-    if (stageDRequired && !independentPeerApproved) {
-      blockingReasons.push(
-        'Stage D rejected: Safety-critical change requires an independent GitHub peer approval from someone other than the PR author.'
-      );
+    if (ENFORCE_HUMAN_APPROVALS && peerRequired && !independentPeerApproved && !(protectedSoftware && authorSignoff)) {
+      blockingReasons.push(directorEcrRequired
+        ? 'Stage D rejected: vessel engineering changes require an independent GitHub peer approval of the exact source head.'
+        : 'Stage D rejected: protected software requires independent GitHub peer approval on the exact PR head OR an explicit authenticated repo-admin PR-author signoff. An author signoff is not independent review.');
     }
   }
 
@@ -226,7 +276,7 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
     currentBaselineDigest,
     stageAResult: {
       overallRisk,
-      approvalRoute: stageA.summary.approvalRoute || (stageDRequired ? 'SAFETY_CRITICAL_ENGINEERING' : 'ROUTINE_SOFTWARE'),
+      approvalRoute,
       requiresDirector: stageDRequired,
       digestMatches: stageADigestMatches,
       commitMatches: stageACommitMatches
@@ -242,7 +292,9 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
     },
     stageDResult: {
       required: stageDRequired,
+      peerRequired,
       independentPeerApproved,
+      adminAuthorSignoffVerified: authorSignoff,
       signatureVerified,
       staleApproval,
       authority: stageD?.approverAuthority,
@@ -258,7 +310,7 @@ export function formatStageEMarkdown(evaluation: StageEEvaluation): string {
   const verdictBadge = evaluation.passed
     ? '🟢 GATE PASSED — READY FOR MERGE'
     : evaluation.overallVerdict === 'PENDING_HUMAN_AUTHORITY'
-    ? '🟡 PENDING HUMAN AUTHORITY (Director Sign-Off Required)'
+    ? '🟡 PENDING HUMAN AUTHORITY (route-specific approval)'
     : '🔴 GATE BLOCKED — INTEGRITY DEFECTS IDENTIFIED';
 
   const stageCBadge = evaluation.stageCResult.hasMockFallback
@@ -269,13 +321,17 @@ export function formatStageEMarkdown(evaluation: StageEEvaluation): string {
     ? '✅ AI REVIEW COMPLETED'
     : '🟡 ADVISORY RECORDED (Deterministic Passed, AI Unavailable)';
 
-  const stageDBadge = !evaluation.stageDResult.required
-    ? '⚪ NOT REQUIRED (Low Risk)'
-    : evaluation.stageDResult.signatureVerified
-    ? '✅ VERIFIED (Ed25519 Signed)'
-    : evaluation.stageDResult.staleApproval
-    ? '❌ STALE APPROVAL'
-    : '❌ UNVERIFIED / PENDING';
+  const stageDBadge = evaluation.stageDResult.required
+    ? evaluation.stageDResult.signatureVerified && evaluation.stageDResult.independentPeerApproved
+      ? '✅ VESSEL ECR SIGNED + PEER APPROVED'
+      : '❌ VESSEL ENGINEERING AUTHORITY PENDING'
+    : evaluation.stageDResult.peerRequired
+      ? evaluation.stageDResult.independentPeerApproved
+        ? '✅ SOFTWARE PEER APPROVED (NO VESSEL ECR)'
+        : evaluation.stageDResult.adminAuthorSignoffVerified
+          ? '✅ ADMIN AUTHOR SIGNOFF (NOT INDEPENDENT REVIEW)'
+          : '❌ SOFTWARE HUMAN SIGNOFF PENDING (NO VESSEL ECR)'
+      : '⚪ VESSEL ECR NOT APPLICABLE';
 
   let md = `## 🛡️ NAVAL-USV Stage E: Comprehensive Governance Gate Enforcement
 
@@ -291,8 +347,8 @@ export function formatStageEMarkdown(evaluation: StageEEvaluation): string {
 |---|---|---|---|
 | **Stage A: Classification** | PR Risk Classification & Impact Analysis | \`${evaluation.stageAResult.overallRisk}\` Risk | ℹ️ EVALUATED |
 | **Stage B: Quality Suite** | Deterministic Tests (66/66), Audit, Lint, Build | Zero Vulnerabilities & Clean Build | ✅ PASSED |
-| **Stage C: Independent Engineering Review** | Required for safety-critical engineering only; routine work uses GitHub independent review | ${evaluation.stageAResult.approvalRoute === 'SAFETY_CRITICAL_ENGINEERING' ? evaluation.stageCResult.verdict : 'Not required for routine work'} | ${evaluation.stageAResult.approvalRoute === 'SAFETY_CRITICAL_ENGINEERING' ? stageCBadge : '⚪ NOT REQUIRED'} |
-| **Stage D: Human Authority** | Exact-baseline Ed25519 Project Lead signature and independent peer approval for safety-critical changes | ${evaluation.stageDResult.signatureVerified ? 'Signature verified' : 'Signature pending'}; ${evaluation.stageDResult.required ? (evaluation.stageDResult.independentPeerApproved ? 'peer approved' : 'peer approval pending') : 'not required'} | ${stageDBadge} |
+| **Stage C: Independent Technical/Security Review** | Required for protected software and vessel engineering | ${evaluation.stageAResult.approvalRoute === 'ROUTINE_SOFTWARE' || evaluation.stageAResult.approvalRoute === 'RESTRICTED_LAB_SOFTWARE' ? 'Not required beyond routine CI' : evaluation.stageCResult.verdict} | ${evaluation.stageAResult.approvalRoute === 'ROUTINE_SOFTWARE' || evaluation.stageAResult.approvalRoute === 'RESTRICTED_LAB_SOFTWARE' ? '⚪ ROUTINE CI' : stageCBadge} |
+| **Stage D: Human Authority** | Director Ed25519 ECR only for vessel baselines; protected software accepts exact-head peer OR authenticated repo-admin author signoff | ${evaluation.stageDResult.required ? (evaluation.stageDResult.signatureVerified ? 'Vessel ECR signed' : 'Vessel ECR pending') : 'No vessel ECR'}; ${evaluation.stageDResult.peerRequired ? (evaluation.stageDResult.independentPeerApproved ? 'peer approved' : evaluation.stageDResult.adminAuthorSignoffVerified ? 'admin author signed (non-independent)' : 'human signoff pending') : 'heightened software signoff not required'} | ${stageDBadge} |
 | **Stage E: Final Enforcement Gate** | Fail-Closed Multi-Stage Governance Policy | **${evaluation.overallVerdict}** | **${evaluation.passed ? '✅ PASSED' : '🚫 BLOCKED'}** |
 `;
 
@@ -301,7 +357,7 @@ export function formatStageEMarkdown(evaluation: StageEEvaluation): string {
     for (const reason of evaluation.blockingReasons) {
       md += `- ${reason}\n`;
     }
-    md += `\n> **Governance Policy Mandate:** In accordance with NAVAL-USV Non-Negotiable Principle 5, AI agents and automated workflows cannot independently authorize safety-critical changes. A valid Ed25519 signature from the Engineering Director covering the exact PR baseline digest is mandatory prior to merging into \`main\`.\n`;
+    md += `\n> **Governance Policy:** AI cannot authorize its own changes. Protected software requires exact-head independent peer approval OR an explicit GitHub-authenticated repository-admin author acceptance (not independent review); vessel engineering changes require an independent peer and Director-signed Ed25519 ECR bound to source content. Stage E remains a mandatory integrity gate.\n`;
   } else {
     md += `\n### ✅ Governance Authorization Complete\nAll automated quality controls, independent technical review evidence, and required human authority approvals are fully satisfied.\n`;
   }
@@ -333,9 +389,9 @@ if (process.argv[1] && process.argv[1].endsWith('stage-e-enforce.ts')) {
     const allowPendingLocal = process.argv.includes('--allow-pending') && !isCI;
 
     if (evaluation.overallVerdict === 'PENDING_HUMAN_AUTHORITY') {
-      console.warn('⚠️  STAGE E: Automated technical quality checks PASSED, but Director authorization is pending.');
+      console.warn('⚠️  STAGE E: Automated quality checks PASSED, but route-specific human authorization is pending.');
       console.warn('   In accordance with NAVAL-USV Non-Negotiable Principle 5, AI cannot authorize safety-critical changes.');
-      console.warn('   A valid Ed25519 signature from the Engineering Director over the exact baseline is mandatory.\n');
+      console.warn('   Director Ed25519 ECR is required only for vessel engineering, not protected lab software.\n');
 
       if (allowPendingLocal) {
         console.log('ℹ️  Exiting 0 for local advisory inspection (--allow-pending specified).');

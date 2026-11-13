@@ -1,0 +1,121 @@
+name: USV-01 26-Agent Authenticated ChatGPT Commissioning
+
+# Never execute unreviewed PR code on a runner that holds a ChatGPT session or
+# private attestation key. This workflow can run only from protected main.
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Offline zero-model preflight or real ChatGPT/Codex campaign"
+        required: true
+        default: "preflight"
+        type: choice
+        options:
+          - preflight
+          - live
+      catalog_path:
+        description: "Controlled input catalog path relative to repository root"
+        required: true
+        default: "evidence/live-agents/representative-cases.json"
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: usv01-26-agent-commissioning
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    if: ${{ github.ref == 'refs/heads/main' && inputs.mode == 'preflight' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact protected main revision
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install immutable dependencies
+        run: bun install --frozen-lockfile
+      - name: Source-level 26-agent preflight with zero model calls
+        env:
+          CATALOG_PATH: ${{ inputs.catalog_path }}
+        run: npm run acceptance:codex-agents -- --catalog "$CATALOG_PATH"
+      - name: Produce fail-closed three-gate assessment
+        run: npm run acceptance:full-26 -- --source-sha "$GITHUB_SHA"
+      - name: Upload unverified preflight and blockers
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: usv01-26-agent-zero-model-preflight
+          path: |
+            governance/reports/codex-26-agent-preflight.json
+            governance/reports/26-agent-engineering-campaign-status.json
+          if-no-files-found: warn
+          retention-days: 30
+
+  live:
+    if: ${{ github.ref == 'refs/heads/main' && inputs.mode == 'live' }}
+    # The operator provisions and authenticates this trusted, isolated host.
+    # Do not change this to a public GitHub runner or execute a pull-request SHA.
+    runs-on: [self-hosted, usv01-codex]
+    timeout-minutes: 180
+    env:
+      AI_REVIEW_PROVIDER: codex_cli
+      USV_SUBSCRIPTION_PILOT: enabled
+      USV_ALLOW_PAID_AI_API: 'false'
+      USV_LAB_SCOPE: RESEARCH_ONLY
+      USV01_HOST_ID: ${{ vars.USV01_HOST_ID }}
+      USV_HOST_ATTESTATION_PRIVATE_KEY_FILE: ${{ vars.USV_HOST_ATTESTATION_PRIVATE_KEY_FILE }}
+      USV_HOST_ATTESTATION_PUBLIC_KEY: ${{ vars.USV_HOST_ATTESTATION_PUBLIC_KEY }}
+      USV_INDEPENDENT_REVIEWER_PUBLIC_KEY: ${{ vars.USV_INDEPENDENT_REVIEWER_PUBLIC_KEY }}
+    steps:
+      - name: Checkout exact protected main revision
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install immutable dependencies
+        run: bun install --frozen-lockfile
+      - name: Verify signed-in ChatGPT OAuth CLI without paid API calls
+        run: npm run mission-control:preflight
+      - name: Run all 26 specialists as dependency-aware Codex campaign
+        env:
+          CATALOG_PATH: ${{ inputs.catalog_path }}
+        run: npm run acceptance:codex-agents -- --catalog "$CATALOG_PATH" --execute
+      - name: Generate fresh signed execution-host evidence
+        run: npm run mission-control:attest-host
+      - name: Evaluate all three operational and independent evidence gates
+        run: |
+          npm run acceptance:full-26 -- \
+            --report data/codex-26-agent-matrix.json \
+            --preflight data/codex-26-agent-preflight.json \
+            --host data/codex-host-health.json \
+            --reviews data/independent-reviews.json \
+            --source-sha "$GITHUB_SHA" \
+            --require-all
+      - name: Upload exact-source 26-agent evidence and blockers
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: usv01-26-agent-live-evidence
+          path: |
+            data/codex-26-agent-progress.json
+            data/codex-26-agent-preflight.json
+            data/codex-26-agent-matrix.json
+            data/codex-host-health.json
+            governance/reports/26-agent-engineering-campaign-status.json
+          if-no-files-found: warn
+          retention-days: 30

@@ -177,7 +177,11 @@ describe('26-Agent Individual Verification Matrix (A01 - A26, Tests A through H)
         const mandatoryTools = agent.verificationCriteria?.mandatoryDeterministicTools || [];
         if (mandatoryTools.length > 0) {
           expect(result.evidenceValid).toBe(false);
-          expect(result.verificationStatus).toBe('UNVERIFIED');
+          // Unavailable external models in test mode produce synthetic
+          // narrative fixtures; they must never appear as verified evidence.
+          expect(result.verificationStatus).toBe(
+            result.provider === 'mock_deterministic' ? 'SYNTHETIC_MOCK' : 'UNVERIFIED'
+          );
           expect(result.executionMode).toBe('DETERMINISTIC_CALCULATION');
         } else {
           // Agents without deterministic tools MUST NOT report evidenceValid: true from text synthesis alone

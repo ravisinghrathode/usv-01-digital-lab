@@ -8,13 +8,22 @@ describe('STAGE B: Agent Organization & Master Registry', () => {
     expect(registry.getCount()).toBe(26);
   });
 
+  it('pins all 26 agents to ChatGPT/Codex CLI without Gemini or mock fallbacks', () => {
+    for (const agent of registry.getAllAgents()) {
+      expect(agent.modelConfig.preferredProvider).toBe('codex_cli');
+      expect(agent.modelConfig.fallbackToMock).toBe(false);
+      // Codex uses the locally authenticated session; do not invent a model ID.
+      expect(agent.modelConfig.modelName).toBeUndefined();
+    }
+  });
+
   it('should pass complete structural and dependency validation without errors', () => {
     const validation = registry.validateRegistry();
     expect(validation.valid).toBe(true);
     expect(validation.errors).toHaveLength(0);
   });
 
-  it('should verify all 25 agents have valid unique IDs and system instructions', () => {
+  it('should verify all 26 agents have valid unique IDs and system instructions', () => {
     const agents = registry.getAllAgents();
     const idSet = new Set<string>();
 
