@@ -176,9 +176,11 @@ class WorkerTest(unittest.TestCase):
                     'Mesh non-orthogonality Max: 70 average: 5\nMax skewness = 0.4 OK.\n',stderr='')
             return subprocess.CompletedProcess(args,0,stdout=
                 'Solving for Ux, Final residual = 1e-6',stderr='')
-        with self.assertRaisesRegex(RuntimeError,'non-orthogonality'):
-            run_staged_case(manifest,self.staging,self.root/'work',{digest},runner=bad_mesh,
-                artifact_root=self.artifacts/'bad-mesh',isolation_mode='TEST_NO_NAMESPACE')
+        rejected=run_staged_case(manifest,self.staging,self.root/'work',{digest},runner=bad_mesh,
+            artifact_root=self.artifacts/'bad-mesh',isolation_mode='TEST_NO_NAMESPACE')
+        self.assertEqual(rejected['state'],'COMPUTE_DONE_QUALITY_REJECTED')
+        self.assertIn('non-orthogonality',rejected['qualityGateIssue'])
+        self.assertTrue(Path(rejected['outputArtifactLocalPath']).is_file())
 
         def bad_residual(args,**kwargs):
             if args==['simpleFoam','-help']:
@@ -188,9 +190,11 @@ class WorkerTest(unittest.TestCase):
                     'Mesh non-orthogonality Max: 20 average: 5\nMax skewness = 0.4 OK.\n',stderr='')
             return subprocess.CompletedProcess(args,0,stdout=
                 'Solving for Ux, Initial residual = 1, Final residual = 0.01, No Iterations 1',stderr='')
-        with self.assertRaisesRegex(RuntimeError,'residual'):
-            run_staged_case(manifest,self.staging,self.root/'work',{digest},runner=bad_residual,
-                artifact_root=self.artifacts/'bad-residual',isolation_mode='TEST_NO_NAMESPACE')
+        rejected=run_staged_case(manifest,self.staging,self.root/'work',{digest},runner=bad_residual,
+            artifact_root=self.artifacts/'bad-residual',isolation_mode='TEST_NO_NAMESPACE')
+        self.assertEqual(rejected['state'],'COMPUTE_DONE_QUALITY_REJECTED')
+        self.assertIn('residual',rejected['qualityGateIssue'])
+        self.assertFalse(rejected['engineeringReleaseAuthorized'])
 
     def test_production_command_requires_network_namespace_wrapper(self):
         manifest,digest=self._openfoam_fixture()
