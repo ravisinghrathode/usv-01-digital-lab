@@ -230,7 +230,7 @@ type GeminiCliRunner = (binary:string,args:string[],options:{
 
 const stripJsonFence=(text:string)=>{
   const trimmed=text.trim();
-  const m=trimmed.match(/^\`\`\`(?:json)?\\s*([\\s\\S]*?)\\s*\`\`\`$/i);
+  const m=trimmed.match(/^\`\`\`(?:json)?\s*([\s\S]*?)\s*\`\`\`$/i);
   return m?m[1].trim():trimmed;
 };
 
@@ -305,7 +305,7 @@ export class GeminiCliProvider implements IModelProvider {
         executionMode:'LIVE_AI_GENERATION',isAiReview:true,isMock:false,evidenceValid:false,
         correlationId:request.correlationId||'corr-gem-cli-'+Date.now(),
         timestamp:new Date().toISOString(),
-        statusMessage:'Gemini CLI headless transport using operator-managed existing authentication; CLI stderr digest not treated as engineering evidence'+(stderr?'':'')
+        statusMessage:'Gemini CLI headless transport using operator-managed existing authentication; stderr is never engineering evidence'
       };
     }catch(error:any){
       throw new Error('Gemini CLI Execution Error: '+(error?.message||String(error)));
@@ -617,7 +617,13 @@ export class ModelProviderRouter {
 
   public async generate(request: ModelPromptRequest, config: ModelConfig): Promise<ModelPromptResponse> {
     const isTestMode = isTestExecutionEnvironment();
-    let providerName = config.preferredProvider || resolveConfiguredProvider();
+    // An explicit deployment-level provider selection overrides the 26 agent
+    // defaults. This is required for operator-authenticated Gemini CLI runs
+    // without rewriting every registered agent spec.
+    let providerName =
+      (typeof process !== 'undefined' && process.env?.AI_REVIEW_PROVIDER)
+        ? resolveConfiguredProvider()
+        : (config.preferredProvider || resolveConfiguredProvider());
     const hasGeminiKey = typeof process !== 'undefined' && !!process.env?.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim().length > 0;
     if (providerName === 'gemini' && !hasGeminiKey) {
       providerName = resolveConfiguredProvider();
