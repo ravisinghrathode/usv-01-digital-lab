@@ -106,6 +106,7 @@ export interface ResistancePropulsionScreen {
     'NUMERIC_FAIL' | 'NUMERIC_PASS_UNCERTIFIED';
   issues: string[];
   missingGates: ResistancePropulsionGate[];
+  numericalProblemGates: ResistancePropulsionGate[];
   cases: ResistancePowerCheck[];
   speedTrialChecks: Array<{
     caseId: string; nominalKnots: number; measuredKnots: number;
@@ -118,7 +119,7 @@ export interface ResistancePropulsionScreen {
 
 const empty = (status: ResistancePropulsionScreen['status'], issues: string[],
   missingGates: ResistancePropulsionGate[]): ResistancePropulsionScreen => ({
-  status, issues, missingGates, cases: [], speedTrialChecks: [],
+  status, issues, missingGates, numericalProblemGates: [], cases: [], speedTrialChecks: [],
   numericalChecksPassed: false, independentlyValidated: false, releaseApproved: false
 });
 
@@ -127,7 +128,7 @@ const empty = (status: ResistancePropulsionScreen['status'], issues: string[],
  * successful consistency check is not proof of its measurement provenance.
  * The final GOV-01/GOV-02 gates ALWAYS remain open in this model.
  */
-export function screenResistancePropulsionEvidence(raw: unknown): ResistancePropulsionScreen {
+export function screenResistancePropulsionEvidence(raw: unknown, expectedBaselineSha?: string): ResistancePropulsionScreen {
   if (raw === undefined || raw === null) {
     return empty('MISSING_EVIDENCE', ['No controlled RES-01 evidence package supplied'], [...RES01_GATES]);
   }
@@ -139,7 +140,11 @@ export function screenResistancePropulsionEvidence(raw: unknown): ResistanceProp
   }
   const data = parsed.data;
   const issues: string[] = [];
-  const unresolved = new Set<ResistancePropulsionGate>(['GOV-01', 'GOV-02']);
+  const unresolved = new Set<ResistancePropulsionGate>();
+  if (expectedBaselineSha && data.baseline.sourceCommitSha !== expectedBaselineSha) {
+    issues.push('Evidence package source commit does not match the requested exact baseline SHA');
+    unresolved.add('RES-01-A');
+  }
   const ids = new Set<string>();
   for (const item of [...data.resistanceCurve, ...data.propulsionCurve, ...data.speedPowerTrials]) {
     if (ids.has(item.id)) issues.push('Duplicate evidence case ID: ' + item.id);
@@ -237,6 +242,7 @@ export function screenResistancePropulsionEvidence(raw: unknown): ResistanceProp
   // `unresolved` records numerical defects but is NOT a replacement for authorization.
   return {
     status, issues, missingGates: [...RES01_GATES],
+    numericalProblemGates: [...unresolved],
     cases, speedTrialChecks, numericalChecksPassed,
     independentlyValidated: false, releaseApproved: false
   };
