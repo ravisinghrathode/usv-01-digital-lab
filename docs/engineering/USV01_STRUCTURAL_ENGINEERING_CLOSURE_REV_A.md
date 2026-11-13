@@ -15,6 +15,14 @@
 4. New `TOOL-STRUCTURES-LIFT-01` provides traceable gravity, vertical reaction, sling tension and horizontal component magnitude calculations for **externally established** reaction fractions and sling angles. It never verifies 3D equilibrium, lifting safety or local structural capacity.
 5. Existing `TOOL-STRUCTURES-01` slamming scantling output remains an **uncorrelated preliminary empirical screen**, not ISO/DNV verified.
 
+## Structural reference standards — verified source catalogue (not approval)
+
+- **ISO 12215-5:2019, corrected 2024-03** — current ISO edition for monohull small-craft pressures, design stresses and scantlings up to 24 m; explicitly includes commercial small craft/workboats. Candidate if the actual hull is monohull, subject to regulatory/project applicability: https://committee.iso.org/cms/live/live/en/sites/isoorg/contents/data/standard/06/95/69552.html?browse=ics
+- **ISO 12215-7:2020** — current ISO edition for multihull global loads and local design pressures, with scantlings using Part 5; candidate for catamaran/other multihull configuration: https://committee.iso.org/cms/live/live/en/sites/isoorg/contents/data/standard/07/34/73457.html?browse=ics
+- **ISO 12215-6:2008** — current structural arrangements/details standard supplementing Parts 5 and 7, for monohull and multihull craft up to 24 m: https://www.iso.org/standard/42346.html
+- These **do not themselves establish approved crane hook loads, sling factors, commercial lifting device rating or road transport acceleration**. Select lifting/transport basis separately for actual hoist, jurisdiction and duty, with appropriate proof inspection and qualifications. Do not represent ISO 12215-6 as a lifting WLL certification.
+- Verify the standard clause editions and applicability in the controlled Engineering Basis of Design; this catalogue is not a licensed text copy, a validated rule calculation, or a class certification.
+
 ## Required structural load-case register
 
 | Case | Physical effect | Data required | Evidence and acceptance |
