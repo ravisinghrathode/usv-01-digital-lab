@@ -65,3 +65,13 @@ The repository had `INITIAL_PROJECT.governanceState = Approved`, `INITIAL_NAVAL_
 PR #46 resets the default vessel particulars to TBD, project governance to Draft, removes unsupported baseline weight/resistance/passed-test records, demotes synthetic simulation outputs to unexecuted draft scenarios, and returns structure load cases to TBD. The 120 kg owner-directed concept from the separate proposed parameter YAML remains **a different, explicitly unapproved design alternative**; do not automatically transfer those values into this lab without a controlled vessel identity and source revision.
 
 `tests/seedBaselineIntegrity.test.ts` prevents regression. This only corrects misleading stored demo fixtures; it does not validate vessel measurements, assign engineers, or approve a design.
+
+## Google Drive source inspection — 13 November 2026
+
+The connected USV-01 Drive was queried for `USV`, `hull`, `hydro`, `CAD`, `weight` and `STEP`, and the controlled CAD and hydrostatic folders were inspected directly:
+
+- [CAD folder — 11_CAD_Drawings](https://drive.google.com/drive/folders/1jiD8ovY8dEBIHDNWPbPJXz8czGjP_mmM) contains [CAD Source and Revision Control Protocol](https://drive.google.com/file/d/1BBtzquDTI2eoRnzRXlEhFzs48E6Ysrpq/view?usp=drivesdk), but no actual hull geometry was returned in the folder listing.
+- [HYD-01 CAD/Hydrostatics Protocol](https://drive.google.com/file/d/1i2lc-KsdRX9Pt1myBTSogq57aGeSuDTq/view?usp=drivesdk) is the only file returned by the designated HYD-01 folder listing.
+- [Gate 0 Evidence Acquisition Register](https://drive.google.com/file/d/1i-mHJiWBhcwkqgA5cNu9ysv0uImkaqXN/view?usp=drivesdk) provides a related evidence-acquisition reference.
+
+**Evidence interpretation:** Only protocols/registers, not approved 3D hull surfaces, offsets, measured CG, inclining or independently validated hydrostatic tables, were observed in these scoped queries. This is a bounded search result, not proof that geometry does not exist elsewhere. Until the approved source is identified and inspected, the physical acceptance remains blocked.
