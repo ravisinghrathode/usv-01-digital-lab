@@ -4,6 +4,7 @@
  */
 import { AgentRegistry } from '../registry/AgentRegistry.ts';
 import { ToolRegistry } from '../tools/ToolRegistry.ts';
+import { ROLE_ACCURACY_OBLIGATIONS } from './RoleAccuracyObligations.ts';
 
 export type CapabilityClass =
   | 'DETERMINISTIC_SCREENING_AVAILABLE_UNCERTIFIED'
@@ -23,6 +24,8 @@ export interface AgentCapabilityFinding {
   /** A checklist is a review rubric, not an engineering calculator. */
   reviewRubric: string[];
   knowledgeReferences: string[];
+  independentReferenceChallenge: string;
+  independentProofRequired: string;
   issues: string[];
   engineeringVerified: false;
 }
@@ -31,6 +34,7 @@ export function auditAgentCapabilities() {
   const registry = AgentRegistry.getInstance();
   const actualTools = new Set(ToolRegistry.getInstance().getAllTools().map(t => t.id));
   const findings: AgentCapabilityFinding[] = registry.getAllAgents().map(spec => {
+    const obligation = ROLE_ACCURACY_OBLIGATIONS.find(x => x.canonicalId === spec.canonicalId);
     const executableToolIds = spec.permittedTools.filter(id => actualTools.has(id));
     const unregisteredToolIds = spec.permittedTools.filter(id => !actualTools.has(id));
     const mandatoryToolIds = spec.verificationCriteria.mandatoryDeterministicTools;
@@ -44,6 +48,7 @@ export function auditAgentCapabilities() {
       issues.push('No reviewer rubric / acceptance criteria present');
     }
     if (!spec.requiredKnowledgeSources.length) issues.push('No domain reference source names declared');
+    if (!obligation) issues.push('Independent reference challenge not registered');
     if (unregisteredToolIds.length) issues.push('Declared tool names without executable ToolRegistry implementation');
     let capability: CapabilityClass = executableToolIds.length && toolPermission
       ? 'DETERMINISTIC_SCREENING_AVAILABLE_UNCERTIFIED'
@@ -59,6 +64,8 @@ export function auditAgentCapabilities() {
       independentReviewRequired: spec.verificationCriteria.independentReviewRequired,
       reviewRubric: [...spec.verificationCriteria.requiredChecklist],
       knowledgeReferences: [...spec.requiredKnowledgeSources],
+      independentReferenceChallenge: obligation?.representativeChallenge || 'MISSING',
+      independentProofRequired: obligation?.independentlyRequired || 'MISSING',
       issues,
       engineeringVerified: false as const
     };
