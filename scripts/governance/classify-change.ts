@@ -14,7 +14,12 @@ export type ChangeCategory =
   | 'RELEASE';
 
 export type RiskClassification = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-export type ApprovalRoute = 'ROUTINE_SOFTWARE' | 'SAFETY_CRITICAL_ENGINEERING';
+/** Risk severity and approval purpose are intentionally independent. */
+export type ApprovalRoute =
+  | 'ROUTINE_SOFTWARE'
+  | 'RESTRICTED_LAB_SOFTWARE'
+  | 'PROTECTED_SOFTWARE_SECURITY'
+  | 'SAFETY_CRITICAL_ENGINEERING';
 
 export interface FileClassification {
   file: string;
@@ -33,6 +38,8 @@ export interface PRClassificationReport {
     overallRisk: RiskClassification;
     approvalRoute: ApprovalRoute;
     requiresIndependentEngineeringReview: boolean;
+    requiresIndependentSoftwareReview: boolean;
+    requiresIndependentPeerApproval: boolean;
     requiresDesignatedAuthorityApproval: boolean;
     requiresECR: boolean;
   };
@@ -155,6 +162,84 @@ export function classifyFile(filePath: string): { categories: ChangeCategory[]; 
   return { categories, risk };
 }
 
+/**
+ * Authoritative path-only approval routing: no labels, PR body text, branch
+ * variables or "research only" flags can downgrade the route.
+ *
+ * Precedence: vessel engineering authority > software security authority >
+ * restricted research > routine. High severity alone does NOT mean an
+ * engineering baseline has been changed.
+ */
+export function isVesselEngineeringAuthorityPath(file: string): boolean {
+  const p = file.replace(/\\/g, '/');
+  return p.startsWith('src/core/tools/naval/') ||
+    p.startsWith('governance/ecr/') ||
+    p.startsWith('governance/approvals/') ||
+    p.startsWith('governance/release/') ||
+    p === 'RELEASE_MANIFEST.json' ||
+    p === 'USV01_PROJECT_CONTEXT.md' ||
+    p.startsWith('data/') ||
+    p.startsWith('src/data/') ||
+    /^docs\\/MAR[0-9]+_/.test(p) ||
+    /^docs\\/AUT01_/.test(p) ||
+    p === 'docs/CONSOLIDATED_ACCEPTANCE_REGISTER.md' ||
+    p.startsWith('evidence/aut01/') ||
+    /^src\\/core\\/verification\\/(Autonomy[^/]*|SafetyScenarioSuite|MarineSystemsSuite|AcceptanceGate)\\.ts$/i.test(p) ||
+    p === 'src/components/SoftwareAutonomyView.tsx' ||
+    /^tests\\/(autonomy[^/]*|marineSystems|acceptanceGate|acceptanceCampaign)/i.test(p);
+}
+
+export function isProtectedSoftwareAuthorityPath(file: string): boolean {
+  const p = file.replace(/\\/g, '/');
+  return p.startsWith('scripts/governance/') ||
+    p.startsWith('.github/') ||
+    p.startsWith('src/core/auth/') ||
+    p.startsWith('src/core/governance/') ||
+    p.startsWith('src/core/safety/') ||
+    p.startsWith('src/core/models/') ||
+    p.startsWith('src/core/mission-control/') ||
+    p.startsWith('src/core/verification/EngineeringCampaignAcceptance.') ||
+    p.startsWith('src/core/verification/LiveAgentMatrix.') ||
+    p.startsWith('src/core/verification/RoleAccuracyAudit.') ||
+    p === 'server.ts' ||
+    p === 'package.json' ||
+    p === 'bun.lock' ||
+    p === 'tsconfig.json' ||
+    p === 'vite.config.ts' ||
+    p === '.gitignore';
+}
+
+export function isRestrictedLabResearchPath(file: string): boolean {
+  const p = file.replace(/\\/g, '/');
+  return p.startsWith('src/core/agents/') ||
+    p.startsWith('src/core/registry/') ||
+    p.startsWith('src/core/orchestrator/') ||
+    p.startsWith('src/core/verification/') ||
+    p.startsWith('scripts/run-codex-agent-campaign.') ||
+    p.startsWith('scripts/run-concept-discovery.') ||
+    p.startsWith('scripts/run-design-loop.') ||
+    p.startsWith('scripts/engineering/') ||
+    p.startsWith('tests/') ||
+    p.startsWith('evidence/live-agents/') ||
+    p.startsWith('references/') ||
+    p.startsWith('docs/LAB_COMMISSIONING_') ||
+    p.startsWith('docs/USV01_26_AGENT_');
+}
+
+export function approvalRouteForChangedFiles(files: readonly string[]): ApprovalRoute {
+  // Missing/damaged diff data must never implicitly certify a software change
+  // as low risk. The final Stage E gate additionally requires real Git diff.
+  if (!files.length) return 'PROTECTED_SOFTWARE_SECURITY';
+  if (files.some(isVesselEngineeringAuthorityPath)) return 'SAFETY_CRITICAL_ENGINEERING';
+  if (files.some(isProtectedSoftwareAuthorityPath)) return 'PROTECTED_SOFTWARE_SECURITY';
+  if (files.some(p => {
+    const risk = classifyFile(p).risk;
+    return risk === 'HIGH' || risk === 'CRITICAL';
+  } && !isRestrictedLabResearchPath(p))) return 'PROTECTED_SOFTWARE_SECURITY';
+  if (files.some(isRestrictedLabResearchPath)) return 'RESTRICTED_LAB_SOFTWARE';
+  return 'ROUTINE_SOFTWARE';
+}
+
 export function generateClassificationReport(baseRef = 'origin/main', rootDir = process.cwd()): PRClassificationReport {
   let diffStat = '';
   try {
@@ -218,14 +303,13 @@ export function generateClassificationReport(baseRef = 'origin/main', rootDir = 
     .sort((a, b) => b[1] - a[1])
     .map(e => e[0]);
 
-  const requiresDesignatedAuthorityApproval = overallRisk === 'HIGH' || overallRisk === 'CRITICAL';
-  // LOW/MEDIUM changes still require the repository's independent GitHub review
-  // and required CI checks.  Only HIGH/CRITICAL changes alter an engineering
-  // baseline and therefore require the additional independent engineering
-  // review and cryptographic Project Lead authorization path.
-  const approvalRoute: ApprovalRoute = requiresDesignatedAuthorityApproval
-    ? 'SAFETY_CRITICAL_ENGINEERING'
-    : 'ROUTINE_SOFTWARE';
+  // Never derive vessel-signature obligations from severity alone.
+  const approvalRoute = approvalRouteForChangedFiles(fileDetails.map(f => f.file));
+  const requiresDesignatedAuthorityApproval = approvalRoute === 'SAFETY_CRITICAL_ENGINEERING';
+  const requiresIndependentSoftwareReview = approvalRoute === 'PROTECTED_SOFTWARE_SECURITY';
+  const requiresIndependentPeerApproval = requiresDesignatedAuthorityApproval ||
+    requiresIndependentSoftwareReview;
+  const requiresIndependentEngineeringReview = requiresDesignatedAuthorityApproval;
   const requiresECR = requiresDesignatedAuthorityApproval;
 
   const headRef = process.env.PR_HEAD_SHA || 'HEAD';
@@ -244,7 +328,9 @@ export function generateClassificationReport(baseRef = 'origin/main', rootDir = 
       dominantCategories: dominantCategories.length ? dominantCategories : ['SOFTWARE'],
       overallRisk,
       approvalRoute,
-      requiresIndependentEngineeringReview: requiresDesignatedAuthorityApproval,
+      requiresIndependentEngineeringReview,
+      requiresIndependentSoftwareReview,
+      requiresIndependentPeerApproval,
       requiresDesignatedAuthorityApproval,
       requiresECR
     },
@@ -269,20 +355,21 @@ export function formatReportMarkdown(report: PRClassificationReport): string {
 | Metric | Assessment |
 |---|---|
 | **Overall Change Risk** | **${badgeMap[s.overallRisk]}** |
-| **Approval Route** | **${s.approvalRoute === 'SAFETY_CRITICAL_ENGINEERING' ? 'Safety-Critical Engineering' : 'Routine Software'}** |
+| **Approval Route** | **${s.approvalRoute}** |
 | **Change Categories** | \`${s.dominantCategories.join(', ')}\` |
 | **Files Modified** | \`${s.totalFilesChanged}\` |
 | **Lines Changed** | \`+${s.totalLinesAdded} / -${s.totalLinesDeleted}\` |
-| **Independent Engineering Review Required** | **${s.requiresIndependentEngineeringReview ? 'YES (High/Critical change)' : 'NO (GitHub independent review still required)'}** |
+| **Independent Engineering Review Required** | **${s.requiresIndependentEngineeringReview ? 'YES (vessel engineering evidence/release)' : 'NO (not a vessel baseline)' }** |
+| **Independent Software Peer Review Required** | **${s.requiresIndependentPeerApproval ? 'YES (exact PR head, protected route)' : 'NO (normal branch protections apply)' }** |
 | **Designated Authority Approval Required** | **${s.requiresDesignatedAuthorityApproval ? 'YES (Engineering Director)' : 'NO (Independent GitHub review)'}** |
-| **Engineering Change Request (ECR) Required** | **${s.requiresECR ? 'YES (Mandatory for High/Critical)' : 'NO (Optional)'}** |
+| **Engineering Change Request (ECR) Required** | **${s.requiresECR ? 'YES (vessel engineering authority route)' : 'NO (not vessel design approval)'}** |
 
 #### Modified File Classifications
 | File | Categories | Risk Level | Diff (+/-) |
 |---|---|---|---|
 ${report.fileDetails.map(f => `| \`${f.file}\` | ${f.categories.join(', ')} | **${f.risk}** | +${f.linesAdded} / -${f.linesDeleted} |`).join('\n')}
 
-> **Governance Notice:** AI tools may review or challenge this change, but **cannot authorise merge**. Every change requires an independent GitHub approval. Safety-critical engineering changes additionally require the evidence and signed-authority controls above.
+> **Governance Notice:** Path-based routing cannot be overridden by PR metadata. Restricted research software is not a released vessel design. Protected software and governance changes require independent exact-head peer review; vessel-baseline changes additionally require Engineering Director Ed25519 approval. AI tools cannot authorise their own changes.
 `;
 }
 
