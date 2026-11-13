@@ -228,6 +228,7 @@ def _parse_calculix_dat(case: Path) -> dict:
         return {}
     max_stress = None
     max_disp = None
+    first_normal_stress_samples: list[float] = []
     mode = None
     for line in dat.read_text(errors="replace").splitlines():
         lower = line.lower()
@@ -239,6 +240,9 @@ def _parse_calculix_dat(case: Path) -> dict:
             continue
         values = [float(v) for v in re.findall(FLOAT, line)]
         if mode == "stress" and len(values) >= 8:
+            # CalculiX DAT ordering documented by header:
+            # elem, integration point, sxx, syy, szz, sxy, sxz, syz.
+            first_normal_stress_samples.append(values[2])
             for value in values[-6:]:
                 max_stress = max(abs(value), max_stress or 0.0)
         elif mode == "displacement" and len(values) >= 4:
@@ -248,6 +252,11 @@ def _parse_calculix_dat(case: Path) -> dict:
     result = {"sourceFile": "model.dat"}
     if max_stress is not None:
         result["maxAbsoluteStressComponent"] = max_stress
+    if first_normal_stress_samples:
+        result["meanFirstNormalStressComponent"] = (
+            sum(first_normal_stress_samples) / len(first_normal_stress_samples)
+        )
+        result["firstNormalStressSampleCount"] = len(first_normal_stress_samples)
     if max_disp is not None:
         result["maxDisplacementMagnitude"] = max_disp
     return result if len(result) > 1 else {}
