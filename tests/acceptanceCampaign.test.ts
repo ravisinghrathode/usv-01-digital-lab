@@ -57,6 +57,47 @@ describe('Single-pass USV-01 acceptance campaign', () => {
     expect(r.releaseApproved).toBe(false);
   });
 
+  it('evaluates marine sizing inputs without accepting physical engineering', () => {
+    const r = runAcceptanceCampaign({
+      baselineSha: sha,
+      marineLiftingCases: [{
+        caseId: 'SYNTHETIC-LIFT-CASE', designVerticalLoadN: 1000,
+        loadCaseSource: 'Unit test only, not handling evidence',
+        legs: [
+          { legId: 'L1', verticalLoadShare: 0.6, angleFromVerticalRad: 0,
+            workingLoadLimitN: 1000, reference: 'Synthetic source' },
+          { legId: 'L2', verticalLoadShare: 0.4, angleFromVerticalRad: 0,
+            workingLoadLimitN: 1000, reference: 'Synthetic source' }
+        ]
+      }],
+      marineThermalCases: [{
+        caseId: 'SYNTHETIC-THERMAL-CASE', worstCaseSinkTemperatureK: 300,
+        sinkConditionSource: 'Synthetic sink condition',
+        components: [{
+          componentId: 'COMP-1', dissipationW: 10, totalResistanceKPerW: 0.5,
+          maximumCaseTemperatureK: 330, reserveMarginK: 5,
+          sourceReference: 'Synthetic component source'
+        }]
+      }]
+    });
+    expect(r.marineScreens.liftingCases[0].status).toBe('SCREEN_PASS_UNVERIFIED');
+    expect(r.marineScreens.thermalCases[0].status).toBe('SCREEN_PASS_UNVERIFIED');
+    expect(r.workstreams.find(x => x.id === 'WS-07')?.accepted).toBe(false);
+    expect(r.releaseApproved).toBe(false);
+  });
+  it('flags invalid marine sizing inputs as a software-observable defect without approval', () => {
+    const r = runAcceptanceCampaign({
+      baselineSha: sha,
+      marineLiftingCases: [{
+        caseId: 'TEST-CASE', designVerticalLoadN: -1, loadCaseSource: 'TBD',
+        legs: []
+      }]
+    });
+    expect(r.marineScreens.liftingCases[0].status).toBe('INVALID_INPUT');
+    expect(r.workstreams.find(x => x.id === 'WS-07')?.status).toBe('BLOCKED_SOFTWARE_DEFECT');
+    expect(r.releaseApproved).toBe(false);
+  });
+
   it('generates human-readable report with every workstream and explicit non-certification', () => {
     const report = acceptanceCampaignMarkdown(runAcceptanceCampaign({ baselineSha: sha }));
     expect(report).toContain('NOT APPROVED');
