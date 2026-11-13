@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "1.0",
+  "baseline": {
+    "revision": "USV01_REV_0_4",
+    "sourceCommitSha": null,
+    "geometryRevision": null,
+    "hullOffsetsSourceRef": null,
+    "hullOffsetsSha256": null,
+    "lwlM": null,
+    "designDisplacementKg": null,
+    "wettedSurfaceAreaM2": null,
+    "loadingCaseSourceRef": null
+  },
+  "resistanceCurve": [],
+  "propulsionCurve": [],
+  "speedPowerTrials": [],
+  "evidenceReferences": {
+    "humpCoverageAndConvergence": null,
+    "scaleAndModelCorrelation": null,
+    "podBollardPull": null,
+    "cavitationVentilation": null,
+    "oneDriveDegradedOperation": null,
+    "motorEscElectricalProtection": null,
+    "batteryEnergyAndEndurance": null,
+    "actualEnvironmentalEnvelope": null
+  }
+}
