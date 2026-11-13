@@ -111,6 +111,11 @@ jobs:
           path: governance/reports/concept-research/
           if-no-files-found: ignore
 
+      - name: Stage B — Restricted CFD/FEA Worker Security Unit Tests (no real solver)
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s remote_solver -p 'test_*.py' -v
+
       - name: Stage B — Source-Derived Agent/Tool/Documentation Capability Audit
         run: |
           set -euo pipefail
