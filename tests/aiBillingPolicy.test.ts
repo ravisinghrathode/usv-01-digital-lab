@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { assertPaidAiApiAllowed, isPaidAiApiAllowed } from '../src/core/models/AiBillingPolicy.ts';
-import { GeminiProvider, OpenAIProvider, resolveConfiguredProvider } from '../src/core/models/ModelProvider.ts';
+import { CodexCliProvider, GeminiProvider, OpenAIProvider, resolveConfiguredProvider } from '../src/core/models/ModelProvider.ts';
 
 const originalEnv = { ...process.env };
 afterEach(() => {
@@ -41,4 +41,30 @@ describe('AI billing policy', () => {
     expect(resolveConfiguredProvider()).toBe('openai');
     expect(new OpenAIProvider().isAvailable()).toBe(true);
   });
+  it('makes signed-in Codex an explicit, zero-paid-API opt-in', () => {
+    process.env.AI_REVIEW_PROVIDER = 'codex_cli';
+    delete process.env.USV_SUBSCRIPTION_PILOT;
+    process.env.USV_ALLOW_PAID_AI_API = 'false';
+    expect(resolveConfiguredProvider()).toBe('deterministic');
+    expect(new CodexCliProvider().isAvailable()).toBe(false);
+
+    process.env.USV_SUBSCRIPTION_PILOT = 'enabled';
+    expect(resolveConfiguredProvider()).toBe('codex_cli');
+    expect(new CodexCliProvider().isAvailable()).toBe(true);
+
+    process.env.USV_ALLOW_PAID_AI_API = 'true';
+    expect(resolveConfiguredProvider()).toBe('deterministic');
+    expect(new CodexCliProvider().isAvailable()).toBe(false);
+  });
+
+  it('fails closed if a Codex subscription pilot is not explicitly enabled', async () => {
+    delete process.env.USV_SUBSCRIPTION_PILOT;
+    process.env.USV_ALLOW_PAID_AI_API = 'false';
+    await expect(new CodexCliProvider().generateText({
+      systemInstructions: 'Test role',
+      userPrompt: 'Test request',
+      context: {}
+    })).rejects.toThrow(/subscription pilot/);
+  });
+
 });
