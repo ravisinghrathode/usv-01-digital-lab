@@ -165,7 +165,7 @@ describe('Reproducible legacy scenarios and real-agent iterative design screenin
     expect(report.engineeringReleaseAuthorized).toBe(false);
   });
 
-  it('activates four real registered specialist roles when both calculations pass', async () => {
+  it('activates hydro specialists but withholds resistance specialists when total resistance evidence is absent', async () => {
     const calls: string[] = [];
     const result = await runAgentDesignLoop({...mission, maxRevisions:1,
       specialistReviews:'AUTO' as const}, async (id,input) => {
@@ -179,12 +179,11 @@ describe('Reproducible legacy scenarios and real-agent iterative design screenin
       registry.requireAgent('A01').id,
       registry.requireAgent('A05').id,
       registry.requireAgent('A06').id,
-      registry.requireAgent('A07').id,
-      registry.requireAgent('A23').id,
       registry.requireAgent('A15').id
     ]);
-    expect(result.specialistReviewCount).toBe(4);
-    expect(result.revisions[0].specialistReviews).toHaveLength(4);
+    expect(result.specialistReviewCount).toBe(2);
+    expect(result.revisions[0].specialistReviews).toHaveLength(2);
+    expect(result.revisions[0].screened.missingEngineeringInputs.join(' ')).toContain('total resistance curve');
     expect(result.revisions[0].specialistReviews.every(x=>x.status==='LIVE_REVIEW_UNVERIFIED')).toBe(true);
     expect(result.completedToolScreens).toBe(2);
     expect(result.engineeringReleaseAuthorized).toBe(false);
@@ -246,11 +245,11 @@ describe('Reproducible legacy scenarios and real-agent iterative design screenin
     const caseMission = {
       ...mission,
       objectives: [{
-        id: 'MIN_SHAFT_POWER', toolId: 'TOOL-RESISTANCE-01',
-        outputMetric: 'shaftBrakePowerPbKw',
+        id: 'MIN_FROUDE_SCREEN', toolId: 'TOOL-RESISTANCE-01',
+        outputMetric: 'froudeNumberFn',
         direction: 'MINIMIZE' as const, weight: 1,
-        unit: 'kW', sourceReference: 'SYNTHETIC_TEST_CONDITION_NOT_AN_APPROVED_MISSION',
-        fixedInputParameters: { speedKnots: 10, propulsiveEfficiencyEtaD: 0.6, waterTempCelsius: 15 }
+        unit: '-', sourceReference: 'SYNTHETIC_TEST_CONDITION_NOT_AN_APPROVED_MISSION',
+        fixedInputParameters: { speedKnots: 10, waterTempCelsius: 15 }
       }]
     };
     const execute = async (id: string, input: AgentExecutionInput) => {
@@ -268,7 +267,7 @@ describe('Reproducible legacy scenarios and real-agent iterative design screenin
     expect(result.comparison.rankings).toHaveLength(2);
     expect(result.comparison.rankings[0].relativeScore).toBeGreaterThanOrEqual(
       result.comparison.rankings[1].relativeScore);
-    expect(result.comparison.rankings[0].objectiveValues.MIN_SHAFT_POWER).toBeGreaterThan(0);
+    expect(result.comparison.rankings[0].objectiveValues.MIN_FROUDE_SCREEN).toBeGreaterThan(0);
     expect(result.comparison.externallyValidated).toBe(false);
     expect(result.comparison.approvedDesignSelected).toBe(false);
     expect(result.engineeringReleaseAuthorized).toBe(false);
@@ -278,9 +277,9 @@ describe('Reproducible legacy scenarios and real-agent iterative design screenin
     const caseMission = {
       ...mission,
       objectives: [{
-        id: 'FAIR_RESISTANCE', toolId: 'TOOL-RESISTANCE-01',
-        outputMetric: 'totalResistanceKn', direction: 'MINIMIZE' as const,
-        weight: 1, unit: 'kN', sourceReference: 'SYNTHETIC_CONDITION_ONLY',
+        id: 'FAIR_FROUDE_SCREEN', toolId: 'TOOL-RESISTANCE-01',
+        outputMetric: 'froudeNumberFn', direction: 'MINIMIZE' as const,
+        weight: 1, unit: '-', sourceReference: 'SYNTHETIC_CONDITION_ONLY',
         fixedInputParameters: { speedKnots: 10 }
       }]
     };
@@ -328,11 +327,11 @@ describe('Reproducible legacy scenarios and real-agent iterative design screenin
   it('rescreens two concepts at the same declared speed without modifying their original hypotheses',async()=>{
     const missionAtSpeed = {...mission,comparisonMode:'FIXED_CONDITIONS_RESCREEN' as const,
       objectives:[{
-        id:'POWER_FIXED_SPEED',toolId:'TOOL-RESISTANCE-01',
-        outputMetric:'shaftBrakePowerPbKw',
-        direction:'MINIMIZE' as const,weight:1,unit:'kW',
+        id:'FROUDE_FIXED_SPEED',toolId:'TOOL-RESISTANCE-01',
+        outputMetric:'froudeNumberFn',
+        direction:'MINIMIZE' as const,weight:1,unit:'-',
         sourceReference:'SYNTHETIC_COMPARISON_CONDITION_NOT_REAL_REQUIREMENT',
-        fixedInputParameters:{speedKnots:10,propulsiveEfficiencyEtaD:0.6,waterTempCelsius:15}
+        fixedInputParameters:{speedKnots:10,waterTempCelsius:15}
       }]};
     const report=await runAgentDesignLoop(missionAtSpeed,async (id,input)=>{
       if(id!==proposer)return makeOutput(id,input,{});
