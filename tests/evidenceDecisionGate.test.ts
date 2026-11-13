@@ -117,6 +117,20 @@ describe('Gate 0 design configuration and evidence authority', () => {
     expect(r.dualAiDisagreements).toEqual(['EV-01']);
     expect(r.gate0ReadyForExternalReview).toBe(false);
   });
+  it('fails closed on duplicate reviewer IDs and contradictory submissions from the same AI', () => {
+    const f=fullFixture();f.evidence=[evidence()];
+    f.reviews=[
+      {reviewId:'REVIEW-ONE',evidenceId:'EV-01',reviewerRole:'CHATGPT',verdict:'PASS',reviewArtifactUri:uri,reviewArtifactSha256:digest},
+      {reviewId:'REVIEW-ONE',evidenceId:'EV-01',reviewerRole:'CHATGPT',verdict:'FAIL',reviewArtifactUri:uri,reviewArtifactSha256:digest}
+    ];
+    const r=evaluateEvidenceDecision(f,commitSha);
+    expect(r.problems).toContain('DUPLICATE_REVIEW_ID');
+    expect(r.problems).toContain('DUPLICATE_REVIEWER_ROLE');
+    expect(r.problems).toContain('DUAL_AI_DISAGREEMENT');
+    expect(r.gate0ReadyForExternalReview).toBe(false);
+    expect(r.releaseApproved).toBe(false);
+  });
+
   it('quarantines duplicate evidence, failed trials and malformed external metadata', () => {
     const f=fullFixture();f.evidence=[evidence(),{...evidence(), claimedOutcome:'FAIL'}];
     const r=evaluateEvidenceDecision(f,commitSha);
@@ -129,7 +143,7 @@ describe('Gate 0 design configuration and evidence authority', () => {
   it('rejects unfrozen criteria and invalid commit identity', () => {
     const f=fullFixture();f.criteria[0]={...criteria[0],declaredFrozenBeforeTest:false};
     const r=evaluateEvidenceDecision(f,'bad');
-    expect(r.problems).toContain('CRITERION_NOT_FROZEN'.replace('CRITERION_NOT_FROZEN','INVALID_OR_CONFLICTING_ACCEPTANCE_CRITERIA'));
+    expect(r.problems).toContain('INVALID_OR_CONFLICTING_ACCEPTANCE_CRITERIA');
     expect(r.problems).toContain('INVALID_EVALUATED_COMMIT');
     expect(r.gate0ReadyForExternalReview).toBe(false);
   });
