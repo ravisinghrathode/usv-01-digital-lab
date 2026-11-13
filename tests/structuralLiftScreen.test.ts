@@ -84,6 +84,7 @@ describe('TOOL-STRUCTURES-LIFT-01 lifting statics only', () => {
     ['duplicate points', { ...base(), liftingPoints: [ base().liftingPoints[0], base().liftingPoints[0] ] }],
     ['missing source', { ...base(), massSourceRef: '' }],
     ['unsupported invented approval', { ...base(), inputBasis: 'APPROVED', loadShareSourceRef: 'TBD' }],
+    ['fabricated approval with plausible-looking source IDs', { ...base(), inputBasis: 'APPROVED', massSourceRef: 'DOC-123', loadShareSourceRef: 'DOC-456', dynamicFactorSourceRef: 'DOC-789' }],
   ])('rejects invalid %s', async (_label, input) => {
     const result = await run(input);
     expect(result.success).toBe(false);
