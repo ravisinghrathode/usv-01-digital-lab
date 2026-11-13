@@ -28,7 +28,7 @@ from pathlib import Path
 from typing import Callable
 
 from worker import (
-    _limit_resources, _wrapped_argv, resource_policy, sha256,
+    _limit_resources, _wrapped_argv, _solver_environment, resource_policy, sha256,
 )
 
 ID = re.compile(r"^[A-Za-z0-9_-]{3,64}$")
@@ -80,6 +80,10 @@ def load_catalog(path: Path) -> dict:
         mesh_path=str(item.get("meshPath",""))
         if not mesh_path or mesh_path.startswith("/") or ".." in Path(mesh_path).parts:
             raise ValueError("Unsafe template mesh path")
+        preprocessor=item.get("meshPreprocessor")
+        if preprocessor is not None:
+            if item.get("family")!="OPENFOAM_CFD" or preprocessor!="blockMesh":
+                raise ValueError("Only fixed blockMesh preprocessing is permitted for OpenFOAM templates")
         bounds=item.get("parameterBounds")
         if not isinstance(bounds,dict) or not bounds:
             raise ValueError("Template requires bounded numeric parameters")
@@ -180,6 +184,15 @@ def materialize_template_job(
         )
         if proc.returncode!=0:
             raise RuntimeError("Approved template generator failed")
+        if template.get("meshPreprocessor")=="blockMesh":
+            pre=runner(
+                _wrapped_argv(["blockMesh"],isolation),
+                cwd=str(case),capture_output=True,text=True,check=False,
+                timeout=resource_policy()["wallTimeoutSeconds"],preexec_fn=_limit_resources,
+                env=_solver_environment(case)
+            )
+            if pre.returncode!=0:
+                raise RuntimeError("Approved fixed blockMesh preprocessing failed")
         _safe_generated_tree(case)
         mesh=case/template["meshPath"]
         if not mesh.is_file() or mesh.is_symlink():
@@ -202,6 +215,7 @@ def materialize_template_job(
             "parameterDigest":sha256(_canonical_json(params)),
             "generatorStdoutSha256":sha256((proc.stdout or "").encode()),
             "generatorStderrSha256":sha256((proc.stderr or "").encode()),
+            "meshPreprocessor":template.get("meshPreprocessor"),
         }
         manifest_seed={
             "jobRef":request["jobRef"],
