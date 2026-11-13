@@ -90,7 +90,7 @@ export const NavalArchitectureView: React.FC<NavalArchitectureViewProps> = ({
       ['Moulded depth assumption', depthM, 'm', 'UNVERIFIED PARAMETRIC SCREEN'],
       ['KG assumption', vcgM, 'm', 'UNVERIFIED PARAMETRIC SCREEN'],
       ['Cb assumption', blockCoeffCb, '-', 'UNVERIFIED PARAMETRIC SCREEN'],
-      ['Regulatory compliance validated', false, '-', 'NO — requires approved hull geometry and loading']
+      ['Regulatory compliance validated', 'NO', '-', 'NO — requires approved hull geometry and loading']
     ];
     downloadCsv(`USV01_Unverified_Hydrostatic_Screen_${new Date().toISOString().split('T')[0]}.csv`, headers, rows);
     setSaveSuccessMsg(true);
