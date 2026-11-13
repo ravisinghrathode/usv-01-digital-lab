@@ -10,14 +10,16 @@ from __future__ import annotations
 import hashlib
 import io
 import json
+import math
 import os
 import re
+import resource
 import stat
 import subprocess
 import tempfile
 import zipfile
 from pathlib import Path, PurePosixPath
-from typing import Callable
+from typing import Callable, Iterable
 
 SHA = re.compile(r"^sha256:[0-9a-f]{64}$")
 GIT_SHA = re.compile(r"^[0-9a-f]{40}$")
@@ -25,6 +27,13 @@ JOB = re.compile(r"^[A-Za-z0-9_-]{3,64}$")
 MAX_ZIP = 128 * 1024 * 1024
 MAX_UNPACK = 512 * 1024 * 1024
 MAX_FILES = 1500
+MAX_PERSIST_BYTES = 256 * 1024 * 1024
+DEFAULT_CPU_SECONDS = 1800
+DEFAULT_ADDRESS_SPACE_BYTES = 8 * 1024 * 1024 * 1024
+DEFAULT_FILE_BYTES = 2 * 1024 * 1024 * 1024
+DEFAULT_OPEN_FILES = 1024
+DEFAULT_PROCESSES = 64
+FLOAT = r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[Ee][-+]?\d+)?"
 
 def sha256(payload: bytes) -> str:
     return "sha256:" + hashlib.sha256(payload).hexdigest()
@@ -84,6 +93,194 @@ def unzip_restricted(data: bytes, dest: Path) -> None:
                     chunk = source.read(1024*1024)
                     if not chunk: break
                     target.write(chunk)
+
+def _limit_resources() -> None:
+    """Hard child-process resource ceilings. Production execution is Linux/POSIX only."""
+    limits = (
+        (resource.RLIMIT_CPU, DEFAULT_CPU_SECONDS, DEFAULT_CPU_SECONDS + 5),
+        (resource.RLIMIT_AS, DEFAULT_ADDRESS_SPACE_BYTES, DEFAULT_ADDRESS_SPACE_BYTES),
+        (resource.RLIMIT_FSIZE, DEFAULT_FILE_BYTES, DEFAULT_FILE_BYTES),
+        (resource.RLIMIT_NOFILE, DEFAULT_OPEN_FILES, DEFAULT_OPEN_FILES),
+        (resource.RLIMIT_CORE, 0, 0),
+    )
+    for kind, soft, hard in limits:
+        resource.setrlimit(kind, (soft, hard))
+    if hasattr(resource, "RLIMIT_NPROC"):
+        resource.setrlimit(resource.RLIMIT_NPROC, (DEFAULT_PROCESSES, DEFAULT_PROCESSES))
+    os.setsid()
+
+def _wrapped_argv(argv: list[str], isolation_mode: str) -> list[str]:
+    if isolation_mode == "UNSHARE_NET":
+        return ["unshare", "--net", "--", *argv]
+    if isolation_mode == "TEST_NO_NAMESPACE":
+        return argv
+    raise ValueError("Unsupported network-isolation mode")
+
+def _run(runner: Callable[..., subprocess.CompletedProcess], argv: list[str], case: Path,
+         timeout: int = 1800, isolation_mode: str = "UNSHARE_NET") -> subprocess.CompletedProcess:
+    return runner(
+        _wrapped_argv(argv, isolation_mode), cwd=str(case), capture_output=True,
+        text=True, timeout=timeout, check=False, preexec_fn=_limit_resources,
+        env={
+            "PATH": os.environ.get("USV_SOLVER_BIN_PATH", "/usr/bin:/bin"),
+            "HOME": str(case), "LC_ALL": "C",
+            "OMP_NUM_THREADS": os.environ.get("USV_SOLVER_OMP_THREADS", "2"),
+            "OPENBLAS_NUM_THREADS": os.environ.get("USV_SOLVER_BLAS_THREADS", "2"),
+        }
+    )
+
+def _version_command(family: str) -> list[str]:
+    return ["simpleFoam", "-help"] if family == "OPENFOAM_CFD" else ["ccx", "-v"]
+
+def _parse_version(text: str, family: str) -> str:
+    patterns = (
+        [r"OpenFOAM[^\n]*?(?:v|version[ :=-]*)([A-Za-z0-9_.+-]+)", r"OpenFOAM[- ]([A-Za-z0-9_.+-]+)"]
+        if family == "OPENFOAM_CFD"
+        else [r"CalculiX(?: CrunchiX)?[^\n]*?(?:version|Version)?[ :=-]*([0-9]+(?:\.[0-9]+)+)"]
+    )
+    for pattern in patterns:
+        m = re.search(pattern, text, re.IGNORECASE)
+        if m:
+            return m.group(1)
+    for line in text.splitlines():
+        if line.strip():
+            return "UNPARSED:" + line.strip()[:120]
+    return "NOT_RECORDED"
+
+def _parse_check_mesh(check_log: str, case: Path) -> dict:
+    data: dict = {}
+    check_json = case / "checkMesh.json"
+    if check_json.is_file():
+        try:
+            loaded = json.loads(check_json.read_text(errors="replace"))
+            if isinstance(loaded, dict):
+                data = loaded
+        except (OSError, json.JSONDecodeError):
+            data = {}
+    max_non_orth = data.get("maxNonOrth")
+    max_skew = data.get("maxSkew")
+    if not isinstance(max_non_orth, (int, float)) or not math.isfinite(float(max_non_orth)):
+        matches = re.findall(
+            rf"(?:Mesh\s+non-orthogonality\s+Max:|max(?:imum)?\s+non[- ]?orthogonality(?:\s*=|:))\s*({FLOAT})",
+            check_log, re.IGNORECASE)
+        max_non_orth = float(matches[-1]) if matches else None
+    if not isinstance(max_skew, (int, float)) or not math.isfinite(float(max_skew)):
+        matches = re.findall(
+            rf"(?:Max(?:imum)?\s+(?:boundary\s+|internal\s+)?skew(?:ness)?(?:\s*=|:)|maxSkew\s*[:=])\s*({FLOAT})",
+            check_log, re.IGNORECASE)
+        max_skew = float(matches[-1]) if matches else None
+    return {
+        "maximumMeshSkewness": float(max_skew) if isinstance(max_skew, (int, float)) else None,
+        "maximumNonOrthogonalityDeg": float(max_non_orth) if isinstance(max_non_orth, (int, float)) else None,
+    }
+
+def _parse_final_residuals(solver_log: str) -> tuple[float | None, dict[str, float]]:
+    last: dict[str, float] = {}
+    pattern = re.compile(
+        rf"Solving\s+for\s+([^,\s]+).*?Final\s+residual\s*=\s*({FLOAT})",
+        re.IGNORECASE)
+    for field, value in pattern.findall(solver_log):
+        number = float(value)
+        if math.isfinite(number):
+            last[field] = number
+    return (max(last.values()) if last else None, last)
+
+def _parse_force_coefficients(case: Path) -> dict:
+    for file in reversed(sorted(case.glob("postProcessing/**/coefficient.dat"))):
+        lines = file.read_text(errors="replace").splitlines()
+        headers = None
+        rows: list[list[float]] = []
+        for line in lines:
+            stripped = line.strip()
+            if not stripped:
+                continue
+            if stripped.startswith("#"):
+                words = stripped.lstrip("#").strip().split()
+                if words and words[0].lower() == "time":
+                    headers = words
+                continue
+            try:
+                rows.append([float(x) for x in stripped.split()])
+            except ValueError:
+                continue
+        if not rows:
+            continue
+        row = rows[-1]
+        if headers and len(headers) == len(row):
+            return {
+                "sourceFile": str(file.relative_to(case)), "time": row[0],
+                "coefficients": {k:v for k,v in zip(headers[1:], row[1:]) if math.isfinite(v)}
+            }
+        return {"sourceFile": str(file.relative_to(case)), "time": row[0], "rawFinalNumericRow": row[1:]}
+    return {}
+
+def _parse_calculix_dat(case: Path) -> dict:
+    dat = case / "model.dat"
+    if not dat.is_file():
+        return {}
+    max_stress = None
+    max_disp = None
+    mode = None
+    for line in dat.read_text(errors="replace").splitlines():
+        lower = line.lower()
+        if "stress" in lower:
+            mode = "stress"
+            continue
+        if "displacement" in lower:
+            mode = "displacement"
+            continue
+        values = [float(v) for v in re.findall(FLOAT, line)]
+        if mode == "stress" and len(values) >= 8:
+            for value in values[-6:]:
+                max_stress = max(abs(value), max_stress or 0.0)
+        elif mode == "displacement" and len(values) >= 4:
+            xyz = values[-3:]
+            magnitude = math.sqrt(sum(v*v for v in xyz))
+            max_disp = max(magnitude, max_disp or 0.0)
+    result = {"sourceFile": "model.dat"}
+    if max_stress is not None:
+        result["maxAbsoluteStressComponent"] = max_stress
+    if max_disp is not None:
+        result["maxDisplacementMagnitude"] = max_disp
+    return result if len(result) > 1 else {}
+
+def _selected_artifacts(case: Path) -> Iterable[Path]:
+    exact = {"solver-summary.json","checkMesh.log","simpleFoam.log","ccx.log","version.log",
+             "checkMesh.json","model.dat","model.frd","model.sta","model.cvg"}
+    for file in case.rglob("*"):
+        if not file.is_file() or file.is_symlink():
+            continue
+        rel = file.relative_to(case).as_posix()
+        if rel in exact or rel.startswith("postProcessing/"):
+            yield file
+
+def _persist_artifacts(case: Path, artifact_root: Path, job_ref: str, summary: dict) -> tuple[Path,str]:
+    artifact_root.mkdir(parents=True, exist_ok=True, mode=0o700)
+    (case / "solver-summary.json").write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
+    archive_path = artifact_root / (job_ref + "-solver-evidence.zip")
+    if archive_path.exists():
+        raise FileExistsError("Immutable solver evidence archive already exists")
+    total = 0
+    with zipfile.ZipFile(archive_path, "x", compression=zipfile.ZIP_DEFLATED) as archive:
+        for file in _selected_artifacts(case):
+            total += file.stat().st_size
+            if total > MAX_PERSIST_BYTES:
+                raise RuntimeError("Persisted solver evidence exceeds configured quota")
+            archive.write(file, file.relative_to(case).as_posix())
+    os.chmod(archive_path, 0o600)
+    return archive_path, sha256(archive_path.read_bytes())
+
+def _quality_gate_openfoam(metrics: dict, plan: dict) -> None:
+    for key in ("finalResidual","maximumMeshSkewness","maximumNonOrthogonalityDeg"):
+        value = metrics.get(key)
+        if not isinstance(value, (int,float)) or not math.isfinite(float(value)):
+            raise RuntimeError("Required OpenFOAM residual or mesh-quality metric was not produced")
+    if metrics["finalResidual"] > plan["residualThreshold"]:
+        raise RuntimeError("Final solver residual exceeds source-defined screening threshold")
+    if metrics["maximumMeshSkewness"] > plan["maxMeshSkewness"]:
+        raise RuntimeError("Mesh skewness exceeds source-defined screening threshold")
+    if metrics["maximumNonOrthogonalityDeg"] > plan["maxNonOrthogonalityDeg"]:
+        raise RuntimeError("Mesh non-orthogonality exceeds source-defined screening threshold")
 
 def command_plan(family: str) -> tuple[list[list[str]],str]:
     # Fixed command/arguments; neither ZIP nor API can supply a shell command.
