@@ -171,7 +171,12 @@ export function classifyFile(filePath: string): { categories: ChangeCategory[]; 
  * engineering baseline has been changed.
  */
 export function isVesselEngineeringAuthorityPath(file: string): boolean {
-  const p = file.replaceAll('\\\\', '/');
+  const p = file.split(String.fromCharCode(92)).join('/');
+  const safetyVerifier = p.startsWith('src/core/verification/') &&
+    p.endsWith('.ts') &&
+    /^(Autonomy[^/]*|SafetyScenarioSuite|MarineSystemsSuite|AcceptanceGate)$/.test(
+      p.slice('src/core/verification/'.length, -3)
+    );
   return p.startsWith('src/core/tools/naval/') ||
     p.startsWith('governance/ecr/') ||
     p.startsWith('governance/approvals/') ||
@@ -184,15 +189,14 @@ export function isVesselEngineeringAuthorityPath(file: string): boolean {
     p.startsWith('docs/AUT01_') ||
     p === 'docs/CONSOLIDATED_ACCEPTANCE_REGISTER.md' ||
     p.startsWith('evidence/aut01/') ||
-    (p.startsWith('src/core/verification/') &&
-      /^(Autonomy[^/]*|SafetyScenarioSuite|MarineSystemsSuite|AcceptanceGate)\\.ts$/i.test(p.slice('src/core/verification/'.length))) ||
+    safetyVerifier ||
     p === 'src/components/SoftwareAutonomyView.tsx' ||
     (p.startsWith('tests/') &&
       /^(autonomy[^/]*|marineSystems|acceptanceGate|acceptanceCampaign)/i.test(p.slice(6)));
 }
 
 export function isProtectedSoftwareAuthorityPath(file: string): boolean {
-  const p = file.replaceAll('\\\\', '/');
+  const p = file.split(String.fromCharCode(92)).join('/');
   return p.startsWith('scripts/governance/') ||
     p.startsWith('.github/') ||
     p.startsWith('src/core/auth/') ||
@@ -212,7 +216,7 @@ export function isProtectedSoftwareAuthorityPath(file: string): boolean {
 }
 
 export function isRestrictedLabResearchPath(file: string): boolean {
-  const p = file.replaceAll('\\\\', '/');
+  const p = file.split(String.fromCharCode(92)).join('/');
   return p.startsWith('src/core/agents/') ||
     p.startsWith('src/core/registry/') ||
     p.startsWith('src/core/orchestrator/') ||
