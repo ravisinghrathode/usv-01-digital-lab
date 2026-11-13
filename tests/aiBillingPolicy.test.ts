@@ -51,6 +51,14 @@ describe('AI billing policy', () => {
     }, process.env.AI_REVIEW_PROVIDER)).toBe('codex_cli');
   });
 
+  it('allows a deterministic provider only for explicit offline Vitest fixtures', () => {
+    process.env.AI_REVIEW_PROVIDER = 'deterministic';
+    expect(resolveModelProviderForTask({
+      preferredProvider: 'codex_cli',
+      fallbackToMock: false
+    }, process.env.AI_REVIEW_PROVIDER)).toBe('deterministic');
+  });
+
   it('makes signed-in Codex an explicit, zero-paid-API opt-in', () => {
     process.env.AI_REVIEW_PROVIDER = 'codex_cli';
     delete process.env.USV_SUBSCRIPTION_PILOT;
