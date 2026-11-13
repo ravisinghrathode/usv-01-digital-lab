@@ -9,7 +9,8 @@
  * - never grants engineering approval or merge authority.
  */
 import { spawn } from 'node:child_process';
-import { stat } from 'node:fs/promises';
+import { readFile, stat } from 'node:fs/promises';
+import path from 'node:path';
 
 export type PilotRole = 'orchestrator' | 'worker' | 'reviewer';
 
@@ -104,6 +105,27 @@ export function sanitizedSubscriptionEnvironment(env: NodeJS.ProcessEnv = proces
   return filtered;
 }
 
+/**
+ * Prevent the subscription CLIs from being pointed at an arbitrary directory.
+ * Git worktrees are supported because validation uses repository content, not .git directory shape.
+ */
+export async function assertUsvRepositoryWorkingDirectory(workingDirectory: string): Promise<void> {
+  const packagePath = path.join(workingDirectory, 'package.json');
+  const registryPath = path.join(workingDirectory, 'src', 'core', 'registry', 'AgentRegistry.ts');
+  try {
+    const [packageText, registryStat] = await Promise.all([
+      readFile(packagePath, 'utf8'),
+      stat(registryPath)
+    ]);
+    const packageJson = JSON.parse(packageText);
+    if (packageJson?.name !== 'usv-01-digital-lab' || !registryStat.isFile()) {
+      throw new Error('repository identity mismatch');
+    }
+  } catch {
+    throw new Error('workingDirectory must be a USV-01 Digital Lab repository/worktree');
+  }
+}
+
 /** Fixed command metadata for preflight checks without invoking a model. */
 export function getSubscriptionCliSpecs(): Record<PilotRole, Pick<CliSpec, 'executable'>> {
   return {
@@ -121,6 +143,7 @@ export async function runSubscriptionCli(input: PilotRequest): Promise<PilotResu
   validatePilotRequest(input);
   const directory = await stat(input.workingDirectory);
   if (!directory.isDirectory()) throw new Error('workingDirectory must be a directory');
+  await assertUsvRepositoryWorkingDirectory(input.workingDirectory);
 
   const spec = SAFE_ROLES[input.role];
   const timeoutMs = Math.min(Math.max(input.timeoutMs ?? 180_000, 1000), 600_000);
