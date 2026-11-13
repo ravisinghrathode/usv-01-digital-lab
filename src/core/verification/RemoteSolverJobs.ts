@@ -32,7 +32,7 @@ export interface SolverJobManifest extends SolverJobRequest {
 export interface SolverServiceReceipt {
   jobId: string;
   acceptedInputDigest: string;
-  state: 'QUEUED' | 'RUNNING' | 'COMPLETED';
+  state: 'QUEUED' | 'RUNNING' | 'COMPLETED' | 'COMPUTE_DONE_EVIDENCE_PENDING';
   solverVersion?: string;
   outputArtifactUri?: string;
   outputSha256?: string;
@@ -44,7 +44,7 @@ export interface SolverServiceReceipt {
   };
 }
 export interface SolverJobDisposition {
-  status: 'SUBMITTED_UNVERIFIED' | 'COMPLETED_UNVERIFIED' | 'REJECTED';
+  status: 'SUBMITTED_UNVERIFIED' | 'COMPUTE_DONE_EVIDENCE_PENDING' | 'COMPLETED_UNVERIFIED' | 'REJECTED';
   jobId: string | null;
   qualityScreenPassed: boolean;
   issues: string[];
@@ -104,8 +104,9 @@ export function evaluateSolverReceipt(
   const r = raw as Partial<SolverServiceReceipt>;
   if (typeof r.jobId !== 'string' || !/^[A-Za-z0-9_-]{3,128}$/.test(r.jobId) ||
       r.acceptedInputDigest !== manifest.manifestSha256 ||
-      !['QUEUED', 'RUNNING', 'COMPLETED'].includes(r.state || '')) return invalid;
+      !['QUEUED', 'RUNNING', 'COMPLETED', 'COMPUTE_DONE_EVIDENCE_PENDING'].includes(r.state || '')) return invalid;
   const completed = r.state === 'COMPLETED';
+  const computedWithoutConvergence = r.state === 'COMPUTE_DONE_EVIDENCE_PENDING';
   let qualityScreenPassed = false;
   if (completed) {
     if (!r.outputArtifactUri || !httpsRef(r.outputArtifactUri) ||
@@ -130,10 +131,13 @@ export function evaluateSolverReceipt(
   }
   const receipt = r as SolverServiceReceipt;
   return {
-    status: problems.length ? 'REJECTED' : completed ? 'COMPLETED_UNVERIFIED' : 'SUBMITTED_UNVERIFIED',
+    status: problems.length ? 'REJECTED' : completed ? 'COMPLETED_UNVERIFIED' :
+      computedWithoutConvergence ? 'COMPUTE_DONE_EVIDENCE_PENDING' : 'SUBMITTED_UNVERIFIED',
     jobId: r.jobId,
     qualityScreenPassed: completed && qualityScreenPassed && problems.length === 0,
-    issues: problems.concat('Server receipt is self-reported; validate solver output, mesh convergence, independent benchmarks and technical authority externally'),
+    issues: problems.concat(computedWithoutConvergence ?
+      ['Solver subprocess reported completion, but grid convergence, result artifact, solver version and independent reference proof are still required'] :
+      ['Server receipt is self-reported; validate solver output, mesh convergence, independent benchmarks and technical authority externally']),
     engineeringValidated: false, independentReferenceValidated: false,
     engineeringReleaseAuthorized: false, receipt
   };
@@ -171,4 +175,34 @@ export async function submitRemoteSolverJob(
     remote = await result.json();
   }
   return evaluateSolverReceipt(manifest, remote);
+}
+
+/**
+ * Query a previously submitted job. HTTPS only; polling cannot itself
+ * authenticate remote model physics or justify vessel engineering release.
+ */
+export async function pollRemoteSolverJob(
+  manifest: SolverJobManifest,
+  transport?: (jobId: string) => Promise<unknown>
+): Promise<SolverJobDisposition> {
+  let raw: unknown;
+  if (transport) {
+    raw = await transport(manifest.jobRef);
+  } else {
+    const endpoint = process.env.USV_SOLVER_HTTPS_ENDPOINT;
+    const token = process.env.USV_SOLVER_SERVICE_TOKEN;
+    if (!endpoint || !httpsRef(endpoint) || !token || token.length < 32) {
+      throw new Error('Authenticated HTTPS solver service required for polling');
+    }
+    const u = new URL(endpoint);
+    if (!u.pathname.endsWith('/jobs')) throw new Error('Solver service endpoint must end with /jobs');
+    u.pathname += '/' + encodeURIComponent(manifest.jobRef);
+    const response = await fetch(u.toString(), {
+      headers: {Authorization:'Bearer '+token},
+      signal: AbortSignal.timeout(15000)
+    });
+    if (!response.ok) throw new Error('Solver status query failed: HTTP '+response.status);
+    raw = await response.json();
+  }
+  return evaluateSolverReceipt(manifest,raw);
 }
