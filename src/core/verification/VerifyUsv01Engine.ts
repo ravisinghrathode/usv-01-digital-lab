@@ -486,6 +486,8 @@ export class VerifyUsv01Engine {
           totalLinesDeleted: 0,
           dominantCategories: ['SOFTWARE'],
           overallRisk: 'LOW',
+          approvalRoute: 'ROUTINE_SOFTWARE',
+          requiresIndependentEngineeringReview: false,
           requiresDesignatedAuthorityApproval: false,
           requiresECR: false
         },
@@ -677,7 +679,11 @@ export class VerifyUsv01Engine {
       stageEEval = {
         passed: false,
         overallVerdict: 'BLOCKED',
-        stageAResult: { overallRisk: stageARisk, requiresDirector: stageDRequired },
+        stageAResult: {
+          overallRisk: stageARisk,
+          approvalRoute: stageDRequired ? 'SAFETY_CRITICAL_ENGINEERING' : 'ROUTINE_SOFTWARE',
+          requiresDirector: stageDRequired
+        },
         stageCResult: {
           provider: stageCProvider,
           aiStatus: stageCAiStatus,
@@ -687,6 +693,7 @@ export class VerifyUsv01Engine {
         },
         stageDResult: {
           required: stageDRequired,
+          independentPeerApproved: false,
           signatureVerified: stageDSignatureVerified,
           staleApproval: stageDStale
         },
@@ -832,7 +839,7 @@ export class VerifyUsv01Engine {
         waterplaneCoefficientCwp: 0.65,
         kgMeters: 0.8,
         seawaterDensityKgM3: 1025,
-        propulsiveEfficiencyEtaD: 0.65,
+        // RES-01: no artificial propulsive efficiency in the verification fixture.
         waterTempCelsius: 15,
         deadriseAngleDeg: 18,
         unsupportedPanelWidthMm: 500,

@@ -14,6 +14,7 @@ export type ChangeCategory =
   | 'RELEASE';
 
 export type RiskClassification = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+export type ApprovalRoute = 'ROUTINE_SOFTWARE' | 'SAFETY_CRITICAL_ENGINEERING';
 
 export interface FileClassification {
   file: string;
@@ -30,6 +31,8 @@ export interface PRClassificationReport {
     totalLinesDeleted: number;
     dominantCategories: ChangeCategory[];
     overallRisk: RiskClassification;
+    approvalRoute: ApprovalRoute;
+    requiresIndependentEngineeringReview: boolean;
     requiresDesignatedAuthorityApproval: boolean;
     requiresECR: boolean;
   };
@@ -216,6 +219,13 @@ export function generateClassificationReport(baseRef = 'origin/main', rootDir = 
     .map(e => e[0]);
 
   const requiresDesignatedAuthorityApproval = overallRisk === 'HIGH' || overallRisk === 'CRITICAL';
+  // LOW/MEDIUM changes still require the repository's independent GitHub review
+  // and required CI checks.  Only HIGH/CRITICAL changes alter an engineering
+  // baseline and therefore require the additional independent engineering
+  // review and cryptographic Project Lead authorization path.
+  const approvalRoute: ApprovalRoute = requiresDesignatedAuthorityApproval
+    ? 'SAFETY_CRITICAL_ENGINEERING'
+    : 'ROUTINE_SOFTWARE';
   const requiresECR = requiresDesignatedAuthorityApproval;
 
   const headRef = process.env.PR_HEAD_SHA || 'HEAD';
@@ -233,6 +243,8 @@ export function generateClassificationReport(baseRef = 'origin/main', rootDir = 
       totalLinesDeleted: totalDeleted,
       dominantCategories: dominantCategories.length ? dominantCategories : ['SOFTWARE'],
       overallRisk,
+      approvalRoute,
+      requiresIndependentEngineeringReview: requiresDesignatedAuthorityApproval,
       requiresDesignatedAuthorityApproval,
       requiresECR
     },
@@ -257,10 +269,12 @@ export function formatReportMarkdown(report: PRClassificationReport): string {
 | Metric | Assessment |
 |---|---|
 | **Overall Change Risk** | **${badgeMap[s.overallRisk]}** |
+| **Approval Route** | **${s.approvalRoute === 'SAFETY_CRITICAL_ENGINEERING' ? 'Safety-Critical Engineering' : 'Routine Software'}** |
 | **Change Categories** | \`${s.dominantCategories.join(', ')}\` |
 | **Files Modified** | \`${s.totalFilesChanged}\` |
 | **Lines Changed** | \`+${s.totalLinesAdded} / -${s.totalLinesDeleted}\` |
-| **Designated Authority Approval Required** | **${s.requiresDesignatedAuthorityApproval ? 'YES (Engineering Director)' : 'NO (Standard Review)'}** |
+| **Independent Engineering Review Required** | **${s.requiresIndependentEngineeringReview ? 'YES (High/Critical change)' : 'NO (GitHub independent review still required)'}** |
+| **Designated Authority Approval Required** | **${s.requiresDesignatedAuthorityApproval ? 'YES (Engineering Director)' : 'NO (Independent GitHub review)'}** |
 | **Engineering Change Request (ECR) Required** | **${s.requiresECR ? 'YES (Mandatory for High/Critical)' : 'NO (Optional)'}** |
 
 #### Modified File Classifications
@@ -268,7 +282,7 @@ export function formatReportMarkdown(report: PRClassificationReport): string {
 |---|---|---|---|
 ${report.fileDetails.map(f => `| \`${f.file}\` | ${f.categories.join(', ')} | **${f.risk}** | +${f.linesAdded} / -${f.linesDeleted} |`).join('\n')}
 
-> **Governance Notice:** AI tools may review or challenge this change, but **cannot authorise merge**. Final acceptance requires signed human authority per the USV-01 Engineering Governance Standard.
+> **Governance Notice:** AI tools may review or challenge this change, but **cannot authorise merge**. Every change requires an independent GitHub approval. Safety-critical engineering changes additionally require the evidence and signed-authority controls above.
 `;
 }
 

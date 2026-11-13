@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { authenticatedFetch, getCurrentUser } from '../core/auth/authClient.ts';
 import {
   ShieldAlert,
   GitPullRequest,
@@ -71,6 +72,30 @@ export const ProjectOverview: React.FC<ProjectOverviewProps> = ({
   onNavigate,
   onAskAi
 }) => {
+  // Only the authenticated Engineering Director can initiate the GitHub run.
+  const [mergeInProgress, setMergeInProgress] = useState(false);
+  const [mergeMessage, setMergeMessage] = useState('');
+  const [mergeRunUrl, setMergeRunUrl] = useState('');
+  const isProjectLead = getCurrentUser()?.role === 'ENGINEERING_DIRECTOR';
+
+  const handleMergeEligible = async () => {
+    if (mergeInProgress || !isProjectLead) return;
+    setMergeInProgress(true);
+    setMergeMessage('');
+    setMergeRunUrl('');
+    try {
+      const response = await authenticatedFetch('/api/project-lead/merge-eligible', { method: 'POST' });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.success) throw new Error(result.error || 'GitHub dispatch failed');
+      setMergeMessage('Request accepted. GitHub is checking approvals and merging only eligible PRs.');
+      if (typeof result.url === 'string') setMergeRunUrl(result.url);
+    } catch (error) {
+      setMergeMessage(error instanceof Error ? error.message : 'Merge request failed');
+    } finally {
+      setMergeInProgress(false);
+    }
+  };
+
   // Calculated stats
   const approvedReqs = requirements.filter(r => r.status === 'Approved').length;
   const inReviewReqs = requirements.filter(r => r.status === 'In Review').length;
@@ -414,6 +439,23 @@ export const ProjectOverview: React.FC<ProjectOverviewProps> = ({
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
+      {isProjectLead && (
+        <section className="rounded-xl border border-teal-700/60 bg-slate-900 p-5" aria-label="Project Lead merge controls">
+          <h2 className="text-lg font-bold text-white mb-2">Project Lead — Pull Request Control</h2>
+          <p className="text-sm text-slate-300 mb-4">Merge all eligible PRs with one click. GitHub independently verifies approvals, required checks and branch protection. Safety-critical engineering release gates are never bypassed.</p>
+          <button
+            type="button"
+            onClick={handleMergeEligible}
+            disabled={mergeInProgress}
+            className="rounded-lg bg-teal-600 hover:bg-teal-500 disabled:opacity-50 px-5 py-3 font-bold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-teal-300"
+          >
+            {mergeInProgress ? 'Submitting to GitHub…' : 'Approve & Merge All Eligible PRs'}
+          </button>
+          <p className="text-xs text-slate-400 mt-2">This authorizes the merge attempt only; it does not substitute for independent review or engineering sign-off.</p>
+          {mergeMessage && <p role="status" className="text-sm text-teal-200 mt-3">{mergeMessage}</p>}
+          {mergeRunUrl && <a href={mergeRunUrl} target="_blank" rel="noopener noreferrer" className="inline-block text-teal-300 underline text-sm mt-2">View GitHub execution and HOLD reasons</a>}
+        </section>
+      )}
       {/* 1. Executive Master Command Banner */}
       <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 border border-slate-800 rounded-xl p-5 shadow-sm">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">

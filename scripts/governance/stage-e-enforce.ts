@@ -13,6 +13,7 @@ export interface StageEEvaluation {
   currentBaselineDigest?: string;
   stageAResult: {
     overallRisk: string;
+    approvalRoute: 'ROUTINE_SOFTWARE' | 'SAFETY_CRITICAL_ENGINEERING';
     requiresDirector: boolean;
     digestMatches?: boolean;
     commitMatches?: boolean;
@@ -28,6 +29,7 @@ export interface StageEEvaluation {
   };
   stageDResult: {
     required: boolean;
+    independentPeerApproved: boolean;
     signatureVerified: boolean;
     staleApproval: boolean;
     authority?: string;
@@ -111,6 +113,15 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
     );
   }
 
+  const overallRisk = stageA.summary.overallRisk;
+  const requiresDirector = stageA.summary.requiresDesignatedAuthorityApproval;
+  const isCriticalOrHigh = overallRisk === 'CRITICAL' || overallRisk === 'HIGH';
+  // A routine change remains subject to GitHub's independently authored
+  // approval and required checks. Stage C is an *additional* engineering
+  // evidence control, required only when a change can affect an engineering
+  // baseline (HIGH/CRITICAL).
+  const requiresIndependentEngineeringReview = isCriticalOrHigh || stageA.summary.requiresIndependentEngineeringReview === true;
+
   // Evaluate Stage C
   const hasMockFallback = stageC ? stageC.hasMockFallback : false;
   const deterministicStatus = stageC ? stageC.deterministicStatus : 'UNKNOWN';
@@ -119,9 +130,7 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
   let stageCDigestMatches = true;
   let stageCCommitMatches = true;
 
-  if (!stageC) {
-    blockingReasons.push('Stage C independent review evidence report is missing.');
-  } else {
+  if (requiresIndependentEngineeringReview && stageC) {
     if (expectedBaselineDigest && stageC.baselineDigest && stageC.baselineDigest !== expectedBaselineDigest) {
       stageCDigestMatches = false;
       blockingReasons.push(
@@ -151,28 +160,31 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
         );
       }
     }
+  } else if (requiresIndependentEngineeringReview) {
+    blockingReasons.push('Stage C independent review evidence report is missing.');
   }
 
   // Evaluate Stage D
-  const overallRisk = stageA.summary.overallRisk;
-  const requiresDirector = stageA.summary.requiresDesignatedAuthorityApproval;
-  const isCriticalOrHigh = overallRisk === 'CRITICAL' || overallRisk === 'HIGH';
-
   const stageDRequired = isCriticalOrHigh || requiresDirector;
   const signatureVerified = stageD ? stageD.signatureVerified : false;
+  const independentPeerApproved = stageD?.independentReviewStatus === 'APPROVED_BY_PEER';
   const staleApproval = stageD ? stageD.staleApproval : false;
   let stageDDigestMatches = true;
 
-  if (stageDRequired) {
-    if (!stageD) {
-      blockingReasons.push('Stage D human authority verification report is missing.');
-    } else {
-      if (expectedBaselineDigest && stageD.baselineDigest && stageD.baselineDigest !== expectedBaselineDigest) {
-        stageDDigestMatches = false;
-        blockingReasons.push(
-          `Stage D approval evidence does not correspond to the exact baseline digest being verified (expected ${expectedBaselineDigest}, report had ${stageD.baselineDigest}).`
-        );
-      }
+  if (!stageD) {
+    blockingReasons.push(
+      stageDRequired
+        ? 'Stage D human authority verification report is missing.'
+        : 'Independent GitHub review verification report is missing.'
+    );
+  } else {
+    if (stageDRequired && expectedBaselineDigest && stageD.baselineDigest && stageD.baselineDigest !== expectedBaselineDigest) {
+      stageDDigestMatches = false;
+      blockingReasons.push(
+        `Stage D approval evidence does not correspond to the exact baseline digest being verified (expected ${expectedBaselineDigest}, report had ${stageD.baselineDigest}).`
+      );
+    }
+    if (stageDRequired) {
       if (staleApproval) {
         blockingReasons.push('Stage D rejected: ECR approval record is stale; does not match current baseline digest.');
       } else if (!signatureVerified) {
@@ -180,6 +192,13 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
           `Stage D rejected: Safety-critical change (${overallRisk} risk) requires Director-signed Ed25519 approval over baseline digest ${stageD.baselineDigest || currentBaselineDigest || 'unknown'}.`
         );
       }
+    }
+    if (!independentPeerApproved) {
+      blockingReasons.push(
+        stageDRequired
+          ? 'Stage D rejected: Safety-critical change requires an independent GitHub peer approval from someone other than the PR author.'
+          : 'Routine change requires an independent GitHub peer approval from someone other than the PR author.'
+      );
     }
   }
 
@@ -206,6 +225,7 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
     currentBaselineDigest,
     stageAResult: {
       overallRisk,
+      approvalRoute: stageA.summary.approvalRoute || (stageDRequired ? 'SAFETY_CRITICAL_ENGINEERING' : 'ROUTINE_SOFTWARE'),
       requiresDirector: stageDRequired,
       digestMatches: stageADigestMatches,
       commitMatches: stageACommitMatches
@@ -221,6 +241,7 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
     },
     stageDResult: {
       required: stageDRequired,
+      independentPeerApproved,
       signatureVerified,
       staleApproval,
       authority: stageD?.approverAuthority,
@@ -258,7 +279,7 @@ export function formatStageEMarkdown(evaluation: StageEEvaluation): string {
   let md = `## 🛡️ NAVAL-USV Stage E: Comprehensive Governance Gate Enforcement
 
 - **Overall Governance Gate Verdict:** **${verdictBadge}**
-- **Risk Classification (Stage A):** \`${evaluation.stageAResult.overallRisk}\` (Director Sign-Off Required: \`${evaluation.stageAResult.requiresDirector ? 'YES' : 'NO'}\`)
+- **Risk Classification (Stage A):** \`${evaluation.stageAResult.overallRisk}\` — \`${evaluation.stageAResult.approvalRoute}\` (Director Sign-Off Required: \`${evaluation.stageAResult.requiresDirector ? 'YES' : 'NO'}\`)
 - **Stage C Independent Review:** ${stageCBadge}
   - Provider: \`${evaluation.stageCResult.provider}\` | AI Status: \`${evaluation.stageCResult.aiStatus}\` | Deterministic: \`${evaluation.stageCResult.deterministicStatus}\`
 - **Stage D Human Authority:** ${stageDBadge}
@@ -269,8 +290,8 @@ export function formatStageEMarkdown(evaluation: StageEEvaluation): string {
 |---|---|---|---|
 | **Stage A: Classification** | PR Risk Classification & Impact Analysis | \`${evaluation.stageAResult.overallRisk}\` Risk | ℹ️ EVALUATED |
 | **Stage B: Quality Suite** | Deterministic Tests (66/66), Audit, Lint, Build | Zero Vulnerabilities & Clean Build | ✅ PASSED |
-| **Stage C: Independent Review** | 7-Role Independent Review (Zero Mock Acceptance) | ${evaluation.stageCResult.verdict} | ${stageCBadge} |
-| **Stage D: Human Authority** | Ed25519 Director Signature over Exact Baseline | ${evaluation.stageDResult.signatureVerified ? 'Verified' : 'Pending / Unverified'} | ${stageDBadge} |
+| **Stage C: Independent Engineering Review** | Required for safety-critical engineering only; routine work uses GitHub independent review | ${evaluation.stageAResult.approvalRoute === 'SAFETY_CRITICAL_ENGINEERING' ? evaluation.stageCResult.verdict : 'Not required for routine work'} | ${evaluation.stageAResult.approvalRoute === 'SAFETY_CRITICAL_ENGINEERING' ? stageCBadge : '⚪ NOT REQUIRED'} |
+| **Stage D: Human Authority** | Exact-baseline Ed25519 Project Lead signature and independent peer approval for safety-critical changes | ${evaluation.stageDResult.signatureVerified ? 'Signature verified' : 'Signature pending'}; ${evaluation.stageDResult.required ? (evaluation.stageDResult.independentPeerApproved ? 'peer approved' : 'peer approval pending') : 'not required'} | ${stageDBadge} |
 | **Stage E: Final Enforcement Gate** | Fail-Closed Multi-Stage Governance Policy | **${evaluation.overallVerdict}** | **${evaluation.passed ? '✅ PASSED' : '🚫 BLOCKED'}** |
 `;
 

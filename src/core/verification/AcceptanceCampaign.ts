@@ -2,6 +2,7 @@ import { AgentRegistry } from '../registry/AgentRegistry.ts';
 import { ToolRegistry } from '../tools/ToolRegistry.ts';
 import { ACCEPTANCE_REQUIREMENTS, evaluateAcceptance, type AcceptanceId, type AcceptanceEvidence } from './AcceptanceGate.ts';
 import { evaluateBenchmark, type ReferenceMeasurement } from './EngineeringBenchmarks.ts';
+import { screenResistancePropulsionEvidence } from './ResistancePropulsionEvidence.ts';
 import { assessMarineEvidence, type MarineEvidenceSubmission } from './MarineSystemsEvidenceGate.ts';
 import { screenLiftingLoadCase, screenThermalSteadyState, type LiftingScreenInput, type ThermalScreenInput } from './MarineSystemsSizing.ts';
 
@@ -31,6 +32,7 @@ export interface CampaignInputs {
   baselineSha: string;
   evidence?: readonly AcceptanceEvidence[];
   benchmarkMeasurements?: readonly ReferenceMeasurement[];
+  resistancePropulsionEvidence?: unknown;
   marineEvidenceSubmissions?: readonly MarineEvidenceSubmission[];
   marineLiftingCases?: readonly LiftingScreenInput[];
   marineThermalCases?: readonly ThermalScreenInput[];
@@ -60,6 +62,7 @@ export function runAcceptanceCampaign(input: CampaignInputs) {
     agentFindings.every(a => a.configurationValid);
   const acceptance = evaluateAcceptance(input.baselineSha, input.evidence);
   const benchmark = evaluateBenchmark(input.benchmarkMeasurements || []);
+  const resistancePropulsion = screenResistancePropulsionEvidence(input.resistancePropulsionEvidence, input.baselineSha);
   const marineEvidence = assessMarineEvidence(input.baselineSha, input.marineEvidenceSubmissions || []);
   const marineScreens = {
     liftingCases: (input.marineLiftingCases || []).map(screenLiftingLoadCase),
@@ -95,6 +98,7 @@ export function runAcceptanceCampaign(input: CampaignInputs) {
     agentFindings,
     registryErrors: registryCheck.errors,
     benchmark,
+    resistancePropulsion,
     marineEvidence,
     marineScreens,
     missingCriteria,
@@ -122,6 +126,8 @@ export function acceptanceCampaignMarkdown(
       (report.structurallyValid ? 'PASS' : 'FAIL') + ')',
     'External acceptance: **NOT APPROVED**',
     'Benchmark comparison: ' + report.benchmark.status,
+    'RES-01 numerical evidence screening: ' + report.resistancePropulsion.status + ' (not a physical acceptance or release signature)',
+    'RES-01 unclosed external engineering/review gates: ' + report.resistancePropulsion.missingGates.join(', '),
     'Marine MAR-01 intake: ' + report.marineEvidence.status +
       ' (' + report.marineEvidence.missingRequirements.length + ' missing evidence entries; NOT APPROVED)',
     'Marine numerical screens: ' + report.marineScreens.liftingCases.length +
