@@ -553,15 +553,64 @@ def run_staged_case(manifest: dict, stage: Path, work_root: Path,
             quality.update(_parse_check_mesh(command_text.get("checkMesh",""),case))
             residual, residuals_by_field = _parse_final_residuals(command_text.get("simpleFoam",""))
             quality["finalResidual"] = residual
-            _quality_gate_openfoam(quality,manifest["qualityPlan"])
             key_results = {
                 "finalResidualsByField":residuals_by_field,
                 "forceCoefficients":_parse_force_coefficients(case)
             }
+            try:
+                _quality_gate_openfoam(quality,manifest["qualityPlan"])
+            except RuntimeError as exc:
+                failure_summary = {
+                    "jobId":manifest["jobRef"],
+                    "acceptedInputDigest":manifest["manifestSha256"],
+                    "family":manifest["family"],
+                    "solverVersion":solver_version,
+                    "state":"NUMERICAL_QUALITY_FAILED",
+                    "quality":quality,
+                    "keyResults":key_results,
+                    "qualityPlan":manifest["qualityPlan"],
+                    "executionLogs":logs,
+                    "resourcePolicy":resource_policy(),
+                    "networkIsolationMode":isolation_mode,
+                    "engineeringValidated":False,
+                    "engineeringReleaseAuthorized":False,
+                }
+                evidence_path,evidence_sha = _persist_artifacts(
+                    case,artifact_root,manifest["jobRef"]+"-FAILED",failure_summary)
+                raise RuntimeError(
+                    str(exc)+"; quality="+json.dumps(quality,sort_keys=True)+
+                    "; residualsByField="+json.dumps(residuals_by_field,sort_keys=True)+
+                    "; failureEvidenceSha256="+evidence_sha+
+                    "; failureEvidencePath="+str(evidence_path)
+                ) from exc
         else:
             quality.update(_parse_c3d8_mesh_quality(case / "model.inp"))
-            _quality_gate_calculix(quality,manifest["qualityPlan"])
             key_results = _parse_calculix_dat(case)
+            try:
+                _quality_gate_calculix(quality,manifest["qualityPlan"])
+            except RuntimeError as exc:
+                failure_summary = {
+                    "jobId":manifest["jobRef"],
+                    "acceptedInputDigest":manifest["manifestSha256"],
+                    "family":manifest["family"],
+                    "solverVersion":solver_version,
+                    "state":"NUMERICAL_QUALITY_FAILED",
+                    "quality":quality,
+                    "keyResults":key_results,
+                    "qualityPlan":manifest["qualityPlan"],
+                    "executionLogs":logs,
+                    "resourcePolicy":resource_policy(),
+                    "networkIsolationMode":isolation_mode,
+                    "engineeringValidated":False,
+                    "engineeringReleaseAuthorized":False,
+                }
+                evidence_path,evidence_sha = _persist_artifacts(
+                    case,artifact_root,manifest["jobRef"]+"-FAILED",failure_summary)
+                raise RuntimeError(
+                    str(exc)+"; quality="+json.dumps(quality,sort_keys=True)+
+                    "; failureEvidenceSha256="+evidence_sha+
+                    "; failureEvidencePath="+str(evidence_path)
+                ) from exc
 
         summary = {
             "jobId":manifest["jobRef"],
