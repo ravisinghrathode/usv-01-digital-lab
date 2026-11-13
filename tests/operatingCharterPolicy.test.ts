@@ -79,7 +79,7 @@ describe('26-agent operating charter v1.1: specification and current evidence bo
     expect(charter).toContain('an authority state, not proof');
     expect(charter).toContain('PASS at declared fidelity, FAIL, or UNKNOWN');
     expect(charter).toContain('UNKNOWN can remain in exploratory studies');
-    expect(charter).toContain('legacy single-field status labels');
+    expect(charter).toContain('Legacy single-field status labels');
   });
 
   it('blocks unapproved spending, publication and AI self-certification', () => {
