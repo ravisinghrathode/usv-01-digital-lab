@@ -15,14 +15,14 @@
 
 ### 2. Engineering Impact Analysis
 - **Affected Requirements:** MAR-01; MAR-LR-01 to MAR-LR-03; MAR-TH-01 to MAR-TH-03; MAR-AC-01 to MAR-AC-03; MAR-FC-01 to MAR-FC-02; MAR-BC-01 to MAR-BC-02
-- **Architectural Impact:** New conservative metadata evidence gate and 13 traceable requirements; optional integrated acceptance-campaign report field. Does not create actuator pathways or change approved vessel dimensions.
+- **Architectural Impact:** New conservative metadata evidence gate and 13 traceable requirements; integrated acceptance-campaign status; source-gated numerical screens for lifting and steady thermal design; safety-critical risk classification tightened to prevent Stage D bypass. Does not create actuator pathways or change approved vessel dimensions.
 - **Safety Impact:** Prevent false acceptance from incomplete, mismatched or self-attested evidence. Actual engineering qualification and physical tests remain mandatory.
 - **Cybersecurity Impact:** Evidence URLs are treated as untrusted references; no fetching, external token handling or authentication claim is added.
 
 ### 3. Verification & Evidence Plan
-- **Verification Plan:** Compile TypeScript; Vitest must cover 13 IDs/5 domains, missing evidence, stale SHA, duplicate/unknown IDs and self-attested false approval. CI must build cleanly. Independent discipline review and physical acceptance separately required.
-- **Risk Assessment:** HIGH
-- **Review Evidence:** Draft MAR-01 branch, CI check and independent review pending. See docs/MAR01_MARINE_SYSTEMS_INTEGRATION.md.
+- **Verification Plan:** Compile TypeScript; Vitest must cover 13 IDs/5 domains, missing evidence, stale SHA, duplicate/unknown IDs, self-attested false approval, unequal sling forces, angle-amplified tension, thermal margins, invalid inputs and governance risk classification. CI must build cleanly. Stage E must block without exact-baseline Director authorization. Independent discipline review and physical acceptance separately required.
+- **Risk Assessment:** CRITICAL
+- **Review Evidence:** Proposed PR #42; software CI checks and later Stage E sign-off pending. See docs/MAR01_MARINE_SYSTEMS_INTEGRATION.md and docs/MAR01_VERIFICATION_PROTOCOLS.md.
 
 ### 4. Human Authority Approval & Closure Record
 - **Approval Record:** PENDING; independent and human engineering approval not yet obtained.
