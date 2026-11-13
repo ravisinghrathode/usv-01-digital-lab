@@ -1,5 +1,5 @@
 /**
- * Research-led iterative concept screening. Actual A05 proposer and A15 critic
+ * Research-led iterative concept screening. Actual A01 systems proposer and A15 critic
  * are invoked through ExecutionEngine; deterministic tools screen explicit
  * hypotheses. It NEVER promotes a model's numbers to the engineering baseline.
  *
@@ -139,7 +139,7 @@ export async function runAgentDesignLoop(
 ): Promise<DesignLoopReport> {
   validateInput(input);
   const registry = AgentRegistry.getInstance();
-  const proposer = registry.requireAgent('A05');
+  const proposer = registry.requireAgent('A01');
   const critic = registry.requireAgent('A15');
   const optimizer = GenerativeDesignOptimizer.getInstance();
   optimizer.resetOptimizer(input.seed);
@@ -231,7 +231,7 @@ export async function runAgentDesignLoop(
         rawAgentAssumptions: proposal.assumptions,
         noPhysicalOrReferenceValidation: true
       },
-      priorAgentOutputs: { proposerA05: { ...screened, openTbdItems: proposal.openTbdItems } },
+      priorAgentOutputs: { proposerA01: { ...screened, openTbdItems: proposal.openTbdItems } },
       userNotes: 'Critically review uncertainty, unsupported data, hull assumptions, tool failure, alternative topology, hydrostatics and powering. Demand actual source verification and revised design; do not self-approve. All numbers are preliminary.'
     };
     const challenge = await executeAgent(critic.id, critiqueInput);
