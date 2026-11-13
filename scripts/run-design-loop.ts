@@ -46,7 +46,8 @@ async function main() {
     sourceReferences: (mission.researchSources || []) as { reference: string; description: string }[],
     objectives: (mission.objectives || []) as import('../src/core/optimizer/AgentDesignLoop.ts').PreliminaryObjective[],
     comparisonMode: mission.comparisonMode === 'FIXED_CONDITIONS_RESCREEN' ? 'FIXED_CONDITIONS_RESCREEN' : 'STRICT',
-    specialistReviews: 'AUTO'
+    specialistReviews: 'AUTO',
+    disciplinePackages: (mission.disciplinePackages || []) as import('../src/core/optimizer/AgentDesignLoop.ts').DisciplineInputPackage[]
   });
   const filename = path.join(outDir, runId + '-UNVERIFIED.json');
   fs.writeFileSync(filename, JSON.stringify({missionDigest,preflight,report}, null, 2) + '\n', { mode: 0o600 });
