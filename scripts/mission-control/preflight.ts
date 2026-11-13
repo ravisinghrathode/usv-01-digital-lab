@@ -27,6 +27,17 @@ if (exposedBillingVars.length) {
   console.warn(`WARN shell contains ${exposedBillingVars.length} API/provider credential variable(s); Mission Control strips them before child execution.`);
 }
 
-console.log('\nAuthentication is intentionally not probed here because that would consume model usage.');
-console.log('Run Codex CLI interactively once on the Mac and sign in with the intended ChatGPT subscription/account.');
+// Official Codex CLI login status checks credentials without any model call.
+const auth = spawnSync('codex', ['login', 'status'], {
+  encoding: 'utf8', timeout: 8000, env: sanitizedSubscriptionEnvironment()
+});
+const authMode = ((auth.stdout || '') + ' ' + (auth.stderr || '')).toLowerCase();
+if (auth.status === 0 && authMode.includes('chatgpt') &&
+    !/api[- ]?key|access token/.test(authMode)) {
+  console.log('PASS ChatGPT OAuth subscription session is active; no model tokens consumed.');
+} else {
+  failed = true;
+  console.error('FAIL Codex is not authenticated with the intended ChatGPT account (API-key mode is refused).');
+}
+console.log('This preflight does not execute any of the 26 specialist agents.');
 if (failed) process.exitCode = 1;
