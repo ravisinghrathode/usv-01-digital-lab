@@ -40,7 +40,7 @@ export interface DesignLoopRequirements {
   maxRevisions: number;
   missionStatement: string;
   requirements: readonly { id: string; statement: string; source: string }[];
-  sourceReferences: readonly { reference: string; description: string }[];
+  sourceReferences: readonly { reference: string; description: string; sha256?:string; url?:string }[];
   objectives?: readonly PreliminaryObjective[];
   specialistReviews?: 'AUTO' | 'OFF';
   comparisonMode?: 'STRICT' | 'FIXED_CONDITIONS_RESCREEN';
@@ -113,7 +113,7 @@ const supported = new Set([
   'speedKnots', 'propulsiveEfficiencyEtaD', 'waterTempCelsius'
 ]);
 
-function extractUnverifiedNumbers(output: AgentExecutionOutput, sourceReferences: readonly { reference: string; description: string }[]) {
+function extractUnverifiedNumbers(output: AgentExecutionOutput, sourceReferences: readonly { reference: string; description: string; sha256?:string; url?:string }[]) {
   const raw: unknown = output.data?.modelSuggestedKeyMetrics;
   const rawClaims: unknown = output.data?.metricProvenance;
   const numbers: Record<string, number> = {};
@@ -134,7 +134,9 @@ function extractUnverifiedNumbers(output: AgentExecutionOutput, sourceReferences
       typeof sourceReference === 'string' && sourceReference.trim().length >= 3 &&
       typeof justification === 'string' && justification.trim().length >= 5;
     if (!authenticShape || (sourceKind === 'SOURCE_DOCUMENT' &&
-      !sourceReferences.some(src => src.reference === sourceReference))) {
+      !sourceReferences.some(src => src.reference === sourceReference &&
+        typeof src.sha256 === 'string' && /^sha256:[0-9a-f]{64}$/.test(src.sha256) &&
+        typeof src.url === 'string' && /^https:\/\//.test(src.url)))) {
       unsubstantiated.push(key+': malformed/undisclosed source, not eligible even for screening'); continue;
     }
     // Metadata is never proof: source claims require independent authentication.
