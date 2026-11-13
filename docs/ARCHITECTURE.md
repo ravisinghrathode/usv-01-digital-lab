@@ -6,6 +6,8 @@ The **USV-01 Digital Engineering Lab** is a modular, deterministic multi-agent p
 
 ---
 
+**Operating authority boundary:** The [26-Agent Operating Charter v1.0 (proposed)](governance/USV01_26_AGENT_OPERATING_CHARTER_V1.md) specifies the intended division of authority, evidence classes, coupled-iteration acceptance criteria and open engineering blockers. It is a governance *proposal*, not implemented proof of 26-agent convergence, verified naval engineering, or vessel release. Current implementation limits remain described below.
+
 ## 2. Definitive 26-Agent Organization
 
 The 26 canonical agents are organized into **8** source-defined functional divisions. This table is a documentation snapshot; the authoritative IDs, names, divisions, reporting lines, dependencies and permissions are in [`src/core/agents/definitions.ts`](../src/core/agents/definitions.ts). Historical role aliases do not confer current responsibilities.
