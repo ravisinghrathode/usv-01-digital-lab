@@ -66,6 +66,43 @@ describe('Remote CFD/FEA job evidence', () => {
     expect(result.issues.join(' ')).toMatch(/grid-convergence/);
   });
 
+  it('uses source-defined OpenFOAM initial residualControl and solver convergence instead of max final linear residual', async () => {
+    const manifest=createSolverJobManifest({
+      ...raw(),
+      qualityPlan:{...raw().qualityPlan,
+        initialResidualThresholds:{p:1e-4,'U*':1e-6,k:1e-5,omega:1e-5},
+        requireSolverDeclaredConvergence:true}
+    });
+    const result=await pollRemoteSolverJob(manifest,async jobId=>({
+      jobId,acceptedInputDigest:manifest.manifestSha256,
+      state:'COMPUTE_DONE_EVIDENCE_PENDING',
+      solverVersion:'OpenFOAM-v2606',
+      outputArtifactUri:'https://solver.example.org/artifacts/'+jobId,
+      outputSha256:d,
+      quality:{finalResidual:8e-4,gridUncertaintyFraction:null,
+        maximumMeshSkewness:0.2,maximumNonOrthogonalityDeg:20,
+        initialResidualsByField:{p:9e-5,Ux:9e-7,Uy:8e-7,k:9e-6,omega:8e-6},
+        solverDeclaredConverged:true,convergedIterations:321}
+    }));
+    expect(result.status).toBe('COMPUTE_DONE_EVIDENCE_PENDING');
+    expect(result.meshAndResidualScreenPassed).toBe(true);
+    expect(result.issues.join(' ')).not.toMatch(/residualControl thresholds not met/);
+
+    const rejected=await pollRemoteSolverJob(manifest,async jobId=>({
+      jobId,acceptedInputDigest:manifest.manifestSha256,
+      state:'COMPUTE_DONE_EVIDENCE_PENDING',
+      solverVersion:'OpenFOAM-v2606',
+      outputArtifactUri:'https://solver.example.org/artifacts/'+jobId,
+      outputSha256:d,
+      quality:{finalResidual:1e-8,gridUncertaintyFraction:null,
+        maximumMeshSkewness:0.2,maximumNonOrthogonalityDeg:20,
+        initialResidualsByField:{p:9e-5,Ux:9e-7,Uy:8e-7,k:9e-6,omega:8e-6},
+        solverDeclaredConverged:false}
+    }));
+    expect(rejected.status).toBe('REJECTED');
+    expect(rejected.issues.join(' ')).toMatch(/did not declare SIMPLE/);
+  });
+
   it('rejects computed receipts missing retained artifacts, version or mesh quality', async () => {
     const manifest=createSolverJobManifest(raw());
     const missing=await pollRemoteSolverJob(manifest,async jobId=>({
