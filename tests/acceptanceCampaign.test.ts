@@ -22,6 +22,9 @@ describe('Single-pass USV-01 acceptance campaign', () => {
     expect(result.structurallyValid).toBe(true);
     expect(result.agentFindings.every(x => x.configurationValid)).toBe(true);
     expect(result.agentFindings.every(x => !x.liveProviderExecutionVerified && !x.independentlyValidated)).toBe(true);
+    expect(result.resistancePropulsion.status).toBe('MISSING_EVIDENCE');
+    expect(result.resistancePropulsion.releaseApproved).toBe(false);
+    expect(result.resistancePropulsion.missingGates).toContain('RES-01-A');
     expect(result.acceptedWorkstreams).toBe(0);
     expect(result.pendingWorkstreams).toBe(13);
     expect(result.releaseApproved).toBe(false);
@@ -58,6 +61,7 @@ describe('Single-pass USV-01 acceptance campaign', () => {
   it('generates human-readable report with every workstream and explicit non-certification', () => {
     const report = acceptanceCampaignMarkdown(runAcceptanceCampaign({ baselineSha: sha }));
     expect(report).toContain('NOT APPROVED');
+    expect(report).toContain('RES-01 numerical evidence screening: MISSING_EVIDENCE');
     for (const workstream of CAMPAIGN_WORKSTREAMS) expect(report).toContain(workstream.id);
   });
 });
