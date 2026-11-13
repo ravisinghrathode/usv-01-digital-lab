@@ -140,6 +140,7 @@ jobs:
             USV_SOLVER_WORK_DIR="$ROOT/work"
             USV_SOLVER_ARTIFACT_DIR="$ROOT/artifacts"
             USV_SOLVER_BIN_PATH="/usr/bin:/bin"
+            USV_OPENFOAM_PROJECT_DIR="/usr/share/openfoam"
             USV_SOLVER_CPU_SECONDS="1200"
             USV_SOLVER_ADDRESS_SPACE_BYTES="$((6*1024*1024*1024))"
             USV_SOLVER_FILE_BYTES="$((2*1024*1024*1024))"
@@ -338,7 +339,7 @@ jobs:
           rm -rf "$ROOT/case/0"
           cp -rL "$ROOT/case/0.kOmegaSST" "$ROOT/case/0"
           cp "$ROOT/case/constant/turbulenceProperties-kOmegaSST" "$ROOT/case/constant/turbulenceProperties"
-          (cd "$ROOT/case" && blockMesh > blockMesh.log 2>&1)
+          (cd "$ROOT/case" && WM_PROJECT_DIR=/usr/share/openfoam blockMesh > blockMesh.log 2>&1)
           (cd "$ROOT/case" && zip -qr "$ROOT/case.zip" .)
           npm exec -- tsx scripts/generate-known-solver-manifest.ts -- \
             --source-sha "$PR_HEAD_SHA" \
