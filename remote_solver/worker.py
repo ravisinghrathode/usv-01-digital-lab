@@ -152,11 +152,21 @@ def _limit_resources() -> None:
         resource.setrlimit(resource.RLIMIT_NPROC, (policy["processes"], policy["processes"]))
     os.setsid()
 
+def _host_solver_argv(argv: list[str]) -> list[str]:
+    wrapper = os.environ.get("USV_OPENFOAM_WRAPPER", "").strip()
+    if wrapper and argv and argv[0] in ("simpleFoam", "checkMesh"):
+        path = Path(wrapper)
+        if not path.is_absolute() or not re.fullmatch(r"openfoam[0-9]+", path.name):
+            raise RuntimeError("USV_OPENFOAM_WRAPPER must be an absolute versioned OpenFOAM wrapper")
+        return [wrapper, *argv]
+    return argv
+
 def _wrapped_argv(argv: list[str], isolation_mode: str) -> list[str]:
+    host_argv = _host_solver_argv(argv)
     if isolation_mode == "UNSHARE_NET":
-        return ["unshare", "--net", "--", *argv]
+        return ["unshare", "--net", "--", *host_argv]
     if isolation_mode == "TEST_NO_NAMESPACE":
-        return argv
+        return host_argv
     raise ValueError("Unsupported network-isolation mode")
 
 def _solver_environment(case: Path) -> dict[str, str]:
