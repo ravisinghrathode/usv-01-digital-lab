@@ -38,7 +38,8 @@ async function main() {
   };
   const cases = compileCodexAgentCases(catalog);
   const preflight = await preflightCodexAgentCases(cases);
-  const preflightPath = path.resolve(execute ? 'data/codex-26-agent-preflight.json' : 'governance/reports/codex-26-agent-preflight.json');
+  // Local preflight must not dirty the pinned source before --execute.
+  const preflightPath = path.resolve('data/codex-26-agent-preflight.json');
   fs.mkdirSync(path.dirname(preflightPath), { recursive: true });
   fs.writeFileSync(preflightPath, JSON.stringify({
     ...preflight, ...provenance, catalogClassification: catalog.dataClassification,

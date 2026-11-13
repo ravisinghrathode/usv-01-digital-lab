@@ -77,7 +77,7 @@ workflow has offline and trusted-self-hosted-live modes. A synthetic catalog
 can verify model execution but cannot establish real engineering accuracy or
 baseline release.
 
-See [26-Agent Operational Acceptance Protocol](docs/USV01_26_AGENT_OPERATIONAL_ACCEPTANCE.md)
+See [current agent readiness](docs/AGENT_READINESS_20261114.md), [26-Agent Operational Acceptance Protocol](docs/USV01_26_AGENT_OPERATIONAL_ACCEPTANCE.md)
 and [Laboratory Commissioning Protocol](docs/LAB_COMMISSIONING_PROTOCOL.md).
 
 ## Two-stage authority model
