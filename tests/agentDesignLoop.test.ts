@@ -17,7 +17,11 @@ const makeOutput = (agentId: string, input: AgentExecutionInput, metrics: Record
   status: 'NEEDS_HUMAN_APPROVAL',
   providerExecutionMode: provider === 'mock' ? 'SYNTHETIC_TEST_MOCK' : 'LIVE_AI_GENERATION',
   provider, evidenceValid: false, verificationStatus: 'UNVERIFIED',
-  data: { modelSuggestedKeyMetrics: metrics, designDecisions: ['Check unsupported hull assumptions'] },
+  data: { modelSuggestedKeyMetrics: metrics,
+    metricProvenance: Object.fromEntries(Object.keys(metrics).map(k => [k,
+      {sourceKind:'HYPOTHESIS',sourceReference:'SYNTHETIC_UNIT_TEST_ASSUMPTION',
+        justification:'Explicitly hypothetical finite numerical unit-test value'}])),
+    designDecisions: ['Check unsupported hull assumptions'] },
   assumptions: [], deterministicToolEvidence: [], openTbdItems: ['Approved hull offsets missing'],
   warnings: [], recommendations: ['Revisit assumptions'], requiresDirectorApproval: true
 });
