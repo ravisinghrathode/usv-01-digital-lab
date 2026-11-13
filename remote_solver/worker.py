@@ -97,6 +97,17 @@ def validate_request(manifest: dict, approved: set[str]) -> None:
             raise ValueError("Malformed quality threshold")
     if plan["gridUncertaintyMaxFraction"] > 1 or plan["maxNonOrthogonalityDeg"] > 180:
         raise ValueError("Out-of-range quality threshold")
+    field_thresholds = plan.get("initialResidualThresholds")
+    if field_thresholds is not None:
+        if manifest.get("family") != "OPENFOAM_CFD" or not isinstance(field_thresholds, dict) or not field_thresholds:
+            raise ValueError("Field-specific residual thresholds require a nonempty OpenFOAM mapping")
+        for selector, threshold in field_thresholds.items():
+            if not isinstance(selector, str) or not re.fullmatch(r"[A-Za-z][A-Za-z0-9_]*(?:\\*)?", selector):
+                raise ValueError("Malformed residual field selector")
+            if not _finite_number(threshold) or float(threshold) <= 0:
+                raise ValueError("Malformed field-specific residual threshold")
+    if plan.get("requireSolverDeclaredConvergence") not in (None, True, False):
+        raise ValueError("requireSolverDeclaredConvergence must be boolean")
     if manifest.get("family") == "CALCULIX_FEA":
         if not _finite_number(plan.get("maxElementAspectRatio")) or float(plan["maxElementAspectRatio"]) < 1:
             raise ValueError("CalculiX jobs require maxElementAspectRatio >= 1")
