@@ -164,7 +164,7 @@ def _host_solver_argv(argv: list[str]) -> list[str]:
 def _wrapped_argv(argv: list[str], isolation_mode: str) -> list[str]:
     host_argv = _host_solver_argv(argv)
     if isolation_mode == "UNSHARE_NET":
-        return ["unshare", "--net", "--", *host_argv]
+        return ["unshare", "--user", "--map-root-user", "--net", "--", *host_argv]
     if isolation_mode == "TEST_NO_NAMESPACE":
         return host_argv
     raise ValueError("Unsupported network-isolation mode")
