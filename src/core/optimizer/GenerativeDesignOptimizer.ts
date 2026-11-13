@@ -1,8 +1,8 @@
 /**
  * USV-01 Generative Multi-Agent Design Optimization Engine
- * Executes evolutionary design space exploration with deterministic naval physics,
- * 25-agent multi-disciplinary consensus voting, multi-sea-state Monte Carlo survivability gates,
- * Sobol parameter sensitivity indices, permanent learned invariants, and executive defense logging.
+ * LEGACY EXPLORATORY SCENARIO GENERATOR ONLY. Uses assumed coefficients and
+ * synthetic scoring/votes; outputs are not live 26-agent calculations, validated
+ * hydrostatics, powering, stability or regulatory compliance evidence.
  */
 
 import { calculateSavitskyPlaning, SavitskyInputs } from '../../utils/navalCalculators';
@@ -1141,16 +1141,16 @@ export class GenerativeDesignOptimizer {
     const vetoes = c.agentEvaluations25.filter(a => a.vote === 'VETO').length;
 
     return `# USV-01 DIGITAL LAB | EXECUTIVE NAVAL DESIGN DEFENSE DOSSIER
-**Document Control:** USV-01-DEF-DOSSIER-REV-1.0
-**Certified Candidate:** ${c.id} (Generation #${c.generation})
+**Document Control:** USV-01-DEF-DOSSIER-REV-1.0 (SCREENING / NOT FOR DESIGN RELEASE)
+**UNVERIFIED EXPLORATORY CANDIDATE:** ${c.id} (Generation #${c.generation})
 **Design Philosophy:** ${c.philosophy}
 **Composite Multi-Objective Fitness:** ${c.fitnessScore} / 100
-**Consensus Status:** ${c.status} (${concurs} Concur, ${reservations} Reservation, ${vetoes} Veto)
+**Synthetic heuristic vote status (NOT actual agent consensus):** ${c.status} (${concurs} Concur, ${reservations} Reservation, ${vetoes} Veto)
 
 ---
 
 ## 1. Executive Summary & Design Justification
-This dossier provides the mathematical, hydrodynamic, and structural defense for the **USV-01 Autonomous Patrol Vessel** selected by the Generative Multi-Agent Optimization Engine. Through **${this.currentGeneration} iterative generational trials**, the 25 specialized AI agents explored the design space bounded by deterministic naval physics, synthesizing permanent boundary invariants to avoid local minima and eliminate capsize or structural failures.
+**WARNING — SCREENING ONLY.** All numbers below are illustrative outputs from a legacy heuristic generator with undocumented/uncalibrated assumptions. No verified vessel geometry, loading, resistance, propulsion efficiency, independent FEA, external source authentication or real 26-agent project-specific debate is demonstrated. This is NOT an engineering design certificate, regulatory compliance statement or authorization to update the controlled baseline. The synthetic scoring cannot establish capsize prevention, structures, performance, or suitability.
 
 ### Primary Geometry & Performance Parameters:
 - **Hull Topology Architecture:** **${c.hullType}**
@@ -1159,11 +1159,11 @@ This dossier provides the mathematical, hydrodynamic, and structural defense for
 - **Operating Draft (T):** ${c.draftMeters} m
 - **Transom Deadrise (β):** ${c.deadriseDeg}°
 - **Full Load Displacement (Δ):** ${c.displacementTonnes} metric tonnes
-- **Transverse Metacentric Height (GMt):** **${c.gmtMeters} m** *(IMO MSC.267 threshold: >= 0.35m)*
+- **Transverse Metacentric Height (GMt):** **${c.gmtMeters} m** *(unverified approximation; NO IMO compliance claim)*
 - **Installed Electric Propulsion:** ${c.motorKwTotal} kW twin PMSM pods
 - **Battery Storage (ESS):** ${c.batteryKwh} kWh LiFePO4
 - **Sprint Speed:** ${c.sprintSpeedKnots} knots
-- **Patrol Endurance @ 14kt Cruise:** **${c.enduranceHours} hours** *(Baseline req: >= 8.0h)*
+- **Patrol Endurance @ 14kt Cruise:** **${c.enduranceHours} hours** *(illustrative scenario only; mission requirement unconfirmed)*
 - **Total Operational Range:** ${c.rangeNm} nautical miles
 
 ---
@@ -1176,12 +1176,12 @@ ${c.seaStates.map(s => `| **SS ${s.seaState}** (${s.description}) | ${s.signific
 ---
 
 ## 3. Global Sobol Parameter Sensitivity Decomposition
-Understanding parameter sensitivities guarantees the design is robust and not resting at an unstable local edge:
+These heuristic sensitivity indicators are unvalidated and do not establish robustness:
 ${c.sobolSensitivities.map(s => `- **${s.displayName}**: First-Order S_i = **${s.firstOrderIndex}**, Total S_Ti = **${s.totalEffectIndex}**\n  *Impact:* ${s.primaryTarget}\n  *Guidance:* ${s.architecturalGuidance}`).join('\n')}
 
 ---
 
-## 4. 25-Agent Full Concurrence & Veto Audit Matrix
+## 4. Synthetic Heuristic Voting Matrix — NOT Real Agent Execution
 | Agent ID | Discipline | Vote | Evaluated Criterion | Engineering Justification |
 | :--- | :--- | :--- | :--- | :--- |
 ${c.agentEvaluations25.map(a => `| **${a.agentId}** | ${a.name} | **${a.vote}** | ${a.metric} | ${a.rationale} |`).join('\n')}
@@ -1189,7 +1189,7 @@ ${c.agentEvaluations25.map(a => `| **${a.agentId}** | ${a.name} | **${a.vote}** 
 ---
 
 ## 5. Architectural Trade-Off Matrix: Catamaran vs Monohull
-The 25 agents subjected both topologies to competitive generational trials:
+Unvalidated heuristic assumptions were used for this illustrative comparison; these are NOT independently researched vendor or model results:
 
 | Evaluation Dimension | Catamaran Topology | Monohull Topology | Engineering Verdict |
 | :--- | :--- | :--- | :--- |
@@ -1202,7 +1202,7 @@ The 25 agents subjected both topologies to competitive generational trials:
 
 ---
 
-## 6. Permanent Learned Invariants Ledger
+## 6. Heuristic Rules Ledger — NOT Validated Invariants
 During trial-and-error exploration, rejected candidates were subjected to automated Root Cause Analysis, producing permanent boundary rules that prevented future failures:
 ${this.learnedInvariants.map(inv => `### [${inv.id}] Discovered at Generation #${inv.discoveredAtGeneration} by ${inv.agentId} (${inv.category})
 - **Rule:** ${inv.ruleStatement}
@@ -1214,11 +1214,11 @@ ${this.learnedInvariants.map(inv => `### [${inv.id}] Discovered at Generation #$
 ${this.generateRedTeamChallenge().map((q, idx) => `### Question ${idx + 1}: ${q.question}
 **Scrutiny Category:** ${q.skepticismCategory}
 **Vulnerability Audited:** ${q.candidateVulnerability}
-**Certified Engineering Defense:** ${q.engineeringDefense}
-**Mathematical Proof:** \`${q.verifiedMath}\``).join('\n\n')}
+**Unverified Heuristic Defense:** ${q.engineeringDefense}
+**Screening Formula (not validated):** \`${q.verifiedMath}\``).join('\n\n')}
 
 ---
-*Dossier Generated deterministically by USV-01 Generative Design Optimizer Engine. ISO 12215 / IMO MSC.267 compliant.*
+*Illustrative deterministic scenario only. NOT certified, NOT independently verified, NOT ISO 12215 or IMO-compliant evidence. Project Lead concept selection requires an evidence-backed multi-agent trade review; safety release requires qualified engineering approvals.*
 `;
   }
 }
