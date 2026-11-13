@@ -654,9 +654,9 @@ export const INITIAL_MATERIALS: MaterialRecord[] = [
 ];
 
 export const INITIAL_LOAD_CASES: LoadCaseRecord[] = [
-  { id: 'LC-01', title: 'Bottom slamming pressure and local hull panel integrity', loadType: 'Bottom Slamming', governingStandard: 'TBD — applicability of ISO 12215-5 / class rules under review', designPressureOrForce: 'TBD — no approved pressure field', safetyFactorTarget: 2.2, feaStatus: 'TBD — illustrative screening only' },
-  { id: 'LC-02', title: 'Hull-girder hogging and sagging bending', loadType: 'Hull Girder Bending', governingStandard: 'TBD — applicable hull structure design basis', designPressureOrForce: 'TBD — requires geometry, weights and wave design loads', safetyFactorTarget: 2.0, feaStatus: 'TBD — no verified global FEA' },
-  { id: 'LC-03', title: 'Crane lift and asymmetric sling / connection loads', loadType: 'Crane Lift', governingStandard: 'TBD — lifting equipment, national law and approved rigging basis', designPressureOrForce: 'TBD — handling mass, dynamic factor, CG and point shares unapproved', safetyFactorTarget: 3.0, feaStatus: 'TBD — lifting points not released' }
+  { id: 'LC-01', title: 'Bottom slamming pressure and local hull panel integrity', loadType: 'Bottom Slamming', governingStandard: 'TBD — applicability of ISO 12215-5 / class rules under review', designPressureOrForce: 'TBD — no approved pressure field', safetyFactorTarget: 'TBD', feaStatus: 'TBD — illustrative screening only' },
+  { id: 'LC-02', title: 'Hull-girder hogging and sagging bending', loadType: 'Hull Girder Bending', governingStandard: 'TBD — applicable hull structure design basis', designPressureOrForce: 'TBD — requires geometry, weights and wave design loads', safetyFactorTarget: 'TBD', feaStatus: 'TBD — no verified global FEA' },
+  { id: 'LC-03', title: 'Crane lift and asymmetric sling / connection loads', loadType: 'Crane Lift', governingStandard: 'TBD — lifting equipment, national law and approved rigging basis', designPressureOrForce: 'TBD — handling mass, dynamic factor, CG and point shares unapproved', safetyFactorTarget: 'TBD', feaStatus: 'TBD — lifting points not released' }
 ];
 
 export const INITIAL_POWER_LOADS: PowerLoadItem[] = [
