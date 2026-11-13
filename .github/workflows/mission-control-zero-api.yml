@@ -1,0 +1,61 @@
+name: USV-01 Mission Control Zero-API Gate
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'src/core/mission-control/**'
+      - 'scripts/mission-control/**'
+      - 'tests/missionControlCoordinator.test.ts'
+      - 'tests/subscriptionCliAdapter.test.ts'
+      - 'Dockerfile'
+      - '.dockerignore'
+      - 'docker-compose.yml'
+      - 'package.json'
+      - '.github/workflows/mission-control-zero-api.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  zero-api-mission-control:
+    runs-on: ubuntu-latest
+    env:
+      AI_REVIEW_PROVIDER: deterministic
+      USV_ALLOW_PAID_AI_API: "false"
+      USV_SUBSCRIPTION_PILOT: disabled
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Assert paid model credentials are not supplied
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in GEMINI_API_KEY OPENAI_API_KEY ANTHROPIC_API_KEY; do
+            if [[ -n "${!name:-}" ]]; then
+              echo "Forbidden paid API credential exposed to Mission Control CI: $name" >&2
+              exit 1
+            fi
+          done
+
+      - name: Typecheck
+        run: npm run lint
+
+      - name: Mission Control regression tests
+        run: npm run mission-control:test
+
+      - name: Validate Docker Compose
+        run: docker compose config --quiet
+
+      - name: Build local deterministic image
+        run: docker compose build usv-lab
