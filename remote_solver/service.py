@@ -22,6 +22,8 @@ IDS = re.compile(r"^[A-Za-z0-9_-]{3,64}$")
 TOKEN = os.environ.get("USV_SOLVER_SERVICE_TOKEN", "")
 STAGE = Path(os.environ.get("USV_SOLVER_STAGING_DIR", "/var/lib/usv-solver/staged"))
 WORK = Path(os.environ.get("USV_SOLVER_WORK_DIR", "/var/lib/usv-solver/work"))
+ARTIFACTS = Path(os.environ.get("USV_SOLVER_ARTIFACT_DIR", "/var/lib/usv-solver/artifacts"))
+OUTPUT_BASE_URI = os.environ.get("USV_SOLVER_OUTPUT_BASE_URI", "").rstrip("/")
 APPROVED = set(filter(None, os.environ.get("USV_SOLVER_APPROVED_ARTIFACT_DIGESTS", "").split(",")))
 POOL = ThreadPoolExecutor(max_workers=1)
 STATE: dict[str, dict] = {}
@@ -32,7 +34,19 @@ def _run(manifest: dict, ref: str) -> None:
     with LOCK:
         STATE[ref]["state"] = "RUNNING"
     try:
-        receipt = run_staged_case(manifest, STAGE, WORK, APPROVED)
+        receipt = run_staged_case(
+            manifest, STAGE, WORK, APPROVED, artifact_root=ARTIFACTS,
+            isolation_mode="UNSHARE_NET")
+        local_path = receipt.pop("outputArtifactLocalPath", None)
+        if local_path:
+            receipt["outputArtifactUri"] = (
+                OUTPUT_BASE_URI + "/artifacts/" + ref
+                if OUTPUT_BASE_URI.startswith("https://") else None
+            )
+        ARTIFACTS.mkdir(parents=True, exist_ok=True, mode=0o700)
+        receipt_file = ARTIFACTS / (ref + "-receipt.json")
+        receipt_file.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n")
+        os.chmod(receipt_file, 0o600)
         with LOCK:
             STATE[ref] = {
                 **receipt,
@@ -98,6 +112,24 @@ class Handler(BaseHTTPRequestHandler):
         if not self._authorized():
             self._write(401, {"error": "Unauthorized"})
             return
+        if self.path.startswith("/artifacts/"):
+            ref = self.path.removeprefix("/artifacts/")
+            if not IDS.fullmatch(ref):
+                self._write(404, {"error": "Not Found"})
+                return
+            archive = ARTIFACTS / (ref + "-solver-evidence.zip")
+            if archive.is_symlink() or not archive.is_file():
+                self._write(404, {"error": "Artifact unavailable"})
+                return
+            body = archive.read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/zip")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("X-Content-Type-Options", "nosniff")
+            self.end_headers()
+            self.wfile.write(body)
+            return
         ref = self.path.removeprefix("/jobs/")
         if not self.path.startswith("/jobs/") or not IDS.fullmatch(ref):
             self._write(404, {"error": "Not Found"})
@@ -105,6 +137,13 @@ class Handler(BaseHTTPRequestHandler):
         with LOCK:
             state = STATE.get(ref)
             snapshot = state.copy() if state else None
+        if snapshot is None:
+            receipt_file = ARTIFACTS / (ref + "-receipt.json")
+            if receipt_file.is_file() and not receipt_file.is_symlink():
+                try:
+                    snapshot = json.loads(receipt_file.read_text())
+                except (OSError, json.JSONDecodeError):
+                    snapshot = None
         self._write(200, snapshot) if snapshot else self._write(404, {"error": "Unknown job"})
 
     def log_message(self, format, *args):
@@ -113,6 +152,6 @@ class Handler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    if len(TOKEN) < 32 or not APPROVED:
-        raise SystemExit("USV_SOLVER_SERVICE_TOKEN (>=32 chars) and approved case hashes required")
+    if len(TOKEN) < 32 or not APPROVED or (OUTPUT_BASE_URI and not OUTPUT_BASE_URI.startswith("https://")):
+        raise SystemExit("Strong token, approved case hashes and HTTPS output base (when set) required")
     ThreadingHTTPServer(("127.0.0.1", 8707), Handler).serve_forever()
