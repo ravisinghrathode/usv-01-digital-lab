@@ -43,6 +43,7 @@ export interface DesignLoopRequirements {
   sourceReferences: readonly { reference: string; description: string }[];
   objectives?: readonly PreliminaryObjective[];
   specialistReviews?: 'AUTO' | 'OFF';
+  comparisonMode?: 'STRICT' | 'FIXED_CONDITIONS_RESCREEN';
 }
 
 export interface ScreenedProposal {
@@ -88,6 +89,7 @@ export interface DesignLoopReport {
   completedAgentCalls: number;
   completedToolScreens: number;
   specialistReviewCount: number;
+  fixedConditionScreens: Array<{revisionIndex:number;objectiveId:string;toolId:string;inputDigest:string;outputDigest:string;success:boolean;reason?:string}>;
   comparison: {
     status: 'UNRANKED_NO_OBJECTIVES' | 'UNRANKED_INCOMPARABLE' | 'COMPARISON_READY_UNVERIFIED';
     rankings: { revisionIndex: number; relativeScore: number; objectiveValues: Record<string, number> }[];
@@ -178,6 +180,7 @@ function validateInput(x: DesignLoopRequirements) {
     }
   }
   if (x.specialistReviews !== undefined && !['AUTO','OFF'].includes(x.specialistReviews)) throw new Error('Unrecognized specialist review mode');
+  if (x.comparisonMode !== undefined && !['STRICT','FIXED_CONDITIONS_RESCREEN'].includes(x.comparisonMode)) throw new Error('Unrecognized comparison mode');
   if (x.objectives !== undefined) {
     if (!Array.isArray(x.objectives) || x.objectives.length > 8) {
       throw new Error('Objectives must contain at most eight source-identified metrics');
@@ -258,6 +261,66 @@ function compareRevisions(revisions: readonly DesignRevision[], objectives: read
   return comparison;
 }
 
+/**
+ * Recalculate preliminary designs at identical declared mission conditions.
+ * Changes only the comparison input, NEVER the original proposal/baseline.
+ * Restricted to the documented monohull resistance screening calculator.
+ */
+async function fixedConditionCompare(
+ revisions: readonly DesignRevision[],
+ objectives: readonly PreliminaryObjective[] | undefined,
+ executeTool: ScreeningToolExecutor
+):Promise<{comparison:DesignLoopReport['comparison'];screens:DesignLoopReport['fixedConditionScreens']}> {
+  const comparison:DesignLoopReport['comparison'] = {
+    status:'UNRANKED_NO_OBJECTIVES',rankings:[],excluded:[],
+    referenceConditionsFromMission:[],externallyValidated:false,approvedDesignSelected:false
+  };
+  const screens:DesignLoopReport['fixedConditionScreens'] = [];
+  if(!objectives?.length) return {comparison,screens};
+  comparison.referenceConditionsFromMission = objectives.map(o=>
+    o.id + ': fixed condition '+JSON.stringify(o.fixedInputParameters)+' source: '+o.sourceReference);
+  const valid:Array<{revisionIndex:number;values:Record<string,number>}> = [];
+  for(const rev of revisions) {
+    const values:Record<string,number>={};
+    let reason='';
+    for(const o of objectives) {
+      if(rev.screened.conceptTopology!=='MONOHULL' || o.toolId!=='TOOL-RESISTANCE-01') {
+        reason='Unvalidated topology or unsupported objective tool';break;
+      }
+      const fixed = {...rev.screened.parameters,...o.fixedInputParameters};
+      const result=await executeTool(o.toolId,fixed,['CALCULATION_EXEC']);
+      const metric=result.success?result.output[o.outputMetric]:undefined;
+      const good=typeof metric==='number'&&Number.isFinite(metric);
+      screens.push({revisionIndex:rev.index,objectiveId:o.id,toolId:o.toolId,
+        inputDigest:hash(fixed),outputDigest:hash(result),success:good,
+        reason:good?undefined:result.error||'Metric missing from actual deterministic screen'});
+      if(!good){reason='Fixed-condition tool screening failed: '+o.id;break;}
+      values[o.id]=metric;
+    }
+    if(reason)comparison.excluded.push({revisionIndex:rev.index,reason});
+    else valid.push({revisionIndex:rev.index,values});
+  }
+  if(valid.length<2) {
+    comparison.status='UNRANKED_INCOMPARABLE';
+    return {comparison,screens};
+  }
+  const weightSum=objectives.reduce((a,o)=>a+o.weight,0);
+  comparison.rankings=valid.map(c=>{
+    let weighted=0;
+    for(const objective of objectives) {
+      const vals=valid.map(x=>x.values[objective.id]);
+      const low=Math.min(...vals),high=Math.max(...vals);
+      const score=high===low?0.5:objective.direction==='MAXIMIZE'?
+        (c.values[objective.id]-low)/(high-low):(high-c.values[objective.id])/(high-low);
+      weighted+=objective.weight*score/weightSum;
+    }
+    return {revisionIndex:c.revisionIndex,relativeScore:Number((100*weighted).toFixed(3)),
+      objectiveValues:c.values};
+  }).sort((a,b)=>b.relativeScore-a.relativeScore||a.revisionIndex-b.revisionIndex);
+  comparison.status='COMPARISON_READY_UNVERIFIED';
+  return {comparison,screens};
+}
+
 const failureOutput = (x: AgentExecutionOutput) => x.status === 'FAILED' || x.status === 'PARTIAL';
 
 /**
@@ -288,6 +351,7 @@ export async function runAgentDesignLoop(
     revisions: [],
     stopReason: 'MAX_REVISIONS_REACHED',
     completedAgentCalls: 0, completedToolScreens: 0, specialistReviewCount: 0,
+    fixedConditionScreens: [],
     comparison: compareRevisions([], input.objectives),
     independentEngineeringValidated: false,
     detailedDesignAuthorized: false, engineeringReleaseAuthorized: false
@@ -443,6 +507,13 @@ export async function runAgentDesignLoop(
     previousProposal = numbers;
     feedback = critique;
   }
-  report.comparison = compareRevisions(report.revisions, input.objectives);
+  if(input.comparisonMode==='FIXED_CONDITIONS_RESCREEN') {
+    const result=await fixedConditionCompare(report.revisions,input.objectives,executeTool);
+    report.comparison=result.comparison;
+    report.fixedConditionScreens=result.screens;
+    report.completedToolScreens+=result.screens.length;
+  } else {
+    report.comparison = compareRevisions(report.revisions, input.objectives);
+  }
   return report;
 }
