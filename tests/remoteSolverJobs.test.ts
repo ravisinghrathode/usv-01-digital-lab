@@ -122,6 +122,22 @@ describe('Remote CFD/FEA job evidence', () => {
     expect(result.engineeringReleaseAuthorized).toBe(false);
   });
 
+  it('retains timed-out solver receipt only as rejected diagnostic evidence', async () => {
+    const manifest=createSolverJobManifest(raw());
+    const result=await pollRemoteSolverJob(manifest,async jobId=>({
+      jobId,acceptedInputDigest:manifest.manifestSha256,
+      state:'COMPUTE_TIMEOUT_REJECTED',
+      solverVersion:'2606',
+      outputArtifactUri:'https://solver.example.org/artifacts/'+jobId,
+      outputSha256:d
+    }));
+    expect(result.status).toBe('REJECTED');
+    expect(result.issues.join(' ')).toMatch(/wall-time|Timed-out/);
+    expect(result.receipt?.outputSha256).toBe(d);
+    expect(getAgentUsableSolverEvidence(result)).toBeNull();
+    expect(result.engineeringReleaseAuthorized).toBe(false);
+  });
+
   it('rejects computed receipts missing retained artifacts, version or mesh quality', async () => {
     const manifest=createSolverJobManifest(raw());
     const missing=await pollRemoteSolverJob(manifest,async jobId=>({
