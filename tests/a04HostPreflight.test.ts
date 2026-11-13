@@ -55,6 +55,8 @@ describe('A04 trusted host evidence is fail-closed and never a release', () => {
     expect(isChatgptSubscriptionLogin('Logged in using ChatGPT', 0)).toBe(true);
     expect(isChatgptSubscriptionLogin('Logged in using API key', 0)).toBe(false);
     expect(isChatgptSubscriptionLogin('ChatGPT but access token in use', 0)).toBe(false);
+    expect(isChatgptSubscriptionLogin('not logged in using ChatGPT', 0)).toBe(false);
+    expect(isChatgptSubscriptionLogin('ChatGPT account error', 0)).toBe(false);
     expect(isChatgptSubscriptionLogin('Logged in using ChatGPT', 1)).toBe(false);
     expect(isChatgptSubscriptionLogin('', null)).toBe(false);
   });
