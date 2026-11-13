@@ -11,12 +11,16 @@ describe('Canonical 26-agent documentation alignment', () => {
     expect(new Set(MASTER_AGENTS.map(agent => agent.division)).size).toBe(8);
 
     const table = read('docs/ARCHITECTURE.md');
-    const rows = [...table.matchAll(/^\\| \\x60([A-Z0-9-]+)\\x60 \\| ([^|]+) \\| ([^|]+) \\|/gm)]
-      .map((match) => ({
-        id: match[1],
-        name: match[2].trim(),
-        division: match[3].trim()
-      }));
+    const rows = table.split('\n')
+      .filter(line => line.startsWith('| `'))
+      .map(line => {
+        const cells = line.split('|').map(cell => cell.trim());
+        return {
+          id: cells[1].replaceAll('`', ''),
+          name: cells[2],
+          division: cells[3]
+        };
+      });
 
     expect(rows).toHaveLength(26);
     expect(new Set(rows.map(row => row.id)).size).toBe(26);
