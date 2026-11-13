@@ -6,7 +6,9 @@ The scout is a **software intelligence utility**, not a 27th engineering agent, 
 
 It never clones code, installs dependencies, invokes a model, runs software from discovered repositories, modifies engineering parameters, changes the control plane, or publishes credentials. No third-party repository gains execution permissions through discovery.
 
-**Integration handoff:** After ranking candidates, the separate [Repository Integration Pipeline](REPOSITORY_INTEGRATION.md) resolves source-pinned investigation records, stages inspected source, can run expressly authorized isolated reference tests, and drafts review-only integration proposals. It does NOT automatically register or install external software in the 26-agent runtime.\n\n## Running
+**Integration handoff:** After ranking candidates, the separate [Repository Integration Pipeline](REPOSITORY_INTEGRATION.md) resolves source-pinned investigation records, stages inspected source, can run expressly authorized isolated reference tests, and drafts review-only integration proposals. It does NOT automatically register or install external software in the 26-agent runtime.
+
+## Running
 
 Node.js >=20 is sufficient (no npm install needed):
 
