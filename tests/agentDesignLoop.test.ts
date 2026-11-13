@@ -183,6 +183,23 @@ describe('Reproducible legacy scenarios and real-agent iterative design screenin
     expect(run.comparison.excluded[0].reason).toMatch(/Different.*conditions/);
   });
 
+  it('never applies a single-hull empirical calculator to catamaran numerical hypotheses', async () => {
+    const report = await runAgentDesignLoop({...mission,maxRevisions:1,specialistReviews:'AUTO' as const},
+      async (id,input) => {
+        const out = makeOutput(id,input,{lwlMeters:10,beamMeters:3,draftMeters:0.7,
+          blockCoefficientCb:0.55,displacementTonnes:11.83875,speedKnots:10,
+          propulsiveEfficiencyEtaD:0.6,waterTempCelsius:15});
+        out.data.conceptTopology='CATAMARAN';
+        return out;
+      });
+    expect(report.revisions).toHaveLength(1);
+    expect(report.revisions[0].screened.conceptTopology).toBe('CATAMARAN');
+    expect(report.completedToolScreens).toBe(0);
+    expect(report.specialistReviewCount).toBe(0);
+    expect(report.revisions[0].critique.openTbdItems.join(' ')).toContain('single-hull empirical calculators');
+    expect(report.engineeringReleaseAuthorized).toBe(false);
+  });
+
   it('rejects model-suggested dimensions without independently declared provenance', async () => {
     const result = await runAgentDesignLoop(mission, async (id, input) => {
       const output = makeOutput(id, input, { lwlMeters: 10, beamMeters: 3, draftMeters: 0.6 });
