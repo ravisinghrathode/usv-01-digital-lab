@@ -837,3 +837,34 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
     });
   });
 });
+
+describe('AUT-01 regression: safety changes cannot evade Director authorization by path', () => {
+  it('classifies operational autonomy, acceptance evidence and gate tampering as CRITICAL', () => {
+    const criticalPaths = [
+      'src/core/verification/AutonomyColregsSafetyScreen.ts',
+      'src/core/verification/AutonomySensorEvidence.ts',
+      'src/core/verification/AutonomySilReplay.ts',
+      'src/core/verification/SafetyScenarioSuite.ts',
+      'src/core/verification/AcceptanceGate.ts',
+      'src/components/SoftwareAutonomyView.tsx',
+      'tests/autonomyColregsSafetyScreen.test.ts',
+      'tests/autonomySensorSilReplay.test.ts',
+      'tests/autonomyAcceptanceEvidence.test.ts',
+      'evidence/aut01/acceptance-status.json',
+      'docs/AUT01_SIL_HIL_SEA_TRIAL_PROTOCOL.md',
+      'docs/CONSOLIDATED_ACCEPTANCE_REGISTER.md',
+      'scripts/governance/classify-change.ts',
+      'scripts/governance/stage-e-enforce.ts',
+      'governance/approvals/ECR-TEST.approval.json',
+      'governance/ecr/ECR-TEST.md'
+    ];
+    for (const file of criticalPaths) {
+      const found = classifyFile(file);
+      expect(found.categories, file).toContain('SAFETY');
+      expect(found.risk, file).toBe('CRITICAL');
+    }
+  });
+  it('retains low-risk classification for ordinary unrelated documentation', () => {
+    expect(classifyFile('docs/ARCHITECTURE.md').risk).toBe('LOW');
+  });
+});
