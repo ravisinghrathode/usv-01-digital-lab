@@ -303,7 +303,7 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
       expect(res.humanApprovalRequired).toBe(true);
       expect(res.signatureVerified).toBe(false);
       expect(res.summary).toContain('Stage D Gate Blocked');
-    });
+    }, 30000); // Subprocess-heavy safety test: avoid false timeout in parallel CI.
 
     it('sign-ecr.ts contains no environment or argv passphrase substitution', () => {
       const src = fs.readFileSync(path.join(process.cwd(), 'scripts', 'governance', 'sign-ecr.ts'), 'utf-8');
