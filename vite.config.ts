@@ -1,8 +1,10 @@
-import { defineConfig } from 'vite';
+import { defineConfig, configDefaults } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
 export default defineConfig({
+  // Node-native node:test suites have dedicated GitHub jobs. Do not collect them in Vitest.
+  test: { exclude: [...configDefaults.exclude, '**/*.test.mjs'] },
   plugins: [react()],
   resolve: {
     alias: {

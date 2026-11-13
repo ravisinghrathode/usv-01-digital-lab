@@ -1,0 +1,83 @@
+name: USV-01 Repository Integration Intake (no third-party execution)
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/repository-integration.mjs'
+      - 'tests/repository-integration.test.mjs'
+      - 'scripts/repository-integration-planner.mjs'
+      - 'tests/repository-integration-planner.test.mjs'
+      - '.github/workflows/repository-integration.yml'
+      - 'docs/REPOSITORY_INTEGRATION.md'
+  workflow_dispatch:
+    inputs:
+      spec_path:
+        description: 'Reviewed candidate JSON manifest in the repository, e.g. references/third-party-candidates/example.json'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Offline integration and scout regression tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Tests (no remote execution)
+        run: node --test tests/repository-scout.test.mjs tests/repository-integration.test.mjs tests/repository-integration-planner.test.mjs
+
+  intake:
+    name: Public source intake and staged proposal (NO execution)
+    needs: test
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Enforce manifest path
+        env:
+          SPEC_PATH: ${{ inputs.spec_path }}
+        run: |
+          if [[ ! "$SPEC_PATH" =~ ^references/third-party-candidates/[a-z0-9-]+\.json$ ]]; then
+            echo 'Spec must be a controlled candidate manifest path' >&2
+            exit 1
+          fi
+          test -f "$SPEC_PATH"
+      - name: Metadata intake (read-only)
+        env:
+          SPEC_PATH: ${{ inputs.spec_path }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/repository-integration.mjs intake --spec "$SPEC_PATH" --out-dir "$RUNNER_TEMP/usv01-repository-integration"
+      - name: Clone exact public SHA and inspect (NO dependency execution)
+        env:
+          SPEC_PATH: ${{ inputs.spec_path }}
+        run: node scripts/repository-integration.mjs stage --spec "$SPEC_PATH" --out-dir "$RUNNER_TEMP/usv01-repository-integration"
+      - name: Generate review-only integration proposal
+        env:
+          SPEC_PATH: ${{ inputs.spec_path }}
+        run: node scripts/repository-integration.mjs propose --spec "$SPEC_PATH" --out-dir "$RUNNER_TEMP/usv01-repository-integration"
+      - name: Remove third-party snapshot before publishing evidence artifact
+        run: rm -rf "$RUNNER_TEMP/usv01-repository-integration/source"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: unverified-usv01-integration-proposal
+          path: |
+            ${{ runner.temp }}/usv01-repository-integration/intake.json
+            ${{ runner.temp }}/usv01-repository-integration/stage.json
+            ${{ runner.temp }}/usv01-repository-integration/proposal.json
+            ${{ runner.temp }}/usv01-repository-integration/REVIEW.md
+          if-no-files-found: error
+          retention-days: 30

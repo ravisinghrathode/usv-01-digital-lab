@@ -104,3 +104,9 @@ See [Lab Commissioning and Evidence Release Protocol](docs/LAB_COMMISSIONING_PRO
 - `RemoteSolverJobs` and `ToolBenchmarkCampaign` support explicit CFD/FEA job manifests and externally sourced numerical comparison only; neither establishes solver commissioning or marine certification.
 
 The legacy heuristic optimizer uses a replayable seed and **12 synthetic rule checks**, not agent votes. Its old hard-coded Sobol indices and fictitious safety/sea-trial proof are removed. The authentic, bounded A01 ↔ A15 design loop is a separate unverified research process. See [Design loop and solver protocol](docs/AGENT_DESIGN_LOOP_AND_SOLVER_PROTOCOL_20261113.md) and the 13-workstream acceptance report. Safety-critical PRs require independent review and exact-baseline human approval before merge.
+
+## Repository Intelligence and Protected Integration (Research Only)
+
+- [Repository Scout](docs/REPOSITORY_SCOUT.md) searches public GitHub projects and ranks research leads for A26 and specialist review.
+- [Repository Integration Pipeline](docs/REPOSITORY_INTEGRATION.md) prepares exact-commit investigation queues, inspects pinned sources, optionally verifies JSON adapters inside isolated containers, and produces unapproved integration proposals.
+- The pipeline is **not a 27th engineering agent**. It cannot autonomously merge third-party code, register tools for agents, release a vessel baseline, control actuators, or commission external solvers. Every installed tool requires a separately reviewed protected software change; vessel design approval remains independent.
