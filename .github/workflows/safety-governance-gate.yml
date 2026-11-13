@@ -98,6 +98,19 @@ jobs:
           if-no-files-found: ignore
 
 
+      - name: Stage B — Research-first 26-Agent Concept Planning (offline, unverified)
+        run: |
+          set -euo pipefail
+          npm run concept:research -- --mission-file references/concept-mission-draft.json --source-sha "$PR_HEAD_SHA" --out-dir governance/reports/concept-research
+
+      - name: Upload Research-Only Case Matrix and Evidence Gate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: usv01-concept-research-unverified
+          path: governance/reports/concept-research/
+          if-no-files-found: ignore
+
       - name: Stage B — Consolidated 13-Workstream Acceptance Campaign
         run: |
           set -euo pipefail
