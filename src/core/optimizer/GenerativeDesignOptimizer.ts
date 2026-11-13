@@ -1,8 +1,8 @@
 /**
  * USV-01 Generative Multi-Agent Design Optimization Engine
- * Executes evolutionary design space exploration with deterministic naval physics,
- * 25-agent multi-disciplinary consensus voting, multi-sea-state Monte Carlo survivability gates,
- * Sobol parameter sensitivity indices, permanent learned invariants, and executive defense logging.
+ * LEGACY EXPLORATORY SCENARIO GENERATOR ONLY. Uses assumed coefficients and
+ * synthetic scoring/votes; outputs are not live 26-agent calculations, validated
+ * hydrostatics, powering, stability or regulatory compliance evidence.
  */
 
 import { calculateSavitskyPlaning, SavitskyInputs } from '../../utils/navalCalculators';
@@ -20,21 +20,21 @@ export interface SeaStateMetric {
   deckWetnessProbabilityPercent: number;
 }
 
-export interface AgentEvaluation25 {
+export interface ScenarioRuleCheck {
   agentId: string;
   canonicalId: string;
   name: string;
   division: 'DIRECTORATE' | 'NAVAL_ARCH' | 'PROPULSION' | 'AUTONOMY' | 'SYSTEMS';
-  vote: 'CONCUR' | 'RESERVATION' | 'VETO';
+  vote: 'SCREEN_PASS_UNVERIFIED' | 'SCREEN_FAIL_UNVERIFIED';
   metric: string;
   rationale: string;
 }
 
-export interface SobolSensitivity {
+export interface LocalSensitivity {
   parameter: string;
   displayName: string;
-  firstOrderIndex: number; // 0 to 1
-  totalEffectIndex: number; // 0 to 1
+  targetChangePercent: number | null; // finite difference response to +1% input
+  inputPerturbationPercent: number;
   primaryTarget: string;
   architecturalGuidance: string;
 }
@@ -45,7 +45,12 @@ export interface CandidateDesign {
   id: string;
   generation: number;
   philosophy: DesignPhilosophy;
-  hullType: HullTopology;    // Primary topology architecture dynamically evaluated by 25 agents
+  hullType: HullTopology;    // Legacy heuristic topology exploration, not agent evaluation
+  /** Reproducibility metadata, NEVER engineering validation. */
+  runSeed: number;
+  scenarioRevision: string;
+  /** Number of seeded PRNG draws consumed before this candidate was generated. */
+  drawIndex: number;
   // 7 Free Design Parameters
   lwlMeters: number;         // Waterline length (6.0m - 14.0m)
   beamMeters: number;        // Waterline beam (1.8m - 3.8m)
@@ -72,11 +77,11 @@ export interface CandidateDesign {
   // Multi-Sea-State Dynamics (SS 1 - 5)
   seaStates: SeaStateMetric[];
 
-  // 25-Agent Multi-Disciplinary Concurrence Matrix
-  agentEvaluations25: AgentEvaluation25[];
+  // 12 purely synthetic input/heuristic checks (no agent review)
+  scenarioRuleChecks: ScenarioRuleCheck[];
 
-  // Parameter Sensitivity Indices (Sobol Decomposition)
-  sobolSensitivities: SobolSensitivity[];
+  // Local 1% finite-difference influence (unverified model)
+  localSensitivities: LocalSensitivity[];
 
   // Evaluation & Verdict
   status: 'SURVIVED' | 'REJECTED_STABILITY' | 'REJECTED_DRAG' | 'REJECTED_RANGE' | 'REJECTED_STRUCTURE' | 'REJECTED_FLOTATION';
@@ -104,9 +109,39 @@ export class GenerativeDesignOptimizer {
   private learnedInvariants: LearnedInvariant[] = [];
   private currentGeneration: number = 0;
   private currentChampion: CandidateDesign | null = null;
+  /** Explicit reproducibility seed, NOT an engineering baseline identifier. */
+  private seed = 0x55535631;
+  private randomState = this.seed;
+  private draws = 0;
+  private readonly scenarioRevision = 'LEGACY_HEURISTIC_REV_0_4_UNVERIFIED';
+
+  private nextRandom(): number {
+    // Mulberry32: fixed 32-bit integer operations make scenario sampling repeatable.
+    this.randomState = (this.randomState + 0x6D2B79F5) >>> 0;
+    let t = this.randomState;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    this.draws += 1;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  }
+
+  public getRunMetadata() {
+    return { runSeed: this.seed, scenarioRevision: this.scenarioRevision, randomDraws: this.draws, generation: this.currentGeneration,
+      screeningOnly: true as const, engineeringReleaseAuthorized: false as const };
+  }
 
   private constructor() {
     this.seedBaselineInvariants();
+  }
+
+  /**
+   * Per-campaign instance: avoids corrupting another user's interactive
+   * optimizer state or interleaving seeded random draws between design runs.
+   */
+  public static createIsolated(seed: number): GenerativeDesignOptimizer {
+    const optimizer = new GenerativeDesignOptimizer();
+    optimizer.resetOptimizer(seed);
+    return optimizer;
   }
 
   public static getInstance(): GenerativeDesignOptimizer {
@@ -117,32 +152,10 @@ export class GenerativeDesignOptimizer {
   }
 
   private seedBaselineInvariants() {
-    this.learnedInvariants = [
-      {
-        id: 'RULE-STAB-001',
-        agentId: 'STAB-HYD-06',
-        category: 'STABILITY',
-        ruleStatement: 'Transverse GMt must strictly satisfy IMO Resolution MSC.267(85) intact stability threshold (GMt >= 0.35m).',
-        discoveredAtGeneration: 0,
-        mathEvidence: 'IMO MSC.267(85) Part 2.2.4 Intact Stability Code'
-      },
-      {
-        id: 'RULE-HYD-001',
-        agentId: 'RES-SEAK-07',
-        category: 'HYDRODYNAMICS',
-        ruleStatement: 'Beam Froude number Cv >= 1.0 required for stable hydrodynamic planing lift over displacement hump.',
-        discoveredAtGeneration: 0,
-        mathEvidence: 'Savitsky (1964) Hydrodynamic Planing Formulations'
-      },
-      {
-        id: 'RULE-STR-001',
-        agentId: 'STR-MAT-10',
-        category: 'STRUCTURE',
-        ruleStatement: 'Bottom laminate core shear stress under ISO 12215-5 slamming load must not exceed 130 kPa limit of 15mm PVC foam core.',
-        discoveredAtGeneration: 0,
-        mathEvidence: 'ISO 12215-5 Section 8 Small Craft Hull Scantlings'
-      }
-    ];
+    // Previous "rules" claimed universal IMO stability, hydrodynamic planing
+    // and laminate thresholds with no approved vessel/standard applicability.
+    // Never seed an evidence ledger with unverified normative statements.
+    this.learnedInvariants = [];
   }
 
   public getHistory(): CandidateDesign[] {
@@ -157,7 +170,13 @@ export class GenerativeDesignOptimizer {
     return this.learnedInvariants;
   }
 
-  public resetOptimizer() {
+  public resetOptimizer(seed: number = this.seed) {
+    if (!Number.isInteger(seed) || seed < 0 || seed > 0xFFFFFFFF) {
+      throw new Error('Optimizer seed must be an unsigned 32-bit integer');
+    }
+    this.seed = seed >>> 0;
+    this.randomState = this.seed;
+    this.draws = 0;
     this.history = [];
     this.currentGeneration = 0;
     this.currentChampion = null;
@@ -165,13 +184,13 @@ export class GenerativeDesignOptimizer {
   }
 
   /**
-   * Run a single generative trial with physics evaluation and agent dialectical debate
+   * Run a single seeded exploratory trial with unverified heuristic screening
    */
   public runIteration(targetPhilosophy: DesignPhilosophy = 'BALANCED_PATROL'): CandidateDesign {
     this.currentGeneration += 1;
     const gen = this.currentGeneration;
 
-    // Mutate parameters using active learned invariants
+    // Mutate parameters using seeded exploratory heuristics, never approved vessel particulars.
     const candidate = this.generateCandidateParameters(gen, targetPhilosophy);
 
     // 1. Solve Naval Physics
@@ -180,14 +199,14 @@ export class GenerativeDesignOptimizer {
     // 2. Solve Multi-Sea-State Dynamics (SS 1 - 5)
     this.solveSeaStateDynamics(candidate);
 
-    // 3. Compute Sobol Sensitivity Decomposition
-    this.computeSobolSensitivities(candidate);
+    // 3. Compute local one-factor-at-a-time scenario sensitivity
+    this.computeLocalSensitivities(candidate);
 
     // 4. Evaluate 5 Multi-Agent Physics Gates
-    this.evaluateGatesAndDebate(candidate);
+    this.evaluateHeuristicScenarioGates(candidate);
 
-    // 5. Evaluate Full 25-Agent Concurrence & Veto Matrix
-    this.evaluateAll25Agents(candidate);
+    // 5. Legacy synthetic input-rule checks (NOT live agent executions)
+    this.evaluateSyntheticRuleVotes(candidate);
 
     // 6. Update Champion if Survived and Higher Fitness
     if (candidate.status === 'SURVIVED') {
@@ -238,18 +257,18 @@ export class GenerativeDesignOptimizer {
     const baseMotor = this.currentChampion ? this.currentChampion.motorKwTotal : (motorMin + motorMax) / 2;
 
     const jitter = (min: number, max: number, base: number) => {
-      const delta = (max - min) * variance * (Math.random() - 0.5);
+      const delta = (max - min) * variance * (this.nextRandom() - 0.5);
       return Math.min(Math.max(base + delta, min), max);
     };
 
     // Explore both Monohull and Catamaran topologies dynamically
     let hullType: HullTopology;
-    if (this.currentChampion && Math.random() > 0.35) {
+    if (this.currentChampion && this.nextRandom() > 0.35) {
       // 65% of the time, explore variations of the leading champion's topology
       hullType = this.currentChampion.hullType;
     } else {
       // 35% of the time, test counter-hypotheses between Monohull and Catamaran
-      hullType = Math.random() > 0.5 ? 'CATAMARAN' : 'MONOHULL';
+      hullType = this.nextRandom() > 0.5 ? 'CATAMARAN' : 'MONOHULL';
     }
 
     if (hullType === 'CATAMARAN') {
@@ -262,12 +281,15 @@ export class GenerativeDesignOptimizer {
     const deadrise = Number(jitter(deadriseMin, deadriseMax, baseDeadrise).toFixed(1));
     const battery = Number(jitter(battMin, battMax, baseBatt).toFixed(1));
     const motor = Number(jitter(motorMin, motorMax, baseMotor).toFixed(1));
-    const lcg = Number((34.5 + (Math.random() - 0.5) * 4 * variance).toFixed(1));
+    const lcg = Number((34.5 + (this.nextRandom() - 0.5) * 4 * variance).toFixed(1));
     const draft = Number((0.55 + (battery / 100) * 0.18).toFixed(2));
 
     return {
       id: `ITER-${gen.toString().padStart(3, '0')}`,
       generation: gen,
+      runSeed: this.seed,
+      scenarioRevision: this.scenarioRevision,
+      drawIndex: this.draws,
       philosophy: phil,
       hullType,
       lwlMeters: lwl,
@@ -290,8 +312,8 @@ export class GenerativeDesignOptimizer {
       rangeNm: 0,
       slammingPressureKpa: 0,
       seaStates: [],
-      agentEvaluations25: [],
-      sobolSensitivities: [],
+      scenarioRuleChecks: [],
+      localSensitivities: [],
       status: 'SURVIVED',
       fitnessScore: 0,
       debateTranscript: [],
@@ -488,514 +510,176 @@ export class GenerativeDesignOptimizer {
     });
   }
 
-  private computeSobolSensitivities(c: CandidateDesign) {
-    c.sobolSensitivities = [
-      {
-        parameter: 'beamMeters',
-        displayName: 'Waterline Beam (B)',
-        firstOrderIndex: 0.44,
-        totalEffectIndex: 0.52,
-        primaryTarget: 'Transverse Metacentric Height (GMt) & Wave Resistance',
-        architecturalGuidance: 'Dominant driver of intact stability (I_wp ~ B^3). Increasing beam by 0.2m increases GMt by +0.18m but adds +1.2kN hump drag.'
-      },
-      {
-        parameter: 'batteryKwh',
-        displayName: 'Battery Storage (E_batt)',
-        firstOrderIndex: 0.51,
-        totalEffectIndex: 0.60,
-        primaryTarget: 'Patrol Endurance (Hours) & Displacement Mass',
-        architecturalGuidance: 'Direct 1:1 driver of 8h loiter mission. Pack mass (11.5 kg/kWh) penalizes draft and raises slamming loads.'
-      },
-      {
-        parameter: 'deadriseDeg',
-        displayName: 'Deadrise Angle (β)',
-        firstOrderIndex: 0.32,
-        totalEffectIndex: 0.41,
-        primaryTarget: 'Bottom Slamming Pressure & Dynamic Lift',
-        architecturalGuidance: 'High deadrise (>22°) softens vertical acceleration in Sea State 3 but increases power required to plane by 18%.'
-      },
-      {
-        parameter: 'lwlMeters',
-        displayName: 'Waterline Length (LWL)',
-        firstOrderIndex: 0.28,
-        totalEffectIndex: 0.35,
-        primaryTarget: 'Length/Beam Slenderness & Pitch Damping',
-        architecturalGuidance: 'Controls volumetric Froude number Fn_V. Under 9.5m, hull suffers severe hump squat. Over 12.0m increases structural mold tooling cost.'
-      },
-      {
-        parameter: 'motorKwTotal',
-        displayName: 'Installed Power (P_inst)',
-        firstOrderIndex: 0.22,
-        totalEffectIndex: 0.29,
-        primaryTarget: 'Sprint Speed & Thermal Heat Rejection',
-        architecturalGuidance: '70-90 kW provides 23-25 kt sprint. Diminishing returns above 100 kW due to battery C-rate discharge limits.'
-      }
+  private computeLocalSensitivities(c: CandidateDesign) {
+    // Real finite differences of the legacy deterministic heuristic solver.
+    // This is one-factor-at-a-time LOCAL numerical influence, NOT Sobol
+    // variance decomposition, uncertainty bounds or physical calibration.
+    type NumericParam = 'beamMeters' | 'batteryKwh' | 'deadriseDeg' | 'lwlMeters' | 'motorKwTotal';
+    type NumericTarget = 'gmtMeters' | 'enduranceHours' | 'peakDragKn' | 'sprintSpeedKnots';
+    const specs: Array<{ key: NumericParam; target: NumericTarget; name: string; description: string }> = [
+      { key: 'beamMeters', target: 'gmtMeters', name: 'Waterline Beam', description: 'Approximate GM screening' },
+      { key: 'batteryKwh', target: 'enduranceHours', name: 'Battery Hypothesis', description: 'Synthetic energy-duration equation' },
+      { key: 'deadriseDeg', target: 'peakDragKn', name: 'Transom Deadrise', description: 'Legacy approximate resistance' },
+      { key: 'lwlMeters', target: 'peakDragKn', name: 'Waterline Length', description: 'Legacy approximate resistance' },
+      { key: 'motorKwTotal', target: 'sprintSpeedKnots', name: 'Installed Motor Hypothesis', description: 'Discrete speed scanning, finite difference may be zero' }
     ];
+    c.localSensitivities = specs.map(spec => {
+      const original = c[spec.key];
+      const relative = 0.01;
+      const delta = original * relative;
+      const trial: CandidateDesign = {
+        ...c, [spec.key]: original + delta,
+        seaStates: [], scenarioRuleChecks: [], localSensitivities: [],
+        debateTranscript: [], agentLearnings: []
+      };
+      this.solvePhysics(trial);
+      const baseTarget = c[spec.target];
+      const perturbed = trial[spec.target];
+      const change = Number.isFinite(baseTarget) && Number.isFinite(perturbed) && Math.abs(baseTarget) > 1e-12
+        ? Number((((perturbed - baseTarget) / Math.abs(baseTarget)) * 100).toFixed(3))
+        : null;
+      return {
+        parameter: spec.key, displayName: spec.name,
+        inputPerturbationPercent: 1,
+        targetChangePercent: change,
+        primaryTarget: spec.description,
+        architecturalGuidance: 'UNVERIFIED one-at-a-time +1% input sensitivity in legacy heuristic, not a Sobol index or validated naval-design recommendation.'
+      };
+    });
   }
 
-  private evaluateGatesAndDebate(c: CandidateDesign) {
-    const debate = c.debateTranscript;
-    const learnings = c.agentLearnings;
-
-    // --- GATE 1: Flotation Equilibrium ---
-    if (c.draftMeters > 0.88 || c.draftMeters < 0.40) {
-      c.status = 'REJECTED_FLOTATION';
-      c.failedGate = 'GATE 1 (HULL-GEO-05 / Flotation)';
-      c.rejectionReason = `Hull draft T=${c.draftMeters}m exceeds operational envelope (limit 0.40m - 0.85m).`;
-      debate.push({
-        agentId: 'HULL-GEO-05',
-        role: 'Hull Geometry Specialist',
-        statement: `Draft T=${c.draftMeters}m violates harbor fairway clearance constraints. Displaced volume is improperly matched to LWL ${c.lwlMeters}m.`,
-        sentiment: 'OBJECT'
-      });
-      learnings.push({
-        agentId: 'HULL-GEO-05',
-        lesson: `Displacement of ${c.displacementTonnes}t on LWL ${c.lwlMeters}m yields excessive draft (${c.draftMeters}m). Require higher waterplane area or reduced lightship mass.`
-      });
-      c.fitnessScore = 15;
-      return;
-    }
-
-    // --- GATE 2: Intact Stability Audit (IMO MSC.267) ---
-    if (c.gmtMeters < 0.35) {
-      c.status = 'REJECTED_STABILITY';
-      c.failedGate = 'GATE 2 (STAB-HYD-06 / Intact Stability)';
-      c.rejectionReason = `Transverse metacentric height GMt=${c.gmtMeters}m fails IMO MSC.267(85) statutory minimum of 0.35m. Severe capsize risk.`;
-      debate.push({
-        agentId: 'STAB-HYD-06',
-        role: 'Hydrostatics & Stability Engineer',
-        statement: `UNACCEPTABLE STABILITY DEFICIT: GMt is only ${c.gmtMeters}m. Center of gravity KG=${c.kgMeters}m is too close to metacenter KM=${c.kmtMeters}m. Vessel will capsize under beam winds.`,
-        sentiment: 'OBJECT'
-      });
-      debate.push({
-        agentId: 'BATT-ESS-15',
-        role: 'Energy Storage Engineer',
-        statement: `Compromise proposal: We can reconfigure the ${c.batteryKwh}kWh battery cells into lower keel stringer cavities to lower KG by ~12cm.`,
-        sentiment: 'COMPROMISE'
-      });
-
-      const invRule = `RULE-STAB-${this.currentGeneration}: For battery pack ${c.batteryKwh}kWh, beam must be >= ${(c.beamMeters + 0.25).toFixed(2)}m to maintain GMt >= 0.35m.`;
-      learnings.push({
-        agentId: 'STAB-HYD-06',
-        lesson: `Beam of ${c.beamMeters}m with KG=${c.kgMeters}m gave GMt=${c.gmtMeters}m (< 0.35m). Vessel is top-heavy.`,
-        invariantProposed: invRule
-      });
-      this.recordLearnedInvariant('STAB-HYD-06', 'STABILITY', invRule, `Failed Trial ${c.id}: GMt=${c.gmtMeters}m < 0.35m`);
-      c.fitnessScore = 25;
-      return;
-    }
-
-    // --- GATE 3: Planing Hydrodynamics & Hump Drag ---
-    if (c.peakDragKn > 15.5 || c.sprintSpeedKnots < 21.0) {
-      c.status = 'REJECTED_DRAG';
-      c.failedGate = 'GATE 3 (RES-SEAK-07 / Savitsky Resistance)';
-      c.rejectionReason = `Hump drag peak ${c.peakDragKn}kN exceeds motor torque limit or sprint speed (${c.sprintSpeedKnots}kt) falls below 22kt threshold.`;
-      debate.push({
-        agentId: 'RES-SEAK-07',
-        role: 'Hydrodynamics Specialist',
-        statement: `Excessive drag hump at Froude beam Cv=1.2: Resistance peaks at ${c.peakDragKn}kN. Deadrise of ${c.deadriseDeg}° induces severe pressure drag.`,
-        sentiment: 'OBJECT'
-      });
-      debate.push({
-        agentId: 'PROP-ENG-13',
-        role: 'Propulsion Lead',
-        statement: `Motor torque derate: ${c.motorKwTotal}kW installed cannot overcome this hump without risk of inverter thermal shutdown.`,
-        sentiment: 'OBJECT'
-      });
-
-      const invRule = `RULE-HYD-${this.currentGeneration}: Cap transom deadrise <= ${(c.deadriseDeg - 1.5).toFixed(1)}° to reduce hump drag below 14.0kN.`;
-      learnings.push({
-        agentId: 'RES-SEAK-07',
-        lesson: `Deadrise ${c.deadriseDeg}° created ${c.peakDragKn}kN hump drag. Lower deadrise by 1.5° to boost dynamic lift.`,
-        invariantProposed: invRule
-      });
-      this.recordLearnedInvariant('RES-SEAK-07', 'HYDRODYNAMICS', invRule, `Trial ${c.id}: Peak drag ${c.peakDragKn}kN exceeded limits`);
-      c.fitnessScore = 40;
-      return;
-    }
-
-    // --- GATE 4: Battery Endurance & Patrol Range ---
-    if (c.enduranceHours < 8.0) {
-      c.status = 'REJECTED_RANGE';
-      c.failedGate = 'GATE 4 (BATT-ESS-15 & CONOPS-03 / Endurance)';
-      c.rejectionReason = `Endurance ${c.enduranceHours}h falls short of mandatory 8-hour harbor patrol mission profile.`;
-      debate.push({
-        agentId: 'CONOPS-03',
-        role: 'Mission CONOPS Specialist',
-        statement: `MISSION FAILURE: Vessel runs out of charge at ${c.enduranceHours} hours. Minimum 8.0 hours continuous loiter is non-negotiable.`,
-        sentiment: 'OBJECT'
-      });
-      debate.push({
-        agentId: 'BATT-ESS-15',
-        role: 'Battery Lead',
-        statement: `Need +12kWh additional capacity, but we must watch weight growth so we do not trigger Gate 2 stability issues.`,
-        sentiment: 'COMPROMISE'
-      });
-
-      const invRule = `RULE-BATT-${this.currentGeneration}: Minimum battery capacity for 8h mission is >= ${(c.batteryKwh + 8).toFixed(0)}kWh.`;
-      learnings.push({
-        agentId: 'BATT-ESS-15',
-        lesson: `${c.batteryKwh}kWh yields only ${c.enduranceHours}h endurance at 14kt cruise. Battery pack must expand.`,
-        invariantProposed: invRule
-      });
-      this.recordLearnedInvariant('BATT-ESS-15', 'ENERGY', invRule, `Trial ${c.id}: Endurance ${c.enduranceHours}h < 8.0h`);
-      c.fitnessScore = 55;
-      return;
-    }
-
-    // --- GATE 5: ISO 12215 Structural Slamming ---
-    if (c.slammingPressureKpa > 135.0) {
-      c.status = 'REJECTED_STRUCTURE';
-      c.failedGate = 'GATE 5 (STR-MAT-10 / Scantlings)';
-      c.rejectionReason = `Bottom slamming pressure ${c.slammingPressureKpa}kPa exceeds composite core shear limit (130 kPa). Structural delamination hazard.`;
-      debate.push({
-        agentId: 'STR-MAT-10',
-        role: 'Composite Structures Lead',
-        statement: `STRUCTURAL INTEGRITY VIOLATION: Slamming head of ${c.slammingPressureKpa}kPa at ${c.sprintSpeedKnots}kt will crush 15mm PVC foam core in Sea State 3.`,
-        sentiment: 'OBJECT'
-      });
-
-      const invRule = `RULE-STR-${this.currentGeneration}: Sprint speed > 24kt requires deadrise >= 19.5° or upgraded 20mm 100kg/m³ structural core.`;
-      learnings.push({
-        agentId: 'STR-MAT-10',
-        lesson: `Slamming reached ${c.slammingPressureKpa}kPa. Need higher deadrise forward to soften wave impacts.`,
-        invariantProposed: invRule
-      });
-      this.recordLearnedInvariant('STR-MAT-10', 'STRUCTURE', invRule, `Trial ${c.id}: Slamming ${c.slammingPressureKpa}kPa > 135kPa`);
-      c.fitnessScore = 65;
-      return;
-    }
-
-    // --- ALL GATES PASSED! ---
-    c.status = 'SURVIVED';
-    const scoreEndurance = Math.min((c.enduranceHours / 12.0) * 30, 30);
-    const scoreStability = Math.min(((c.gmtMeters - 0.35) / 1.0) * 25, 25);
-    const scoreSpeed = Math.min(((c.sprintSpeedKnots - 20) / 6) * 25, 25);
-    const scoreEfficiency = Math.min((15.0 / c.cruisePowerKw) * 20, 20);
-
-    c.fitnessScore = Number((scoreEndurance + scoreStability + scoreSpeed + scoreEfficiency).toFixed(1));
-
-    debate.push({
-      agentId: 'LEAD-SYS-01',
-      role: 'Lead Systems Architect',
-      statement: `CONSENSUS REACHED: Candidate ${c.id} (${c.hullType}) passes all 5 naval engineering gates! Fitness Score: ${c.fitnessScore}/100. GMt=${c.gmtMeters}m, Range=${c.rangeNm}nm, Sprint=${c.sprintSpeedKnots}kt.`,
-      sentiment: 'ENDORSE'
-    });
-
-    if (c.hullType === 'CATAMARAN') {
-      debate.push({
-        agentId: 'HULL-GEO-05',
-        role: 'Hull Geometry Specialist',
-        statement: `Catamaran twin demi-hull topology confirmed: Waterline beam ${c.beamMeters}m provides exceptional intact roll stability (GMt=${c.gmtMeters}m) and 18.5m² flat payload deck.`,
-        sentiment: 'ENDORSE'
-      });
-      debate.push({
-        agentId: 'STR-MAT-10',
-        role: 'Composite Structures Lead',
-        statement: `Cross-deck tunnel clearance ${(0.75 - c.draftMeters).toFixed(2)}m evaluated. Slamming pressure ${c.slammingPressureKpa}kPa is within bridge bulkhead design shear envelope.`,
-        sentiment: 'ENDORSE'
-      });
+  private evaluateHeuristicScenarioGates(c: CandidateDesign) {
+    // These are configurable exploratory preference screens from the historical
+    // demonstration model, NOT naval engineering acceptance or agent debate.
+    c.debateTranscript = [{
+      agentId: 'SYNTHETIC_SCENARIO_GATE',
+      role: 'Legacy numerical hypothesis screen',
+      statement: 'Illustrative formulas and thresholds only. No role-level AI execution, physical verification, applicable class rules, or approved mission baseline.',
+      sentiment: 'OBJECT'
+    }];
+    c.agentLearnings = [];
+    const reject = (status: CandidateDesign['status'], reason: string, fitness: number) => {
+      c.status = status;
+      c.failedGate = 'LEGACY_UNVERIFIED_HEURISTIC';
+      c.rejectionReason = reason;
+      c.fitnessScore = fitness;
+    };
+    if (![c.lwlMeters,c.beamMeters,c.draftMeters,c.displacementTonnes,c.gmtMeters,
+          c.peakDragKn,c.sprintSpeedKnots,c.enduranceHours,c.slammingPressureKpa,c.cruisePowerKw]
+        .every(Number.isFinite)) {
+      reject('REJECTED_FLOTATION', 'Nonfinite numerical result in approximate model', 0);
+    } else if (c.draftMeters < 0.40 || c.draftMeters > 0.88) {
+      reject('REJECTED_FLOTATION', 'Historical hypothetical draft range [0.40,0.88]m not satisfied; not a verified operating constraint', 15);
+    } else if (c.gmtMeters < 0.35) {
+      reject('REJECTED_STABILITY', 'Approximate GM below legacy 0.35m scenario screening reference; this is NOT IMO compliance classification', 25);
+    } else if (c.peakDragKn > 15.5 || c.sprintSpeedKnots < 21) {
+      reject('REJECTED_DRAG', 'Historical trial resistance/speed preference not met; no validated powering envelope or CFD/sea-trial data', 40);
+    } else if (c.enduranceHours < 8) {
+      reject('REJECTED_RANGE', 'Hypothetical 8h demo preference not met; mission requirement and endurance model are unverified', 55);
+    } else if (c.slammingPressureKpa > 135) {
+      reject('REJECTED_STRUCTURE', 'Unverified synthetic slamming threshold exceeded; does not establish laminate or ISO adequacy', 65);
     } else {
-      debate.push({
-        agentId: 'HULL-GEO-05',
-        role: 'Hull Geometry Specialist',
-        statement: `Deep-V Monohull topology confirmed: Slender single-chine form eliminates tunnel slamming risk in head seas and reduces shipyard tooling complexity by 35%.`,
-        sentiment: 'ENDORSE'
-      });
-      debate.push({
-        agentId: 'RES-SEAK-07',
-        role: 'Hydrodynamics Lead',
-        statement: `Savitsky planing dynamics validated: Dynamic lift established with peak hump drag of ${c.peakDragKn}kN and sprint speed of ${c.sprintSpeedKnots}kt.`,
-        sentiment: 'ENDORSE'
-      });
+      c.status = 'SURVIVED';
+      c.failedGate = undefined;
+      c.rejectionReason = undefined;
+      const scoreEndurance = Math.min((c.enduranceHours / 12) * 30, 30);
+      const scoreStability = Math.min(((c.gmtMeters - 0.35) / 1.0) * 25, 25);
+      const scoreSpeed = Math.min(((c.sprintSpeedKnots - 20) / 6) * 25, 25);
+      const scoreEfficiency = Math.min((15.0 / Math.max(0.001, c.cruisePowerKw)) * 20, 20);
+      c.fitnessScore = Number(Math.max(0, Math.min(100,
+        scoreEndurance + scoreStability + scoreSpeed + scoreEfficiency)).toFixed(1));
     }
-
-    debate.push({
-      agentId: 'STAB-HYD-06',
-      role: 'Stability Specialist',
-      statement: `Intact stability approved: GMt=${c.gmtMeters}m provides strong restoring moment under 30kt beam wind gusts.`,
-      sentiment: 'ENDORSE'
-    });
-
-    learnings.push({
-      agentId: 'LEAD-SYS-01',
-      lesson: `Viable ${c.hullType} Pareto design point discovered: LWL=${c.lwlMeters}m, B=${c.beamMeters}m, ${c.batteryKwh}kWh battery delivers ${c.enduranceHours}h endurance.`
-    });
   }
 
-  private evaluateAll25Agents(c: CandidateDesign) {
-    const isSurvived = c.status === 'SURVIVED';
-
-    c.agentEvaluations25 = [
-      // Directorate
+  private evaluateSyntheticRuleVotes(c: CandidateDesign) {
+    // Transparent scenario hygiene tests, NOT agent executions, domain
+    // certification, class-rule compliance, seakeeping prediction or approval.
+    // The rules intentionally avoid pretending to cover safety-critical physics.
+    const finitePositive = (value: number) => Number.isFinite(value) && value > 0;
+    const rules: Array<{
+      id: string; name: string;
+      division: ScenarioRuleCheck['division'];
+      pass: boolean; metric: string; rationale: string;
+    }> = [
       {
-        agentId: 'LEAD-SYS-01',
-        canonicalId: 'A01',
-        name: 'Lead Systems Architect & Orchestrator',
-        division: 'DIRECTORATE',
-        vote: isSurvived ? 'CONCUR' : 'VETO',
-        metric: `System Integration & Fitness (${c.fitnessScore}/100)`,
-        rationale: isSurvived
-          ? `Overall system trade balance certified. L/B ratio ${(c.lwlMeters / c.beamMeters).toFixed(2)} balances payload volume against transport efficiency.`
-          : `Candidate rejected at ${c.failedGate}. System balance unachievable.`
+        id: 'SCR-001', name: 'Illustrative hull length check',
+        division: 'NAVAL_ARCH', pass: finitePositive(c.lwlMeters),
+        metric: 'Waterline length is finite and positive',
+        rationale: 'Input sanitation only. No hull offsets or CAD geometry examined.'
       },
       {
-        agentId: 'CONOPS-REQ-02',
-        canonicalId: 'A02',
-        name: 'CONOPS & Mission Requirements',
-        division: 'DIRECTORATE',
-        vote: c.enduranceHours >= 8.0 ? 'CONCUR' : 'VETO',
-        metric: `Endurance Target (Req >= 8.0h, Actual ${c.enduranceHours}h)`,
-        rationale: c.enduranceHours >= 8.0
-          ? `Continuous 8-hour harbor security patrol satisfied with ${(c.enduranceHours - 8.0).toFixed(1)}h reserve margin.`
-          : `Fails mission threshold: endurance of ${c.enduranceHours}h aborts loiter prematurely.`
+        id: 'SCR-002', name: 'Illustrative beam check',
+        division: 'NAVAL_ARCH', pass: finitePositive(c.beamMeters),
+        metric: 'Beam is finite and positive',
+        rationale: 'Input sanitation only. No independent resistance or stability evidence.'
       },
       {
-        agentId: 'REG-CLASS-03',
-        canonicalId: 'A03',
-        name: 'Regulatory & Classification Compliance',
-        division: 'DIRECTORATE',
-        vote: c.gmtMeters >= 0.35 ? 'CONCUR' : 'VETO',
-        metric: `IMO MSC.267(85) Intact Stability Code`,
-        rationale: c.gmtMeters >= 0.35
-          ? `Meets Chapter 2.2 criteria. GMt=${c.gmtMeters}m exceeds 0.35m limit; positive dynamic stability range > 50°.`
-          : `Violates IMO MSC.267(85). Statutory capsize risk under beam sea wind roll.`
+        id: 'SCR-003', name: 'Illustrative draft check',
+        division: 'NAVAL_ARCH', pass: finitePositive(c.draftMeters),
+        metric: 'Draft is finite and positive',
+        rationale: 'Not an equilibrium solution from controlled offsets and loading conditions.'
       },
       {
-        agentId: 'INDEP-REV-24',
-        canonicalId: 'A24',
-        name: 'Independent Technical Reviewer & Red Team',
-        division: 'DIRECTORATE',
-        vote: isSurvived && c.gmtMeters >= 0.45 ? 'CONCUR' : isSurvived ? 'RESERVATION' : 'VETO',
-        metric: `Adversarial Cross-Disciplinary Audit`,
-        rationale: isSurvived && c.gmtMeters >= 0.45
-          ? `Red Team cross-examination passed. GMt safety factor ${(c.gmtMeters / 0.35).toFixed(2)}x and ISO 12215 margin sufficient.`
-          : isSurvived
-          ? `Conditional concurrence: GMt=${c.gmtMeters}m is marginally compliant (1.14x IMO limit). Recommend 50mm keel ballast bulb.`
-          : `Unacceptable failure mode identified in ${c.failedGate}.`
+        id: 'SCR-004', name: 'Screened displacement check',
+        division: 'NAVAL_ARCH', pass: finitePositive(c.displacementTonnes),
+        metric: 'Screened mass is finite and positive',
+        rationale: 'Estimated coefficients and component masses, not verified weight ledger or inclining test.'
       },
       {
-        agentId: 'OPS-MAINT-25',
-        canonicalId: 'A25',
-        name: 'Operational Logistics & Lifecycle Support',
-        division: 'DIRECTORATE',
-        vote: c.draftMeters <= 0.75 ? 'CONCUR' : 'RESERVATION',
-        metric: `Shallow Ramp Launch & Shore Recharge`,
-        rationale: c.draftMeters <= 0.75
-          ? `Draft T=${c.draftMeters}m allows slipway trailer recovery and 2.5h fast DC recharge (CCS2).`
-          : `Draft T=${c.draftMeters}m restricts trailer ramp operations at low tide.`
-      },
-
-      // Naval Architecture Division
-      {
-        agentId: 'CAD-PARAM-04',
-        canonicalId: 'A04',
-        name: 'Parametric CAD & Geometry Engine',
-        division: 'NAVAL_ARCH',
-        vote: 'CONCUR',
-        metric: `Fairing Curvature & Hull Topology Fairing`,
-        rationale: c.hullType === 'CATAMARAN'
-          ? `Twin demi-hull geometry with ${(c.beamMeters * 0.72).toFixed(2)}m demi-hull spacing. Class-A arched tunnel fairing continuity.`
-          : `LWL=${c.lwlMeters}m, B=${c.beamMeters}m generates Class-A surface continuity with 12° bow flare for spray deflection.`
+        id: 'SCR-005', name: 'Screened KG check',
+        division: 'NAVAL_ARCH', pass: Number.isFinite(c.kgMeters) && c.kgMeters >= 0,
+        metric: 'Illustrative KG is finite and nonnegative',
+        rationale: 'No accepted center-of-gravity measurement or free-surface correction.'
       },
       {
-        agentId: 'HULL-GEO-05',
-        canonicalId: 'A05',
-        name: 'Hull Form & Hydrodynamic Geometry',
-        division: 'NAVAL_ARCH',
-        vote: c.draftMeters >= 0.40 && c.draftMeters <= 0.85 ? 'CONCUR' : 'VETO',
-        metric: c.hullType === 'CATAMARAN' ? `Catamaran Demi-Hull Clearance (Tunnel=${(0.75 - c.draftMeters).toFixed(2)}m)` : `Submerged Volume & Prismatic Form (Cp=0.68)`,
-        rationale: c.draftMeters >= 0.40 && c.draftMeters <= 0.85
-          ? (c.hullType === 'CATAMARAN'
-              ? `Catamaran demi-hull draft T=${c.draftMeters}m leaves ${(0.75 - c.draftMeters).toFixed(2)}m wet-deck tunnel clearance.`
-              : `Displaced volume ${(c.displacementTonnes / 1.025).toFixed(2)}m³ well distributed with L/B ratio ${(c.lwlMeters / c.beamMeters).toFixed(2)}.`)
-          : `Displacement/draft mismatch (T=${c.draftMeters}m outside 0.40-0.85m band).`
+        id: 'SCR-006', name: 'Screened initial GM check',
+        division: 'NAVAL_ARCH', pass: finitePositive(c.gmtMeters),
+        metric: 'Approximate GM positive (NOT IMO criterion)',
+        rationale: 'Positive approximate GM alone establishes neither GZ stability nor statutory compliance.'
       },
       {
-        agentId: 'STAB-HYD-06',
-        canonicalId: 'A06',
-        name: 'Hydrostatics & Intact/Damage Stability',
-        division: 'NAVAL_ARCH',
-        vote: c.gmtMeters >= 0.35 ? 'CONCUR' : 'VETO',
-        metric: `Transverse Metacentric Height (GMt = ${c.gmtMeters}m)`,
-        rationale: c.gmtMeters >= 0.35
-          ? `KMt=${c.kmtMeters}m minus KG=${c.kgMeters}m leaves healthy GMt margin of +${(c.gmtMeters - 0.35).toFixed(2)}m.`
-          : `Catastrophic stability deficit: GMt=${c.gmtMeters}m < 0.35m.`
+        id: 'SCR-007', name: 'Screened resistance sanity',
+        division: 'PROPULSION', pass: finitePositive(c.cruiseDragKn) && finitePositive(c.peakDragKn),
+        metric: 'Approximate resistance is finite and positive',
+        rationale: 'Legacy empirical resistance lacks independently benchmarked model-test data.'
       },
       {
-        agentId: 'RES-SEAK-07',
-        canonicalId: 'A07',
-        name: 'Resistance, Powering & Seakeeping',
-        division: 'NAVAL_ARCH',
-        vote: c.peakDragKn <= 15.0 && c.sprintSpeedKnots >= 22.0 ? 'CONCUR' : 'VETO',
-        metric: `Savitsky Planing Drag (Peak ${c.peakDragKn}kN)`,
-        rationale: c.peakDragKn <= 15.0 && c.sprintSpeedKnots >= 22.0
-          ? `Clean planing transition at 12 knots. Achieves sprint ${c.sprintSpeedKnots}kt with installed ${c.motorKwTotal}kW.`
-          : `Excessive drag hump (${c.peakDragKn}kN) or inadequate sprint speed (${c.sprintSpeedKnots}kt).`
+        id: 'SCR-008', name: 'Installed motor hypothesis',
+        division: 'PROPULSION', pass: finitePositive(c.motorKwTotal),
+        metric: 'Assumed motor rating is finite and positive',
+        rationale: 'No supplier datasheet, efficiency map, propulsor match or sea trial verified.'
       },
       {
-        agentId: 'PROP-MATCH-08',
-        canonicalId: 'A08',
-        name: 'Propulsor Selection & Matching',
-        division: 'NAVAL_ARCH',
-        vote: c.sprintSpeedKnots >= 21.0 ? 'CONCUR' : 'RESERVATION',
-        metric: `Twin Pod Propeller Diameter (340mm) & Advance Ratio (J=0.82)`,
-        rationale: `Twin pod propellers operate at optimal 1,450 RPM cruise with 18% cavitation margin at sprint.`
+        id: 'SCR-009', name: 'Battery hypothesis',
+        division: 'PROPULSION', pass: finitePositive(c.batteryKwh),
+        metric: 'Assumed battery capacity is finite and positive',
+        rationale: 'Pack usable energy, DC bus losses and safety controls not qualified.'
       },
       {
-        agentId: 'WGT-BAL-09',
-        canonicalId: 'A09',
-        name: 'Weight, Balance & Mass Properties',
-        division: 'NAVAL_ARCH',
-        vote: c.lcgPercent >= 32.0 && c.lcgPercent <= 38.0 ? 'CONCUR' : 'RESERVATION',
-        metric: `LCG Location (${c.lcgPercent}% LWL from stern)`,
-        rationale: `LCG at ${c.lcgPercent}% prevents dynamic porpoising instability at speeds above 20 knots.`
+        id: 'SCR-010', name: 'Illustrative endurance sanity',
+        division: 'PROPULSION', pass: finitePositive(c.enduranceHours),
+        metric: 'Heuristic endurance is finite and positive',
+        rationale: 'No duty-cycle, loss, battery aging or weather validation; NOT a mission-endurance prediction.'
       },
       {
-        agentId: 'STR-MAT-10',
-        canonicalId: 'A10',
-        name: 'Structural Mechanics & Composite Materials',
-        division: 'NAVAL_ARCH',
-        vote: c.slammingPressureKpa <= 135.0 ? 'CONCUR' : 'VETO',
-        metric: c.hullType === 'CATAMARAN' ? `Cross-Deck Bridge Slamming Head (${c.slammingPressureKpa} kPa)` : `ISO 12215-5 Slamming Head (${c.slammingPressureKpa} kPa)`,
-        rationale: c.slammingPressureKpa <= 135.0
-          ? (c.hullType === 'CATAMARAN'
-              ? `Cross-deck bridging bulkhead with carbon cap withstands ${c.slammingPressureKpa} kPa tunnel slamming (Safety Factor ${(185 / c.slammingPressureKpa).toFixed(2)}).`
-              : `18mm PVC foam sandwich bottom laminate withstands 185 kPa ultimate shear (Safety Factor ${(185 / c.slammingPressureKpa).toFixed(2)}).`)
-          : `Applied slamming ${c.slammingPressureKpa} kPa exceeds 130 kPa core shear allowable.`
+        id: 'SCR-011', name: 'Illustrative slamming indicator',
+        division: 'SYSTEMS', pass: Number.isFinite(c.slammingPressureKpa) && c.slammingPressureKpa >= 0,
+        metric: 'Heuristic pressure indicator is finite',
+        rationale: 'Not a laminate/core capacity check, ISO scantling assessment or FEA.'
       },
       {
-        agentId: 'ARR-GA-12',
-        canonicalId: 'A12',
-        name: 'General Arrangement & Internal Layout',
-        division: 'NAVAL_ARCH',
-        vote: c.beamMeters >= 2.3 ? 'CONCUR' : 'RESERVATION',
-        metric: `Watertight Bulkhead Spacing & Equipment Bays`,
-        rationale: `Watertight division provides 3 separate compartments (Forepeak, Battery Vault, Aft Thruster Bay).`
-      },
-
-      // Propulsion & Energy Division
-      {
-        agentId: 'THRM-ENV-11',
-        canonicalId: 'A11',
-        name: 'Thermal Management & Environmental Control',
-        division: 'PROPULSION',
-        vote: 'CONCUR',
-        metric: `Closed-Loop Raw Seawater Heat Exchanger`,
-        rationale: `Liquid cooling loop rejects ${(c.cruisePowerKw * 0.12).toFixed(1)}kW inverter/motor thermal loss into keel cooler.`
-      },
-      {
-        agentId: 'ELEC-PWR-14',
-        canonicalId: 'A14',
-        name: 'Electrical Power Distribution & Single-Line',
-        division: 'PROPULSION',
-        vote: 'CONCUR',
-        metric: `400V DC Traction Bus & Galvanic Isolation`,
-        rationale: `Isolated 400V DC traction bus with redundant DC-DC 24V avionics converter meets IEC 60092-507 marine standard.`
-      },
-      {
-        agentId: 'BATT-ESS-15',
-        canonicalId: 'A15',
-        name: 'Battery Energy Storage System (ESS)',
-        division: 'PROPULSION',
-        vote: c.batteryKwh >= 45.0 ? 'CONCUR' : 'VETO',
-        metric: `LiFePO4 Pack Capacity (${c.batteryKwh} kWh)`,
-        rationale: c.batteryKwh >= 45.0
-          ? `IP67 submerged keel battery module delivers ${c.enduranceHours}h loiter with 10% uncommitted reserve.`
-          : `Battery capacity (${c.batteryKwh} kWh) insufficient for 8h duty cycle.`
-      },
-
-      // Autonomy & Sensors Division
-      {
-        agentId: 'SENS-PAY-16',
-        canonicalId: 'A16',
-        name: 'Sensor Payload & Mast Integration',
-        division: 'AUTONOMY',
-        vote: 'CONCUR',
-        metric: `Mast Height (2.1m) 360° Radar/LiDAR Horizon`,
-        rationale: `Solid-state Doppler radar and dual 360° LiDAR placed above superstructure with zero blind arcs forward.`
-      },
-      {
-        agentId: 'NAV-COL-17',
-        canonicalId: 'A17',
-        name: 'Autonomous Navigation & COLREGs Engine',
-        division: 'AUTONOMY',
-        vote: isSurvived ? 'CONCUR' : 'RESERVATION',
-        metric: `COLREGs Rules 13/14/15 Maneuvering Agility`,
-        rationale: `Twin pod vectoring provides rapid rate-of-turn (>12 deg/sec) ensuring collision avoidance compliance.`
-      },
-      {
-        agentId: 'C2-COMM-18',
-        canonicalId: 'A18',
-        name: 'Command, Control & Communications (C2)',
-        division: 'AUTONOMY',
-        vote: 'CONCUR',
-        metric: `Redundant LTE/5G & L-Band SATCOM Uplink`,
-        rationale: `Dual modem failover with AES-256 telemetry encryption keeps latency under 180ms within 25nm of shore.`
-      },
-      {
-        agentId: 'CYBER-SEC-19',
-        canonicalId: 'A19',
-        name: 'Cybersecurity & Hardware Trust',
-        division: 'AUTONOMY',
-        vote: 'CONCUR',
-        metric: `Air-Gapped CAN FD & TPM 2.0 Root of Trust`,
-        rationale: `Avionics compute uses hardware root of trust with cryptographic bus isolation between thruster controls and cloud telematics.`
-      },
-
-      // Systems & Production Division
-      {
-        agentId: 'COST-BOM-13',
-        canonicalId: 'A13',
-        name: 'Cost Estimation & Bill of Materials (BOM)',
-        division: 'SYSTEMS',
-        vote: c.lwlMeters <= 12.0 && c.batteryKwh <= 75.0 ? 'CONCUR' : 'RESERVATION',
-        metric: `Target Prototype Unit Cost Budget`,
-        rationale: c.lwlMeters <= 12.0 && c.batteryKwh <= 75.0
-          ? `Estimated build BOM is within target unit budget envelope.`
-          : `Hull length (${c.lwlMeters}m) or battery (${c.batteryKwh}kWh) pushes unit BOM +15% over target.`
-      },
-      {
-        agentId: 'SFTY-FMEA-20',
-        canonicalId: 'A20',
-        name: 'System Safety & FMEA Reliability',
-        division: 'SYSTEMS',
-        vote: 'CONCUR',
-        metric: `FMEA Criticality Index (Twin Pod Redundancy)`,
-        rationale: `No single point of failure in propulsion or steering. Vessel can limp home on one pod thruster.`
-      },
-      {
-        agentId: 'DIG-TWIN-21',
-        canonicalId: 'A21',
-        name: 'Digital Twin & Real-Time Telemetry',
-        division: 'SYSTEMS',
-        vote: 'CONCUR',
-        metric: `60Hz Physics Model Synchronicity`,
-        rationale: `Hydrodynamic hull coefficients calibrated to Savitsky curve for real-time edge telemetry state estimator.`
-      },
-      {
-        agentId: 'PROD-MFG-22',
-        canonicalId: 'A22',
-        name: 'Production Engineering & Shipyard Assembly',
-        division: 'SYSTEMS',
-        vote: c.deadriseDeg >= 16.0 && c.deadriseDeg <= 24.0 ? 'CONCUR' : 'RESERVATION',
-        metric: c.hullType === 'CATAMARAN' ? `Modular Demi-Hull Split Tooling` : `Split Composite Tooling Demolding Draft Angles`,
-        rationale: c.hullType === 'CATAMARAN'
-          ? `Modular demi-hull tooling: Symmetrical demi-hulls demold from unified port/stbd mold set, with secondary infusion for cross-deck bridge.`
-          : `Deadrise angle of ${c.deadriseDeg}° allows single-piece female split mold infusion without undercut binding.`
-      },
-      {
-        agentId: 'VVT-TEST-23',
-        canonicalId: 'A23',
-        name: 'Verification, Validation & Sea Trials (V&V)',
-        division: 'SYSTEMS',
-        vote: isSurvived ? 'CONCUR' : 'VETO',
-        metric: `Harbor Acceptance Trial (HAT) & SAT Gate Criteria`,
-        rationale: isSurvived
-          ? `All virtual acceptance criteria verified across calm water, Sea State 3 maneuvering, and 8h continuous endurance.`
-          : `Candidate failed validation gate ${c.failedGate}. Cannot proceed to sea trial planning.`
+        id: 'SCR-012', name: 'Sea-state input coverage',
+        division: 'SYSTEMS', pass: c.seaStates.length === 5,
+        metric: 'Five generated sea-state rows present',
+        rationale: 'Coverage of synthetic inputs only; no RAO, slamming trial, or validated seakeeping model.'
       }
     ];
+    c.scenarioRuleChecks = rules.map(rule => ({
+      agentId: rule.id, canonicalId: rule.id,
+      name: rule.name, division: rule.division,
+      vote: rule.pass ? 'SCREEN_PASS_UNVERIFIED' : 'SCREEN_FAIL_UNVERIFIED',
+      metric: rule.metric, rationale: rule.rationale
+    }));
   }
 
   private recordLearnedInvariant(agentId: string, category: any, ruleStatement: string, mathEvidence: string) {
@@ -1027,6 +711,9 @@ export class GenerativeDesignOptimizer {
     const candidate: CandidateDesign = {
       id: 'CUSTOM-STUDIO',
       generation: this.currentGeneration,
+      runSeed: this.seed,
+      scenarioRevision: this.scenarioRevision,
+      drawIndex: this.draws,
       philosophy: 'BALANCED_PATROL',
       hullType: params.hullType || (this.currentChampion ? this.currentChampion.hullType : 'CATAMARAN'),
       lwlMeters: params.lwlMeters,
@@ -1049,8 +736,8 @@ export class GenerativeDesignOptimizer {
       rangeNm: 0,
       slammingPressureKpa: 0,
       seaStates: [],
-      agentEvaluations25: [],
-      sobolSensitivities: [],
+      scenarioRuleChecks: [],
+      localSensitivities: [],
       status: 'SURVIVED',
       fitnessScore: 0,
       debateTranscript: [],
@@ -1059,9 +746,9 @@ export class GenerativeDesignOptimizer {
 
     this.solvePhysics(candidate);
     this.solveSeaStateDynamics(candidate);
-    this.computeSobolSensitivities(candidate);
-    this.evaluateGatesAndDebate(candidate);
-    this.evaluateAll25Agents(candidate);
+    this.computeLocalSensitivities(candidate);
+    this.evaluateHeuristicScenarioGates(candidate);
+    this.evaluateSyntheticRuleVotes(candidate);
 
     return candidate;
   }
@@ -1078,79 +765,48 @@ export class GenerativeDesignOptimizer {
   }[] {
     const c = this.currentChampion || this.history[0];
     if (!c) return [];
-
-    return [
-      {
-        question: `Why did the multi-agent engine converge on a ${c.hullType} rather than the competing topology?`,
-        skepticismCategory: "Hull Architecture & Topology Selection",
-        candidateVulnerability: `Seniors will question whether a ${c.hullType === 'CATAMARAN' ? 'Deep-V Monohull would have been cheaper and easier to mold' : 'Catamaran would have provided higher roll stability and larger flat payload deck'}.`,
-        engineeringDefense: c.hullType === 'CATAMARAN'
-          ? `The Catamaran delivers superior intact roll stability (GMt=${c.gmtMeters}m vs ~0.45m for monohull) and a wide 18.5m² flat deck essential for sensor mast separation and drone launch. Slender demi-hulls lower wave interference drag at 14kt cruise, reducing propulsion draw to ${c.cruisePowerKw}kW and extending endurance to ${c.enduranceHours}h.`
-          : `The Deep-V Monohull eliminates cross-deck tunnel slamming risk in head seas, reduces lightship composite mass by ~17%, cuts shipyard tooling costs by 35%, and achieves a higher sprint speed (${c.sprintSpeedKnots}kt) with clean Savitsky planing separation.`,
-        verifiedMath: c.hullType === 'CATAMARAN'
-          ? `Parallel Axis Theorem: IT = 2 * (i_demi + A_demi * y^2) gives GMt=${c.gmtMeters}m (>3.5x IMO threshold). Cruise drag = ${c.cruiseDragKn}kN.`
-          : `Savitsky Planing: Fn_V = ${(14 * 0.514444) / Math.sqrt(9.81 * c.lwlMeters)}. Hump drag ${c.peakDragKn}kN surmounted cleanly by ${c.motorKwTotal}kW.`
-      },
-      {
-        question: "Why an 11-meter hull instead of an 8.5-meter trailerable hull? Smaller is cheaper.",
-        skepticismCategory: "Hull Sizing & Capsize Vulnerability",
-        candidateVulnerability: "Seniors will question whether an 8.5m boat could satisfy the same harbor patrol mission at 40% lower tooling cost.",
-        engineeringDefense: `Trial ITER-014 proved an 8.5m hull capsizes (GMt=0.18m) when loaded with the mandatory 55kWh battery pack. Waterline beam would need to expand to >3.2m, creating a severely distorted L/B ratio (<2.6) that doubles hydrodynamic hump drag and stalls the motors.`,
-        verifiedMath: `LWL=${c.lwlMeters}m provides the minimal wetted length-beam ratio (L/B=${(c.lwlMeters / c.beamMeters).toFixed(2)}) to keep GMt=${c.gmtMeters}m >= 0.35m while keeping peak drag to ${c.peakDragKn}kN.`
-      },
-      {
-        question: "What happens if battery capacity degrades by 20% after 3 years in service?",
-        skepticismCategory: "Mission Reliability & Battery Degradation",
-        candidateVulnerability: "Patrol endurance might drop below the required 8-hour shift.",
-        engineeringDefense: `The champion design incorporates a 25% energy reserve margin. At 80% State of Health (SOH), usable energy drops from ${(c.batteryKwh * 0.9).toFixed(1)}kWh to ${(c.batteryKwh * 0.72).toFixed(1)}kWh, which still provides ${(c.enduranceHours * 0.8).toFixed(1)} hours of continuous transit at 14 knots.`,
-        verifiedMath: `Endurance @ 80% SOH = ${(c.enduranceHours * 0.8).toFixed(1)} hours >= 8.0 hours minimum baseline requirement.`
-      },
-      {
-        question: "What happens if one of the twin pod thrusters fails in rough water?",
-        skepticismCategory: "Single Point of Failure / Redundancy",
-        candidateVulnerability: "Asymmetric thrust could cause vessel to spin out or drift into hazards.",
-        engineeringDefense: `Twin steerable electric pod thrusters are physically isolated across independent CAN FD micro-ROS buses. If one pod suffers inverter failure, the remaining pod can vector steer +/-35° to counter yaw moment, maintaining limp-home steerage at 7.5 knots.`,
-        verifiedMath: `Single pod power (${(c.motorKwTotal / 2).toFixed(0)} kW) overcomes calm water drag up to 9.2 knots (Fn_b = 0.65).`
-      },
-      {
-        question: "Will bottom slamming in Sea State 4 cause composite delamination at 22 knots?",
-        skepticismCategory: "Structural Scantling Fatigue",
-        candidateVulnerability: "Lightweight composite planing monohulls are vulnerable to core crush.",
-        engineeringDefense: `Bottom design slamming head is certified at ${c.slammingPressureKpa} kPa under ISO 12215-5. The laminate specification utilizes 18mm cross-linked structural PVC foam core with quadraxial carbon keel cap, providing an ultimate shear strength of 185 kPa (Safety factor ${(185 / c.slammingPressureKpa).toFixed(2)}).`,
-        verifiedMath: `Applied ${c.slammingPressureKpa} kPa vs Core Ultimate 185 kPa = Safety Factor ${(185 / c.slammingPressureKpa).toFixed(2)}.`
-      },
-      {
-        question: "How do you prove the design will not experience synchronous parametric roll resonance in beam seas?",
-        skepticismCategory: "Dynamic Seakeeping & Roll Resonance",
-        candidateVulnerability: "High initial metacentric height can induce violent snap rolls with short roll periods.",
-        engineeringDefense: `The natural roll period T_phi is calculated at ${c.seaStates[3]?.naturalRollPeriodSec || 2.8} seconds. Sea State 4 spectral peak wave period is 4.4 seconds. Because the ratio T_wave / T_phi is ${(4.4 / (c.seaStates[3]?.naturalRollPeriodSec || 2.8)).toFixed(2)} (well removed from the 1.0 and 2.0 resonance bands), the vessel avoids parametric excitation.`,
-        verifiedMath: `Natural roll period T_phi = 2 * C * B / sqrt(GMt) = ${c.seaStates[3]?.naturalRollPeriodSec || 2.8}s vs Peak Sea Period 4.4s.`
-      }
-    ];
+    const questions = [
+      ['How can this hull topology be justified?', 'Hull architecture',
+       'No authoritative CAD or model-test comparison of monohull and catamaran'],
+      ['How are principal dimensions and displacement verified?', 'Hydrostatics and mass',
+       'No approved offsets, measured mass/CG, loading cases, GZ or downflooding studies'],
+      ['What supports the predicted speed and endurance?', 'Resistance and energy',
+       'No validated CFD/tank data, propulsive efficiency map or full electrical duty cycle'],
+      ['What happens after a propulsion actuator fails?', 'Propulsion redundancy',
+       'No documented failure modes, controlled dynamic simulation or real HIL tests'],
+      ['What verifies composite scantlings in slamming?', 'Structures',
+       'No qualified laminate layup, loads, structural solver convergence or test coupon results'],
+      ['How can the vessel safely operate in the ODD?', 'Autonomy and sea trials',
+       'No approved sensor calibration, closed-loop SIL, HIL, COLREG observer or permitted sea trials']
+    ] as const;
+    return questions.map(([question, skepticismCategory, candidateVulnerability]) => ({
+      question, skepticismCategory, candidateVulnerability,
+      engineeringDefense: 'NOT DEMONSTRATED. This exploratory scenario provides no verified engineering defense.',
+      verifiedMath: 'MISSING: independent source-backed calculations, applicable standards, qualified review and physical acceptance.'
+    }));
   }
 
   /**
-   * Export formal Executive Design Defense Dossier formatted for executive review
+   * Export unverified exploratory concept dossier formatted for executive review
    */
   public generateExecutiveDefenseDossierMarkdown(candidate?: CandidateDesign): string {
     const c = candidate || this.currentChampion || this.history[0];
     if (!c) return '# USV-01 Executive Design Defense Dossier\nNo candidate data available.';
 
-    const concurs = c.agentEvaluations25.filter(a => a.vote === 'CONCUR').length;
-    const reservations = c.agentEvaluations25.filter(a => a.vote === 'RESERVATION').length;
-    const vetoes = c.agentEvaluations25.filter(a => a.vote === 'VETO').length;
+    const passes = c.scenarioRuleChecks.filter(a => a.vote === 'SCREEN_PASS_UNVERIFIED').length;
+    const fails = c.scenarioRuleChecks.filter(a => a.vote === 'SCREEN_FAIL_UNVERIFIED').length;
 
     return `# USV-01 DIGITAL LAB | EXECUTIVE NAVAL DESIGN DEFENSE DOSSIER
-**Document Control:** USV-01-DEF-DOSSIER-REV-1.0
-**Certified Candidate:** ${c.id} (Generation #${c.generation})
+**Document Control:** USV-01-DEF-DOSSIER-REV-1.0 (SCREENING / NOT FOR DESIGN RELEASE)\n**Reproducibility Seed:** ${c.runSeed} | PRNG draw index: ${c.drawIndex} | Scenario revision: ${c.scenarioRevision}\n**Numerical Confidence:** UNVERIFIED LEGACY HEURISTIC; deterministic replay does not validate engineering accuracy.
+**UNVERIFIED EXPLORATORY CANDIDATE:** ${c.id} (Generation #${c.generation})
 **Design Philosophy:** ${c.philosophy}
 **Composite Multi-Objective Fitness:** ${c.fitnessScore} / 100
-**Consensus Status:** ${c.status} (${concurs} Concur, ${reservations} Reservation, ${vetoes} Veto)
+**Synthetic screening rule status (NOT actual agent consensus):** ${c.status} (${passes} tentative passes, ${fails} failures; no engineering approval)
 
 ---
 
 ## 1. Executive Summary & Design Justification
-This dossier provides the mathematical, hydrodynamic, and structural defense for the **USV-01 Autonomous Patrol Vessel** selected by the Generative Multi-Agent Optimization Engine. Through **${this.currentGeneration} iterative generational trials**, the 25 specialized AI agents explored the design space bounded by deterministic naval physics, synthesizing permanent boundary invariants to avoid local minima and eliminate capsize or structural failures.
+**WARNING — SCREENING ONLY.** All numbers below are illustrative outputs from a legacy heuristic generator with undocumented/uncalibrated assumptions. No verified vessel geometry, loading, resistance, propulsion efficiency, independent FEA, external source authentication or real 26-agent project-specific debate is demonstrated. This is NOT an engineering design certificate, regulatory compliance statement or authorization to update the controlled baseline. The synthetic scoring cannot establish capsize prevention, structures, performance, or suitability.
 
 ### Primary Geometry & Performance Parameters:
 - **Hull Topology Architecture:** **${c.hullType}**
@@ -1159,11 +815,11 @@ This dossier provides the mathematical, hydrodynamic, and structural defense for
 - **Operating Draft (T):** ${c.draftMeters} m
 - **Transom Deadrise (β):** ${c.deadriseDeg}°
 - **Full Load Displacement (Δ):** ${c.displacementTonnes} metric tonnes
-- **Transverse Metacentric Height (GMt):** **${c.gmtMeters} m** *(IMO MSC.267 threshold: >= 0.35m)*
+- **Transverse Metacentric Height (GMt):** **${c.gmtMeters} m** *(unverified approximation; NO IMO compliance claim)*
 - **Installed Electric Propulsion:** ${c.motorKwTotal} kW twin PMSM pods
 - **Battery Storage (ESS):** ${c.batteryKwh} kWh LiFePO4
 - **Sprint Speed:** ${c.sprintSpeedKnots} knots
-- **Patrol Endurance @ 14kt Cruise:** **${c.enduranceHours} hours** *(Baseline req: >= 8.0h)*
+- **Patrol Endurance @ 14kt Cruise:** **${c.enduranceHours} hours** *(illustrative scenario only; mission requirement unconfirmed)*
 - **Total Operational Range:** ${c.rangeNm} nautical miles
 
 ---
@@ -1175,35 +831,26 @@ ${c.seaStates.map(s => `| **SS ${s.seaState}** (${s.description}) | ${s.signific
 
 ---
 
-## 3. Global Sobol Parameter Sensitivity Decomposition
-Understanding parameter sensitivities guarantees the design is robust and not resting at an unstable local edge:
-${c.sobolSensitivities.map(s => `- **${s.displayName}**: First-Order S_i = **${s.firstOrderIndex}**, Total S_Ti = **${s.totalEffectIndex}**\n  *Impact:* ${s.primaryTarget}\n  *Guidance:* ${s.architecturalGuidance}`).join('\n')}
+## 3. Local finite-difference influence — NOT Sobol/validated sensitivities
+These heuristic sensitivity indicators are unvalidated and do not establish robustness:
+${c.localSensitivities.map(s => `- **${s.displayName}**: +${s.inputPerturbationPercent}% input => ${s.targetChangePercent === null ? 'NOT AVAILABLE' : s.targetChangePercent + '%'} output change (legacy local model)\n  *Target:* ${s.primaryTarget}\n  *Limitations:* ${s.architecturalGuidance}`).join('\n')}
 
 ---
 
-## 4. 25-Agent Full Concurrence & Veto Audit Matrix
+## 4. Synthetic Input Screening Matrix — NOT Real Agent Execution
 | Agent ID | Discipline | Vote | Evaluated Criterion | Engineering Justification |
 | :--- | :--- | :--- | :--- | :--- |
-${c.agentEvaluations25.map(a => `| **${a.agentId}** | ${a.name} | **${a.vote}** | ${a.metric} | ${a.rationale} |`).join('\n')}
+${c.scenarioRuleChecks.map(a => `| **${a.agentId}** | ${a.name} | **${a.vote}** | ${a.metric} | ${a.rationale} |`).join('\n')}
 
 ---
 
-## 5. Architectural Trade-Off Matrix: Catamaran vs Monohull
-The 25 agents subjected both topologies to competitive generational trials:
-
-| Evaluation Dimension | Catamaran Topology | Monohull Topology | Engineering Verdict |
-| :--- | :--- | :--- | :--- |
-| **Intact Roll Stability ($GM_t$)** | **1.4m - 2.6m** (Parallel Axis Theorem) | 0.35m - 0.75m (Single waterplane) | Catamaran provides >3x restoring moment against 35kt beam wind gusts. |
-| **Payload Deck Area** | **~18.5 m²** (Full beam crossdeck) | ~9.2 m² (Tapering foredeck) | Catamaran accommodates dual UAV launch pads and sensor mast baseline. |
-| **14-Knot Cruise Resistance** | **Lower** (Slender demi-hull wave slicing) | Higher (Planing transition hump) | Catamaran achieves +1.4h additional loiter at 14kt patrol. |
-| **Sea State 4 Head Slamming** | Tunnel clearance dependent ($0.75\text{m} - T$) | **Continuous deadrise wave cutting** | Monohull experiences lower vertical accelerations in steep head seas. |
-| **Lightship Structural Mass** | Higher (+17% cross-deck bridging) | **Lower** (Single infused shell) | Monohull saves composite scantling weight. |
-| **Tooling & Shipyard Cost** | Higher (Twin demi-molds + bridge) | **Lower** (-35% tooling expenditure) | Monohull has simplified one-piece split demolding. |
+## 5. Architectural Trade-Offs — SOURCE EVIDENCE MISSING
+No validated monohull/catamaran comparative resistance curves, stability curves, deck arrangements, structural weights, model tests or shipyard cost quotations are attached. No superiority or cost percentages may be asserted. See source-identified agent research and independent concept-selection gates before issuing a recommendation.
 
 ---
 
-## 6. Permanent Learned Invariants Ledger
-During trial-and-error exploration, rejected candidates were subjected to automated Root Cause Analysis, producing permanent boundary rules that prevented future failures:
+## 6. Heuristic Rules Ledger — NOT Validated Invariants
+No externally established invariant is registered. Synthetic rule thresholds must not be treated as approved source evidence:
 ${this.learnedInvariants.map(inv => `### [${inv.id}] Discovered at Generation #${inv.discoveredAtGeneration} by ${inv.agentId} (${inv.category})
 - **Rule:** ${inv.ruleStatement}
 - **Proof:** \`${inv.mathEvidence}\``).join('\n\n')}
@@ -1214,11 +861,11 @@ ${this.learnedInvariants.map(inv => `### [${inv.id}] Discovered at Generation #$
 ${this.generateRedTeamChallenge().map((q, idx) => `### Question ${idx + 1}: ${q.question}
 **Scrutiny Category:** ${q.skepticismCategory}
 **Vulnerability Audited:** ${q.candidateVulnerability}
-**Certified Engineering Defense:** ${q.engineeringDefense}
-**Mathematical Proof:** \`${q.verifiedMath}\``).join('\n\n')}
+**Unverified Heuristic Defense:** ${q.engineeringDefense}
+**Screening Formula (not validated):** \`${q.verifiedMath}\``).join('\n\n')}
 
 ---
-*Dossier Generated deterministically by USV-01 Generative Design Optimizer Engine. ISO 12215 / IMO MSC.267 compliant.*
+*Illustrative deterministic scenario only. NOT certified, NOT independently verified, NOT ISO 12215 or IMO-compliant evidence. Project Lead concept selection requires an evidence-backed multi-agent trade review; safety release requires qualified engineering approvals.*
 `;
   }
 }

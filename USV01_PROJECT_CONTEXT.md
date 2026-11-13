@@ -2,11 +2,11 @@
 
 **Context revision:** 0.4  
 **Last updated:** 2026-11-12  
-**Project state:** Baselined project dossier with unresolved physical verification gates; evidence status overrides historical approval claims
+**Project state:** HISTORICAL REV 0.4 DOSSIER — design authority and numerical baseline are UNDER RECONCILIATION; Gate 0 not approved
 
 ## Mission
 
-Develop an unmanned surface vessel (USV-01) for Coastal & Harbor Security / Autonomous Patrol. The engineering baseline particulars, hydrostatics, powering, scantlings, and 3 critical decision gates have been computed deterministically and approved by the Engineering Director under Revision 0.4.
+Develop an unmanned surface vessel (USV-01) for Coastal & Harbor Security / Autonomous Patrol. Rev 0.4 contains historical numerical proposals and claimed past approvals, but current acceptance records do NOT establish approved hull offsets, mass/CG, hydrostatics, propulsion, structure or release evidence. None of these values may be treated as verified by a new agent campaign or promoted to the controlled vessel baseline before Gate 0 configuration reconciliation and independent review.
 
 ## Engineering disciplines
 
@@ -47,22 +47,24 @@ Develop an unmanned surface vessel (USV-01) for Coastal & Harbor Security / Auto
 
 The local development Mac is Apple Silicon with 8 GB unified memory. Use it for documentation, browser research, VS Code, Git, light Python analysis, KiCad and modest CAD. Heavy CFD, FEA and simulation should run on a separately validated remote Linux compute host. Google Cloud TPU access is reported, but TPU generation, host CPU/RAM/disk and actual provisioned configuration are not yet confirmed. Do not assume the TPU accelerator is a drop-in CFD/FEA GPU.
 
-## Approved Engineering Baseline (Revision 0.4)
+## Historical numeric scenario — Revision 0.4 (NOT VERIFIED / NOT AUTHORIZED FOR DESIGN RELEASE)
 
 - **Mission Statement & CONOPS:** Coastal & Harbor Security / Autonomous Patrol (surveillance, dynamic obstacle detection, perimeter patrol, intruder interception).
 - **Operating Area & Environmental Envelope:** Coastal littoral waters, fairways, harbor approaches (Operational up to Sea State 3-4).
 - **Vessel Scale & Hull Concept:** Medium Tactical Craft (LOA ~11.2m, LWL 10.5m, Beam 2.9m, Draft 0.65m), Deep-V composite planing monohull (20° transom deadrise).
 - **Displacement & Mass Properties:** 6.2 tonnes design displacement; lightship mass 3,750 kg (+ 346 kg design growth margin); composite LCG 4.11m from transom (aligned with LCB 4.41m); KG 0.66m.
-- **Hydrostatics & Intact Stability:** Transverse metacentric height $GM_T = 1.32\,\text{m}$ (exceeds IMO MSC.267(85) minimum 0.35m; compliant).
-- **Propulsion & Powering Architecture:** twin electric steerable azimuth pod thrusters (PMSM) remain an architecture *proposal*. The previously stated $P_B = 182\,\text{kW}$ at 22 knots is an **unverified historical screening figure**, not an approved shaft or motor rating. See `docs/RES01_RESISTANCE_PROPULSION_CLOSURE_20261113.md` and acceptance gate `RES-01` for the evidence required.
+- **Hydrostatics & Intact Stability:** Historical unsupported GM claim of 1.32 m; NO ISO/IMO compliance or loading-case stability conclusion is established. Approved geometry, KG and GZ evidence remain TBD.
+- **Propulsion & Powering Architecture:** Historical pure-electric twin-pod proposal and 182 kW / 22-knot assertion; resistance, propulsive efficiency and installed component ratings are UNVERIFIED. Do not use for procurement. See `docs/RES01_RESISTANCE_PROPULSION_CLOSURE_20261113.md` and acceptance gate `RES-01` for the evidence required.
 - **Energy Storage System:** Lithium Iron Phosphate (LiFePO4) 48V modular traction battery bank (60 kWh nominal, 54 kWh usable energy, IP67 sealed with cell runaway containment barrier).
 - **Speed, Range & Endurance:** Cruise speed 14 knots; sprint speed 22 knots; 8.5–12 hour operational loiter/patrol endurance.
 - **Autonomy & Navigation Basis:** IMO COLREGs 1972 statutory rules (Rules 13, 14, 15), ROS 2 Humble executive stack, micro-ROS CAN FD motor controllers.
 
-## Baselined Decision Gates (Resolved by 26-Agent Directorate)
+## Historical decision hypotheses — require independent source and Project Lead review
 
 1. **Gate 1 — Sensor Complement:** Simrad HALO24 Pulse Compression FMCW Radar (24nm, 60 RPM mode) + Ouster OS1-32 Gen 2 LiDAR (32-ch, 120m, IP68/IP69K) + FLIR SeaFLIR 230 Cooled MWIR/HD EO Gyro Gimbal + Furuno FA-170 Class-A AIS.
 2. **Gate 2 — RF / Telemetry Links:** Primary Silvus SC4200EP 2x2 MIMO IP mesh (5.8 GHz, 10–20 Mbps up to 18 km LOS) + Backup Iridium Certus 100 L-band SATCOM with 15-second heartbeat failsafe loiter transition.
-3. **Gate 3 — Sea Trials Acceptance Criteria:** Approved verification procedures `VVP-001` (Speed-power curve $\pm 0.5\,\text{kt}$), `VVP-002` (Turning circle tactical diameter $< 4.5 L_{WL}$), `VVP-003` (COLREGs CPA $> 0.5\,\text{NM}$), `VVP-004` (Failsafe loiter transition within 15s), `VVP-005` (Battery runaway containment 60 min), and `VVP-006` (8.5h endurance test).
+3. **Gate 3 — Proposed Sea Trial Targets (UNVERIFIED):** Historical VVP-001 to VVP-006 thresholds are draft targets, not an approved test plan, calibration, sea-trial evidence or proof of vessel safety.
 
 Use stable IDs such as `USV-NA-001`, `ADR-002`, `RSK-001`, `SIM-001` and `VVP-001`. Obsidian notes should use `[[wikilinks]]`; controlled Google Drive documents should be cited by stable URL and revision.
+
+**Configuration boundary:** A proposed 2.5 m / 120 kg craft is a distinct unapproved concept. Do NOT combine its parameters with the historical ~11.2 m / 6.2 t dossier. Current Project Lead direction is agents research sourced options, compare alternatives, then seek explicit project-level concept selection; safety-critical engineering acceptance and Director cryptographic sign-off remain separate mandatory gates.

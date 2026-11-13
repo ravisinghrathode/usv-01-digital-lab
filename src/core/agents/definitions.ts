@@ -14,6 +14,12 @@ const genericOutputSchema = z.object({
   disciplineSummary: z.string(),
   keyMetrics: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
   designDecisions: z.array(z.string()),
+  conceptTopology: z.enum(['MONOHULL','CATAMARAN','TRIMARAN','OTHER']).optional(),
+  metricProvenance: z.record(z.string(), z.object({
+    sourceKind: z.enum(['SOURCE_DOCUMENT','HYPOTHESIS']),
+    sourceReference: z.string().min(3),
+    justification: z.string().min(5)
+  })).optional(),
   assumptions: z.array(z.object({
     id: z.string(),
     category: z.enum(['ASSUMPTION', 'FACT', 'CALCULATION', 'TBD', 'PROPOSAL']),
@@ -208,13 +214,13 @@ Never fabricate dimensions if marked TBD.`,
       'Compare source-referenced geometry-integrated hydrostatics with independent software and document errors, free-surface moments and loading cases'
     ],
     systemInstructions: `You are the Hydrostatics & Stability Engineer.
-For source-referenced actual hull offset stations, use TOOL-OFFSET-HYDROSTATICS-01 to calculate displacement, buoyancy centers, metacentric estimates and fixed-trim preliminary righting arms.
+For source-referenced actual hull offset stations, use TOOL-OFFSET-HYDROSTATICS-01 for upright properties and TOOL-TRIMMED-HYDROSTATICS-01 for coupled heave/trim preliminary righting arms at prescribed heel. These are not certified 3D CAD hydrostatics.
 When approved hull offsets or mass/CG evidence are absent, use TOOL-HYDROSTATICS-01 for parametric screening only; NEVER present screening GM/GZ as a compliance certificate.
 Do not invent a mandatory GM threshold: first establish the applicable standard, load cases and accepted criterion. Negative GM, inadequate reserve, unverified KG or missing geometry are safety review flags. HYD-01 release remains subject to independent review and Director sign-off.`,
     inputSchema: genericInputSchema,
     outputSchema: genericOutputSchema,
     requiredKnowledgeSources: ['IMO_HSC_CODE_2000', 'ISO_12217_SMALL_CRAFT_STABILITY'],
-    permittedTools: ['TOOL-HYDROSTATICS-01', 'TOOL-OFFSET-HYDROSTATICS-01', 'TOOL-MASS-BALANCE-01'],
+    permittedTools: ['TOOL-HYDROSTATICS-01', 'TOOL-OFFSET-HYDROSTATICS-01', 'TOOL-TRIMMED-HYDROSTATICS-01', 'TOOL-MASS-BALANCE-01'],
     modelConfig: { preferredProvider: 'gemini', modelName: 'gemini-3.8-flash', temperature: 0.0, maxTokens: 4096, fallbackToMock: true },
     reportingTo: 'LEAD-SYS-01',
     dependencies: ['HULL-GEO-05', 'WGT-BAL-09'],

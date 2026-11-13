@@ -289,9 +289,15 @@ function sectionMoments(station: HullStation, sin: number, cos: number, h: numbe
   return out;
 }
 
-function integrate(input: HydroInput, heelRad: number, planeOffsetM: number): ImmersedProperties {
+function integrate(input: HydroInput, heelRad: number, planeOffsetM: number, pitchSlope = 0): ImmersedProperties {
   const sin = Math.sin(heelRad), cos = Math.cos(heelRad);
-  const sections = input.hull.stations.map(s => sectionMoments(s, sin, cos, planeOffsetM));
+  // A positive slope immerses the forward end more deeply. Use the hull midpoint as
+  // a fixed reference so changing trim does not alter the meaning of the plane offset.
+  const stations = input.hull.stations;
+  const xReference = (stations[0].xM + stations[stations.length - 1].xM) / 2;
+  const sections = stations.map(station => sectionMoments(
+    station, sin, cos, planeOffsetM + pitchSlope * (station.xM - xReference)
+  ));
   let volume = 0, mx = 0, my = 0, mz = 0;
   let awp = 0, mXwp = 0, mX2wp = 0, mSwp = 0, mS2wp = 0;
   for (let i = 1; i < sections.length; i++) {
@@ -324,23 +330,28 @@ function integrate(input: HydroInput, heelRad: number, planeOffsetM: number): Im
   };
 }
 
-function equilibrium(input: HydroInput, heelRad: number): { h: number; hydro: ImmersedProperties } {
+function equilibrium(input: HydroInput, heelRad: number, pitchSlope = 0): { h: number; hydro: ImmersedProperties } {
   const sin = Math.sin(heelRad), cos = Math.cos(heelRad);
-  const hs = input.hull.stations.flatMap(s =>
-    s.loops.flatMap(loop => loop.map(v => v[0] * sin + v[1] * cos)));
+  const stations = input.hull.stations;
+  const xReference = (stations[0].xM + stations[stations.length - 1].xM) / 2;
+  const hs = stations.flatMap(station =>
+    station.loops.flatMap(loop => loop.map(v =>
+      v[0] * sin + v[1] * cos - pitchSlope * (station.xM - xReference)
+    ))
+  );
   let lo = Math.min(...hs), hi = Math.max(...hs);
   const target = input.load.massKg / input.waterDensityKgM3;
-  const capacity = integrate(input, heelRad, hi + 1).displacedVolumeM3;
+  const capacity = integrate(input, heelRad, hi + 1, pitchSlope).displacedVolumeM3;
   if (target >= capacity - Math.max(EPS, capacity * 1e-8)) {
     throw new Error('Load case exhausts closed-hull submerged geometric volume');
   }
   for (let i = 0; i < 75; i++) {
     const mid = (lo + hi) / 2;
-    if (integrate(input, heelRad, mid).displacedVolumeM3 < target) lo = mid;
+    if (integrate(input, heelRad, mid, pitchSlope).displacedVolumeM3 < target) lo = mid;
     else hi = mid;
   }
   const h = (lo + hi) / 2;
-  return { h, hydro: integrate(input, heelRad, h) };
+  return { h, hydro: integrate(input, heelRad, h, pitchSlope) };
 }
 
 export function calculateOffsetHydrostatics(input: HydroInput): OffsetHydroResult {
@@ -402,6 +413,121 @@ export function calculateOffsetHydrostatics(input: HydroInput): OffsetHydroResul
       'Coupled heave/trim/heel equilibrium, downflooding and all load cases',
       'Independent hydrostatic-table and GZ benchmark comparison with uncertainty',
       'Qualified naval architect review and Director release sign-off'
+    ]
+  };
+}
+
+/**
+ * Two-equation numerical static equilibrium at prescribed heel:
+ * 1) buoyant mass == loading mass (heave)
+ * 2) longitudinal buoyancy/weight lever == 0 (pitch)
+ *
+ * This improves on the fixed-trim legacy screening, but longitudinal integration
+ * is still piecewise linear in station properties; it is not a lofted CAD model.
+ * A prescribed heel is NOT a solved free-roll equilibrium. Downflooding,
+ * discontinuous waterplanes and transverse capsize criteria are not modeled.
+ */
+export interface TrimEquilibriumPoint {
+  heelDeg: number;
+  trimDeg: number;
+  pitchSlope: number;
+  referencePlaneOffsetM: number;
+  displacedVolumeM3: number;
+  longitudinalMomentResidualM: number;
+  lcbM: number;
+  tcbM: number;
+  kbM: number;
+  uncorrectedGzM: number;
+  correctedGzM: number | null;
+}
+
+export interface TrimEquilibriumScreen {
+  status: 'GEOMETRY_DERIVED_UNVERIFIED';
+  method: 'COUPLED_HEAVE_TRIM_AT_PRESCRIBED_HEEL';
+  geometryReference: string;
+  geometryRevision: string;
+  loadCaseId: string;
+  results: TrimEquilibriumPoint[];
+  maximumPitchAngleDeg: 15;
+  engineeringComplianceValidated: false;
+  limitations: string[];
+}
+
+function solveHeaveAndTrim(input: HydroInput, heelRad: number): {
+  slope: number; offsetM: number; hydro: ImmersedProperties; residualM: number;
+} {
+  const sin = Math.sin(heelRad), cos = Math.cos(heelRad);
+  const bound = Math.tan(15 * Math.PI / 180) * cos;
+
+  const check = (slope: number) => {
+    const { h, hydro } = equilibrium(input, heelRad, slope);
+    // e_x=(1, slope*sin(heel), slope*cos(heel)) is orthogonal to the
+    // body-frame gravity normal (-slope, sin(heel), cos(heel)).
+    const residual = hydro.centerBuoyancyXM - input.load.lcgM +
+      slope * (
+        sin * (hydro.centerBuoyancyYM - input.load.tcgM) +
+        cos * (hydro.centerBuoyancyZM - input.load.kgM)
+      );
+    return { slope, offsetM: h, hydro, residualM: residual };
+  };
+
+  const zero = check(0);
+  if (Math.abs(zero.residualM) < 1e-10) return zero;
+  let left = check(-bound), right = check(bound);
+  if (left.residualM * right.residualM > 0) {
+    throw new Error('No static heave/trim equilibrium within +/-15 deg pitch screening envelope');
+  }
+  for (let i = 0; i < 72; i++) {
+    const mid = check((left.slope + right.slope) / 2);
+    if (Math.abs(mid.residualM) < 1e-10) return mid;
+    if (left.residualM * mid.residualM <= 0) right = mid;
+    else left = mid;
+  }
+  const best = check((left.slope + right.slope) / 2);
+  if (Math.abs(best.residualM) > 1e-7) {
+    throw new Error('Static heave/trim equilibrium did not converge');
+  }
+  return best;
+}
+
+export function calculateTrimmedOffsetHydrostatics(input: HydroInput): TrimEquilibriumScreen {
+  validate(input);
+  const angles = input.heelAnglesDeg ?? [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
+  const correctionM = input.load.freeSurfaceMomentKgM === undefined ? null :
+    input.load.freeSurfaceMomentKgM / input.load.massKg;
+  return {
+    status: 'GEOMETRY_DERIVED_UNVERIFIED',
+    method: 'COUPLED_HEAVE_TRIM_AT_PRESCRIBED_HEEL',
+    geometryReference: input.hull.geometryReference,
+    geometryRevision: input.hull.geometryRevision,
+    loadCaseId: input.load.id,
+    results: angles.map(heelDeg => {
+      const heelRad = heelDeg * Math.PI / 180;
+      const { slope, offsetM, hydro, residualM } = solveHeaveAndTrim(input, heelRad);
+      const gz = (input.load.tcgM - hydro.centerBuoyancyYM) * Math.cos(heelRad) -
+        (input.load.kgM - hydro.centerBuoyancyZM) * Math.sin(heelRad);
+      return {
+        heelDeg,
+        trimDeg: Math.atan2(slope, Math.cos(heelRad)) * 180 / Math.PI,
+        pitchSlope: slope,
+        referencePlaneOffsetM: offsetM,
+        displacedVolumeM3: hydro.displacedVolumeM3,
+        longitudinalMomentResidualM: residualM,
+        lcbM: hydro.centerBuoyancyXM,
+        tcbM: hydro.centerBuoyancyYM,
+        kbM: hydro.centerBuoyancyZM,
+        uncorrectedGzM: gz,
+        correctedGzM: correctionM === null ? null :
+          gz - correctionM * Math.sin(heelRad)
+      };
+    }),
+    maximumPitchAngleDeg: 15,
+    engineeringComplianceValidated: false,
+    limitations: [
+      'Section-based longitudinal interpolation; convergence and independent CAD correlation are not established',
+      'Prescribed heel and approximate free-surface correction, not free-roll equilibrium or time-domain stability',
+      'No downflooding, openings, trapped water, damage, appendages or physical trim/heel measurements',
+      'No class or flag compliance certification, approved loading cases or competent-person sign-off'
     ]
   };
 }

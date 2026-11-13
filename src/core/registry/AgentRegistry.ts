@@ -78,7 +78,7 @@ export class AgentRegistry {
 
   /**
    * Validates that:
-   * 1. Exactly 25 master agents are registered (or minimum 25).
+   * 1. Exactly 26 canonical agents are registered.
    * 2. All agent dependencies exist in the registry.
    * 3. No circular dependencies exist in the agent reporting or dependency tree.
    * 4. System instructions and schemas are defined.

@@ -30,11 +30,10 @@ import {
   CandidateDesign,
   LearnedInvariant,
   DesignPhilosophy,
-  AgentEvaluation25
+  ScenarioRuleCheck
 } from '../core/optimizer/GenerativeDesignOptimizer';
 import { downloadCsv } from '../utils/engineeringUtils';
 import { Vessel3DVisualizer } from './Vessel3DVisualizer';
-import { SharedMemory } from '../core/memory/SharedMemory';
 
 interface GenerativeOptimizerViewProps {
   onAskAi?: (prompt: string, record?: any) => void;
@@ -44,7 +43,7 @@ interface GenerativeOptimizerViewProps {
 export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = ({ onAskAi, onNavigateToSimulator }) => {
   const optimizer = GenerativeDesignOptimizer.getInstance();
 
-  const [activeTab, setActiveTab] = useState<'ledger' | 'studio' | 'agents25' | 'seastates' | 'pareto' | 'invariants' | 'redteam'>('ledger');
+  const [activeTab, setActiveTab] = useState<'ledger' | 'studio' | 'rules' | 'seastates' | 'pareto' | 'invariants' | 'redteam'>('ledger');
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [philosophy, setPhilosophy] = useState<DesignPhilosophy>('BALANCED_PATROL');
   const [history, setHistory] = useState<CandidateDesign[]>(() => {
@@ -63,11 +62,11 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [appliedToast, setAppliedToast] = useState<{ id: string; message: string; lwl: number; beam: number; disp: number } | null>(null);
 
-  // 25-Agent tab filters
+  // Synthetic rule tab filters
   const [agentDivisionFilter, setAgentDivisionFilter] = useState<string>('ALL');
   const [agentSearch, setAgentSearch] = useState<string>('');
 
-  // Interactive What-If Studio Sliders — Synchronized with Rev 0.4 10.5m Baseline
+  // Interactive What-If Studio Sliders — illustrative ONLY, not a Rev 0.4 baseline
   const [studioParams, setStudioParams] = useState<{
     hullType: 'CATAMARAN' | 'MONOHULL';
     lwlMeters: number;
@@ -182,32 +181,18 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
     document.body.removeChild(link);
   };
 
-  // Apply candidate directly to SharedMemory and Digital Lab Simulator
+  // Synthetic optimizer scenarios are local previews only. They MUST NOT write
+  // invented hull, stability or powering values to controlled SharedMemory.
   const handleApplyCandidateToLab = (candidate: CandidateDesign) => {
-    const sm = SharedMemory.getInstance();
-    try {
-      sm.updateParameter('USV-NA-001', { value: candidate.lwlMeters, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
-      sm.updateParameter('USV-NA-002', { value: candidate.beamMeters, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
-      sm.updateParameter('USV-NA-003', { value: candidate.draftMeters, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
-      sm.updateParameter('USV-NA-004', { value: candidate.displacementTonnes, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
-      sm.updateParameter('USV-NA-005', { value: candidate.gmtMeters, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
-      sm.updateParameter('USV-NA-006', { value: candidate.kgMeters, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
-      sm.updateParameter('USV-PROP-001', { value: candidate.sprintSpeedKnots, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
-      sm.updateParameter('USV-PROP-002', { value: 14.0, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
-      if (sm.getParameter('USV-ELEC-001')) {
-        sm.updateParameter('USV-ELEC-001', { value: candidate.batteryKwh, assumptions: [`Applied from Optimizer candidate ${candidate.id}`] }, 'GEN-OPT-DEF');
-      }
-      setAppliedToast({
-        id: candidate.id,
-        message: `Design ${candidate.id} applied to Lab Baseline & Simulator!`,
-        lwl: candidate.lwlMeters,
-        beam: candidate.beamMeters,
-        disp: candidate.displacementTonnes
-      });
-      setTimeout(() => setAppliedToast(null), 8000);
-    } catch (err) {
-      console.error('Failed to update shared memory parameters', err);
-    }
+    setSelectedCandidate(candidate);
+    setAppliedToast({
+      id: candidate.id,
+      message: 'UNVERIFIED SCREENING PREVIEW — controlled vessel baseline unchanged',
+      lwl: candidate.lwlMeters,
+      beam: candidate.beamMeters,
+      disp: candidate.displacementTonnes
+    });
+    setTimeout(() => setAppliedToast(null), 8000);
   };
 
   // Draw Dynamic Morphing Hull Canvas
@@ -359,10 +344,10 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
 
   const redTeamQuestions = optimizer.generateRedTeamChallenge();
 
-  // Filtered 25 agents
-  const filtered25Agents = useMemo(() => {
-    if (!activeCandidate || !activeCandidate.agentEvaluations25) return [];
-    return activeCandidate.agentEvaluations25.filter(a => {
+  // Filtered scenario rules
+  const filteredRules = useMemo(() => {
+    if (!activeCandidate || !activeCandidate.scenarioRuleChecks) return [];
+    return activeCandidate.scenarioRuleChecks.filter(a => {
       const matchDivision = agentDivisionFilter === 'ALL' || a.division === agentDivisionFilter;
       const matchSearch = agentSearch.trim() === '' ||
         a.agentId.toLowerCase().includes(agentSearch.toLowerCase()) ||
@@ -372,17 +357,22 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
     });
   }, [activeCandidate, agentDivisionFilter, agentSearch]);
 
-  const agentVoteSummary = useMemo(() => {
-    if (!activeCandidate || !activeCandidate.agentEvaluations25) return { concur: 0, reservation: 0, veto: 0 };
+  const ruleSummary = useMemo(() => {
+    if (!activeCandidate || !activeCandidate.scenarioRuleChecks) return { pass: 0, fail: 0 };
     return {
-      concur: activeCandidate.agentEvaluations25.filter(a => a.vote === 'CONCUR').length,
-      reservation: activeCandidate.agentEvaluations25.filter(a => a.vote === 'RESERVATION').length,
-      veto: activeCandidate.agentEvaluations25.filter(a => a.vote === 'VETO').length
+      pass: activeCandidate.scenarioRuleChecks.filter(a => a.vote === 'SCREEN_PASS_UNVERIFIED').length,
+      fail: activeCandidate.scenarioRuleChecks.filter(a => a.vote === 'SCREEN_FAIL_UNVERIFIED').length
     };
   }, [activeCandidate]);
 
   return (
     <div className="space-y-6">
+      <div role="alert" className="rounded-lg border border-amber-500 bg-amber-950/20 p-4 text-sm text-amber-200">
+        <strong>UNVERIFIED CONCEPT EXPLORATION.</strong> The legacy optimizer uses assumed numerical coefficients
+        and synthetic votes, not validated resistance, hydrostatics, structures or a live 26-agent
+        decision. All generated values are illustrative. Previewing a design does not change
+        SharedMemory, the accepted baseline or the real-time vessel simulator.
+      </div>
       {/* CLOSED-LOOP SYNTHESIS TOAST NOTIFICATION */}
       {appliedToast && (
         <div className="p-4 rounded-lg bg-emerald-950/40 border border-emerald-500/50 text-emerald-200 flex flex-wrap items-center justify-between gap-3 shadow-lg shadow-emerald-950/30 animate-in fade-in">
@@ -390,10 +380,10 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
             <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
             <div>
               <div className="text-emerald-300 font-bold text-sm">
-                DESIGN CANDIDATE {appliedToast.id} APPLIED TO LAB & SIMULATOR!
+                DESIGN CANDIDATE {appliedToast.id}: PREVIEW ONLY — NOT APPROVED
               </div>
               <div className="text-slate-300 text-xs mt-0.5">
-                Waterline length: <strong className="text-white">{appliedToast.lwl}m</strong> • Beam: <strong className="text-white">{appliedToast.beam}m</strong> • Displacement: <strong className="text-amber-400">{appliedToast.disp.toFixed(2)}t</strong>. SharedMemory and 3D visual twins are synchronized.
+                Waterline length: <strong className="text-white">{appliedToast.lwl}m</strong> • Beam: <strong className="text-white">{appliedToast.beam}m</strong> • Displacement: <strong className="text-amber-400">{appliedToast.disp.toFixed(2)}t</strong>. Numbers are illustrative; the controlled engineering baseline and simulator remain unchanged.
               </div>
             </div>
           </div>
@@ -402,7 +392,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
               onClick={onNavigateToSimulator}
               className="px-3.5 py-1.5 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-xs font-bold transition flex items-center gap-1.5 shadow"
             >
-              <span>Open in Real-Time Simulator</span>
+              <span>Open existing simulator (unchanged)</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           )}
@@ -415,7 +405,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-purple-500/10 text-purple-400 border border-purple-500/30">
-                USV-GEN-OPT // 25-AGENT MULTI-OBJECTIVE
+                USV-GEN-OPT // SYNTHETIC SCENARIO EXPLORATION
               </span>
               <span className="text-xs font-mono text-slate-400">
                 GENERATION #{history[0]?.generation ?? optimizer.getHistory()[0]?.generation ?? 0}
@@ -423,10 +413,10 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
             </div>
             <h1 className="text-xl font-bold text-slate-100 flex items-center gap-2">
               <Cpu className="w-5 h-5 text-purple-400" />
-              Generative Multi-Agent Design Optimization & Defense
+              Legacy Heuristic Scenario Explorer (Unverified)
             </h1>
             <p className="text-xs text-slate-400 max-w-3xl leading-relaxed">
-              25 specialized engineering agents iteratively generate, debate, stress-test, and eliminate hull candidates using deterministic naval hydrostatics, Savitsky planing equations, ISO 12215 scantlings, and multi-sea-state survivability gates.
+              Exploratory synthetic heuristic scenarios, NOT live 26-agent engineering reviews or validated naval calculations. Results are unverified and cannot establish design compliance.
             </p>
           </div>
 
@@ -435,10 +425,10 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
               <button
                 onClick={() => handleApplyCandidateToLab(champion)}
                 className="px-3 py-1.5 rounded text-xs font-mono font-bold bg-emerald-600 hover:bg-emerald-500 text-white flex items-center gap-1.5 shadow-sm shadow-emerald-950/50 transition-colors"
-                title="Apply Champion to Lab Shared Memory Baseline & Real-Time Simulator"
+                title="Preview synthetic heuristic leader without updating the controlled baseline"
               >
                 <CheckCircle2 className="w-3.5 h-3.5 text-white" />
-                <span>Apply Champion to Simulator</span>
+                <span>Preview Heuristic Leader</span>
               </button>
             )}
 
@@ -667,7 +657,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                   </span>
                   {activeCandidate.id === champion?.id && (
                     <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
-                      ★ CURRENT LEADING CHAMPION
+                      ★ LEADING HEURISTIC SCENARIO (UNVERIFIED)
                     </span>
                   )}
                 </div>
@@ -743,18 +733,18 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-1.5 text-[11px] font-mono">
                   <span className="text-slate-400">Sign-off:</span>
-                  <span className="text-emerald-400 font-bold">{agentVoteSummary.concur}C</span>
-                  <span className="text-amber-400 font-bold">{agentVoteSummary.reservation}R</span>
-                  <span className="text-rose-400 font-bold">{agentVoteSummary.veto}V</span>
+                  <span className="text-emerald-400 font-bold">{ruleSummary.pass}P</span>
+                  <span className="text-amber-400 font-bold">{0}R</span>
+                  <span className="text-rose-400 font-bold">{ruleSummary.fail}F</span>
                 </div>
 
                 <button
                   onClick={() => handleApplyCandidateToLab(activeCandidate)}
                   className="px-2.5 py-1 rounded text-xs font-mono font-bold bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-300 border border-cyan-500/40 flex items-center gap-1.5 transition-colors"
-                  title="Apply this exact design geometry and physics to the Real-Time Simulator & SharedMemory"
+                  title="Preview the synthetic scenario locally; does not update the controlled engineering baseline"
                 >
                   <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400" />
-                  <span>Apply to Simulator</span>
+                  <span>Preview Candidate</span>
                 </button>
               </div>
             </div>
@@ -789,15 +779,15 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
         </button>
 
         <button
-          onClick={() => setActiveTab('agents25')}
+          onClick={() => setActiveTab('rules')}
           className={`px-4 py-2.5 font-bold border-b-2 flex items-center gap-1.5 transition-colors whitespace-nowrap ${
-            activeTab === 'agents25'
+            activeTab === 'rules'
               ? 'border-purple-500 text-purple-400 bg-purple-500/5'
               : 'border-transparent text-slate-400 hover:text-slate-200'
           }`}
         >
           <Users className="w-3.5 h-3.5 text-blue-400" />
-          25-Agent Concurrence Matrix ({agentVoteSummary.concur} / 25)
+          Synthetic Rule Checks ({ruleSummary.pass} / {activeCandidate?.scenarioRuleChecks.length || 0})
         </button>
 
         <button
@@ -833,7 +823,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
           }`}
         >
           <BookOpen className="w-3.5 h-3.5" />
-          Learned Invariants ({invariants.length})
+          Registered Heuristic Rules ({invariants.length}; Unverified)
         </button>
 
         <button
@@ -845,7 +835,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
           }`}
         >
           <ShieldAlert className="w-3.5 h-3.5 text-rose-400" />
-          Senior Leadership Red Team
+          Static Critique Checklist
         </button>
       </div>
 
@@ -862,7 +852,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                 className="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200 focus:outline-none"
               >
                 <option value="ALL">Show All Iterations</option>
-                <option value="SURVIVED">Survived Only (Passed All Gates)</option>
+                <option value="SURVIVED">Heuristic Survivor Only (Not Design-Approved)</option>
                 <option value="CATAMARAN">Catamaran Hulls Only</option>
                 <option value="MONOHULL">Monohull Hulls Only</option>
                 <option value="REJECTED">Rejected Only</option>
@@ -1218,7 +1208,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                   <span className="text-slate-400 block text-[10px] uppercase font-bold">Agents Critical Reaction:</span>
                   <p className="mt-1 text-slate-300 leading-snug">
                     {studioCandidate.status === 'SURVIVED'
-                      ? `✓ Balanced solution! GMt=${studioCandidate.gmtMeters}m offers safe restoring arm; ${studioCandidate.batteryKwh}kWh battery safely supports ${studioCandidate.enduranceHours}h patrol without overload.`
+                      ? `✓ Balanced solution! GMt=${studioCandidate.gmtMeters}m offers safe restoring arm; ${studioCandidate.batteryKwh}kWh and ${studioCandidate.enduranceHours}h are unverified synthetic estimates; safety and endurance are NOT established.`
                       : `✗ ${studioCandidate.rejectionReason}`}
                   </p>
                 </div>
@@ -1227,7 +1217,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                   className="w-full mt-1 px-3 py-1.5 rounded font-mono text-xs font-bold bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-300 border border-cyan-500/40 flex items-center justify-center gap-1.5 transition-colors"
                 >
                   <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400" />
-                  <span>Apply Hypothesis to Lab Simulator</span>
+                  <span>Preview Synthetic Hypothesis</span>
                 </button>
               </div>
             </div>
@@ -1235,25 +1225,25 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
         </div>
       )}
 
-      {/* TAB 3: 25-AGENT CONCURRENCE & VETO MATRIX */}
-      {activeTab === 'agents25' && (
+      {/* TAB 3: SYNTHETIC INPUT RULE CHECK MATRIX */}
+      {activeTab === 'rules' && (
         <div className="space-y-4">
           <div className="p-4 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-300 leading-relaxed flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
             <div>
-              <strong className="text-slate-100 font-semibold">25-Agent Multi-Disciplinary Concurrence Matrix:</strong>
+              <strong className="text-slate-100 font-semibold">Synthetic Input Checks (not agent execution):</strong>
               <p className="text-slate-400 mt-0.5">
-                Full governance sign-off record for Candidate <strong>{activeCandidate?.id}</strong>. Every specialized agent across all 5 engineering divisions evaluates their statutory criteria.
+                Unverified rules for Candidate <strong>{activeCandidate?.id}</strong>. No registered agent reviewed this scenario and no class/stability/structure standard was independently evaluated.
               </p>
             </div>
             <div className="flex items-center gap-2 font-mono text-xs">
               <span className="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">
-                {agentVoteSummary.concur} CONCUR
+                {ruleSummary.pass} SCREEN PASS (UNVERIFIED)
               </span>
               <span className="px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
-                {agentVoteSummary.reservation} RESERVATION
+                {0} RESERVATION
               </span>
               <span className="px-2.5 py-1 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold">
-                {agentVoteSummary.veto} VETO
+                {ruleSummary.fail} SCREEN FAIL
               </span>
             </div>
           </div>
@@ -1280,7 +1270,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
               <Search className="w-3.5 h-3.5 text-slate-400" />
               <input
                 type="text"
-                placeholder="Search agent ID, metric, name..."
+                placeholder="Search screening rule ID or metric..."
                 value={agentSearch}
                 onChange={(e) => setAgentSearch(e.target.value)}
                 className="bg-transparent text-slate-200 text-xs focus:outline-none placeholder-slate-500"
@@ -1288,15 +1278,15 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
             </div>
           </div>
 
-          {/* 25 Agents Grid */}
+          {/* 12 Synthetic Rule Checks */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 font-mono text-xs">
-            {filtered25Agents.map((agent) => (
+            {filteredRules.map((agent) => (
               <div
                 key={agent.agentId}
                 className={`p-3.5 rounded-lg border flex flex-col justify-between space-y-2.5 ${
-                  agent.vote === 'CONCUR'
+                  agent.vote === 'SCREEN_PASS_UNVERIFIED'
                     ? 'bg-slate-900/90 border-slate-800'
-                    : agent.vote === 'RESERVATION'
+                    : agent.vote === 'SCREEN_FAIL_UNVERIFIED'
                     ? 'bg-amber-500/5 border-amber-500/30'
                     : 'bg-rose-500/5 border-rose-500/30'
                 }`}
@@ -1305,9 +1295,9 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                   <div className="flex items-center justify-between pb-1.5 border-b border-slate-800/80">
                     <span className="font-bold text-slate-200">{agent.agentId}</span>
                     <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                      agent.vote === 'CONCUR'
+                      agent.vote === 'SCREEN_PASS_UNVERIFIED'
                         ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                        : agent.vote === 'RESERVATION'
+                        : agent.vote === 'SCREEN_FAIL_UNVERIFIED'
                         ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
                         : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
                     }`}>
@@ -1341,7 +1331,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
             <div>
               <strong className="text-slate-100 font-semibold">Multi-Sea-State Dynamics & Dynamic Resonance Audit:</strong>
               <p className="mt-1 text-slate-400">
-                Senior naval architects require proof that hull performance is not confined to calm-water equations. This module evaluates vertical accelerations (a_cg), slamming shock loads, and synchronous roll resonance across Sea States 1 through 5.
+                Senior naval architects require proof that hull performance is not confined to calm-water equations. This legacy heuristic displays illustrative vertical acceleration, slamming and roll indicators across Sea States 1–5; no measured RAO or certified dynamic response is demonstrated.
               </p>
             </div>
           </div>
@@ -1423,7 +1413,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
               <div className="p-3 bg-slate-950 rounded border border-slate-800 flex flex-col justify-between">
                 <div>
-                  <span className="text-slate-400 block text-[11px]">GLOBAL CHAMPION</span>
+                  <span className="text-slate-400 block text-[11px]">SCREENING LEADER (UNVERIFIED)</span>
                   <span className="text-lg font-bold text-emerald-400 mt-1 block">
                     {champion?.id || 'Running...'}
                   </span>
@@ -1431,7 +1421,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                     <div>LWL: {champion?.lwlMeters}m • Beam: {champion?.beamMeters}m</div>
                     <div>Speed: {champion?.sprintSpeedKnots} kts • Range: {champion?.rangeNm} nm</div>
                     <div>Endurance: {champion?.enduranceHours} hrs @ 14kt</div>
-                    <div className="text-teal-400 font-bold">GMt: {champion?.gmtMeters}m (IMO Compliant)</div>
+                    <div className="text-teal-400 font-bold">GMt: {champion?.gmtMeters}m (unverified)</div>
                   </div>
                 </div>
                 {champion && (
@@ -1440,7 +1430,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                     className="mt-3 w-full px-2.5 py-1.5 rounded font-mono text-xs font-bold bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/40 flex items-center justify-center gap-1.5 transition-colors"
                   >
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>Apply Champion to Simulator</span>
+                    <span>Preview Heuristic Leader</span>
                   </button>
                 )}
               </div>
@@ -1463,28 +1453,28 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
             </div>
           </div>
 
-          {/* Sobol Parameter Sensitivity Decomposition */}
+          {/* Local finite difference sensitivity */}
           <div className="bg-slate-900 border border-slate-800 rounded-lg p-5 space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-slate-800">
               <div className="space-y-0.5">
                 <h3 className="text-xs font-semibold text-slate-200">
-                  Sobol Global Sensitivity Analysis (S_i & S_Ti Decomposition)
+                  Local +1% Finite-Difference Heuristic Influence (Unverified)
                 </h3>
                 <p className="text-[11px] text-slate-400">
-                  Quantifies which parameters most heavily dictate stability, drag, and mission success.
+                  Shows sensitivity of the legacy simplified model to a +1% input change; not true Sobol indices, independent physics or global robustness.
                 </p>
               </div>
-              <span className="text-[10px] font-mono text-purple-400">VARIANCE DECOMPOSITION</span>
+              <span className="text-[10px] font-mono text-purple-400">LOCAL SCENARIO SCREEN</span>
             </div>
 
             <div className="space-y-3 font-mono text-xs">
-              {activeCandidate?.sobolSensitivities?.map((s) => (
+              {activeCandidate?.localSensitivities?.map((s) => (
                 <div key={s.parameter} className="p-3.5 bg-slate-950 rounded border border-slate-800 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-slate-200">{s.displayName}</span>
                     <div className="flex items-center gap-3 text-[11px]">
-                      <span>First-Order S_i: <strong className="text-teal-400">{s.firstOrderIndex}</strong></span>
-                      <span>Total-Effect S_Ti: <strong className="text-purple-400">{s.totalEffectIndex}</strong></span>
+                      <span>Target response: <strong className="text-teal-400">{s.targetChangePercent === null ? 'N/A' : s.targetChangePercent + '%'}</strong></span>
+                      <span>Input perturbation: <strong className="text-purple-400">{s.inputPerturbationPercent + '%'}</strong></span>
                     </div>
                   </div>
 
@@ -1492,13 +1482,13 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                   <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden flex">
                     <div
                       className="bg-teal-400 h-full"
-                      style={{ width: `${s.firstOrderIndex * 100}%` }}
-                      title={`First Order: ${s.firstOrderIndex}`}
+                      style={{ width: `${Math.min(100, Math.abs(s.targetChangePercent ?? 0) * 10)}%` }}
+                      title={`First Order: ${s.targetChangePercent === null ? 'N/A' : s.targetChangePercent + '%'}`}
                     />
                     <div
                       className="bg-purple-500 h-full opacity-60"
-                      style={{ width: `${(s.totalEffectIndex - s.firstOrderIndex) * 100}%` }}
-                      title={`Interaction Effect: ${(s.totalEffectIndex - s.firstOrderIndex).toFixed(2)}`}
+                      style={{ width: '0%' }}
+                      title={'Interactions not measured'}
                     />
                   </div>
 
@@ -1518,11 +1508,11 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
         </div>
       )}
 
-      {/* TAB 6: PERMANENT LEARNED INVARIANTS */}
+      {/* TAB 6: HISTORICAL HEURISTIC RULES */}
       {activeTab === 'invariants' && (
         <div className="space-y-4">
           <div className="p-4 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-300 leading-relaxed">
-            <strong className="text-slate-100 font-semibold">How Invariant Learning Works:</strong> Whenever an agent rejects a trial design, it performs an automated Root Cause Analysis (RCA) and synthesizes a permanent boundary rule. All future trials inherit these constraints, guaranteeing the multi-agent system never repeats past mistakes.
+            <strong className="text-slate-100 font-semibold">How Invariant Learning Works:</strong> No real agent performed root-cause analysis in this legacy scenario. Unsupported normative invariants were removed; actual validated engineering rules require externally established evidence and review.
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 font-mono text-xs">
@@ -1549,9 +1539,9 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
             <div className="flex items-start gap-3">
               <ShieldAlert className="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
               <div>
-                <strong className="text-slate-100 font-semibold">Senior Leadership Defense Dossier:</strong>
+                <strong className="text-slate-100 font-semibold">Unverified Concept Critique Checklist:</strong>
                 <p className="mt-0.5 text-slate-400 leading-relaxed">
-                  Aggressive cross-examination compiled by <strong>INDEP-REV-24 (Independent Red Team Reviewer)</strong>. Prepares the engineering team for adversarial scrutiny from Chief Naval Architects, Executives, and Classification Societies.
+                  Static questions only; no real A15/A23 specialist agent has reviewed these heuristic numbers in this interface. The separate live design loop must produce authentic critic traces.
                 </p>
               </div>
             </div>
@@ -1561,7 +1551,7 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
               className="px-3.5 py-1.5 rounded text-xs font-mono font-bold bg-teal-600 hover:bg-teal-500 text-white flex items-center gap-1.5 shadow-sm whitespace-nowrap"
             >
               <Download className="w-3.5 h-3.5" />
-              Download Formal Dossier (.md)
+              Download Unverified Scenario (.md)
             </button>
           </div>
 
@@ -1581,10 +1571,10 @@ export const GenerativeOptimizerView: React.FC<GenerativeOptimizerViewProps> = (
                 </div>
 
                 <div className="p-3 bg-slate-950 rounded border border-slate-800 space-y-1.5">
-                  <div className="font-mono text-[10px] text-teal-400 font-bold uppercase">Certified Engineering Defense:</div>
+                  <div className="font-mono text-[10px] text-teal-400 font-bold uppercase">Unverified Heuristic Explanation:</div>
                   <p className="text-slate-200 leading-relaxed">{q.engineeringDefense}</p>
                   <div className="pt-2 border-t border-slate-800 text-[11px] font-mono text-slate-400">
-                    Math Proof: <strong className="text-slate-200">{q.verifiedMath}</strong>
+                    Unverified Formula: <strong className="text-slate-200">{q.verifiedMath}</strong>
                   </div>
                 </div>
               </div>

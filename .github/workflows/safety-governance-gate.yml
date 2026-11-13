@@ -103,6 +103,105 @@ jobs:
           if-no-files-found: ignore
 
 
+      - name: Stage B — Research-first 26-Agent Concept Planning (offline, unverified)
+        run: |
+          set -euo pipefail
+          npm run concept:research -- --mission-file references/concept-mission-draft.json --source-sha "$PR_HEAD_SHA" --out-dir governance/reports/concept-research
+
+      - name: Upload Research-Only Case Matrix and Evidence Gate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: usv01-concept-research-unverified
+          path: governance/reports/concept-research/
+          if-no-files-found: ignore
+
+      - name: Stage B — Restricted CFD/FEA Worker Security Unit Tests (no real solver)
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s remote_solver -p 'test_*.py' -v
+
+      - name: Stage B — REAL CalculiX Linux Known-Case Commissioning (Uncertified)
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends calculix-ccx zip
+          ROOT=/tmp/usv-calculix-known
+          rm -rf "$ROOT"
+          mkdir -p "$ROOT/case" "$ROOT/staged" "$ROOT/work" "$ROOT/artifacts"
+          python3 remote_solver/known_cases/make_calculix_axial_bar.py "$ROOT/case"
+          (cd "$ROOT/case" && zip -q "$ROOT/case.zip" model.inp)
+          npm exec -- tsx scripts/generate-known-solver-manifest.ts -- \
+            --source-sha "$PR_HEAD_SHA" \
+            --archive "$ROOT/case.zip" \
+            --mesh "$ROOT/case/model.inp" \
+            --out "$ROOT/manifest.json" \
+            --family CALCULIX_FEA \
+            --job-ref CI_CALCULIX_AXIAL_BAR
+          ARCHIVE_DIGEST="sha256:$(sha256sum "$ROOT/case.zip" | awk '{print $1}')"
+          cp "$ROOT/case.zip" "$ROOT/staged/${ARCHIVE_DIGEST#sha256:}.zip"
+          COMMON_ENV=(
+            USV_SOLVER_STAGING_DIR="$ROOT/staged"
+            USV_SOLVER_WORK_DIR="$ROOT/work"
+            USV_SOLVER_ARTIFACT_DIR="$ROOT/artifacts"
+            USV_SOLVER_BIN_PATH="/usr/bin:/bin"
+            USV_SOLVER_CPU_SECONDS="1200"
+            USV_SOLVER_ADDRESS_SPACE_BYTES="$((6*1024*1024*1024))"
+            USV_SOLVER_FILE_BYTES="$((2*1024*1024*1024))"
+            USV_SOLVER_OPEN_FILES="1024"
+            USV_SOLVER_PROCESSES="64"
+            USV_SOLVER_WALL_TIMEOUT_SECONDS="1200"
+          )
+          set +e
+          env "${COMMON_ENV[@]}" USV_SOLVER_ISOLATION_MODE=UNSHARE_USER_NET \
+            python3 "$GITHUB_WORKSPACE/remote_solver/host_probe.py" \
+              --require-calculix --require-network-isolation \
+              > governance/reports/calculix-host-probe-nonroot.json
+          NONROOT_RC=$?
+          set -e
+          echo "Non-root namespace preflight exit code: $NONROOT_RC"
+          sudo env "${COMMON_ENV[@]}" USV_SOLVER_ISOLATION_MODE=UNSHARE_NET_PRIVILEGED \
+            python3 "$GITHUB_WORKSPACE/remote_solver/host_probe.py" \
+              --require-calculix --require-network-isolation \
+              > governance/reports/calculix-host-probe-privileged.json
+          sudo env "${COMMON_ENV[@]}" USV_SOLVER_ISOLATION_MODE=UNSHARE_NET_PRIVILEGED \
+            USV_SOLVER_APPROVED_ARTIFACT_DIGESTS="$ARCHIVE_DIGEST" \
+            python3 "$GITHUB_WORKSPACE/remote_solver/worker.py" \
+              --manifest "$ROOT/manifest.json" > "$ROOT/result.json"
+          sudo python3 remote_solver/known_cases/check_calculix_axial_bar.py "$ROOT/result.json"
+          cp "$ROOT/result.json" governance/reports/calculix-known-case-result.json
+          sudo cp "$ROOT/artifacts/CI_CALCULIX_AXIAL_BAR-solver-evidence.zip" \
+            governance/reports/calculix-known-case-evidence.zip
+          sudo chown "$(id -u):$(id -g)" governance/reports/calculix-known-case-evidence.zip
+          chmod 600 governance/reports/calculix-known-case-evidence.zip
+
+      - name: Upload Real CalculiX Known-Case Evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: usv01-real-calculix-known-case-unverified
+          path: |
+            governance/reports/calculix-known-case-result.json
+            governance/reports/calculix-known-case-evidence.zip
+            governance/reports/calculix-host-probe-nonroot.json
+            governance/reports/calculix-host-probe-privileged.json
+            /tmp/usv-calculix-known/artifacts/*-FAILED-solver-evidence.zip
+          if-no-files-found: ignore
+      - name: Stage B — Source-Derived Agent/Tool/Documentation Capability Audit
+        run: |
+          set -euo pipefail
+          npm run audit:capabilities
+
+      - name: Upload Source-Derived Capability Matrix
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: usv01-live-capabilities-unverified
+          path: |
+            governance/reports/agent-capability-audit.json
+            governance/reports/agent-capability-audit.md
+          if-no-files-found: ignore
+
       - name: Stage A — PR Change Classification
         id: stage_a
         if: github.event_name == 'pull_request'
@@ -126,6 +225,21 @@ jobs:
           path: |
             governance/reports/acceptance-campaign.json
             governance/reports/acceptance-campaign.md
+          if-no-files-found: ignore
+
+      - name: Stage B — Gate 0 Vessel Configuration and Evidence Decision Report
+        run: |
+          set -euo pipefail
+          npm run evidence:gate0 -- --baseline-sha "$PR_HEAD_SHA"
+
+      - name: Upload Gate 0 Configuration and Evidence Findings
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: usv01-gate0-configuration-evidence
+          path: |
+            governance/reports/evidence-gate0.json
+            governance/reports/evidence-gate0.md
           if-no-files-found: ignore
 
       - name: Stage B — Offline Commissioning Preconditions (External Evidence Pending)
@@ -221,3 +335,123 @@ jobs:
         run: |
           set -euo pipefail
           npx tsx scripts/governance/stage-e-enforce.ts origin/main
+
+  openfoam-known-case:
+    name: Real OpenFOAM Turbulent Flat-Plate Commissioning (Uncertified)
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    env:
+      PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - name: Checkout Exact PR Head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Set up Node.js LTS (v22)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Project Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Install OpenFOAM v2606 and Run Official ZPG Flat-Plate V&V Case
+        run: |
+          set -euo pipefail
+          wget -q -O /tmp/add-openfoam-repo.sh https://dl.openfoam.com/add-debian-repo.sh
+          sudo bash /tmp/add-openfoam-repo.sh
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends openfoam2606-default zip
+          ROOT=/tmp/usv-openfoam-flat-plate
+          rm -rf "$ROOT"
+          mkdir -p "$ROOT/case" "$ROOT/staged" "$ROOT/work" "$ROOT/artifacts" governance/reports
+          CASE_SRC="$(find /usr/lib/openfoam/openfoam2606/tutorials -type d -path '*/incompressible/simpleFoam/turbulentFlatPlate' -print -quit)"
+          test -n "$CASE_SRC"
+          # The official flat-plate tutorial spans 0.05<y+<100 using the
+          # same cell count with different wall-normal grading. For bounded CI
+          # commissioning use its y+=30 wall-function case (GRADING=30), which
+          # remains within the documented V&V family while avoiding the much
+          # slower wall-resolved y+=1 grading=2200 case.
+          cp -aL "$CASE_SRC/setups.orig/common/." "$ROOT/case/"
+          cp -aL "$CASE_SRC/setups.orig/kOmegaSST/0.orig/." "$ROOT/case/0.orig/"
+          if [ -d "$CASE_SRC/setups.orig/kOmegaSST/constant" ]; then
+            cp -aL "$CASE_SRC/setups.orig/kOmegaSST/constant/." "$ROOT/case/constant/"
+          fi
+          if [ -d "$CASE_SRC/setups.orig/kOmegaSST/system" ]; then
+            cp -aL "$CASE_SRC/setups.orig/kOmegaSST/system/." "$ROOT/case/system/"
+          fi
+          test -f "$CASE_SRC/setups.orig/common/system/blockMeshDict.template"
+          sed 's/GRADING/30/g' "$CASE_SRC/setups.orig/common/system/blockMeshDict.template" \
+            > "$ROOT/case/system/blockMeshDict"
+          cp -aL "$ROOT/case/0.orig" "$ROOT/case/0"
+          (cd "$ROOT/case" && /usr/bin/openfoam2606 blockMesh > blockMesh.log 2>&1)
+          (cd "$ROOT/case" && zip -qr "$ROOT/case.zip" .)
+          npm exec -- tsx scripts/generate-known-solver-manifest.ts -- \
+            --source-sha "$PR_HEAD_SHA" \
+            --archive "$ROOT/case.zip" \
+            --mesh "$ROOT/case/constant/polyMesh/points" \
+            --out "$ROOT/manifest.json" \
+            --family OPENFOAM_CFD \
+            --benchmark flat-plate-zpg-v2606 \
+            --job-ref CI_OPENFOAM_FLAT_PLATE
+          ARCHIVE_DIGEST="sha256:$(sha256sum "$ROOT/case.zip" | awk '{print $1}')"
+          cp "$ROOT/case.zip" "$ROOT/staged/${ARCHIVE_DIGEST#sha256:}.zip"
+          COMMON_ENV=(
+            USV_SOLVER_STAGING_DIR="$ROOT/staged"
+            USV_SOLVER_WORK_DIR="$ROOT/work"
+            USV_SOLVER_ARTIFACT_DIR="$ROOT/artifacts"
+            USV_SOLVER_BIN_PATH="/usr/bin:/bin"
+            USV_OPENFOAM_WRAPPER="/usr/bin/openfoam2606"
+            USV_OPENFOAM_PROJECT_DIR="/usr/lib/openfoam/openfoam2606"
+            USV_SOLVER_CPU_SECONDS="1200"
+            USV_SOLVER_ADDRESS_SPACE_BYTES="$((6*1024*1024*1024))"
+            USV_SOLVER_FILE_BYTES="$((2*1024*1024*1024))"
+            USV_SOLVER_OPEN_FILES="1024"
+            USV_SOLVER_PROCESSES="64"
+            USV_SOLVER_WALL_TIMEOUT_SECONDS="1200"
+          )
+          set +e
+          env "${COMMON_ENV[@]}" USV_SOLVER_ISOLATION_MODE=UNSHARE_USER_NET \
+            python3 "$GITHUB_WORKSPACE/remote_solver/host_probe.py" \
+              --require-openfoam --require-network-isolation \
+              > governance/reports/openfoam-host-probe-nonroot.json
+          NONROOT_RC=$?
+          set -e
+          echo "Non-root namespace preflight exit code: $NONROOT_RC"
+          sudo env "${COMMON_ENV[@]}" USV_SOLVER_ISOLATION_MODE=UNSHARE_NET_PRIVILEGED \
+            python3 "$GITHUB_WORKSPACE/remote_solver/host_probe.py" \
+              --require-openfoam --require-network-isolation \
+              > governance/reports/openfoam-host-probe-privileged.json
+          sudo env "${COMMON_ENV[@]}" USV_SOLVER_ISOLATION_MODE=UNSHARE_NET_PRIVILEGED \
+            USV_SOLVER_APPROVED_ARTIFACT_DIGESTS="$ARCHIVE_DIGEST" \
+            python3 "$GITHUB_WORKSPACE/remote_solver/worker.py" \
+              --manifest "$ROOT/manifest.json" > "$ROOT/result.json"
+          sudo python3 remote_solver/known_cases/check_openfoam_flat_plate.py "$ROOT/result.json"
+          cp "$ROOT/result.json" governance/reports/openfoam-flat-plate-result.json
+          if [ -f "$ROOT/artifacts/CI_OPENFOAM_FLAT_PLATE-solver-evidence.zip" ]; then
+            sudo cp "$ROOT/artifacts/CI_OPENFOAM_FLAT_PLATE-solver-evidence.zip" \
+              governance/reports/openfoam-flat-plate-evidence.zip
+          fi
+          sudo chown -R "$(id -u):$(id -g)" governance/reports
+          chmod 600 governance/reports/openfoam-flat-plate-evidence.zip 2>/dev/null || true
+
+      - name: Upload Real OpenFOAM Flat-Plate Evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: usv01-real-openfoam-flat-plate-unverified
+          path: |
+            governance/reports/openfoam-flat-plate-result.json
+            governance/reports/openfoam-flat-plate-evidence.zip
+            governance/reports/openfoam-host-probe-nonroot.json
+            governance/reports/openfoam-host-probe-privileged.json
+            /tmp/usv-openfoam-flat-plate/artifacts/*-FAILED-solver-evidence.zip
+          if-no-files-found: ignore
+
