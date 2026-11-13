@@ -240,7 +240,7 @@ export class GeminiCliProvider implements IModelProvider {
   private binary:string;
   constructor(options:{runner?:GeminiCliRunner;binary?:string}={}){
     this.runner=options.runner;
-    this.binary=options.binary||process.env.GEMINI_CLI_BINARY||'gemini';
+    this.binary=options.binary||((typeof process!=='undefined'&&process.env?.GEMINI_CLI_BINARY)||'gemini');
   }
   private async run(args:string[],cwd:string,timeout=120000){
     if(this.runner)return this.runner(this.binary,args,{
