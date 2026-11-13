@@ -20,6 +20,12 @@ async function main() {
       ? process.argv[process.argv.indexOf('--catalog') + 1]
       : 'evidence/live-agents/representative-cases.json'
   );
+  const rootDir = process.cwd();
+  if (!sourcePath.startsWith(rootDir + path.sep) ||
+      !['evidence', 'references'].some(folder =>
+        sourcePath.startsWith(path.join(rootDir, folder) + path.sep))) {
+    throw new Error('Commissioning catalog must be a controlled file under evidence/ or references/ in the pinned source tree');
+  }
   if (fs.statSync(sourcePath).size > 2 * 1024 * 1024) throw new Error('Catalog too large');
   const source = fs.readFileSync(sourcePath);
   const catalog = JSON.parse(source.toString('utf8'));
