@@ -123,3 +123,41 @@ The machine-readable report must explicitly say
 An offline preflight, agent registration, an unverified model output or a
 simulated test is **not** proof that an agent is operational. Deployment-level
 health and a separate engineering evidence review remain necessary.
+
+
+### Single-maintainer protected software signoff (GitHub author)
+
+GitHub does **not** permit the author of a pull request to submit a native
+`APPROVE` review of that same PR. For protected **software-only** changes,
+USV-01 therefore accepts an alternative, clearly labeled authorization from
+the verified **repository-admin PR author**. It is not independent review and
+does not meet any engineering design or vessel safety release requirement.
+
+To authorize a reviewed, exact source revision:
+1. Open the PR's **Files changed** tab and inspect the complete diff and
+   the automated security, TypeScript and deterministic test results.
+2. Click **Review changes**, select **Comment** (not **Approve**), and enter
+   the entire one-line review body shown below, replacing `HEAD_SHA` with
+   the current 40-character PR head:
+   ```text
+   USV01-SOFTWARE-AUTHOR-APPROVE HEAD_SHA
+   ```
+3. Submit the review. GitHub's `pull_request_review: submitted` event
+   reruns the governance pipeline without changing the signed commit.
+   Stage D verifies the GitHub API review author is the PR author with
+   repository-admin authority, the review state is `COMMENTED`, its
+   commit ID equals the present head SHA, and its entire message is the
+   specified authorization token. Stage E checks that same live GitHub
+   evidence again; no untrusted PR file or environment flag can claim it.
+4. On a subsequent code push, the old token becomes invalid. The admin
+   author must inspect the updated diff and submit a **new** exact-head
+   comment. The latest review by that author must be the signoff.
+
+When Stage E succeeds and GitHub branch protections permit merging, GitHub
+auto-merge may complete the PR. Native GitHub settings that require a genuine
+independent Approve review are separate constraints; a comment never
+masquerades as one and cannot override such a requirement.
+
+The same author-signoff token is **never valid** for a
+`SAFETY_CRITICAL_ENGINEERING` change. Those still require independent
+review and the exact-content Engineering Director ECR.
