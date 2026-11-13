@@ -19,7 +19,7 @@ A second, different `usv01_parameters.yaml` proposal describes a 2.5 m / 120 kg 
 3. Effective power `P_E = R_T V` is **null** without total resistance. Shaft brake power `P_B = P_E / eta_D` is **null** unless both total resistance and a separately sourced quasi-propulsive efficiency are supplied. Neither output is validated just because provenance text is present.
 4. Optional resistance and efficiency intervals propagate to effective/brake-power intervals. No confidence probability is implied, and intervals are not fabricated.
 5. Froude speed *band* is retained only as a diagnostic. The actual displacement/semi-planing/planing regime is `UNVERIFIED`, as it requires hull lift/trim evidence.
-6. Zod validation rejects unsupported fields, unsigned source omissions, inconsistent bounds, and impossible nominal efficiencies. Automated tests include missing-evidence, friction identity, dimensional power identity, invalid inputs and unverified labels.
+6. Zod validates resistance and propulsion input fields and rejects unsourced resistance/efficiency, inconsistent uncertainty bounds and physically unusable factors. The engineering tool tolerates unrelated composite agent inputs while ignoring them. A separate strict evidence-package schema rejects unsupported fields and wrong source-commit provenance. Regression tests cover missing evidence, friction and power identities, inadequate installed thrust/continuous power, VVP-001 speed error and unverified result labels.
 
 **Compatibility note:** The change is deliberately breaking: former calls supplying `propulsiveEfficiencyEtaD` without provenance, or expecting numerical `totalResistanceKn` from length/beam/draft only, now fail closed. Consumers must display missing evidence and nullable powering outputs; do not fall back to zero, prior fixed numbers, or unsafe legacy results.
 
@@ -46,9 +46,17 @@ A second, different `usv01_parameters.yaml` proposal describes a 2.5 m / 120 kg 
 - At 22 kn and LWL 10.5 m, `V ≈ 11.3178 m/s`; `Fn ≈ 1.115` (a nondimensional speed indicator, **not** evidence of stable planing).
 - The Rev 0.4 claim of `P_B = 182 kW` at 22 kn is **UNVERIFIED**, and should be shown as a historical proposed figure, not as a selected motor rating. If it is used as a conditional claim, it would imply `R_T = 182000 eta_D / 11.3178` N; without independently established `eta_D`, this equation provides no verified resistance.
 
+## Additional implementation and acceptance gates
+
+The executable RES-01 intake was added in `src/core/verification/ResistancePropulsionEvidence.ts` and is available from the standard 13-workstream acceptance campaign via `--resistance-propulsion-file`. Its schema requires controlled geometry, resistance data, uncertainty, environmental allowances, two installed propulsor/power cases, low-speed/hump coverage, the matched-power sea trials, and traceable references to remaining performance and thermal evidence. It compares worst-case required thrust and continuous shaft power with submitted installed capability; it cannot authenticate measurements and always retains all external closure gates. See `docs/RES01_RESISTANCE_PROPULSION_TEST_PROCEDURE.md` and `references/res01-evidence-template.json`. The template's nulls are intentional; unsupported fabricated numbers must not be substituted.
+
+**Software tasks completed in the proposed PR:** eliminated the uncalibrated residual coefficient and default efficiency in the deterministic tool; removed dashboard motor-rating synthesis; marked the legacy Savitsky-like visualizer explicitly unvalidated; corrected 26-agent/VERIFY fixtures; attached executable evidence checks and a detailed physical trial protocol; and updated regression tests and the acceptance register.
+
+**Physical tasks explicitly not completed:** acquisition and independent evaluation of actual hull offsets, environmental resistance, CFD or towing test correlation, propulsor wake/cavitation characteristics, motor thermal and endurance trials, full-scale speed-power trials, Gemini/peer review, and qualified Director approval.
+
 ## Test and release status
 
-Regression tests added under `tests/deterministicTools.test.ts`. No sea trial, CFD run, bench propulsion test, or independent engineering review is claimed by this change. Verify CI Vitest, strict TypeScript, build and change-control gates on the final commit. Do not merge solely because tests pass.
+Regression suites include `tests/deterministicTools.test.ts`, `tests/resistancePropulsionEvidence.test.ts`, `tests/acceptanceCampaign.test.ts`, `tests/navalAcceptanceSafeguards.test.ts` and existing 26-agent workflow tests. Stage B CI must pass for the final commit; full Stage E will intentionally remain blocked without independent qualified review and a fresh source-bound Director signature. Do not merge solely because tests pass. No sea trial, CFD run, bench propulsion test or independent physical validation is claimed.
 
 **Review slots:** ChatGPT author review — change proposal only. Gemini independent review — pending. Human Engineering Director approval — pending.
 
