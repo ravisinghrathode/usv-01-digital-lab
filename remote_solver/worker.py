@@ -60,6 +60,11 @@ def validate_request(manifest: dict, approved: set[str]) -> None:
             raise ValueError("Malformed quality threshold")
     if plan["gridUncertaintyMaxFraction"] > 1 or plan["maxNonOrthogonalityDeg"] > 180:
         raise ValueError("Out-of-range quality threshold")
+    if manifest.get("family") == "CALCULIX_FEA":
+        if not _finite_number(plan.get("maxElementAspectRatio")) or float(plan["maxElementAspectRatio"]) < 1:
+            raise ValueError("CalculiX jobs require maxElementAspectRatio >= 1")
+        if not _finite_number(plan.get("minScaledJacobian")) or not 0 < float(plan["minScaledJacobian"]) <= 1:
+            raise ValueError("CalculiX jobs require minScaledJacobian in (0,1]")
 
 def unzip_restricted(data: bytes, dest: Path) -> None:
     if len(data) > MAX_ZIP or not zipfile.is_zipfile(io.BytesIO(data)):
@@ -244,6 +249,75 @@ def _parse_calculix_dat(case: Path) -> dict:
         result["maxDisplacementMagnitude"] = max_disp
     return result if len(result) > 1 else {}
 
+def _parse_c3d8_mesh_quality(model: Path) -> dict:
+    """Basic center-Jacobian/aspect check for C3D8 meshes. Other element types fail closed."""
+    nodes: dict[int,tuple[float,float,float]] = {}
+    elements: list[list[int]] = []
+    mode = None
+    c3d8 = False
+    for raw in model.read_text(errors="replace").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("**"):
+            continue
+        if line.startswith("*"):
+            upper = line.upper()
+            mode = "NODE" if upper.startswith("*NODE") else "ELEM" if upper.startswith("*ELEMENT") else None
+            c3d8 = mode == "ELEM" and "TYPE=C3D8" in upper.replace(" ","")
+            continue
+        parts = [p.strip() for p in line.split(",")]
+        try:
+            if mode == "NODE" and len(parts) >= 4:
+                nodes[int(parts[0])] = (float(parts[1]),float(parts[2]),float(parts[3]))
+            elif mode == "ELEM" and c3d8 and len(parts) >= 9:
+                elements.append([int(x) for x in parts[1:9]])
+        except ValueError:
+            continue
+    if not elements:
+        raise RuntimeError("CalculiX mesh quality currently supports explicit C3D8 elements only")
+    signs = [(-1,-1,-1),(1,-1,-1),(1,1,-1),(-1,1,-1),
+             (-1,-1,1),(1,-1,1),(1,1,1),(-1,1,1)]
+    edges = [(0,1),(1,2),(2,3),(3,0),(4,5),(5,6),(6,7),(7,4),
+             (0,4),(1,5),(2,6),(3,7)]
+    max_aspect = 0.0
+    min_scaled = 1.0
+    for element in elements:
+        coords = [nodes.get(n) for n in element]
+        if any(c is None for c in coords):
+            raise RuntimeError("C3D8 element references missing node")
+        pts = [c for c in coords if c is not None]
+        lengths = []
+        for a,b in edges:
+            dx=pts[b][0]-pts[a][0];dy=pts[b][1]-pts[a][1];dz=pts[b][2]-pts[a][2]
+            lengths.append(math.sqrt(dx*dx+dy*dy+dz*dz))
+        if min(lengths) <= 0:
+            raise RuntimeError("Degenerate C3D8 edge")
+        max_aspect=max(max_aspect,max(lengths)/min(lengths))
+        cols=[]
+        for axis in range(3):
+            col=[]
+            for coord in range(3):
+                col.append(sum(pts[i][coord]*signs[i][axis]/8 for i in range(8)))
+            cols.append(col)
+        a,b,c=cols
+        det=(a[0]*(b[1]*c[2]-b[2]*c[1])
+             -b[0]*(a[1]*c[2]-a[2]*c[1])
+             +c[0]*(a[1]*b[2]-a[2]*b[1]))
+        norms=[math.sqrt(sum(x*x for x in v)) for v in cols]
+        denom=norms[0]*norms[1]*norms[2]
+        scaled=det/denom if denom>0 else -1
+        min_scaled=min(min_scaled,scaled)
+    return {"maximumElementAspectRatio":max_aspect,"minimumScaledJacobian":min_scaled}
+
+def _quality_gate_calculix(metrics: dict, plan: dict) -> None:
+    aspect=metrics.get("maximumElementAspectRatio")
+    jac=metrics.get("minimumScaledJacobian")
+    if not _finite_number(aspect) or not _finite_number(jac):
+        raise RuntimeError("CalculiX mesh-quality metrics missing")
+    if aspect > plan["maxElementAspectRatio"]:
+        raise RuntimeError("FEA element aspect ratio exceeds source-defined threshold")
+    if jac < plan["minScaledJacobian"]:
+        raise RuntimeError("FEA scaled Jacobian below source-defined threshold")
+
 def _selected_artifacts(case: Path) -> Iterable[Path]:
     exact = {"solver-summary.json","checkMesh.log","simpleFoam.log","ccx.log","version.log",
              "checkMesh.json","model.dat","model.frd","model.sta","model.cvg"}
@@ -344,7 +418,9 @@ def run_staged_case(manifest: dict, stage: Path, work_root: Path,
             "finalResidual":None,
             "gridUncertaintyFraction":None,
             "maximumMeshSkewness":None,
-            "maximumNonOrthogonalityDeg":None
+            "maximumNonOrthogonalityDeg":None,
+            "maximumElementAspectRatio":None,
+            "minimumScaledJacobian":None
         }
         key_results: dict = {}
         if manifest["family"] == "OPENFOAM_CFD":
@@ -357,6 +433,8 @@ def run_staged_case(manifest: dict, stage: Path, work_root: Path,
                 "forceCoefficients":_parse_force_coefficients(case)
             }
         else:
+            quality.update(_parse_c3d8_mesh_quality(case / "model.inp"))
+            _quality_gate_calculix(quality,manifest["qualityPlan"])
             key_results = _parse_calculix_dat(case)
 
         summary = {
