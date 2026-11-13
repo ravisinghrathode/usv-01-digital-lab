@@ -25,6 +25,7 @@ describe('TOOL-STRUCTURES-LIFT-01 lifting statics only', () => {
     expect(result.output.sumVerticalReactionsN).toBeCloseTo(980.665, 6);
     expect(result.output.pointLoads[0].slingTensionN).toBeCloseTo(490.3325, 6);
     expect(result.output.capacityScreenStatus).toBe('WITHIN_ENTERED_WLL_ONLY');
+    expect(result.output.capacityAssessmentDisclaimer).toContain('NO SAFE-TO-LIFT CLAIM');
     expect(result.output.structuralComplianceValidated).toBe(false);
     expect(result.output.liftingCertificationIssued).toBe(false);
   });
