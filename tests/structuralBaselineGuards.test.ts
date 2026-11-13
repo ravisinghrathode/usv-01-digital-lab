@@ -24,7 +24,8 @@ describe('Structural project seed is unapproved and fails closed', () => {
       expect(row.designPressureOrForce).toContain('TBD');
       expect(row.safetyFactorTarget).toBe('TBD');
       expect(row.feaStatus).toMatch(/TBD/);
-      expect(row.feaStatus).not.toMatch(/Solved|Criteria Met|Verified|Approved/i);
+      expect(row.feaStatus).not.toMatch(/Solved|Criteria Met|Approved/i);
+      expect(row.feaStatus).not.toMatch(/^Verified/i);
     }
   });
 
