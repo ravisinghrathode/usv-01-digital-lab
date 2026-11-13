@@ -36,7 +36,7 @@ def _run(manifest: dict, ref: str) -> None:
     try:
         receipt = run_staged_case(
             manifest, STAGE, WORK, APPROVED, artifact_root=ARTIFACTS,
-            isolation_mode="UNSHARE_NET")
+            isolation_mode=os.environ.get("USV_SOLVER_ISOLATION_MODE","UNSHARE_USER_NET"))
         local_path = receipt.pop("outputArtifactLocalPath", None)
         if local_path:
             receipt["outputArtifactUri"] = (
@@ -48,12 +48,10 @@ def _run(manifest: dict, ref: str) -> None:
         receipt_file.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n")
         os.chmod(receipt_file, 0o600)
         with LOCK:
-            STATE[ref] = {
-                **receipt,
-                # An actual subprocess completion does not establish GCI or
-                # a remotely accessible validated result archive.
-                "state": "COMPUTE_DONE_EVIDENCE_PENDING",
-            }
+            # Preserve the worker's fail-closed disposition. In particular,
+            # COMPUTE_DONE_QUALITY_REJECTED must never be rewritten as a
+            # successful evidence-pending result merely because the process ran.
+            STATE[ref] = receipt.copy()
     except Exception as e:
         # Avoid leaking shell stdout or private file contents over HTTP.
         with LOCK:
