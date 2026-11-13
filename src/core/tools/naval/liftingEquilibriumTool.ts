@@ -1,5 +1,5 @@
 /**
- * ECR-20261113-004 — deterministic 3D lifting vector equilibrium audit.
+ * ECR-20261113-009 — deterministic 3D lifting vector equilibrium audit.
  * Mathematical equilibrium is NECESSARY, NEVER SUFFICIENT for safe lifting.
  * The coordinates, angles and tensions are entered facts/proposals and
  * are NOT calculated from crane/sling stiffness or approved by this tool.

@@ -1,6 +1,6 @@
 /**
  * USV-01 lifting-point statics SCREEN, not structure sizing or rigging approval.
- * ECR-20261113-004 / REQ-OPS-001 (proposed).
+ * ECR-20261113-009 / REQ-OPS-001 (proposed).
  *
  * Point share fractions MUST originate from independently checked geometry,
  * CG and sling-stiffness/equilibrium analysis. Four points never imply 25% each.

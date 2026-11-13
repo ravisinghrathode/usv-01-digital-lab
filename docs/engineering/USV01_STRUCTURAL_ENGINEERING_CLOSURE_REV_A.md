@@ -1,7 +1,7 @@
 # USV-01 Structural Engineering Blocker — Controlled Closure Basis
 
 - ID: STR-BLK-001
-- Change: ECR-20261113-004
+- Change: ECR-20261113-009
 - Revision: A, 2026-11-13
 - Status: **OPEN — software guardrails implemented, physical design unverified**
 - Requirement: REQ-OPS-001 (proposed structural launch/recovery and transport)
@@ -13,16 +13,13 @@
 2. Illustrative 45 kPa slamming, 14.2 kN·m bending, and 2.5g lift loads are **not** approved design cases, and alleged FEA/panel pass results are reset to TBD.
 3. Sample composite material is flagged illustrative rather than selected; sample metallic strength properties are not certified MTRs or weld allowables.
 4. New `TOOL-STRUCTURES-LIFT-01` provides traceable gravity, vertical reaction, sling tension and horizontal component magnitude calculations for **externally established** reaction fractions and sling angles. It never verifies 3D equilibrium, lifting safety or local structural capacity.
-5. Existing `TOOL-STRUCTURES-01` slamming scantling output remains an **uncorrelated preliminary empirical screen**, not ISO/DNV verified.
+5. The latest main baseline **blocks** all unvalidated TOOL-STRUCTURES-01 marine scantling/pressure/thickness outputs (returns null), and that safety gate is preserved during integration. TOOL-STRUCTURES-BEAM-01 is strictly separate generic non-design beam arithmetic.
 
-## Corrected stiffener section-modulus unit defect
+## Corrected and isolated stiffener arithmetic — legacy marine sizing remains disabled
 
-The legacy screening formula for stiffener section modulus divided by an unexplained extra factor of 10 and presumed an unsupported 1/12 end-fixity moment factor. For the **synthetic** fixture P = 35 kPa, tributary width = 0.45 m, span = 0.90 m and allowable stress = 62.5 MPa it returned about **1.701 cm³**. The now explicit **simply supported** uniformly distributed-load arithmetic produces:
-- q = P × 1000 × width = **15,750 N/m**
-- M_max = q × span² / 8 = **1,594.6875 N·m**
-- Z = M_max / allowable_MPa = **25.515 cm³**
+The former unvalidated marine scantling screen used an inconsistent unit conversion and unsupported end-fixity coefficient. For the **synthetic** fixture P = 35 kPa, tributary width = 0.45 m, span = 0.90 m, and stress divisor = 62.5 MPa, the former output was about 1.701 cm³. The correct **generic simply supported uniform beam load arithmetic** produces q = **15,750 N/m**, M = **1,594.6875 N·m** and Z = **25.515 cm³**. The old number is approximately 15× smaller for this comparison model.
 
-The earlier numerical result was **15 times smaller** than this particular comparison benchmark. This fixes dimensional arithmetic, **not** panel boundary realism, pressure model, local buckling, effective breadth, welding, or section strength approval; the synthetic calculation is not a structural scantling prescription. Automated regression checks now assert the N·m and cm³ values and ensure all compliance outputs remain false.
+**Crucial integration decision:** The latest main baseline rightly disables TOOL-STRUCTURES-01, returning null for design pressure, panel thickness and stiffener sizing. This blocking behavior stays intact. The reproducible arithmetic lives **only** in TOOL-STRUCTURES-BEAM-01 and requires externally supplied pressure, geometry and stress divisor, with designUsePermitted=false and structuralComplianceValidated=false. No actual vessel scantling, member adequacy, load patch, weld/buckling/fatigue strength, lifting certification or approved rule compliance is inferred. Releasing hull sizing still requires genuine rule-source and structural evidence.
 
 ## Structural reference standards — verified source catalogue (not approval)
 

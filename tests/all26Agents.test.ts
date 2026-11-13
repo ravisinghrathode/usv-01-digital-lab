@@ -50,7 +50,7 @@ describe('26-Agent Individual Verification Matrix (A01 - A26, Tests A through H)
       ],
       ownCourseDeg: 0,
       ownSpeedKnots: 15,
-      targetBearingDeg: 45,
+      targetBearingDeg: 45, bearingReference: 'TRUE_NORTH',
       targetRangeNm: 2.0,
       targetCourseDeg: 270,
       targetSpeedKnots: 12
@@ -194,18 +194,11 @@ describe('26-Agent Individual Verification Matrix (A01 - A26, Tests A through H)
           taskId: `MATRIX-SAFETY-${canonicalId}`
         });
 
-        const expectsApproval =
-          agent.verificationCriteria?.independentReviewRequired ||
-          agent.auditRequirement?.logLevel === 'SAFETY_CRITICAL' ||
-          result.executionMode === 'SYNTHETIC_TEST_MOCK' ||
-          result.deterministicToolEvidence.some(e =>
-            e.outputs?.isPreliminaryEstimate === true ||
-            e.outputs?.engineeringComplianceValidated === false ||
-            e.outputs?.modelStatus === 'PRELIMINARY_EMPIRICAL_ESTIMATE' ||
-            e.outputs?.stabilityStatus === 'UNVERIFIED_ESTIMATE'
-          );
-
-        expect(result.requiresDirectorApproval).toBe(Boolean(expectsApproval));
+        // Every engineering specialist can alter design intent. A successful
+        // code path is NOT an independent naval engineering sign-off.
+        expect(result.requiresDirectorApproval).toBe(true);
+        expect(result.data.engineeringReleaseBlocked).toBe(true);
+        expect(result.data.keyMetrics).toEqual({});
       });
     });
   }

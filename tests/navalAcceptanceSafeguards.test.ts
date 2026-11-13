@@ -19,7 +19,7 @@ describe('Naval estimator acceptance safeguards', () => {
 
   it('enforces power/unit consistency without implying resistance validation', async () => {
     const output = await ResistanceTool.execute(ResistanceTool.inputSchema.parse({
-      ...hull, displacementTonnes: 3.5, speedKnots: 12, propulsiveEfficiencyEtaD: 0.65
+      ...hull, displacementTonnes: 3.5, speedKnots: 12, propulsiveEfficiencyEtaD: 0.65, waterTempCelsius: 15
     }));
     expect(ResistanceTool.outputSchema.safeParse(output).success).toBe(true);
     expect(output.totalResistanceKn).toBeGreaterThan(0);

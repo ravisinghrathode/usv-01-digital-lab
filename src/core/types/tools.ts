@@ -26,6 +26,10 @@ export interface ToolExecutionResult {
   toolId: string;
   timestamp: string;
   success: boolean;
+  /** Formula ran or input validated, NOT proof of naval engineering correctness. */
+  engineeringReleaseAuthorized: false;
+  independentReferenceValidated: false;
+  resultDisposition: 'ANALYSIS_ONLY_NEVER_ACTUATE';
   input: Record<string, any>;
   output: Record<string, any>;
   executionTimeMs: number;

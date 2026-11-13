@@ -1,13 +1,13 @@
 # Engineering Change Request — USV-01
 
-- **Change ID:** ECR-20261113-004
+- **Change ID:** ECR-20261113-009
 - **Originator:** ChatGPT — Systems/Structural Engineering Proposal
 - **Date:** 2026-11-13
 - **Closure Status:** UNDER_REVIEW
 
 ## 1. Change Summary
 
-- **Description:** Remove unsupported structural compliance, false controlled-CAD labels and FEA claims from the sample UI; introduce non-certifying deterministic multi-point sling-force arithmetic plus full 3D force/moment residual audits, source references, invalid-input rejection, and unit tests; document load cases and closure evidence.
+- **Description:** Remove unsupported structural compliance, false controlled-CAD labels and FEA claims from the sample UI; introduce non-certifying deterministic multi-point sling-force arithmetic, full 3D force/moment residual audits and separate generic beam-unit arithmetic (while retaining null marine scantling outputs), source references, invalid-input rejection, and unit tests; document load cases and closure evidence.
 - **Reason for Change:** Avoid false approval of scantlings, lifting points or FEA based on synthetic data.
 - **Affected Subsystem:** STR / SYS / VVT
 

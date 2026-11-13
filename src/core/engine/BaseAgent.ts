@@ -250,8 +250,23 @@ export class BaseAgent {
 
     // 5. Traceable Assumptions & Zero Fabrication
     // Never fabricate default assumptions if the agent returns none. Preserve unconfirmed parameters as TBD.
-    const assumptions: TraceableAssumption[] = Array.isArray(synthesized.assumptions) ? synthesized.assumptions : [];
+    // Any LLM assertion that it represents an approved baseline or verified
+    // external FACT is an untrusted claim, not a change of engineering authority.
+    // Preserve original text and source references, but downgrade its status.
+    const originalAssumptions: TraceableAssumption[] = Array.isArray(synthesized.assumptions)
+      ? synthesized.assumptions : [];
+    const modelAttemptedAuthority = originalAssumptions.some(a =>
+      a.isBaseline || a.category === 'FACT' || a.category === 'CALCULATION');
+    const assumptions: TraceableAssumption[] = originalAssumptions.map(a => ({
+      ...a,
+      category: a.category === 'FACT' || a.category === 'CALCULATION'
+        ? 'ASSUMPTION' : a.category,
+      isBaseline: false
+    }));
     const openTbdItems: string[] = Array.isArray(synthesized.openTbdItems) ? [...synthesized.openTbdItems] : [];
+    if (modelAttemptedAuthority) {
+      openTbdItems.push('Validate LLM-supplied FACT/CALCULATION provenance and baseline status using independently authenticated evidence.');
+    }
 
     if (assumptions.length === 0 && this.spec.auditRequirement.recordAssumptions) {
       openTbdItems.push(`Unconfirmed engineering assumptions for ${this.spec.id} tracked as TBD per zero-fabrication policy.`);
@@ -287,10 +302,24 @@ export class BaseAgent {
       }
     }
 
+    // Safety release invariant: successful formula execution is *screening*
+    // evidence only. It must never become an autonomous engineering decision,
+    // vessel setpoint, structural scantling, power-system rating or acceptance.
+    // Keep calculations inspectable but isolate them from primary metrics.
+    const preliminaryToolMetrics = { ...toolCalculatedKeyMetrics };
+    const engineeringReleaseBlocked = true;
+
     // 7. Human Authority and Approval Gates
     let requiresDirectorApproval = false;
     let approvalRationale: string | undefined;
     const warnings = [...(synthesized.warnings || [])];
+    if (modelAttemptedAuthority) {
+      warnings.push('UNVERIFIED MODEL AUTHORITY: LLM cannot attest FACTs, validate calculations, or declare an engineering baseline.');
+    }
+    if (!hasExecutedDeterministicTools && Object.keys(synthesized.keyMetrics ?? {}).length > 0) {
+      warnings.push('UNVERIFIED MODEL METRICS: No deterministic tools were executed; primary quantitative metrics withheld.');
+      openTbdItems.push('Independently corroborate all model-proposed numerical quantities.');
+    }
 
     if (modelResponse.isMock) {
       requiresDirectorApproval = true;
@@ -318,6 +347,12 @@ export class BaseAgent {
       approvalRationale = approvalRationale || `Safety-critical engineering output from ${this.spec.id} requires Engineering Director approval.`;
     }
 
+    // Even a no-tool specialist's narrative can alter design intent; all 26
+    // specialists therefore require independent technical authority.
+    requiresDirectorApproval = true;
+    approvalRationale = approvalRationale ||
+      'Unverified engineering output: independent reference data and Director authorization required.';
+    warnings.push('ENGINEERING RELEASE BLOCKED: no numerical value or LLM conclusion is certified for vessel design, construction, power protection or autonomous control.');
     const verificationStatus = modelResponse.isMock ? 'SYNTHETIC_MOCK' : 'UNVERIFIED';
 
     const output: AgentExecutionOutput = {
@@ -336,10 +371,21 @@ export class BaseAgent {
         ...synthesized,
         // Model-suggested numbers never substitute for deterministic calculations.
         modelSuggestedKeyMetrics: synthesized.keyMetrics,
-        keyMetrics: hasExecutedDeterministicTools ? toolCalculatedKeyMetrics : synthesized.keyMetrics,
-        keyMetricsOrigin: hasExecutedDeterministicTools
-          ? 'DETERMINISTIC_TOOL_OUTPUT_UNCERTIFIED'
-          : 'MODEL_GENERATED_UNVERIFIED',
+        // Release-critical primary metrics remain empty until independent
+        // review binds inputs, formula, reference and approval to this digest.
+        keyMetrics: {},
+        keyMetricsOrigin: 'NO_RELEASE_AUTHORIZED_METRICS',
+        preliminaryToolMetrics,
+        engineeringReleaseBlocked,
+        prohibitedUses: [
+          'SCANTLING_SELECTION', 'ELECTRICAL_PROTECTION',
+          'PROPULSION_SIZING', 'OPERATIONAL_ENDURANCE',
+          'AUTONOMOUS_HELM_COMMAND', 'STABILITY_CERTIFICATION'
+        ],
+        // Model narrative remains a PROPOSAL, never a released engineering decision.
+        modelNarrativeStatus: 'MODEL_GENERATED_UNVERIFIED',
+        designDecisionStatus: 'PROPOSAL_ONLY',
+        assumptions,
         isMockFallback: !!modelResponse.isMock,
         evidenceValid,
         executionTimeMs: performance.now() - startTime,

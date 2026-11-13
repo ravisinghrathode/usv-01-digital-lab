@@ -14,7 +14,7 @@
 | HYD-01 | Hydrostatics / stability | Approved hull offsets, hydrostatic tables, verified KG, GZ curves, loading cases, reference comparison | Preliminary only |
 | RES-01 | Resistance / power | Actual hull geometry, wetted area, vessel regime, towing tank/CFD or accepted reference dataset with uncertainty | Preliminary only |
 | STR-01 | Structures | Load envelopes, class-rule citations, FEA correlations, fatigue and buckling | Pending |
-| AUT-01 | Safety-critical autonomy | COLREG encounter suite, sensing uncertainty, controlled loss-of-link simulation and tests | Pending |
+| AUT-01 | Safety-critical autonomy | Non-actuating COLREG screen, synthetic sensor evidence and advisory SIL replay in PR #41; full closed-loop SIL, physical HIL, qualified independent review, regulated sea trials and Director release evidence required | Software controls implemented; physical and governance acceptance OPEN |
 | MAR-01 | Marine systems integration | Launch/recovery loads, acoustics wet-end, thermal, corrosion/fouling, condensation/bilge evidence | Pending |
 | INT-01 | Google AI Studio source sync | Live deployed revision/commit digest matching accepted GitHub SHA | Not yet observed |
 | INT-02 | Google Drive | Authenticated read/write test of controlled project artifact and role controls | Not yet observed |
