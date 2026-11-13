@@ -21,7 +21,8 @@ const liftingInputSchema = z.object({
   handlingMassKg: z.number().finite().positive(),
   // Dynamic amplification is a load multiplier, not an extra acceleration.
   dynamicAmplificationFactor: z.number().finite().min(1),
-  inputBasis: z.enum(['ILLUSTRATIVE', 'PROPOSED', 'APPROVED']),
+  // No user-supplied APPROVED status: only the independent governance gate can authenticate approval.
+  inputBasis: z.enum(['ILLUSTRATIVE', 'PROPOSED']),
   massSourceRef: z.string().trim().min(1),
   loadShareSourceRef: z.string().trim().min(1),
   dynamicFactorSourceRef: z.string().trim().min(1),
@@ -48,17 +49,7 @@ const liftingInputSchema = z.object({
     });
   }
 
-  if (data.inputBasis === 'APPROVED') {
-    for (const [field, value] of [
-      ['massSourceRef', data.massSourceRef],
-      ['loadShareSourceRef', data.loadShareSourceRef],
-      ['dynamicFactorSourceRef', data.dynamicFactorSourceRef],
-    ] as const) {
-      if (value.trim().toUpperCase() === 'TBD' || value.trim().toUpperCase() === 'UNVERIFIED') {
-        ctx.addIssue({ code: 'custom', path: [field], message: 'Approved data requires a real traceable evidence reference' });
-      }
-    }
-  }
+
 });
 
 const liftingOutputSchema = z.object({
