@@ -15,6 +15,8 @@
     "chatgpt:verify": "tsx scripts/chatgpt-verify.ts",
     "acceptance:campaign": "tsx scripts/run-acceptance-campaign.ts",
     "concept:research": "tsx scripts/run-concept-discovery.ts",
+    "design:iterate": "tsx scripts/run-design-loop.ts",
+    "audit:capabilities": "tsx scripts/audit-capabilities.ts",
     "acceptance:accuracy": "tsx scripts/assess-agent-accuracy.ts",
     "acceptance:agt02-audit": "tsx scripts/run-agent-accuracy-audit.ts",
     "acceptance:numerical": "vitest run tests/independentNumericalOracles.test.ts",
