@@ -29,7 +29,7 @@ export interface HydroLoadCase {
   kgM: number;
   lcgM: number;
   tcgM: number;
-  /** Total free-surface moment / mass [m]; unknown is NOT assumed zero. */
+  /** Free-surface mass moment [kg*m], divided by mass to obtain GM loss [m]; unknown is NOT assumed zero. */
   freeSurfaceMomentKgM?: number;
 }
 
@@ -111,6 +111,72 @@ function signedPolygonArea(loop: OffsetPoint[]): number {
   return twiceArea / 2;
 }
 
+function orientation(a: OffsetPoint, b: OffsetPoint, c: OffsetPoint): number {
+  return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+}
+
+function onSegment(a: OffsetPoint, b: OffsetPoint, c: OffsetPoint): boolean {
+  return Math.abs(orientation(a, b, c)) <= EPS &&
+    c[0] >= Math.min(a[0], b[0]) - EPS && c[0] <= Math.max(a[0], b[0]) + EPS &&
+    c[1] >= Math.min(a[1], b[1]) - EPS && c[1] <= Math.max(a[1], b[1]) + EPS;
+}
+
+function segmentsIntersect(a: OffsetPoint, b: OffsetPoint, c: OffsetPoint, d: OffsetPoint): boolean {
+  const o1 = orientation(a, b, c), o2 = orientation(a, b, d);
+  const o3 = orientation(c, d, a), o4 = orientation(c, d, b);
+  if (o1 * o2 < -EPS && o3 * o4 < -EPS) return true;
+  return (Math.abs(o1) <= EPS && onSegment(a, b, c)) ||
+    (Math.abs(o2) <= EPS && onSegment(a, b, d)) ||
+    (Math.abs(o3) <= EPS && onSegment(c, d, a)) ||
+    (Math.abs(o4) <= EPS && onSegment(c, d, b));
+}
+
+function pointInsidePolygon(p: OffsetPoint, loop: OffsetPoint[]): boolean {
+  let inside = false;
+  for (let i = 0, j = loop.length - 1; i < loop.length; j = i++) {
+    const a = loop[i], b = loop[j];
+    if (onSegment(a, b, p)) return true;
+    if ((a[1] > p[1]) !== (b[1] > p[1])) {
+      const yAt = a[0] + (b[0] - a[0]) * (p[1] - a[1]) / (b[1] - a[1]);
+      if (p[0] < yAt) inside = !inside;
+    }
+  }
+  return inside;
+}
+
+function verifyDisjointSimpleLoops(loops: OffsetPoint[][]): void {
+  for (const loop of loops) {
+    const n = loop.length;
+    for (let i = 0; i < n; i++) {
+      const a = loop[i], b = loop[(i + 1) % n];
+      if (Math.hypot(b[0] - a[0], b[1] - a[1]) <= EPS) {
+        throw new Error('Zero-length hull section edge');
+      }
+      for (let j = i + 1; j < n; j++) {
+        if (j === i + 1 || (i === 0 && j === n - 1)) continue;
+        if (segmentsIntersect(a, b, loop[j], loop[(j + 1) % n])) {
+          throw new Error('Self-intersecting hull section polygon');
+        }
+      }
+    }
+  }
+  for (let k = 0; k < loops.length; k++) {
+    for (let m = k + 1; m < loops.length; m++) {
+      const a = loops[k], b = loops[m];
+      for (let i = 0; i < a.length; i++) {
+        for (let j = 0; j < b.length; j++) {
+          if (segmentsIntersect(a[i], a[(i + 1) % a.length], b[j], b[(j + 1) % b.length])) {
+            throw new Error('Overlapping or touching section loops are not supported');
+          }
+        }
+      }
+      if (pointInsidePolygon(a[0], b) || pointInsidePolygon(b[0], a)) {
+        throw new Error('Nested section loops and holes are not supported');
+      }
+    }
+  }
+}
+
 function validate(input: HydroInput): void {
   const { hull, load } = input;
   if (!hull?.geometryReference?.trim() || !hull.geometryRevision?.trim()) {
@@ -150,6 +216,7 @@ function validate(input: HydroInput): void {
       }
       if (Math.abs(signedPolygonArea(loop)) <= EPS) throw new Error('Degenerate hull section polygon');
     }
+    verifyDisjointSimpleLoops(station.loops);
   }
   if (input.heelAnglesDeg) {
     if (!input.heelAnglesDeg.length) throw new Error('Heel-angle list cannot be empty');
