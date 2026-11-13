@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { execFileSync } from 'child_process';
 import { generateClassificationReport, type ApprovalRoute } from './classify-change.ts';
+import { hasLiveAdminAuthorSignoff } from './owner-author-approval.ts';
 import { validateECRFile } from './ecr-tool.ts';
 import { computeBaselineDigest, loadApprovalRecords, resolveDirectorPublicKey, verifyApproval } from './ecr-approval.ts';
 
@@ -27,6 +28,9 @@ export interface StageDResult {
   humanApprovalRequired: boolean;
   peerApprovalRequired: boolean;
   independentPeerApproved: boolean;
+  /** An exact-head authenticated GitHub review COMMENT by the repo admin
+   *  author. Never independent; never valid for vessel engineering changes. */
+  adminAuthorSignoffVerified: boolean;
   highestRisk: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   ecrRecordFound: boolean;
   ecrRecordValid: boolean;
@@ -39,7 +43,7 @@ export interface StageDResult {
   signatureVerified: boolean;
   staleApproval: boolean;
   signatureError?: string;
-  independentReviewStatus: 'APPROVED_BY_PEER' | 'ECR_DIRECTOR_SIGNED' | 'PENDING_HUMAN_SIGN_OFF';
+  independentReviewStatus: 'APPROVED_BY_PEER' | 'APPROVED_BY_ADMIN_AUTHOR' | 'ECR_DIRECTOR_SIGNED' | 'PENDING_HUMAN_SIGN_OFF';
   summary: string;
 }
 
@@ -177,8 +181,14 @@ export function evaluateStageDHumanApproval(baseRef = 'origin/main', opts: Stage
   const signatureError = signatureVerified ? undefined : (errors.join(' | ') || 'No Director approval records found in governance/approvals/.');
 
   const independentPeerApproved = peerApprovalRequired && hasLiveIndependentApproval(evaluatedRef);
+  const adminAuthorSignoffVerified = approvalRoute === 'PROTECTED_SOFTWARE_SECURITY' &&
+    hasLiveAdminAuthorSignoff(evaluatedRef);
+  // An author is not an independent reviewer. Admin author signoff is an
+  // auditable software acceptance alternative, never a vessel ECR or peer review.
+  const softwareHumanAuthorized = independentPeerApproved || adminAuthorSignoffVerified;
   const reviewStatus: StageDResult['independentReviewStatus'] = independentPeerApproved
     ? 'APPROVED_BY_PEER'
+    : adminAuthorSignoffVerified ? 'APPROVED_BY_ADMIN_AUTHOR'
     : signatureVerified ? 'ECR_DIRECTOR_SIGNED' : 'PENDING_HUMAN_SIGN_OFF';
 
   let summary: string;
@@ -187,7 +197,9 @@ export function evaluateStageDHumanApproval(baseRef = 'origin/main', opts: Stage
   } else if (!directorEcrRequired) {
     summary = independentPeerApproved
       ? `Stage D protected software review passed: independent peer approved exact source head ${evaluatedRef.substring(0, 7)}. No vessel ECR required.`
-      : `Stage D Gate Blocked: protected software/security change requires an independent GitHub peer approval on exact source head ${evaluatedRef.substring(0, 7)}. No vessel ECR required.`;
+      : adminAuthorSignoffVerified
+        ? `Stage D protected software author authorization passed: repository admin author explicitly signed off exact source head ${evaluatedRef.substring(0, 7)}. This was NOT independent peer review or a vessel ECR.`
+        : `Stage D Gate Blocked: protected software/security change requires either an independent GitHub peer approval or an explicit exact-head GitHub COMMENTED review by the repository-admin PR author. No vessel ECR required.`;
   } else if (!publicKeyPem) {
     summary = `Stage D Gate Blocked: vessel engineering change requires DIRECTOR_PUBLIC_KEY and independent exact-head peer approval.`;
   } else if (signatureVerified) {
@@ -206,6 +218,7 @@ export function evaluateStageDHumanApproval(baseRef = 'origin/main', opts: Stage
     humanApprovalRequired: directorEcrRequired,
     peerApprovalRequired,
     independentPeerApproved,
+    adminAuthorSignoffVerified,
     highestRisk,
     ecrRecordFound: approvals.length > 0,
     ecrRecordValid: signatureVerified,
@@ -226,7 +239,9 @@ export function evaluateStageDHumanApproval(baseRef = 'origin/main', opts: Stage
 export function formatStageDMarkdown(result: StageDResult): string {
   const statusBadge = !result.humanApprovalRequired
     ? result.peerApprovalRequired
-      ? result.independentPeerApproved ? '🟢 SOFTWARE PEER APPROVED' : '🟡 SOFTWARE PEER REVIEW PENDING'
+      ? result.independentPeerApproved ? '🟢 SOFTWARE PEER APPROVED'
+        : result.adminAuthorSignoffVerified ? '🟢 ADMIN AUTHOR ACCEPTED (NOT PEER REVIEW)'
+        : '🟡 SOFTWARE AUTHORIZATION PENDING'
       : '⚪ VESSEL ECR NOT APPLICABLE'
     : result.signatureVerified && result.independentPeerApproved
     ? '🟢 DIRECTOR SIGNATURE + PEER VERIFIED'
@@ -242,6 +257,7 @@ export function formatStageDMarkdown(result: StageDResult): string {
 - **Director Vessel ECR Required:** \`${result.humanApprovalRequired ? 'YES' : 'NO'}\`
 - **Independent Peer Required:** \`${result.peerApprovalRequired ? 'YES' : 'NO'}\`
 - **Independent Peer Verified:** \`${result.independentPeerApproved ? 'YES' : 'NO'}\`
+- **Repository Admin Author Signoff:** \`${result.adminAuthorSignoffVerified ? 'VERIFIED (not independent)' : 'NO'}\`
 - **Signatory Authority:** ${result.approverAuthority || 'None'} [${result.approverRole || 'N/A'}]
 - **Review / Signature Status:** \`${result.independentReviewStatus}\`
 - **Assessment Summary:** ${result.summary}
@@ -259,6 +275,7 @@ if (process.argv[1] && process.argv[1].endsWith('stage-d-human-approval.ts')) {
   console.log(`Approval route:              ${result.approvalRoute}`);
   console.log(`Exact-head peer required:    ${result.peerApprovalRequired}`);
   console.log(`Exact-head peer approved:    ${result.independentPeerApproved}`);
+  console.log(`Admin author signoff:        ${result.adminAuthorSignoffVerified}`);
   console.log(`Human Authority Required:    ${result.humanApprovalRequired ? 'YES (MANDATORY)' : 'NO'}`);
   console.log(`Approval records present:    ${result.ecrRecordFound ? 'YES' : 'NO'}`);
   console.log(`Signatory Authority:         ${result.approverAuthority || 'None'} [${result.approverRole || 'N/A'}]`);
@@ -281,7 +298,7 @@ if (process.argv[1] && process.argv[1].endsWith('stage-d-human-approval.ts')) {
   fs.writeFileSync(path.join(outDir, 'stage-d-approval.json'), JSON.stringify(result, null, 2));
 
   if ((result.humanApprovalRequired && !result.signatureVerified) ||
-      (result.peerApprovalRequired && !result.independentPeerApproved)) {
+      (result.peerApprovalRequired && !softwareHumanAuthorized)) {
     console.log('ℹ️  STAGE D: Required human authorization remains pending; Stage E will fail closed.\n');
     process.exit(0);
   }
