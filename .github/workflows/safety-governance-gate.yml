@@ -316,7 +316,7 @@ jobs:
 
       - name: Stage C — Independent Technical Review
         id: stage_c
-        if: github.event_name == 'pull_request' && steps.stage_a.outputs.approval_route == 'SAFETY_CRITICAL_ENGINEERING'
+        if: github.event_name == 'pull_request' && (steps.stage_a.outputs.approval_route == 'SAFETY_CRITICAL_ENGINEERING' || steps.stage_a.outputs.approval_route == 'PROTECTED_SOFTWARE_SECURITY')
         run: |
           set -euo pipefail
           echo "" >> $GITHUB_STEP_SUMMARY
