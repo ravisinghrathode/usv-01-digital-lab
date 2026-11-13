@@ -141,7 +141,7 @@ def _parse_version(text: str, family: str) -> str:
     patterns = (
         [r"OpenFOAM[^\n]*?(?:v|version[ :=-]*)([A-Za-z0-9_.+-]+)", r"OpenFOAM[- ]([A-Za-z0-9_.+-]+)"]
         if family == "OPENFOAM_CFD"
-        else [r"CalculiX(?: CrunchiX)?[^\n]*?(?:version|Version)?[ :=-]*([0-9]+(?:\.[0-9]+)+)"]
+        else [r"(?:CalculiX(?: CrunchiX)?[^\n]*?(?:version|Version)?[ :=-]*|This\s+is\s+Version\s+)([0-9]+(?:\.[0-9]+)+)"]
     )
     for pattern in patterns:
         m = re.search(pattern, text, re.IGNORECASE)
