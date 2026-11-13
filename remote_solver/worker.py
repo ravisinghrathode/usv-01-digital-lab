@@ -470,16 +470,40 @@ def _persist_artifacts(case: Path, artifact_root: Path, job_ref: str, summary: d
     return archive_path, sha256(archive_path.read_bytes())
 
 def _quality_gate_openfoam(metrics: dict, plan: dict) -> None:
-    for key in ("finalResidual","maximumMeshSkewness","maximumNonOrthogonalityDeg"):
-        value = metrics.get(key)
-        if not isinstance(value, (int,float)) or not math.isfinite(float(value)):
-            raise RuntimeError("Required OpenFOAM residual or mesh-quality metric was not produced")
-    if metrics["finalResidual"] > plan["residualThreshold"]:
-        raise RuntimeError("Final solver residual exceeds source-defined screening threshold")
+    for key in ("maximumMeshSkewness","maximumNonOrthogonalityDeg"):
+        value=metrics.get(key)
+        if not _finite_number(value):
+            raise RuntimeError("Required OpenFOAM mesh-quality metric was not produced")
     if metrics["maximumMeshSkewness"] > plan["maxMeshSkewness"]:
         raise RuntimeError("Mesh skewness exceeds source-defined screening threshold")
     if metrics["maximumNonOrthogonalityDeg"] > plan["maxNonOrthogonalityDeg"]:
         raise RuntimeError("Mesh non-orthogonality exceeds source-defined screening threshold")
+
+    field_thresholds=plan.get("initialResidualThresholds")
+    if field_thresholds:
+        residuals=metrics.get("initialResidualsByField")
+        if not isinstance(residuals,dict) or not residuals:
+            raise RuntimeError("OpenFOAM initial residual evidence was not produced")
+        for selector, threshold in field_thresholds.items():
+            if selector.endswith("*"):
+                prefix=selector[:-1]
+                matched=[(field,value) for field,value in residuals.items() if field.startswith(prefix)]
+            else:
+                matched=[(selector,residuals[selector])] if selector in residuals else []
+            if not matched:
+                raise RuntimeError("Required residual field selector missing: "+selector)
+            for field,value in matched:
+                if not _finite_number(value) or value > threshold:
+                    raise RuntimeError(
+                        f"OpenFOAM initial residual {field}={value} exceeds {selector} threshold {threshold}")
+        if plan.get("requireSolverDeclaredConvergence") and not metrics.get("solverDeclaredConverged"):
+            raise RuntimeError("OpenFOAM did not declare SIMPLE residualControl convergence")
+    else:
+        final_residual=metrics.get("finalResidual")
+        if not _finite_number(final_residual):
+            raise RuntimeError("Required OpenFOAM final residual metric was not produced")
+        if final_residual > plan["residualThreshold"]:
+            raise RuntimeError("Final solver residual exceeds source-defined screening threshold")
 
 def command_plan(family: str) -> tuple[list[list[str]],str]:
     # Fixed command/arguments; neither ZIP nor API can supply a shell command.
