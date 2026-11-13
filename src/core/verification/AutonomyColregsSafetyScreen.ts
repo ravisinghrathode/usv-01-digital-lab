@@ -43,6 +43,8 @@ export interface SafetyContext {
   evidenceId: string;
   ownship: Ownship;
   contacts: Contact[];
+  /** Explicitly verified TRUE heading and visual aspect, not just AIS/GNSS COG. */
+  headingAspectVerified?: boolean;
   visibility: VisibilityRegime;
   lookoutAssessment: 'ASSESSED_ADEQUATE' | 'DEGRADED' | 'UNASSESSED';
   sensorsHealthy: boolean;
@@ -157,7 +159,8 @@ function analyzeContact(own: Ownship, c: Contact, ctx: SafetyContext): ContactFi
       !finite(c.speedStdKnots!) || c.speedStdKnots! <= 0) concerns.push('UNCERTAINTY_UNCHARACTERIZED');
   const geometry = kinematics(own, c);
   if (!geometry) concerns.push('KINEMATICS_INVALID');
-  const classified = geometry && validKind(c.vesselKind) ?
+  const classified = geometry && validKind(c.vesselKind) &&
+    (ctx.visibility !== 'IN_SIGHT' || ctx.headingAspectVerified === true) ?
     encounter(own, c, ctx.visibility, ctx.narrowChannelOrTrafficScheme, ctx.limits.nearHeadOnDeg) :
     {kind:'UNDETERMINED' as const,rules:['2','5','6','7','8']};
   // First-order conservative corridor envelope. This is NOT a statistical
@@ -168,7 +171,12 @@ function analyzeContact(own: Ownship, c: Contact, ctx: SafetyContext): ContactFi
   const lowerBound = uncertainty === null ? null : Math.max(0, geometry!.cpaNm - uncertainty);
   let proximity: Proximity = 'UNDETERMINED';
   if (geometry && lowerBound !== null && !concerns.some(x=>['TRACK_STALE_OR_INVALID','KINEMATICS_INVALID','SENSOR_SOURCE_UNVERIFIED'].includes(x))) {
-    proximity = geometry.tcpaMinutes > 0 && geometry.tcpaMinutes <= ctx.limits.lookAheadMinutes && lowerBound <= ctx.limits.cpaAlertThresholdNm ?
+    // A target already inside the alert envelope is hazardous even if TCPA
+    // clamps to 0 (stationary/parallel/just-passed geometry).
+    const immediateClose = c.rangeNm <= ctx.limits.cpaAlertThresholdNm + uncertainty!;
+    proximity = immediateClose || (geometry.tcpaMinutes > 0 &&
+      geometry.tcpaMinutes <= ctx.limits.lookAheadMinutes &&
+      lowerBound <= ctx.limits.cpaAlertThresholdNm) ?
       'CPA_ALERT' : 'CPA_SCREEN_NEGATIVE';
   }
   // Explicitly avoid false "safe passing" where a measurement is AIS only or visual lookout lacking.
@@ -187,6 +195,8 @@ export function evaluateAutonomyColregsScreen(ctx: SafetyContext): SafetyScreenR
       !validKind(ctx.ownship.vesselKind)) concerns.push('OWN_NAVIGATION_STATE_INVALID');
   if (!['IN_SIGHT','RESTRICTED_NOT_IN_SIGHT','UNKNOWN'].includes(ctx.visibility)) concerns.push('VISIBILITY_INVALID');
   if (ctx.visibility === 'UNKNOWN') concerns.push('VISIBILITY_UNKNOWN');
+  if (ctx.visibility === 'IN_SIGHT' && ctx.headingAspectVerified !== true)
+    concerns.push('HEADING_AND_VISUAL_ASPECT_UNVERIFIED');
   if (ctx.lookoutAssessment !== 'ASSESSED_ADEQUATE') concerns.push('LOOKOUT_NOT_DEMONSTRATED');
   if (!ctx.sensorsHealthy || !ctx.navigationIntegrityValid) concerns.push('NAVIGATION_OR_SENSING_DEGRADED');
   if (!ctx.propulsionHealthy || !ctx.energyReserveAdequate) concerns.push('PROPULSION_OR_ENERGY_DEGRADED');
@@ -199,13 +209,15 @@ export function evaluateAutonomyColregsScreen(ctx: SafetyContext): SafetyScreenR
   const ids = new Set<string>();
   for (const f of findings) {if (ids.has(f.id)) concerns.push('DUPLICATE_CONTACT_ID');ids.add(f.id);}
   const anyUnsafe = ctx.contacts?.length === 0 || findings.some(f=> f.proximity !== 'CPA_SCREEN_NEGATIVE' || f.concerns.length > 0);
-  if (findings.length > 1 && findings.some(f=>f.proximity !== 'CPA_SCREEN_NEGATIVE')) concerns.push('MULTI_CONTACT_CONSTRAINTS_UNRESOLVED');
+  // No independent multi-target constraint solver exists. Pairwise negative
+  // CPA tests do not certify jointly safe navigation.
+  if (findings.length > 1) concerns.push('MULTI_CONTACT_CONSTRAINTS_UNRESOLVED');
   if (anyUnsafe) concerns.push('UNRESOLVED_ENCOUNTER_RISK');
   if (!ctx.linkHealthy) concerns.push('SUPERVISORY_LINK_LOST_REJECT_STALE_COMMANDS');
   if (ctx.contacts?.length === 0) concerns.push('NO_CONTACTS_DOES_NOT_PROVE_CLEAR_WATER');
   const blocker = concerns.some(x=>[
     'MISSING_EVIDENCE_ID','MISSING_OR_INVALID_SCREENING_PROFILE','OWN_NAVIGATION_STATE_INVALID','VISIBILITY_INVALID',
-    'VISIBILITY_UNKNOWN','LOOKOUT_NOT_DEMONSTRATED','NAVIGATION_OR_SENSING_DEGRADED',
+    'VISIBILITY_UNKNOWN','HEADING_AND_VISUAL_ASPECT_UNVERIFIED','LOOKOUT_NOT_DEMONSTRATED','NAVIGATION_OR_SENSING_DEGRADED',
     'PROPULSION_OR_ENERGY_DEGRADED','GEOFENCE_OR_ODD_UNSAFE','DUPLICATE_CONTACT_ID',
     'CONTACT_LIST_INVALID','NO_CONTACTS_DOES_NOT_PROVE_CLEAR_WATER','MULTI_CONTACT_CONSTRAINTS_UNRESOLVED','RESTRICTED_VISIBILITY_SAFE_SPEED_AND_RULE_19_REVIEW',
     'LOCAL_NAVIGATION_RULE_REVIEW_REQUIRED'
