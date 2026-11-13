@@ -12,6 +12,8 @@
 - **Cybersecurity Impact:** Resource settings are range checked. Solver commands remain fixed. OpenFOAM uses only an absolute versioned operator-controlled wrapper. Ambient host environment is not inherited wholesale. Network namespace behavior is preflight-tested and recorded.
 - **Verification Plan:** Full TypeScript/Vitest suite; Python worker tests; negative C3D8 corner-inversion case; configurable-resource range tests; explicit non-root and privileged namespace preflights; real CalculiX known case; real OpenFOAM v2606 Driver-Seegmiller backward-facing-step execution; retained quality-rejection evidence; Stage C independent review; exact-digest Stage D Director authorization; Stage E enforcement.
 - **Risk Assessment:** CRITICAL
+- **Review Evidence:** Exact-head GitHub Actions for PR #52; retained OpenFOAM v2606 backward-step execution/quality-rejection evidence; non-root and privileged namespace preflight reports; real CalculiX known-case evidence; full TypeScript/Vitest/Python-worker/build/security results. Evidence remains unapproved until the exact-head run completes and independent Stage C review is recorded.
+- **Implementation Commit:** Current PR #52 head on `feature/solver-host-hardening-live-cfd-20261113`; final exact commit digest to be bound by Stage D before merge.
 - **Approval Record:** PENDING. No AI output or Project Lead chat approval substitutes for independent technical review and exact-revision Director authorization.
 - **Closure Status:** UNDER_REVIEW
 
