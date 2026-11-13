@@ -101,6 +101,11 @@ export const ResistanceTool: EngineeringTool = {
     draftMeters: z.number().positive(),
     displacementTonnes: z.number().positive(),
     speedKnots: z.number().positive(),
+    // The default viscosity below is referenced only to 15 C; reject other
+    // water temperatures until a separately validated fluid-properties path exists.
+    waterTempCelsius: z.number().finite().refine(v => Math.abs(v - 15) < 1e-9, {
+      message: 'Only 15°C seawater viscosity is implemented. Other temperatures require validated viscosity data.'
+    }).optional(),
     seawaterDensityKgM3: z.number().positive().default(1025),
     kinematicViscosityM2S: z.number().positive().default(1.188e-6),
     wettedSurfaceAreaM2: z.number().positive().optional(),
@@ -161,6 +166,8 @@ export const ResistanceTool: EngineeringTool = {
     shaftBrakePowerRangeKw: z.object({ min: z.number(), max: z.number() }).nullable(),
     missingEvidence: z.array(z.string()),
     engineeringComplianceValidated: z.literal(false),
+    designUsePermitted: z.literal(false),
+    residualDragModelValidated: z.literal(false),
     modelStatus: z.enum(['INSUFFICIENT_EVIDENCE', 'EVIDENCE_REFERENCED_UNVERIFIED'])
   }),
   execute: (input: any) => {
@@ -215,6 +222,8 @@ export const ResistanceTool: EngineeringTool = {
       shaftBrakePowerRangeKw: pbRange ? { min: round(pbRange.min)!, max: round(pbRange.max)! } : null,
       missingEvidence,
       engineeringComplianceValidated: false as const,
+      designUsePermitted: false as const,
+      residualDragModelValidated: false as const,
       modelStatus: totalKn === null || shaftKw === null
         ? 'INSUFFICIENT_EVIDENCE' as const
         : 'EVIDENCE_REFERENCED_UNVERIFIED' as const
