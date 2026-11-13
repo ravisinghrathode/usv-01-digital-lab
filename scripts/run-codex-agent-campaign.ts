@@ -34,7 +34,7 @@ async function main() {
   if (execute) await assertPinnedCleanGitRevision(process.cwd(), implementationSha);
   const provenance = {
     implementationSha,
-    catalogSha256: createHash('sha256').update(source).digest('hex')
+    catalogSha256: 'sha256:' + createHash('sha256').update(source).digest('hex')
   };
   const cases = compileCodexAgentCases(catalog);
   const preflight = await preflightCodexAgentCases(cases);
