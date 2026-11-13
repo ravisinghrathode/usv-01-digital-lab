@@ -182,11 +182,16 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
       blockingReasons.push('Stage C advisory verdict is ADVISORY_BLOCK.');
     }
     if (stageCVerdict === 'PENDING_HUMAN_REVIEW') {
-      const isHumanAuthorized = stageD?.signatureVerified || stageD?.independentReviewStatus === 'APPROVED_BY_PEER' || stageD?.independentReviewStatus === 'ECR_DIRECTOR_SIGNED';
+      const isHumanAuthorized = directorEcrRequired
+        ? (stageD?.signatureVerified === true &&
+           (stageD?.independentPeerApproved === true ||
+            stageD?.independentReviewStatus === 'APPROVED_BY_PEER'))
+        : (stageD?.independentPeerApproved === true ||
+           stageD?.independentReviewStatus === 'APPROVED_BY_PEER');
       if (!isHumanAuthorized) {
-        blockingReasons.push(
-          'Stage C independent review is PENDING_HUMAN_REVIEW: AI review was unavailable on a safety-critical / high-risk change. Designated independent technical peer review or Director sign-off must be completed prior to approval.'
-        );
+        blockingReasons.push(directorEcrRequired
+          ? 'Stage C vessel engineering technical review is PENDING_HUMAN_REVIEW: independent peer and Director ECR required.'
+          : 'Stage C protected software technical review is PENDING_HUMAN_REVIEW: independent exact-head GitHub peer approval required; vessel ECR not applicable.');
       }
     }
   } else if (requiresReviewEvidence) {
