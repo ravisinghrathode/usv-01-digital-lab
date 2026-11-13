@@ -7,7 +7,7 @@ import type { StageDResult } from './stage-d-human-approval.ts';
 import { computeBaselineDigest } from './ecr-approval.ts';
 import { hasLiveAdminAuthorSignoff } from './owner-author-approval.ts';
 
-const ENFORCE_HUMAN_APPROVALS = false;
+const ENFORCE_HUMAN_APPROVALS = true;
 
 export interface StageEEvaluation {
   passed: boolean;

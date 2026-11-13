@@ -571,7 +571,7 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
       }
     });
 
-    it('allows pending human review when approval blockers are disabled', () => {
+    it('should block merge and reject PENDING_HUMAN_REVIEW as acceptable Stage C result on critical changes', () => {
       // Simulate reports with PENDING_HUMAN_REVIEW in a temporary directory
       const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'egs-stage-e-'));
       const reportsDir = path.join(tmpDir, 'governance', 'reports');
@@ -617,9 +617,9 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
         );
 
         const evalRes = evaluateGovernanceGate(tmpDir, 'origin/main');
-        expect(evalRes.passed).toBe(true);
-        expect(evalRes.overallVerdict).toBe('APPROVED');
-        expect(evalRes.blockingReasons.some(r => r.includes('PENDING_HUMAN_REVIEW'))).toBe(false);
+        expect(evalRes.passed).toBe(false);
+        expect(evalRes.overallVerdict).toBe('BLOCKED');
+        expect(evalRes.blockingReasons.some(r => r.includes('PENDING_HUMAN_REVIEW'))).toBe(true);
       } finally {
         fs.rmSync(tmpDir, { recursive: true, force: true });
       }
@@ -748,7 +748,7 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
       }
     });
 
-    it('does not require peer approval when approval blockers are disabled', () => {
+    it('blocks a safety-critical change that lacks an independent peer approval even when other Stage D evidence exists', () => {
       const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'egs-critical-peer-'));
       const reportsDir = path.join(tmpDir, 'governance', 'reports');
       fs.mkdirSync(reportsDir, { recursive: true });
@@ -766,8 +766,8 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
         }));
 
         const evalRes = evaluateGovernanceGate(tmpDir, 'origin/main');
-        expect(evalRes.passed).toBe(true);
-        expect(evalRes.blockingReasons.some(r => r.includes('independent GitHub peer approval'))).toBe(false);
+        expect(evalRes.passed).toBe(false);
+        expect(evalRes.blockingReasons.some(r => r.includes('independent GitHub peer approval'))).toBe(true);
       } finally {
         fs.rmSync(tmpDir, { recursive: true, force: true });
       }
