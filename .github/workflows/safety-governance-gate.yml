@@ -173,68 +173,6 @@ jobs:
             governance/reports/calculix-known-case-evidence.zip
             governance/reports/calculix-host-probe.json
           if-no-files-found: ignore
-      - name: Stage B — REAL OpenFOAM Turbulent Flat-Plate Commissioning (Uncertified)
-        run: |
-          set -euo pipefail
-          sudo add-apt-repository -y universe
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends openfoam openfoam-examples zip
-          ROOT=/tmp/usv-openfoam-flatplate
-          rm -rf "$ROOT"
-          mkdir -p "$ROOT/case" "$ROOT/staged" "$ROOT/work" "$ROOT/artifacts"
-          cp -rL /usr/share/doc/openfoam-examples/examples/incompressible/simpleFoam/turbulentFlatPlate/. "$ROOT/case/"
-          rm -rf "$ROOT/case/0"
-          cp -rL "$ROOT/case/0.kOmegaSST" "$ROOT/case/0"
-          cp "$ROOT/case/constant/turbulenceProperties-kOmegaSST" \
-            "$ROOT/case/constant/turbulenceProperties"
-          (cd "$ROOT/case" && blockMesh > blockMesh.log 2>&1)
-          (cd "$ROOT/case" && zip -qr "$ROOT/case.zip" .)
-          npm exec -- tsx scripts/generate-known-solver-manifest.ts -- \
-            --source-sha "$PR_HEAD_SHA" \
-            --archive "$ROOT/case.zip" \
-            --mesh "$ROOT/case/constant/polyMesh/points" \
-            --out "$ROOT/manifest.json" \
-            --family OPENFOAM_CFD \
-            --job-ref CI_OPENFOAM_TURBULENT_FLAT_PLATE
-          ARCHIVE_DIGEST="sha256:$(sha256sum "$ROOT/case.zip" | awk '{print $1}')"
-          cp "$ROOT/case.zip" "$ROOT/staged/${ARCHIVE_DIGEST#sha256:}.zip"
-          COMMON_ENV=(
-            USV_SOLVER_STAGING_DIR="$ROOT/staged"
-            USV_SOLVER_WORK_DIR="$ROOT/work"
-            USV_SOLVER_ARTIFACT_DIR="$ROOT/artifacts"
-            USV_SOLVER_BIN_PATH="/usr/bin:/bin"
-            USV_SOLVER_CPU_SECONDS="1200"
-            USV_SOLVER_ADDRESS_SPACE_BYTES="$((6*1024*1024*1024))"
-            USV_SOLVER_FILE_BYTES="$((2*1024*1024*1024))"
-            USV_SOLVER_OPEN_FILES="1024"
-            USV_SOLVER_PROCESSES="64"
-            USV_SOLVER_WALL_TIMEOUT_SECONDS="1200"
-          )
-          sudo env "${COMMON_ENV[@]}" \
-            python3 "$GITHUB_WORKSPACE/remote_solver/host_probe.py" \
-              --require-openfoam --require-network-isolation \
-              > governance/reports/openfoam-host-probe.json
-          sudo env "${COMMON_ENV[@]}" \
-            USV_SOLVER_APPROVED_ARTIFACT_DIGESTS="$ARCHIVE_DIGEST" \
-            python3 "$GITHUB_WORKSPACE/remote_solver/worker.py" \
-              --manifest "$ROOT/manifest.json" > "$ROOT/result.json"
-          sudo python3 remote_solver/known_cases/check_openfoam_flat_plate.py "$ROOT/result.json"
-          cp "$ROOT/result.json" governance/reports/openfoam-flat-plate-result.json
-          sudo cp "$ROOT/artifacts/CI_OPENFOAM_TURBULENT_FLAT_PLATE-solver-evidence.zip" \
-            governance/reports/openfoam-flat-plate-evidence.zip
-          sudo chown "$(id -u):$(id -g)" governance/reports/openfoam-flat-plate-evidence.zip
-          chmod 600 governance/reports/openfoam-flat-plate-evidence.zip
-
-      - name: Upload Real OpenFOAM Flat-Plate Evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: usv01-real-openfoam-flat-plate-unverified
-          path: |
-            governance/reports/openfoam-flat-plate-result.json
-            governance/reports/openfoam-flat-plate-evidence.zip
-            governance/reports/openfoam-host-probe.json
-          if-no-files-found: ignore
       - name: Stage B — Source-Derived Agent/Tool/Documentation Capability Audit
         run: |
           set -euo pipefail
@@ -360,3 +298,92 @@ jobs:
         run: |
           set -euo pipefail
           npx tsx scripts/governance/stage-e-enforce.ts origin/main
+
+  openfoam-known-case:
+    name: Real OpenFOAM Flat-Plate Commissioning (Uncertified)
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    env:
+      PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - name: Checkout Exact PR Head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Set up Node.js LTS (v22)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Project Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Install Ubuntu 24.04 OpenFOAM Package and Run Real Flat-Plate Case
+        run: |
+          set -euo pipefail
+          sudo add-apt-repository -y universe
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends openfoam openfoam-examples zip
+          ROOT=/tmp/usv-openfoam-flatplate
+          rm -rf "$ROOT"
+          mkdir -p "$ROOT/case" "$ROOT/staged" "$ROOT/work" "$ROOT/artifacts" governance/reports
+          cp -rL /usr/share/doc/openfoam-examples/examples/incompressible/simpleFoam/turbulentFlatPlate/. "$ROOT/case/"
+          rm -rf "$ROOT/case/0"
+          cp -rL "$ROOT/case/0.kOmegaSST" "$ROOT/case/0"
+          cp "$ROOT/case/constant/turbulenceProperties-kOmegaSST" "$ROOT/case/constant/turbulenceProperties"
+          (cd "$ROOT/case" && blockMesh > blockMesh.log 2>&1)
+          (cd "$ROOT/case" && zip -qr "$ROOT/case.zip" .)
+          npm exec -- tsx scripts/generate-known-solver-manifest.ts -- \
+            --source-sha "$PR_HEAD_SHA" \
+            --archive "$ROOT/case.zip" \
+            --mesh "$ROOT/case/constant/polyMesh/points" \
+            --out "$ROOT/manifest.json" \
+            --family OPENFOAM_CFD \
+            --job-ref CI_OPENFOAM_TURBULENT_FLAT_PLATE
+          ARCHIVE_DIGEST="sha256:$(sha256sum "$ROOT/case.zip" | awk '{print $1}')"
+          cp "$ROOT/case.zip" "$ROOT/staged/${ARCHIVE_DIGEST#sha256:}.zip"
+          COMMON_ENV=(
+            USV_SOLVER_STAGING_DIR="$ROOT/staged"
+            USV_SOLVER_WORK_DIR="$ROOT/work"
+            USV_SOLVER_ARTIFACT_DIR="$ROOT/artifacts"
+            USV_SOLVER_BIN_PATH="/usr/bin:/bin"
+            USV_SOLVER_CPU_SECONDS="1200"
+            USV_SOLVER_ADDRESS_SPACE_BYTES="$((6*1024*1024*1024))"
+            USV_SOLVER_FILE_BYTES="$((2*1024*1024*1024))"
+            USV_SOLVER_OPEN_FILES="1024"
+            USV_SOLVER_PROCESSES="64"
+            USV_SOLVER_WALL_TIMEOUT_SECONDS="1200"
+          )
+          sudo env "${COMMON_ENV[@]}" \
+            python3 "$GITHUB_WORKSPACE/remote_solver/host_probe.py" \
+              --require-openfoam --require-network-isolation \
+              > governance/reports/openfoam-host-probe.json
+          sudo env "${COMMON_ENV[@]}" \
+            USV_SOLVER_APPROVED_ARTIFACT_DIGESTS="$ARCHIVE_DIGEST" \
+            python3 "$GITHUB_WORKSPACE/remote_solver/worker.py" \
+              --manifest "$ROOT/manifest.json" > "$ROOT/result.json"
+          sudo python3 remote_solver/known_cases/check_openfoam_flat_plate.py "$ROOT/result.json"
+          cp "$ROOT/result.json" governance/reports/openfoam-flat-plate-result.json
+          sudo cp "$ROOT/artifacts/CI_OPENFOAM_TURBULENT_FLAT_PLATE-solver-evidence.zip" \
+            governance/reports/openfoam-flat-plate-evidence.zip
+          sudo chown "$(id -u):$(id -g)" governance/reports/openfoam-flat-plate-evidence.zip
+          chmod 600 governance/reports/openfoam-flat-plate-evidence.zip
+
+      - name: Upload Real OpenFOAM Flat-Plate Evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: usv01-real-openfoam-flat-plate-unverified
+          path: |
+            governance/reports/openfoam-flat-plate-result.json
+            governance/reports/openfoam-flat-plate-evidence.zip
+            governance/reports/openfoam-host-probe.json
+          if-no-files-found: ignore
+
