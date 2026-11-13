@@ -44,7 +44,7 @@ const liftingInputSchema = z.object({
     ctx.addIssue({
       code: 'custom',
       path: ['liftingPoints'],
-      message: 'Signed-off vertical reaction shares must sum to 1 (within 1e-6); no equal-share assumption',
+      message: 'Input vertical reaction shares must sum to 1 (within 1e-6); approval and equilibrium are NOT implied',
     });
   }
 
@@ -74,6 +74,7 @@ const liftingOutputSchema = z.object({
     utilizationRatio: z.number().nonnegative().nullable(),
   })),
   capacityScreenStatus: z.enum(['INCOMPLETE_WLL', 'EXCEEDS_ENTERED_WLL', 'WITHIN_ENTERED_WLL_ONLY']),
+  capacityAssessmentDisclaimer: z.literal('ARITHMETIC COMPARISON ONLY: ENTERED ALLOWABLES ARE NOT VERIFIED; NO SAFE-TO-LIFT CLAIM'),
   modelStatus: z.literal('UNVERIFIED_LIFTING_STATICS_SCREEN'),
   structuralComplianceValidated: z.literal(false),
   liftingCertificationIssued: z.literal(false),
@@ -125,6 +126,7 @@ export const LiftingLoadScreenTool: EngineeringTool = {
       peakSlingTensionN: Math.max(...pointLoads.map(point => point.slingTensionN)),
       pointLoads,
       capacityScreenStatus,
+      capacityAssessmentDisclaimer: 'ARITHMETIC COMPARISON ONLY: ENTERED ALLOWABLES ARE NOT VERIFIED; NO SAFE-TO-LIFT CLAIM',
       modelStatus: 'UNVERIFIED_LIFTING_STATICS_SCREEN',
       structuralComplianceValidated: false,
       liftingCertificationIssued: false,
