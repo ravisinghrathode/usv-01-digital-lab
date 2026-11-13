@@ -22,8 +22,10 @@ const requireObject = (raw: unknown): Record<string, unknown> => {
   return raw as Record<string, unknown>;
 };
 async function main() {
-  if (!process.env.GEMINI_API_KEY?.trim()) {
-    throw new Error('Actual agent design iterations require GEMINI_API_KEY on the authorized server; no offline simulation is substituted.');
+  const providerMode=process.env.AI_REVIEW_PROVIDER?.toLowerCase();
+  const usingCli=providerMode==='gemini_cli';
+  if (!usingCli && !process.env.GEMINI_API_KEY?.trim()) {
+    throw new Error('Actual agent design iterations require an authenticated Gemini CLI with AI_REVIEW_PROVIDER=gemini_cli, or GEMINI_API_KEY; no offline simulation is substituted.');
   }
   const missionPath = path.resolve(value('--mission-file'));
   if (fs.statSync(missionPath).size > 2 * 1024 * 1024) throw new Error('Mission brief exceeds 2 MiB');
