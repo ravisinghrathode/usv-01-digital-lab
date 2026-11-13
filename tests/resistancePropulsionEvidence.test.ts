@@ -139,7 +139,7 @@ describe('RES-01 independent-data acceptance screening (NOT certification)', () 
     const result = screenResistancePropulsionEvidence(data);
     expect(result.status).toBe('NUMERIC_FAIL');
     expect(result.issues.join(' ')).toMatch(/do not mix vessels/i);
-    expect(result.issues.join(' ')).toMatch(/different displacement/);
+    expect(result.issues.join(' ')).toMatch(/incompatible design displacement/);
     expect(result.issues.join(' ')).toMatch(/hump-region/);
     expect(result.issues.join(' ')).toMatch(/Duplicate evidence case ID/);
     expect(result.releaseApproved).toBe(false);
