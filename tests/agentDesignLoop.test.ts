@@ -8,6 +8,7 @@ const sha = 'a'.repeat(40);
 const mission = {
   runId: 'TEST-DESIGN-LOOP', sourceCommit: sha, seed: 1337,
   maxRevisions: 2,
+  specialistReviews: 'OFF' as const,
   missionStatement: 'Explore two unapproved alternatives without claiming vessel release',
   requirements: [{ id: 'REQ-TEST-1', statement: 'Explore preliminary design variants', source: 'Synthetic regression case only' }],
   sourceReferences: [{ reference: 'https://example.org/synthetic-only', description: 'NOT an authenticated design source' }]
@@ -95,6 +96,31 @@ describe('Reproducible legacy scenarios and real-agent iterative design screenin
     expect(result.detailedDesignAuthorized).toBe(false);
     expect(result.engineeringReleaseAuthorized).toBe(false);
     expect(result.independentEngineeringValidated).toBe(false);
+  });
+
+  it('activates four real registered specialist roles when both calculations pass', async () => {
+    const calls: string[] = [];
+    const result = await runAgentDesignLoop({...mission, maxRevisions:1,
+      specialistReviews:'AUTO' as const}, async (id,input) => {
+      calls.push(id);
+      if (id !== proposer) return makeOutput(id,input,{});
+      return makeOutput(id,input,{lwlMeters:10,beamMeters:3,draftMeters:0.7,
+        blockCoefficientCb:0.55,displacementTonnes:10*3*0.7*0.55*1.025,
+        speedKnots:10,propulsiveEfficiencyEtaD:0.6,waterTempCelsius:15});
+    });
+    expect(calls).toEqual([
+      registry.requireAgent('A01').id,
+      registry.requireAgent('A05').id,
+      registry.requireAgent('A06').id,
+      registry.requireAgent('A07').id,
+      registry.requireAgent('A23').id,
+      registry.requireAgent('A15').id
+    ]);
+    expect(result.specialistReviewCount).toBe(4);
+    expect(result.revisions[0].specialistReviews).toHaveLength(4);
+    expect(result.revisions[0].specialistReviews.every(x=>x.status==='LIVE_REVIEW_UNVERIFIED')).toBe(true);
+    expect(result.completedToolScreens).toBe(2);
+    expect(result.engineeringReleaseAuthorized).toBe(false);
   });
 
   it('ranks only source-defined, same-condition preliminary tool outputs, never design acceptance', async () => {
