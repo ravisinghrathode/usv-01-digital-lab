@@ -157,6 +157,31 @@ describe('Reproducible legacy scenarios and real-agent iterative design screenin
     expect(run.comparison.excluded[0].reason).toMatch(/Different.*conditions/);
   });
 
+  it('rejects model-suggested dimensions without independently declared provenance', async () => {
+    const result = await runAgentDesignLoop(mission, async (id, input) => {
+      const output = makeOutput(id, input, { lwlMeters: 10, beamMeters: 3, draftMeters: 0.6 });
+      delete output.data.metricProvenance;
+      return output;
+    });
+    expect(result.stopReason).toBe('INVALID_PROPOSAL');
+    expect(result.completedToolScreens).toBe(0);
+    expect(result.revisions).toHaveLength(0);
+    expect(result.engineeringReleaseAuthorized).toBe(false);
+  });
+
+  it('rejects source-document numeric claims with no registered source record', async () => {
+    const result = await runAgentDesignLoop(mission, async (id, input) => {
+      const output = makeOutput(id,input,{lwlMeters:10});
+      output.data.metricProvenance.lwlMeters = {
+        sourceKind:'SOURCE_DOCUMENT', sourceReference:'https://unregistered.invalid/claim',
+        justification:'Fabricated source pointer cannot grant baseline authority'
+      };
+      return output;
+    });
+    expect(result.stopReason).toBe('INVALID_PROPOSAL');
+    expect(result.completedToolScreens).toBe(0);
+  });
+
   it('fails closed on mock provider and never substitutes a synthetic "agent vote"', async () => {
     let attempts = 0;
     const result = await runAgentDesignLoop(mission, async (id, input) => {
