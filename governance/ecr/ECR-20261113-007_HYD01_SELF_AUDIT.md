@@ -23,3 +23,7 @@
 - Interpolated offset sections are not certified hull geometry, even if a source string and SHA are structurally well-formed.
 - The test hull is an **analytical rectangular barge**, not USV-01. The 120 kg and 6,200 kg candidate inputs cannot be reconciled without explicit vessel selection and approved mass/geometry.
 - Use `evidence/hyd01/acceptance-manifest.json` as missing-evidence ledger. Reviewers must independently authenticate any subsequently submitted source and signature; `auditHydroEvidence` never grants engineering acceptance.
+
+## Additional safety-critical source data fault
+
+Code review of `src/data/initialProjectData.ts` found unsupported project approval and mock verification records that were being loaded into normal live project views: an 11.2 m / 6.2 t vessel marked verified, mass/CG entries marked non-illustrative, verified resistance, solved structure, and a fake passed physical electrical FAT. The remediation strips those approval claims from initial project state and removes fake physical evidence; it does not create replacement measurements. Verification requires `tests/seedBaselineIntegrity.test.ts` and UI audit. Risk remains CRITICAL.
