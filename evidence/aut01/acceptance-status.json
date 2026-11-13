@@ -84,9 +84,9 @@
     },
     {
       "gate_id": "AUT-G10",
-      "name": "Director Stage D signed approval and Stage E protected merge",
+      "name": "Director exact-SHA signature, Stage E enforcement and governance nonconformance disposition",
       "status": "NOT_SUBMITTED",
-      "evidence_reference": null
+      "evidence_reference": "Issue #43 documents the post-merge governance bypass; no valid Director signature submitted"
     }
   ],
   "autonomous_navigation_authorized": false,
@@ -94,5 +94,20 @@
   "physical_validation_complete": false,
   "release_authorized": false,
   "closure_authorized": false,
-  "evidence_rules": "No placeholder, synthetic, model-generated or code-only result satisfies an external gate; retain NOT_SUBMITTED/NOT_EXECUTED until independent evidence reviewed."
+  "evidence_rules": "No placeholder, synthetic, model-generated or code-only result satisfies an external gate; retain NOT_SUBMITTED/NOT_EXECUTED until independent evidence reviewed.",
+  "post_merge_nonconformance": {
+    "id": "NC-AUT01-20261113-001",
+    "issue_url": "https://github.com/ravisinghrathode/usv-01-digital-lab/issues/43",
+    "merged_pr_url": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/41",
+    "source_pr_head_sha": "efcc9b20007cefa35909988698a181795aceaca8",
+    "source_merge_commit_sha": "4f285f5a51afc18c4b7825569f3185401d3e0a73",
+    "observed_merge_time_utc": "2026-11-13T00:35:28Z",
+    "github_ci_conclusion_at_merge_head": "failure",
+    "independent_pr_reviewer_submissions_at_inspection": 0,
+    "director_signature_verified": false,
+    "effective_branch_protection_verified": false,
+    "engineering_release_hold": true,
+    "status": "OPEN_PENDING_HUMAN_SAFETY_REVIEW",
+    "note": "Do not interpret merged source, successful software tests or AI advice as qualified engineering/operational authorization."
+  }
 }
