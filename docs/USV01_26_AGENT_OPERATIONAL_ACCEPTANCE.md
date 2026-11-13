@@ -151,9 +151,12 @@ reports are uploaded as workflow artifacts even when acceptance fails.
 
 The repository cannot authenticate your Mac, register a runner for you, sign
 as an independent reviewer, invent laboratory/sea-trial data, or merge a
-HIGH/CRITICAL PR without its required cryptographic Git source approval and
-independent peer review. These are **real, unresolved external evidence and
-authority prerequisites**, not tasks for AI agents to self-certify.
+protected software/security PR without its exact-head independent peer
+approval or a vessel-engineering PR without both that peer review and a
+Director-signed Ed25519 engineering ECR. The purpose is determined by changed
+source paths, not high/critical risk alone. These are **real, unresolved
+external evidence and authority prerequisites**, not tasks for AI agents to
+self-certify.
 
 ## Source versus vessel baseline authority
 
