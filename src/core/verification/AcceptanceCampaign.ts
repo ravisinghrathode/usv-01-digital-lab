@@ -3,6 +3,7 @@ import { ToolRegistry } from '../tools/ToolRegistry.ts';
 import { ACCEPTANCE_REQUIREMENTS, evaluateAcceptance, type AcceptanceId, type AcceptanceEvidence } from './AcceptanceGate.ts';
 import { evaluateBenchmark, type ReferenceMeasurement } from './EngineeringBenchmarks.ts';
 import { assessMarineEvidence, type MarineEvidenceSubmission } from './MarineSystemsEvidenceGate.ts';
+import { screenLiftingLoadCase, screenThermalSteadyState, type LiftingScreenInput, type ThermalScreenInput } from './MarineSystemsSizing.ts';
 
 /**
  * Integrated software-observable acceptance campaign. This is NOT an engineering
@@ -31,6 +32,8 @@ export interface CampaignInputs {
   evidence?: readonly AcceptanceEvidence[];
   benchmarkMeasurements?: readonly ReferenceMeasurement[];
   marineEvidenceSubmissions?: readonly MarineEvidenceSubmission[];
+  marineLiftingCases?: readonly LiftingScreenInput[];
+  marineThermalCases?: readonly ThermalScreenInput[];
 }
 
 export function runAcceptanceCampaign(input: CampaignInputs) {
@@ -58,13 +61,18 @@ export function runAcceptanceCampaign(input: CampaignInputs) {
   const acceptance = evaluateAcceptance(input.baselineSha, input.evidence);
   const benchmark = evaluateBenchmark(input.benchmarkMeasurements || []);
   const marineEvidence = assessMarineEvidence(input.baselineSha, input.marineEvidenceSubmissions || []);
+  const marineScreens = {
+    liftingCases: (input.marineLiftingCases || []).map(screenLiftingLoadCase),
+    thermalCases: (input.marineThermalCases || []).map(screenThermalSteadyState)
+  };
+  const invalidMarineScreens = [...marineScreens.liftingCases, ...marineScreens.thermalCases].some(x => x.status === 'INVALID_INPUT');
   const assigned = new Set(CAMPAIGN_WORKSTREAMS.flatMap(w => [...w.criteria]));
   const missingCriteria = ACCEPTANCE_REQUIREMENTS.filter(c => !assigned.has(c.id)).map(c => c.id);
   const workstreams = CAMPAIGN_WORKSTREAMS.map(w => {
     const softwareDefect = (w.id === 'WS-01' && !structurallyValid) ||
       (w.id === 'WS-03' && benchmark.status === 'INVALID_REFERENCE_DATA') ||
       (w.id === 'WS-04' && benchmark.status === 'INVALID_REFERENCE_DATA') ||
-      (w.id === 'WS-07' && marineEvidence.status === 'INCOMPLETE_OR_INVALID');
+      (w.id === 'WS-07' && (marineEvidence.status === 'INCOMPLETE_OR_INVALID' || invalidMarineScreens));
     const status: CampaignStatus = softwareDefect ? 'BLOCKED_SOFTWARE_DEFECT' :
       w.id === 'WS-01' ? 'SOFTWARE_CHECK_PASSED_EXTERNAL_EVIDENCE_PENDING' : 'BLOCKED_MISSING_EVIDENCE';
     return {
@@ -88,6 +96,7 @@ export function runAcceptanceCampaign(input: CampaignInputs) {
     registryErrors: registryCheck.errors,
     benchmark,
     marineEvidence,
+    marineScreens,
     missingCriteria,
     workstreams,
     pendingWorkstreams: workstreams.filter(w => !w.accepted).length,
@@ -115,6 +124,9 @@ export function acceptanceCampaignMarkdown(
     'Benchmark comparison: ' + report.benchmark.status,
     'Marine MAR-01 intake: ' + report.marineEvidence.status +
       ' (' + report.marineEvidence.missingRequirements.length + ' missing evidence entries; NOT APPROVED)',
+    'Marine numerical screens: ' + report.marineScreens.liftingCases.length +
+      ' lifting, ' + report.marineScreens.thermalCases.length +
+      ' thermal. All screens are uncertified and release remains blocked.',
     '',
     '| Workstream | Requirement | Disposition |',
     '|---|---|---|',
