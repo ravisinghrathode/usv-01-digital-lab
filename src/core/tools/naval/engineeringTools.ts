@@ -383,13 +383,14 @@ export const StructuresTool: EngineeringTool = {
       safetyFactor = 2.0
     } = input;
 
-    // ISO 12215-5 slamming pressure for high-speed craft:
-    // P_slam = (1.8 * Delta / Lwl) * (1 + 0.08 * V^2) * ((50 - deadrise) / 30) (kPa)
+    // Illustrative empirical expression only: NOT sourced or validated as ISO 12215-5.
+    // Do NOT use this pressure for physical plating selection, FEA certification or a lift decision.
+    // Expression below is uncorrelated with a verified rule source or actual USV-01 geometry.
     const deadriseFactor = Math.max(0.5, (50 - deadriseAngleDeg) / 30);
     const baseP = (1.8 * displacementTonnes / lwlMeters) * (1 + 0.08 * Math.pow(speedKnots, 2));
     const designSlammingPressureKpa = Math.max(35, baseP * deadriseFactor);
 
-    // Aspect ratio factor k2 = min(0.5, 0.271 * (a/b)^0.5 ...)
+    // Ad hoc aspect-ratio modifier; neither a calibrated pressure coefficient nor rule formula.
     const aspectRatio = unsupportedPanelLengthMm / unsupportedPanelWidthMm;
     const k2 = Math.min(0.5, 0.35 + 0.15 * Math.min(aspectRatio, 2.0));
 
