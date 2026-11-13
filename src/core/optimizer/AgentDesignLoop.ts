@@ -141,8 +141,7 @@ export async function runAgentDesignLoop(
   const registry = AgentRegistry.getInstance();
   const proposer = registry.requireAgent('A01');
   const critic = registry.requireAgent('A15');
-  const optimizer = GenerativeDesignOptimizer.getInstance();
-  optimizer.resetOptimizer(input.seed);
+  const optimizer = GenerativeDesignOptimizer.createIsolated(input.seed);
   const initial = optimizer.runIteration('BALANCED_PATROL');
   const report: DesignLoopReport = {
     runId: input.runId, sourceCommit: input.sourceCommit,
