@@ -1,7 +1,8 @@
 """Materialize an approved bounded template, then run real CalculiX through worker."""
-import argparse,json
+import argparse,json,sys
 from pathlib import Path
 
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from templates import materialize_template_job
 from worker import run_staged_case,sha256
 
