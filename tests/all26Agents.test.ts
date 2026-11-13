@@ -25,7 +25,7 @@ describe('26-Agent Individual Verification Matrix (A01 - A26, Tests A through H)
       waterplaneCoefficientCwp: 0.65,
       kgMeters: 0.8,
       seawaterDensityKgM3: 1025,
-      propulsiveEfficiencyEtaD: 0.65,
+      // No sourced propulsive efficiency or resistance is supplied; powering must remain unverified.
       waterTempCelsius: 15,
       deadriseAngleDeg: 18,
       unsupportedPanelWidthMm: 450,
