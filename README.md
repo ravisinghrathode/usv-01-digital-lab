@@ -1,6 +1,8 @@
 # NAVAL-USV | USV-01 — 26-Agent Digital Engineering Lab
 
-Private engineering workspace and deterministic multi-agent platform for the **USV-01 unmanned surface vessel project**.
+Public source-code workspace and deterministic multi-agent platform for the **USV-01 unmanned surface vessel project**.
+
+> **Publication boundary (approved 14 November 2026):** This repository is intentionally **PUBLIC** for source code, publicly shareable architecture, and non-sensitive development material. Public repository access does **not** authorize publishing confidential Navy/client information, restricted vessel specifications, controlled engineering baselines, CAD/drawings, private operational information, contract materials, credentials, or unapproved test evidence. Store restricted artifacts in approved access-controlled storage (including the project's Google Drive); review data classification before committing or linking content. Git history may have been copied externally. Repository secret scanning and push protection are enabled, but cannot replace a full disclosure review.
 
 ---
 
