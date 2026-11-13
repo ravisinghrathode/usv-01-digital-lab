@@ -7,7 +7,8 @@ import type { StageDResult } from './stage-d-human-approval.ts';
 import { computeBaselineDigest } from './ecr-approval.ts';
 import { hasLiveAdminAuthorSignoff } from './owner-author-approval.ts';
 
-const ENFORCE_HUMAN_APPROVALS = true;
+// Protected software and vessel-engineering authorization is mandatory;
+// do not introduce a PR-controlled switch to bypass it.
 
 export interface StageEEvaluation {
   passed: boolean;
@@ -123,7 +124,7 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
     (stageA.summary.requiresDesignatedAuthorityApproval
       ? 'SAFETY_CRITICAL_ENGINEERING' : 'ROUTINE_SOFTWARE');
   const directorEcrRequiredByRoute = approvalRoute === 'SAFETY_CRITICAL_ENGINEERING';
-  const directorEcrRequired = ENFORCE_HUMAN_APPROVALS && directorEcrRequiredByRoute;
+  const directorEcrRequired = directorEcrRequiredByRoute;
   const protectedSoftware = approvalRoute === 'PROTECTED_SOFTWARE_SECURITY';
   const peerRequired = directorEcrRequiredByRoute || protectedSoftware;
   const requiresReviewEvidence = directorEcrRequiredByRoute || protectedSoftware;
@@ -200,7 +201,7 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
             stageD?.independentReviewStatus === 'APPROVED_BY_PEER'))
         : (authorSignoff || stageD?.independentPeerApproved === true ||
            stageD?.independentReviewStatus === 'APPROVED_BY_PEER');
-      if (ENFORCE_HUMAN_APPROVALS && !isHumanAuthorized) {
+      if (!isHumanAuthorized) {
         blockingReasons.push(directorEcrRequired
           ? 'Stage C vessel engineering technical review is PENDING_HUMAN_REVIEW: independent peer and Director ECR required.'
           : 'Stage C protected software technical review is PENDING_HUMAN_REVIEW: independent exact-head peer approval or authenticated admin-author signoff required; vessel ECR not applicable.');
@@ -246,7 +247,7 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
         );
       }
     }
-    if (ENFORCE_HUMAN_APPROVALS && peerRequired && !independentPeerApproved && !(protectedSoftware && authorSignoff)) {
+    if (peerRequired && !independentPeerApproved && !(protectedSoftware && authorSignoff)) {
       blockingReasons.push(directorEcrRequired
         ? 'Stage D rejected: vessel engineering changes require an independent GitHub peer approval of the exact source head.'
         : 'Stage D rejected: protected software requires independent GitHub peer approval on the exact PR head OR an explicit authenticated repo-admin PR-author signoff. An author signoff is not independent review.');
