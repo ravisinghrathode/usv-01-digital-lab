@@ -1,7 +1,7 @@
 # HYD-01 Numerical Remediation and Remaining Acceptance Gates
 
 **Date:** 2026-11-13  
-**State:** Proposed numerical remediation in branch `fix/hyd-01-offsets-gz-20261113`; external acceptance OPEN.
+**State:** Numerical first-stage remediation merged as PR #40 (merge commit `21992ef6e10cdf902c33a1fd41f28f68a6314a02`). PR #46 is a subsequent self-audit improvement; physical acceptance and engineering release remain OPEN.
 
 ## Findings
 
@@ -45,3 +45,15 @@ Earlier live Gemini campaign `evidence/live-agents/live-gemini-26-20261113.json`
 ## Baseline write protection
 
 The interactive slider was capable of staging the 6,200 kg demonstration scenario as project particulars and calculating waterline beam as `beamM * 0.92` without verified offsets. That pathway was disabled. Users can export a clearly `UNVERIFIED PARAMETRIC SCREEN` CSV; slider reset affects only local state. No automated calculator can overwrite the project baseline. `tests/hydroBaselineIntegrity.test.ts` enforces the critical UI boundary.
+
+## Post-merge independent self-audit (PR #46, not a certified stability solution)
+
+An internal critique identified the following remediations:
+- The fixed-trim source-offset tool had no longitudinal pitch equilibrium. `calculateTrimmedOffsetHydrostatics` now solves heave plus longitudinal trim at each **prescribed heel** for the stated offset hull, within a ±15° trim screening envelope; infeasible mass/CG cases throw rather than return unphysical GZ.
+- `TOOL-TRIMMED-HYDROSTATICS-01` is registered with `CALCULATION_EXEC` permission checks and A06 authorization.
+- The `calculateGZStability` slider curve is an empirical wall-sided/rollover approximation, not a validated hydrostatic righting curve. Its `overallPass` cannot become true; negative righting arms and negative GZ-area integrals are no longer clipped. It rejects invalid numerical inputs.
+- The vessel dashboard now starts blank (no invented 6,200 kg default). The 120 kg concept and 6,200 kg exploratory data are distinct, unapproved configurations; neither is a naval baseline.
+- `evidence/hyd01/acceptance-manifest.json` represents the actual absent baseline, load cases, hydrostatic benchmark and signatures explicitly as null/empty. `HydroEvidenceAudit.ts` checks exact SHA, geometry revision, load-case evidence coverage and reference tolerances. Structural completeness **never equals authenticated or independently accepted evidence**.
+- Automated analytical trim and negative tests are not independent hydrostatic-software validation. Actual 3D CAD/offset provenance, station-convergence study, all load cases, downflooding, heel/trim trials, independent correlation and approval remain mandatory.
+
+**Numerical integration caveat:** The solver trapezoidally integrates cross-sectional properties across stations. It is a section-based screening approximation and cannot establish geometry closure between stations, appendage buoyancy, physical hull watertightness, or cross-checks against a second certified solver.
