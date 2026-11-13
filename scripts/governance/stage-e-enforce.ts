@@ -171,16 +171,20 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
   const staleApproval = stageD ? stageD.staleApproval : false;
   let stageDDigestMatches = true;
 
-  if (stageDRequired) {
-    if (!stageD) {
-      blockingReasons.push('Stage D human authority verification report is missing.');
-    } else {
-      if (expectedBaselineDigest && stageD.baselineDigest && stageD.baselineDigest !== expectedBaselineDigest) {
-        stageDDigestMatches = false;
-        blockingReasons.push(
-          `Stage D approval evidence does not correspond to the exact baseline digest being verified (expected ${expectedBaselineDigest}, report had ${stageD.baselineDigest}).`
-        );
-      }
+  if (!stageD) {
+    blockingReasons.push(
+      stageDRequired
+        ? 'Stage D human authority verification report is missing.'
+        : 'Independent GitHub review verification report is missing.'
+    );
+  } else {
+    if (stageDRequired && expectedBaselineDigest && stageD.baselineDigest && stageD.baselineDigest !== expectedBaselineDigest) {
+      stageDDigestMatches = false;
+      blockingReasons.push(
+        `Stage D approval evidence does not correspond to the exact baseline digest being verified (expected ${expectedBaselineDigest}, report had ${stageD.baselineDigest}).`
+      );
+    }
+    if (stageDRequired) {
       if (staleApproval) {
         blockingReasons.push('Stage D rejected: ECR approval record is stale; does not match current baseline digest.');
       } else if (!signatureVerified) {
@@ -188,11 +192,13 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
           `Stage D rejected: Safety-critical change (${overallRisk} risk) requires Director-signed Ed25519 approval over baseline digest ${stageD.baselineDigest || currentBaselineDigest || 'unknown'}.`
         );
       }
-      if (!independentPeerApproved) {
-        blockingReasons.push(
-          'Stage D rejected: Safety-critical change requires an independent GitHub peer approval from someone other than the PR author.'
-        );
-      }
+    }
+    if (!independentPeerApproved) {
+      blockingReasons.push(
+        stageDRequired
+          ? 'Stage D rejected: Safety-critical change requires an independent GitHub peer approval from someone other than the PR author.'
+          : 'Routine change requires an independent GitHub peer approval from someone other than the PR author.'
+      );
     }
   }
 
