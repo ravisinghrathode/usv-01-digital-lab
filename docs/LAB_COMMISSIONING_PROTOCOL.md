@@ -92,7 +92,10 @@ baseline approval. The protected path-based Stage A classifier chooses:
 - `PROTECTED_SOFTWARE_SECURITY` for governance, authentication, Codex
   provider, lab commissioning authority, execution-host and CI workflow
   changes: deterministic technical/security checks and **independent
-  GitHub peer approval on the exact PR head**; no vessel ECR.
+  GitHub peer approval on the exact PR head OR an explicit authenticated
+  repository-admin PR-author acceptance on that exact head**; no vessel ECR.
+  The latter is a declared single-maintainer authorization exception, not
+  independent review.
 - `SAFETY_CRITICAL_ENGINEERING` when a change touches naval engineering
   calculators, vessel safety acceptance, controlled design data, release
   manifests or an ECR: independent peer, technical engineering review,
