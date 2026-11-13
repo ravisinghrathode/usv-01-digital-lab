@@ -10,7 +10,8 @@ const raw = () => ({
   inputArtifactSha256: d, meshArtifactSha256: d,
   qualityPlan: { sourceReference: 'Synthetic unit-test specification only',
     residualThreshold: 1e-4, gridUncertaintyMaxFraction: 0.04,
-    maxMeshSkewness: 2, maxNonOrthogonalityDeg: 65 }
+    maxMeshSkewness: 2, maxNonOrthogonalityDeg: 65,
+    maxElementAspectRatio: 5, minScaledJacobian: 0.2 }
 });
 describe('Remote CFD/FEA job evidence', () => {
   it('binds solver job to source and mesh digests, does not claim remote execution', () => {
