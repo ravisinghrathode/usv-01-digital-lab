@@ -112,10 +112,14 @@ These are **architecture/audit findings**, not newly proven field failures or pe
 - [x] Classify representative modules as implemented, source/test checked, historical-only, external-unverified or proposed only.
 - [x] Identify overlapping execution paths, authority boundaries, missing live host/solver/CAD/integration evidence, and legacy seed discrepancy.
 - [x] Produce evidence-linked A04–A15 prerequisites and named architecture risks.
-- [ ] Merge report on protected `main` with required exact-head governance check green and verify merged report exists.
-- [ ] Record A03 completion in the Master Project Register; **do not start A04** until separately authorized.
+- [x] [PR #84](https://github.com/ravisinghrathode/usv-01-digital-lab/pull/84) merged on protected `main` at [`ed54ead757646adbd122c31597a853542e4036f1`](https://github.com/ravisinghrathode/usv-01-digital-lab/commit/ed54ead757646adbd122c31597a853542e4036f1); required [exact-main deterministic governance gate](https://github.com/ravisinghrathode/usv-01-digital-lab/actions/runs/43523068633) passed and report file verified.
+- [x] A03 source-audit completion entered in [Master Project Register](MASTER_PROJECT_REGISTER.md) via controlled closeout PR; **A04 remains PLANNED** and needs separate Project Lead authorization.
 
-## 7. Original source references (audited pinned commit)
+## 7. Source-audit closure
+
+**Verified 14 November 2026:** the 20-module/10-risk source audit and Master Register link were published on protected `main` in [PR #84](https://github.com/ravisinghrathode/usv-01-digital-lab/pull/84), with passing required exact-main CI. The source-audit classification is complete; no current-revision live agent commissioning, deployment, authenticated CFD/FEA evidence, physical naval validation or independent release approval is claimed. The separate OpenFOAM commissioning job was still in progress at the main CI check and is NOT an A03 acceptance condition. **Do not begin A04 without a new authorization.**
+
+## 8. Original source references (audited pinned commit)
 
 - [Agent definitions](../src/core/agents/definitions.ts), [registry](../src/core/registry/AgentRegistry.ts), [engine](../src/core/engine/ExecutionEngine.ts), [DAG orchestrator](../src/core/orchestrator/CentralOrchestrator.ts)
 - [Model router](../src/core/models/ModelProvider.ts), [Mission Control](../src/core/mission-control/MissionControlCoordinator.ts), [Design loop](../src/core/optimizer/AgentDesignLoop.ts), [12 tools](../src/core/tools/ToolRegistry.ts)
