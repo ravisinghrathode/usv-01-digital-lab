@@ -693,6 +693,7 @@ export class VerifyUsv01Engine {
         },
         stageDResult: {
           required: stageDRequired,
+          independentPeerApproved: false,
           signatureVerified: stageDSignatureVerified,
           staleApproval: stageDStale
         },

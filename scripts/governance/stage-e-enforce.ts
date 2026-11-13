@@ -29,6 +29,7 @@ export interface StageEEvaluation {
   };
   stageDResult: {
     required: boolean;
+    independentPeerApproved: boolean;
     signatureVerified: boolean;
     staleApproval: boolean;
     authority?: string;
@@ -166,6 +167,7 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
   // Evaluate Stage D
   const stageDRequired = isCriticalOrHigh || requiresDirector;
   const signatureVerified = stageD ? stageD.signatureVerified : false;
+  const independentPeerApproved = stageD?.independentReviewStatus === 'APPROVED_BY_PEER';
   const staleApproval = stageD ? stageD.staleApproval : false;
   let stageDDigestMatches = true;
 
@@ -184,6 +186,11 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
       } else if (!signatureVerified) {
         blockingReasons.push(
           `Stage D rejected: Safety-critical change (${overallRisk} risk) requires Director-signed Ed25519 approval over baseline digest ${stageD.baselineDigest || currentBaselineDigest || 'unknown'}.`
+        );
+      }
+      if (!independentPeerApproved) {
+        blockingReasons.push(
+          'Stage D rejected: Safety-critical change requires an independent GitHub peer approval from someone other than the PR author.'
         );
       }
     }
@@ -228,6 +235,7 @@ export function evaluateGovernanceGate(rootDir = process.cwd(), baseRef = 'origi
     },
     stageDResult: {
       required: stageDRequired,
+      independentPeerApproved,
       signatureVerified,
       staleApproval,
       authority: stageD?.approverAuthority,
@@ -277,7 +285,7 @@ export function formatStageEMarkdown(evaluation: StageEEvaluation): string {
 | **Stage A: Classification** | PR Risk Classification & Impact Analysis | \`${evaluation.stageAResult.overallRisk}\` Risk | ℹ️ EVALUATED |
 | **Stage B: Quality Suite** | Deterministic Tests (66/66), Audit, Lint, Build | Zero Vulnerabilities & Clean Build | ✅ PASSED |
 | **Stage C: Independent Engineering Review** | Required for safety-critical engineering only; routine work uses GitHub independent review | ${evaluation.stageAResult.approvalRoute === 'SAFETY_CRITICAL_ENGINEERING' ? evaluation.stageCResult.verdict : 'Not required for routine work'} | ${evaluation.stageAResult.approvalRoute === 'SAFETY_CRITICAL_ENGINEERING' ? stageCBadge : '⚪ NOT REQUIRED'} |
-| **Stage D: Human Authority** | Ed25519 Director Signature over Exact Baseline | ${evaluation.stageDResult.signatureVerified ? 'Verified' : 'Pending / Unverified'} | ${stageDBadge} |
+| **Stage D: Human Authority** | Exact-baseline Ed25519 Project Lead signature and independent peer approval for safety-critical changes | ${evaluation.stageDResult.signatureVerified ? 'Signature verified' : 'Signature pending'}; ${evaluation.stageDResult.required ? (evaluation.stageDResult.independentPeerApproved ? 'peer approved' : 'peer approval pending') : 'not required'} | ${stageDBadge} |
 | **Stage E: Final Enforcement Gate** | Fail-Closed Multi-Stage Governance Policy | **${evaluation.overallVerdict}** | **${evaluation.passed ? '✅ PASSED' : '🚫 BLOCKED'}** |
 `;
 

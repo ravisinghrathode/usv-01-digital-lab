@@ -679,6 +679,31 @@ describe('STAGE G: Engineering Governance System (EGS) Verification', () => {
       }
     });
 
+    it('blocks a safety-critical change that lacks an independent peer approval even when other Stage D evidence exists', () => {
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'egs-critical-peer-'));
+      const reportsDir = path.join(tmpDir, 'governance', 'reports');
+      fs.mkdirSync(reportsDir, { recursive: true });
+
+      try {
+        fs.writeFileSync(path.join(reportsDir, 'pr-classification.json'), JSON.stringify({
+          summary: { overallRisk: 'CRITICAL', approvalRoute: 'SAFETY_CRITICAL_ENGINEERING', requiresIndependentEngineeringReview: true, requiresDesignatedAuthorityApproval: true, totalFilesChanged: 1, totalLinesAdded: 1, totalLinesDeleted: 0, dominantCategories: ['SAFETY'], requiresECR: true },
+          fileDetails: [], timestamp: new Date().toISOString()
+        }));
+        fs.writeFileSync(path.join(reportsDir, 'stage-c-review.json'), JSON.stringify({
+          compositeAdvisoryRecommendation: 'ADVISORY_APPROVE', provider: 'deterministic', aiReviewStatus: 'AI_REVIEW_UNAVAILABLE', deterministicStatus: 'PASS', hasMockFallback: false
+        }));
+        fs.writeFileSync(path.join(reportsDir, 'stage-d-approval.json'), JSON.stringify({
+          humanApprovalRequired: true, signatureVerified: true, staleApproval: false, independentReviewStatus: 'ECR_DIRECTOR_SIGNED'
+        }));
+
+        const evalRes = evaluateGovernanceGate(tmpDir, 'origin/main');
+        expect(evalRes.passed).toBe(false);
+        expect(evalRes.blockingReasons.some(r => r.includes('independent GitHub peer approval'))).toBe(true);
+      } finally {
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+      }
+    });
+
     it('should accurately disclose deterministic review and never represent it as model-backed', async () => {
       const report = await generateMultiRoleReview('HEAD');
       expect(report).toBeDefined();
