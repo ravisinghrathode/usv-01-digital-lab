@@ -4,7 +4,7 @@
 
 ## Closed-loop design runtime
 
-The legacy `GenerativeDesignOptimizer` now uses a deterministic Mulberry32 seed, records `runSeed`, `drawIndex` and `scenarioRevision` in each candidate, and can replay identical scenario sequences. Its old “25-agent” voting matrix is a **synthetic rule screen**; it DOES NOT execute the 26 canonical agents. Its approximate physics constants and numeric outputs remain explicitly unverified. Seed reproducibility does **not** imply solution correctness.
+The legacy `GenerativeDesignOptimizer` now uses a deterministic Mulberry32 seed, records `runSeed`, `drawIndex` and `scenarioRevision` in each candidate, and can replay identical scenario sequences. Its former “25-agent” voting matrix has been removed and replaced by **12 explicitly synthetic input/heuristic checks**; it DOES NOT execute the 26 canonical agents. Its approximate physics constants, local +1% finite-difference responses and numeric outputs remain explicitly unverified; the previous invented Sobol values and fabricated red-team proof have been removed. Seed reproducibility does **not** imply solution correctness.
 
 The new `AgentDesignLoop` performs up to five *real*, sequential proposal–screen–critique–revision cycles:
 
