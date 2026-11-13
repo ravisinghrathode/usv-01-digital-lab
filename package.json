@@ -28,7 +28,7 @@
     "acceptance:numerical": "vitest run tests/independentNumericalOracles.test.ts",
     "acceptance:commission": "tsx scripts/run-commissioning-suite.ts",
     "acceptance:live-agents": "tsx scripts/run-live-agent-matrix.ts",
-    "acceptance:codex-agents": "tsx scripts/run-live-agent-matrix.ts --cases evidence/live-agents/representative-cases.json",
+    "acceptance:codex-agents": "tsx scripts/run-codex-agent-campaign.ts",
     "acceptance:live-integrations": "tsx scripts/run-live-commissioning.ts",
     "governance:classify": "tsx scripts/governance/classify-change.ts",
     "governance:secrets": "tsx scripts/governance/secret-scanner.ts",
