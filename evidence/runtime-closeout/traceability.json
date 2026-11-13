@@ -1,0 +1,126 @@
+{
+  "id": "USV-RT-WP-001",
+  "commit": "9b00f7aa6afc0d8fd7ebe3c43aa677855fc43d25",
+  "input": "evidence/runtime-closeout/requirements.json",
+  "inputSha256": "684922961d45a769135442722cba14178ea597c3bb47229d65b287593fd5c7a1",
+  "source": "docs/CODEX_NATIVE_AGENT_RUNTIME.md",
+  "sourceSha256": "9394e1e31753135de64bf32e5a37a527caa7181213e9823ed7980ce0883409e6",
+  "requirements": [
+    {
+      "id": "USV-RT-001",
+      "quote": "with their ChatGPT account",
+      "subsystem": "Codex CLI provider",
+      "method": "Test",
+      "verificationId": "USV-RT-V01",
+      "criterion": "Native agent reports codex_cli and LIVE_AI_GENERATION in a signed-in run."
+    },
+    {
+      "id": "USV-RT-002",
+      "quote": "fails closed without a valid CLI session or required engineering inputs",
+      "subsystem": "Native agent execution",
+      "method": "Test",
+      "verificationId": "USV-RT-V02",
+      "criterion": "Provider failure or missing mandatory input fails execution before acceptance."
+    },
+    {
+      "id": "USV-RT-003",
+      "quote": "Project Lead signature where required",
+      "subsystem": "Release governance",
+      "method": "Test",
+      "verificationId": "USV-RT-V03",
+      "criterion": "Stage D requires a valid Director signature covering the exact baseline digest."
+    }
+  ],
+  "cycles": [
+    {
+      "cycle": 1,
+      "worker": {
+        "agentId": "REQ-TRC-02",
+        "taskId": "USV-RT-WP-001-R1",
+        "timestamp": "2026-11-13T16:31:24.426Z",
+        "status": "NEEDS_HUMAN_APPROVAL",
+        "executionMode": "LIVE_AI_GENERATION",
+        "providerExecutionMode": "LIVE_AI_GENERATION",
+        "provider": "codex_cli",
+        "modelIdentifier": "codex-signed-in-session-model-unverified",
+        "correlationId": "corr-REQ-TRC-02-1794587475098",
+        "evidenceValid": false,
+        "verificationStatus": "UNVERIFIED",
+        "data": {
+          "disciplineSummary": "Advisory trace of three controlled software requirements. No tests, approvals, or independent verification are reported.",
+          "keyMetrics": {},
+          "designDecisions": [
+            "[\"USV-RT-001\",\"Codex CLI provider\",\"Test\",\"USV-RT-V01\",\"Native agent reports codex_cli and LIVE_AI_GENERATION in a signed-in run.\"]",
+            "[\"USV-RT-002\",\"Native agent execution\",\"Test\",\"USV-RT-V02\",\"Provider failure or missing mandatory input fails execution before acceptance.\"]",
+            "[\"USV-RT-003\",\"Release governance\",\"Test\",\"USV-RT-V03\",\"Stage D requires a valid Director signature covering the exact baseline digest.\"]"
+          ],
+          "assumptions": [],
+          "openTbdItems": [
+            "USV-RT-003 quote refers to a Project Lead signature where required, while its acceptance criterion requires a Director signature; reconcile the role requirement and criterion."
+          ],
+          "requiresDirectorApproval": true,
+          "modelSuggestedKeyMetrics": {},
+          "keyMetricsOrigin": "NO_RELEASE_AUTHORIZED_METRICS",
+          "preliminaryToolMetrics": {},
+          "engineeringReleaseBlocked": true,
+          "prohibitedUses": [
+            "SCANTLING_SELECTION",
+            "ELECTRICAL_PROTECTION",
+            "PROPULSION_SIZING",
+            "OPERATIONAL_ENDURANCE",
+            "AUTONOMOUS_HELM_COMMAND",
+            "STABILITY_CERTIFICATION"
+          ],
+          "modelNarrativeStatus": "MODEL_GENERATED_UNVERIFIED",
+          "designDecisionStatus": "PROPOSAL_ONLY",
+          "isMockFallback": false,
+          "evidenceValid": false,
+          "executionTimeMs": 9328.278375,
+          "modelUsed": "codex-signed-in-session-model-unverified",
+          "executionMode": "LIVE_AI_GENERATION"
+        },
+        "assumptions": [],
+        "deterministicToolEvidence": [],
+        "openTbdItems": [
+          "USV-RT-003 quote refers to a Project Lead signature where required, while its acceptance criterion requires a Director signature; reconcile the role requirement and criterion.",
+          "Unconfirmed engineering assumptions for REQ-TRC-02 tracked as TBD per zero-fabrication policy."
+        ],
+        "warnings": [
+          "ENGINEERING RELEASE BLOCKED: no numerical value or LLM conclusion is certified for vessel design, construction, power protection or autonomous control."
+        ],
+        "recommendations": [],
+        "requiresDirectorApproval": true,
+        "approvalRationale": "Unverified engineering output: independent reference data and Director authorization required."
+      },
+      "checks": {
+        "nativeLive": true,
+        "linksMatch": true
+      },
+      "review": {
+        "provider": "antigravity_gemini",
+        "promptSha256": "989d55b46d30f9eb208109022c8efb7013c38d0b8b8cdbe4678ef00a06d90245",
+        "responseSha256": "276e9ee3e4fd7de040e4f0dae895172c2bf339152b8c82fc322684befdf5eb0b",
+        "decision": "APPROVE",
+        "findings": [
+          "All three traceability rows (USV-RT-001, USV-RT-002, USV-RT-003) match the supplied source requirements across stable IDs, subsystem allocations, verification methods, verification IDs (USV-RT-V01 through USV-RT-V03), and acceptance criteria.",
+          "Reverse link and deterministic link verification check passed (linksMatch: true) against source docs/CODEX_NATIVE_AGENT_RUNTIME.md.",
+          "Traceability package is suitable for qualified human review; this automated review does not constitute human or Project Lead/Director approval."
+        ]
+      }
+    }
+  ],
+  "gate": {
+    "humanApprovalRequired": true,
+    "highestRisk": "CRITICAL",
+    "ecrRecordFound": true,
+    "ecrRecordValid": false,
+    "evaluatedRef": "9b00f7aa6afc0d8fd7ebe3c43aa677855fc43d25",
+    "baselineDigest": "sha256:ca1b3987f7fd0812cfc69289ddac4175830127cd5d404c2a9715f5bc4862a136",
+    "signatureVerified": false,
+    "staleApproval": true,
+    "signatureError": "ECR-20261112-002.approval.json: STALE APPROVAL REJECTED: approval covers baseline sha256:71ec8a5453466c81f0c20ceca09f03c6a984ada34161dfe403dccf178cfeca31 (signed at commit 6508475), but the PR head content is sha256:ca1b3987f7fd0812cfc69289ddac4175830127cd5d404c2a9715f5bc4862a136. Files changed after sign-off; the Director must re-sign.",
+    "independentReviewStatus": "PENDING_HUMAN_SIGN_OFF",
+    "summary": "Stage D Gate Blocked: CRITICAL risk change. ECR-20261112-002.approval.json: STALE APPROVAL REJECTED: approval covers baseline sha256:71ec8a5453466c81f0c20ceca09f03c6a984ada34161dfe403dccf178cfeca31 (signed at commit 6508475), but the PR head content is sha256:ca1b3987f7fd0812cfc69289ddac4175830127cd5d404c2a9715f5bc4862a136. Files changed after sign-off; the Director must re-sign."
+  },
+  "state": "PENDING_QUALIFIED_REVIEW_AND_DIRECTOR_APPROVAL"
+}

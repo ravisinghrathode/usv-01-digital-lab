@@ -21,7 +21,11 @@ const output = (agentId: string, provider: string, executionMode: AgentExecution
   agentId, taskId, timestamp: new Date().toISOString(), status: 'NEEDS_HUMAN_APPROVAL',
   provider, executionMode, providerExecutionMode: executionMode, correlationId: 'corr-' + agentId, evidenceValid: false,
   verificationStatus: 'UNVERIFIED', data: { unverified: true }, assumptions: [],
-  deterministicToolEvidence: [], openTbdItems: [], warnings: [],
+  deterministicToolEvidence: AgentRegistry.getInstance().requireAgent(agentId)
+    .verificationCriteria.mandatoryDeterministicTools.map(toolName => ({
+      toolName, inputs: {}, outputs: {}, verified: true
+    })),
+  openTbdItems: [], warnings: [],
   recommendations: [], requiresDirectorApproval: true
 });
 
@@ -42,6 +46,14 @@ describe('Live agent operational matrix', () => {
     }));
     expect(result.liveProviderRuns).toBe(26);
     expect(result.engineeringReleaseApproved).toBe(false);
+  });
+  it('rejects live output that lacks mandatory tool evidence', async () => {
+    const result = await runLiveAgentMatrix(suiteCases, async (id, input) => ({
+      ...output(id, 'codex_cli', 'LIVE_AI_GENERATION', input.taskId),
+      deterministicToolEvidence: []
+    }));
+    expect(result.findings.find(f => f.canonicalId === 'A05')?.requiredToolsVerified).toBe(false);
+    expect(result.providerOperationalMatrixComplete).toBe(false);
   });
   it('rejects mock/static providers as live evidence', async () => {
     const result = await runLiveAgentMatrix(suiteCases, async (id, input) => output(id, 'deterministic', 'STATIC_RULES_EVALUATION', input.taskId));

@@ -1,0 +1,9 @@
+{
+  "id": "USV-RT-WP-001",
+  "source": "docs/CODEX_NATIVE_AGENT_RUNTIME.md",
+  "requirements": [
+    {"id":"USV-RT-001","quote":"with their ChatGPT account","subsystem":"Codex CLI provider","method":"Test","verificationId":"USV-RT-V01","criterion":"Native agent reports codex_cli and LIVE_AI_GENERATION in a signed-in run."},
+    {"id":"USV-RT-002","quote":"fails closed without a valid CLI session or required engineering inputs","subsystem":"Native agent execution","method":"Test","verificationId":"USV-RT-V02","criterion":"Provider failure or missing mandatory input fails execution before acceptance."},
+    {"id":"USV-RT-003","quote":"Project Lead signature where required","subsystem":"Release governance","method":"Test","verificationId":"USV-RT-V03","criterion":"Stage D requires a valid Director signature covering the exact baseline digest."}
+  ]
+}

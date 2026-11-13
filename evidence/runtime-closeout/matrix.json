@@ -1,0 +1,422 @@
+{
+  "generatedAt": "2026-11-13T16:36:32.043Z",
+  "totalAgents": 26,
+  "liveProviderRuns": 26,
+  "findings": [
+    {
+      "canonicalId": "A01",
+      "runtimeId": "LEAD-SYS-01",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-LEAD-SYS-01-1794587469231",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [],
+      "requiredToolsVerified": true,
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:6427f3f4a449ba7e3f83b5989e38367b56a4ff0d33950025b87e966b2e3246ba"
+    },
+    {
+      "canonicalId": "A02",
+      "runtimeId": "REQ-TRC-02",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-REQ-TRC-02-1794587480637",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [],
+      "requiredToolsVerified": true,
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:9c8487fb11461b0f0b8ca20af9c1e0ab860aee80cd1acc6c4f554f863be64a73"
+    },
+    {
+      "canonicalId": "A03",
+      "runtimeId": "CONOPS-03",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-CONOPS-03-1794587496937",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [],
+      "requiredToolsVerified": true,
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:f68974b494101e2b112930febe0fe80ce0a480368808e01e6261e228ab62b3e8"
+    },
+    {
+      "canonicalId": "A04",
+      "runtimeId": "REG-STD-04",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-REG-STD-04-1794587505896",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [],
+      "requiredToolsVerified": true,
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:d4b176085d4c5e01a2978a612635c8c6a8f63e18af4b5234b21f5666174cb7aa"
+    },
+    {
+      "canonicalId": "A05",
+      "runtimeId": "HULL-GEO-05",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-HULL-GEO-05-1794587520174",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [
+        {
+          "toolId": "TOOL-HYDROSTATICS-01",
+          "verified": true,
+          "inputSha256": "bd7c29576d8e6e86000ed68e8783202a1dbb1b0f2dce8be5f5b0376abe5a080c",
+          "outputSha256": "3b4df9671bee614ad3c98990a7437930ba18968722b522cc6aedcf3665d848f5"
+        }
+      ],
+      "requiredToolsVerified": true,
+      "executionMode": "DETERMINISTIC_CALCULATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:c39b8577a2f64b92777bced18c559580a61bf776d3dc06a4e724c5152dc33749"
+    },
+    {
+      "canonicalId": "A06",
+      "runtimeId": "STAB-HYD-06",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-STAB-HYD-06-1794587534127",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [
+        {
+          "toolId": "TOOL-HYDROSTATICS-01",
+          "verified": true,
+          "inputSha256": "bd7c29576d8e6e86000ed68e8783202a1dbb1b0f2dce8be5f5b0376abe5a080c",
+          "outputSha256": "3b4df9671bee614ad3c98990a7437930ba18968722b522cc6aedcf3665d848f5"
+        }
+      ],
+      "requiredToolsVerified": true,
+      "executionMode": "DETERMINISTIC_CALCULATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:5a4e2fa998a41cde537da719ff0838a096037c146f96d82c1957ccc5129ac149"
+    },
+    {
+      "canonicalId": "A07",
+      "runtimeId": "RES-SEAK-07",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-RES-SEAK-07-1794587547915",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [
+        {
+          "toolId": "TOOL-RESISTANCE-01",
+          "verified": true,
+          "inputSha256": "1fbeec509e99905328d0d4ef3c27636ed9de0fca2dd76909999c3250d4bc8bdd",
+          "outputSha256": "4dacc5ae3fbb0999d141c97dc0a38c9253c0bb66a86d2ea822fd0d6025c171a1"
+        }
+      ],
+      "requiredToolsVerified": true,
+      "executionMode": "DETERMINISTIC_CALCULATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:53932b327388fff1b238543fd78faff40807249c6a3a1bb0b81b6df2252cb1a7"
+    },
+    {
+      "canonicalId": "A08",
+      "runtimeId": "MAN-MOT-08",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-MAN-MOT-08-1794587564047",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [],
+      "requiredToolsVerified": true,
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:fd39a599befc1913b95625ee570dbf7d7c20b838902e4d43415331323ee9d398"
+    },
+    {
+      "canonicalId": "A09",
+      "runtimeId": "WGT-BAL-09",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-WGT-BAL-09-1794587574045",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [
+        {
+          "toolId": "TOOL-MASS-BALANCE-01",
+          "verified": true,
+          "inputSha256": "0543f38b9e082d68802025176a4293cbd59f45d29dc5d5711b08da6f33a6b64d",
+          "outputSha256": "7df038693d1c85666eca4bfbad0175417a738894def33a0fde8cd5ea193eaa64"
+        }
+      ],
+      "requiredToolsVerified": true,
+      "executionMode": "DETERMINISTIC_CALCULATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:1a7064c869ccbc68620c188c31c233a15892679c6e13a18499831716767d47d6"
+    },
+    {
+      "canonicalId": "A10",
+      "runtimeId": "STR-MAT-10",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-STR-MAT-10-1794587585896",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [
+        {
+          "toolId": "TOOL-STRUCTURES-01",
+          "verified": true,
+          "inputSha256": "bca30b885a50ccbfd0a5828ecd0622934335ea8280c699b8a10b644b92a7689e",
+          "outputSha256": "acc456a7960b17e9b9b8e2978121060397a767e280e664860aad7ab24edc111e"
+        }
+      ],
+      "requiredToolsVerified": true,
+      "executionMode": "DETERMINISTIC_CALCULATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:e608c65ee4dc9a2547b6c3d5d0e148e0816fec58726ae350bf301fcb32f40bba"
+    },
+    {
+      "canonicalId": "A11",
+      "runtimeId": "ENV-ENV-11",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-ENV-ENV-11-1794587596308",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [],
+      "requiredToolsVerified": true,
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:576e8622ff542a3914cca0e70cd16fb60ee78c1d91bd921459d3f0530e736ff2"
+    },
+    {
+      "canonicalId": "A12",
+      "runtimeId": "MECH-APP-12",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-MECH-APP-12-1794587607642",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [],
+      "requiredToolsVerified": true,
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:ea39959990e11f636c2c3018aa2d25b5ba533c98f5863eec374bdd6ff6ae3447"
+    },
+    {
+      "canonicalId": "A13",
+      "runtimeId": "PROP-ENG-13",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-PROP-ENG-13-1794587621406",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [
+        {
+          "toolId": "TOOL-RESISTANCE-01",
+          "verified": true,
+          "inputSha256": "1fbeec509e99905328d0d4ef3c27636ed9de0fca2dd76909999c3250d4bc8bdd",
+          "outputSha256": "4dacc5ae3fbb0999d141c97dc0a38c9253c0bb66a86d2ea822fd0d6025c171a1"
+        }
+      ],
+      "requiredToolsVerified": true,
+      "executionMode": "DETERMINISTIC_CALCULATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:7fe5c38e8b2bcd00c1f88b10b8c442cd5be0dc16944c5a5efcfd3bdeb4ccb17d"
+    },
+    {
+      "canonicalId": "A14",
+      "runtimeId": "ELEC-PWR-14",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-ELEC-PWR-14-1794587636086",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [
+        {
+          "toolId": "TOOL-ELECTRICAL-01",
+          "verified": true,
+          "inputSha256": "eab29e45888d42174504f2d952454bf3660fad34f6635200e61a3a975d777f31",
+          "outputSha256": "0555bcb4e1e3830000d87fef34eccb61235408ab596582c469e51ba8507c0d60"
+        }
+      ],
+      "requiredToolsVerified": true,
+      "executionMode": "DETERMINISTIC_CALCULATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:6602e28e570cd560004df929fa71aef31f160562c13545063586547908b1a392"
+    },
+    {
+      "canonicalId": "A15",
+      "runtimeId": "INDEP-CRIT-15",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-INDEP-CRIT-15-1794587652685",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [],
+      "requiredToolsVerified": true,
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:5a18d775184bfbfcb9bb7d0e5f66afafcf737640b9e71bd5311884cea67cf6bb"
+    },
+    {
+      "canonicalId": "A16",
+      "runtimeId": "SENS-PER-16",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-SENS-PER-16-1794587664645",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [],
+      "requiredToolsVerified": true,
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:214c13d589dd445476cbd666961b02ae58e8fa731cf6b81ebb7c2a90916ed608"
+    },
+    {
+      "canonicalId": "A17",
+      "runtimeId": "NAV-COL-17",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-NAV-COL-17-1794587676473",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [
+        {
+          "toolId": "TOOL-COLREGS-01",
+          "verified": true,
+          "inputSha256": "ca26b450666d180da658294b7dab85d1c98e9321a91d431f7ee7d43bf38854d5",
+          "outputSha256": "5ed61654f2d3ef79c6eb654eaa8cdf4e8b5e94d6cbb73f711f611d9b6fe5af4f"
+        }
+      ],
+      "requiredToolsVerified": true,
+      "executionMode": "DETERMINISTIC_CALCULATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:3b9f465bfbe8b9120c43e16c004907274f004fea447b2a0e831c60466b784dff"
+    },
+    {
+      "canonicalId": "A18",
+      "runtimeId": "TEST-DIR-18",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-TEST-DIR-18-1794587687982",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [],
+      "requiredToolsVerified": true,
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:b94b5aff46d2befb3143bf7fe313c413b3e5e0af89526032cab11407ee508744"
+    },
+    {
+      "canonicalId": "A19",
+      "runtimeId": "COMM-RF-19",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-COMM-RF-19-1794587699080",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [],
+      "requiredToolsVerified": true,
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:fb6d06753c40e1049986687633e2ddcd3295d97af83e0fa01f2efefa92e9e139"
+    },
+    {
+      "canonicalId": "A20",
+      "runtimeId": "CYBER-SEC-20",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-CYBER-SEC-20-1794587711387",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [],
+      "requiredToolsVerified": true,
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:3f1faae70ab90864e0ba6446271d42c3e9d0fba0925795f7bef608deaa86f554"
+    },
+    {
+      "canonicalId": "A21",
+      "runtimeId": "ICD-ENG-21",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-ICD-ENG-21-1794587722102",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [],
+      "requiredToolsVerified": true,
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:7230c66f39a55762e3667b2a04e8563216fce530b5ad68783969e8de4657b39a"
+    },
+    {
+      "canonicalId": "A22",
+      "runtimeId": "FMEA-RSK-22",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-FMEA-RSK-22-1794587734497",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [],
+      "requiredToolsVerified": true,
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:caaf7466a5d501f56438090da65960a46a174494f2e9411e2c7ec82e175316e9"
+    },
+    {
+      "canonicalId": "A23",
+      "runtimeId": "INDEP-REV-23",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-INDEP-REV-23-1794587746781",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [
+        {
+          "toolId": "TOOL-HYDROSTATICS-01",
+          "verified": true,
+          "inputSha256": "44963ca9ab689274475fb4c3ab2e42723a72f7d2796b749f2a175cc9237a862c",
+          "outputSha256": "3b4df9671bee614ad3c98990a7437930ba18968722b522cc6aedcf3665d848f5"
+        },
+        {
+          "toolId": "TOOL-RESISTANCE-01",
+          "verified": true,
+          "inputSha256": "d7558d540ae496af766903b6cc10f5dd13c3c0a06acf5c1f1b6b1bbf8c91fc07",
+          "outputSha256": "4dacc5ae3fbb0999d141c97dc0a38c9253c0bb66a86d2ea822fd0d6025c171a1"
+        }
+      ],
+      "requiredToolsVerified": true,
+      "executionMode": "DETERMINISTIC_CALCULATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:483b8fec0a4ea35cb88684e6e1b798595afd6ba98eff5a09718cda4d18f77fb6"
+    },
+    {
+      "canonicalId": "A24",
+      "runtimeId": "VVT-VAL-24",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-VVT-VAL-24-1794587760581",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [],
+      "requiredToolsVerified": true,
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:3ab238e483b447142b9e552cae2aedcedfad46f2a90628d7475e01eebeb8ef9b"
+    },
+    {
+      "canonicalId": "A25",
+      "runtimeId": "DOC-OBS-25",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-DOC-OBS-25-1794587773378",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [],
+      "requiredToolsVerified": true,
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:8a527165e5fa0e83466f473f683fdef1eb3db54facfdfcdb623ae741f2109f24"
+    },
+    {
+      "canonicalId": "A26",
+      "runtimeId": "INTEL-USV-26",
+      "status": "LIVE_PROVIDER_EXECUTED_UNCERTIFIED",
+      "correlationId": "corr-INTEL-USV-26-1794587783716",
+      "provider": "codex_cli",
+      "modelIdentifier": "codex-signed-in-session-model-unverified",
+      "toolTraces": [],
+      "requiredToolsVerified": true,
+      "executionMode": "LIVE_AI_GENERATION",
+      "providerExecutionMode": "LIVE_AI_GENERATION",
+      "outputDigestSha256": "sha256:4369e5cf6ebb80eadc8230eea95d0319dcfcb9f88c8a82863e4e71e22324f63e"
+    }
+  ],
+  "providerOperationalMatrixComplete": true,
+  "independentlyEngineeringValidated": false,
+  "engineeringReleaseApproved": false,
+  "implementationSha": "9b00f7aa6afc0d8fd7ebe3c43aa677855fc43d25",
+  "catalogSha256": "ed888cad865390ae771ebded058496addcd3076f6e2d029fb16824ee42c09bf8",
+  "dataClassification": "SYNTHETIC_TEST_ONLY_NON_OPERATIONAL",
+  "illustrativeNonOperational": true,
+  "historicalCatalogBaseline": "854812812f02ab232a506957572c2944be63c7a5"
+}

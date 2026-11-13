@@ -14,6 +14,9 @@ export interface AgentRunFinding {
   outputDigestSha256?: string;
   correlationId?: string;
   failureReason?: string;
+  modelIdentifier?: string;
+  requiredToolsVerified?: boolean;
+  toolTraces?: Array<{ toolId: string; verified: boolean; inputSha256: string; outputSha256: string }>;
 }
 
 export interface AgentMatrixReport {
@@ -62,12 +65,21 @@ export async function runLiveAgentMatrix(
         finding.failureReason = typeof error === 'string' ? error : 'Agent execution failed without a recorded reason';
       }
       finding.provider = output.provider;
+      finding.modelIdentifier = output.modelIdentifier;
+      finding.toolTraces = output.deterministicToolEvidence.map(tool => ({
+        toolId: tool.toolName,
+        verified: tool.verified,
+        inputSha256: createHash('sha256').update(JSON.stringify(tool.inputs ?? null)).digest('hex'),
+        outputSha256: createHash('sha256').update(JSON.stringify(tool.outputs ?? null)).digest('hex')
+      }));
+      finding.requiredToolsVerified = spec.verificationCriteria.mandatoryDeterministicTools.every(toolId =>
+        finding.toolTraces!.some(tool => tool.toolId === toolId && tool.verified));
       finding.executionMode = output.executionMode;
       finding.providerExecutionMode = output.providerExecutionMode;
       finding.outputDigestSha256 = 'sha256:' + createHash('sha256')
         .update(JSON.stringify(output.data)).digest('hex');
       const realProvider = ['gemini','openai','ollama','codex_cli'].includes(output.provider || '');
-      const live = output.providerExecutionMode === 'LIVE_AI_GENERATION' && realProvider &&
+      const live = output.providerExecutionMode === 'LIVE_AI_GENERATION' && realProvider && finding.requiredToolsVerified &&
         output.agentId === spec.id && output.taskId === input.taskId &&
         !['FAILED','PARTIAL'].includes(output.status) && !!output.correlationId;
       finding.status = live ? 'LIVE_PROVIDER_EXECUTED_UNCERTIFIED' :
