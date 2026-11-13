@@ -306,3 +306,14 @@ export interface KnowledgeNote {
   lastRevision?: string;
   verificationStatus?: string;
 }
+
+export type RecordKind = 'requirement' | 'decision' | 'risk' | 'simulation' | 'verification' | 'component';
+
+export type ModalRecordPayload =
+  | { kind: 'requirement'; data: Partial<Requirement> }
+  | { kind: 'decision'; data: Partial<DesignDecision> }
+  | { kind: 'risk'; data: Partial<EngineeringRisk> }
+  | { kind: 'simulation'; data: Partial<SimulationJob> }
+  | { kind: 'verification'; data: Partial<VerificationPlan> }
+  | { kind: 'component'; data: Partial<ComponentBOM> };
+
