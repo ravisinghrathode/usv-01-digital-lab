@@ -6,7 +6,7 @@ const base=():SafetyContext=>({
  evidenceId:'SYNTHETIC-BASE',ownship:{courseDeg:0,speedKnots:12,vesselKind:'POWER_DRIVEN'},
  contacts:[{id:'T01',bearingTrueDeg:0,rangeNm:2,courseTrueDeg:180,speedKnots:12,vesselKind:'POWER_DRIVEN',
   trackAgeSeconds:1,rangeStdNm:0.01,bearingStdDeg:1,speedStdKnots:0.1,sources:['RADAR','CAMERA']}],
- visibility:'IN_SIGHT',lookoutAssessment:'ASSESSED_ADEQUATE',sensorsHealthy:true,
+ headingAspectVerified:true,visibility:'IN_SIGHT',lookoutAssessment:'ASSESSED_ADEQUATE',sensorsHealthy:true,
  navigationIntegrityValid:true,propulsionHealthy:true,geofenceValid:true,energyReserveAdequate:true,
  insideOperationalDesignDomain:true,narrowChannelOrTrafficScheme:false,linkHealthy:true,
  humanEmergencyOverride:false,stationKeepingApprovedForCurrentRegion:false,recoveryCorridorApprovedAndClear:false,
