@@ -28,6 +28,8 @@ npm run concept:research -- --mission-file references/concept-mission-draft.json
 
 Outputs default to ignored `.local-concept-research/`; do not commit restricted model responses or source documents. Running with no provider credentials prepares the tasks only. Offline CI checks planning and validation; it cannot establish live source research.
 
+Live runs now retain `agent-research-for-review.json` containing each agent's actual proposed metrics, assumptions, TBDs and recommendations, explicitly labeled **UNVERIFIED_AGENT_RESEARCH**. It is local-only with restrictive file permissions. The 26-agent matrix and individual research results are not authoritative external-source verification: only authenticated and qualified review of source material can promote evidence. Running live with an output directory inside the checkout outside the ignored research directory is rejected to reduce accidental disclosure.
+
 ## Immediate software remediation
 
 The previous optimizer was a **heuristic scenario generator** with invented/scoped coefficients, 25 synthetic votes, illustrative 14-knot outputs and unsourced ISO/IMO thresholds. It previously promoted those scenario values directly into `SharedMemory` and described its design dossier as `Certified Candidate`. The UI now only previews the synthetic candidate and leaves the controlled baseline unchanged; the dossier must label all results unverified. This is a safety correction, not a validated optimizer replacement.
