@@ -41,7 +41,7 @@ test('reject actual use lacking full source and evidence chain',()=>{
 });
 test('reject project engineering use without Director acceptance',()=>{
  const x=clone(db);x.records[0].actualUsage=[{kind:'ENGINEERING_BASELINE',project:'USV-01',agent:'A08',
-   sourceCommit:'a'.repeat(40),executionEvidence:'https://github.com/example/evidence'}];
+   sourceCommit:db.records[0].source.commit,executionEvidence:'https://github.com/example/evidence'}];
  assert.throws(()=>validateRegister(x),/baseline usage not approved/);
 });
 test('Scout only proposes new discoveries; never changes existing qualification',()=>{
