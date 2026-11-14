@@ -38,7 +38,7 @@ describe('Studio X.2 technical audit remediation', () => {
     expect(html).toContain('role="listbox"');
     expect(html).toContain('role="status"');
     expect(html).toContain('Search only records already loaded');
-    expect(html).toContain('on a specific record');
+    expect(html).toContain('not a specific record');
   });
 
   it('provides real search and all secondary actions from a narrow-screen menu', () => {
