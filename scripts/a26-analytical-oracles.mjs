@@ -9,7 +9,7 @@ const finite=(name,x,{positive=false,nonnegative=false}={})=>{
  return x;
 };
 const vec=(name,v)=>{
- if(!Array.isArray(v)||v.length!==2)v===undefined?(()=>{throw Error('Analytical reference HOLD: '+name+' missing 2D vector');})():(()=>{throw Error('Analytical reference HOLD: '+name+' requires 2D vector');})();
+ if(!Array.isArray(v)||v.length!==2)throw Error('Analytical reference HOLD: '+name+' requires 2D vector');
  return v.map((x,i)=>finite(name+'['+i+']',x));
 };
 export const PROVENANCE={
