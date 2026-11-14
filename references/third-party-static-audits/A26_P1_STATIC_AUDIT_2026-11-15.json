@@ -1,0 +1,609 @@
+{
+  "schemaVersion": 1,
+  "recordId": "USV01-A26-STATIC-P1-20261115-001",
+  "generatedAt": "2026-11-15T00:00:00+05:30",
+  "source": "GITHUB_PINNED_REPOSITORY_CONTENT_INSPECTION",
+  "custodian": "A26",
+  "classification": "PUBLIC_SOURCE_METADATA_ONLY",
+  "execution": "NO_UNTRUSTED_CODE_EXECUTED",
+  "allLicenseReviews": "PENDING_HUMAN",
+  "allSecurityReviews": "PENDING_A20",
+  "allEngineeringValidations": "NOT_VALIDATED",
+  "allToolPermissions": "NONE",
+  "sourceScope": "Eight priority candidates only; no transitive package scan, malware scan, SBOM or CVE audit completed",
+  "records": [
+    {
+      "id": "mss-marine-systems-simulator",
+      "repository": "cybergalactic/MSS",
+      "pinnedCommit": "78298f0f4822544cd715a66945d0bc3ed37561c8",
+      "pinnedTree": "e6728ed863759d949f5d787a1bd9bd82aef0da67",
+      "sourceUrl": "https://github.com/cybergalactic/MSS/tree/78298f0f4822544cd715a66945d0bc3ed37561c8",
+      "primaryDiscipline": "MARINE_DYNAMICS",
+      "immediateBlocker": "MATLAB_OR_GNU_OCTAVE_RUNTIME_DEPENDENCY",
+      "inspectedFiles": [
+        {
+          "path": "LICENSE",
+          "gitBlobSha": "87dad679778b82928a3f6d7c2bc8802c0c822fc9",
+          "sourceUrl": "https://github.com/cybergalactic/MSS/blob/78298f0f4822544cd715a66945d0bc3ed37561c8/LICENSE"
+        },
+        {
+          "path": "README.md",
+          "gitBlobSha": "aec5730129e919774bcc54a5132409958fcbfacd",
+          "sourceUrl": "https://github.com/cybergalactic/MSS/blob/78298f0f4822544cd715a66945d0bc3ed37561c8/README.md"
+        }
+      ],
+      "licenseFinding": "MIT_TEXT_PRESENT_HUMAN_REVIEW_PENDING",
+      "dependencyFinding": "MATLAB_OR_OCTAVE_RUNTIME_AND_TOOLBOX_REQUIREMENTS_TBD",
+      "interfaceFinding": "MATLAB_M_FILES; JSON_BRIDGE_NOT_VERIFIED",
+      "staticObservations": [
+        "External MATLAB/Octave/runtime capability needed; no approved computational host",
+        "Vessel-specific 6-DOF parameters, restoring matrices and mass/damping evidence remain TBD"
+      ],
+      "independentBenchmarkPlan": [
+        {
+          "id": "analytic-limits",
+          "goal": "6-DOF rigid-body energy and coordinate-transform consistency",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        },
+        {
+          "id": "representative-domain-case",
+          "goal": "Still-water restoring and zero-velocity reference limits",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        },
+        {
+          "id": "negative-and-uncertainty",
+          "goal": "Independent dimensional mass/damping and manoeuvring benchmark comparison",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        }
+      ],
+      "status": "STATIC_INSPECTED_HOLD_FOR_REVIEW",
+      "licenseApproved": false,
+      "securityQualified": false,
+      "benchmarkPassed": false,
+      "acceptedForEngineering": false,
+      "agentRuntimeRegistered": false,
+      "actualUse": false
+    },
+    {
+      "id": "sintef-feems",
+      "repository": "SINTEF/FEEMS",
+      "pinnedCommit": "ebb05ffdd5e9ed509fe66d8451ed0ff4f7635629",
+      "pinnedTree": "c1c3b88470206fbc5e6a28a4b7547ecccdfa6802",
+      "sourceUrl": "https://github.com/SINTEF/FEEMS/tree/ebb05ffdd5e9ed509fe66d8451ed0ff4f7635629",
+      "primaryDiscipline": "ENERGY_PROPULSION",
+      "immediateBlocker": "MULTI_PACKAGE_LICENSE_DISCREPANCY",
+      "inspectedFiles": [
+        {
+          "path": "LICENSE",
+          "gitBlobSha": "51e6b77b9edbb25709dbdd4f0aa19aa59d2e5ef3",
+          "sourceUrl": "https://github.com/SINTEF/FEEMS/blob/ebb05ffdd5e9ed509fe66d8451ed0ff4f7635629/LICENSE"
+        },
+        {
+          "path": "pyproject.toml",
+          "gitBlobSha": "56a60ee5d01e065bc5552930a1209283fe0e4ac4",
+          "sourceUrl": "https://github.com/SINTEF/FEEMS/blob/ebb05ffdd5e9ed509fe66d8451ed0ff4f7635629/pyproject.toml"
+        },
+        {
+          "path": "feems/pyproject.toml",
+          "gitBlobSha": "69c53ad0198396324ef853309ac36e6fb4a6ffc0",
+          "sourceUrl": "https://github.com/SINTEF/FEEMS/blob/ebb05ffdd5e9ed509fe66d8451ed0ff4f7635629/feems/pyproject.toml"
+        },
+        {
+          "path": "machinery-system-structure/pyproject.toml",
+          "gitBlobSha": "2ca07393a6fc4e927fc0d3df00f910494c6b4095",
+          "sourceUrl": "https://github.com/SINTEF/FEEMS/blob/ebb05ffdd5e9ed509fe66d8451ed0ff4f7635629/machinery-system-structure/pyproject.toml"
+        },
+        {
+          "path": "machinery-system-structure/LICENSE",
+          "gitBlobSha": "48e05f6159e7448b73a52cdf666cd6b38857ae71",
+          "sourceUrl": "https://github.com/SINTEF/FEEMS/blob/ebb05ffdd5e9ed509fe66d8451ed0ff4f7635629/machinery-system-structure/LICENSE"
+        },
+        {
+          "path": "RunFEEMSSim/pyproject.toml",
+          "gitBlobSha": "61a5f39172c6f67110fd7c46481a00c78988736e",
+          "sourceUrl": "https://github.com/SINTEF/FEEMS/blob/ebb05ffdd5e9ed509fe66d8451ed0ff4f7635629/RunFEEMSSim/pyproject.toml"
+        }
+      ],
+      "licenseFinding": "ROOT_MIT_BUT_SUBPACKAGE_METADATA_APACHE_AND_SUBPACKAGE_LICENSE_MIT_RECONCILE",
+      "dependencyFinding": "PYTHON_UV_LOCK_PRESENT; FEEMS_PANDAS_SCIPY; MACHSYSS_PROTOBUF; RUNFEEMSSIM_NUMPY_AND_WORKSPACE",
+      "interfaceFinding": "PYTHON_PACKAGE; DOMAIN_IO_SCHEMA_AND_POWER_UNIT_CONTRACT_TBD",
+      "staticObservations": [
+        "MachSysS and RunFeemsSim package metadata declares Apache-2.0 while the inspected MachSysS LICENSE file is MIT; human review must reconcile",
+        "Transitive dependency SBOM, energy model envelopes and reproducibility not verified"
+      ],
+      "independentBenchmarkPlan": [
+        {
+          "id": "analytic-limits",
+          "goal": "Steady electrical balance: generation minus load versus declared losses",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        },
+        {
+          "id": "representative-domain-case",
+          "goal": "Battery state-of-charge energy integral with positive/negative sign convention",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        },
+        {
+          "id": "negative-and-uncertainty",
+          "goal": "Multi-source demand dispatch and published reference fuel/energy curve within domain range",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        }
+      ],
+      "status": "STATIC_INSPECTED_HOLD_FOR_REVIEW",
+      "licenseApproved": false,
+      "securityQualified": false,
+      "benchmarkPassed": false,
+      "acceptedForEngineering": false,
+      "agentRuntimeRegistered": false,
+      "actualUse": false
+    },
+    {
+      "id": "ntnu-colav-simulator",
+      "repository": "ntnu-itk-autonomous-ship-lab/colav-simulator",
+      "pinnedCommit": "a385e0fcbcf7b7de3edaada35d37dd63f2b027c2",
+      "pinnedTree": "1a801cbff73bde5583f235a106eb9e0bb7fe38e5",
+      "sourceUrl": "https://github.com/ntnu-itk-autonomous-ship-lab/colav-simulator/tree/a385e0fcbcf7b7de3edaada35d37dd63f2b027c2",
+      "primaryDiscipline": "COLREGS_SIMULATION",
+      "immediateBlocker": "EXTERNAL_GIT_DEPENDENCIES_AND_PYTHON_VERSION_BOUND",
+      "inspectedFiles": [
+        {
+          "path": "LICENSE",
+          "gitBlobSha": "21f35a73f690d642ad28e363381c3b6824520616",
+          "sourceUrl": "https://github.com/ntnu-itk-autonomous-ship-lab/colav-simulator/blob/a385e0fcbcf7b7de3edaada35d37dd63f2b027c2/LICENSE"
+        },
+        {
+          "path": "pyproject.toml",
+          "gitBlobSha": "741b58334bfe442788568185bee171f1a230283e",
+          "sourceUrl": "https://github.com/ntnu-itk-autonomous-ship-lab/colav-simulator/blob/a385e0fcbcf7b7de3edaada35d37dd63f2b027c2/pyproject.toml"
+        },
+        {
+          "path": "README.md",
+          "gitBlobSha": "8aa31d4c0be41a6ff67185575c887462604bc477",
+          "sourceUrl": "https://github.com/ntnu-itk-autonomous-ship-lab/colav-simulator/blob/a385e0fcbcf7b7de3edaada35d37dd63f2b027c2/README.md"
+        }
+      ],
+      "licenseFinding": "MIT_TEXT_PRESENT_HUMAN_REVIEW_PENDING",
+      "dependencyFinding": "PYTHON_GE_3_10_LT_3_12; UV_LOCK_PRESENT; SEACHARTS_AND_OPTIONAL_GIT_DEPENDENCIES_SHA_PINNED",
+      "interfaceFinding": "SCENARIO_YAML_AND_PYTHON_GYM_API; JSON_STDIN_STDOUT_BRIDGE_TBD",
+      "staticObservations": [
+        "Dependency manifest references multiple Git revisions; transitive licenses and supply-chain must be independently reconciled",
+        "Advisory collision avoidance simulation cannot establish lawful/robust real vessel behaviour"
+      ],
+      "independentBenchmarkPlan": [
+        {
+          "id": "analytic-limits",
+          "goal": "Independent crossing, overtaking and head-on encounter geometry from input tracks",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        },
+        {
+          "id": "representative-domain-case",
+          "goal": "Time-to-closest-point and separation-distance reference under fixed frames",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        },
+        {
+          "id": "negative-and-uncertainty",
+          "goal": "Malformed, conflicting and no-solution encounter rejection with fail-safe simulation output",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        }
+      ],
+      "status": "STATIC_INSPECTED_HOLD_FOR_REVIEW",
+      "licenseApproved": false,
+      "securityQualified": false,
+      "benchmarkPassed": false,
+      "acceptedForEngineering": false,
+      "agentRuntimeRegistered": false,
+      "actualUse": false
+    },
+    {
+      "id": "marine-api-nmea0183",
+      "repository": "ktuukkan/marine-api",
+      "pinnedCommit": "6224ad6e62e7554a89ae8fe9e9ba54a29df394de",
+      "pinnedTree": "73f13436beb894649c3180037fcedd469b84e5b2",
+      "sourceUrl": "https://github.com/ktuukkan/marine-api/tree/6224ad6e62e7554a89ae8fe9e9ba54a29df394de",
+      "primaryDiscipline": "NMEA0183_AIS_INTERFACE",
+      "immediateBlocker": "LGPL_LINKING_AND_ATTRIBUTION_REVIEW",
+      "inspectedFiles": [
+        {
+          "path": "LICENSE",
+          "gitBlobSha": "cca7fc278f5c81ce23a2687208f0d63a6ea44009",
+          "sourceUrl": "https://github.com/ktuukkan/marine-api/blob/6224ad6e62e7554a89ae8fe9e9ba54a29df394de/LICENSE"
+        },
+        {
+          "path": "pom.xml",
+          "gitBlobSha": "c67849e5b6ce790d47ed37ddbf4db3f80b2de317",
+          "sourceUrl": "https://github.com/ktuukkan/marine-api/blob/6224ad6e62e7554a89ae8fe9e9ba54a29df394de/pom.xml"
+        },
+        {
+          "path": "README.md",
+          "gitBlobSha": "c40943bdb0ff0afc12ace6389d46b130e19bc892",
+          "sourceUrl": "https://github.com/ktuukkan/marine-api/blob/6224ad6e62e7554a89ae8fe9e9ba54a29df394de/README.md"
+        }
+      ],
+      "licenseFinding": "LGPL_3_TEXT_PRESENT_HUMAN_LINKING_REVIEW_PENDING",
+      "dependencyFinding": "JAVA_MAVEN_POM; TRANSITIVE_JAR_AND_SIGNING_EVIDENCE_TBD",
+      "interfaceFinding": "JAVA_NMEA0183_API; JSON_ADAPTER_AND_INPUT_SIZE_POLICY_TBD",
+      "staticObservations": [
+        "LGPL-3 terms require legal and distribution/linking assessment for proposed packaging",
+        "No vessel communication links or live NMEA devices can be connected through this research pipeline"
+      ],
+      "independentBenchmarkPlan": [
+        {
+          "id": "analytic-limits",
+          "goal": "NMEA 0183 XOR checksum across known independent fixtures",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        },
+        {
+          "id": "representative-domain-case",
+          "goal": "Latitude/longitude and speed unit conversion with hemisphere and boundary inputs",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        },
+        {
+          "id": "negative-and-uncertainty",
+          "goal": "Malformed length, invalid checksum, corrupted byte-stream and AIS-fragment reassembly rejection",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        }
+      ],
+      "status": "STATIC_INSPECTED_HOLD_FOR_REVIEW",
+      "licenseApproved": false,
+      "securityQualified": false,
+      "benchmarkPassed": false,
+      "acceptedForEngineering": false,
+      "agentRuntimeRegistered": false,
+      "actualUse": false
+    },
+    {
+      "id": "hull-generator-geometry",
+      "repository": "janibert1/ship-hull-generator",
+      "pinnedCommit": "262cb29f0a5f90acc7132ee6c1b91efd81d855fd",
+      "pinnedTree": "4e3e533ce28fa60f6e4a99095b084e7ad62bfed3",
+      "sourceUrl": "https://github.com/janibert1/ship-hull-generator/tree/262cb29f0a5f90acc7132ee6c1b91efd81d855fd",
+      "primaryDiscipline": "PARAMETRIC_HULL",
+      "immediateBlocker": "GPL_3_AND_LARGE_VESSEL_MODEL_DOMAIN",
+      "inspectedFiles": [
+        {
+          "path": "LICENSE",
+          "gitBlobSha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7",
+          "sourceUrl": "https://github.com/janibert1/ship-hull-generator/blob/262cb29f0a5f90acc7132ee6c1b91efd81d855fd/LICENSE"
+        },
+        {
+          "path": "README.md",
+          "gitBlobSha": "b6497f64f307699b5860fb6650d8c86d57db0ed3",
+          "sourceUrl": "https://github.com/janibert1/ship-hull-generator/blob/262cb29f0a5f90acc7132ee6c1b91efd81d855fd/README.md"
+        },
+        {
+          "path": "main.py",
+          "gitBlobSha": "38b7de8442753cb071157192adf2aba57961c4c6",
+          "sourceUrl": "https://github.com/janibert1/ship-hull-generator/blob/262cb29f0a5f90acc7132ee6c1b91efd81d855fd/main.py"
+        },
+        {
+          "path": "config.json",
+          "gitBlobSha": "1f44d9460fe498f9c62f12c9eea3cabe8f7fb7fb",
+          "sourceUrl": "https://github.com/janibert1/ship-hull-generator/blob/262cb29f0a5f90acc7132ee6c1b91efd81d855fd/config.json"
+        }
+      ],
+      "licenseFinding": "GPL_3_TEXT_PRESENT_HUMAN_COMPATIBILITY_REVIEW_PENDING",
+      "dependencyFinding": "PYTHON_SCRIPT_SUBPROCESS_IMPORTS; LOCKFILE_NOT_VISIBLE_AT_REPOSITORY_ROOT",
+      "interfaceFinding": "JSON_CONFIG_TO_HULL_OUTPUTS; PURE_FUNCTION_ADAPTER_NOT_EVIDENCED",
+      "staticObservations": [
+        "Example config length overall approx 118.7 m, unlike small USV applicability; empirical resistance regime not transferable without validation",
+        "Main entrypoint imports subprocess; strict sandbox and command/side-effect inspection required prior to any run",
+        "GPL-3 distribution and adaptation obligations need human legal review"
+      ],
+      "independentBenchmarkPlan": [
+        {
+          "id": "analytic-limits",
+          "goal": "Displaced volume equals independently integrated immersed sections with consistent metre units",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        },
+        {
+          "id": "representative-domain-case",
+          "goal": "Mirror-symmetric hull zero heel produces zero transverse centroid offset within numerical tolerance",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        },
+        {
+          "id": "negative-and-uncertainty",
+          "goal": "Resistance scaling and stability comparison against independent small-vessel/appropriate Froude-range reference",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        }
+      ],
+      "status": "STATIC_INSPECTED_HOLD_FOR_REVIEW",
+      "licenseApproved": false,
+      "securityQualified": false,
+      "benchmarkPassed": false,
+      "acceptedForEngineering": false,
+      "agentRuntimeRegistered": false,
+      "actualUse": false
+    },
+    {
+      "id": "strip-theory-seakeeping",
+      "repository": "CaptanG/striptheory",
+      "pinnedCommit": "ade00fbdfdfae0cf3b93291b778d2d94330dd8e1",
+      "pinnedTree": "bae3a190e5dbedc5f9be73a6e0154493ecbe7423",
+      "sourceUrl": "https://github.com/CaptanG/striptheory/tree/ade00fbdfdfae0cf3b93291b778d2d94330dd8e1",
+      "primaryDiscipline": "SEAKEEPING_STRIP_THEORY",
+      "immediateBlocker": "HARD_CODED_WIGLEY_AND_DIMENSIONAL_AMBIGUITIES",
+      "inspectedFiles": [
+        {
+          "path": "LICENSE",
+          "gitBlobSha": "95abf704dfeccb41da5e905168bdb5fb6ed23eac",
+          "sourceUrl": "https://github.com/CaptanG/striptheory/blob/ade00fbdfdfae0cf3b93291b778d2d94330dd8e1/LICENSE"
+        },
+        {
+          "path": "README.md",
+          "gitBlobSha": "aa8cb365dcedfe19ac10c4b4aab56d84b6d1c491",
+          "sourceUrl": "https://github.com/CaptanG/striptheory/blob/ade00fbdfdfae0cf3b93291b778d2d94330dd8e1/README.md"
+        },
+        {
+          "path": "main.py",
+          "gitBlobSha": "2a6dc08819988c7a671ee4b8e850656c6bbcc536",
+          "sourceUrl": "https://github.com/CaptanG/striptheory/blob/ade00fbdfdfae0cf3b93291b778d2d94330dd8e1/main.py"
+        }
+      ],
+      "licenseFinding": "MIT_TEXT_PRESENT_HUMAN_REVIEW_PENDING",
+      "dependencyFinding": "PYTHON_NUMPY_SCIPY_MATPLOTLIB_UNPINNED_IN_INSPECTED_ROOT; NO_LOCKFILE_FOUND",
+      "interfaceFinding": "TOP_LEVEL_SCRIPT_AND_WIGLEY_DATA_FILES; NO_DEFINED_JSON_API",
+      "staticObservations": [
+        "Source main.py hardcodes L=120 and density=1.025; dimensional conventions must be independently checked",
+        "Uses script-level direct plotting, limiting isolated headless bridge",
+        "A Wigley hull example is not a validated marine seakeeping model for a new USV"
+      ],
+      "independentBenchmarkPlan": [
+        {
+          "id": "analytic-limits",
+          "goal": "Long-wave and zero-wave limiting heave response for Wigley hull with independent reference",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        },
+        {
+          "id": "representative-domain-case",
+          "goal": "Dimensionally consistent added-mass and damping integration across sections",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        },
+        {
+          "id": "negative-and-uncertainty",
+          "goal": "Independent published or measured RAO curve with specified Froude number, water depth and sea state",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        }
+      ],
+      "status": "STATIC_INSPECTED_HOLD_FOR_REVIEW",
+      "licenseApproved": false,
+      "securityQualified": false,
+      "benchmarkPassed": false,
+      "acceptedForEngineering": false,
+      "agentRuntimeRegistered": false,
+      "actualUse": false
+    },
+    {
+      "id": "open-echo-sonar",
+      "repository": "Neumi/open_echo",
+      "pinnedCommit": "0c4e6e78895fdc39a5e90dedaa16e225f1c3c4b7",
+      "pinnedTree": "38da4ec2e072eccf94c0d8c14b27d141a61bd3f2",
+      "sourceUrl": "https://github.com/Neumi/open_echo/tree/0c4e6e78895fdc39a5e90dedaa16e225f1c3c4b7",
+      "primaryDiscipline": "SONAR_BATHYMETRY_RESEARCH",
+      "immediateBlocker": "UNKNOWN_ROOT_LICENSE_AND_HARDWARE_FIRMWARE_BARRIER",
+      "inspectedFiles": [
+        {
+          "path": "README.md",
+          "gitBlobSha": "4c76b1d0fff98dc9a20091227fa0b83895b184b4",
+          "sourceUrl": "https://github.com/Neumi/open_echo/blob/0c4e6e78895fdc39a5e90dedaa16e225f1c3c4b7/README.md"
+        },
+        {
+          "path": "TUSS4470_shield_002/README.md",
+          "gitBlobSha": "1782b0921c9c98beffa5b0fb3dd9a26fcf3a2f79",
+          "sourceUrl": "https://github.com/Neumi/open_echo/blob/0c4e6e78895fdc39a5e90dedaa16e225f1c3c4b7/TUSS4470_shield_002/README.md"
+        }
+      ],
+      "licenseFinding": "NO_ROOT_LICENSE_FILE_IN_PINNED_ROOT_LISTING_HOLD",
+      "dependencyFinding": "HARDWARE_FIRMWARE_ARDUINO_PYTHON_DEPENDENCIES_UNASSESSED",
+      "interfaceFinding": "SONAR_HARDWARE_AND_NMEA_DEPTH_MESSAGES; NO_LIVE_HARDWARE_ALLOWED",
+      "staticObservations": [
+        "No root LICENSE file in pinned commit root listing; no copying or executable integration until rights are clarified",
+        "Uncontrolled transducer frequency and power may pose hardware safety and data-quality risks; purely simulated/read-only test fixtures only"
+      ],
+      "independentBenchmarkPlan": [
+        {
+          "id": "analytic-limits",
+          "goal": "Independent sound-speed, round-trip time and depth conversion with uncertainty",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        },
+        {
+          "id": "representative-domain-case",
+          "goal": "Invalid or saturated return and multiple-echo rejection on synthetic public waveforms",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        },
+        {
+          "id": "negative-and-uncertainty",
+          "goal": "Offline depth-telegram checksum, timestamp and range-consistency checks",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        }
+      ],
+      "status": "STATIC_INSPECTED_HOLD_FOR_REVIEW",
+      "licenseApproved": false,
+      "securityQualified": false,
+      "benchmarkPassed": false,
+      "acceptedForEngineering": false,
+      "agentRuntimeRegistered": false,
+      "actualUse": false
+    },
+    {
+      "id": "fossen-python-vehicle-simulator",
+      "repository": "cybergalactic/PythonVehicleSimulator",
+      "pinnedCommit": "a93d1938ba1f78f2580c24c73f003091b2f03cd0",
+      "pinnedTree": "80feeef4a79bbc23b539d47a0cae20ea41abb600",
+      "sourceUrl": "https://github.com/cybergalactic/PythonVehicleSimulator/tree/a93d1938ba1f78f2580c24c73f003091b2f03cd0",
+      "primaryDiscipline": "MARINE_GNC",
+      "immediateBlocker": "ATTRIBUTION_AND_ELEMENTARY_SMOKE_NOT_MARINE_VALIDATION",
+      "inspectedFiles": [
+        {
+          "path": "LICENSE",
+          "gitBlobSha": "248f6fc115c7024230f89517a954ef9d04fdd8fe",
+          "sourceUrl": "https://github.com/cybergalactic/PythonVehicleSimulator/blob/a93d1938ba1f78f2580c24c73f003091b2f03cd0/LICENSE"
+        },
+        {
+          "path": "pyproject.toml",
+          "gitBlobSha": "fa7093a33c048d9db6e0eb3b4d8daa57426754e3",
+          "sourceUrl": "https://github.com/cybergalactic/PythonVehicleSimulator/blob/a93d1938ba1f78f2580c24c73f003091b2f03cd0/pyproject.toml"
+        },
+        {
+          "path": "setup.cfg",
+          "gitBlobSha": "f5748ea97d5ffe4263bddb9038fdcb25846c9d68",
+          "sourceUrl": "https://github.com/cybergalactic/PythonVehicleSimulator/blob/a93d1938ba1f78f2580c24c73f003091b2f03cd0/setup.cfg"
+        },
+        {
+          "path": "README.md",
+          "gitBlobSha": "572d7c1efbac97d577047df6e463ce3e069922b9",
+          "sourceUrl": "https://github.com/cybergalactic/PythonVehicleSimulator/blob/a93d1938ba1f78f2580c24c73f003091b2f03cd0/README.md"
+        }
+      ],
+      "licenseFinding": "MIT_FORMAT_WITH_PYTHON_PACKAGING_AUTHORITY_COPYRIGHT_CHECK_ATTRIBUTION",
+      "dependencyFinding": "PYTHON_GE_3_10; NUMPY_MATPLOTLIB_UNPINNED_IN_SETUP_CFG; SOURCE_RUNNER_PREPARED_ONLY",
+      "interfaceFinding": "EXISTING_RESEARCH_ADAPTER_GNC_ELEMENTARY_FUNCTIONS_ONLY",
+      "staticObservations": [
+        "Pinned LICENSE references Python Packaging Authority whereas package metadata lists T. I. Fossen; verify provenance/attribution and scope before distribution",
+        "Five existing elementary GNC smoke reference cases are not a hydrodynamic manoeuvring qualification"
+      ],
+      "independentBenchmarkPlan": [
+        {
+          "id": "analytic-limits",
+          "goal": "6-DOF frame rotation/energy consistency over independently defined vessel mass/inertia",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        },
+        {
+          "id": "representative-domain-case",
+          "goal": "Vessel manoeuvring turn/circle/zig-zag against independent dynamics reference",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        },
+        {
+          "id": "negative-and-uncertainty",
+          "goal": "Zero-thrust link-loss drift, environmental current and safety-envelope simulation with independent observer",
+          "expected": "TBD_INDEPENDENT_SOURCE_NOT_CANDIDATE_OUTPUT",
+          "units": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "coordinateFrame": "TBD_PER_ENGINEERING_DISCIPLINE",
+          "tolerance": "TBD_NUMERICALLY_JUSTIFIED",
+          "source": "TBD_INDEPENDENT_REFERENCE",
+          "completed": false
+        }
+      ],
+      "status": "STATIC_INSPECTED_HOLD_FOR_REVIEW",
+      "licenseApproved": false,
+      "securityQualified": false,
+      "benchmarkPassed": false,
+      "acceptedForEngineering": false,
+      "agentRuntimeRegistered": false,
+      "actualUse": false
+    }
+  ]
+}
