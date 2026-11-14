@@ -107,7 +107,9 @@ test('source-code and original annex are checked rather than trusting a second a
  assert.throws(()=>check(profile,external,unified,annex.replace('**R2.05 —','**R2.XX —')),/HOLD/);
  assert.throws(()=>check(profile,external,unified,annex.replace('Amendment R2','AMENDED PERMISSION')), /HOLD/);
  assert.throws(()=>check(profile,external,unified,annex,definitions.replace("id: 'INTEL-USV-26'","id: 'INTEL-USV-27'")),/HOLD/);
- assert.throws(()=>check(profile,external,unified,annex,definitions.replace("executionPermissions: ['READ_ONLY', 'BASELINE_DRAFT']","executionPermissions: ['READ_ONLY', 'CALCULATION_EXEC']")),/HOLD/);
+ const originalPos=definitions.indexOf("id: 'INTEL-USV-26'");
+ const tamperedA26=definitions.slice(0,originalPos)+definitions.slice(originalPos).replace("executionPermissions: ['READ_ONLY', 'BASELINE_DRAFT']","executionPermissions: ['READ_ONLY', 'CALCULATION_EXEC']");
+ assert.throws(()=>check(profile,external,unified,annex,tamperedA26),/HOLD/);
  assert.throws(()=>check(profile,external,unified,annex,definitions,labText.replace('PROPOSED — NOT ADOPTED','ADOPTED')),/HOLD/);
 });
 test('changes to protected external-policy sandbox/roles/status are detected',()=>{
