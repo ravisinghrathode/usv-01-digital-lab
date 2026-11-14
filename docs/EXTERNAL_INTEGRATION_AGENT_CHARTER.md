@@ -105,3 +105,11 @@ This amendment **extends**, but does not replace, the laboratory's existing safe
 Keep the exact source SHA/tree and inspected Git blob paths in the controlled record. Supply a non-executable adapter contract, input/output data dimensions and frames, a dependency/attribution inventory, operator-isolated execution receipt when authorized, at least three independently justified benchmark families and a reviewer-specific blocker report. Evidence may be recorded as a URL and digest, but A26 does not treat a URL written by an AI or repo owner as authenticated approval.
 
 **Operational milestone status (R2):** Eight research source audits and independent benchmark plans have been drafted; license compliance, complete SBOM/CVE scans, isolated runtime tests (beyond earlier Fossen static intake), independent validated engineering models, operational tool registry wiring and vessel release are **not complete**. This amendment is not permission to bypass their separate controls.
+
+## Model access amendment — A26 subscription-only GPT-6 request (15 November 2026)
+
+For A26 public-source research and evidence drafting only, the operator may request **GPT-6 Astra** over the existing ChatGPT-signed-in Codex CLI. The canonical A26 agent definition is not altered, preserving its reviewed evidence hash. The model-request setting is an **optional** host-local entitlement, default OFF, enforced by `src/core/mission-control/A26SubscriptionModelAccess.ts` and `SubscriptionCliAdapter.ts`; see [subscription setup and provenance limits](A26_GPT6_SUBSCRIPTION.md).
+
+Only `INTEL-USV-26` in the **worker** role may use the `gpt-6-astra` CLI model override. Explicit consent requires `USV_A26_GPT6_SUBSCRIPTION=enabled`, `USV_SUBSCRIPTION_PILOT=enabled`, `AI_REVIEW_PROVIDER=codex_cli` and `USV_ALLOW_PAID_AI_API=false`. CLI version must be 0.153.0 or newer and local ChatGPT sign-in verified. Other agent IDs, paid OpenAI API routing, key-based login, unavailable model and unverified engineering assertions are not permitted. Model identity is labelled **requested but unverified** until authenticated provenance exists.
+
+This is *permission to request a subscription model*, not authorization for third-party code, an external-tool installation, independent model validation or a vessel release. A26 still has only READ_ONLY / BASELINE_DRAFT engineering authority.
