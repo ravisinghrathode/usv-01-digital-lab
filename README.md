@@ -12,7 +12,7 @@ The **[Master Project Register](docs/MASTER_PROJECT_REGISTER.md)** is the contro
 
 ### External software and project usage tracking
 
-The [External Software Register](docs/EXTERNAL_SOFTWARE_OVERVIEW.md) provides the public-safe, source-controlled inventory of discovered and evaluated engineering software. It explicitly separates planned agent/project usage from verified actual use, and links pinned commits and review evidence. [Operating and maintenance rules](docs/EXTERNAL_SOFTWARE_REGISTER_OPERATING.md) define the protected updates. The lab sidebar includes a read-only **External Software Register** view when this source revision is deployed. No entry implies software or vessel approval.
+The [A26 External Integration Agent Charter](docs/EXTERNAL_INTEGRATION_AGENT_CHARTER.md) and machine-enforced `config/external-integration-policy.json` govern how the team researches, drafts, verifies and seeks protected approval for new tools; no automatic third-party execution or runtime adoption. The [External Software Register](docs/EXTERNAL_SOFTWARE_OVERVIEW.md) provides the public-safe, source-controlled inventory of discovered and evaluated engineering software. It explicitly separates planned agent/project usage from verified actual use, and links pinned commits and review evidence. [Operating and maintenance rules](docs/EXTERNAL_SOFTWARE_REGISTER_OPERATING.md) define the protected updates. The lab sidebar includes a read-only **External Software Register** view when this source revision is deployed. No entry implies software or vessel approval.
 
 ## 1. System Overview
 

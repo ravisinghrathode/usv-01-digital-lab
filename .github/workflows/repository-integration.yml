@@ -4,6 +4,10 @@ on:
   pull_request:
     paths:
       - 'scripts/repository-integration.mjs'
+      - 'scripts/external-integration-agent.mjs'
+      - 'tests/external-integration-agent.test.mjs'
+      - 'config/external-integration-policy.json'
+      - 'docs/EXTERNAL_INTEGRATION_AGENT_CHARTER.md'
       - 'tests/repository-integration.test.mjs'
       - 'scripts/repository-integration-planner.mjs'
       - 'tests/repository-integration-planner.test.mjs'
@@ -35,7 +39,7 @@ jobs:
         with:
           node-version: '22'
       - name: Tests (no remote execution)
-        run: node --test tests/repository-scout.test.mjs tests/repository-integration.test.mjs tests/repository-integration-planner.test.mjs
+        run: node --test tests/repository-scout.test.mjs tests/repository-integration.test.mjs tests/repository-integration-planner.test.mjs tests/external-integration-agent.test.mjs
       - name: Contract-test first external candidate adapter (standard library only)
         run: python3 -m unittest discover -s tests -p 'test_fossen_candidate_adapter.py' -v
 
@@ -74,6 +78,14 @@ jobs:
         env:
           SPEC_PATH: ${{ inputs.spec_path }}
         run: node scripts/repository-integration.mjs propose --spec "$SPEC_PATH" --out-dir "$RUNNER_TEMP/usv01-repository-integration"
+      - name: Enforce A26 charter, generate a non-executable adapter scaffold and independent review plan
+        env:
+          SPEC_PATH: ${{ inputs.spec_path }}
+        run: >-
+          node scripts/external-integration-agent.mjs prepare
+          --spec "$SPEC_PATH"
+          --stage "$RUNNER_TEMP/usv01-repository-integration/stage.json"
+          --out-dir "$RUNNER_TEMP/usv01-repository-integration/a26-review"
       - name: Remove third-party snapshot before publishing evidence artifact
         run: rm -rf "$RUNNER_TEMP/usv01-repository-integration/source"
       - uses: actions/upload-artifact@v4
@@ -84,5 +96,6 @@ jobs:
             ${{ runner.temp }}/usv01-repository-integration/stage.json
             ${{ runner.temp }}/usv01-repository-integration/proposal.json
             ${{ runner.temp }}/usv01-repository-integration/REVIEW.md
+            ${{ runner.temp }}/usv01-repository-integration/a26-review/
           if-no-files-found: error
           retention-days: 30

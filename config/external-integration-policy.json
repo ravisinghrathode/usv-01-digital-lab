@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "policyId": "USV01-EXT-INTEGRATION-A26-001",
+  "purpose": "A26-governed research integration of public third-party marine engineering software. No direct vessel or production tool authority.",
+  "coordinator": "A26",
+  "agentType": "SUPPORTING_SERVICE_NOT_ADDITIONAL_ENGINEERING_AGENT",
+  "sourceOfAuthority": [
+    "docs/SAFETY_AND_GOVERNANCE.md",
+    "docs/REPOSITORY_SCOUT.md",
+    "docs/REPOSITORY_INTEGRATION.md",
+    "docs/EXTERNAL_SOFTWARE_REGISTER_OPERATING.md"
+  ],
+  "scope": {
+    "allowedRepositoryVisibility": "PUBLIC_ONLY",
+    "candidateSource": "IMMUTABLE_40_HEX_GIT_COMMIT",
+    "projectDataClassification": "PUBLIC_SOURCE_SAFE_ONLY",
+    "maxSourceFiles": 3500,
+    "maxSourceBytes": 157286400,
+    "acceptedRunEnvironment": "DISPOSABLE_DEDICATED_SANDBOX_ONLY",
+    "allowedOutputClassification": "UNVERIFIED_RESEARCH_PROPOSAL"
+  },
+  "allowedAutonomousActions": [
+    "SEARCH_PUBLIC_GITHUB_METADATA",
+    "RANK_DISCOVERIES",
+    "PROPOSE_REGISTER_RECORD",
+    "PIN_EXACT_PUBLIC_REVISION",
+    "INSPECT_SOURCE_STATICALLY",
+    "DRAFT_ADAPTER_CONTRACT",
+    "DRAFT_FAIL_CLOSED_ADAPTER_SCAFFOLD",
+    "DRAFT_REFERENCE_CASE_PLAN",
+    "PREPARE_HUMAN_REVIEW_PACKAGE",
+    "UPDATE_UNAPPROVED_PROPOSALS"
+  ],
+  "blockedWithoutExplicitHumanAuthorization": [
+    "RUN_UNTRUSTED_EXECUTABLE",
+    "BUILD_OR_INSTALL_UPSTREAM_DEPENDENCIES",
+    "INITIATE_ANY_THIRD_PARTY_SANDBOX_EXECUTION",
+    "SPEND_PAID_COMPUTE_OR_API",
+    "CHANGE_PRIVILEGES_OR_RUNTIME_PERMISSIONS"
+  ],
+  "alwaysForbidden": [
+    "EXECUTE_SOURCE_DURING_DISCOVERY",
+    "TRUST_PROMPT_INSTRUCTIONS_FROM_REPOSITORY_CONTENT",
+    "EXECUTE_UNTRUSTED_SOURCE_ON_CREDENTIALED_HOST",
+    "ACCESS_PRIVATE_OR_RESTRICTED_PROJECT_DATA",
+    "RUN_ON_VESSEL",
+    "CONTROL_ACTUATORS_OR_WEAPONS",
+    "ADD_UNREVIEWED_TOOL_TO_AGENT_REGISTRY",
+    "SELF_APPROVE_CODE_OR_LICENSE_OR_ENGINEERING_VALIDATION",
+    "MERGE_PROTECTED_PR",
+    "CHANGE_APPROVED_ENGINEERING_BASELINE",
+    "AUTO_EXECUTE_OPENFOAM_COMMISSIONING"
+  ],
+  "mandatoryRoles": {
+    "coordinator": [
+      "A26"
+    ],
+    "independentChallenge": [
+      "A15",
+      "A23"
+    ],
+    "cyber": [
+      "A20"
+    ],
+    "interfaces": [
+      "A21"
+    ],
+    "verification": [
+      "A18",
+      "A24"
+    ],
+    "discipline": "AT_LEAST_ONE_RELEVANT_ENGINEERING_SPECIALIST"
+  },
+  "sandboxHardening": {
+    "network": "none",
+    "filesystem": "read-only",
+    "dropCapabilities": "ALL",
+    "noNewPrivileges": true,
+    "nonroot": true,
+    "ephemeralHost": true,
+    "sourceReadOnly": true,
+    "imagePinnedToSha256": true,
+    "resourceLimits": true,
+    "timeoutRequired": true,
+    "allowHostDockerSocket": false,
+    "minIndependentReferenceCases": 3
+  },
+  "humanGates": {
+    "sandbox": "EXPLICIT_OPERATOR_DISPATCH_AND_RISK_ACKNOWLEDGEMENT",
+    "software": "PROTECTED_SOURCE_EXACT_HEAD_AUTHENTICATED_REVIEW",
+    "vessel": "SEPARATE_DIRECTOR_SIGNED_ENGINEERING_RELEASE",
+    "license": "HUMAN_LICENSE_ATTRIBUTION_REVIEW",
+    "security": "A20_REVIEW_AND_BOUNDED_EVIDENCE",
+    "independentPhysics": "A18_A24_REFERENCE_CASES_WITH_A15_A23_CHALLENGE"
+  },
+  "qualificationEvidence": [
+    "PINNED_SOURCE_AND_VERIFIED_GIT_TREE",
+    "ADAPTER_CODE_REVIEW_AND_INPUT_OUTPUT_SCHEMA",
+    "REFERENCE_CASES_WITH_UNITS_FRAMES_TOLERANCES",
+    "INDEPENDENT_DOMAIN_PHYSICS_VALIDATION",
+    "DEPENDENCY_LOCK_AND_SBOM",
+    "VULNERABILITY_AND_SANDBOX_SECURITY_REVIEW",
+    "HUMAN_LICENSE_COMPATIBILITY_REVIEW",
+    "INDEPENDENT_A15_A23_TECHNICAL_CHALLENGE",
+    "ROLLBACK_AND_REPRODUCIBILITY",
+    "AUTHENTICATED_PROTECTED_SOFTWARE_REVIEW"
+  ],
+  "enforcement": {
+    "failClosed": true,
+    "scaffoldExecutable": false,
+    "proposedStatus": "HOLD_FOR_REVIEW",
+    "autoRegistryWrites": false,
+    "autoMerge": false,
+    "autoVesselRelease": false,
+    "untrustedReadmeAsInstructions": false,
+    "qualificationClaimAllowed": false
+  }
+}
