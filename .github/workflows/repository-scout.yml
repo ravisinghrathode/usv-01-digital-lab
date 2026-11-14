@@ -22,7 +22,12 @@ on:
       - 'src/components/NavigationSidebar.tsx'
       - 'docs/EXTERNAL_SOFTWARE_OVERVIEW.md'
       - 'scripts/external-software-register.mjs'
+      - 'scripts/external-software-usage.mjs'
+      - 'scripts/run-fossen-evaluation.sh'
       - 'tests/external-software-register.test.mjs'
+      - 'tests/external-software-usage.test.mjs'
+      - '.github/workflows/fossen-usage-register.yml'
+      - '.github/workflows/fossen-isolated-evaluation.yml'
       - 'tests/repository-scout.test.mjs'
       - '.github/workflows/repository-scout.yml'
 
@@ -42,7 +47,7 @@ jobs:
         with:
           node-version: '22'
       - name: Run offline tests
-        run: node --test tests/repository-scout.test.mjs tests/repository-integration.test.mjs tests/repository-integration-planner.test.mjs tests/external-software-register.test.mjs
+        run: node --test tests/repository-scout.test.mjs tests/repository-integration.test.mjs tests/repository-integration-planner.test.mjs tests/external-software-register.test.mjs tests/external-software-usage.test.mjs
       - name: Validate permanent register and generated overview
         run: node scripts/external-software-register.mjs --check
 
