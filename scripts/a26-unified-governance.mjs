@@ -44,6 +44,13 @@ function exactObjectKeys(actual,keys,name){
   hold(name+' has extra/missing fields');
 }
 export function validateUnifiedProfile(profile,externalPolicy,unifiedText,annexText,definitionsText,labText){
+ exactObjectKeys(profile,[
+  'schemaVersion','charterId','revision','canonicalId','registryAgentId',
+  'registrySize','roleSource','unifiedCharter','bindingAnnex',
+  'bindingExternalPolicy','labGovernance','labOperatingCharter',
+  'labOperatingCharterAdoption','modelPolicy','modes','enforcement',
+  'verification'
+ ],'unified role profile');
  if(!profile||profile.schemaVersion!==1||profile.revision!==1||
   profile.charterId!=='USV01-A26-UNIFIED-OPERATING-001'||
   profile.canonicalId!=='A26'||profile.registryAgentId!=='INTEL-USV-26'||
@@ -100,6 +107,9 @@ export function validateUnifiedProfile(profile,externalPolicy,unifiedText,annexT
 
  exactObjectKeys(profile.modes,AUTHORIZED_MODES,'operating modes');
  const fleet=profile.modes.FLEET_INTELLIGENCE,ext=profile.modes.EXTERNAL_SOFTWARE,joint=profile.modes.CORRELATED_RESEARCH;
+ exactObjectKeys(fleet,['existingImplementation','allowedPlanningActions','output'],'fleet research mode');
+ exactObjectKeys(ext,['existingImplementation','allowedPlanningActionsSource','output'],'external research mode');
+ exactObjectKeys(joint,['existingImplementation','allowedPlanningActions','output'],'correlated research mode');
  if(fleet?.existingImplementation!=='src/core/agents/GlobalUsvIntelligenceAgent.ts'||
     fleet.output!=='UNVERIFIED_PUBLIC_INTELLIGENCE_DOSSIER')hold('fleet research profile altered');
  exactList(fleet.allowedPlanningActions,FLEET_ACTIONS,'fleet planning allowlist');
