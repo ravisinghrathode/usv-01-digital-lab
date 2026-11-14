@@ -4,7 +4,7 @@
 
 Register: USV01-EXT-SOFTWARE-001 | Custodian: A26 | Controlled change via GitHub PR
 
-Overview: 4 tracked | 3 discovered | 1 evaluating | 0 qualified | 0 integrated | 0 retired | 0 rejected | 0 evidenced usage events.
+Overview: 4 tracked | 3 discovered | 1 evaluating | 0 qualified | 0 integrated | 0 retired | 0 rejected | 0 evidenced usage events (0 research sandbox, 0 agent invocations, 0 accepted engineering uses).
 
 | ID | Repository | Domain | Lifecycle | Adoption | Installation | Review agents | Planned projects | Evidenced uses | Source evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- | ---: | --- |

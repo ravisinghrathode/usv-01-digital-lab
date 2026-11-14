@@ -3,7 +3,7 @@
   "registerId": "USV01-EXT-SOFTWARE-001",
   "sourceOfTruth": "GITHUB_PROTECTED_MAIN",
   "custodian": "A26",
-  "maintenance": "PROPOSED_CHANGES_REQUIRE_PROTECTED_PR_REVIEW",
+  "maintenance": "AUTOMATED_REVIEW_PROPOSALS_FROM_WEEKLY_DISCOVERY_AND_PROVEN_DISPOSABLE_RUNS_REQUIRE_PROTECTED_PR_MERGE",
   "notes": "Curated public-source-only metadata. This register is not a software certification, engineering approval, or active vessel configuration. Never store proprietary source, credentials, or restricted evidence here.",
   "records": [
     {
@@ -69,10 +69,10 @@
         {
           "type": "FOLLOWUP_ISOLATED_EVALUATION",
           "url": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/91",
-          "status": "OPEN_UNMERGED_AT_CREATION"
+          "status": "MERGED_MANUAL_RUNNER_AVAILABLE_EXECUTION_NOT_EVIDENCED_IN_REGISTER"
         }
       ],
-      "nextAction": "Complete isolated source evaluation evidence, license/CVE review and independently accepted marine dynamics benchmarks before proposing protected registry integration."
+      "nextAction": "Manually authorize the disposable Fossen evaluation workflow on main; preserve and reconcile successful smoke evidence, then separately complete SBOM/CVE, license and independent marine dynamics validation before any agent-tool adoption."
     },
     {
       "id": "EXT-002",

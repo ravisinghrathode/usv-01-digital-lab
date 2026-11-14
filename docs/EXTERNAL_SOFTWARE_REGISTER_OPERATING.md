@@ -58,3 +58,20 @@ Never silently replace an existing curated status based on a search score. The p
 - Scheduled discovery is bounded and not exhaustive across all Git forges; new entries become permanent only after review.
 - The inventory is public-source-safe. Private engineering evidence stays in controlled storage, with public-safe identifiers/links only.
 - No new 27th engineering agent is created; A26 coordinates the supporting service.
+
+## Operational closeout: reviewed automation, archival evidence and truthfulness
+
+The register has **two source-to-record proposal mechanisms**, neither of which can approve software or merge into protected `main`:
+
+1. **Weekly / manual discovery:** `.github/workflows/repository-scout.yml` performs a bounded, read-only GitHub search and prepares a register proposal from `latest.json`. A scheduled or manually dispatched Scout scan creates a **review PR** only if new public repository identities exist and no discovery-review PR is already open. Review the proposed descriptions, licenses, relevance and duplicates; new entries are always `DISCOVERED`, `NOT_APPROVED` and `NOT_INSTALLED`. The full artifact remains available when a PR cannot be created because GitHub Actions lacks the repository setting permitting bot-created PRs. Recheck the most recent workflow run rather than assuming the scheduled job succeeded.
+2. **Actual Fossen sandbox execution:** `.github/workflows/fossen-isolated-evaluation.yml` runs **only after a manual operator acknowledges the existing third-party execution risk** and dispatches it on protected `main`. A passing real source-pinned run produces `external-software-usage-receipt.json` plus `verification.json`. `.github/workflows/fossen-usage-register.yml` only processes a **successful manual workflow_run on main**, independently fetches GitHub run metadata, compares exact upstream commit/tree/image and SHA256 of the verification file, and proposes a single `SANDBOX_EVALUATION` event. It also proposes a sanitized, permanent summary in `evidence/external-software/EXT-001-<run-id>.json` for audit continuity after the temporary GitHub Actions artifact expires.
+
+This is **not live vessel usage telemetry**, independent hydrodynamic validation, a source-code security audit, license compatibility acceptance or production agent invocation evidence. A sandbox evaluation counts as a research trial only; no A08/A16/A17 engineering computation is credited until the lab actually executes and records it. A review PR requires fresh protected-source governance checks; the bot cannot sign its own approval. Failed numerical tests, invalid receipts, unsupported workflow identities or mismatched source revisions leave the register untouched.
+
+The reconciliation algorithms are in `scripts/external-software-register.mjs` and `scripts/external-software-usage.mjs`, with negative tests `tests/external-software-register.test.mjs` and `tests/external-software-usage.test.mjs`. Open-data fields only are committed to the public repository; never save source packages, raw restricted sensor data, defense/client details, credentials or unreviewed design baselines. When no real external run exists, **zero verified usage is the correct state**.
+
+### Gaps reserved for later qualified work
+
+- A trusted, approved external software runtime with registered `TOOL-EXT-*` identity does not exist yet. Runtime agent call capture and project/agent attribution will be connected only after a software integration is independently qualified, security reviewed and deliberately registered. Existing in-memory internal deterministic tool history is not that evidence.
+- Human authorization to start potentially unsafe third-party execution is mandatory. The automation never dispatches or approves that workflow.
+- The UI is a committed source snapshot, not a continuously updating browser query; a controlled application rebuild/deployment is needed to show newly merged records.

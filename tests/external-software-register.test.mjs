@@ -41,7 +41,7 @@ test('reject actual use lacking full source and evidence chain',()=>{
 });
 test('reject project engineering use without Director acceptance',()=>{
  const x=clone(db);x.records[0].actualUsage=[{kind:'ENGINEERING_BASELINE',project:'USV-01',agent:'A08',
-   sourceCommit:'a'.repeat(40),executionEvidence:'https://github.com/example/evidence'}];
+   sourceCommit:db.records[0].source.commit,executionEvidence:'https://github.com/example/evidence'}];
  assert.throws(()=>validateRegister(x),/baseline usage not approved/);
 });
 test('Scout only proposes new discoveries; never changes existing qualification',()=>{
@@ -66,4 +66,25 @@ test('reject fixture reports and malformed/duplicate upstream metadata',()=>{
  assert.throws(()=>validateRegister(x),/duplicate upstream/);
  const r=reconcileScout(db,{provider:'OFFLINE_TEST_FIXTURE',candidates:[candidate]},{allowFixture:true});
  assert.equal(r.newCount,1);
+});
+
+test('sandbox evaluation needs pinned local runner and proof hash',()=>{
+ const x=clone(db);
+ x.records[0].actualUsage=[{
+   kind:'SANDBOX_EVALUATION',project:'USV-01',agent:'A26',
+   sourceCommit:x.records[0].source.commit,
+   executionEvidence:'https://github.com/ravisinghrathode/usv-01-digital-lab/actions/runs/12345'
+ }];
+ assert.throws(()=>validateRegister(x),/unverified sandbox evidence provenance/);
+});
+test('unapproved external software never claims an operational agent-tool invocation',()=>{
+ const x=clone(db);
+ x.records[0].actualUsage=[{
+   kind:'AGENT_TOOL_INVOCATION',project:'USV-01',agent:'A08',
+   sourceCommit:x.records[0].source.commit,
+   executionEvidence:'https://github.com/ravisinghrathode/usv-01-digital-lab/actions/runs/12345',
+   runtimeEvidence:'https://github.com/ravisinghrathode/usv-01-digital-lab/pull/92',
+   invocationId:'FAKE-001'
+ }];
+ assert.throws(()=>validateRegister(x),/agent invocation needs approved runtime evidence/);
 });

@@ -1,0 +1,100 @@
+name: USV-01 Fossen Usage Evidence Review Proposal
+
+on:
+  workflow_run:
+    workflows:
+      - 'USV-01 Fossen Isolated GNC Evaluation (manual, research-only)'
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  propose:
+    name: Verify successful research-only execution and open reviewed usage PR
+    if: >-
+      github.event.workflow_run.event == 'workflow_dispatch' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Check out controlled default branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Download evidence only from specified successful manual workflow run
+        uses: actions/download-artifact@v4
+        with:
+          run-id: ${{ github.event.workflow_run.id }}
+          name: fossen-unverified-disposable-smoke-evidence
+          path: ${{ runner.temp }}/candidate-evidence
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Validate receipt against GitHub Actions API and exact numerical evidence hash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          SOURCE_RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          set -euo pipefail
+          node --test tests/external-software-usage.test.mjs
+          node scripts/external-software-usage.mjs \
+            --receipt "$RUNNER_TEMP/candidate-evidence/external-software-usage-receipt.json" \
+            --verification "$RUNNER_TEMP/candidate-evidence/verification.json" \
+            --proposal-out "$RUNNER_TEMP/external-register-usage-proposal.json" \
+            --overview-out "$RUNNER_TEMP/external-register-usage-overview.md" \
+            --summary-out "$RUNNER_TEMP/EXT-001-$SOURCE_RUN_ID.json" \
+            | tee "$RUNNER_TEMP/usage-reconciliation-result.json"
+      - name: Open review-only usage record PR (no software approval or tool activation)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          set -euo pipefail
+          ADDED="$(node -e "const f=require('fs');const x=JSON.parse(f.readFileSync(process.argv[1]));process.stdout.write(x.added?'yes':'no')" "$RUNNER_TEMP/usage-reconciliation-result.json")"
+          if [[ "$ADDED" != yes ]]; then
+            echo 'Run was already incorporated; no new proposal.'
+            exit 0
+          fi
+          BRANCH="automation/fossen-usage-$SOURCE_RUN_ID"
+          if git ls-remote --exit-code --heads origin "$BRANCH" > /dev/null; then
+            echo "Review branch already exists; skipping duplicate PR for run $SOURCE_RUN_ID"
+            exit 0
+          fi
+          cp "$RUNNER_TEMP/external-register-usage-proposal.json" src/data/externalSoftwareRegister.json
+          cp "$RUNNER_TEMP/external-register-usage-overview.md" docs/EXTERNAL_SOFTWARE_OVERVIEW.md
+          mkdir -p evidence/external-software
+          cp "$RUNNER_TEMP/EXT-001-$SOURCE_RUN_ID.json" "evidence/external-software/EXT-001-$SOURCE_RUN_ID.json"
+          node scripts/external-software-register.mjs --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "$BRANCH"
+          git add src/data/externalSoftwareRegister.json docs/EXTERNAL_SOFTWARE_OVERVIEW.md "evidence/external-software/EXT-001-$SOURCE_RUN_ID.json"
+          git commit -m "docs(register): propose evidenced research sandbox use from workflow $SOURCE_RUN_ID"
+          gh auth setup-git
+          git push -u origin "$BRANCH"
+          gh pr create --base main --head "$BRANCH" \
+            --title "Register research-only Fossen sandbox evidence: run $SOURCE_RUN_ID" \
+            --body "Review-only update from a verified manual GitHub Actions run. The importer checked successful workflow identity, pinned Fossen source, image ID, case outcomes and SHA256 receipt. This adds one SANDBOX_EVALUATION event, **not** agent runtime integration, marine dynamics qualification, license/security acceptance, or vessel release. **Human review and protected source gates remain mandatory.** Evidence run: https://github.com/${{ github.repository }}/actions/runs/$SOURCE_RUN_ID"
+          gh workflow run repository-scout.yml --ref "$BRANCH" -f validate_only=true
+          gh workflow run safety-governance-gate.yml --ref "$BRANCH" -f run_openfoam=false
+      - name: Preserve independent proposal for review even if PR creation is blocked
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: external-software-usage-review-proposal
+          path: |
+            ${{ runner.temp }}/external-register-usage-proposal.json
+            ${{ runner.temp }}/external-register-usage-overview.md
+            ${{ runner.temp }}/usage-reconciliation-result.json
+            ${{ runner.temp }}/EXT-001-*.json
+          if-no-files-found: warn
+          retention-days: 30
