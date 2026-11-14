@@ -21,9 +21,9 @@ const hold=x=>{throw Error('External integration HOLD: '+x);};
 const hash=x=>createHash('sha256').update(x).digest('hex');
 export function validatePolicy(p){
  if(!p||p.schemaVersion!==1||p.policyId!=='USV01-EXT-INTEGRATION-A26-001'||p.coordinator!=='A26'||p.agentType!=='SUPPORTING_SERVICE_NOT_ADDITIONAL_ENGINEERING_AGENT')hold('unexpected authority');
- if(!Array.isArray(p.sourceOfAuthority)||p.sourceOfAuthority.length<4)hold('missing governance sources');
+ if(!Array.isArray(p.sourceOfAuthority)||['docs/SAFETY_AND_GOVERNANCE.md','docs/REPOSITORY_SCOUT.md','docs/REPOSITORY_INTEGRATION.md','docs/EXTERNAL_SOFTWARE_REGISTER_OPERATING.md'].some(x=>!p.sourceOfAuthority.includes(x)))hold('missing governance sources');
  const scope=p.scope||{},h=p.sandboxHardening||{},g=p.humanGates||{},e=p.enforcement||{},r=p.mandatoryRoles||{};
- if(scope.allowedRepositoryVisibility!=='PUBLIC_ONLY'||scope.candidateSource!=='IMMUTABLE_40_HEX_GIT_COMMIT'||scope.projectDataClassification!=='PUBLIC_SOURCE_SAFE_ONLY'||scope.allowedOutputClassification!=='UNVERIFIED_RESEARCH_PROPOSAL'||scope.acceptedRunEnvironment!=='DISPOSABLE_DEDICATED_SANDBOX_ONLY'||scope.maxSourceFiles<1||scope.maxSourceFiles>3500||scope.maxSourceBytes<1||scope.maxSourceBytes>157286400)hold('source/data boundary');
+ if(scope.allowedRepositoryVisibility!=='PUBLIC_ONLY'||scope.candidateSource!=='IMMUTABLE_40_HEX_GIT_COMMIT'||scope.projectDataClassification!=='PUBLIC_SOURCE_SAFE_ONLY'||scope.allowedOutputClassification!=='UNVERIFIED_RESEARCH_PROPOSAL'||scope.acceptedRunEnvironment!=='DISPOSABLE_DEDICATED_SANDBOX_ONLY'||!Number.isSafeInteger(scope.maxSourceFiles)||scope.maxSourceFiles<1||scope.maxSourceFiles>3500||!Number.isSafeInteger(scope.maxSourceBytes)||scope.maxSourceBytes<1||scope.maxSourceBytes>157286400)hold('source/data boundary');
  const invariants={network:'none',filesystem:'read-only',dropCapabilities:'ALL',noNewPrivileges:true,nonroot:true,ephemeralHost:true,sourceReadOnly:true,imagePinnedToSha256:true,resourceLimits:true,timeoutRequired:true,allowHostDockerSocket:false};
  for(const [k,v] of Object.entries(invariants))if(h[k]!==v)hold('sandbox invariant '+k);
  if(!Number.isSafeInteger(h.minIndependentReferenceCases)||h.minIndependentReferenceCases<3)hold('minimum independent physics cases');
@@ -33,7 +33,7 @@ export function validatePolicy(p){
  for(const [name,required] of [['allowedAutonomousActions',SAFE],['alwaysForbidden',DENY],['blockedWithoutExplicitHumanAuthorization',HUMAN]]){
   if(!Array.isArray(p[name])||required.some(x=>!p[name].includes(x)))hold('missing authority '+name);
  }
- if(p.allowedAutonomousActions.some(x=>p.alwaysForbidden.includes(x)||p.blockedWithoutExplicitHumanAuthorization.includes(x)))hold('contradictory permissions');
+ if(p.allowedAutonomousActions.some(x=>!SAFE.includes(x)||p.alwaysForbidden.includes(x)||p.blockedWithoutExplicitHumanAuthorization.includes(x)))hold('new or contradictory autonomous permission');
  const gates={sandbox:'EXPLICIT_OPERATOR_DISPATCH_AND_RISK_ACKNOWLEDGEMENT',software:'PROTECTED_SOURCE_EXACT_HEAD_AUTHENTICATED_REVIEW',vessel:'SEPARATE_DIRECTOR_SIGNED_ENGINEERING_RELEASE',license:'HUMAN_LICENSE_ATTRIBUTION_REVIEW',security:'A20_REVIEW_AND_BOUNDED_EVIDENCE',independentPhysics:'A18_A24_REFERENCE_CASES_WITH_A15_A23_CHALLENGE'};
  for(const [k,v] of Object.entries(gates))if(g[k]!==v)hold('missing human gate '+k);
  for(const [k,v] of Object.entries({failClosed:true,scaffoldExecutable:false,autoRegistryWrites:false,autoMerge:false,autoVesselRelease:false,untrustedReadmeAsInstructions:false,qualificationClaimAllowed:false,proposedStatus:'HOLD_FOR_REVIEW'}))if(e[k]!==v)hold('unsafe enforcement '+k);
