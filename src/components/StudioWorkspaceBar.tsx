@@ -1,18 +1,17 @@
 import React from 'react';
-import { Activity, Box, Command, LayoutDashboard, ShieldCheck, Type, X } from 'lucide-react';
+import { Activity, Box, Bot, Command, LayoutDashboard, ShieldCheck, Type, X } from 'lucide-react';
 import type { StudioTextSize } from '../studio/readability';
-import { NavigationModule, StudioWorkspace, MODULE_REGISTRY } from '../moduleRegistry';
+import { NavigationModule, MODULE_REGISTRY } from '../moduleRegistry';
+import { dockyardAreaFor, DOCKYARD_AREAS } from '../studio/dockyardAreas';
 import { nextWorkTab, studioTabId, studioPanelId } from '../studio/workTabs';
 
-const workspaces: {
-  id: StudioWorkspace; label: string; defaultModule: NavigationModule;
-  icon: React.ReactNode;
-}[] = [
-  { id: 'cad', label: 'Product & CAD', defaultModule: 'cad-studio', icon: <Box size={17}/> },
-  { id: 'programme', label: 'Programme', defaultModule: 'overview', icon: <LayoutDashboard size={17}/> },
-  { id: 'analysis', label: 'Engineering', defaultModule: 'simulations', icon: <Activity size={17}/> },
-  { id: 'verification', label: 'Assurance', defaultModule: 'workstream-VNV', icon: <ShieldCheck size={17}/> }
-];
+const areaIcons: Record<string, React.ReactNode> = {
+  product:<Box size={17} aria-hidden="true"/>,
+  engineering:<Activity size={17} aria-hidden="true"/>,
+  programme:<LayoutDashboard size={17} aria-hidden="true"/>,
+  agents:<Bot size={17} aria-hidden="true"/>,
+  assurance:<ShieldCheck size={17} aria-hidden="true"/>
+};
 interface Props {
   currentModule: NavigationModule;
   onSelectModule: (module: NavigationModule) => void;
@@ -26,7 +25,7 @@ export const StudioWorkspaceBar: React.FC<Props> = ({
   currentModule, onSelectModule, openTabs = [currentModule], onCloseTab,
   onOpenCommand, textSize = 'comfortable', onChangeTextSize
 }) => {
-  const workspace = MODULE_REGISTRY.find(m => m.id === currentModule)!.workspace;
+  const activeArea = dockyardAreaFor(currentModule);
   const handleTabKey = (event: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
     const key = event.key;
     if (key !== 'ArrowLeft' && key !== 'ArrowRight' && key !== 'Home' && key !== 'End') return;
@@ -39,10 +38,10 @@ export const StudioWorkspaceBar: React.FC<Props> = ({
 
   return <div className="ns3-workspace-shell">
     <nav aria-label="Workspaces" className="ns3-workspaces">
-      {workspaces.map(item => <button type="button" key={item.id}
-        className="ns3-workspace-tab" aria-current={workspace === item.id ? 'page' : undefined}
+      {DOCKYARD_AREAS.map(item => <button type="button" key={item.id}
+        className="ns3-workspace-tab" aria-current={activeArea === item.id ? 'page' : undefined}
         onClick={() => onSelectModule(item.defaultModule)}>
-        {item.icon}<span>{item.label}</span>
+        {areaIcons[item.id]}<span>{item.shortLabel}</span>
       </button>)}
       <div className="ns3-workspace-tools">
         {onChangeTextSize && <button type="button" className="ns3-workspace-tool"
