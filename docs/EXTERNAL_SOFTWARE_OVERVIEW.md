@@ -4,11 +4,14 @@
 
 Register: USV01-EXT-SOFTWARE-001 | Custodian: A26 | Controlled change via GitHub PR
 
-Overview: 1 tracked | 0 discovered | 1 evaluating | 0 qualified | 0 integrated | 0 retired | 0 rejected | 0 evidenced usage events.
+Overview: 4 tracked | 3 discovered | 1 evaluating | 0 qualified | 0 integrated | 0 retired | 0 rejected | 0 evidenced usage events.
 
 | ID | Repository | Domain | Lifecycle | Adoption | Installation | Review agents | Planned projects | Evidenced uses | Source evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- | ---: | --- |
 | EXT-001 | [Fossen Python Vehicle Simulator](https://github.com/cybergalactic/PythonVehicleSimulator) | MARINE_SIMULATION_GNC | EVALUATING | NOT_APPROVED | NOT_INSTALLED | A08, A15, A16, A17, A18, A20, A21, A23, A24 | USV-01 | 0 | [Evidence](https://github.com/ravisinghrathode/usv-01-digital-lab/actions/runs/43588332612) |
+| EXT-002 | [MSS-Capytaine](https://github.com/cybergalactic/MSS-Capytaine) | POTENTIAL_FLOW_HYDRODYNAMICS | DISCOVERED | NOT_APPROVED | NOT_INSTALLED | A07, A08, A15, A18, A20, A23, A24 | None | 0 | Pending |
+| EXT-003 | [shipcurve](https://github.com/ARPA-GO/shipcurve) | HYDROSTATICS_CURVES | DISCOVERED | NOT_APPROVED | NOT_INSTALLED | A05, A06, A15, A18, A20, A23, A24 | None | 0 | Pending |
+| EXT-004 | [COLREG encounter identifier](https://github.com/ntnu-itk-autonomous-ship-lab/collision_avoidance_identifier) | AIS_COLREG_ENCOUNTER_ANALYSIS | DISCOVERED | NOT_APPROVED | NOT_INSTALLED | A15, A17, A18, A20, A22, A23, A24 | None | 0 | Pending |
 
 ## Use and maintenance rules
 
