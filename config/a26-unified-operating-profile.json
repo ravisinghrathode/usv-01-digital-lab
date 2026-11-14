@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "charterId": "USV01-A26-UNIFIED-OPERATING-001",
+  "revision": 1,
+  "canonicalId": "A26",
+  "registryAgentId": "INTEL-USV-26",
+  "registrySize": 26,
+  "roleSource": "src/core/agents/definitions.ts",
+  "unifiedCharter": "docs/governance/A26_UNIFIED_AGENT_OPERATING_CHARTER.md",
+  "bindingAnnex": "docs/EXTERNAL_INTEGRATION_AGENT_CHARTER.md",
+  "bindingExternalPolicy": "config/external-integration-policy.json",
+  "labGovernance": "docs/SAFETY_AND_GOVERNANCE.md",
+  "labOperatingCharter": "docs/governance/USV01_26_AGENT_OPERATING_CHARTER_V1.md",
+  "labOperatingCharterAdoption": "NOT_ADOPTED_BY_THIS_PROFILE",
+  "modelPolicy": "INHERIT_REGISTERED_CODEX_CLI_AND_SEPARATELY_REVIEWED_ROUTING",
+  "modes": {
+    "FLEET_INTELLIGENCE": {
+      "existingImplementation": "src/core/agents/GlobalUsvIntelligenceAgent.ts",
+      "allowedPlanningActions": [
+        "CATALOG_PUBLIC_USV_EVIDENCE",
+        "RESEARCH_PUBLIC_ACADEMIC_PAPERS",
+        "DRAFT_SOURCE_LINKED_NAVAL_COMPARISON",
+        "DRAFT_PUBLIC_OBSIDIAN_KNOWLEDGE_NOTE"
+      ],
+      "output": "UNVERIFIED_PUBLIC_INTELLIGENCE_DOSSIER"
+    },
+    "EXTERNAL_SOFTWARE": {
+      "existingImplementation": "scripts/external-integration-agent.mjs",
+      "allowedPlanningActionsSource": "EXTERNAL_INTEGRATION_POLICY_ALLOWED_AUTONOMOUS_ACTIONS",
+      "output": "UNAPPROVED_SOURCE_PINNED_SOFTWARE_REVIEW"
+    },
+    "CORRELATED_RESEARCH": {
+      "existingImplementation": "READ_ONLY_CROSS_REFERENCE_NOT_A_RUNTIME_AGENT",
+      "allowedPlanningActions": [
+        "CROSS_REFERENCE_PUBLIC_RESEARCH",
+        "DRAFT_ENGINEERING_CAPABILITY_GAP",
+        "PROPOSE_INDEPENDENT_REVIEW_HANDOFF"
+      ],
+      "output": "DRAFT_INTELLIGENCE_TO_SOFTWARE_HANDOFF"
+    }
+  },
+  "enforcement": {
+    "publicSafeOnly": true,
+    "noAdditionalAgent": true,
+    "noNewToolPermission": true,
+    "noModelPermissionChange": true,
+    "noThirdPartyExecution": true,
+    "noAutoSoftwareApproval": true,
+    "noAutonomousPaidCompute": true,
+    "noPhysicalActuation": true,
+    "noEngineeringBaselineWrites": true,
+    "noProtectedPrMerge": true,
+    "requireExactSourceProvenance": true,
+    "requireIndependentEngineeringReview": true,
+    "originalIntegrationPolicyUnchanged": true,
+    "unknownActionHold": true
+  },
+  "verification": {
+    "requiredExternalAnnexRules": [
+      "R2.01",
+      "R2.02",
+      "R2.03",
+      "R2.04",
+      "R2.05",
+      "R2.06",
+      "R2.07",
+      "R2.08",
+      "R2.09",
+      "R2.10"
+    ],
+    "mandatoryExternalReviewRoles": [
+      "A26",
+      "A15",
+      "A23",
+      "A20",
+      "A21",
+      "A18",
+      "A24"
+    ],
+    "expectedPermissions": [
+      "READ_ONLY",
+      "BASELINE_DRAFT"
+    ],
+    "requiredCanonicalProvider": "codex_cli",
+    "noClaimOfLiveCrawlOrModelCommissioning": true
+  }
+}

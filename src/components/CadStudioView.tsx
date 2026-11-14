@@ -164,11 +164,11 @@ export const CadStudioView: React.FC<Props> = ({ particulars, onNavigate, onAskA
     : 'Preview only · no authoritative CAD loaded';
   const inspectorModule = conceptual?.module ?? 'workstream-NAV';
 
-  return <div className={focusMode ? 'studio-dark fixed inset-0 z-[60] flex flex-col overflow-hidden bg-[#0b1522] text-[#f1f5f9] p-3' : 'studio-dark flex min-h-full flex-col gap-3 bg-[#0b1522] p-3 text-[#f1f5f9] lg:p-4'}>
+  return <div className={focusMode ? 'studio-dark ns3-cad-workstage fixed inset-0 z-[60] flex flex-col overflow-hidden bg-[#0b1522] text-[#f1f5f9] p-3' : 'studio-dark ns3-cad-workstage flex min-h-full flex-col gap-3 bg-[#0b1522] p-3 text-[#f1f5f9] lg:p-4'}>
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-white/10 bg-[#122338] px-4 py-3">
       <div>
         <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-300">Product workspace / USV-01</div>
-        <h1 className="text-lg font-semibold">CAD Studio <span className="text-xs font-normal text-slate-400">X.2</span></h1>
+        <h1 className="text-lg font-semibold">CAD Studio <span className="text-xs font-normal text-slate-400">Clarity workbench</span></h1>
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <span className="rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-xs text-amber-200"><ShieldAlert size={13} className="mr-1 inline" />{activeLabel}</span>
@@ -228,7 +228,7 @@ export const CadStudioView: React.FC<Props> = ({ particulars, onNavigate, onAskA
         <p className="mb-3 text-[11px] text-slate-400">{active?'Groups parsed from local OBJ mesh':'Conceptual navigation. Items are not selectable CAD bodies.'}</p>
         {active ? groups.map(group=><button key={group} type="button" onClick={()=>chooseGroup(group)} aria-current={selected===group?'true':undefined} className={`block w-full truncate rounded px-2 py-2 text-left text-xs ${selected===group?'bg-cyan-400/20 text-cyan-100':'text-slate-300 hover:bg-white/10'}`}>{group}</button>) : conceptualAssemblies.map(item=><button key={item.id} type="button" onClick={()=>chooseGroup(item.id)} className={`block w-full rounded px-2 py-2 text-left text-xs ${selected===item.id?'bg-cyan-400/20 text-cyan-100':'text-slate-300 hover:bg-white/10'}`}>{item.label}</button>)}
       </section>}
-      <section aria-label="Hero product viewport" className="flex min-h-[400px] min-w-0 flex-1 flex-col rounded-lg border border-white/10 bg-[#132236] p-2">
+      <section aria-label="Hero product viewport" className="ns3-viewport-stage flex min-h-[400px] min-w-0 flex-1 flex-col rounded-lg border border-white/10 bg-[#132236] p-2">
         <div className="flex flex-wrap items-center justify-between gap-2 px-2 pb-2">
           <div><h2 className="text-sm font-semibold">USV-01 · Hero product</h2><p className="text-[11px] text-slate-400">{active?active.fileName:'Interactive illustrative vessel mesh'}</p></div>
           <span className="rounded border border-amber-500/30 px-2 py-1 text-[10px] uppercase tracking-wider text-amber-200">Unverified preview</span>
