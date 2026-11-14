@@ -42,6 +42,7 @@ jobs:
       - name: Validate receipt against GitHub Actions API and exact numerical evidence hash
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          SOURCE_RUN_ID: ${{ github.event.workflow_run.id }}
         run: |
           set -euo pipefail
           node --test tests/external-software-usage.test.mjs
@@ -50,6 +51,7 @@ jobs:
             --verification "$RUNNER_TEMP/candidate-evidence/verification.json" \
             --proposal-out "$RUNNER_TEMP/external-register-usage-proposal.json" \
             --overview-out "$RUNNER_TEMP/external-register-usage-overview.md" \
+            --summary-out "$RUNNER_TEMP/EXT-001-$SOURCE_RUN_ID.json" \
             | tee "$RUNNER_TEMP/usage-reconciliation-result.json"
       - name: Open review-only usage record PR (no software approval or tool activation)
         env:
@@ -69,11 +71,13 @@ jobs:
           fi
           cp "$RUNNER_TEMP/external-register-usage-proposal.json" src/data/externalSoftwareRegister.json
           cp "$RUNNER_TEMP/external-register-usage-overview.md" docs/EXTERNAL_SOFTWARE_OVERVIEW.md
+          mkdir -p evidence/external-software
+          cp "$RUNNER_TEMP/EXT-001-$SOURCE_RUN_ID.json" "evidence/external-software/EXT-001-$SOURCE_RUN_ID.json"
           node scripts/external-software-register.mjs --check
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git switch -c "$BRANCH"
-          git add src/data/externalSoftwareRegister.json docs/EXTERNAL_SOFTWARE_OVERVIEW.md
+          git add src/data/externalSoftwareRegister.json docs/EXTERNAL_SOFTWARE_OVERVIEW.md "evidence/external-software/EXT-001-$SOURCE_RUN_ID.json"
           git commit -m "docs(register): propose evidenced research sandbox use from workflow $SOURCE_RUN_ID"
           gh auth setup-git
           git push -u origin "$BRANCH"
@@ -89,5 +93,6 @@ jobs:
             ${{ runner.temp }}/external-register-usage-proposal.json
             ${{ runner.temp }}/external-register-usage-overview.md
             ${{ runner.temp }}/usage-reconciliation-result.json
+            ${{ runner.temp }}/EXT-001-*.json
           if-no-files-found: warn
           retention-days: 30
