@@ -10,37 +10,61 @@
   }
 }
 
-/* Custom scrollbars for high-density engineering dashboards */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #101e30;
-}
-::-webkit-scrollbar-thumb {
-  background: #40576b;
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #647b8f;
-}
+/* Studio scrollbars must be visible on dark backgrounds. */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #101e30; }
+::-webkit-scrollbar-thumb { background: #70859d; border-radius: 6px; border: 2px solid #101e30; }
+::-webkit-scrollbar-thumb:hover { background: #a8b9cf; }
 
-/* The legacy palette maps slate to light surfaces. Keep its look intact while
-   giving the Studio X command bar its own dark surface and readable controls. */
+/* Keep the old engineering views' light palette intact. New dark-shell
+   components use explicit scoped contrast instead of Tailwind's legacy
+   slate palette (where slate-300 is #334155, nearly invisible on navy). */
 .studio-x > div > header {
   background: #101b2a;
   border-color: #31445b;
+  min-height: 64px;
+  height: auto;
+  flex-wrap: wrap;
+  row-gap: 8px;
+  padding-block: 8px;
 }
-.studio-x > div > header .bg-slate-900 { background: #1a2a3d; }
-.studio-x > div > header .border-slate-800 { border-color: #31445b; }
-.studio-x > div > header .text-slate-100 { color: #f8fafc; }
-.studio-x > div > header .text-slate-200 { color: #e2e8f0; }
-.studio-x > div > header .text-slate-300 { color: #cbd5e1; }
-.studio-x > div > header .text-slate-400 { color: #94a3b8; }
-.studio-x > div > header .text-teal-300 { color: #5eead4; }
-.studio-x > div > header .text-emerald-300 { color: #6ee7b7; }
-.studio-x > div > header .text-sky-400 { color: #7dd3fc; }
+.studio-x .studio-dark {
+  color: #f1f5f9;
+  --studio-primary: #f1f5f9;
+  --studio-secondary: #cbd5e1;
+  --studio-muted: #a8b9cf;
+  --studio-accent: #67e8f9;
+}
+/* These are scoped to new dark workspaces only, never globally remapped. */
+.studio-x .studio-dark .text-slate-50,
+.studio-x .studio-dark .text-slate-100,
+.studio-x .studio-dark .text-slate-200 { color: #f1f5f9; }
+.studio-x .studio-dark .text-slate-300 { color: #cbd5e1; }
+.studio-x .studio-dark .text-slate-400,
+.studio-x .studio-dark .text-slate-500,
+.studio-x .studio-dark .text-slate-600 { color: #a8b9cf; }
+.studio-x .studio-dark .text-cyan-300,
+.studio-x .studio-dark .text-cyan-400 { color: #67e8f9; }
+.studio-x .studio-dark .text-teal-300,
+.studio-x .studio-dark .text-teal-400 { color: #5eead4; }
+.studio-x .studio-dark .text-emerald-300,
+.studio-x .studio-dark .text-emerald-400 { color: #6ee7b7; }
+.studio-x .studio-dark .text-sky-400 { color: #7dd3fc; }
+.studio-x .studio-dark .text-purple-300,
+.studio-x .studio-dark .text-purple-400 { color: #d8b4fe; }
+.studio-x .studio-dark .text-rose-300,
+.studio-x .studio-dark .text-rose-400 { color: #fda4af; }
+.studio-x .studio-dark .text-amber-300,
+.studio-x .studio-dark .text-amber-400 { color: #fcd34d; }
+
+.studio-x .studio-dark .bg-slate-900 { background-color: #1a2a3d; }
+.studio-x .studio-dark .bg-slate-800 { background-color: #253d56; }
+.studio-x .studio-dark .border-slate-800 { border-color: #31445b; }
+.studio-x .studio-dark .border-slate-700 { border-color: #496077; }
+.studio-x .studio-dark .hover\\:bg-slate-800:hover { background-color: #253d56; }
+.studio-x .studio-dark .hover\\:bg-slate-900:hover { background-color: #1e3249; }
+.studio-x .studio-dark input::placeholder { color: #a8b9cf; }
+.studio-x .studio-dark button { min-height: 34px; }
 
 /* X.2 engineering workstation surface contract. Legacy view-specific styles stay intact. */
 .studio-x {
@@ -51,6 +75,26 @@
   --studio-accent: #67e8f9;
   color-scheme: dark;
 }
+
+/* Comfortable is the default; large remains an immediate user control.
+   Fixed Tailwind rem utilities do not respond to a parent font-size alone. */
+.studio-x {
+  --studio-micro-font: 12px;
+  --studio-label-font: 13px;
+  --studio-xs-font: 14px;
+  --studio-sm-font: 15px;
+}
+.studio-x[data-text-size="large"] {
+  --studio-micro-font: 14px;
+  --studio-label-font: 15px;
+  --studio-xs-font: 16px;
+  --studio-sm-font: 17px;
+}
+.studio-x [class~="text-[9px]"],
+.studio-x [class~="text-[10px]"] { font-size: var(--studio-micro-font); line-height: 1.45; }
+.studio-x [class~="text-[11px]"] { font-size: var(--studio-label-font); line-height: 1.5; }
+.studio-x [class~="text-xs"] { font-size: var(--studio-xs-font); line-height: 1.5; }
+.studio-x [class~="text-sm"] { font-size: var(--studio-sm-font); line-height: 1.5; }
 .studio-x :focus-visible {
   outline: 2px solid #67e8f9;
   outline-offset: 2px;
