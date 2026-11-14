@@ -25,3 +25,19 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+/* The legacy palette maps slate to light surfaces. Keep its look intact while
+   giving the Studio X command bar its own dark surface and readable controls. */
+.studio-x > div > header {
+  background: #101b2a;
+  border-color: #31445b;
+}
+.studio-x > div > header .bg-slate-900 { background: #1a2a3d; }
+.studio-x > div > header .border-slate-800 { border-color: #31445b; }
+.studio-x > div > header .text-slate-100 { color: #f8fafc; }
+.studio-x > div > header .text-slate-200 { color: #e2e8f0; }
+.studio-x > div > header .text-slate-300 { color: #cbd5e1; }
+.studio-x > div > header .text-slate-400 { color: #94a3b8; }
+.studio-x > div > header .text-teal-300 { color: #5eead4; }
+.studio-x > div > header .text-emerald-300 { color: #6ee7b7; }
+.studio-x > div > header .text-sky-400 { color: #7dd3fc; }
