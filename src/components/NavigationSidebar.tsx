@@ -22,31 +22,8 @@ import {
   Globe
 } from 'lucide-react';
 import { WorkstreamCode } from '../types/engineering';
-
-export type NavigationModule = 
-  | 'overview'
-  | 'agent-orchestrator'
-  | 'orchestrator-tools'
-  | 'orchestrator-approvals'
-  | 'global-usv-fleet'
-  | 'external-software'
-  | 'workstream-SYS'
-  | 'workstream-NAV'
-  | 'workstream-HYD'
-  | 'workstream-MEC'
-  | 'workstream-ELE'
-  | 'workstream-PRP'
-  | 'workstream-AUT'
-  | 'workstream-VNV'
-  | 'traceability'
-  | 'simulations'
-  | 'risks-decisions'
-  | 'procurement-bom'
-  | 'knowledge-centre'
-  | 'realtime-sim'
-  | 'ship-building'
-  | 'generative-optimizer'
-  | 'notebook-lm';
+import type { NavigationModule } from '../moduleRegistry';
+export type { NavigationModule } from '../moduleRegistry';
 
 interface NavigationSidebarProps {
   currentModule: NavigationModule;

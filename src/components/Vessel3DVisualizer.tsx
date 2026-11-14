@@ -29,6 +29,8 @@ export interface Vessel3DVisualizerProps {
   status?: string;
   initialHullType?: 'CATAMARAN' | 'MONOHULL';
   showPhotoRenderToggle?: boolean;
+  showPreviewDimensions?: boolean;
+  initialZoom?: number;
   className?: string;
 }
 
@@ -58,6 +60,8 @@ export const Vessel3DVisualizer: React.FC<Vessel3DVisualizerProps> = ({
   status = 'UNVERIFIED_PREVIEW',
   initialHullType = 'MONOHULL',
   showPhotoRenderToggle = true,
+  showPreviewDimensions = true,
+  initialZoom = 1,
   className = ''
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -65,7 +69,7 @@ export const Vessel3DVisualizer: React.FC<Vessel3DVisualizerProps> = ({
   // User Interactive View State
   const [pitch, setPitch] = useState<number>(0.42); // Elevation angle in radians (~24°)
   const [yaw, setYaw] = useState<number>(0.75); // Azimuth angle in radians (~43°)
-  const [zoom, setZoom] = useState<number>(1.0);
+  const [zoom, setZoom] = useState<number>(initialZoom);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [lastMousePos, setLastMousePos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [autoRotate, setAutoRotate] = useState<boolean>(false);
@@ -1149,7 +1153,7 @@ export const Vessel3DVisualizer: React.FC<Vessel3DVisualizerProps> = ({
       </div>
 
       {/* Unverified geometry preview dimensions only; no physical verification */}
-      <div className="mt-3 pt-3 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs font-mono">
+      {showPreviewDimensions && <div className="mt-3 pt-3 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs font-mono">
         <div className="p-2 bg-slate-950 rounded border border-slate-800/60">
           <span className="text-[10px] text-slate-500 block">LENGTH OVERALL (LOA)</span>
           <span className="font-bold text-slate-200">
@@ -1174,7 +1178,7 @@ export const Vessel3DVisualizer: React.FC<Vessel3DVisualizerProps> = ({
             {displacementTonnes.toFixed(2)} tonnes
           </span>
         </div>
-      </div>
+      </div>}
     </div>
   );
 };
