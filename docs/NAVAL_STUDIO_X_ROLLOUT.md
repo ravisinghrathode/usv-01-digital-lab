@@ -1,18 +1,30 @@
-# Naval Studio X rollout
+# Naval Studio X — single-interface release
 
-Naval Studio X is an additive UI. It does not change API routes, server persistence, records, approval gates, the 26-agent registry, or existing view components and their sub-tabs. The existing sidebar and top tabs remain as the classic layout.
+**Product decision (15 November 2026): Naval Studio X is the sole supported application interface.** The previous Classic shell, duplicate top tab strip, Classic switch, persisted Classic preference and `?ui=classic` selection have been removed from the application. An old bookmark or browser preference cannot re-enable Classic after a build with this change loads.
 
-## Preview and rollback
+## Scope and non-loss contract
 
-1. Build and run the candidate branch. Open `?ui=studio` to preview Studio X. The choice is stored only as a browser preference.
-2. Use **Switch to classic layout** in the Studio X sidebar or open `?ui=classic` to return to the former shell. The classic shell includes **Try Naval Studio X**.
-3. Validate every module and its internal tabs, login, export/import, verification, and approval flows in a staged environment with representative non-sensitive records. Confirm existing records and permissions remain intact.
-4. Promote only through the project's normal branch protection and release approval. If a UI issue appears, switch clients to classic immediately and revert the UI commit in the release branch. No data migration or schema rollback is required.
+This change affects only the presentation/navigation shell. All **23 pre-existing modules** remain accessible through the one-source-of-truth `MODULE_REGISTRY`; the new CAD Studio remains the default opening module, for **24 registered modules** in total. No engineering view components, sub-tabs, data records, server API endpoints, agent execution systems, approval gates, authorization rules or CAD provenance declarations are deliberately altered.
 
-The new CAD Studio is a preview and record-navigation workspace. The procedural mesh has no authoritative geometry, configuration ID, measured dimensions, section/measurement capability, or CAD revision control. It cannot be used as design or simulation evidence. The inspector reads existing Naval Architecture register values and keeps unknowns as TBD.
+Preservation and shell invariants are covered by `tests/studioNavigation.test.tsx`, TypeScript typechecking, the production build and the repository's safety/governance CI. Release acceptance also requires an operator smoke test of every module and critical sub-tab with non-sensitive representative records.
 
-## Google AI Studio / deployed app
+## Operator experience
 
-The repository provides `AI_STUDIO_BUILD_PROMPT.md` and `docs/REPOSITORY_SYNC.md`, which describe importing or refreshing this repository in Google AI Studio Build mode. They do not identify a connected app ID, automated deployment trigger, or running deployment URL. Existing project acceptance records mark deployed source SHA sync as unverified. A GitHub PR or merge therefore does not establish an AI Studio update.
+- Open the application normally. It starts in Naval Studio X, CAD Studio.
+- Change workspace using the workspace bar; use the expandable searchable catalogue and pinned entries for every existing and future registered module.
+- Previously stored `naval-studio-x-layout=classic` preferences and `?ui=classic` links are ignored. No browser reset is necessary.
+- The existing CAD geometry is **an unverified preview, not authoritative engineering CAD or certified physics evidence**. Its status must remain clearly visible.
 
-An authorized integration owner should refresh the AI Studio source from the reviewed commit, deploy through the existing approved process, and capture the deployed app URL and authenticated running source SHA. Compare that SHA with the approved GitHub commit, then run the deployment authorization and recovery checks in `docs/COMMISSIONING_RUNBOOK.md`. Until those observations exist, report AI Studio synchronization as **unverified**.
+## Rollout and recovery
+
+1. Merge only after the protected GitHub tests and repository governance rules pass.
+2. Refresh/build/deploy the corresponding reviewed GitHub commit into the target execution environment.
+3. Verify the **running application source revision** equals the approved GitHub commit, then confirm it opens Naval Studio X without `?ui=studio`, including in a browser that previously selected Classic.
+4. Confirm module completeness (24/24, including 23 legacy), login, export/import, verification, approval flows, CAD preview labeling and data integrity.
+5. If a defect is found, **revert the UI-only commit under the normal governance process and redeploy** a verified prior build. There is no client-side Classic toggle after this change; rollback is a release action, not an in-app preference. No schema/data migration is introduced here.
+
+## Google AI Studio / deployment status
+
+The app at `https://aistudio.google.com/apps/b79d8d84-9f5e-420a-9dbc-a17f3636987b` has been identified by the operator as the target. The operator reports that it fetches from this GitHub repository. This does **not** prove that an already-running AI Studio preview automatically refreshes on every merge. The repository does not provide verified running SHA evidence or a confirmed automatic deployment trigger.
+
+After the merge, an authorized operator must refresh the AI Studio project from the reviewed `main` revision and check the running source SHA and Studio X rendering. Do not claim the AI Studio application was updated solely from a GitHub merge. See `docs/REPOSITORY_SYNC.md` and `docs/COMMISSIONING_RUNBOOK.md`.
