@@ -29,45 +29,42 @@
   padding-block: 8px;
 }
 .studio-x .studio-dark {
-  color: #f1f5f9;
-  --studio-primary: #f1f5f9;
-  --studio-secondary: #cbd5e1;
-  --studio-muted: #a8b9cf;
-  --studio-accent: #67e8f9;
+  color: var(--studio-primary);
+  color-scheme: dark;
 }
 /* These are scoped to new dark workspaces only, never globally remapped. */
 .studio-x .studio-dark .text-slate-50,
 .studio-x .studio-dark .text-slate-100,
-.studio-x .studio-dark .text-slate-200 { color: #f1f5f9; }
+.studio-x .studio-dark .text-slate-200 { color: var(--studio-primary); }
 .studio-x .studio-dark.text-slate-300,
-.studio-x .studio-dark .text-slate-300 { color: #cbd5e1; }
+.studio-x .studio-dark .text-slate-300 { color: var(--studio-secondary); }
 .studio-x .studio-dark.text-slate-400,
 .studio-x .studio-dark.text-slate-500,
 .studio-x .studio-dark.text-slate-600,
 .studio-x .studio-dark .text-slate-400,
 .studio-x .studio-dark .text-slate-500,
-.studio-x .studio-dark .text-slate-600 { color: #a8b9cf; }
+.studio-x .studio-dark .text-slate-600 { color: var(--studio-muted); }
 .studio-x .studio-dark .text-cyan-300,
-.studio-x .studio-dark .text-cyan-400 { color: #67e8f9; }
+.studio-x .studio-dark .text-cyan-400 { color: var(--studio-accent); }
 .studio-x .studio-dark .text-teal-300,
 .studio-x .studio-dark .text-teal-400 { color: #5eead4; }
 .studio-x .studio-dark .text-emerald-300,
-.studio-x .studio-dark .text-emerald-400 { color: #6ee7b7; }
+.studio-x .studio-dark .text-emerald-400 { color: var(--studio-success); }
 .studio-x .studio-dark .text-sky-400 { color: #7dd3fc; }
 .studio-x .studio-dark .text-purple-300,
 .studio-x .studio-dark .text-purple-400 { color: #d8b4fe; }
 .studio-x .studio-dark .text-rose-300,
-.studio-x .studio-dark .text-rose-400 { color: #fda4af; }
+.studio-x .studio-dark .text-rose-400 { color: var(--studio-danger); }
 .studio-x .studio-dark .text-amber-300,
-.studio-x .studio-dark .text-amber-400 { color: #fcd34d; }
+.studio-x .studio-dark .text-amber-400 { color: var(--studio-warning); }
 
-.studio-x .studio-dark .bg-slate-900 { background-color: #1a2a3d; }
+.studio-x .studio-dark .bg-slate-900 { background-color: var(--studio-field); }
 .studio-x .studio-dark .bg-slate-800 { background-color: #253d56; }
-.studio-x .studio-dark .border-slate-800 { border-color: #31445b; }
+.studio-x .studio-dark .border-slate-800 { border-color: var(--studio-border); }
 .studio-x .studio-dark .border-slate-700 { border-color: #496077; }
 .studio-x .studio-dark .hover\:bg-slate-800:hover { background-color: #253d56; }
 .studio-x .studio-dark .hover\:bg-slate-900:hover { background-color: #1e3249; }
-.studio-x .studio-dark input::placeholder { color: #a8b9cf; }
+.studio-x .studio-dark input::placeholder { color: var(--studio-muted); }
 .studio-x .studio-dark button { min-height: 44px; }
 
 /* X.2 engineering workstation surface contract. Legacy view-specific styles stay intact. */
@@ -75,9 +72,15 @@
   --studio-canvas: #0b1522;
   --studio-surface: #132236;
   --studio-elevated: #1b2d40;
-  --studio-border: rgba(226, 232, 240, 0.11);
+  --studio-border: #31445b;
+  --studio-primary: #f1f5f9;
+  --studio-secondary: #cbd5e1;
+  --studio-muted: #a8b9cf;
   --studio-accent: #67e8f9;
-  color-scheme: dark;
+  --studio-success: #6ee7b7;
+  --studio-danger: #fda4af;
+  --studio-warning: #fcd34d;
+  --studio-field: #1a2a3d;
 }
 
 /* Comfortable is the default; large remains an immediate user control.
@@ -115,7 +118,7 @@
 @media (prefers-reduced-motion: reduce) {
   .studio-x *, .studio-x *::before, .studio-x *::after { scroll-behavior: auto !important; }
   .studio-x .animate-pulse, .studio-x .animate-spin { animation: none !important; }
-  .studio-x .transition-\\[width\\] { transition-duration: 0ms !important; }
+  .studio-x [class*="transition-[width]"] { transition-duration: 0ms !important; }
 }
 @media (max-width: 480px) {
   .studio-x .studio-dark { overflow-wrap: break-word; }
