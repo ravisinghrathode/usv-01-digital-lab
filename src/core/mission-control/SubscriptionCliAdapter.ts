@@ -24,7 +24,7 @@ export interface PilotRequest {
   prompt: string;
   workingDirectory: string;
   timeoutMs?: number;
-  /** A26-only requested subscription model, never OpenAI API access. */
+  /** A26 standard GPT-6 Sol via signed-in ChatGPT, never OpenAI API access. */
   modelOverride?: typeof A26_GPT6_MODEL;
 }
 
@@ -87,7 +87,7 @@ export function validatePilotRequest(input: PilotRequest): void {
     input.role !== 'worker' || input.agentId !== A26_CODEX_AGENT_ID ||
     input.modelOverride !== A26_GPT6_MODEL ||
     selectA26SubscriptionModel(input.agentId) !== input.modelOverride
-  )) throw new SubscriptionCliUnavailable('A26 GPT-6 model override denied: ChatGPT subscription-only A26 authorization required.');
+  )) throw new SubscriptionCliUnavailable('A26 standard GPT-6 Sol model override denied: ChatGPT subscription-only A26 authorization required.');
 }
 
 /**
@@ -169,18 +169,9 @@ export async function runSubscriptionCli(input: PilotRequest): Promise<PilotResu
     );
   }
 
-  if (input.modelOverride) {
-    // GPT-6 Astra is supported only on sufficiently recent Codex CLI builds.
-    // This preflight does not call a model or consume subscription usage.
-    const version = spawnSync(spec.executable, ['--version'], {
-      cwd: input.workingDirectory, env: childEnv, encoding: 'utf8', timeout: 8000
-    });
-    const match = /^codex(?:-cli)?\s+(\d+)\.(\d+)\.(\d+)\b/im.exec(String(version.stdout || ''));
-    const versionNumber = match ? Number(match[1])*1_000_000 + Number(match[2])*1000 + Number(match[3]) : -1;
-    if (version.error || version.status !== 0 || versionNumber < 153_000) {
-      throw new SubscriptionCliUnavailable('A26 GPT-6 requires Codex CLI >= 0.153.0 with ChatGPT model entitlement. No API fallback.');
-    }
-  }
+  // Codex itself checks the requested standard GPT-6 Sol model availability.
+  // The previously imposed >=0.153.0 threshold was specific to Astra,
+  // not an evidenced minimum for Sol. Unsupported models fail the CLI run.
 
   const tmpDirectory = await mkdtemp(path.join(os.tmpdir(), 'usv-codex-final-'));
   const finalMessageFile = path.join(tmpDirectory, 'final-message.json');
