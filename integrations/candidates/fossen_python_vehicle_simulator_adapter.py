@@ -11,6 +11,8 @@ testing. They do NOT demonstrate numerical accuracy of a ship-motion model.
 import json
 import math
 import sys
+import importlib.util
+from pathlib import Path
 
 SOURCE_ROOT = "/candidate/src"
 MAX_REQUEST_BYTES = 8192
@@ -62,6 +64,20 @@ def dispatch(request, gnc):
     return {f"s{i}{j}": finite_number(float(skew[i][j]), "skew") for i in range(3) for j in range(3)}
 
 
+def load_pinned_gnc():
+    """Import exactly the reviewed file, not unneeded package __init__ modules."""
+    source = Path(SOURCE_ROOT) / "python_vehicle_simulator" / "lib" / "gnc.py"
+    if not source.is_file() or source.is_symlink():
+        raise AdapterError("expected pinned GNC source is absent or symlinked")
+    module_spec = importlib.util.spec_from_file_location("usv01_untrusted_gnc", source)
+    if module_spec is None or module_spec.loader is None:
+        raise AdapterError("candidate GNC source could not be loaded")
+    module = importlib.util.module_from_spec(module_spec)
+    sys.dont_write_bytecode = True
+    module_spec.loader.exec_module(module)
+    return module
+
+
 def main():
     raw = sys.stdin.buffer.readline(MAX_REQUEST_BYTES + 1)
     if len(raw) > MAX_REQUEST_BYTES or not raw.endswith(b"\n"):
@@ -69,15 +85,15 @@ def main():
     request = json.loads(raw)
     # Import upstream code only after validating the input, inside the isolated
     # process. Do not grant the candidate any runtime network or file writes.
-    sys.path.insert(0, SOURCE_ROOT)
-    from python_vehicle_simulator.lib import gnc
-    result = dispatch(request, gnc)
+    if not isinstance(request, dict) or request.get("operation") not in ALLOWED:
+        raise AdapterError("unsupported operation")
+    result = dispatch(request, load_pinned_gnc())
     print(json.dumps(result, allow_nan=False, separators=(",", ":")))
 
 
 if __name__ == "__main__":
     try:
         main()
-    except (AdapterError, ValueError, TypeError, ImportError, KeyError, IndexError) as exc:
+    except (AdapterError, ValueError, TypeError, ImportError, KeyError, IndexError, FileNotFoundError) as exc:
         print(f"candidate evaluation refused: {type(exc).__name__}: {exc}", file=sys.stderr)
         raise SystemExit(2)
