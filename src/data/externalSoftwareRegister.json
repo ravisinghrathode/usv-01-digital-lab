@@ -73,6 +73,123 @@
         }
       ],
       "nextAction": "Complete isolated source evaluation evidence, license/CVE review and independently accepted marine dynamics benchmarks before proposing protected registry integration."
+    },
+    {
+      "id": "EXT-002",
+      "name": "MSS-Capytaine",
+      "repository": "cybergalactic/MSS-Capytaine",
+      "domain": "POTENTIAL_FLOW_HYDRODYNAMICS",
+      "description": "Python/Capytaine boundary-element hydrodynamics workflow exporting marine 6-DOF coefficients into MSS.",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A07",
+        "A08",
+        "A15",
+        "A18",
+        "A20",
+        "A23",
+        "A24"
+      ],
+      "repositoryUrl": "https://github.com/cybergalactic/MSS-Capytaine",
+      "firstRecordedOn": "2026-11-14",
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": null,
+        "tree": null,
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "A26 shortlist: obtain pinned source revision, license/security assessment, benchmark and independent domain review before any intended use."
+    },
+    {
+      "id": "EXT-003",
+      "name": "shipcurve",
+      "repository": "ARPA-GO/shipcurve",
+      "domain": "HYDROSTATICS_CURVES",
+      "description": "Python library for ship hydrostatic curve calculation; source and numerical limits not qualified.",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A05",
+        "A06",
+        "A15",
+        "A18",
+        "A20",
+        "A23",
+        "A24"
+      ],
+      "repositoryUrl": "https://github.com/ARPA-GO/shipcurve",
+      "firstRecordedOn": "2026-11-14",
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": null,
+        "tree": null,
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "A26 shortlist: obtain pinned source revision, license/security assessment, benchmark and independent domain review before any intended use."
+    },
+    {
+      "id": "EXT-004",
+      "name": "COLREG encounter identifier",
+      "repository": "ntnu-itk-autonomous-ship-lab/collision_avoidance_identifier",
+      "domain": "AIS_COLREG_ENCOUNTER_ANALYSIS",
+      "description": "AIS-data preprocessing to classify potential head-on, crossing and overtaking maritime encounters.",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A15",
+        "A17",
+        "A18",
+        "A20",
+        "A22",
+        "A23",
+        "A24"
+      ],
+      "repositoryUrl": "https://github.com/ntnu-itk-autonomous-ship-lab/collision_avoidance_identifier",
+      "firstRecordedOn": "2026-11-14",
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": null,
+        "tree": null,
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "A26 shortlist: obtain pinned source revision, license/security assessment, benchmark and independent domain review before any intended use."
     }
   ]
 }
