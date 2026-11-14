@@ -184,7 +184,7 @@ export function isVesselEngineeringAuthorityPath(file: string): boolean {
     p === 'RELEASE_MANIFEST.json' ||
     p === 'USV01_PROJECT_CONTEXT.md' ||
     p.startsWith('data/') ||
-    p.startsWith('src/data/') ||
+    (p.startsWith('src/data/') && p !== 'src/data/externalSoftwareRegister.json') ||
     (p.startsWith('docs/MAR') && /^MAR[0-9]+_/.test(p.slice(5))) ||
     p.startsWith('docs/AUT01_') ||
     p === 'docs/CONSOLIDATED_ACCEPTANCE_REGISTER.md' ||
@@ -218,7 +218,8 @@ export function isProtectedSoftwareAuthorityPath(file: string): boolean {
     p === 'bun.lock' ||
     p === 'tsconfig.json' ||
     p === 'vite.config.ts' ||
-    p === '.gitignore';
+    p === '.gitignore' ||
+    p === 'src/data/externalSoftwareRegister.json';
 }
 
 export function isRestrictedLabResearchPath(file: string): boolean {
