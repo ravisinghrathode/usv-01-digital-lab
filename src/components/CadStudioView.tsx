@@ -161,7 +161,7 @@ export const CadStudioView: React.FC<Props> = ({ particulars, onNavigate, onAskA
             <div>Evidence state: <span className="text-amber-300">{selection.evidenceLevel}</span></div>
             <p className="text-amber-200">No approved source link or engineering metadata exists for this imported group.</p>
           </div> : <>
-            <div className="mt-3 space-y-2">{fields.map(([label,value])=><div className="flex justify-between gap-3 text-xs" key={label}><span className="text-slate-400">{label}</span><span className="font-mono">{value || 'TBD'}</span></div>)}</div>
+            <div className="mt-3 space-y-2">{fields.map(([label,value])=><div className="flex justify-between gap-3 text-xs" key={label}><span className="text-slate-400">{label}</span><span className="font-mono">{String(value ?? 'TBD')}</span></div>)}</div>
             <p className="mt-3 text-[11px] text-amber-200">Record state: {particulars.validationState}. Unverified / TBD values are from the engineering register, never inferred from illustrative geometry.</p>
           </>}
           <button type="button" onClick={()=>onNavigate(inspectorModule)} className="mt-3 flex w-full items-center justify-between rounded bg-cyan-400/15 p-2 text-xs text-cyan-200">Open engineering module <ChevronRight size={14}/></button>
