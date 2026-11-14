@@ -12,6 +12,7 @@ import { StudioCommandPalette } from './components/StudioCommandPalette';
 import { DirectorBriefing } from './components/DirectorBriefing';
 import { CadStudioView } from './components/CadStudioView';
 import { findModule } from './moduleRegistry';
+import type { SearchableRecord } from './studio/recordSearch';
 import { parseStudioTextSize, STUDIO_TEXT_PREFERENCE_KEY } from './studio/readability';
 import type { StudioTextSize } from './studio/readability';
 import { TopBar } from './components/TopBar';
@@ -136,7 +137,6 @@ export default function App() {
     window.addEventListener('keydown', keydown);
     return () => window.removeEventListener('keydown', keydown);
   }, []);
-  const [globalSearch, setGlobalSearch] = useState('');
   const [isAiOpen, setIsAiOpen] = useState(false);
   const [aiPrefillPrompt, setAiPrefillPrompt] = useState<string | undefined>();
   const [isNewRecordModalOpen, setIsNewRecordModalOpen] = useState(false);
@@ -170,6 +170,25 @@ export default function App() {
   const [powerLoads, setPowerLoads] = useState<PowerLoadItem[]>(INITIAL_POWER_LOADS);
   const [interfaces, setInterfaces] = useState<InterfaceDefinition[]>(INITIAL_INTERFACES);
   const [knowledgeNotes, setKnowledgeNotes] = useState<KnowledgeNote[]>(INITIAL_KNOWLEDGE_NOTES);
+  // In-memory search only: never fetch hidden/unauthorized data or claim server-wide coverage.
+  const loadedSearchRecords = useMemo<SearchableRecord[]>(() => [
+    ...requirements.map(r => ({ id:r.id, title:r.title, summary:r.description,
+      kind:'Requirement', module:'workstream-SYS' as const, status:r.status, illustrative:r.isIllustrative })),
+    ...decisions.map(d => ({ id:d.id, title:d.title, summary:d.problemStatement,
+      kind:'Decision', module:'risks-decisions' as const, status:d.approvalState, illustrative:d.isIllustrative })),
+    ...risks.map(r => ({ id:r.id, title:r.description, summary:r.mitigation,
+      kind:'Risk', module:'risks-decisions' as const, status:r.status, illustrative:r.isIllustrative })),
+    ...simulations.map(s => ({ id:s.id, title:s.name, summary:s.solver,
+      kind:'Simulation', module:'simulations' as const, status:s.runStatus, illustrative:s.isIllustrative })),
+    ...verificationPlans.map(v => ({ id:v.id, title:v.title, summary:v.procedureSummary,
+      kind:'Verification plan', module:'workstream-VNV' as const, status:v.status, illustrative:v.isIllustrative })),
+    ...testRecords.map(t => ({ id:t.id, title:t.planId, summary:t.measuredDataSummary,
+      kind:'Test record', module:'workstream-VNV' as const, status:t.resultStatus, illustrative:t.isIllustrative })),
+    ...components.map(c => ({ id:c.id, title:c.partNumber, summary:c.description,
+      kind:'Component', module:'procurement-bom' as const, status:c.procurementStatus, illustrative:c.isIllustrative })),
+    ...knowledgeNotes.map(n => ({ id:n.id, title:n.title, summary:(n.tags ?? []).join(' '),
+      kind:'Knowledge note', module:'knowledge-centre' as const, status:n.verificationStatus }))
+  ], [requirements,decisions,risks,simulations,verificationPlans,testRecords,components,knowledgeNotes]);
   const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
   const [verificationReport, setVerificationReport] = useState<VerificationReport | null>(null);
 
@@ -636,8 +655,7 @@ export default function App() {
         {/* Top Header Bar */}
         <TopBar
           currentModuleName={currentModuleName}
-          searchQuery={globalSearch}
-          onSearchChange={setGlobalSearch}
+          onOpenSearch={() => setCommandOpen(true)}
           currentUser={currentUser}
           onOpenLogin={() => {
             setLoginRequiredRole(undefined);
@@ -889,7 +907,7 @@ export default function App() {
       </div>
 
       {/* Universal module command search; engineering data and permissions stay with their original views. */}
-      <StudioCommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} onSelect={setCurrentModule} />
+      <StudioCommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} onSelect={setCurrentModule} records={loadedSearchRecords} />
 
       {/* AI Engineering Assistant Sliding Panel */}
       <AiEngineeringAssistant
