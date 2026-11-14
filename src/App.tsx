@@ -5,6 +5,10 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { NavigationSidebar, NavigationModule } from './components/NavigationSidebar';
+import { StudioNavigation } from './components/StudioNavigation';
+import { StudioWorkspaceBar } from './components/StudioWorkspaceBar';
+import { CadStudioView } from './components/CadStudioView';
+import { findModule } from './moduleRegistry';
 import { TopBar } from './components/TopBar';
 import { ProjectOverview } from './components/ProjectOverview';
 import { SystemsEngineeringView } from './components/SystemsEngineeringView';
@@ -90,9 +94,26 @@ import {
   INITIAL_KNOWLEDGE_NOTES
 } from './data/initialProjectData';
 
+function initialStudioLayout(): boolean {
+  const requested = new URLSearchParams(window.location.search).get('ui');
+  if (requested === 'studio') return true;
+  if (requested === 'classic') return false;
+  try { return localStorage.getItem('naval-studio-x-layout') === 'studio'; } catch { return false; }
+}
+
 export default function App() {
   // Navigation & UI state
-  const [currentModule, setCurrentModule] = useState<NavigationModule>('overview');
+  const [currentModule, setCurrentModule] = useState<NavigationModule>(() => initialStudioLayout() ? 'cad-studio' : 'overview');
+  const [studioLayout, setStudioLayout] = useState(initialStudioLayout);
+  const useStudioLayout = (enabled: boolean) => {
+    setStudioLayout(enabled);
+    if (enabled) setCurrentModule('cad-studio');
+    else if (currentModule === 'cad-studio') setCurrentModule('overview');
+    const url = new URL(window.location.href);
+    url.searchParams.delete('ui');
+    window.history.replaceState(null, '', url);
+    try { localStorage.setItem('naval-studio-x-layout', enabled ? 'studio' : 'classic'); } catch { /* Preference only. */ }
+  };
   const [globalSearch, setGlobalSearch] = useState('');
   const [isAiOpen, setIsAiOpen] = useState(false);
   const [aiPrefillPrompt, setAiPrefillPrompt] = useState<string | undefined>();
@@ -534,6 +555,7 @@ export default function App() {
 
   // Map module to display title
   const currentModuleName = useMemo(() => {
+    if (currentModule === 'cad-studio') return 'CAD Studio · Unverified Preview';
     switch (currentModule) {
       case 'overview':
         return 'Project Overview & Executive Command';
@@ -578,21 +600,21 @@ export default function App() {
       case 'generative-optimizer':
         return 'Generative Multi-Agent Design Optimization & Executive Defense';
       default:
-        return 'Digital Engineering Lab';
+        return findModule(currentModule).label;
     }
   }, [currentModule]);
 
   return (
-    <div className="flex h-screen bg-slate-950 text-slate-100 font-sans antialiased overflow-hidden">
+    <div className={`flex h-screen bg-slate-950 text-slate-100 font-sans antialiased overflow-hidden ${studioLayout ? 'studio-x' : ''}`}>
       {/* Left Persistent Navigation Sidebar */}
-      <NavigationSidebar
+      {studioLayout ? <StudioNavigation currentModule={currentModule} onSelectModule={setCurrentModule} onUseClassic={() => useStudioLayout(false)} /> : <NavigationSidebar
         currentModule={currentModule}
         onSelectModule={(mod) => setCurrentModule(mod)}
         openRequirementsCount={requirements.filter((r) => r.status !== 'Archived').length}
         openDecisionsCount={decisions.filter((d) => d.approvalState !== 'Approved').length}
         openRisksCount={risks.filter((r) => r.status === 'Open').length}
         openSimulationsCount={simulations.filter((s) => s.runStatus === 'Under Review' || s.runStatus === 'Running').length}
-      />
+      />}
 
       {/* Main Workspace Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
@@ -631,7 +653,9 @@ export default function App() {
           onOpenVerify={() => setIsVerifyModalOpen(true)}
         />
 
-        {/* Global Primary Navigation Tab Bar (Always Visible Across All Views) */}
+        {studioLayout ? <StudioWorkspaceBar currentModule={currentModule} onSelectModule={setCurrentModule} /> : <>
+        <div className="flex justify-end border-b border-cyan-500/20 bg-cyan-500/5 px-4 py-1"><button type="button" onClick={() => useStudioLayout(true)} className="text-xs font-semibold text-cyan-300 hover:underline">Try Naval Studio X →</button></div>
+        {/* Classic primary tab bar retained for rollout and rollback. */}
         <div className="bg-slate-900 border-b border-slate-800 px-4 py-2 flex items-center gap-1.5 overflow-x-auto text-xs font-mono sticky top-0 z-20 backdrop-blur-md shadow-sm">
           <span className="text-slate-400 text-[10px] uppercase tracking-wider mr-1.5 font-bold flex items-center gap-1.5 flex-shrink-0">
             <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" /> LAB TABS:
@@ -659,10 +683,11 @@ export default function App() {
               <span>{tab.label}</span>
             </button>
           ))}
-        </div>
+        </div></>}
 
         {/* Scrollable Workspace Body */}
         <main className="flex-1 overflow-y-auto bg-slate-950/60 pb-12">
+          {currentModule === 'cad-studio' && <CadStudioView particulars={particulars} onNavigate={setCurrentModule} />}
           {currentModule === 'overview' && (
             <ProjectOverview
               workstreams={workstreams}
