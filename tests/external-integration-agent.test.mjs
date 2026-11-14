@@ -123,3 +123,17 @@ test('CLI writes a controlled proposal package and rejects every execution comma
   }
  }finally{await rm(dir,{recursive:true,force:true});}
 });
+
+test('weekly A26 preparation drafts only registered, source-pinned candidates',async()=>{
+ const dir=await mkdtemp(path.join(os.tmpdir(),'usv01-a26-weekly-'));
+ try{
+  await main(['prepare-all','--out-dir',dir]);
+  const pkg=JSON.parse(await readFile(path.join(dir,'fossen-python-vehicle-simulator','governed-plan.json'),'utf8'));
+  assert.equal(pkg.repository,'cybergalactic/PythonVehicleSimulator');
+  assert.equal(pkg.disposition,'DRAFT_ONLY_NOT_EXECUTED_OR_QUALIFIED');
+  assert.equal(pkg.approved,false);
+  const py=await readFile(path.join(dir,'fossen-python-vehicle-simulator','unimplemented-adapter.py'),'utf8');
+  assert.equal(py,FAIL_CLOSED_PYTHON);
+  await assert.rejects(main(['prepare-all','--out-dir',dir,'--execute']),/prepare-all requires/);
+ }finally{await rm(dir,{recursive:true,force:true});}
+});
