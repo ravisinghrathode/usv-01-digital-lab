@@ -52,10 +52,13 @@ export function renderOverview(db){
  validateRegister(db);
  const counts=Object.fromEntries([...STATUSES].map(x=>[x,db.records.filter(r=>r.lifecycle===x).length]));
  const uses=db.records.reduce((n,r)=>n+r.actualUsage.length,0);
+ const sandbox=db.records.reduce((n,r)=>n+r.actualUsage.filter(u=>u.kind==='SANDBOX_EVALUATION').length,0);
+ const agentCalls=db.records.reduce((n,r)=>n+r.actualUsage.filter(u=>u.kind==='AGENT_TOOL_INVOCATION').length,0);
+ const baseline=db.records.reduce((n,r)=>n+r.actualUsage.filter(u=>u.kind==='ENGINEERING_BASELINE').length,0);
  const lines=['# USV-01 External Software and Repository Register','',
  '> This is a read-only snapshot generated from src/data/externalSoftwareRegister.json. No repository is approved or installed merely because it appears in this list. Actual use must have evidence.','',
  'Register: '+db.registerId+' | Custodian: '+db.custodian+' | Controlled change via GitHub PR','',
- 'Overview: '+db.records.length+' tracked | '+counts.DISCOVERED+' discovered | '+counts.EVALUATING+' evaluating | '+counts.QUALIFIED+' qualified | '+counts.INTEGRATED+' integrated | '+counts.RETIRED+' retired | '+counts.REJECTED+' rejected | '+uses+' evidenced usage events.','',
+ 'Overview: '+db.records.length+' tracked | '+counts.DISCOVERED+' discovered | '+counts.EVALUATING+' evaluating | '+counts.QUALIFIED+' qualified | '+counts.INTEGRATED+' integrated | '+counts.RETIRED+' retired | '+counts.REJECTED+' rejected | '+uses+' evidenced usage events ('+sandbox+' research sandbox, '+agentCalls+' agent invocations, '+baseline+' accepted engineering uses).','',
  '| ID | Repository | Domain | Lifecycle | Adoption | Installation | Review agents | Planned projects | Evidenced uses | Source evidence |',
  '| --- | --- | --- | --- | --- | --- | --- | --- | ---: | --- |'];
  for(const r of [...db.records].sort((a,b)=>a.id.localeCompare(b.id))){
