@@ -1,0 +1,53 @@
+name: USV-01 Fossen Isolated GNC Evaluation (manual, research-only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      risk_ack:
+        description: 'Type I_ACKNOWLEDGE_DISPOSABLE_THIRD_PARTY_EXECUTION to enable a research-only sandbox run'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  evaluate:
+    name: Disposable source-pinned software smoke test (NO vessel authority)
+    if: github.ref == 'refs/heads/main' && inputs.risk_ack == 'I_ACKNOWLEDGE_DISPOSABLE_THIRD_PARTY_EXECUTION'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out reviewed lab source without persisted credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify independent runner/authorization test contracts
+        run: node --test tests/repository-integration*.test.mjs tests/prepare-fossen-runtime.test.mjs
+      - name: Build a measured local image and run upstream GNC in isolated Docker
+        env:
+          FOSSEN_RISK_ACK: ${{ inputs.risk_ack }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: bash scripts/run-fossen-evaluation.sh
+      - name: Preserve evidence; never upload upstream source, image, or credentials
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fossen-unverified-disposable-smoke-evidence
+          path: |
+            ${{ runner.temp }}/fossen-evaluation/intake.json
+            ${{ runner.temp }}/fossen-evaluation/stage.json
+            ${{ runner.temp }}/fossen-evaluation/runner-provenance.json
+            ${{ runner.temp }}/fossen-evaluation/runtime-manifest.json
+            ${{ runner.temp }}/fossen-evaluation/image-id.txt
+            ${{ runner.temp }}/fossen-evaluation/verification.json
+            ${{ runner.temp }}/fossen-evaluation/proposal.json
+            ${{ runner.temp }}/fossen-evaluation/REVIEW.md
+          if-no-files-found: warn
+          retention-days: 30

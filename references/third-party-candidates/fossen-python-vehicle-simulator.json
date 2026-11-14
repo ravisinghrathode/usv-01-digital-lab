@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "fossen-python-vehicle-simulator",
+  "repository": "cybergalactic/PythonVehicleSimulator",
+  "commit": "a93d1938ba1f78f2580c24c73f003091b2f03cd0",
+  "toolId": "TOOL-EXT-FOSSEN-GNC-SIMULATION",
+  "purpose": "Inspect the pinned Fossen marine GNC source for offline research; no software execution or vessel control.",
+  "agents": [
+    "A08",
+    "A15",
+    "A16",
+    "A17",
+    "A18",
+    "A20",
+    "A21",
+    "A23",
+    "A24",
+    "A26"
+  ]
+}

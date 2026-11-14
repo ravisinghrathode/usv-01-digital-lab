@@ -1,0 +1,90 @@
+name: USV-01 Fossen Static Intake (no third-party execution)
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/repository-integration.mjs'
+      - 'scripts/prepare-fossen-runtime.mjs'
+      - 'scripts/run-fossen-evaluation.sh'
+      - 'tests/prepare-fossen-runtime.test.mjs'
+      - 'tests/repository-source-manifest.test.mjs'
+      - 'tests/repository-integration-intake.test.mjs'
+      - 'tests/test_fossen_adapter_isolation.py'
+      - 'integrations/candidates/fossen_python_vehicle_simulator_adapter.py'
+      - 'references/third-party-candidates/fossen-python-vehicle-simulator.json'
+      - '.github/workflows/repository-first-intake.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-intake:
+    name: Exact-SHA source inspection only
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test inspection-only and executable gates
+        run: node --test tests/repository-integration*.test.mjs tests/repository-scout.test.mjs tests/prepare-fossen-runtime.test.mjs tests/repository-source-manifest.test.mjs
+      - name: Check manual-only runner script cannot execute accidentally
+        run: |
+          bash -n scripts/run-fossen-evaluation.sh
+          if bash scripts/run-fossen-evaluation.sh > "$RUNNER_TEMP/refused-runner.txt" 2>&1; then
+            echo 'Runner unexpectedly executed without human acknowledgement' >&2
+            exit 1
+          fi
+          grep -q 'Refusing evaluation' "$RUNNER_TEMP/refused-runner.txt"
+      - name: Test trusted adapter isolation without upstream execution
+        run: python3 -m unittest discover -s tests -p 'test_fossen*.py' -v
+      - name: Resolve pinned public commit and immutable Git tree
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          node scripts/repository-integration.mjs intake
+          --spec references/third-party-candidates/fossen-python-vehicle-simulator.json
+          --out-dir "$RUNNER_TEMP/fossen-intake"
+      - name: Fetch exact source SHA and inspect without executing third-party code
+        run: >-
+          node scripts/repository-integration.mjs stage
+          --spec references/third-party-candidates/fossen-python-vehicle-simulator.json
+          --out-dir "$RUNNER_TEMP/fossen-intake"
+      - name: Require source tree matches API receipt
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          const root=process.env.RUNNER_TEMP+'/fossen-intake/';
+          const intake=JSON.parse(fs.readFileSync(root+'intake.json','utf8'));
+          const stage=JSON.parse(fs.readFileSync(root+'stage.json','utf8'));
+          if(intake.commit!==stage.commit || intake.tree!==stage.tree ||
+             intake.repository!==stage.repo || stage.dynamicExecution!==false || stage.approved!==false)
+             throw Error('Exact-tree mismatch or unexpected third-party execution');
+          console.log(JSON.stringify({phase:'SOURCE_TREE_VERIFIED',repo:stage.repo,commit:stage.commit,
+             tree:stage.tree,sourceFiles:stage.inspected.fileCount,externalCodeExecuted:false,approved:false}));
+          JS
+      - name: Create unverified integration proposal
+        run: >-
+          node scripts/repository-integration.mjs propose
+          --spec references/third-party-candidates/fossen-python-vehicle-simulator.json
+          --out-dir "$RUNNER_TEMP/fossen-intake"
+      - name: Delete untrusted source before artifact handling
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/fossen-intake/source"
+      - name: Preserve immutable-source investigation evidence (NOT validation)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fossen-source-inspection-unverified
+          path: |
+            ${{ runner.temp }}/fossen-intake/intake.json
+            ${{ runner.temp }}/fossen-intake/stage.json
+            ${{ runner.temp }}/fossen-intake/proposal.json
+            ${{ runner.temp }}/fossen-intake/REVIEW.md
+          if-no-files-found: error
+          retention-days: 30
