@@ -9,6 +9,7 @@ import { StudioNavigation } from './components/StudioNavigation';
 import { StudioWorkspaceBar } from './components/StudioWorkspaceBar';
 import { CadStudioView } from './components/CadStudioView';
 import { findModule } from './moduleRegistry';
+import { resolveInitialStudioLayout } from './studioLayoutPreference';
 import { TopBar } from './components/TopBar';
 import { ProjectOverview } from './components/ProjectOverview';
 import { SystemsEngineeringView } from './components/SystemsEngineeringView';
@@ -96,9 +97,9 @@ import {
 
 function initialStudioLayout(): boolean {
   const requested = new URLSearchParams(window.location.search).get('ui');
-  if (requested === 'studio') return true;
-  if (requested === 'classic') return false;
-  try { return localStorage.getItem('naval-studio-x-layout') === 'studio'; } catch { return false; }
+  let stored: string | null = null;
+  try { stored = localStorage.getItem('naval-studio-x-layout'); } catch { /* Preference storage unavailable. */ }
+  return resolveInitialStudioLayout(requested, stored);
 }
 
 export default function App() {
