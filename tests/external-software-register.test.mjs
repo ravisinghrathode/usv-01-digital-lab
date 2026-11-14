@@ -8,7 +8,7 @@ const clone=x=>JSON.parse(JSON.stringify(x));
 const candidate={name:'research/NewVesselTool',url:'https://github.com/research/NewVesselTool',description:'Example unreviewed research metadata',
   categories:['marine-simulation'],agentReviewers:['A08','A26'],licenseSpdx:'MIT',score:95};
 test('curated catalog validates; Fossen is not approved, installed or project-used',()=>{
- assert.equal(db.records.length,1);
+ assert.equal(db.records.length,4);
  const r=db.records[0];
  assert.equal(r.id,'EXT-001');
  assert.equal(r.lifecycle,'EVALUATING');
@@ -20,7 +20,7 @@ test('curated catalog validates; Fossen is not approved, installed or project-us
 });
 test('overview reports planned use separately from actual execution',()=>{
  const s=renderOverview(db);
- assert.match(s,/1 tracked/);
+ assert.match(s,/4 tracked/);
  assert.match(s,/0 evidenced usage events/);
  assert.match(s,/EXT-001/);
  assert.match(s,/zero evidenced uses/);
@@ -50,8 +50,8 @@ test('Scout only proposes new discoveries; never changes existing qualification'
    candidate]};
  const {proposed,newCount}=reconcileScout(db,report);
  assert.equal(newCount,1);
- assert.equal(db.records.length,1);
- assert.equal(proposed.records.length,2);
+ assert.equal(db.records.length,4);
+ assert.equal(proposed.records.length,5);
  const fresh=proposed.records.find(r=>r.repository==='research/NewVesselTool');
  assert.equal(fresh.lifecycle,'DISCOVERED');
  assert.equal(fresh.source.commit,null);
@@ -62,7 +62,7 @@ test('Scout only proposes new discoveries; never changes existing qualification'
 });
 test('reject fixture reports and malformed/duplicate upstream metadata',()=>{
  assert.throws(()=>reconcileScout(db,{provider:'OFFLINE_TEST_FIXTURE',candidates:[candidate]}),/invalid\/fixture/);
- const x=clone(db);x.records.push({...x.records[0],id:'EXT-002'});
+ const x=clone(db);x.records.push({...x.records[0],id:'EXT-005'});
  assert.throws(()=>validateRegister(x),/duplicate upstream/);
  const r=reconcileScout(db,{provider:'OFFLINE_TEST_FIXTURE',candidates:[candidate]},{allowFixture:true});
  assert.equal(r.newCount,1);
