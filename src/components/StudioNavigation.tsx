@@ -133,7 +133,10 @@ export const StudioNavigation: React.FC<Props> = ({ currentModule, onSelectModul
           <ChevronLeft size={19} aria-hidden="true"/>
         </button>
         <button type="button" className="ns3-icon-button ns3-compact"
-          aria-label="Expand navigation" onClick={toggleRail} title="Expand navigation">
+          aria-label="Expand navigation or find modules" onClick={() => {
+            if (window.innerWidth < 1200 && onOpenCommand) onOpenCommand();
+            else toggleRail();
+          }} title="Expand navigation or find modules">
           <ChevronRight size={19} aria-hidden="true"/>
         </button>
       </div>
@@ -174,7 +177,7 @@ export const StudioNavigation: React.FC<Props> = ({ currentModule, onSelectModul
       <div className="ns3-compact flex-1 flex-col items-center gap-1 py-3">
         <button type="button" className="ns3-railbtn" aria-label="Search modules"
           title="Search modules" onClick={onOpenCommand ?? toggleRail}><Search size={21}/></button>
-        {DEFAULT_PINS.map(id => <button type="button" key={id}
+        {pins.map(id => <button type="button" key={id}
           className="ns3-railbtn" aria-current={currentModule === id ? 'page' : undefined}
           aria-label={MODULE_REGISTRY.find(m => m.id === id)?.label}
           title={MODULE_REGISTRY.find(m => m.id === id)?.label} onClick={() => select(id)}>{iconFor(id)}</button>)}
