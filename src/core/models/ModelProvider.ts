@@ -365,7 +365,7 @@ export class CodexCliProvider implements IModelProvider {
     }
     const serverOnlyAdapter = '../mission-control/' + 'SubscriptionCliAdapter.ts';
     const { runSubscriptionCli } = await import(/* @vite-ignore */ serverOnlyAdapter);
-    // Only A26 may explicitly request GPT-6 via the ChatGPT-signed-in Codex CLI.
+    // A26 uses standard GPT-6 Sol by default in an authorized ChatGPT-signed-in Codex research session.
     // This selection is not proof of the model the service actually used.
     const requestedModel = selectA26SubscriptionModel(request.context?.agentId);
     const result = await runSubscriptionCli({
@@ -395,14 +395,14 @@ export class CodexCliProvider implements IModelProvider {
     return {
       content, parsedJson, providerUsed: 'codex_cli',
       modelUsed: requestedModel
-        ? 'gpt-6-astra-requested-via-subscription-model-unverified'
+        ? 'gpt-6-sol-requested-via-subscription-model-unverified'
         : 'codex-signed-in-session-model-unverified',
       executionMode: 'LIVE_AI_GENERATION',
       isMock: false, isAiReview: true, evidenceValid: false,
       correlationId: request.correlationId,
       timestamp: new Date().toISOString(),
       statusMessage: requestedModel
-        ? 'A26 requested GPT-6 Astra using a ChatGPT-signed-in CLI; actual model identity and engineering evidence not independently attested.'
+        ? 'A26 requested standard GPT-6 Sol using a ChatGPT-signed-in CLI; actual model identity and engineering evidence not independently attested.'
         : 'Local signed-in Codex CLI output; model identity and engineering evidence not independently attested.'
     };
   }
