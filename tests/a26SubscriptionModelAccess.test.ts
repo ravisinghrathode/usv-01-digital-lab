@@ -12,10 +12,10 @@ afterEach(()=>{
   Object.assign(process.env,original);
 });
 function allowSubscription(){
-  process.env.USV_A26_GPT6_SUBSCRIPTION='enabled';
   process.env.USV_ALLOW_PAID_AI_API='false';
   process.env.AI_REVIEW_PROVIDER='codex_cli';
   process.env.USV_SUBSCRIPTION_PILOT='enabled';
+  delete process.env.USV_A26_GPT6_SUBSCRIPTION;
   delete process.env.USV_ENGINEERING_RELEASE_AUTHORIZED;
   delete process.env.USV_NO_PAID_API;
 }
@@ -24,20 +24,26 @@ const req=()=>({
   prompt:'Draft an unapproved source assessment of public marine software.',
   workingDirectory:'/tmp/usv01-repo',modelOverride:A26_GPT6_MODEL
 });
-describe('A26 GPT-6 Astra on ChatGPT subscription only',()=>{
- it('is disabled by default and cannot grant model access to other agents',()=>{
-  delete process.env.USV_A26_GPT6_SUBSCRIPTION;
-  expect(selectA26SubscriptionModel(A26_CODEX_AGENT_ID)).toBeUndefined();
+describe('A26 standard GPT-6 Sol via ChatGPT subscription; no API',()=>{
+ it('selects standard GPT-6 by default in an authorized subscription session without Astra opt-in',()=>{
   allowSubscription();
+  expect(A26_GPT6_MODEL).toBe('gpt-6-sol');
+  expect(selectA26SubscriptionModel(A26_CODEX_AGENT_ID)).toBe('gpt-6-sol');
+  process.env.USV_A26_GPT6_SUBSCRIPTION='disabled';
+  expect(selectA26SubscriptionModel(A26_CODEX_AGENT_ID)).toBe('gpt-6-sol');
   for(const id of ['A01','A20','A26','SYS-LEAD-01','UNTRUSTED','INTEL-USV-25',null])
-   expect(selectA26SubscriptionModel(id)).toBeUndefined();
-  expect(selectA26SubscriptionModel(A26_CODEX_AGENT_ID)).toBe('gpt-6-astra');
+    expect(selectA26SubscriptionModel(id)).toBeUndefined();
  });
- it('rejects paid API use, misleading provider and uncommissioned subscription pilot',()=>{
+ it('cannot request a model without the user-authorized Codex research pilot',()=>{
+  delete process.env.USV_SUBSCRIPTION_PILOT;
+  expect(()=>selectA26SubscriptionModel(A26_CODEX_AGENT_ID)).toThrow(/HOLD/);
   allowSubscription();
+  delete process.env.USV_SUBSCRIPTION_PILOT;
+  expect(()=>selectA26SubscriptionModel(A26_CODEX_AGENT_ID)).toThrow(/HOLD/);
+ });
+ it('rejects paid API mode and wrong provider',()=>{
   for(const change of [
     ()=>{process.env.USV_ALLOW_PAID_AI_API='true';},
-    ()=>{delete process.env.USV_ALLOW_PAID_AI_API;},
     ()=>{process.env.AI_REVIEW_PROVIDER='openai';},
     ()=>{process.env.AI_REVIEW_PROVIDER='gemini_cli';},
     ()=>{delete process.env.USV_SUBSCRIPTION_PILOT;},
@@ -46,8 +52,11 @@ describe('A26 GPT-6 Astra on ChatGPT subscription only',()=>{
    allowSubscription();change();
    expect(()=>selectA26SubscriptionModel(A26_CODEX_AGENT_ID)).toThrow(/HOLD/);
   }
+  allowSubscription();
+  delete process.env.USV_ALLOW_PAID_AI_API; // The existing subscription policy defaults paid API to DENY.
+  expect(selectA26SubscriptionModel(A26_CODEX_AGENT_ID)).toBe('gpt-6-sol');
  });
- it('preserves canonical 26-agent registry, A26 prompt, permissions and Codex route',()=>{
+ it('preserves 26 agents, A26 prompt, permissions and existing Codex route',()=>{
   const a26=MASTER_AGENTS.find(a=>a.canonicalId==='A26');
   expect(MASTER_AGENTS).toHaveLength(26);
   expect(a26?.id).toBe(A26_CODEX_AGENT_ID);
@@ -56,29 +65,29 @@ describe('A26 GPT-6 Astra on ChatGPT subscription only',()=>{
   expect(a26?.permittedTools.some(t=>t.includes('EXT'))).toBe(false);
   expect(resolveModelProviderForTask(a26!.modelConfig,'openai')).toBe('codex_cli');
  });
- it('permits only the signed-in A26 worker to request model override',()=>{
+ it('permits only A26 worker to send the GPT-6 Sol override',()=>{
   allowSubscription();
   expect(()=>validatePilotRequest(req())).not.toThrow();
   expect(()=>validatePilotRequest({...req(),agentId:'INTEL-USV-25'})).toThrow(/model override denied/);
   expect(()=>validatePilotRequest({...req(),role:'reviewer'})).toThrow(/model override denied/);
-  expect(()=>validatePilotRequest({...req(),modelOverride:'gpt-6-luna' as typeof A26_GPT6_MODEL})).toThrow(/model override denied/);
-  process.env.USV_A26_GPT6_SUBSCRIPTION='disabled';
-  expect(()=>validatePilotRequest(req())).toThrow(/model override denied/);
+  expect(()=>validatePilotRequest({...req(),modelOverride:'gpt-6-astra' as typeof A26_GPT6_MODEL})).toThrow(/model override denied/);
+  delete process.env.USV_SUBSCRIPTION_PILOT;
+  expect(()=>validatePilotRequest(req())).toThrow();
  });
- it('uses Codex CLI model flag, not an API endpoint or arbitrary shell',()=>{
+ it('passes an explicit standard GPT-6 model flag in Codex, never the Astra model or API',()=>{
   const args=SAFE_ROLES.worker.args('Research only','/tmp/answer.json',A26_GPT6_MODEL);
   expect(args).toEqual(['exec','--sandbox','read-only','--ephemeral','--output-last-message',
-    '/tmp/answer.json','--model','gpt-6-astra','Research only']);
+    '/tmp/answer.json','--model','gpt-6-sol','Research only']);
   expect(SAFE_ROLES.worker.executable).toBe('codex');
+  expect(args).not.toContain('gpt-6-astra');
   expect(args).not.toContain('--dangerously-bypass-approvals-and-sandbox');
   const defaults=SAFE_ROLES.worker.args('Research only','/tmp/answer.json');
   expect(defaults).not.toContain('--model');
  });
- it('removes API credentials even when the model opt-in is present',()=>{
+ it('strips API credentials even if the host has separately billed API variables',()=>{
   const e=sanitizedSubscriptionEnvironment({
-    PATH:'/usr/bin',USV_A26_GPT6_SUBSCRIPTION:'enabled',
-    OPENAI_API_KEY:'must-not-leak',GEMINI_API_KEY:'must-not-leak',
-    USV_ALLOW_PAID_AI_API:'true'
+    PATH:'/usr/bin',OPENAI_API_KEY:'must-not-leak',
+    GEMINI_API_KEY:'must-not-leak',USV_ALLOW_PAID_AI_API:'true'
   });
   expect(e.OPENAI_API_KEY).toBeUndefined();
   expect(e.GEMINI_API_KEY).toBeUndefined();
