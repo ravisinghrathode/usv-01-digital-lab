@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "open-echo-sonar",
+  "repository": "Neumi/open_echo",
+  "commit": "0c4e6e78895fdc39a5e90dedaa16e225f1c3c4b7",
+  "sourceTree": "38da4ec2e072eccf94c0d8c14b27d141a61bd3f2",
+  "toolId": "TOOL-EXT-OPEN-ECHO",
+  "purpose": "Evaluate research sonar controller interfaces using public specifications; unknown licensing blocks executable intake.",
+  "agents": [
+    "A12",
+    "A15",
+    "A16",
+    "A18",
+    "A20",
+    "A21",
+    "A23",
+    "A24",
+    "A26"
+  ],
+  "sourceOfEvidence": "https://github.com/Neumi/open_echo/tree/0c4e6e78895fdc39a5e90dedaa16e225f1c3c4b7",
+  "execution": "NOT_AUTHORIZED",
+  "approval": "NOT_APPROVED",
+  "evidenceClassification": "STATIC_RESEARCH_ONLY"
+}
