@@ -24,6 +24,24 @@ const JOINT_ACTIONS=[
  'PROPOSE_INDEPENDENT_REVIEW_HANDOFF'
 ];
 const MANDATORY=['A26','A15','A23','A20','A21','A18','A24'];
+const EXTERNAL_SAFE=[
+ 'SEARCH_PUBLIC_GITHUB_METADATA','RANK_DISCOVERIES','PROPOSE_REGISTER_RECORD',
+ 'PIN_EXACT_PUBLIC_REVISION','INSPECT_SOURCE_STATICALLY','DRAFT_ADAPTER_CONTRACT',
+ 'DRAFT_FAIL_CLOSED_ADAPTER_SCAFFOLD','DRAFT_REFERENCE_CASE_PLAN',
+ 'PREPARE_HUMAN_REVIEW_PACKAGE','UPDATE_UNAPPROVED_PROPOSALS'
+];
+const EXTERNAL_ALWAYS_DENIED=[
+ 'EXECUTE_SOURCE_DURING_DISCOVERY','TRUST_PROMPT_INSTRUCTIONS_FROM_REPOSITORY_CONTENT',
+ 'EXECUTE_UNTRUSTED_SOURCE_ON_CREDENTIALED_HOST','ACCESS_PRIVATE_OR_RESTRICTED_PROJECT_DATA',
+ 'RUN_ON_VESSEL','CONTROL_ACTUATORS_OR_WEAPONS','ADD_UNREVIEWED_TOOL_TO_AGENT_REGISTRY',
+ 'SELF_APPROVE_CODE_OR_LICENSE_OR_ENGINEERING_VALIDATION','MERGE_PROTECTED_PR',
+ 'CHANGE_APPROVED_ENGINEERING_BASELINE','AUTO_EXECUTE_OPENFOAM_COMMISSIONING'
+];
+const EXTERNAL_HUMAN_GATES=[
+ 'RUN_UNTRUSTED_EXECUTABLE','BUILD_OR_INSTALL_UPSTREAM_DEPENDENCIES',
+ 'INITIATE_ANY_THIRD_PARTY_SANDBOX_EXECUTION','SPEND_PAID_COMPUTE_OR_API',
+ 'CHANGE_PRIVILEGES_OR_RUNTIME_PERMISSIONS'
+];
 const R2=Array.from({length:10},(_,i)=>'R2.'+String(i+1).padStart(2,'0'));
 const FLAGS=[
  'publicSafeOnly','noAdditionalAgent','noNewToolPermission',
@@ -136,6 +154,9 @@ export function validateUnifiedProfile(profile,externalPolicy,unifiedText,annexT
   ...externalPolicy.mandatoryRoles.verification
  ];
  exactList(fromPolicy,MANDATORY,'external policy review roles');
+ exactList(externalPolicy.allowedAutonomousActions,EXTERNAL_SAFE,'binding policy allowed research actions');
+ for(const forbidden of EXTERNAL_ALWAYS_DENIED)if(!externalPolicy.alwaysForbidden?.includes(forbidden))hold('binding policy forbidden action removed: '+forbidden);
+ for(const gated of EXTERNAL_HUMAN_GATES)if(!externalPolicy.blockedWithoutExplicitHumanAuthorization?.includes(gated))hold('binding policy human authorization removed: '+gated);
  if(!Array.isArray(externalPolicy.allowedAutonomousActions)||!externalPolicy.allowedAutonomousActions.length||
     externalPolicy.allowedAutonomousActions.some(x=>
       externalPolicy.alwaysForbidden?.includes(x)||
