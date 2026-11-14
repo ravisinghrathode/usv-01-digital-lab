@@ -39,7 +39,11 @@
 .studio-x .studio-dark .text-slate-50,
 .studio-x .studio-dark .text-slate-100,
 .studio-x .studio-dark .text-slate-200 { color: #f1f5f9; }
+.studio-x .studio-dark.text-slate-300,
 .studio-x .studio-dark .text-slate-300 { color: #cbd5e1; }
+.studio-x .studio-dark.text-slate-400,
+.studio-x .studio-dark.text-slate-500,
+.studio-x .studio-dark.text-slate-600,
 .studio-x .studio-dark .text-slate-400,
 .studio-x .studio-dark .text-slate-500,
 .studio-x .studio-dark .text-slate-600 { color: #a8b9cf; }
@@ -64,7 +68,7 @@
 .studio-x .studio-dark .hover\:bg-slate-800:hover { background-color: #253d56; }
 .studio-x .studio-dark .hover\:bg-slate-900:hover { background-color: #1e3249; }
 .studio-x .studio-dark input::placeholder { color: #a8b9cf; }
-.studio-x .studio-dark button { min-height: 34px; }
+.studio-x .studio-dark button { min-height: 44px; }
 
 /* X.2 engineering workstation surface contract. Legacy view-specific styles stay intact. */
 .studio-x {
@@ -106,10 +110,13 @@
   opacity: 0.45;
   cursor: not-allowed;
 }
+/* Reduce decorative motion while keeping visible state feedback.
+   Canvas animation also obeys this preference in Vessel3DVisualizer. */
 @media (prefers-reduced-motion: reduce) {
-  .studio-x *, .studio-x *::before, .studio-x *::after {
-    scroll-behavior: auto !important;
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
+  .studio-x *, .studio-x *::before, .studio-x *::after { scroll-behavior: auto !important; }
+  .studio-x .animate-pulse, .studio-x .animate-spin { animation: none !important; }
+  .studio-x .transition-\\[width\\] { transition-duration: 0ms !important; }
+}
+@media (max-width: 480px) {
+  .studio-x .studio-dark { overflow-wrap: break-word; }
 }
