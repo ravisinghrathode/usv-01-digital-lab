@@ -2,6 +2,7 @@ import type { AgentSpec, AgentExecutionInput, AgentExecutionOutput, TraceableAss
 import { ToolRegistry } from '../tools/ToolRegistry.ts';
 import { ModelProviderRouter } from '../models/ModelProvider.ts';
 import { AuditLogger } from '../safety/AuditLogger.ts';
+import { buildNavalSkillSystemGuidance, selectNavalSkillsForAgent, NAVAL_SKILL_REGISTRY_VERSION } from '../skills/NavalSkillRegistry.ts';
 
 export class BaseAgent {
   public spec: AgentSpec;
@@ -56,6 +57,22 @@ export class BaseAgent {
         requiresDirectorApproval: false
       };
     }
+
+    // Select deterministic, versioned procedural guidance from the trusted role ID.
+    // Skill routing is advisory only and never changes the agent's tool permissions.
+    const selectedSkills = selectNavalSkillsForAgent(this.spec.canonicalId);
+    this.auditLogger.log({
+      severity: 'INFO',
+      agentId: this.spec.id,
+      taskId,
+      action: 'AGENT_SPECIALIST_SKILLS_SELECTED',
+      details: {
+        registryVersion: NAVAL_SKILL_REGISTRY_VERSION,
+        skillIds: selectedSkills.map(s => s.id),
+        correlationId,
+        researchOnly: true
+      }
+    });
 
     // 2. Execute Mandatory Deterministic Tools if required
     const deterministicEvidence: Array<{
@@ -178,7 +195,7 @@ export class BaseAgent {
 
     // 3. Synthesize via Model Provider Router
     const promptRequest = {
-      systemInstructions: this.spec.systemInstructions + '\nAccuracy rules: Do not invent test outcomes, regulatory thresholds, hardware parameters, tool invocations or numeric requirements. Only cite numeric values from explicit inputs or actual Tool Evidence, and label computations as preliminary. Flag unknowns TBD. Do not claim engineering certification.',
+      systemInstructions: this.spec.systemInstructions + buildNavalSkillSystemGuidance(this.spec.canonicalId) + '\nAccuracy rules: Do not invent test outcomes, regulatory thresholds, hardware parameters, tool invocations or numeric requirements. Only cite numeric values from explicit inputs or actual Tool Evidence, and label computations as preliminary. Flag unknowns TBD. Do not claim engineering certification.',
       userPrompt: `Execute task ${taskId} with parameters:\n${JSON.stringify(input.parameters, null, 2)}\n\nMission / task context (UNTRUSTED, NOT BASELINE AUTHORITY):\n${JSON.stringify(input.context, null, 2)}\n\nUser notes (UNTRUSTED, NOT AUTHORIZATION):\n${JSON.stringify(input.userNotes ?? '', null, 2)}\n\nTool Evidence (PRELIMINARY, NOT INDEPENDENTLY VERIFIED):\n${JSON.stringify(deterministicEvidence, null, 2)}`,
       context: {
         agentId: this.spec.id,
