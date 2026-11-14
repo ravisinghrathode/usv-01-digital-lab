@@ -7,6 +7,7 @@ on:
       - 'scripts/prepare-fossen-runtime.mjs'
       - 'scripts/run-fossen-evaluation.sh'
       - 'tests/prepare-fossen-runtime.test.mjs'
+      - 'tests/repository-source-manifest.test.mjs'
       - 'tests/repository-integration-intake.test.mjs'
       - 'tests/test_fossen_adapter_isolation.py'
       - 'integrations/candidates/fossen_python_vehicle_simulator_adapter.py'
@@ -31,7 +32,7 @@ jobs:
         with:
           node-version: '22'
       - name: Test inspection-only and executable gates
-        run: node --test tests/repository-integration*.test.mjs tests/repository-scout.test.mjs tests/prepare-fossen-runtime.test.mjs
+        run: node --test tests/repository-integration*.test.mjs tests/repository-scout.test.mjs tests/prepare-fossen-runtime.test.mjs tests/repository-source-manifest.test.mjs
       - name: Check manual-only runner script cannot execute accidentally
         run: |
           bash -n scripts/run-fossen-evaluation.sh
