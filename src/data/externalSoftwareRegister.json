@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "registerId": "USV01-EXT-SOFTWARE-001",
+  "sourceOfTruth": "GITHUB_PROTECTED_MAIN",
+  "custodian": "A26",
+  "maintenance": "PROPOSED_CHANGES_REQUIRE_PROTECTED_PR_REVIEW",
+  "notes": "Curated public-source-only metadata. This register is not a software certification, engineering approval, or active vessel configuration. Never store proprietary source, credentials, or restricted evidence here.",
+  "records": [
+    {
+      "id": "EXT-001",
+      "name": "Fossen Python Vehicle Simulator",
+      "repository": "cybergalactic/PythonVehicleSimulator",
+      "repositoryUrl": "https://github.com/cybergalactic/PythonVehicleSimulator",
+      "domain": "MARINE_SIMULATION_GNC",
+      "description": "Python USV/AUV/ship models and marine GNC research functions, including the Otter USV example.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A08",
+        "A15",
+        "A16",
+        "A17",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "EVALUATING",
+      "source": {
+        "commit": "a93d1938ba1f78f2580c24c73f003091b2f03cd0",
+        "tree": "80feeef4a79bbc23b539d47a0cae20ea41abb600",
+        "verifiedEvidence": "https://github.com/ravisinghrathode/usv-01-digital-lab/actions/runs/43588332612"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "PENDING",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": "TOOL-EXT-FOSSEN-GNC-SIMULATION",
+      "plannedUsage": [
+        {
+          "project": "USV-01",
+          "agents": [
+            "A08",
+            "A16",
+            "A17"
+          ],
+          "purpose": "Compare elementary marine GNC functions and investigate manoeuvring simulator applicability",
+          "sourceEvidence": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/89"
+        }
+      ],
+      "actualUsage": [],
+      "evidence": [
+        {
+          "type": "PINNED_SOURCE_INSPECTION",
+          "url": "https://github.com/ravisinghrathode/usv-01-digital-lab/actions/runs/43588332612",
+          "status": "PASSED_STATIC_ONLY"
+        },
+        {
+          "type": "RESEARCH_ADAPTER_SOURCE",
+          "url": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/89",
+          "status": "MERGED_NOT_ACTIVATED"
+        },
+        {
+          "type": "FOLLOWUP_ISOLATED_EVALUATION",
+          "url": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/91",
+          "status": "OPEN_UNMERGED_AT_CREATION"
+        }
+      ],
+      "nextAction": "Complete isolated source evaluation evidence, license/CVE review and independently accepted marine dynamics benchmarks before proposing protected registry integration."
+    }
+  ]
+}
