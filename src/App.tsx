@@ -20,6 +20,7 @@ import { RisksDecisionsView } from './components/RisksDecisionsView';
 import { ProcurementBOMView } from './components/ProcurementBOMView';
 import { TraceabilityMatrixView } from './components/TraceabilityMatrixView';
 import { KnowledgeCentreView } from './components/KnowledgeCentreView';
+import { ExternalSoftwareRegisterView } from './components/ExternalSoftwareRegisterView';
 import { AgentOrchestratorView } from './components/AgentOrchestratorView';
 import { RealtimeSimulationView } from './components/RealtimeSimulationView';
 import { ShipBuildingProcessView } from './components/ShipBuildingProcessView';
@@ -540,6 +541,8 @@ export default function App() {
         return '26-Agent Autonomous Directorate & DAG Orchestrator';
       case 'orchestrator-tools':
         return 'Deterministic Naval Tools & Solvers';
+      case 'external-software':
+        return 'External Software & Repository Register';
       case 'orchestrator-approvals':
         return 'Human Authority Approval Gates (Stage D)';
       case 'workstream-SYS':
@@ -847,6 +850,10 @@ export default function App() {
 
           {currentModule === 'global-usv-fleet' && (
             <GlobalUsvFleetView onAskAi={triggerAiQuery} />
+          )}
+
+          {currentModule === 'external-software' && (
+            <ExternalSoftwareRegisterView />
           )}
 
           {currentModule === 'notebook-lm' && (
