@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
-      actions: read
+      actions: write
       contents: write
       pull-requests: write
     steps:
@@ -84,6 +84,8 @@ jobs:
           gh pr create --base main --head "$BRANCH" \
             --title "Register research-only Fossen sandbox evidence: run $SOURCE_RUN_ID" \
             --body "Review-only update from a verified manual GitHub Actions run. The importer checked successful workflow identity, pinned Fossen source, image ID, case outcomes and SHA256 receipt. This adds one SANDBOX_EVALUATION event, **not** agent runtime integration, marine dynamics qualification, license/security acceptance, or vessel release. **Human review and protected source gates remain mandatory.** Evidence run: https://github.com/${{ github.repository }}/actions/runs/$SOURCE_RUN_ID"
+          gh workflow run repository-scout.yml --ref "$BRANCH" -f validate_only=true
+          gh workflow run safety-governance-gate.yml --ref "$BRANCH" -f run_openfoam=false
       - name: Preserve independent proposal for review even if PR creation is blocked
         if: always()
         uses: actions/upload-artifact@v4
