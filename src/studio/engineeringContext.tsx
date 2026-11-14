@@ -34,8 +34,12 @@ export function EngineeringContextProvider({ children }: { children: React.React
   return <EngineeringContext.Provider value={value}>{children}</EngineeringContext.Provider>;
 }
 
+const fallbackContext: ContextValue = {
+  selection: DEFAULT_ENGINEERING_SELECTION,
+  updateSelection: () => {},
+  resetGeometry: () => {}
+};
+/** The fallback enables stand-alone read-only component previews and SSR snapshots. */
 export function useEngineeringContext(): ContextValue {
-  const context = useContext(EngineeringContext);
-  if (!context) throw new Error('EngineeringContextProvider is required');
-  return context;
+  return useContext(EngineeringContext) ?? fallbackContext;
 }
