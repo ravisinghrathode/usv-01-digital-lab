@@ -121,7 +121,10 @@ test('changes to protected external-policy sandbox/roles/status are detected',()
  e=>{e.sandboxHardening.network='host'},
  e=>{e.sandboxHardening.minIndependentReferenceCases=1},
  e=>{e.mandatoryRoles.independentChallenge=[]},
- e=>{e.allowedAutonomousActions.push('MERGE_PROTECTED_PR')}
+ e=>{e.allowedAutonomousActions.push('MERGE_PROTECTED_PR')},
+ e=>{e.allowedAutonomousActions.push('RUN_HOST_SHELL')},
+ e=>{e.alwaysForbidden=[]},
+ e=>{e.blockedWithoutExplicitHumanAuthorization=[]}
  ]){
   const altered=clone(external);edit(altered);assert.throws(()=>check(profile,altered),/HOLD/);
  }
