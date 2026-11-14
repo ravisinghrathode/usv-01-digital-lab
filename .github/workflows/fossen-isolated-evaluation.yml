@@ -29,7 +29,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Verify independent runner/authorization test contracts
-        run: node --test tests/repository-integration*.test.mjs tests/prepare-fossen-runtime.test.mjs
+        run: node --test tests/repository-integration*.test.mjs tests/prepare-fossen-runtime.test.mjs tests/external-software-usage.test.mjs
       - name: Build a measured local image and run upstream GNC in isolated Docker
         env:
           FOSSEN_RISK_ACK: ${{ inputs.risk_ack }}
@@ -47,6 +47,7 @@ jobs:
             ${{ runner.temp }}/fossen-evaluation/runtime-manifest.json
             ${{ runner.temp }}/fossen-evaluation/image-id.txt
             ${{ runner.temp }}/fossen-evaluation/verification.json
+            ${{ runner.temp }}/fossen-evaluation/external-software-usage-receipt.json
             ${{ runner.temp }}/fossen-evaluation/proposal.json
             ${{ runner.temp }}/fossen-evaluation/REVIEW.md
           if-no-files-found: warn

@@ -82,4 +82,32 @@ p.vesselReleased=false;
 fs.writeFileSync(root+'runner-provenance.json',JSON.stringify(p,null,2)+'\n');
 if(!p.softwareSmokeTestsPassed)throw Error('GNC reference case failures');
 JS
+# Evidence receipt produced ONLY after all five real sandbox smoke cases pass.
+# The GitHub run conclusion is checked independently by the register importer.
+node --input-type=module <<'JS'
+import fs from 'node:fs';
+import {createHash} from 'node:crypto';
+const root=process.env.RUNNER_TEMP+'/fossen-evaluation/';
+if(process.env.GITHUB_REPOSITORY!=='ravisinghrathode/usv-01-digital-lab'||
+   !/^[0-9]+$/.test(process.env.GITHUB_RUN_ID||'')||
+   !/^[0-9a-f]{40}$/.test(process.env.GITHUB_SHA||''))throw Error('Untrusted workflow identity');
+const raw=fs.readFileSync(root+'verification.json');
+const report=JSON.parse(raw);
+if(report.status!=='REFERENCE_CASES_PASSED_UNVERIFIED_ENGINEERING'||
+   !Array.isArray(report.cases)||report.cases.length!==5||
+   report.cases.some(x=>x.passed!==true)||report.vesselRelease!==false||
+   report.engineeringValidation!==false)throw Error('Upstream smoke evaluation is not successful');
+const receipt={
+ schemaVersion:1,recordId:'EXT-001',kind:'SANDBOX_EVALUATION',
+ project:'USV-01',custodianAgent:'A26',
+ softwareApproved:false,engineeringValidated:false,toolRegistered:false,vesselReleased:false,
+ runId:process.env.GITHUB_RUN_ID,
+ runUrl:'https://github.com/ravisinghrathode/usv-01-digital-lab/actions/runs/'+process.env.GITHUB_RUN_ID,
+ labHeadSha:process.env.GITHUB_SHA,
+ sourceCommit:report.commit,sourceTree:report.tree,imageId:report.image,
+ verificationSha256:'sha256:'+createHash('sha256').update(raw).digest('hex')
+};
+fs.writeFileSync(root+'external-software-usage-receipt.json',JSON.stringify(receipt,null,2)+'\n',{mode:0o600});
+console.log('Wrote research-only receipt; NOT accepted in register until GitHub run succeeds and review PR merges');
+JS
 echo 'Isolated GNC smoke testing finished; independent marine engineering approval still HOLD.'

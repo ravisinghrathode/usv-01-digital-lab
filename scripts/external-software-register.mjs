@@ -36,6 +36,9 @@ export function validateRegister(db){
   for(const p of r.plannedUsage)if(!p.project||!Array.isArray(p.agents)||!p.agents.every(x=>AGENT.test(x))||!p.purpose||!HTTPS.test(p.sourceEvidence||''))fail(r.id+' invalid planned usage');
   for(const u of r.actualUsage){
    if(!USAGE.has(u.kind)||!u.project||!AGENT.test(u.agent||'')||!HTTPS.test(u.executionEvidence||'')||!SHA.test(u.sourceCommit||''))fail(r.id+' actual usage lacks exact source/evidence');
+   if(u.sourceCommit!==r.source.commit)fail(r.id+' actual usage source revision differs from pinned registry');
+   if(u.kind==='SANDBOX_EVALUATION'&&(!SHA.test(u.labSourceCommit||'')||!/^sha256:[0-9a-f]{64}$/.test(u.verificationSha256||'')||u.outcome!=='ELEMENTARY_GNC_SMOKE_ONLY_UNCERTIFIED'||u.executor!=='GITHUB_ACTIONS_DISPOSABLE_RUNNER'))fail(r.id+' unverified sandbox evidence provenance');
+   if(u.kind==='AGENT_TOOL_INVOCATION'&&(r.lifecycle!=='INTEGRATED'||r.adoption!=='APPROVED'||!r.registeredToolId||!u.invocationId||!HTTPS.test(u.runtimeEvidence||'')))fail(r.id+' agent invocation needs approved runtime evidence');
    if(u.kind==='ENGINEERING_BASELINE'&&(r.adoption!=='APPROVED'||r.lifecycle!=='INTEGRATED'||!HTTPS.test(u.directorAcceptanceEvidence||'')))fail(r.id+' baseline usage not approved');
   }
   if(r.adoption==='APPROVED'&&(!['QUALIFIED','INTEGRATED'].includes(r.lifecycle)||r.license.review!=='APPROVED'||r.securityReview!=='APPROVED'||r.engineeringValidation!=='VALIDATED'||!HTTPS.test(r.approvalEvidence||'')))fail(r.id+' claimed approval without complete evidence');
@@ -49,10 +52,13 @@ export function renderOverview(db){
  validateRegister(db);
  const counts=Object.fromEntries([...STATUSES].map(x=>[x,db.records.filter(r=>r.lifecycle===x).length]));
  const uses=db.records.reduce((n,r)=>n+r.actualUsage.length,0);
+ const sandbox=db.records.reduce((n,r)=>n+r.actualUsage.filter(u=>u.kind==='SANDBOX_EVALUATION').length,0);
+ const agentCalls=db.records.reduce((n,r)=>n+r.actualUsage.filter(u=>u.kind==='AGENT_TOOL_INVOCATION').length,0);
+ const baseline=db.records.reduce((n,r)=>n+r.actualUsage.filter(u=>u.kind==='ENGINEERING_BASELINE').length,0);
  const lines=['# USV-01 External Software and Repository Register','',
  '> This is a read-only snapshot generated from src/data/externalSoftwareRegister.json. No repository is approved or installed merely because it appears in this list. Actual use must have evidence.','',
  'Register: '+db.registerId+' | Custodian: '+db.custodian+' | Controlled change via GitHub PR','',
- 'Overview: '+db.records.length+' tracked | '+counts.DISCOVERED+' discovered | '+counts.EVALUATING+' evaluating | '+counts.QUALIFIED+' qualified | '+counts.INTEGRATED+' integrated | '+counts.RETIRED+' retired | '+counts.REJECTED+' rejected | '+uses+' evidenced usage events.','',
+ 'Overview: '+db.records.length+' tracked | '+counts.DISCOVERED+' discovered | '+counts.EVALUATING+' evaluating | '+counts.QUALIFIED+' qualified | '+counts.INTEGRATED+' integrated | '+counts.RETIRED+' retired | '+counts.REJECTED+' rejected | '+uses+' evidenced usage events ('+sandbox+' research sandbox, '+agentCalls+' agent invocations, '+baseline+' accepted engineering uses).','',
  '| ID | Repository | Domain | Lifecycle | Adoption | Installation | Review agents | Planned projects | Evidenced uses | Source evidence |',
  '| --- | --- | --- | --- | --- | --- | --- | --- | ---: | --- |'];
  for(const r of [...db.records].sort((a,b)=>a.id.localeCompare(b.id))){
