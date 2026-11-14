@@ -647,12 +647,12 @@ export default function App() {
   }, [currentModule]);
 
   return (
-    <div className="studio-x flex h-screen bg-slate-950 text-slate-100 font-sans antialiased overflow-hidden" data-text-size={textSize}>
+    <div className="studio-x flex h-screen bg-slate-950 text-slate-100 font-sans antialiased overflow-hidden" data-text-size={textSize} data-ui="clarity">
       {/* Studio X is the sole navigation shell. All legacy engineering modules remain in MODULE_REGISTRY. */}
       <StudioNavigation currentModule={currentModule} onSelectModule={setCurrentModule} onOpenCommand={() => setCommandOpen(true)} />
 
       {/* Main Workspace Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <div className="ns3-main flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top Header Bar */}
         <TopBar
           currentModuleName={currentModuleName}
@@ -692,7 +692,7 @@ export default function App() {
         <StudioWorkspaceBar currentModule={currentModule} onSelectModule={setCurrentModule} openTabs={openTabs} onCloseTab={closeModuleTab} onOpenCommand={() => setCommandOpen(true)} textSize={textSize} onChangeTextSize={changeTextSize} />
 
         {/* Cached work tabs preserve local component state until deliberately closed. */}
-        <main className="min-h-0 flex-1 overflow-hidden bg-slate-950/60">
+        <main className="ns3-content min-h-0 flex-1 overflow-hidden">
           {openTabs.map(tab => <section key={tab} role="tabpanel" id={studioPanelId(tab)}
               aria-labelledby={studioTabId(tab)}
               aria-label={findModule(tab).label}

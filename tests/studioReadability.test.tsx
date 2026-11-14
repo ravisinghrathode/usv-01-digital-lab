@@ -57,14 +57,20 @@ describe('Naval Studio X.2 readable interface', () => {
     expect(css).toContain('font-size: var(--studio-xs-font)');
     expect(css).toContain('.studio-x :focus-visible');
 
-    const components = [
-      'StudioNavigation', 'StudioWorkspaceBar', 'StudioContextStrip',
-      'TopBar', 'CadStudioView', 'DirectorBriefing', 'StudioCommandPalette'
-    ];
-    for (const component of components) {
+    // CAD and command search retain isolated dark surfaces, while core
+    // navigation and the director briefing switch to the light Clarity shell.
+    for (const component of ['CadStudioView', 'StudioCommandPalette']) {
       expect(fromRepo('src/components/' + component + '.tsx'), component)
         .toContain('studio-dark');
     }
+    for (const component of [
+      'StudioNavigation', 'StudioWorkspaceBar', 'StudioContextStrip',
+      'TopBar', 'DirectorBriefing'
+    ]) {
+      expect(fromRepo('src/components/' + component + '.tsx'), component).toContain('ns3-');
+    }
+    expect(fromRepo('src/studio/clarity.css')).toContain('.studio-x[data-ui="clarity"]');
+    expect(fromRepo('src/studio/clarity.css')).toContain('.studio-dark .bg-slate-950');
   });
 
   it('preserves all 24 engineering modules and single Studio X shell', () => {

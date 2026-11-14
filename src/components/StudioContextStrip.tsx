@@ -1,17 +1,24 @@
 import React from 'react';
-import { Fingerprint, Layers3, ShieldAlert } from 'lucide-react';
+import { Fingerprint, ShieldAlert } from 'lucide-react';
 import { useEngineeringContext } from '../studio/engineeringContext';
 
-/** Consistent selected-object provenance across all engineering workspaces. */
-export const StudioContextStrip:React.FC=()=>{
-  const {selection}=useEngineeringContext();
-  return <div role="status" aria-label="Selected engineering context"
-    className="studio-dark flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-white/10 bg-[#101e30] px-3 py-1.5 text-[11px] text-slate-300">
-    <span><Layers3 size={12} className="mr-1 inline text-cyan-300"/> {selection.projectId}</span>
-    <span>Candidate: <strong className="font-medium text-amber-200">{selection.candidateId??'Unassigned'}</strong></span>
-    <span>Config: <strong className="font-medium text-amber-200">{selection.configurationRevision??'Unassigned / TBD'}</strong></span>
-    <span className="max-w-[260px] truncate" title={selection.componentId??'No selected component'}>Selected: {selection.componentId??'None'}</span>
-    {selection.geometryFingerprint&&<span className="font-mono" title={'Browser-local mesh SHA-256: '+selection.geometryFingerprint}><Fingerprint size={12} className="mr-1 inline"/> Local SHA-256 {selection.geometryFingerprint.slice(0,12)}…</span>}
-    <span className="ml-auto font-semibold text-amber-200"><ShieldAlert size={12} className="mr-1 inline"/>{selection.evidenceLevel} · UI context only</span>
+/** Read-only UI selection. No selected value implies engineering approval. */
+export const StudioContextStrip: React.FC = () => {
+  const { selection } = useEngineeringContext();
+  return <div role="status" aria-label="Selected engineering context" className="ns3-context">
+    <span><span className="ns3-context-label">Project</span><strong>{selection.projectId}</strong></span>
+    <span><span className="ns3-context-label">Candidate</span><strong>{selection.candidateId ?? 'Unassigned'}</strong></span>
+    <span><span className="ns3-context-label">Configuration</span><strong>{selection.configurationRevision ?? 'TBD / unassigned'}</strong></span>
+    <span title={selection.componentId ?? 'No component selected'}>
+      <span className="ns3-context-label">Selected part</span><strong>{selection.componentId ?? 'None'}</strong>
+    </span>
+    {selection.geometryFingerprint && <span title={'Browser-local SHA-256: ' + selection.geometryFingerprint}>
+      <Fingerprint size={14} style={{display:'inline',marginRight:5}} aria-hidden="true"/>
+      <code>Local mesh {selection.geometryFingerprint.slice(0, 10)}…</code>
+    </span>}
+    <span className="ns3-context-warning">
+      <ShieldAlert size={15} style={{display:'inline',marginRight:6}} aria-hidden="true"/>
+      {selection.evidenceLevel} · UI selection only
+    </span>
   </div>;
 };
