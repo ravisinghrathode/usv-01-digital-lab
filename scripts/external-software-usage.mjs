@@ -31,7 +31,7 @@ export function validateFossenReceipt(receipt,verification,db){
  if(!RUN.test(String(receipt.runId||''))||!SHA.test(receipt.labHeadSha||'')||
   receipt.runUrl!=='https://github.com/'+ROOT+'/actions/runs/'+receipt.runId)invalid('invalid GitHub Actions run identity');
  if(receipt.sourceCommit!==record.source.commit||receipt.sourceTree!==record.source.tree||
-   !IMG.test(receipt.imageId||'')||!IMG.test(receipt.verificationSha256||''.startsWith('sha256:')?receipt.verificationSha256:'') )invalid('source/image/provenance mismatch');
+   !IMG.test(receipt.imageId||'')||!IMG.test(receipt.verificationSha256||'') )invalid('source/image/provenance mismatch');
  if(!verification||verification.phase!=='CONTAINER_BENCHMARK'||verification.status!==EXPECTED_STATUS||
     verification.repository!==record.repository||verification.commit!==record.source.commit||
     verification.tree!==record.source.tree||verification.image!==receipt.imageId||
