@@ -64,6 +64,7 @@ export function proposeUsage(db,receipt,verification,run,verificationRaw){
   sourceCommit:receipt.sourceCommit,
   labSourceCommit:receipt.labHeadSha,
   executionEvidence:signature,
+  archivalEvidence:'https://github.com/'+ROOT+'/blob/main/evidence/external-software/EXT-001-'+receipt.runId+'.json',
   verificationSha256:receipt.verificationSha256,
   caseCount:verification.cases.length,
   outcome:'ELEMENTARY_GNC_SMOKE_ONLY_UNCERTIFIED'
