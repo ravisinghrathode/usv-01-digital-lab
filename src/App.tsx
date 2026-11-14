@@ -12,6 +12,8 @@ import { StudioCommandPalette } from './components/StudioCommandPalette';
 import { DirectorBriefing } from './components/DirectorBriefing';
 import { CadStudioView } from './components/CadStudioView';
 import { findModule } from './moduleRegistry';
+import { parseStudioTextSize, STUDIO_TEXT_PREFERENCE_KEY } from './studio/readability';
+import type { StudioTextSize } from './studio/readability';
 import { TopBar } from './components/TopBar';
 import { ProjectOverview } from './components/ProjectOverview';
 import { SystemsEngineeringView } from './components/SystemsEngineeringView';
@@ -104,6 +106,16 @@ export default function App() {
   const [openTabs, setOpenTabs] = useState<NavigationModule[]>(['cad-studio']);
   const [commandOpen, setCommandOpen] = useState(false);
   const [detailedOverview, setDetailedOverview] = useState(false);
+  // Comfortable is the new default even for browsers with no saved preference.
+  const [textSize, setTextSize] = useState<StudioTextSize>(() => {
+    try { return parseStudioTextSize(localStorage.getItem(STUDIO_TEXT_PREFERENCE_KEY)); }
+    catch { return 'comfortable'; }
+  });
+  const changeTextSize = (next: StudioTextSize) => {
+    setTextSize(next);
+    try { localStorage.setItem(STUDIO_TEXT_PREFERENCE_KEY, next); }
+    catch { /* Display preference only: UI remains usable without storage. */ }
+  };
   const setCurrentModule = (module: NavigationModule) => {
     setActiveModule(module);
     setOpenTabs(tabs => tabs.includes(module) ? tabs : [...tabs, module]);
@@ -615,7 +627,7 @@ export default function App() {
   }, [currentModule]);
 
   return (
-    <div className="studio-x flex h-screen bg-slate-950 text-slate-100 font-sans antialiased overflow-hidden">
+    <div className="studio-x flex h-screen bg-slate-950 text-slate-100 font-sans antialiased overflow-hidden" data-text-size={textSize}>
       {/* Studio X is the sole navigation shell. All legacy engineering modules remain in MODULE_REGISTRY. */}
       <StudioNavigation currentModule={currentModule} onSelectModule={setCurrentModule} onOpenCommand={() => setCommandOpen(true)} />
 
@@ -658,7 +670,7 @@ export default function App() {
 
         <StudioContextStrip />
 
-        <StudioWorkspaceBar currentModule={currentModule} onSelectModule={setCurrentModule} openTabs={openTabs} onCloseTab={closeModuleTab} onOpenCommand={() => setCommandOpen(true)} />
+        <StudioWorkspaceBar currentModule={currentModule} onSelectModule={setCurrentModule} openTabs={openTabs} onCloseTab={closeModuleTab} onOpenCommand={() => setCommandOpen(true)} textSize={textSize} onChangeTextSize={changeTextSize} />
 
         {/* Cached work tabs preserve local component state until deliberately closed. */}
         <main className="min-h-0 flex-1 overflow-hidden bg-slate-950/60">
