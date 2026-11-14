@@ -2,6 +2,12 @@ name: USV-01 Repository Scout (read-only)
 
 on:
   workflow_dispatch:
+    inputs:
+      validate_only:
+        description: 'Only validate the source register; do not run new GitHub discovery or create PRs'
+        type: boolean
+        required: false
+        default: false
   schedule:
     - cron: '17 2 * * 1'
   pull_request:
@@ -42,11 +48,12 @@ jobs:
 
   discover:
     name: Search public GitHub repositories
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && inputs.validate_only != true
     needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
+      actions: write
       contents: write
       pull-requests: write
     steps:
@@ -111,6 +118,10 @@ jobs:
           gh pr create --base main --head "$BRANCH" \
             --title "External software discovery queue (review required)" \
             --body "Automated A26 discovery *proposal* from Scout run $GITHUB_RUN_ID. $CURRENT_COUNT new public GitHub identities are registered as DISCOVERED ONLY, with no executable permission, no accepted license/security/physics assessment, and no verified project usage. All project and engineering approvals remain separate. Review and curate before protected merge. Source: https://github.com/${{ github.repository }}/actions/runs/$GITHUB_RUN_ID"
+          # GITHUB_TOKEN-created PRs do not emit normal pull_request check runs.
+          # workflow_dispatch is an allowed exception; it checks the exact PR head.
+          gh workflow run repository-scout.yml --ref "$BRANCH" -f validate_only=true
+          gh workflow run safety-governance-gate.yml --ref "$BRANCH" -f run_openfoam=false
       - name: Upload unverified discovery report
         if: always()
         uses: actions/upload-artifact@v4
