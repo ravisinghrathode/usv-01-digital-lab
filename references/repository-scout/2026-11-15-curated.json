@@ -1,0 +1,4638 @@
+{
+  "schemaVersion": 1,
+  "title": "USV-01 A26 public GitHub discovery register",
+  "generatedAt": "2026-11-14T21:12:53.926Z",
+  "scoutSourceCommit": "23c30b3ee2f4a99380ed549058e8a8020acb9a38",
+  "scope": "PUBLIC_GITHUB_DISCOVERY_AND_READ_ONLY_SOURCE_PINNING",
+  "coverage": {
+    "configured": 24,
+    "completed": 24,
+    "perQuery": 20,
+    "primaryUnique": 218,
+    "secondaryUnique": 199,
+    "deduplicated": 380,
+    "curatedMarineOrAdjacent": 88,
+    "unselectedSearchHits": 292,
+    "coverageComplete": false
+  },
+  "governance": "RESEARCH_ONLY; no candidate approved, installed or used through this report",
+  "records": [
+    {
+      "repository": "cybergalactic/MSS",
+      "url": "https://github.com/cybergalactic/MSS",
+      "primaryCategory": "marine-simulation",
+      "allScoutCategories": [
+        "autonomy-control",
+        "marine-iot",
+        "marine-simulation",
+        "navigation-colregs"
+      ],
+      "researchPriority": "P1",
+      "scoutScore": 97,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "The Marine Systems Simulator (MSS) is software that supplements the textbook \"Handbook of Marine Craft Hydrodynamics and Motion Control,\" 3rd Edition, by T. I. Fossen, published in 2027 (in progress) by John Wiley & Sons Ltd.",
+      "possibleUsv01Application": "Investigate vessel dynamics and test scenarios in an isolated research environment.",
+      "source": {
+        "commit": "78298f0f4822544cd715a66945d0bc3ed37561c8",
+        "tree": "e6728ed863759d949f5d787a1bd9bd82aef0da67",
+        "branch": "master",
+        "resolvedAt": "2026-11-14T21:10:37.942Z",
+        "provenance": "https://github.com/cybergalactic/MSS/tree/78298f0f4822544cd715a66945d0bc3ed37561c8"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-11-14T14:44:33Z",
+        "ageDays": 0,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A08",
+        "A17",
+        "A18",
+        "A24",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "FIRST_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "cybergalactic/PythonVehicleSimulator",
+      "url": "https://github.com/cybergalactic/PythonVehicleSimulator",
+      "primaryCategory": "marine-simulation",
+      "allScoutCategories": [
+        "autonomy-control",
+        "marine-iot",
+        "marine-simulation",
+        "mission-digital-twin",
+        "navigation-colregs",
+        "usv-platforms"
+      ],
+      "researchPriority": "P1",
+      "scoutScore": 97,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "The Python Vehicle Simulator is software that supplements the textbook \"Handbook of Marine Craft Hydrodynamics and Motion Control,\" 2nd Edition, by T. I. Fossen, published in 2021 by John Wiley & Sons Ltd.",
+      "possibleUsv01Application": "Investigate vessel dynamics and test scenarios in an isolated research environment.",
+      "source": {
+        "commit": "a93d1938ba1f78f2580c24c73f003091b2f03cd0",
+        "tree": "80feeef4a79bbc23b539d47a0cae20ea41abb600",
+        "branch": "master",
+        "resolvedAt": "2026-11-14T21:10:37.942Z",
+        "provenance": "https://github.com/cybergalactic/PythonVehicleSimulator/tree/a93d1938ba1f78f2580c24c73f003091b2f03cd0"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-09-26T07:55:24Z",
+        "ageDays": 49,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A08",
+        "A17",
+        "A18",
+        "A24",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "EVALUATING",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "FIRST_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "ktuukkan/marine-api",
+      "url": "https://github.com/ktuukkan/marine-api",
+      "primaryCategory": "marine-iot",
+      "allScoutCategories": [
+        "marine-iot",
+        "marine-simulation",
+        "navigation-colregs",
+        "perception-sonar"
+      ],
+      "researchPriority": "P1",
+      "scoutScore": 90,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Java Marine API - NMEA 0183 library for Java",
+      "possibleUsv01Application": "Investigate marine telemetry and NMEA/AIS parsing in a read-only interface review.",
+      "source": {
+        "commit": "6224ad6e62e7554a89ae8fe9e9ba54a29df394de",
+        "tree": "73f13436beb894649c3180037fcedd469b84e5b2",
+        "branch": "master",
+        "resolvedAt": "2026-11-14T21:10:37.942Z",
+        "provenance": "https://github.com/ktuukkan/marine-api/tree/6224ad6e62e7554a89ae8fe9e9ba54a29df394de"
+      },
+      "sourceSearchPasses": [
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-11-02T23:42:33Z",
+        "ageDays": 11,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "LGPL-3.0",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A19",
+        "A20",
+        "A21",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "FIRST_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "michaelstolberger27/usv-navigation",
+      "url": "https://github.com/michaelstolberger27/usv-navigation",
+      "primaryCategory": "navigation-colregs",
+      "allScoutCategories": [
+        "autonomy-control",
+        "marine-simulation",
+        "mission-digital-twin",
+        "navigation-colregs",
+        "usv-platforms"
+      ],
+      "researchPriority": "P1",
+      "scoutScore": 89,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "COLREGs-compliant collision avoidance (COLAV) automaton for Unmanned Surface Vehicles (USVs)",
+      "possibleUsv01Application": "Investigate encounter generation and COLREGs decision tests as advisory research only.",
+      "source": {
+        "commit": "54866f24a04987334057ae5c5896dfc3ee8ca058",
+        "tree": "55c6acec6f52a185f7a07deb9321efc9c0a58a16",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:37.942Z",
+        "provenance": "https://github.com/michaelstolberger27/usv-navigation/tree/54866f24a04987334057ae5c5896dfc3ee8ca058"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-08-23T13:18:25Z",
+        "ageDays": 83,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A17",
+        "A22",
+        "A24",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "FIRST_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "ntnu-itk-autonomous-ship-lab/colav-simulator",
+      "url": "https://github.com/ntnu-itk-autonomous-ship-lab/colav-simulator",
+      "primaryCategory": "navigation-colregs",
+      "allScoutCategories": [
+        "autonomy-control",
+        "marine-simulation",
+        "navigation-colregs"
+      ],
+      "researchPriority": "P1",
+      "scoutScore": 89,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Framework for simulating and evaluating autonomous ship collision avoidance (COLAV) control strategies. Developed as part of the Autoship Centre for Research-based Innovation (SFI). Open sourced in the autumn of 2025.",
+      "possibleUsv01Application": "Investigate encounter generation and COLREGs decision tests as advisory research only.",
+      "source": {
+        "commit": "a385e0fcbcf7b7de3edaada35d37dd63f2b027c2",
+        "tree": "1a801cbff73bde5583f235a106eb9e0bb7fe38e5",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:37.942Z",
+        "provenance": "https://github.com/ntnu-itk-autonomous-ship-lab/colav-simulator/tree/a385e0fcbcf7b7de3edaada35d37dd63f2b027c2"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-01-23T07:14:36Z",
+        "ageDays": 295,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A17",
+        "A22",
+        "A24",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "FIRST_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "SINTEF/FEEMS",
+      "url": "https://github.com/SINTEF/FEEMS",
+      "primaryCategory": "propulsion-power",
+      "allScoutCategories": [
+        "autonomy-control",
+        "marine-iot",
+        "marine-simulation",
+        "mission-digital-twin",
+        "propulsion-power"
+      ],
+      "researchPriority": "P1",
+      "scoutScore": 89,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "FEEMS is modeling framework for a marine power and propulsion system for  calculation of fuel consumption, emissions, and energy balance with the input of operation mode and external power load.",
+      "possibleUsv01Application": "Investigate energy, battery and propulsion modelling with validated units and operating envelopes.",
+      "source": {
+        "commit": "ebb05ffdd5e9ed509fe66d8451ed0ff4f7635629",
+        "tree": "c1c3b88470206fbc5e6a28a4b7547ecccdfa6802",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:37.942Z",
+        "provenance": "https://github.com/SINTEF/FEEMS/tree/ebb05ffdd5e9ed509fe66d8451ed0ff4f7635629"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-11-12T09:04:28Z",
+        "ageDays": 2,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A11",
+        "A13",
+        "A14",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "FIRST_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "Neumi/open_echo",
+      "url": "https://github.com/Neumi/open_echo",
+      "primaryCategory": "perception-sonar",
+      "allScoutCategories": [
+        "marine-iot",
+        "marine-simulation",
+        "perception-sonar"
+      ],
+      "researchPriority": "P1",
+      "scoutScore": 87,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Open Source echo sounder / depth sounder / SONAR for bathymetry and research. Arduino based and compatible.",
+      "possibleUsv01Application": "Investigate maritime sensing, sonar data processing or perception benchmark inputs.",
+      "source": {
+        "commit": "0c4e6e78895fdc39a5e90dedaa16e225f1c3c4b7",
+        "tree": "38da4ec2e072eccf94c0d8c14b27d141a61bd3f2",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:37.942Z",
+        "provenance": "https://github.com/Neumi/open_echo/tree/0c4e6e78895fdc39a5e90dedaa16e225f1c3c4b7"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-10-21T09:31:06Z",
+        "ageDays": 24,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A12",
+        "A16",
+        "A21",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "FIRST_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "kavindagehan/asv-autonomous-docking-and-path-tracking",
+      "url": "https://github.com/kavindagehan/asv-autonomous-docking-and-path-tracking",
+      "primaryCategory": "autonomy-control",
+      "allScoutCategories": [
+        "autonomy-control",
+        "marine-iot",
+        "marine-simulation",
+        "mission-digital-twin",
+        "navigation-colregs",
+        "usv-platforms"
+      ],
+      "researchPriority": "P1",
+      "scoutScore": 85,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "A complete Guidance, Navigation, and Control (GNC) framework for WAM-V Autonomous Surface Vessels using MATLAB/Simulink, ROS 2, and Gazebo (VRX) for adaptive path tracking and autonomous docking.",
+      "possibleUsv01Application": "Investigate guidance and control algorithms with bounded simulation and independent safety review.",
+      "source": {
+        "commit": "b35e82505ceb6cd35294619790f61c4cdc4dff6e",
+        "tree": "105454c4f7a7dbd49169fc053229f995df450078",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:37.942Z",
+        "provenance": "https://github.com/kavindagehan/asv-autonomous-docking-and-path-tracking/tree/b35e82505ceb6cd35294619790f61c4cdc4dff6e"
+      },
+      "sourceSearchPasses": [
+        "primary",
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-02-24T22:19:50Z",
+        "ageDays": 262,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A16",
+        "A17",
+        "A19",
+        "A20",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "FIRST_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "disaster-robotics-proalertas/usv_sim_lsa",
+      "url": "https://github.com/disaster-robotics-proalertas/usv_sim_lsa",
+      "primaryCategory": "marine-simulation",
+      "allScoutCategories": [
+        "cfd-resistance",
+        "marine-simulation",
+        "mission-digital-twin",
+        "usv-platforms"
+      ],
+      "researchPriority": "P1",
+      "scoutScore": 82,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Unmanned Surface Vehicle simulation on Gazebo with water current and winds",
+      "possibleUsv01Application": "Investigate vessel dynamics and test scenarios in an isolated research environment.",
+      "source": {
+        "commit": "61e8f4a5f78f18c01dac0d4eea7f4c3c416e6cb8",
+        "tree": "468eb58de9cd5f7043d90d80fe8079447535595b",
+        "branch": "master",
+        "resolvedAt": "2026-11-14T21:10:37.942Z",
+        "provenance": "https://github.com/disaster-robotics-proalertas/usv_sim_lsa/tree/61e8f4a5f78f18c01dac0d4eea7f4c3c416e6cb8"
+      },
+      "sourceSearchPasses": [
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2024-07-07T19:52:52Z",
+        "ageDays": 860,
+        "signal": "STALE_OVER_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "Apache-2.0",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A08",
+        "A17",
+        "A18",
+        "A24",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "FIRST_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "antpial/thesis_USV_gazebo",
+      "url": "https://github.com/antpial/thesis_USV_gazebo",
+      "primaryCategory": "marine-simulation",
+      "allScoutCategories": [
+        "autonomy-control",
+        "marine-simulation",
+        "navigation-colregs",
+        "structures-materials",
+        "usv-platforms"
+      ],
+      "researchPriority": "P1",
+      "scoutScore": 75,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Official source code for my Engineering Thesis: Autonomous USV navigation and control in ROS 2 & Gazebo. Features LOS, ILOS, PID controllers, and EKF-based sensor fusion.",
+      "possibleUsv01Application": "Investigate vessel dynamics and test scenarios in an isolated research environment.",
+      "source": {
+        "commit": "2b8c4a5df243f126c8d3ce0eeac6aa799c1f2d37",
+        "tree": "8f679de2ff60c2d25e59d540674387efe27cdb86",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:41.844Z",
+        "provenance": "https://github.com/antpial/thesis_USV_gazebo/tree/2b8c4a5df243f126c8d3ce0eeac6aa799c1f2d37"
+      },
+      "sourceSearchPasses": [
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2025-12-26T13:38:12Z",
+        "ageDays": 323,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A08",
+        "A17",
+        "A18",
+        "A24",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "FIRST_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "aixuexisun/pyfoamsetup",
+      "url": "https://github.com/aixuexisun/pyfoamsetup",
+      "primaryCategory": "cfd-resistance",
+      "allScoutCategories": [
+        "cfd-resistance",
+        "marine-iot",
+        "marine-simulation"
+      ],
+      "researchPriority": "P1",
+      "scoutScore": 74,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "A python library for setting up CFD simulations with OpenFOAM, with special focus on marine applications.",
+      "possibleUsv01Application": "Investigate resistance, seakeeping or hydrodynamics workflows; require independent numerical reference cases.",
+      "source": {
+        "commit": "5908aea41bfbde3fad7d6957feab58a50d58e262",
+        "tree": "348f8c285d48fc1630b0fd6d71381feda0f6de89",
+        "branch": "master",
+        "resolvedAt": "2026-11-14T21:10:41.844Z",
+        "provenance": "https://github.com/aixuexisun/pyfoamsetup/tree/5908aea41bfbde3fad7d6957feab58a50d58e262"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2017-08-04T12:14:57Z",
+        "ageDays": 3389,
+        "signal": "STALE_OVER_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "FIRST_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "janibert1/ship-hull-generator",
+      "url": "https://github.com/janibert1/ship-hull-generator",
+      "primaryCategory": "hull-design",
+      "allScoutCategories": [
+        "cfd-resistance",
+        "hull-design"
+      ],
+      "researchPriority": "P1",
+      "scoutScore": 59,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Parametric ship hull generator with hydrostatics, longitudinal strength, stability, resistance, and NSGA-II multi-objective optimizer",
+      "possibleUsv01Application": "Investigate preliminary hull geometry, hydrostatics and design-space methods against independent naval-architecture references.",
+      "source": {
+        "commit": "262cb29f0a5f90acc7132ee6c1b91efd81d855fd",
+        "tree": "4e3e533ce28fa60f6e4a99095b084e7ad62bfed3",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:49.992Z",
+        "provenance": "https://github.com/janibert1/ship-hull-generator/tree/262cb29f0a5f90acc7132ee6c1b91efd81d855fd"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-06-02T19:32:29Z",
+        "ageDays": 165,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "GPL-3.0",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "FIRST_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "CaptanG/striptheory",
+      "url": "https://github.com/CaptanG/striptheory",
+      "primaryCategory": "cfd-resistance",
+      "allScoutCategories": [
+        "cfd-resistance",
+        "hull-design"
+      ],
+      "researchPriority": "P1",
+      "scoutScore": 57,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "The Strip Theory Seakeeping Analysis Toolkit is a Python-based solver for predicting ship motions in waves using classical strip theory. Designed around the Wigley hull as a test case, the toolkit provides a modular and extensible framework for calculating hydrodynamic coefficients and simulating ship responses.",
+      "possibleUsv01Application": "Investigate resistance, seakeeping or hydrodynamics workflows; require independent numerical reference cases.",
+      "source": {
+        "commit": "ade00fbdfdfae0cf3b93291b778d2d94330dd8e1",
+        "tree": "bae3a190e5dbedc5f9be73a6e0154493ecbe7423",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:49.992Z",
+        "provenance": "https://github.com/CaptanG/striptheory/tree/ade00fbdfdfae0cf3b93291b778d2d94330dd8e1"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2025-09-09T18:49:52Z",
+        "ageDays": 431,
+        "signal": "PUSH_WITHIN_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "FIRST_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "cybergalactic/FossenHandbook",
+      "url": "https://github.com/cybergalactic/FossenHandbook",
+      "primaryCategory": "marine-simulation",
+      "allScoutCategories": [
+        "autonomy-control",
+        "marine-iot",
+        "marine-simulation",
+        "navigation-colregs",
+        "usv-platforms"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 97,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Handbook of Marine Craft Hydrodynamics and Motion Control is an extensive study of the latest research in marine craft hydrodynamics, guidance, navigation, and control (GNC) systems. ",
+      "possibleUsv01Application": "Investigate vessel dynamics and test scenarios in an isolated research environment.",
+      "source": {
+        "commit": "4860a4fe92aa6490c28ad28b2d9ce23b3de70974",
+        "tree": "63d7f319d284276cd39222e0c81e47188f676f0a",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:37.936Z",
+        "provenance": "https://github.com/cybergalactic/FossenHandbook/tree/4860a4fe92aa6490c28ad28b2d9ce23b3de70974"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-10-11T15:29:54Z",
+        "ageDays": 34,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A08",
+        "A17",
+        "A18",
+        "A24",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "tkkim-robot/safe_control",
+      "url": "https://github.com/tkkim-robot/safe_control",
+      "primaryCategory": "verification-safety",
+      "allScoutCategories": [
+        "autonomy-control",
+        "marine-simulation",
+        "mission-digital-twin",
+        "navigation-colregs",
+        "verification-safety"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 87,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Safety-critical controllers for single/multi robotic navigation: CBF-QP, MPC-CBF, and etc.",
+      "possibleUsv01Application": "Investigate independent test and safety verification methods, not runtime control.",
+      "source": {
+        "commit": "2a2c4a7fea472daa81901ba6eb90a39b919b93b6",
+        "tree": "8ea89115bfbf5523d9890098cb1ce4b11c53e1d3",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:37.942Z",
+        "provenance": "https://github.com/tkkim-robot/safe_control/tree/2a2c4a7fea472daa81901ba6eb90a39b919b93b6"
+      },
+      "sourceSearchPasses": [
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-10-07T19:11:39Z",
+        "ageDays": 38,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A15",
+        "A18",
+        "A22",
+        "A23",
+        "A24",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "learnsyslab/safe-control-gym",
+      "url": "https://github.com/learnsyslab/safe-control-gym",
+      "primaryCategory": "verification-safety",
+      "allScoutCategories": [
+        "autonomy-control",
+        "mission-digital-twin",
+        "verification-safety"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 85,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "PyBullet CartPole and Quadrotor environments—with CasADi symbolic a priori dynamics—for learning-based control and RL",
+      "possibleUsv01Application": "Investigate independent test and safety verification methods, not runtime control.",
+      "source": {
+        "commit": "6b5391d014f36fdfa0f9d22d92c77387e5274308",
+        "tree": "333c5af7aebc266f45882e57371c8e0101d65e6c",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:37.942Z",
+        "provenance": "https://github.com/learnsyslab/safe-control-gym/tree/6b5391d014f36fdfa0f9d22d92c77387e5274308"
+      },
+      "sourceSearchPasses": [
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-04-29T14:25:54Z",
+        "ageDays": 199,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A15",
+        "A18",
+        "A22",
+        "A23",
+        "A24",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "socquique/capsule-radar-ais",
+      "url": "https://github.com/socquique/capsule-radar-ais",
+      "primaryCategory": "perception-sonar",
+      "allScoutCategories": [
+        "cfd-resistance",
+        "marine-iot",
+        "marine-simulation",
+        "perception-sonar"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 85,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Live AIS ship radar for the Waveshare ESP32-S3-Touch-AMOLED-1.75 — marine sibling of Capsule Radar. WSS feed from aisstream.io.",
+      "possibleUsv01Application": "Investigate maritime sensing, sonar data processing or perception benchmark inputs.",
+      "source": {
+        "commit": "64ad042a8119c4e0abaa86bd8c009755c1b1be25",
+        "tree": "f78fa9ae4b21383a0e021c2cbcc88cb79b521651",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:37.942Z",
+        "provenance": "https://github.com/socquique/capsule-radar-ais/tree/64ad042a8119c4e0abaa86bd8c009755c1b1be25"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-09-22T08:46:15Z",
+        "ageDays": 53,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A12",
+        "A16",
+        "A21",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "Range-Software/range-fea",
+      "url": "https://github.com/Range-Software/range-fea",
+      "primaryCategory": "structures-materials",
+      "allScoutCategories": [
+        "cfd-resistance",
+        "marine-simulation",
+        "structures-materials"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 82,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Range Software - Finite Element Analysis",
+      "possibleUsv01Application": "Investigate structural analysis methods with independent loads and material evidence.",
+      "source": {
+        "commit": "1ee700be21f2d30816a946d65da2658146020587",
+        "tree": "e7d784186613288ec731da9101b31e140053b099",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:37.942Z",
+        "provenance": "https://github.com/Range-Software/range-fea/tree/1ee700be21f2d30816a946d65da2658146020587"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-11-14T15:17:31Z",
+        "ageDays": 0,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "GPL-3.0",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A10",
+        "A11",
+        "A12",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "abdulkadrtr/usv-simulation-ros2",
+      "url": "https://github.com/abdulkadrtr/usv-simulation-ros2",
+      "primaryCategory": "marine-simulation",
+      "allScoutCategories": [
+        "autonomy-control",
+        "marine-simulation",
+        "usv-platforms"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 81,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Browser-based ROS 2 simulation of an autonomous surface vehicle navigating a physically simulated Istanbul Bosphorus — from-scratch rigid-body hydrodynamics, WebGL rendering, LOS path following.",
+      "possibleUsv01Application": "Investigate vessel dynamics and test scenarios in an isolated research environment.",
+      "source": {
+        "commit": "5450dd257ed5cfe67cb6ee63ccf225d261b19a12",
+        "tree": "600380a93d70471bbd4c051f8b2d2704c84ae6be",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:37.942Z",
+        "provenance": "https://github.com/abdulkadrtr/usv-simulation-ros2/tree/5450dd257ed5cfe67cb6ee63ccf225d261b19a12"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-07-16T17:27:09Z",
+        "ageDays": 121,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A08",
+        "A17",
+        "A18",
+        "A24",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "aavek/Aeolus-Ocean",
+      "url": "https://github.com/aavek/Aeolus-Ocean",
+      "primaryCategory": "mission-digital-twin",
+      "allScoutCategories": [
+        "cfd-resistance",
+        "marine-iot",
+        "marine-simulation",
+        "mission-digital-twin",
+        "navigation-colregs",
+        "usv-platforms"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 78,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "An all-weather, day-and-night, collision avoidance simulator that can be implemented as a digital twin for the autonomous COLREG-compliant navigation of maritime vessels.",
+      "possibleUsv01Application": "Investigate offline mission replay, vessel-system observability and digital-twin interfaces.",
+      "source": {
+        "commit": "406429e18dc0d38c697d112a92fa2168f0b140ad",
+        "tree": "4f1128b834c2feae6ac1193065f37cc344b12c8a",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:41.844Z",
+        "provenance": "https://github.com/aavek/Aeolus-Ocean/tree/406429e18dc0d38c697d112a92fa2168f0b140ad"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2023-07-14T08:21:22Z",
+        "ageDays": 1219,
+        "signal": "STALE_OVER_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "BSD-3-Clause",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A01",
+        "A18",
+        "A25",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "hermandoronin/AEGIS-MONITOR",
+      "url": "https://github.com/hermandoronin/AEGIS-MONITOR",
+      "primaryCategory": "mission-digital-twin",
+      "allScoutCategories": [
+        "hull-design",
+        "marine-iot",
+        "mission-digital-twin"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 77,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Ship systems monitoring dashboard — React 19, Three.js hull view, prioritised alarms, mock telemetry server",
+      "possibleUsv01Application": "Investigate offline mission replay, vessel-system observability and digital-twin interfaces.",
+      "source": {
+        "commit": "4500fe51d7b5e9363ad87735df902c030c620657",
+        "tree": "290d2f51acd3a9842d688c605bdc7b44df6bd4ab",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:41.844Z",
+        "provenance": "https://github.com/hermandoronin/AEGIS-MONITOR/tree/4500fe51d7b5e9363ad87735df902c030c620657"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-09-25T11:37:08Z",
+        "ageDays": 50,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A01",
+        "A18",
+        "A25",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "ntnu-itk-autonomous-ship-lab/psbmpc",
+      "url": "https://github.com/ntnu-itk-autonomous-ship-lab/psbmpc",
+      "primaryCategory": "navigation-colregs",
+      "allScoutCategories": [
+        "autonomy-control",
+        "marine-iot",
+        "marine-simulation",
+        "navigation-colregs"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 77,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Library implementations of the Scenario-based Model Predictive Control Algorithm (SB-MPC) and its probabilistic variant (PSB-MPC). Developed as part of the NTNU Centre for Autonomous Marine Operations and Systems (AMOS). Open sourced in November 2025.",
+      "possibleUsv01Application": "Investigate encounter generation and COLREGs decision tests as advisory research only.",
+      "source": {
+        "commit": "5347748e8ad4f32a9ede03f030a4fc2618dedb60",
+        "tree": "89c95135aa62863cd669bf2098db168d334268a7",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:41.844Z",
+        "provenance": "https://github.com/ntnu-itk-autonomous-ship-lab/psbmpc/tree/5347748e8ad4f32a9ede03f030a4fc2618dedb60"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2025-12-05T11:20:20Z",
+        "ageDays": 344,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A17",
+        "A22",
+        "A24",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "solelyman/Multiple-agent-path-planning-and-optimization",
+      "url": "https://github.com/solelyman/Multiple-agent-path-planning-and-optimization",
+      "primaryCategory": "autonomy-control",
+      "allScoutCategories": [
+        "marine-simulation",
+        "navigation-colregs",
+        "usv-platforms"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 77,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "A source code for a project associtaed with multiple USV noncooperatively optimizing path planning behaviors.",
+      "possibleUsv01Application": "Investigate guidance and control algorithms with bounded simulation and independent safety review.",
+      "source": {
+        "commit": "7fbbfac146ad32b56c4ec84afc76f1aacc01632a",
+        "tree": "880fbda3759be8b80cbf86cc8bc8aec1def37c67",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:41.844Z",
+        "provenance": "https://github.com/solelyman/Multiple-agent-path-planning-and-optimization/tree/7fbbfac146ad32b56c4ec84afc76f1aacc01632a"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-10-27T21:12:07Z",
+        "ageDays": 17,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "Apache-2.0",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A16",
+        "A17",
+        "A19",
+        "A20",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "abubakar293/ProjectMarine",
+      "url": "https://github.com/abubakar293/ProjectMarine",
+      "primaryCategory": "hull-design",
+      "allScoutCategories": [
+        "cfd-resistance",
+        "hull-design",
+        "marine-iot",
+        "marine-simulation"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 75,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Multi-agent naval architecture & shipbuilding framework — 120-agent-verified ship design pipeline: hydrostatics/stability cross-checked by two solvers, EEDI trade studies, FE-verified strength, CAD drawings read back against the model. Refuses what it cannot verify.",
+      "possibleUsv01Application": "Investigate preliminary hull geometry, hydrostatics and design-space methods against independent naval-architecture references.",
+      "source": {
+        "commit": "c98143eff9511e563b39cd29647e570f89c6c1d9",
+        "tree": "a88c7df025db125ba3ce9e3ce36e2d4748dcbdc7",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:41.844Z",
+        "provenance": "https://github.com/abubakar293/ProjectMarine/tree/c98143eff9511e563b39cd29647e570f89c6c1d9"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-10-25T16:03:17Z",
+        "ageDays": 20,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "Chethankumardk/5000-teu-container-vessel-design-ship-design",
+      "url": "https://github.com/Chethankumardk/5000-teu-container-vessel-design-ship-design",
+      "primaryCategory": "hull-design",
+      "allScoutCategories": [
+        "hull-design",
+        "marine-iot",
+        "marine-simulation"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 75,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Conceptual design of a 5000 TEU container vessel, including hull geometry, hydrostatics, stability analysis, and Python-assisted engineering calculations.",
+      "possibleUsv01Application": "Investigate preliminary hull geometry, hydrostatics and design-space methods against independent naval-architecture references.",
+      "source": {
+        "commit": "c9c2d5cc10952252f16430a72ab012fb070496fd",
+        "tree": "b3a6d02b98b1d77964b1e24e7b9db35594e96b2e",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:41.844Z",
+        "provenance": "https://github.com/Chethankumardk/5000-teu-container-vessel-design-ship-design/tree/c9c2d5cc10952252f16430a72ab012fb070496fd"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-10-02T19:35:55Z",
+        "ageDays": 43,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "sailtechdk/nmea2000-ble-bridge",
+      "url": "https://github.com/sailtechdk/nmea2000-ble-bridge",
+      "primaryCategory": "marine-iot",
+      "allScoutCategories": [
+        "marine-iot",
+        "marine-simulation",
+        "mission-digital-twin"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 75,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "This repository contains the official firmware for the SailorData NMEA2000 to BLE bridge. It bridges live NMEA2000 marine network data directly to your Garmin smartwatch, enabling real-time telemetry display via the Garmin ConnectIQ SailorData data field.",
+      "possibleUsv01Application": "Investigate marine telemetry and NMEA/AIS parsing in a read-only interface review.",
+      "source": {
+        "commit": "ab2e536aeed15080108a729c9d27df61ed077927",
+        "tree": "b86aa708129e2bfc8e96edd5a8589bd32a8bc9a2",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:41.844Z",
+        "provenance": "https://github.com/sailtechdk/nmea2000-ble-bridge/tree/ab2e536aeed15080108a729c9d27df61ed077927"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-11-14T16:48:47Z",
+        "ageDays": 0,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A19",
+        "A20",
+        "A21",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "tbsalling/aismessages",
+      "url": "https://github.com/tbsalling/aismessages",
+      "primaryCategory": "marine-iot",
+      "allScoutCategories": [
+        "marine-iot",
+        "navigation-colregs",
+        "perception-sonar",
+        "verification-safety"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 75,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "AISmessages is a Java-based light-weight, zero-dependency, and ultra-efficient message decoder for maritime navigation and safety messages compliant with ITU 1371 (NMEA armoured AIS messages).",
+      "possibleUsv01Application": "Investigate marine telemetry and NMEA/AIS parsing in a read-only interface review.",
+      "source": {
+        "commit": "baa3e204fe1ab41699ab519e95683deae9006eb9",
+        "tree": "15c5dfe25c809f522ad32d19e32d8b5b5eca8da3",
+        "branch": "master",
+        "resolvedAt": "2026-11-14T21:10:41.844Z",
+        "provenance": "https://github.com/tbsalling/aismessages/tree/baa3e204fe1ab41699ab519e95683deae9006eb9"
+      },
+      "sourceSearchPasses": [
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-10-26T09:05:01Z",
+        "ageDays": 19,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A19",
+        "A20",
+        "A21",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "bareboat-necessities/ocean-imu",
+      "url": "https://github.com/bareboat-necessities/ocean-imu",
+      "primaryCategory": "marine-iot",
+      "allScoutCategories": [
+        "marine-iot",
+        "marine-simulation"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 74,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Collection of algorithms for IMU data processing in marine environment. Boat heave, wave direction, wave height, attitude (yaw, roll, pitch), tilt compensated compass, ship MRU, GPS fusion, NMEA sensors with IMU, marine AHRS/INS, marine Kalman filters, Arduino/MCU code for marine IMU. Aimed for quality",
+      "possibleUsv01Application": "Investigate marine telemetry and NMEA/AIS parsing in a read-only interface review.",
+      "source": {
+        "commit": "48407251518264d46feb8dc8f6137fdaf21c3bb2",
+        "tree": "ae10907a53a646df8d133b9ee7233e8d735e8178",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:41.844Z",
+        "provenance": "https://github.com/bareboat-necessities/ocean-imu/tree/48407251518264d46feb8dc8f6137fdaf21c3bb2"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-11-14T20:42:59Z",
+        "ageDays": 0,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A19",
+        "A20",
+        "A21",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "Klins101/CORALL",
+      "url": "https://github.com/Klins101/CORALL",
+      "primaryCategory": "navigation-colregs",
+      "allScoutCategories": [
+        "navigation-colregs",
+        "usv-platforms"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 74,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "CORALL (COLREGs-guided Risk Aware LLM) is a novel framework that integrates Large Language Models with real-time risk assessment for autonomous maritime navigation. The system combines LLM-based decision-making with traditional motion planning to enable COLREGs-compliant collision avoidance in ASVs.",
+      "possibleUsv01Application": "Investigate encounter generation and COLREGs decision tests as advisory research only.",
+      "source": {
+        "commit": "0e302cfc73982b8efabff42ed3b58c5611f7f54a",
+        "tree": "4a8ef89910eef4372daaaa9931fb3870c2b72982",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:41.844Z",
+        "provenance": "https://github.com/Klins101/CORALL/tree/0e302cfc73982b8efabff42ed3b58c5611f7f54a"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-08-14T00:27:05Z",
+        "ageDays": 92,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A17",
+        "A22",
+        "A24",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "ppotoc/MPC-Autonomous-Ship-Navigation",
+      "url": "https://github.com/ppotoc/MPC-Autonomous-Ship-Navigation",
+      "primaryCategory": "navigation-colregs",
+      "allScoutCategories": [
+        "autonomy-control",
+        "marine-simulation",
+        "navigation-colregs"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 72,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Model predictive control-based autonomous ship navigation.",
+      "possibleUsv01Application": "Investigate encounter generation and COLREGs decision tests as advisory research only.",
+      "source": {
+        "commit": "3683e92f9949cf884540d40a7ce096c3785273b3",
+        "tree": "6f8177f2812c2832fdefb4e1b17f6e5beb8a7a34",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:44.906Z",
+        "provenance": "https://github.com/ppotoc/MPC-Autonomous-Ship-Navigation/tree/3683e92f9949cf884540d40a7ce096c3785273b3"
+      },
+      "sourceSearchPasses": [
+        "primary",
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2025-08-01T09:53:09Z",
+        "ageDays": 470,
+        "signal": "PUSH_WITHIN_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A17",
+        "A22",
+        "A24",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "M0r13n/pyais",
+      "url": "https://github.com/M0r13n/pyais",
+      "primaryCategory": "marine-iot",
+      "allScoutCategories": [
+        "marine-iot",
+        "perception-sonar"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 70,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "AIS message decoding and encoding in Python (AIVDM/AIVDO)",
+      "possibleUsv01Application": "Investigate marine telemetry and NMEA/AIS parsing in a read-only interface review.",
+      "source": {
+        "commit": "7828bc6b13651279d968e44951ee945fb69648f9",
+        "tree": "fe9ac1e031727e1e6a0a6ccd357c429288950bc5",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:44.906Z",
+        "provenance": "https://github.com/M0r13n/pyais/tree/7828bc6b13651279d968e44951ee945fb69648f9"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-11-01T13:30:18Z",
+        "ageDays": 13,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A19",
+        "A20",
+        "A21",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "Thomas-JHR/Unmanned-Surface-Vessel-Studies",
+      "url": "https://github.com/Thomas-JHR/Unmanned-Surface-Vessel-Studies",
+      "primaryCategory": "usv-platforms",
+      "allScoutCategories": [
+        "autonomy-control",
+        "marine-simulation",
+        "mission-digital-twin",
+        "usv-platforms"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 70,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "A Master of Engineering Academic Project ",
+      "possibleUsv01Application": "Compare research USV software architecture, mission flow and simulation interfaces.",
+      "source": {
+        "commit": "cd70bb67b4685d97345e81acb17f2110d858b76b",
+        "tree": "723ede46d4707855f1b2ab9fce76470b90acbaa4",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:44.906Z",
+        "provenance": "https://github.com/Thomas-JHR/Unmanned-Surface-Vessel-Studies/tree/cd70bb67b4685d97345e81acb17f2110d858b76b"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2022-05-19T14:49:53Z",
+        "ageDays": 1640,
+        "signal": "STALE_OVER_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A01",
+        "A03",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "ros-maritime/awesome-maritime-robotics",
+      "url": "https://github.com/ros-maritime/awesome-maritime-robotics",
+      "primaryCategory": "usv-platforms",
+      "allScoutCategories": [
+        "autonomy-control",
+        "marine-simulation",
+        "mission-digital-twin",
+        "usv-platforms"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 68,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Repo for mapping all the open source robotics software, including the ones from this organization",
+      "possibleUsv01Application": "Compare research USV software architecture, mission flow and simulation interfaces.",
+      "source": {
+        "commit": "a4e77e87c278b215ba35e248539fcfb00dfab9c7",
+        "tree": "80bf725b39614d87dba75065df4fa0aab55daf5a",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:44.906Z",
+        "provenance": "https://github.com/ros-maritime/awesome-maritime-robotics/tree/a4e77e87c278b215ba35e248539fcfb00dfab9c7"
+      },
+      "sourceSearchPasses": [
+        "primary",
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2025-11-04T12:32:25Z",
+        "ageDays": 375,
+        "signal": "PUSH_WITHIN_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A01",
+        "A03",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "WaterScenes/WaterScenes",
+      "url": "https://github.com/WaterScenes/WaterScenes",
+      "primaryCategory": "perception-sonar",
+      "allScoutCategories": [
+        "marine-iot",
+        "marine-simulation",
+        "perception-sonar",
+        "usv-platforms"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 66,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Official repository for WaterScenes dataset",
+      "possibleUsv01Application": "Investigate maritime sensing, sonar data processing or perception benchmark inputs.",
+      "source": {
+        "commit": "9b6af76c4060cf523398f97dc0992ff314791dcc",
+        "tree": "82c3447cb52a5e202558f0fb3bf555e631423560",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:47.691Z",
+        "provenance": "https://github.com/WaterScenes/WaterScenes/tree/9b6af76c4060cf523398f97dc0992ff314791dcc"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2025-10-10T15:13:36Z",
+        "ageDays": 400,
+        "signal": "PUSH_WITHIN_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A12",
+        "A16",
+        "A21",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "yaozt98/USVPlanner",
+      "url": "https://github.com/yaozt98/USVPlanner",
+      "primaryCategory": "navigation-colregs",
+      "allScoutCategories": [
+        "marine-simulation",
+        "navigation-colregs",
+        "perception-sonar",
+        "usv-platforms"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 66,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Local Collision Avoidance for Unmanned Surface Vehicles based on an End-to-End Planner with a LiDAR Beam Map",
+      "possibleUsv01Application": "Investigate encounter generation and COLREGs decision tests as advisory research only.",
+      "source": {
+        "commit": "cb6d90e67f25d02fcb7f77739a8320612ce2e11a",
+        "tree": "4ce90c3a7d6204624930850c9e72136a8c31229a",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:47.691Z",
+        "provenance": "https://github.com/yaozt98/USVPlanner/tree/cb6d90e67f25d02fcb7f77739a8320612ce2e11a"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2025-05-22T19:49:46Z",
+        "ageDays": 541,
+        "signal": "PUSH_WITHIN_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A17",
+        "A22",
+        "A24",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "dureshahwaranna19/marine-hydrodynamics-data-analysis",
+      "url": "https://github.com/dureshahwaranna19/marine-hydrodynamics-data-analysis",
+      "primaryCategory": "cfd-resistance",
+      "allScoutCategories": [
+        "cfd-resistance",
+        "marine-iot",
+        "marine-simulation"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 63,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Python-based analysis of ship resistance and air lubrication data using NumPy, Pandas, and Matplotlib",
+      "possibleUsv01Application": "Investigate resistance, seakeeping or hydrodynamics workflows; require independent numerical reference cases.",
+      "source": {
+        "commit": "5d6e81d2103efe692da80d2e7a636e0433b941d6",
+        "tree": "3ecdce124ef428df771d4e784d13d54ea4b57a5b",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:47.691Z",
+        "provenance": "https://github.com/dureshahwaranna19/marine-hydrodynamics-data-analysis/tree/5d6e81d2103efe692da80d2e7a636e0433b941d6"
+      },
+      "sourceSearchPasses": [
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-08-14T09:45:50Z",
+        "ageDays": 92,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "AhlamBCoding/marine_propulsion_simulator",
+      "url": "https://github.com/AhlamBCoding/marine_propulsion_simulator",
+      "primaryCategory": "propulsion-power",
+      "allScoutCategories": [
+        "marine-iot",
+        "marine-simulation",
+        "propulsion-power"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 62,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "",
+      "possibleUsv01Application": "Investigate energy, battery and propulsion modelling with validated units and operating envelopes.",
+      "source": {
+        "commit": "5914dd91ff9b6780e4ad6baaceab22bb355daece",
+        "tree": "538509cfe87559ece9ea796eaef1e5f5fe35608f",
+        "branch": "master",
+        "resolvedAt": "2026-11-14T21:10:47.691Z",
+        "provenance": "https://github.com/AhlamBCoding/marine_propulsion_simulator/tree/5914dd91ff9b6780e4ad6baaceab22bb355daece"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-02-13T03:21:50Z",
+        "ageDays": 274,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A11",
+        "A13",
+        "A14",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "Fratres-X-AI/mavmrf",
+      "url": "https://github.com/Fratres-X-AI/mavmrf",
+      "primaryCategory": "perception-sonar",
+      "allScoutCategories": [
+        "marine-simulation",
+        "perception-sonar"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 62,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "MAVMRF: simulation-first multi-sensor maritime detect-track-classify framework",
+      "possibleUsv01Application": "Investigate maritime sensing, sonar data processing or perception benchmark inputs.",
+      "source": {
+        "commit": "dfd9d36ace63095a6074dafb3bd47eb118059ab4",
+        "tree": "c2623696a7bcc0b898d6df962fa311a9386c07be",
+        "branch": "master",
+        "resolvedAt": "2026-11-14T21:10:47.691Z",
+        "provenance": "https://github.com/Fratres-X-AI/mavmrf/tree/dfd9d36ace63095a6074dafb3bd47eb118059ab4"
+      },
+      "sourceSearchPasses": [
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-07-19T19:22:02Z",
+        "ageDays": 118,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A12",
+        "A16",
+        "A21",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "JHJP/Unmanned-surface-vehicle-project",
+      "url": "https://github.com/JHJP/Unmanned-surface-vehicle-project",
+      "primaryCategory": "usv-platforms",
+      "allScoutCategories": [
+        "autonomy-control",
+        "marine-simulation",
+        "navigation-colregs"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 60,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "A robot(boat) that autonomously navigate with the optimal path and obstacle avoidance through deep reinforcement learning is being produced.",
+      "possibleUsv01Application": "Compare research USV software architecture, mission flow and simulation interfaces.",
+      "source": {
+        "commit": "28b1cc30fe2720372cda6ec7cef3b009b3dfb6e6",
+        "tree": "5ee72700893fe95a4a43a6557451f034e270c12c",
+        "branch": "master",
+        "resolvedAt": "2026-11-14T21:10:47.691Z",
+        "provenance": "https://github.com/JHJP/Unmanned-surface-vehicle-project/tree/28b1cc30fe2720372cda6ec7cef3b009b3dfb6e6"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2022-11-21T03:22:37Z",
+        "ageDays": 1454,
+        "signal": "STALE_OVER_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A01",
+        "A03",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "pgh-pep/SeaWeed",
+      "url": "https://github.com/pgh-pep/SeaWeed",
+      "primaryCategory": "autonomy-control",
+      "allScoutCategories": [
+        "autonomy-control",
+        "propulsion-power",
+        "usv-platforms"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 60,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "PEP's ASV autonomy stack",
+      "possibleUsv01Application": "Investigate guidance and control algorithms with bounded simulation and independent safety review.",
+      "source": {
+        "commit": "fef2aa0139c06cb8081b20505b67465489e028b5",
+        "tree": "f859f04adf2a69f0f728bc75fe61ea687deafdc4",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:49.992Z",
+        "provenance": "https://github.com/pgh-pep/SeaWeed/tree/fef2aa0139c06cb8081b20505b67465489e028b5"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-11-12T00:43:39Z",
+        "ageDays": 2,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A16",
+        "A17",
+        "A19",
+        "A20",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "hookprobe/naval-ai",
+      "url": "https://github.com/hookprobe/naval-ai",
+      "primaryCategory": "hull-design",
+      "allScoutCategories": [
+        "cfd-resistance",
+        "hull-design"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 59,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Naval-AI is an open-source AI-driven naval design platform. Generate parametric hulls, run physics-based CFD, evaluate stability and performance, and evolve optimized vessels with AI—from sustainable leisure boats to autonomous maritime drones. #drone #maritime #boats #cfd #solarBoat #kiteBoat #diyBoat #navalAI #freeBoatDesign #boatDesign #boatPla",
+      "possibleUsv01Application": "Investigate preliminary hull geometry, hydrostatics and design-space methods against independent naval-architecture references.",
+      "source": {
+        "commit": "f75e02444a97d81c7ad85017b19d5e6950ce1b7f",
+        "tree": "629f2c90cd92e3bb1eb10033a7bf92a7446605c3",
+        "branch": "master",
+        "resolvedAt": "2026-11-14T21:10:49.992Z",
+        "provenance": "https://github.com/hookprobe/naval-ai/tree/f75e02444a97d81c7ad85017b19d5e6950ce1b7f"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-09-04T13:32:03Z",
+        "ageDays": 71,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "AGPL-3.0",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "echostack-org/echopype",
+      "url": "https://github.com/echostack-org/echopype",
+      "primaryCategory": "perception-sonar",
+      "allScoutCategories": [
+        "perception-sonar"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 54,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Enabling interoperability and scalability in ocean sonar data analysis",
+      "possibleUsv01Application": "Investigate maritime sensing, sonar data processing or perception benchmark inputs.",
+      "source": {
+        "commit": "b20bbde3a9edddab0cea895b3b9ab5d7b4500a9c",
+        "tree": "e289b87f1687afdecdfa9f34e7e2bb1f057c6844",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:52.433Z",
+        "provenance": "https://github.com/echostack-org/echopype/tree/b20bbde3a9edddab0cea895b3b9ab5d7b4500a9c"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-11-10T02:37:40Z",
+        "ageDays": 4,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "Apache-2.0",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A12",
+        "A16",
+        "A21",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "shiplab/dt_cv",
+      "url": "https://github.com/shiplab/dt_cv",
+      "primaryCategory": "mission-digital-twin",
+      "allScoutCategories": [
+        "marine-simulation",
+        "mission-digital-twin"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 52,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Two standards-based digital twins of experiments with scale model ships.",
+      "possibleUsv01Application": "Investigate offline mission replay, vessel-system observability and digital-twin interfaces.",
+      "source": {
+        "commit": "7bb6c1065c9cabc3f938e35505ef31b1188a3589",
+        "tree": "8a43161fd79825d6c1c2723ac327575c2edf59cb",
+        "branch": "master",
+        "resolvedAt": "2026-11-14T21:10:52.433Z",
+        "provenance": "https://github.com/shiplab/dt_cv/tree/7bb6c1065c9cabc3f938e35505ef31b1188a3589"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-02-12T08:53:43Z",
+        "ageDays": 275,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A01",
+        "A18",
+        "A25",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "thiru51/wigley-hull-openfoam-resistance",
+      "url": "https://github.com/thiru51/wigley-hull-openfoam-resistance",
+      "primaryCategory": "cfd-resistance",
+      "allScoutCategories": [
+        "cfd-resistance",
+        "hull-design"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 51,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "",
+      "possibleUsv01Application": "Investigate resistance, seakeeping or hydrodynamics workflows; require independent numerical reference cases.",
+      "source": {
+        "commit": "0d4969b43ac3874e43e98faef4d8cacdd5fba7a1",
+        "tree": "fe9b58b3269650d2263d3ff229d326e219605eb8",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:55.424Z",
+        "provenance": "https://github.com/thiru51/wigley-hull-openfoam-resistance/tree/0d4969b43ac3874e43e98faef4d8cacdd5fba7a1"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-10-07T10:57:32Z",
+        "ageDays": 38,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "echostack-org/echoshader",
+      "url": "https://github.com/echostack-org/echoshader",
+      "primaryCategory": "perception-sonar",
+      "allScoutCategories": [
+        "perception-sonar"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 50,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Interactive visualization of ocean sonar data",
+      "possibleUsv01Application": "Investigate maritime sensing, sonar data processing or perception benchmark inputs.",
+      "source": {
+        "commit": "2d695fdbf61272fa24662dab129a2fc1c99f5e35",
+        "tree": "625b65fa1ec094333611390a29fabefa427fe1f7",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:55.424Z",
+        "provenance": "https://github.com/echostack-org/echoshader/tree/2d695fdbf61272fa24662dab129a2fc1c99f5e35"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-11-13T22:28:50Z",
+        "ageDays": 0,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A12",
+        "A16",
+        "A21",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "abdulhamidbatayhi123/ml-ship-resistance",
+      "url": "https://github.com/abdulhamidbatayhi123/ml-ship-resistance",
+      "primaryCategory": "cfd-resistance",
+      "allScoutCategories": [
+        "cfd-resistance",
+        "marine-simulation"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 48,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Machine learning for ship resistance — a TÜBİTAK 3501 model proposal, with seven live simulations",
+      "possibleUsv01Application": "Investigate resistance, seakeeping or hydrodynamics workflows; require independent numerical reference cases.",
+      "source": {
+        "commit": "d88c2b67a9849954c4fb4123574432989b9a05e7",
+        "tree": "0a108f20137145c80432931df00150ea012e36d2",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:58.015Z",
+        "provenance": "https://github.com/abdulhamidbatayhi123/ml-ship-resistance/tree/d88c2b67a9849954c4fb4123574432989b9a05e7"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-08-04T13:54:27Z",
+        "ageDays": 102,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "atticusrussell/MSD15440-BoatBot",
+      "url": "https://github.com/atticusrussell/MSD15440-BoatBot",
+      "primaryCategory": "usv-platforms",
+      "allScoutCategories": [
+        "autonomy-control",
+        "mission-digital-twin"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 47,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "ROS2 code for robot from MSD15440 team in NASA SAVER challenge to locate radio beacon with autonomous vehicle.",
+      "possibleUsv01Application": "Compare research USV software architecture, mission flow and simulation interfaces.",
+      "source": {
+        "commit": "f8f0884d18c0c6862dbe50c896824636e6df6850",
+        "tree": "fbe388474371e21cbb2eda2e66632f139489d6f0",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:58.015Z",
+        "provenance": "https://github.com/atticusrussell/MSD15440-BoatBot/tree/f8f0884d18c0c6862dbe50c896824636e6df6850"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2023-06-12T21:34:53Z",
+        "ageDays": 1250,
+        "signal": "STALE_OVER_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "Apache-2.0",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A01",
+        "A03",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "byu-holoocean/holoocean-ros",
+      "url": "https://github.com/byu-holoocean/holoocean-ros",
+      "primaryCategory": "marine-simulation",
+      "allScoutCategories": [
+        "marine-simulation"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 47,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "ROS Bridge for HoloOcean",
+      "possibleUsv01Application": "Investigate vessel dynamics and test scenarios in an isolated research environment.",
+      "source": {
+        "commit": "cbc5a769f8fc01e354290df9ebd58cc5a62429a9",
+        "tree": "0908115bd5052efc1b69834fdb81d4bc3654f515",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:58.015Z",
+        "provenance": "https://github.com/byu-holoocean/holoocean-ros/tree/cbc5a769f8fc01e354290df9ebd58cc5a62429a9"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-11-13T21:35:46Z",
+        "ageDays": 0,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A08",
+        "A17",
+        "A18",
+        "A24",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "danielkope/scheiber-can-analysis-nmea2000",
+      "url": "https://github.com/danielkope/scheiber-can-analysis-nmea2000",
+      "primaryCategory": "marine-iot",
+      "allScoutCategories": [
+        "marine-iot"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 46,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Reverse engineering, decoding and NMEA 2000 mapping of a Scheiber Multibloc V8 CAN network",
+      "possibleUsv01Application": "Investigate marine telemetry and NMEA/AIS parsing in a read-only interface review.",
+      "source": {
+        "commit": "4fac2d87e0c92a8ecb2b7c7eeec08d799838068d",
+        "tree": "c4828a23b065b3f3630e97b78e3f53b76f29f4d2",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:10:58.015Z",
+        "provenance": "https://github.com/danielkope/scheiber-can-analysis-nmea2000/tree/4fac2d87e0c92a8ecb2b7c7eeec08d799838068d"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-08-28T09:50:36Z",
+        "ageDays": 78,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A19",
+        "A20",
+        "A21",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "open-ships/n2k",
+      "url": "https://github.com/open-ships/n2k",
+      "primaryCategory": "marine-iot",
+      "allScoutCategories": [
+        "marine-iot"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 46,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Read/write NMEA 2000 PGN's using Golang. Supports tcp/udp, SocketCAN, serial USB gateways like the Actisense NGT-1, and wifi gateways such as Yacht Devices YDWG-02. Includes filtering with Common Expression Language, address claiming, and more 🌶️",
+      "possibleUsv01Application": "Investigate marine telemetry and NMEA/AIS parsing in a read-only interface review.",
+      "source": {
+        "commit": "bdc115d5c7b31fee889a91cc0db16e5458df9411",
+        "tree": "168bb9e8dc1c5f15a12d6a84e68327f38441fbc4",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:01.168Z",
+        "provenance": "https://github.com/open-ships/n2k/tree/bdc115d5c7b31fee889a91cc0db16e5458df9411"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-11-09T12:15:40Z",
+        "ageDays": 5,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A19",
+        "A20",
+        "A21",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "vamseeachanta/digitalmodel",
+      "url": "https://github.com/vamseeachanta/digitalmodel",
+      "primaryCategory": "structures-materials",
+      "allScoutCategories": [
+        "cfd-resistance"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 46,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Offshore asset lifecycle: ASCII data → strength, fatigue, FFS, hydrodynamics",
+      "possibleUsv01Application": "Investigate structural analysis methods with independent loads and material evidence.",
+      "source": {
+        "commit": "02377a0a3fa75bf8e85b8fe013f044d670b5fb63",
+        "tree": "5f64e8e4db76d386640df6d5224fb734d7fd9632",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:01.168Z",
+        "provenance": "https://github.com/vamseeachanta/digitalmodel/tree/02377a0a3fa75bf8e85b8fe013f044d670b5fb63"
+      },
+      "sourceSearchPasses": [
+        "primary",
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-11-14T21:04:00Z",
+        "ageDays": 0,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A10",
+        "A11",
+        "A12",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "ajsanderson2222-maker/openfoam-DTCHullWave",
+      "url": "https://github.com/ajsanderson2222-maker/openfoam-DTCHullWave",
+      "primaryCategory": "cfd-resistance",
+      "allScoutCategories": [
+        "cfd-resistance",
+        "hull-design"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 43,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "",
+      "possibleUsv01Application": "Investigate resistance, seakeeping or hydrodynamics workflows; require independent numerical reference cases.",
+      "source": {
+        "commit": "eaa51235b6e93f924f22c9f4c8913a764f1c427e",
+        "tree": "0aa635a96518b54a83c331a8f94a210fb6eca118",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:01.168Z",
+        "provenance": "https://github.com/ajsanderson2222-maker/openfoam-DTCHullWave/tree/eaa51235b6e93f924f22c9f4c8913a764f1c427e"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-05-19T15:04:35Z",
+        "ageDays": 179,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "BEMRosetta/BEMRosetta",
+      "url": "https://github.com/BEMRosetta/BEMRosetta",
+      "primaryCategory": "cfd-resistance",
+      "allScoutCategories": [
+        "hull-design"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 43,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Hydrodynamic coefficients viewer and converter for Boundary Element Method solver formats",
+      "possibleUsv01Application": "Investigate resistance, seakeeping or hydrodynamics workflows; require independent numerical reference cases.",
+      "source": {
+        "commit": "83476982ebcce5d269628556771def58fee496fe",
+        "tree": "6dcb7464f30ea95aa56447ba1a9ba8d9b716ff6b",
+        "branch": "master",
+        "resolvedAt": "2026-11-14T21:11:01.168Z",
+        "provenance": "https://github.com/BEMRosetta/BEMRosetta/tree/83476982ebcce5d269628556771def58fee496fe"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-10-28T12:39:56Z",
+        "ageDays": 17,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "GPL-3.0",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "jiangshirong/FreeShip-26",
+      "url": "https://github.com/jiangshirong/FreeShip-26",
+      "primaryCategory": "hull-design",
+      "allScoutCategories": [
+        "hull-design"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 43,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "A modernized fork of FREE!ship Plus in Lazarus — hull design, hydrostatics and linesplan with a new StudioLight UI, 5–17.6× faster rendering, 17 upstream fixes and 7 UI languages. | FreeShip_26 船体设计与静水力工作台",
+      "possibleUsv01Application": "Investigate preliminary hull geometry, hydrostatics and design-space methods against independent naval-architecture references.",
+      "source": {
+        "commit": "06dbc24792a33c456e56a35537767611c078b895",
+        "tree": "fcfaecbda76ded7264f89776d14dc0e4da827718",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:05.066Z",
+        "provenance": "https://github.com/jiangshirong/FreeShip-26/tree/06dbc24792a33c456e56a35537767611c078b895"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-11-09T11:08:39Z",
+        "ageDays": 5,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "GPL-3.0",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "VTTI-CSM/ShipNetSim",
+      "url": "https://github.com/VTTI-CSM/ShipNetSim",
+      "primaryCategory": "mission-digital-twin",
+      "allScoutCategories": [
+        "marine-simulation"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 43,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "An open-source integrated ship network simulator.",
+      "possibleUsv01Application": "Investigate offline mission replay, vessel-system observability and digital-twin interfaces.",
+      "source": {
+        "commit": "3029cbb5370a61ae5f960812bf94d6f67c37599d",
+        "tree": "29f79937c6ab5c581f6f12aa6a6e7129138cda1d",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:05.066Z",
+        "provenance": "https://github.com/VTTI-CSM/ShipNetSim/tree/3029cbb5370a61ae5f960812bf94d6f67c37599d"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-06-11T19:14:16Z",
+        "ageDays": 156,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "GPL-3.0",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A01",
+        "A18",
+        "A25",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "julesricheux/Archibald",
+      "url": "https://github.com/julesricheux/Archibald",
+      "primaryCategory": "cfd-resistance",
+      "allScoutCategories": [
+        "hull-design"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 42,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "An open-source performance prediction program (PPP) for sailboats and ships in the preliminary design stage, with fast pipelines from CAD to computation in a Python environment.",
+      "possibleUsv01Application": "Investigate resistance, seakeeping or hydrodynamics workflows; require independent numerical reference cases.",
+      "source": {
+        "commit": "ab769914c7125666ec5edb4422f920baff5b1470",
+        "tree": "9acb5142c2f2309de4e14ff9c67328ecc673387c",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:05.066Z",
+        "provenance": "https://github.com/julesricheux/Archibald/tree/ab769914c7125666ec5edb4422f920baff5b1470"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-11-08T23:57:55Z",
+        "ageDays": 5,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "ntnu-itk-autonomous-ship-lab/collision_avoidance_identifier",
+      "url": "https://github.com/ntnu-itk-autonomous-ship-lab/collision_avoidance_identifier",
+      "primaryCategory": "navigation-colregs",
+      "allScoutCategories": [
+        "navigation-colregs"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 42,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Preprocessing of AIS-data to extract COLREG-relevant encounters",
+      "possibleUsv01Application": "Investigate encounter generation and COLREGs decision tests as advisory research only.",
+      "source": {
+        "commit": "6db25234c186ae384c17d629fe552922fdcf7114",
+        "tree": "37ecc9bb23fc22c72006227ec808ac76338d5211",
+        "branch": "master",
+        "resolvedAt": "2026-11-14T21:11:05.066Z",
+        "provenance": "https://github.com/ntnu-itk-autonomous-ship-lab/collision_avoidance_identifier/tree/6db25234c186ae384c17d629fe552922fdcf7114"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2025-11-26T14:48:08Z",
+        "ageDays": 353,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A17",
+        "A22",
+        "A24",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "XueYifan1995/Real-time-NMPC-for-USVs-CasADi",
+      "url": "https://github.com/XueYifan1995/Real-time-NMPC-for-USVs-CasADi",
+      "primaryCategory": "autonomy-control",
+      "allScoutCategories": [
+        "marine-simulation",
+        "usv-platforms"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 42,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "ICMRE-2021 coference paper codes",
+      "possibleUsv01Application": "Investigate guidance and control algorithms with bounded simulation and independent safety review.",
+      "source": {
+        "commit": "496500e8f3fa4a563de0f123549e0bd55fee5273",
+        "tree": "c3903be2e78ea4f9caed313e499f2ca49dd5a75d",
+        "branch": "master",
+        "resolvedAt": "2026-11-14T21:11:05.066Z",
+        "provenance": "https://github.com/XueYifan1995/Real-time-NMPC-for-USVs-CasADi/tree/496500e8f3fa4a563de0f123549e0bd55fee5273"
+      },
+      "sourceSearchPasses": [
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2023-05-17T01:27:54Z",
+        "ageDays": 1277,
+        "signal": "STALE_OVER_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A16",
+        "A17",
+        "A19",
+        "A20",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "noahbagz/C_ShipGen",
+      "url": "https://github.com/noahbagz/C_ShipGen",
+      "primaryCategory": "hull-design",
+      "allScoutCategories": [
+        "hull-design"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 41,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Conditional Parametric Diffusion Model for Ship Hull Design",
+      "possibleUsv01Application": "Investigate preliminary hull geometry, hydrostatics and design-space methods against independent naval-architecture references.",
+      "source": {
+        "commit": "cdd83e3182d3a873e608a3c6a1518d9f5c3a76e5",
+        "tree": "626549907ef9734f3b628363d61d226a7ad89617",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:05.066Z",
+        "provenance": "https://github.com/noahbagz/C_ShipGen/tree/cdd83e3182d3a873e608a3c6a1518d9f5c3a76e5"
+      },
+      "sourceSearchPasses": [
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2024-12-05T21:47:03Z",
+        "ageDays": 708,
+        "signal": "PUSH_WITHIN_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "ZHIBO-HE/MPAPF-ship-collision-avoidance-method",
+      "url": "https://github.com/ZHIBO-HE/MPAPF-ship-collision-avoidance-method",
+      "primaryCategory": "navigation-colregs",
+      "allScoutCategories": [
+        "navigation-colregs"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 41,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "A novel model predictive artificial potential field based ship motion planning method considering COLREGs for complex encounter scenarios",
+      "possibleUsv01Application": "Investigate encounter generation and COLREGs decision tests as advisory research only.",
+      "source": {
+        "commit": "fb8ecaafb4e1865b26e6de61793b756d9d6f943d",
+        "tree": "48fc2a328ee595f5f4d25ac3a72115298feb488e",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:05.066Z",
+        "provenance": "https://github.com/ZHIBO-HE/MPAPF-ship-collision-avoidance-method/tree/fb8ecaafb4e1865b26e6de61793b756d9d6f943d"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2025-08-28T09:49:45Z",
+        "ageDays": 443,
+        "signal": "PUSH_WITHIN_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A17",
+        "A22",
+        "A24",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "BavoLesy/ASVSim",
+      "url": "https://github.com/BavoLesy/ASVSim",
+      "primaryCategory": "marine-simulation",
+      "allScoutCategories": [
+        "usv-platforms"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 40,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "AirSim for Surface Vehicles (ASVSim) by IDLab",
+      "possibleUsv01Application": "Investigate vessel dynamics and test scenarios in an isolated research environment.",
+      "source": {
+        "commit": "df8c3990b3287b713247e831b312ea43f0718f0b",
+        "tree": "085a66be39f4f11e4301290861c8be3b06b19ea1",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:05.066Z",
+        "provenance": "https://github.com/BavoLesy/ASVSim/tree/df8c3990b3287b713247e831b312ea43f0718f0b"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-05-11T17:10:42Z",
+        "ageDays": 187,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A08",
+        "A17",
+        "A18",
+        "A24",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "markmal/freeship-plus-in-lazarus",
+      "url": "https://github.com/markmal/freeship-plus-in-lazarus",
+      "primaryCategory": "hull-design",
+      "allScoutCategories": [
+        "hull-design"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 40,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "FreeShip Plus in Lazarus",
+      "possibleUsv01Application": "Investigate preliminary hull geometry, hydrostatics and design-space methods against independent naval-architecture references.",
+      "source": {
+        "commit": "1de17e99fb2b1cc559cdf27c5cafb595a627a641",
+        "tree": "eceed19e4f92ffae3b2f38d0e316fc287fb5ef8c",
+        "branch": "master",
+        "resolvedAt": "2026-11-14T21:11:07.964Z",
+        "provenance": "https://github.com/markmal/freeship-plus-in-lazarus/tree/1de17e99fb2b1cc559cdf27c5cafb595a627a641"
+      },
+      "sourceSearchPasses": [
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-02-19T04:05:48Z",
+        "ageDays": 268,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "GPL-3.0",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "andreacoraddu/ECM",
+      "url": "https://github.com/andreacoraddu/ECM",
+      "primaryCategory": "propulsion-power",
+      "allScoutCategories": [
+        "propulsion-power"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 38,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Equivalent Circuit for Maritime Batteries",
+      "possibleUsv01Application": "Investigate energy, battery and propulsion modelling with validated units and operating envelopes.",
+      "source": {
+        "commit": "3d103a793c87a5d1576088585a19d7a43936b57d",
+        "tree": "a36dece3cb9e06800b7f5b143f9f7bb28c9fa5fd",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:07.964Z",
+        "provenance": "https://github.com/andreacoraddu/ECM/tree/3d103a793c87a5d1576088585a19d7a43936b57d"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-05-19T08:20:14Z",
+        "ageDays": 179,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A11",
+        "A13",
+        "A14",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "aqualinkorg/asv",
+      "url": "https://github.com/aqualinkorg/asv",
+      "primaryCategory": "usv-platforms",
+      "allScoutCategories": [
+        "autonomy-control",
+        "usv-platforms"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 38,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Autonomous surface vehicle",
+      "possibleUsv01Application": "Compare research USV software architecture, mission flow and simulation interfaces.",
+      "source": {
+        "commit": "7dc47ab34a193dde7bbd02a6612803d22fe5fbb4",
+        "tree": "4caaed345f28e2ec94d1b4b74da61baa09da6cc6",
+        "branch": "master",
+        "resolvedAt": "2026-11-14T21:11:07.964Z",
+        "provenance": "https://github.com/aqualinkorg/asv/tree/7dc47ab34a193dde7bbd02a6612803d22fe5fbb4"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2020-10-15T17:06:30Z",
+        "ageDays": 2221,
+        "signal": "STALE_OVER_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A01",
+        "A03",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "bartboogmans/TurtleBoat",
+      "url": "https://github.com/bartboogmans/TurtleBoat",
+      "primaryCategory": "marine-simulation",
+      "allScoutCategories": [
+        "autonomy-control",
+        "marine-simulation"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 37,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Compact vessel simulator on a single ROS node",
+      "possibleUsv01Application": "Investigate vessel dynamics and test scenarios in an isolated research environment.",
+      "source": {
+        "commit": "a6184bdf81dd6d99099e4af7ae131731a58e9eb6",
+        "tree": "67b72efe8e1fefe203b473d01cf1da7ebf098c75",
+        "branch": "ros2",
+        "resolvedAt": "2026-11-14T21:11:07.964Z",
+        "provenance": "https://github.com/bartboogmans/TurtleBoat/tree/a6184bdf81dd6d99099e4af7ae131731a58e9eb6"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2024-06-12T07:42:01Z",
+        "ageDays": 885,
+        "signal": "STALE_OVER_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A08",
+        "A17",
+        "A18",
+        "A24",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "CaptanG/shiphydrostatics",
+      "url": "https://github.com/CaptanG/shiphydrostatics",
+      "primaryCategory": "hull-design",
+      "allScoutCategories": [
+        "hull-design"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 37,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "This project is a ship hydrostatics and structural analysis toolbox. It demonstrates how to determine equilibrium conditions (draft, trim, buoyancy balance) and evaluate structural responses under distributed loads. Useful for naval architecture coursework, hydrostatics studies, and ship design projects.",
+      "possibleUsv01Application": "Investigate preliminary hull geometry, hydrostatics and design-space methods against independent naval-architecture references.",
+      "source": {
+        "commit": "4caeef4ce07f981f2f6de3caffcb7673e4bf7032",
+        "tree": "e133d9f331b955446510127648b0601e2a4034c1",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:07.964Z",
+        "provenance": "https://github.com/CaptanG/shiphydrostatics/tree/4caeef4ce07f981f2f6de3caffcb7673e4bf7032"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2025-08-25T07:17:20Z",
+        "ageDays": 446,
+        "signal": "PUSH_WITHIN_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "cram001/esp32-n2k-touch",
+      "url": "https://github.com/cram001/esp32-n2k-touch",
+      "primaryCategory": "marine-iot",
+      "allScoutCategories": [
+        "marine-iot"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 37,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Touch screen nmea2000 display",
+      "possibleUsv01Application": "Investigate marine telemetry and NMEA/AIS parsing in a read-only interface review.",
+      "source": {
+        "commit": "2acc6289747dc9dadb8625672755fbcf6c081faa",
+        "tree": "613361cf7c0719df59fbc7efa31ccc520fb93c87",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:07.964Z",
+        "provenance": "https://github.com/cram001/esp32-n2k-touch/tree/2acc6289747dc9dadb8625672755fbcf6c081faa"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-11-06T14:37:07Z",
+        "ageDays": 8,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A19",
+        "A20",
+        "A21",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "edzop/bpyhullgen",
+      "url": "https://github.com/edzop/bpyhullgen",
+      "primaryCategory": "hull-design",
+      "allScoutCategories": [
+        "hull-design"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 36,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Blender based Parametric Hull Generator",
+      "possibleUsv01Application": "Investigate preliminary hull geometry, hydrostatics and design-space methods against independent naval-architecture references.",
+      "source": {
+        "commit": "d619f7c3ef0cad70ed678e405778e98b0e09d1fd",
+        "tree": "cc8f6cbb81cba1c6feb20d6a3f688f28259565d5",
+        "branch": "master",
+        "resolvedAt": "2026-11-14T21:11:10.774Z",
+        "provenance": "https://github.com/edzop/bpyhullgen/tree/d619f7c3ef0cad70ed678e405778e98b0e09d1fd"
+      },
+      "sourceSearchPasses": [
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-06-05T13:15:36Z",
+        "ageDays": 162,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "emi-ber/ship-hydrostatics",
+      "url": "https://github.com/emi-ber/ship-hydrostatics",
+      "primaryCategory": "hull-design",
+      "allScoutCategories": [
+        "hull-design"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 36,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Hydrostatics of a 77.7 m cargo vessel in Python from a DELFTship offset table, validated against DELFTship (within 0.5 %).",
+      "possibleUsv01Application": "Investigate preliminary hull geometry, hydrostatics and design-space methods against independent naval-architecture references.",
+      "source": {
+        "commit": "2304f05bea9623fd0035563de2a1732f623ce246",
+        "tree": "4c6ac0cad6ca1235352a8d4e861096485bcdb288",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:10.774Z",
+        "provenance": "https://github.com/emi-ber/ship-hydrostatics/tree/2304f05bea9623fd0035563de2a1732f623ce246"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-11-08T13:23:43Z",
+        "ageDays": 6,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "gy65896/Neptune-X",
+      "url": "https://github.com/gy65896/Neptune-X",
+      "primaryCategory": "perception-sonar",
+      "allScoutCategories": [
+        "perception-sonar"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 36,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "[NeurIPS 2025 Spotlight] Neptune-X: Active X-to-Maritime Generation for Universal Maritime Object Detection",
+      "possibleUsv01Application": "Investigate maritime sensing, sonar data processing or perception benchmark inputs.",
+      "source": {
+        "commit": "d4703530afaaa286fb3324b27150e4f7c25d7a6e",
+        "tree": "f504adf7a0145a75216401a89bb25848b584f367",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:10.774Z",
+        "provenance": "https://github.com/gy65896/Neptune-X/tree/d4703530afaaa286fb3324b27150e4f7c25d7a6e"
+      },
+      "sourceSearchPasses": [
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-06-17T07:50:41Z",
+        "ageDays": 150,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A12",
+        "A16",
+        "A21",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "openearth/tudflow3d",
+      "url": "https://github.com/openearth/tudflow3d",
+      "primaryCategory": "cfd-resistance",
+      "allScoutCategories": [
+        "cfd-resistance"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 36,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "TUDFlow3d is a fully 3 dimensional CFD (computational fluid dynamics) solver which can simulate turbulent flows on engineering scale. ",
+      "possibleUsv01Application": "Investigate resistance, seakeeping or hydrodynamics workflows; require independent numerical reference cases.",
+      "source": {
+        "commit": "b17896257c7ac1d9ab701aed5c02a0a6e01fe23d",
+        "tree": "de6dba2e4ca281857a73017de771147e8eaac1e1",
+        "branch": "master",
+        "resolvedAt": "2026-11-14T21:11:10.774Z",
+        "provenance": "https://github.com/openearth/tudflow3d/tree/b17896257c7ac1d9ab701aed5c02a0a6e01fe23d"
+      },
+      "sourceSearchPasses": [
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-06-09T11:06:25Z",
+        "ageDays": 158,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "NAOE-5thLab/mmg-1p1r-simulator",
+      "url": "https://github.com/NAOE-5thLab/mmg-1p1r-simulator",
+      "primaryCategory": "marine-simulation",
+      "allScoutCategories": [
+        "marine-simulation"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 35,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Simulation code for MMG model of single propeller single rudder ship",
+      "possibleUsv01Application": "Investigate vessel dynamics and test scenarios in an isolated research environment.",
+      "source": {
+        "commit": "d838b860a3e508da92d993eecce881ce6c77573f",
+        "tree": "1d53496f3eafedef2dbb995f79356ff64a069889",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:10.774Z",
+        "provenance": "https://github.com/NAOE-5thLab/mmg-1p1r-simulator/tree/d838b860a3e508da92d993eecce881ce6c77573f"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2025-08-06T07:36:52Z",
+        "ageDays": 465,
+        "signal": "PUSH_WITHIN_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A08",
+        "A17",
+        "A18",
+        "A24",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "noahbagz/ShipD",
+      "url": "https://github.com/noahbagz/ShipD",
+      "primaryCategory": "hull-design",
+      "allScoutCategories": [
+        "hull-design"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 35,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Dataset of 30,000 ship hulls for machine learning applications to ship design. ",
+      "possibleUsv01Application": "Investigate preliminary hull geometry, hydrostatics and design-space methods against independent naval-architecture references.",
+      "source": {
+        "commit": "a281d92958451a2c8c4ac1efe6056fcf804fe6e0",
+        "tree": "5d2c5a02bb2cc01bcbb8a68d1795561a1bfc1cb3",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:10.774Z",
+        "provenance": "https://github.com/noahbagz/ShipD/tree/a281d92958451a2c8c4ac1efe6056fcf804fe6e0"
+      },
+      "sourceSearchPasses": [
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2025-01-29T16:00:15Z",
+        "ageDays": 654,
+        "signal": "PUSH_WITHIN_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "MaritimeDataset/KOLOMVERSE",
+      "url": "https://github.com/MaritimeDataset/KOLOMVERSE",
+      "primaryCategory": "perception-sonar",
+      "allScoutCategories": [
+        "perception-sonar"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 34,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Large-scale object detection dataset in the maritime domain",
+      "possibleUsv01Application": "Investigate maritime sensing, sonar data processing or perception benchmark inputs.",
+      "source": {
+        "commit": "e4ba8754be9a3d6aba742348a451b8bf8012af24",
+        "tree": "c4bb3bf100126b0a79d7e79ace87e96cb72057dc",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:14.148Z",
+        "provenance": "https://github.com/MaritimeDataset/KOLOMVERSE/tree/e4ba8754be9a3d6aba742348a451b8bf8012af24"
+      },
+      "sourceSearchPasses": [
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2025-07-22T17:22:19Z",
+        "ageDays": 480,
+        "signal": "PUSH_WITHIN_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "GPL-3.0",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A12",
+        "A16",
+        "A21",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "kalbar87/resistance",
+      "url": "https://github.com/kalbar87/resistance",
+      "primaryCategory": "cfd-resistance",
+      "allScoutCategories": [
+        "cfd-resistance",
+        "hull-design"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 33,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Fishery Vessel Resistance Prediction",
+      "possibleUsv01Application": "Investigate resistance, seakeeping or hydrodynamics workflows; require independent numerical reference cases.",
+      "source": {
+        "commit": "6b62bdf69021982fdc346c0289d303b8fb41c7da",
+        "tree": "864e568f7c7c4a0dfc0d9f0c34f570d26d55f280",
+        "branch": "master",
+        "resolvedAt": "2026-11-14T21:11:14.148Z",
+        "provenance": "https://github.com/kalbar87/resistance/tree/6b62bdf69021982fdc346c0289d303b8fb41c7da"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2023-08-08T07:37:02Z",
+        "ageDays": 1194,
+        "signal": "STALE_OVER_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "shipCFD-SJTU/MPX",
+      "url": "https://github.com/shipCFD-SJTU/MPX",
+      "primaryCategory": "cfd-resistance",
+      "allScoutCategories": [
+        "cfd-resistance"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 33,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "基于Boussinesq假设的温盐分层流求解器",
+      "possibleUsv01Application": "Investigate resistance, seakeeping or hydrodynamics workflows; require independent numerical reference cases.",
+      "source": {
+        "commit": "d81fd6aaf3139b673d59b6f4abaa84337e6e66fd",
+        "tree": "5f2e5bc14bd108755aaccd2bc1128622097c784d",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:14.148Z",
+        "provenance": "https://github.com/shipCFD-SJTU/MPX/tree/d81fd6aaf3139b673d59b6f4abaa84337e6e66fd"
+      },
+      "sourceSearchPasses": [
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-10-24T04:16:24Z",
+        "ageDays": 21,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "shiplab/hull",
+      "url": "https://github.com/shiplab/hull",
+      "primaryCategory": "hull-design",
+      "allScoutCategories": [
+        "hull-design"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 33,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Hull Generator",
+      "possibleUsv01Application": "Investigate preliminary hull geometry, hydrostatics and design-space methods against independent naval-architecture references.",
+      "source": {
+        "commit": "9cdf8af5fa7358d1f2319469e92fa93fb03ca1a6",
+        "tree": "8fb59b57cceaf1ff572ba19c5d66b064344e328d",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:14.148Z",
+        "provenance": "https://github.com/shiplab/hull/tree/9cdf8af5fa7358d1f2319469e92fa93fb03ca1a6"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-10-30T21:05:21Z",
+        "ageDays": 15,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "alperalacam/NavalArchitectureSuite",
+      "url": "https://github.com/alperalacam/NavalArchitectureSuite",
+      "primaryCategory": "hull-design",
+      "allScoutCategories": [
+        "hull-design"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 32,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Free naval architecture desktop application — 14 modules, 3,358 live formulas",
+      "possibleUsv01Application": "Investigate preliminary hull geometry, hydrostatics and design-space methods against independent naval-architecture references.",
+      "source": {
+        "commit": "b83726aca0a1071e463745dda042c94caba4fbf9",
+        "tree": "8bb20ec442b628df35044d6d2684be6c639731e6",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:14.148Z",
+        "provenance": "https://github.com/alperalacam/NavalArchitectureSuite/tree/b83726aca0a1071e463745dda042c94caba4fbf9"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-07-24T17:16:17Z",
+        "ageDays": 113,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "Sagacious-Science-Syndicate/LinesPlanModule",
+      "url": "https://github.com/Sagacious-Science-Syndicate/LinesPlanModule",
+      "primaryCategory": "hull-design",
+      "allScoutCategories": [
+        "hull-design"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 32,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Ship Hull Lines Plan Generator module",
+      "possibleUsv01Application": "Investigate preliminary hull geometry, hydrostatics and design-space methods against independent naval-architecture references.",
+      "source": {
+        "commit": "86ab3b1c4f1f7aad98727f9f3c97b2fa7e478e1c",
+        "tree": "592ea449e55d64c1d21443eae9b86d11239ef881",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:14.148Z",
+        "provenance": "https://github.com/Sagacious-Science-Syndicate/LinesPlanModule/tree/86ab3b1c4f1f7aad98727f9f3c97b2fa7e478e1c"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-07-29T06:59:01Z",
+        "ageDays": 108,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "aburguera/NNSSS",
+      "url": "https://github.com/aburguera/NNSSS",
+      "primaryCategory": "perception-sonar",
+      "allScoutCategories": [
+        "perception-sonar"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 31,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Multi-Class Segmentation of Side-Scan Sonar Data using a Neural Network",
+      "possibleUsv01Application": "Investigate maritime sensing, sonar data processing or perception benchmark inputs.",
+      "source": {
+        "commit": "4b8f25f5d922ec34f5e46abe5d545a219fdc199c",
+        "tree": "bb4e0d77d1fbe5e4e9ef6fab04aae1cb66e97465",
+        "branch": "master",
+        "resolvedAt": "2026-11-14T21:11:14.148Z",
+        "provenance": "https://github.com/aburguera/NNSSS/tree/4b8f25f5d922ec34f5e46abe5d545a219fdc199c"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2024-11-20T08:03:48Z",
+        "ageDays": 724,
+        "signal": "PUSH_WITHIN_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A12",
+        "A16",
+        "A21",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "apl-ocean-engineering/liboculus",
+      "url": "https://github.com/apl-ocean-engineering/liboculus",
+      "primaryCategory": "perception-sonar",
+      "allScoutCategories": [
+        "perception-sonar"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 31,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "",
+      "possibleUsv01Application": "Investigate maritime sensing, sonar data processing or perception benchmark inputs.",
+      "source": {
+        "commit": "9e65e03e9fbdfaa5a451f1193d8f720b2ae588f5",
+        "tree": "d61a7d8af252ea02c5e03385d2e71bc71ba986b9",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:14.148Z",
+        "provenance": "https://github.com/apl-ocean-engineering/liboculus/tree/9e65e03e9fbdfaa5a451f1193d8f720b2ae588f5"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-09-17T18:03:18Z",
+        "ageDays": 58,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A12",
+        "A16",
+        "A21",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "bbabina/Surrogate-modelling-of-ship-residuary-resistance",
+      "url": "https://github.com/bbabina/Surrogate-modelling-of-ship-residuary-resistance",
+      "primaryCategory": "cfd-resistance",
+      "allScoutCategories": [
+        "cfd-resistance"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 31,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "",
+      "possibleUsv01Application": "Investigate resistance, seakeeping or hydrodynamics workflows; require independent numerical reference cases.",
+      "source": {
+        "commit": "5452e0c14ce1e27457bb7a304a8dd1cfb16f3c3e",
+        "tree": "e9e4d37f9e7adc9487825989bfa431da8601a23d",
+        "branch": "master",
+        "resolvedAt": "2026-11-14T21:11:14.148Z",
+        "provenance": "https://github.com/bbabina/Surrogate-modelling-of-ship-residuary-resistance/tree/5452e0c14ce1e27457bb7a304a8dd1cfb16f3c3e"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-11-06T11:11:28Z",
+        "ageDays": 8,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "noahbagz/ShipGen",
+      "url": "https://github.com/noahbagz/ShipGen",
+      "primaryCategory": "hull-design",
+      "allScoutCategories": [
+        "hull-design"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 31,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Generate Parametric Ship Hull with a Guided Tabular Diffusion Model",
+      "possibleUsv01Application": "Investigate preliminary hull geometry, hydrostatics and design-space methods against independent naval-architecture references.",
+      "source": {
+        "commit": "3a87b64a294d9be592898e34620ffa88ea197193",
+        "tree": "a589240c9fa6a3fa2c22820bc48a5ff1badbf26e",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:16.659Z",
+        "provenance": "https://github.com/noahbagz/ShipGen/tree/3a87b64a294d9be592898e34620ffa88ea197193"
+      },
+      "sourceSearchPasses": [
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2024-12-05T21:47:46Z",
+        "ageDays": 708,
+        "signal": "PUSH_WITHIN_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "gt-marine-robotics-group/stinger-software",
+      "url": "https://github.com/gt-marine-robotics-group/stinger-software",
+      "primaryCategory": "usv-platforms",
+      "allScoutCategories": [
+        "marine-simulation"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 29,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Stinger Tug Core Software",
+      "possibleUsv01Application": "Compare research USV software architecture, mission flow and simulation interfaces.",
+      "source": {
+        "commit": "486949e5919d54d813fe2c07a969195916619550",
+        "tree": "ae17f8f2f5ba7aaf56911a1fd14073bd02fc7f21",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:16.659Z",
+        "provenance": "https://github.com/gt-marine-robotics-group/stinger-software/tree/486949e5919d54d813fe2c07a969195916619550"
+      },
+      "sourceSearchPasses": [
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-11-13T06:21:19Z",
+        "ageDays": 1,
+        "signal": "RECENT_PUSH"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A01",
+        "A03",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "SensorsINI/argo",
+      "url": "https://github.com/SensorsINI/argo",
+      "primaryCategory": "usv-platforms",
+      "allScoutCategories": [
+        "autonomy-control"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 29,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Code for Autonomous sail boat ",
+      "possibleUsv01Application": "Compare research USV software architecture, mission flow and simulation interfaces.",
+      "source": {
+        "commit": "a748d15ec5c401375d6cf2ae52e1fa78d5e8e449",
+        "tree": "46f8bb9f199edb75674a0a3a6eb94547f916d9e8",
+        "branch": "master",
+        "resolvedAt": "2026-11-14T21:11:16.659Z",
+        "provenance": "https://github.com/SensorsINI/argo/tree/a748d15ec5c401375d6cf2ae52e1fa78d5e8e449"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2026-06-23T08:21:34Z",
+        "ageDays": 144,
+        "signal": "PUSH_WITHIN_ONE_YEAR"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A01",
+        "A03",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "Ben93kie/SeaDronesSee",
+      "url": "https://github.com/Ben93kie/SeaDronesSee",
+      "primaryCategory": "perception-sonar",
+      "allScoutCategories": [
+        "perception-sonar"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 25,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Vision Benchmark for Maritime Search and Rescue",
+      "possibleUsv01Application": "Investigate maritime sensing, sonar data processing or perception benchmark inputs.",
+      "source": {
+        "commit": "8062b5df484bfeab7ebb8c039ca535dee05b6d8e",
+        "tree": "2fc0097905b7ef4e3a2997195ac98b2c5e1da857",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:19.571Z",
+        "provenance": "https://github.com/Ben93kie/SeaDronesSee/tree/8062b5df484bfeab7ebb8c039ca535dee05b6d8e"
+      },
+      "sourceSearchPasses": [
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2023-12-13T23:56:24Z",
+        "ageDays": 1066,
+        "signal": "STALE_OVER_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A12",
+        "A16",
+        "A21",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "ieb/nmea2000",
+      "url": "https://github.com/ieb/nmea2000",
+      "primaryCategory": "marine-iot",
+      "allScoutCategories": [
+        "marine-iot"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 25,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Collection of Arduino and Linux code to integrate with a NMEA2000 Can bus.",
+      "possibleUsv01Application": "Investigate marine telemetry and NMEA/AIS parsing in a read-only interface review.",
+      "source": {
+        "commit": "e05357cff061d492cf149c9de7d01c1d4aa861cb",
+        "tree": "4592ee244492a20931c6f1b7d3517aad9764aae4",
+        "branch": "master",
+        "resolvedAt": "2026-11-14T21:11:19.571Z",
+        "provenance": "https://github.com/ieb/nmea2000/tree/e05357cff061d492cf149c9de7d01c1d4aa861cb"
+      },
+      "sourceSearchPasses": [
+        "primary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2017-12-11T21:13:49Z",
+        "ageDays": 3259,
+        "signal": "STALE_OVER_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A19",
+        "A20",
+        "A21",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    },
+    {
+      "repository": "YujiaWei2020/openfoam_ship_hydrodynamics",
+      "url": "https://github.com/YujiaWei2020/openfoam_ship_hydrodynamics",
+      "primaryCategory": "cfd-resistance",
+      "allScoutCategories": [
+        "cfd-resistance"
+      ],
+      "researchPriority": "P2",
+      "scoutScore": 18,
+      "evidenceBasis": "GitHub search description and repository metadata; human relevance screen; source pin resolved through GitHub GraphQL. No technical validation.",
+      "description": "Openfoam ship hydrodynamics ",
+      "possibleUsv01Application": "Investigate resistance, seakeeping or hydrodynamics workflows; require independent numerical reference cases.",
+      "source": {
+        "commit": "f514445dadc5332a6e6c8b4dc8a5de11d55fe066",
+        "tree": "94308862a1382ad87afffb69e05eab90caaaf912",
+        "branch": "main",
+        "resolvedAt": "2026-11-14T21:11:19.571Z",
+        "provenance": "https://github.com/YujiaWei2020/openfoam_ship_hydrodynamics/tree/f514445dadc5332a6e6c8b4dc8a5de11d55fe066"
+      },
+      "sourceSearchPasses": [
+        "secondary"
+      ],
+      "maintainerFreshness": {
+        "lastPushedAt": "2024-10-22T16:22:10Z",
+        "ageDays": 753,
+        "signal": "STALE_OVER_TWO_YEARS"
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "status": "HUMAN_LICENSE_REVIEW_PENDING"
+      },
+      "mappedAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "mandatoryQualificationReviewers": [
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24"
+      ],
+      "lifecycle": "DISCOVERED",
+      "approved": false,
+      "installed": false,
+      "used": false,
+      "evidencePriority": "SECOND_PASS_STATIC_REVIEW"
+    }
+  ]
+}

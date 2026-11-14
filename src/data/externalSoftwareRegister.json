@@ -190,6 +190,3112 @@
       "actualUsage": [],
       "evidence": [],
       "nextAction": "A26 shortlist: obtain pinned source revision, license/security assessment, benchmark and independent domain review before any intended use."
+    },
+    {
+      "id": "EXT-DISC-009540babdb3",
+      "name": "cram001/esp32-n2k-touch",
+      "repository": "cram001/esp32-n2k-touch",
+      "repositoryUrl": "https://github.com/cram001/esp32-n2k-touch",
+      "domain": "marine-iot",
+      "description": "Touch screen nmea2000 display",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A19",
+        "A20",
+        "A21",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "2acc6289747dc9dadb8625672755fbcf6c081faa",
+        "tree": "613361cf7c0719df59fbc7efa31ccc520fb93c87",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-0179167b9d75",
+      "name": "dureshahwaranna19/marine-hydrodynamics-data-analysis",
+      "repository": "dureshahwaranna19/marine-hydrodynamics-data-analysis",
+      "repositoryUrl": "https://github.com/dureshahwaranna19/marine-hydrodynamics-data-analysis",
+      "domain": "cfd-resistance",
+      "description": "Python-based analysis of ship resistance and air lubrication data using NumPy, Pandas, and Matplotlib",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "5d6e81d2103efe692da80d2e7a636e0433b941d6",
+        "tree": "3ecdce124ef428df771d4e784d13d54ea4b57a5b",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-04e5bb66a58e",
+      "name": "Klins101/CORALL",
+      "repository": "Klins101/CORALL",
+      "repositoryUrl": "https://github.com/Klins101/CORALL",
+      "domain": "navigation-colregs",
+      "description": "CORALL (COLREGs-guided Risk Aware LLM) is a novel framework that integrates Large Language Models with real-time risk assessment for autonomous maritime navigation. The system combines LLM-based decision-making with traditional motion planning to enable COLREGs-compliant collision avoidance in ASVs.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A17",
+        "A22",
+        "A24",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "0e302cfc73982b8efabff42ed3b58c5611f7f54a",
+        "tree": "4a8ef89910eef4372daaaa9931fb3870c2b72982",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-05694e3b302f",
+      "name": "antpial/thesis_USV_gazebo",
+      "repository": "antpial/thesis_USV_gazebo",
+      "repositoryUrl": "https://github.com/antpial/thesis_USV_gazebo",
+      "domain": "marine-simulation",
+      "description": "Official source code for my Engineering Thesis: Autonomous USV navigation and control in ROS 2 & Gazebo. Features LOS, ILOS, PID controllers, and EKF-based sensor fusion.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A08",
+        "A17",
+        "A18",
+        "A24",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "2b8c4a5df243f126c8d3ce0eeac6aa799c1f2d37",
+        "tree": "8f679de2ff60c2d25e59d540674387efe27cdb86",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-0b1f173ac099",
+      "name": "open-ships/n2k",
+      "repository": "open-ships/n2k",
+      "repositoryUrl": "https://github.com/open-ships/n2k",
+      "domain": "marine-iot",
+      "description": "Read/write NMEA 2000 PGN's using Golang. Supports tcp/udp, SocketCAN, serial USB gateways like the Actisense NGT-1, and wifi gateways such as Yacht Devices YDWG-02. Includes filtering with Common Expression Language, address claiming, and more 🌶️",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A19",
+        "A20",
+        "A21",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "bdc115d5c7b31fee889a91cc0db16e5458df9411",
+        "tree": "168bb9e8dc1c5f15a12d6a84e68327f38441fbc4",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-0f30e089cfc8",
+      "name": "MaritimeDataset/KOLOMVERSE",
+      "repository": "MaritimeDataset/KOLOMVERSE",
+      "repositoryUrl": "https://github.com/MaritimeDataset/KOLOMVERSE",
+      "domain": "perception-sonar",
+      "description": "Large-scale object detection dataset in the maritime domain",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A12",
+        "A16",
+        "A21",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "e4ba8754be9a3d6aba742348a451b8bf8012af24",
+        "tree": "c4bb3bf100126b0a79d7e79ace87e96cb72057dc",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "GPL-3.0",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-0f938440f97b",
+      "name": "ntnu-itk-autonomous-ship-lab/colav-simulator",
+      "repository": "ntnu-itk-autonomous-ship-lab/colav-simulator",
+      "repositoryUrl": "https://github.com/ntnu-itk-autonomous-ship-lab/colav-simulator",
+      "domain": "navigation-colregs",
+      "description": "Framework for simulating and evaluating autonomous ship collision avoidance (COLAV) control strategies. Developed as part of the Autoship Centre for Research-based Innovation (SFI). Open sourced in the autumn of 2025.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A17",
+        "A22",
+        "A24",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "a385e0fcbcf7b7de3edaada35d37dd63f2b027c2",
+        "tree": "1a801cbff73bde5583f235a106eb9e0bb7fe38e5",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-0feb9e2e2f3a",
+      "name": "tbsalling/aismessages",
+      "repository": "tbsalling/aismessages",
+      "repositoryUrl": "https://github.com/tbsalling/aismessages",
+      "domain": "marine-iot",
+      "description": "AISmessages is a Java-based light-weight, zero-dependency, and ultra-efficient message decoder for maritime navigation and safety messages compliant with ITU 1371 (NMEA armoured AIS messages).",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A19",
+        "A20",
+        "A21",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "baa3e204fe1ab41699ab519e95683deae9006eb9",
+        "tree": "15c5dfe25c809f522ad32d19e32d8b5b5eca8da3",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-1670a84bce62",
+      "name": "Fratres-X-AI/mavmrf",
+      "repository": "Fratres-X-AI/mavmrf",
+      "repositoryUrl": "https://github.com/Fratres-X-AI/mavmrf",
+      "domain": "perception-sonar",
+      "description": "MAVMRF: simulation-first multi-sensor maritime detect-track-classify framework",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A12",
+        "A16",
+        "A21",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "dfd9d36ace63095a6074dafb3bd47eb118059ab4",
+        "tree": "c2623696a7bcc0b898d6df962fa311a9386c07be",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-1d33fca11311",
+      "name": "ieb/nmea2000",
+      "repository": "ieb/nmea2000",
+      "repositoryUrl": "https://github.com/ieb/nmea2000",
+      "domain": "marine-iot",
+      "description": "Collection of Arduino and Linux code to integrate with a NMEA2000 Can bus.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A19",
+        "A20",
+        "A21",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "e05357cff061d492cf149c9de7d01c1d4aa861cb",
+        "tree": "4592ee244492a20931c6f1b7d3517aad9764aae4",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-1fda522b5eaf",
+      "name": "XueYifan1995/Real-time-NMPC-for-USVs-CasADi",
+      "repository": "XueYifan1995/Real-time-NMPC-for-USVs-CasADi",
+      "repositoryUrl": "https://github.com/XueYifan1995/Real-time-NMPC-for-USVs-CasADi",
+      "domain": "autonomy-control",
+      "description": "ICMRE-2021 coference paper codes",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A16",
+        "A17",
+        "A19",
+        "A20",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "496500e8f3fa4a563de0f123549e0bd55fee5273",
+        "tree": "c3903be2e78ea4f9caed313e499f2ca49dd5a75d",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-2ba15331048d",
+      "name": "atticusrussell/MSD15440-BoatBot",
+      "repository": "atticusrussell/MSD15440-BoatBot",
+      "repositoryUrl": "https://github.com/atticusrussell/MSD15440-BoatBot",
+      "domain": "usv-platforms",
+      "description": "ROS2 code for robot from MSD15440 team in NASA SAVER challenge to locate radio beacon with autonomous vehicle.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A01",
+        "A03",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "f8f0884d18c0c6862dbe50c896824636e6df6850",
+        "tree": "fbe388474371e21cbb2eda2e66632f139489d6f0",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "Apache-2.0",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-2d49d2bdbe79",
+      "name": "shiplab/hull",
+      "repository": "shiplab/hull",
+      "repositoryUrl": "https://github.com/shiplab/hull",
+      "domain": "hull-design",
+      "description": "Hull Generator",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "9cdf8af5fa7358d1f2319469e92fa93fb03ca1a6",
+        "tree": "8fb59b57cceaf1ff572ba19c5d66b064344e328d",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-36cd7199cd4b",
+      "name": "alperalacam/NavalArchitectureSuite",
+      "repository": "alperalacam/NavalArchitectureSuite",
+      "repositoryUrl": "https://github.com/alperalacam/NavalArchitectureSuite",
+      "domain": "hull-design",
+      "description": "Free naval architecture desktop application — 14 modules, 3,358 live formulas",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "b83726aca0a1071e463745dda042c94caba4fbf9",
+        "tree": "8bb20ec442b628df35044d6d2684be6c639731e6",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-370921710ebb",
+      "name": "disaster-robotics-proalertas/usv_sim_lsa",
+      "repository": "disaster-robotics-proalertas/usv_sim_lsa",
+      "repositoryUrl": "https://github.com/disaster-robotics-proalertas/usv_sim_lsa",
+      "domain": "marine-simulation",
+      "description": "Unmanned Surface Vehicle simulation on Gazebo with water current and winds",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A08",
+        "A17",
+        "A18",
+        "A24",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "61e8f4a5f78f18c01dac0d4eea7f4c3c416e6cb8",
+        "tree": "468eb58de9cd5f7043d90d80fe8079447535595b",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "Apache-2.0",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-3b7ee0e8b244",
+      "name": "kalbar87/resistance",
+      "repository": "kalbar87/resistance",
+      "repositoryUrl": "https://github.com/kalbar87/resistance",
+      "domain": "cfd-resistance",
+      "description": "Fishery Vessel Resistance Prediction",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "6b62bdf69021982fdc346c0289d303b8fb41c7da",
+        "tree": "864e568f7c7c4a0dfc0d9f0c34f570d26d55f280",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-3d1583bf0af9",
+      "name": "markmal/freeship-plus-in-lazarus",
+      "repository": "markmal/freeship-plus-in-lazarus",
+      "repositoryUrl": "https://github.com/markmal/freeship-plus-in-lazarus",
+      "domain": "hull-design",
+      "description": "FreeShip Plus in Lazarus",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "1de17e99fb2b1cc559cdf27c5cafb595a627a641",
+        "tree": "eceed19e4f92ffae3b2f38d0e316fc287fb5ef8c",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "GPL-3.0",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-3e0ea48337b8",
+      "name": "Range-Software/range-fea",
+      "repository": "Range-Software/range-fea",
+      "repositoryUrl": "https://github.com/Range-Software/range-fea",
+      "domain": "structures-materials",
+      "description": "Range Software - Finite Element Analysis",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A10",
+        "A11",
+        "A12",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "1ee700be21f2d30816a946d65da2658146020587",
+        "tree": "e7d784186613288ec731da9101b31e140053b099",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "GPL-3.0",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-47548e04f1f8",
+      "name": "byu-holoocean/holoocean-ros",
+      "repository": "byu-holoocean/holoocean-ros",
+      "repositoryUrl": "https://github.com/byu-holoocean/holoocean-ros",
+      "domain": "marine-simulation",
+      "description": "ROS Bridge for HoloOcean",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A08",
+        "A17",
+        "A18",
+        "A24",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "cbc5a769f8fc01e354290df9ebd58cc5a62429a9",
+        "tree": "0908115bd5052efc1b69834fdb81d4bc3654f515",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-4be9e3376eac",
+      "name": "shipCFD-SJTU/MPX",
+      "repository": "shipCFD-SJTU/MPX",
+      "repositoryUrl": "https://github.com/shipCFD-SJTU/MPX",
+      "domain": "cfd-resistance",
+      "description": "基于Boussinesq假设的温盐分层流求解器",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "d81fd6aaf3139b673d59b6f4abaa84337e6e66fd",
+        "tree": "5f2e5bc14bd108755aaccd2bc1128622097c784d",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-4c0885fb0775",
+      "name": "learnsyslab/safe-control-gym",
+      "repository": "learnsyslab/safe-control-gym",
+      "repositoryUrl": "https://github.com/learnsyslab/safe-control-gym",
+      "domain": "verification-safety",
+      "description": "PyBullet CartPole and Quadrotor environments—with CasADi symbolic a priori dynamics—for learning-based control and RL",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A15",
+        "A18",
+        "A22",
+        "A23",
+        "A24",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "6b5391d014f36fdfa0f9d22d92c77387e5274308",
+        "tree": "333c5af7aebc266f45882e57371c8e0101d65e6c",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-4d9f8573435d",
+      "name": "CaptanG/shiphydrostatics",
+      "repository": "CaptanG/shiphydrostatics",
+      "repositoryUrl": "https://github.com/CaptanG/shiphydrostatics",
+      "domain": "hull-design",
+      "description": "This project is a ship hydrostatics and structural analysis toolbox. It demonstrates how to determine equilibrium conditions (draft, trim, buoyancy balance) and evaluate structural responses under distributed loads. Useful for naval architecture coursework, hydrostatics studies, and ship design projects.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "4caeef4ce07f981f2f6de3caffcb7673e4bf7032",
+        "tree": "e133d9f331b955446510127648b0601e2a4034c1",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-56327883c947",
+      "name": "SINTEF/FEEMS",
+      "repository": "SINTEF/FEEMS",
+      "repositoryUrl": "https://github.com/SINTEF/FEEMS",
+      "domain": "propulsion-power",
+      "description": "FEEMS is modeling framework for a marine power and propulsion system for  calculation of fuel consumption, emissions, and energy balance with the input of operation mode and external power load.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A11",
+        "A13",
+        "A14",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "ebb05ffdd5e9ed509fe66d8451ed0ff4f7635629",
+        "tree": "c1c3b88470206fbc5e6a28a4b7547ecccdfa6802",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-5a23be670b53",
+      "name": "janibert1/ship-hull-generator",
+      "repository": "janibert1/ship-hull-generator",
+      "repositoryUrl": "https://github.com/janibert1/ship-hull-generator",
+      "domain": "hull-design",
+      "description": "Parametric ship hull generator with hydrostatics, longitudinal strength, stability, resistance, and NSGA-II multi-objective optimizer",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "262cb29f0a5f90acc7132ee6c1b91efd81d855fd",
+        "tree": "4e3e533ce28fa60f6e4a99095b084e7ad62bfed3",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "GPL-3.0",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-5ceca9c3b06a",
+      "name": "VTTI-CSM/ShipNetSim",
+      "repository": "VTTI-CSM/ShipNetSim",
+      "repositoryUrl": "https://github.com/VTTI-CSM/ShipNetSim",
+      "domain": "mission-digital-twin",
+      "description": "An open-source integrated ship network simulator.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A01",
+        "A18",
+        "A25",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "3029cbb5370a61ae5f960812bf94d6f67c37599d",
+        "tree": "29f79937c6ab5c581f6f12aa6a6e7129138cda1d",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "GPL-3.0",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-63923f13b193",
+      "name": "abdulhamidbatayhi123/ml-ship-resistance",
+      "repository": "abdulhamidbatayhi123/ml-ship-resistance",
+      "repositoryUrl": "https://github.com/abdulhamidbatayhi123/ml-ship-resistance",
+      "domain": "cfd-resistance",
+      "description": "Machine learning for ship resistance — a TÜBİTAK 3501 model proposal, with seven live simulations",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "d88c2b67a9849954c4fb4123574432989b9a05e7",
+        "tree": "0a108f20137145c80432931df00150ea012e36d2",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-64a86ef2ad38",
+      "name": "ros-maritime/awesome-maritime-robotics",
+      "repository": "ros-maritime/awesome-maritime-robotics",
+      "repositoryUrl": "https://github.com/ros-maritime/awesome-maritime-robotics",
+      "domain": "usv-platforms",
+      "description": "Repo for mapping all the open source robotics software, including the ones from this organization",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A01",
+        "A03",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "a4e77e87c278b215ba35e248539fcfb00dfab9c7",
+        "tree": "80bf725b39614d87dba75065df4fa0aab55daf5a",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-65e9e68221cd",
+      "name": "JHJP/Unmanned-surface-vehicle-project",
+      "repository": "JHJP/Unmanned-surface-vehicle-project",
+      "repositoryUrl": "https://github.com/JHJP/Unmanned-surface-vehicle-project",
+      "domain": "usv-platforms",
+      "description": "A robot(boat) that autonomously navigate with the optimal path and obstacle avoidance through deep reinforcement learning is being produced.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A01",
+        "A03",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "28b1cc30fe2720372cda6ec7cef3b009b3dfb6e6",
+        "tree": "5ee72700893fe95a4a43a6557451f034e270c12c",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-67a87c21a2e4",
+      "name": "bareboat-necessities/ocean-imu",
+      "repository": "bareboat-necessities/ocean-imu",
+      "repositoryUrl": "https://github.com/bareboat-necessities/ocean-imu",
+      "domain": "marine-iot",
+      "description": "Collection of algorithms for IMU data processing in marine environment. Boat heave, wave direction, wave height, attitude (yaw, roll, pitch), tilt compensated compass, ship MRU, GPS fusion, NMEA sensors with IMU, marine AHRS/INS, marine Kalman filters, Arduino/MCU code for marine IMU. Aimed for quality",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A19",
+        "A20",
+        "A21",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "48407251518264d46feb8dc8f6137fdaf21c3bb2",
+        "tree": "ae10907a53a646df8d133b9ee7233e8d735e8178",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-7051d386c17d",
+      "name": "BavoLesy/ASVSim",
+      "repository": "BavoLesy/ASVSim",
+      "repositoryUrl": "https://github.com/BavoLesy/ASVSim",
+      "domain": "marine-simulation",
+      "description": "AirSim for Surface Vehicles (ASVSim) by IDLab",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A08",
+        "A17",
+        "A18",
+        "A24",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "df8c3990b3287b713247e831b312ea43f0718f0b",
+        "tree": "085a66be39f4f11e4301290861c8be3b06b19ea1",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-712cfe680315",
+      "name": "sailtechdk/nmea2000-ble-bridge",
+      "repository": "sailtechdk/nmea2000-ble-bridge",
+      "repositoryUrl": "https://github.com/sailtechdk/nmea2000-ble-bridge",
+      "domain": "marine-iot",
+      "description": "This repository contains the official firmware for the SailorData NMEA2000 to BLE bridge. It bridges live NMEA2000 marine network data directly to your Garmin smartwatch, enabling real-time telemetry display via the Garmin ConnectIQ SailorData data field.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A19",
+        "A20",
+        "A21",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "ab2e536aeed15080108a729c9d27df61ed077927",
+        "tree": "b86aa708129e2bfc8e96edd5a8589bd32a8bc9a2",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-733f574eddc0",
+      "name": "M0r13n/pyais",
+      "repository": "M0r13n/pyais",
+      "repositoryUrl": "https://github.com/M0r13n/pyais",
+      "domain": "marine-iot",
+      "description": "AIS message decoding and encoding in Python (AIVDM/AIVDO)",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A19",
+        "A20",
+        "A21",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "7828bc6b13651279d968e44951ee945fb69648f9",
+        "tree": "fe9ac1e031727e1e6a0a6ccd357c429288950bc5",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-7aa2eeeabc25",
+      "name": "ajsanderson2222-maker/openfoam-DTCHullWave",
+      "repository": "ajsanderson2222-maker/openfoam-DTCHullWave",
+      "repositoryUrl": "https://github.com/ajsanderson2222-maker/openfoam-DTCHullWave",
+      "domain": "cfd-resistance",
+      "description": "",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "eaa51235b6e93f924f22c9f4c8913a764f1c427e",
+        "tree": "0aa635a96518b54a83c331a8f94a210fb6eca118",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-87ee237bfb3b",
+      "name": "Thomas-JHR/Unmanned-Surface-Vessel-Studies",
+      "repository": "Thomas-JHR/Unmanned-Surface-Vessel-Studies",
+      "repositoryUrl": "https://github.com/Thomas-JHR/Unmanned-Surface-Vessel-Studies",
+      "domain": "usv-platforms",
+      "description": "A Master of Engineering Academic Project ",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A01",
+        "A03",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "cd70bb67b4685d97345e81acb17f2110d858b76b",
+        "tree": "723ede46d4707855f1b2ab9fce76470b90acbaa4",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-88baf9a59faa",
+      "name": "danielkope/scheiber-can-analysis-nmea2000",
+      "repository": "danielkope/scheiber-can-analysis-nmea2000",
+      "repositoryUrl": "https://github.com/danielkope/scheiber-can-analysis-nmea2000",
+      "domain": "marine-iot",
+      "description": "Reverse engineering, decoding and NMEA 2000 mapping of a Scheiber Multibloc V8 CAN network",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A19",
+        "A20",
+        "A21",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "4fac2d87e0c92a8ecb2b7c7eeec08d799838068d",
+        "tree": "c4828a23b065b3f3630e97b78e3f53b76f29f4d2",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-8b590fc5a514",
+      "name": "openearth/tudflow3d",
+      "repository": "openearth/tudflow3d",
+      "repositoryUrl": "https://github.com/openearth/tudflow3d",
+      "domain": "cfd-resistance",
+      "description": "TUDFlow3d is a fully 3 dimensional CFD (computational fluid dynamics) solver which can simulate turbulent flows on engineering scale. ",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "b17896257c7ac1d9ab701aed5c02a0a6e01fe23d",
+        "tree": "de6dba2e4ca281857a73017de771147e8eaac1e1",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-8c7b36e21609",
+      "name": "andreacoraddu/ECM",
+      "repository": "andreacoraddu/ECM",
+      "repositoryUrl": "https://github.com/andreacoraddu/ECM",
+      "domain": "propulsion-power",
+      "description": "Equivalent Circuit for Maritime Batteries",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A11",
+        "A13",
+        "A14",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "3d103a793c87a5d1576088585a19d7a43936b57d",
+        "tree": "a36dece3cb9e06800b7f5b143f9f7bb28c9fa5fd",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-900ce81b512e",
+      "name": "kavindagehan/asv-autonomous-docking-and-path-tracking",
+      "repository": "kavindagehan/asv-autonomous-docking-and-path-tracking",
+      "repositoryUrl": "https://github.com/kavindagehan/asv-autonomous-docking-and-path-tracking",
+      "domain": "autonomy-control",
+      "description": "A complete Guidance, Navigation, and Control (GNC) framework for WAM-V Autonomous Surface Vessels using MATLAB/Simulink, ROS 2, and Gazebo (VRX) for adaptive path tracking and autonomous docking.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A16",
+        "A17",
+        "A19",
+        "A20",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "b35e82505ceb6cd35294619790f61c4cdc4dff6e",
+        "tree": "105454c4f7a7dbd49169fc053229f995df450078",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-902276295292",
+      "name": "shiplab/dt_cv",
+      "repository": "shiplab/dt_cv",
+      "repositoryUrl": "https://github.com/shiplab/dt_cv",
+      "domain": "mission-digital-twin",
+      "description": "Two standards-based digital twins of experiments with scale model ships.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A01",
+        "A18",
+        "A25",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "7bb6c1065c9cabc3f938e35505ef31b1188a3589",
+        "tree": "8a43161fd79825d6c1c2723ac327575c2edf59cb",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-9058f961c4bd",
+      "name": "bartboogmans/TurtleBoat",
+      "repository": "bartboogmans/TurtleBoat",
+      "repositoryUrl": "https://github.com/bartboogmans/TurtleBoat",
+      "domain": "marine-simulation",
+      "description": "Compact vessel simulator on a single ROS node",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A08",
+        "A17",
+        "A18",
+        "A24",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "a6184bdf81dd6d99099e4af7ae131731a58e9eb6",
+        "tree": "67b72efe8e1fefe203b473d01cf1da7ebf098c75",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-91b219e76000",
+      "name": "CaptanG/striptheory",
+      "repository": "CaptanG/striptheory",
+      "repositoryUrl": "https://github.com/CaptanG/striptheory",
+      "domain": "cfd-resistance",
+      "description": "The Strip Theory Seakeeping Analysis Toolkit is a Python-based solver for predicting ship motions in waves using classical strip theory. Designed around the Wigley hull as a test case, the toolkit provides a modular and extensible framework for calculating hydrodynamic coefficients and simulating ship responses.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "ade00fbdfdfae0cf3b93291b778d2d94330dd8e1",
+        "tree": "bae3a190e5dbedc5f9be73a6e0154493ecbe7423",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-928ab6a65ec5",
+      "name": "ppotoc/MPC-Autonomous-Ship-Navigation",
+      "repository": "ppotoc/MPC-Autonomous-Ship-Navigation",
+      "repositoryUrl": "https://github.com/ppotoc/MPC-Autonomous-Ship-Navigation",
+      "domain": "navigation-colregs",
+      "description": "Model predictive control-based autonomous ship navigation.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A17",
+        "A22",
+        "A24",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "3683e92f9949cf884540d40a7ce096c3785273b3",
+        "tree": "6f8177f2812c2832fdefb4e1b17f6e5beb8a7a34",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-934bbd98ce28",
+      "name": "echostack-org/echoshader",
+      "repository": "echostack-org/echoshader",
+      "repositoryUrl": "https://github.com/echostack-org/echoshader",
+      "domain": "perception-sonar",
+      "description": "Interactive visualization of ocean sonar data",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A12",
+        "A16",
+        "A21",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "2d695fdbf61272fa24662dab129a2fc1c99f5e35",
+        "tree": "625b65fa1ec094333611390a29fabefa427fe1f7",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-950b3f75d788",
+      "name": "WaterScenes/WaterScenes",
+      "repository": "WaterScenes/WaterScenes",
+      "repositoryUrl": "https://github.com/WaterScenes/WaterScenes",
+      "domain": "perception-sonar",
+      "description": "Official repository for WaterScenes dataset",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A12",
+        "A16",
+        "A21",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "9b6af76c4060cf523398f97dc0992ff314791dcc",
+        "tree": "82c3447cb52a5e202558f0fb3bf555e631423560",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-97f9c62885e3",
+      "name": "cybergalactic/FossenHandbook",
+      "repository": "cybergalactic/FossenHandbook",
+      "repositoryUrl": "https://github.com/cybergalactic/FossenHandbook",
+      "domain": "marine-simulation",
+      "description": "Handbook of Marine Craft Hydrodynamics and Motion Control is an extensive study of the latest research in marine craft hydrodynamics, guidance, navigation, and control (GNC) systems. ",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A08",
+        "A17",
+        "A18",
+        "A24",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "4860a4fe92aa6490c28ad28b2d9ce23b3de70974",
+        "tree": "63d7f319d284276cd39222e0c81e47188f676f0a",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-98b19666381f",
+      "name": "NAOE-5thLab/mmg-1p1r-simulator",
+      "repository": "NAOE-5thLab/mmg-1p1r-simulator",
+      "repositoryUrl": "https://github.com/NAOE-5thLab/mmg-1p1r-simulator",
+      "domain": "marine-simulation",
+      "description": "Simulation code for MMG model of single propeller single rudder ship",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A08",
+        "A17",
+        "A18",
+        "A24",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "d838b860a3e508da92d993eecce881ce6c77573f",
+        "tree": "1d53496f3eafedef2dbb995f79356ff64a069889",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-a65e34df59fb",
+      "name": "ntnu-itk-autonomous-ship-lab/psbmpc",
+      "repository": "ntnu-itk-autonomous-ship-lab/psbmpc",
+      "repositoryUrl": "https://github.com/ntnu-itk-autonomous-ship-lab/psbmpc",
+      "domain": "navigation-colregs",
+      "description": "Library implementations of the Scenario-based Model Predictive Control Algorithm (SB-MPC) and its probabilistic variant (PSB-MPC). Developed as part of the NTNU Centre for Autonomous Marine Operations and Systems (AMOS). Open sourced in November 2025.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A17",
+        "A22",
+        "A24",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "5347748e8ad4f32a9ede03f030a4fc2618dedb60",
+        "tree": "89c95135aa62863cd669bf2098db168d334268a7",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-a660b351595d",
+      "name": "michaelstolberger27/usv-navigation",
+      "repository": "michaelstolberger27/usv-navigation",
+      "repositoryUrl": "https://github.com/michaelstolberger27/usv-navigation",
+      "domain": "navigation-colregs",
+      "description": "COLREGs-compliant collision avoidance (COLAV) automaton for Unmanned Surface Vehicles (USVs)",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A17",
+        "A22",
+        "A24",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "54866f24a04987334057ae5c5896dfc3ee8ca058",
+        "tree": "55c6acec6f52a185f7a07deb9321efc9c0a58a16",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-a9e0a32e4ab0",
+      "name": "YujiaWei2020/openfoam_ship_hydrodynamics",
+      "repository": "YujiaWei2020/openfoam_ship_hydrodynamics",
+      "repositoryUrl": "https://github.com/YujiaWei2020/openfoam_ship_hydrodynamics",
+      "domain": "cfd-resistance",
+      "description": "Openfoam ship hydrodynamics ",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "f514445dadc5332a6e6c8b4dc8a5de11d55fe066",
+        "tree": "94308862a1382ad87afffb69e05eab90caaaf912",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-aa0053bc9241",
+      "name": "gy65896/Neptune-X",
+      "repository": "gy65896/Neptune-X",
+      "repositoryUrl": "https://github.com/gy65896/Neptune-X",
+      "domain": "perception-sonar",
+      "description": "[NeurIPS 2025 Spotlight] Neptune-X: Active X-to-Maritime Generation for Universal Maritime Object Detection",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A12",
+        "A16",
+        "A21",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "d4703530afaaa286fb3324b27150e4f7c25d7a6e",
+        "tree": "f504adf7a0145a75216401a89bb25848b584f367",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-aa51d3c5d878",
+      "name": "BEMRosetta/BEMRosetta",
+      "repository": "BEMRosetta/BEMRosetta",
+      "repositoryUrl": "https://github.com/BEMRosetta/BEMRosetta",
+      "domain": "cfd-resistance",
+      "description": "Hydrodynamic coefficients viewer and converter for Boundary Element Method solver formats",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "83476982ebcce5d269628556771def58fee496fe",
+        "tree": "6dcb7464f30ea95aa56447ba1a9ba8d9b716ff6b",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "GPL-3.0",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-ae06548c95d0",
+      "name": "Sagacious-Science-Syndicate/LinesPlanModule",
+      "repository": "Sagacious-Science-Syndicate/LinesPlanModule",
+      "repositoryUrl": "https://github.com/Sagacious-Science-Syndicate/LinesPlanModule",
+      "domain": "hull-design",
+      "description": "Ship Hull Lines Plan Generator module",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "86ab3b1c4f1f7aad98727f9f3c97b2fa7e478e1c",
+        "tree": "592ea449e55d64c1d21443eae9b86d11239ef881",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-af6e8ced706f",
+      "name": "Ben93kie/SeaDronesSee",
+      "repository": "Ben93kie/SeaDronesSee",
+      "repositoryUrl": "https://github.com/Ben93kie/SeaDronesSee",
+      "domain": "perception-sonar",
+      "description": "Vision Benchmark for Maritime Search and Rescue",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A12",
+        "A16",
+        "A21",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "8062b5df484bfeab7ebb8c039ca535dee05b6d8e",
+        "tree": "2fc0097905b7ef4e3a2997195ac98b2c5e1da857",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-b3cf81d12742",
+      "name": "ktuukkan/marine-api",
+      "repository": "ktuukkan/marine-api",
+      "repositoryUrl": "https://github.com/ktuukkan/marine-api",
+      "domain": "marine-iot",
+      "description": "Java Marine API - NMEA 0183 library for Java",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A19",
+        "A20",
+        "A21",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "6224ad6e62e7554a89ae8fe9e9ba54a29df394de",
+        "tree": "73f13436beb894649c3180037fcedd469b84e5b2",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "LGPL-3.0",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-b74dfe37ce71",
+      "name": "noahbagz/ShipD",
+      "repository": "noahbagz/ShipD",
+      "repositoryUrl": "https://github.com/noahbagz/ShipD",
+      "domain": "hull-design",
+      "description": "Dataset of 30,000 ship hulls for machine learning applications to ship design. ",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "a281d92958451a2c8c4ac1efe6056fcf804fe6e0",
+        "tree": "5d2c5a02bb2cc01bcbb8a68d1795561a1bfc1cb3",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-b775ad6a4cdc",
+      "name": "edzop/bpyhullgen",
+      "repository": "edzop/bpyhullgen",
+      "repositoryUrl": "https://github.com/edzop/bpyhullgen",
+      "domain": "hull-design",
+      "description": "Blender based Parametric Hull Generator",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "d619f7c3ef0cad70ed678e405778e98b0e09d1fd",
+        "tree": "cc8f6cbb81cba1c6feb20d6a3f688f28259565d5",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-b98bc0db0277",
+      "name": "aavek/Aeolus-Ocean",
+      "repository": "aavek/Aeolus-Ocean",
+      "repositoryUrl": "https://github.com/aavek/Aeolus-Ocean",
+      "domain": "mission-digital-twin",
+      "description": "An all-weather, day-and-night, collision avoidance simulator that can be implemented as a digital twin for the autonomous COLREG-compliant navigation of maritime vessels.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A01",
+        "A18",
+        "A25",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "406429e18dc0d38c697d112a92fa2168f0b140ad",
+        "tree": "4f1128b834c2feae6ac1193065f37cc344b12c8a",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "BSD-3-Clause",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-bc4e7d1d1f5d",
+      "name": "aqualinkorg/asv",
+      "repository": "aqualinkorg/asv",
+      "repositoryUrl": "https://github.com/aqualinkorg/asv",
+      "domain": "usv-platforms",
+      "description": "Autonomous surface vehicle",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A01",
+        "A03",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "7dc47ab34a193dde7bbd02a6612803d22fe5fbb4",
+        "tree": "4caaed345f28e2ec94d1b4b74da61baa09da6cc6",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-bdc6475ce0ea",
+      "name": "Chethankumardk/5000-teu-container-vessel-design-ship-design",
+      "repository": "Chethankumardk/5000-teu-container-vessel-design-ship-design",
+      "repositoryUrl": "https://github.com/Chethankumardk/5000-teu-container-vessel-design-ship-design",
+      "domain": "hull-design",
+      "description": "Conceptual design of a 5000 TEU container vessel, including hull geometry, hydrostatics, stability analysis, and Python-assisted engineering calculations.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "c9c2d5cc10952252f16430a72ab012fb070496fd",
+        "tree": "b3a6d02b98b1d77964b1e24e7b9db35594e96b2e",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-c18821a0422d",
+      "name": "SensorsINI/argo",
+      "repository": "SensorsINI/argo",
+      "repositoryUrl": "https://github.com/SensorsINI/argo",
+      "domain": "usv-platforms",
+      "description": "Code for Autonomous sail boat ",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A01",
+        "A03",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "a748d15ec5c401375d6cf2ae52e1fa78d5e8e449",
+        "tree": "46f8bb9f199edb75674a0a3a6eb94547f916d9e8",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-c60ce21a4214",
+      "name": "aixuexisun/pyfoamsetup",
+      "repository": "aixuexisun/pyfoamsetup",
+      "repositoryUrl": "https://github.com/aixuexisun/pyfoamsetup",
+      "domain": "cfd-resistance",
+      "description": "A python library for setting up CFD simulations with OpenFOAM, with special focus on marine applications.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "5908aea41bfbde3fad7d6957feab58a50d58e262",
+        "tree": "348f8c285d48fc1630b0fd6d71381feda0f6de89",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-c6bc598e9b9c",
+      "name": "apl-ocean-engineering/liboculus",
+      "repository": "apl-ocean-engineering/liboculus",
+      "repositoryUrl": "https://github.com/apl-ocean-engineering/liboculus",
+      "domain": "perception-sonar",
+      "description": "",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A12",
+        "A16",
+        "A21",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "9e65e03e9fbdfaa5a451f1193d8f720b2ae588f5",
+        "tree": "d61a7d8af252ea02c5e03385d2e71bc71ba986b9",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-c6d53caf647e",
+      "name": "abdulkadrtr/usv-simulation-ros2",
+      "repository": "abdulkadrtr/usv-simulation-ros2",
+      "repositoryUrl": "https://github.com/abdulkadrtr/usv-simulation-ros2",
+      "domain": "marine-simulation",
+      "description": "Browser-based ROS 2 simulation of an autonomous surface vehicle navigating a physically simulated Istanbul Bosphorus — from-scratch rigid-body hydrodynamics, WebGL rendering, LOS path following.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A08",
+        "A17",
+        "A18",
+        "A24",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "5450dd257ed5cfe67cb6ee63ccf225d261b19a12",
+        "tree": "600380a93d70471bbd4c051f8b2d2704c84ae6be",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-c7e661a919d6",
+      "name": "echostack-org/echopype",
+      "repository": "echostack-org/echopype",
+      "repositoryUrl": "https://github.com/echostack-org/echopype",
+      "domain": "perception-sonar",
+      "description": "Enabling interoperability and scalability in ocean sonar data analysis",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A12",
+        "A16",
+        "A21",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "b20bbde3a9edddab0cea895b3b9ab5d7b4500a9c",
+        "tree": "e289b87f1687afdecdfa9f34e7e2bb1f057c6844",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "Apache-2.0",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-cf7cb73fba24",
+      "name": "Neumi/open_echo",
+      "repository": "Neumi/open_echo",
+      "repositoryUrl": "https://github.com/Neumi/open_echo",
+      "domain": "perception-sonar",
+      "description": "Open Source echo sounder / depth sounder / SONAR for bathymetry and research. Arduino based and compatible.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A12",
+        "A16",
+        "A21",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "0c4e6e78895fdc39a5e90dedaa16e225f1c3c4b7",
+        "tree": "38da4ec2e072eccf94c0d8c14b27d141a61bd3f2",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-d09c63525631",
+      "name": "tkkim-robot/safe_control",
+      "repository": "tkkim-robot/safe_control",
+      "repositoryUrl": "https://github.com/tkkim-robot/safe_control",
+      "domain": "verification-safety",
+      "description": "Safety-critical controllers for single/multi robotic navigation: CBF-QP, MPC-CBF, and etc.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A15",
+        "A18",
+        "A22",
+        "A23",
+        "A24",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "2a2c4a7fea472daa81901ba6eb90a39b919b93b6",
+        "tree": "8ea89115bfbf5523d9890098cb1ce4b11c53e1d3",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-d3b0c9330fd7",
+      "name": "cybergalactic/MSS",
+      "repository": "cybergalactic/MSS",
+      "repositoryUrl": "https://github.com/cybergalactic/MSS",
+      "domain": "marine-simulation",
+      "description": "The Marine Systems Simulator (MSS) is software that supplements the textbook \"Handbook of Marine Craft Hydrodynamics and Motion Control,\" 3rd Edition, by T. I. Fossen, published in 2027 (in progress) by John Wiley & Sons Ltd.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A08",
+        "A17",
+        "A18",
+        "A24",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "78298f0f4822544cd715a66945d0bc3ed37561c8",
+        "tree": "e6728ed863759d949f5d787a1bd9bd82aef0da67",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-d76322be4478",
+      "name": "abubakar293/ProjectMarine",
+      "repository": "abubakar293/ProjectMarine",
+      "repositoryUrl": "https://github.com/abubakar293/ProjectMarine",
+      "domain": "hull-design",
+      "description": "Multi-agent naval architecture & shipbuilding framework — 120-agent-verified ship design pipeline: hydrostatics/stability cross-checked by two solvers, EEDI trade studies, FE-verified strength, CAD drawings read back against the model. Refuses what it cannot verify.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "c98143eff9511e563b39cd29647e570f89c6c1d9",
+        "tree": "a88c7df025db125ba3ce9e3ce36e2d4748dcbdc7",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-dcc05cbf3732",
+      "name": "yaozt98/USVPlanner",
+      "repository": "yaozt98/USVPlanner",
+      "repositoryUrl": "https://github.com/yaozt98/USVPlanner",
+      "domain": "navigation-colregs",
+      "description": "Local Collision Avoidance for Unmanned Surface Vehicles based on an End-to-End Planner with a LiDAR Beam Map",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A17",
+        "A22",
+        "A24",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "cb6d90e67f25d02fcb7f77739a8320612ce2e11a",
+        "tree": "4ce90c3a7d6204624930850c9e72136a8c31229a",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-ddebd0bf7ef3",
+      "name": "jiangshirong/FreeShip-26",
+      "repository": "jiangshirong/FreeShip-26",
+      "repositoryUrl": "https://github.com/jiangshirong/FreeShip-26",
+      "domain": "hull-design",
+      "description": "A modernized fork of FREE!ship Plus in Lazarus — hull design, hydrostatics and linesplan with a new StudioLight UI, 5–17.6× faster rendering, 17 upstream fixes and 7 UI languages. | FreeShip_26 船体设计与静水力工作台",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "06dbc24792a33c456e56a35537767611c078b895",
+        "tree": "fcfaecbda76ded7264f89776d14dc0e4da827718",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "GPL-3.0",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-de02e6dee104",
+      "name": "aburguera/NNSSS",
+      "repository": "aburguera/NNSSS",
+      "repositoryUrl": "https://github.com/aburguera/NNSSS",
+      "domain": "perception-sonar",
+      "description": "Multi-Class Segmentation of Side-Scan Sonar Data using a Neural Network",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A12",
+        "A16",
+        "A21",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "4b8f25f5d922ec34f5e46abe5d545a219fdc199c",
+        "tree": "bb4e0d77d1fbe5e4e9ef6fab04aae1cb66e97465",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-e08394c45c87",
+      "name": "ZHIBO-HE/MPAPF-ship-collision-avoidance-method",
+      "repository": "ZHIBO-HE/MPAPF-ship-collision-avoidance-method",
+      "repositoryUrl": "https://github.com/ZHIBO-HE/MPAPF-ship-collision-avoidance-method",
+      "domain": "navigation-colregs",
+      "description": "A novel model predictive artificial potential field based ship motion planning method considering COLREGs for complex encounter scenarios",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A17",
+        "A22",
+        "A24",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "fb8ecaafb4e1865b26e6de61793b756d9d6f943d",
+        "tree": "48fc2a328ee595f5f4d25ac3a72115298feb488e",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-e1bea0590e84",
+      "name": "thiru51/wigley-hull-openfoam-resistance",
+      "repository": "thiru51/wigley-hull-openfoam-resistance",
+      "repositoryUrl": "https://github.com/thiru51/wigley-hull-openfoam-resistance",
+      "domain": "cfd-resistance",
+      "description": "",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "0d4969b43ac3874e43e98faef4d8cacdd5fba7a1",
+        "tree": "fe9b58b3269650d2263d3ff229d326e219605eb8",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-e42945f8f002",
+      "name": "solelyman/Multiple-agent-path-planning-and-optimization",
+      "repository": "solelyman/Multiple-agent-path-planning-and-optimization",
+      "repositoryUrl": "https://github.com/solelyman/Multiple-agent-path-planning-and-optimization",
+      "domain": "autonomy-control",
+      "description": "A source code for a project associtaed with multiple USV noncooperatively optimizing path planning behaviors.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A16",
+        "A17",
+        "A19",
+        "A20",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "7fbbfac146ad32b56c4ec84afc76f1aacc01632a",
+        "tree": "880fbda3759be8b80cbf86cc8bc8aec1def37c67",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "Apache-2.0",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-e73e8dd713a4",
+      "name": "bbabina/Surrogate-modelling-of-ship-residuary-resistance",
+      "repository": "bbabina/Surrogate-modelling-of-ship-residuary-resistance",
+      "repositoryUrl": "https://github.com/bbabina/Surrogate-modelling-of-ship-residuary-resistance",
+      "domain": "cfd-resistance",
+      "description": "",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "5452e0c14ce1e27457bb7a304a8dd1cfb16f3c3e",
+        "tree": "e9e4d37f9e7adc9487825989bfa431da8601a23d",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-e751cd80ebf0",
+      "name": "noahbagz/ShipGen",
+      "repository": "noahbagz/ShipGen",
+      "repositoryUrl": "https://github.com/noahbagz/ShipGen",
+      "domain": "hull-design",
+      "description": "Generate Parametric Ship Hull with a Guided Tabular Diffusion Model",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "3a87b64a294d9be592898e34620ffa88ea197193",
+        "tree": "a589240c9fa6a3fa2c22820bc48a5ff1badbf26e",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-e806a0fc5e0c",
+      "name": "gt-marine-robotics-group/stinger-software",
+      "repository": "gt-marine-robotics-group/stinger-software",
+      "repositoryUrl": "https://github.com/gt-marine-robotics-group/stinger-software",
+      "domain": "usv-platforms",
+      "description": "Stinger Tug Core Software",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A01",
+        "A03",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "486949e5919d54d813fe2c07a969195916619550",
+        "tree": "ae17f8f2f5ba7aaf56911a1fd14073bd02fc7f21",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-ec619818cdea",
+      "name": "emi-ber/ship-hydrostatics",
+      "repository": "emi-ber/ship-hydrostatics",
+      "repositoryUrl": "https://github.com/emi-ber/ship-hydrostatics",
+      "domain": "hull-design",
+      "description": "Hydrostatics of a 77.7 m cargo vessel in Python from a DELFTship offset table, validated against DELFTship (within 0.5 %).",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "2304f05bea9623fd0035563de2a1732f623ce246",
+        "tree": "4c6ac0cad6ca1235352a8d4e861096485bcdb288",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-edc893809a99",
+      "name": "vamseeachanta/digitalmodel",
+      "repository": "vamseeachanta/digitalmodel",
+      "repositoryUrl": "https://github.com/vamseeachanta/digitalmodel",
+      "domain": "structures-materials",
+      "description": "Offshore asset lifecycle: ASCII data → strength, fatigue, FFS, hydrodynamics",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A10",
+        "A11",
+        "A12",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "02377a0a3fa75bf8e85b8fe013f044d670b5fb63",
+        "tree": "5f64e8e4db76d386640df6d5224fb734d7fd9632",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-ef1935411b52",
+      "name": "pgh-pep/SeaWeed",
+      "repository": "pgh-pep/SeaWeed",
+      "repositoryUrl": "https://github.com/pgh-pep/SeaWeed",
+      "domain": "autonomy-control",
+      "description": "PEP's ASV autonomy stack",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A16",
+        "A17",
+        "A19",
+        "A20",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "fef2aa0139c06cb8081b20505b67465489e028b5",
+        "tree": "f859f04adf2a69f0f728bc75fe61ea687deafdc4",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-f0da37373ea5",
+      "name": "socquique/capsule-radar-ais",
+      "repository": "socquique/capsule-radar-ais",
+      "repositoryUrl": "https://github.com/socquique/capsule-radar-ais",
+      "domain": "perception-sonar",
+      "description": "Live AIS ship radar for the Waveshare ESP32-S3-Touch-AMOLED-1.75 — marine sibling of Capsule Radar. WSS feed from aisstream.io.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A12",
+        "A16",
+        "A21",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "64ad042a8119c4e0abaa86bd8c009755c1b1be25",
+        "tree": "f78fa9ae4b21383a0e021c2cbcc88cb79b521651",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-f4066f9e2896",
+      "name": "AhlamBCoding/marine_propulsion_simulator",
+      "repository": "AhlamBCoding/marine_propulsion_simulator",
+      "repositoryUrl": "https://github.com/AhlamBCoding/marine_propulsion_simulator",
+      "domain": "propulsion-power",
+      "description": "",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A11",
+        "A13",
+        "A14",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "5914dd91ff9b6780e4ad6baaceab22bb355daece",
+        "tree": "538509cfe87559ece9ea796eaef1e5f5fe35608f",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "UNKNOWN",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-f44d3694d6bd",
+      "name": "noahbagz/C_ShipGen",
+      "repository": "noahbagz/C_ShipGen",
+      "repositoryUrl": "https://github.com/noahbagz/C_ShipGen",
+      "domain": "hull-design",
+      "description": "Conditional Parametric Diffusion Model for Ship Hull Design",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "cdd83e3182d3a873e608a3c6a1518d9f5c3a76e5",
+        "tree": "626549907ef9734f3b628363d61d226a7ad89617",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-f865d4893f65",
+      "name": "hermandoronin/AEGIS-MONITOR",
+      "repository": "hermandoronin/AEGIS-MONITOR",
+      "repositoryUrl": "https://github.com/hermandoronin/AEGIS-MONITOR",
+      "domain": "mission-digital-twin",
+      "description": "Ship systems monitoring dashboard — React 19, Three.js hull view, prioritised alarms, mock telemetry server",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A01",
+        "A18",
+        "A25",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "4500fe51d7b5e9363ad87735df902c030c620657",
+        "tree": "290d2f51acd3a9842d688c605bdc7b44df6bd4ab",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-fdeab602c33f",
+      "name": "julesricheux/Archibald",
+      "repository": "julesricheux/Archibald",
+      "repositoryUrl": "https://github.com/julesricheux/Archibald",
+      "domain": "cfd-resistance",
+      "description": "An open-source performance prediction program (PPP) for sailboats and ships in the preliminary design stage, with fast pipelines from CAD to computation in a Python environment.",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A07",
+        "A08",
+        "A13",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "ab769914c7125666ec5edb4422f920baff5b1470",
+        "tree": "9acb5142c2f2309de4e14ff9c67328ecc673387c",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-DISC-fe92bc2d6b1b",
+      "name": "hookprobe/naval-ai",
+      "repository": "hookprobe/naval-ai",
+      "repositoryUrl": "https://github.com/hookprobe/naval-ai",
+      "domain": "hull-design",
+      "description": "Naval-AI is an open-source AI-driven naval design platform. Generate parametric hulls, run physics-based CFD, evaluate stability and performance, and evolve optimized vessels with AI—from sustainable leisure boats to autonomous maritime drones. #drone #maritime #boats #cfd #solarBoat #kiteBoat #diyBoat #navalAI #freeBoatDesign #boatDesign #boatPla",
+      "firstRecordedOn": "2026-11-14",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A05",
+        "A06",
+        "A09",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "f75e02444a97d81c7ad85017b19d5e6950ce1b7f",
+        "tree": "629f2c90cd92e3bb1eb10033a7bf92a7446605c3",
+        "verifiedEvidence": null
+      },
+      "license": {
+        "spdxMetadata": "AGPL-3.0",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [],
+      "actualUsage": [],
+      "evidence": [],
+      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
     }
   ]
 }

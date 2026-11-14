@@ -78,9 +78,9 @@ jobs:
         run: >-
           node scripts/repository-scout.mjs
           --out-dir "$RUNNER_TEMP/repository-scout"
-          --max-queries 18
-          --per-query 30
-          --limit 100
+          --max-queries 24
+          --per-query 12
+          --limit 300
       - name: Draft source-pinned investigation queue (never executes external code)
         continue-on-error: true
         env:
@@ -128,9 +128,14 @@ jobs:
           git commit -m "docs(register): propose $CURRENT_COUNT new public repository discoveries for review"
           gh auth setup-git
           git push -u origin "$BRANCH"
-          gh pr create --base main --head "$BRANCH" \
+          if ! gh pr create --base main --head "$BRANCH" \
             --title "External software discovery queue (review required)" \
-            --body "Automated A26 discovery *proposal* from Scout run $GITHUB_RUN_ID. $CURRENT_COUNT new public GitHub identities are registered as DISCOVERED ONLY, with no executable permission, no accepted license/security/physics assessment, and no verified project usage. All project and engineering approvals remain separate. Review and curate before protected merge. Source: https://github.com/${{ github.repository }}/actions/runs/$GITHUB_RUN_ID"
+            --body "Automated A26 discovery *proposal* from Scout run $GITHUB_RUN_ID. $CURRENT_COUNT new public GitHub identities are registered as DISCOVERED ONLY, with no executable permission, no accepted license/security/physics assessment, and no verified project usage. All project and engineering approvals remain separate. Review and curate before protected merge. Source: https://github.com/${{ github.repository }}/actions/runs/$GITHUB_RUN_ID"; then
+            echo '::warning::GitHub Actions could not create the review PR. The unapproved proposal branch and scan artifact remain available.'
+            echo "Review branch: https://github.com/${{ github.repository }}/tree/$BRANCH" >> "$GITHUB_STEP_SUMMARY"
+            echo "Scan artifact: https://github.com/${{ github.repository }}/actions/runs/$GITHUB_RUN_ID" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
           # GITHUB_TOKEN-created PRs do not emit normal pull_request check runs.
           # workflow_dispatch is an allowed exception; it checks the exact PR head.
           gh workflow run repository-scout.yml --ref "$BRANCH" -f validate_only=true

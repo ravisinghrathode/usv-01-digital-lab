@@ -15,19 +15,19 @@ Node.js >=20 is sufficient (no npm install needed):
 ```bash
 node --test tests/repository-scout.test.mjs
 GITHUB_TOKEN=<read-only GitHub token> node scripts/repository-scout.mjs \
-  --max-queries 18 --per-query 30 --limit 100 \
+  --max-queries 24 --per-query 12 --limit 300 \
   --out-dir /tmp/usv01-repository-scout
 ```
 
 `GITHUB_TOKEN` is optional on a workstation but recommended to avoid very low unauthenticated rate limits. Never commit it. Output defaults to a directory under the operating system temporary folder, not the controlled engineering baseline. `latest.json` is the structured discovery queue and `latest.md` is the human-readable shortlist. Each run records timestamp, source SHA when known, query counts and incomplete-coverage/error warnings. Scores are **heuristic discovery priority**, never engineering accuracy or certification.
 
-GitHub Actions runs tests for relevant pull requests; after this change is reviewed and merged to the default branch, a bounded scan runs **weekly on Monday at 02:17 UTC**, or on manual workflow dispatch. The workflow has read-only `contents` permissions and uploads reports as 30-day artifacts. It does **not** commit reports, open pull requests, or auto-adopt software.
+GitHub Actions runs tests for relevant pull requests; a bounded scan runs **weekly on Monday at 02:17 UTC**, or on manual workflow dispatch. The workflow uploads reports as 30-day artifacts and proposes unapproved register changes on a review branch. It attempts to open a protected review PR. If repository settings forbid Actions from creating PRs, the workflow leaves a branch and artifact link for an authenticated reviewer to use; it does not approve or auto-adopt software.
 
 ## Coverage and search tuning
 
 `config/repository-scout.json` lists 12 search categories, mapped to canonical A01–A26 roles: USV platforms, hull design, CFD/resistance, marine simulation, navigation/COLREGS, autonomy/control, sonar/perception, propulsion/power, NMEA/communications, V&V/safety, structures/materials and digital twins. Each category has first and secondary query terms and keyword signals.
 
-A default scan queries one search result page for each of up to 18 round-robin queries, with 30 hits/page. It deduplicates using case-folded `owner/repo` identities, caps processing at 300 unique repositories, and emits the top 100. The cap, GitHub search engine/index, ranking, result pagination, API rate limits and availability mean **this cannot discover all Git repositories**. It does not search GitLab, Codeberg, private repositories or arbitrary Git hosts. Later integrations must use separately authorized, read-only credentials.
+A scheduled scan queries one search result page for each of 24 round-robin queries, with 12 hits/page. This keeps the 24 configured terms under the 300-candidate cap even if no results overlap. It deduplicates using case-folded `owner/repo` identities and emits up to 300. The cap, GitHub search engine/index, ranking, result pagination, API rate limits and availability mean **this cannot discover all Git repositories**. It does not search GitLab, Codeberg, private repositories or arbitrary Git hosts. Later integrations must use separately authorized, read-only credentials.
 
 The rank score (0–100) combines engineering category/keyword match (up to 55), last push recency (up to 15), GitHub stars (up to 15), description signal (up to 5), and recognized machine-readable license signal (up to 10). Archived/forked results are excluded from collection. Stars and recency are *not* proofs of code quality; source license and security review never pass automatically. GitHub metadata may be stale or incorrect. The candidate list retains license status and flags for independent review.
 
