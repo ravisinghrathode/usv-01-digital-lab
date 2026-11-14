@@ -19,7 +19,7 @@ export const StudioCommandPalette: React.FC<Props> = ({open,onClose,onSelect}) =
   if(!open)return null;
   const select=(module:NavigationModule)=>{onSelect(module);onClose();};
   return <div className="fixed inset-0 z-[90] flex justify-center bg-[#020617]/85 px-4 pt-[10vh]" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)onClose();}}>
-    <div role="dialog" aria-modal="true" aria-label="Find engineering module" className="h-fit w-full max-w-xl overflow-hidden rounded-xl border border-cyan-400/30 bg-[#111f30] shadow-2xl">
+    <div role="dialog" aria-modal="true" aria-label="Find engineering module" className="studio-dark h-fit w-full max-w-xl overflow-hidden rounded-xl border border-cyan-400/30 bg-[#111f30] shadow-2xl">
       <div className="flex items-center gap-3 border-b border-white/10 p-4"><Command size={16} className="text-cyan-300"/><Search size={16} className="text-slate-400"/>
         <input ref={input} value={query} onChange={e=>{setQuery(e.target.value);setCursor(0);}}
           onKeyDown={e=>{if(e.key==='ArrowDown'){e.preventDefault();setCursor(i=>Math.min(found.length-1,i+1));}else if(e.key==='ArrowUp'){e.preventDefault();setCursor(i=>Math.max(0,i-1));}else if(e.key==='Enter'&&found[cursor]){e.preventDefault();select(found[cursor].id);}}}
