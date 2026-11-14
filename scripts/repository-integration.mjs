@@ -137,7 +137,7 @@ export async function execBounded(program, args, {cwd, stdin = '', timeoutMs = 3
 
 export async function checkSourceTree(dir) {
   let count = 0, total = 0;
-  const manifestNames = new Set(['LICENSE','LICENSE.md','LICENSE.txt','COPYING','package.json','package-lock.json','pnpm-lock.yaml','requirements.txt','pyproject.toml','Cargo.lock','Cargo.toml','CMakeLists.txt','Dockerfile','go.mod','go.sum','README.md']);
+  const manifestNames = new Set(['LICENSE','LICENSE.md','LICENSE.txt','COPYING','setup.cfg','requirements-dev.txt','tox.ini','package.json','package-lock.json','pnpm-lock.yaml','requirements.txt','pyproject.toml','Cargo.lock','Cargo.toml','CMakeLists.txt','Dockerfile','go.mod','go.sum','README.md']);
   const findings = [];
   const manifests = [];
   async function walk(base, depth) {
