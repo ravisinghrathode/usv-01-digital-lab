@@ -46,6 +46,9 @@ jobs:
     needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -76,7 +79,40 @@ jobs:
           node scripts/external-software-register.mjs
           --scout-report "$RUNNER_TEMP/repository-scout/latest.json"
           --proposal-out "$RUNNER_TEMP/repository-scout/external-register-proposal.json"
+      - name: Open a controlled review PR for new discoveries (never approve software)
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          PROPOSAL="$RUNNER_TEMP/repository-scout/external-register-proposal.json"
+          REPORT="$RUNNER_TEMP/repository-scout/latest.json"
+          CURRENT_COUNT="$(node -e "const fs=require('fs');const old=require('./src/data/externalSoftwareRegister.json');const x=JSON.parse(fs.readFileSync(process.argv[1]));process.stdout.write(String(x.records.length-old.records.length))" "$PROPOSAL")"
+          if [[ "$CURRENT_COUNT" -eq 0 ]]; then
+            echo 'No new external repositories; current register remains authoritative.'
+            exit 0
+          fi
+          OPEN="$(gh pr list --state open --limit 100 --json title --jq '[.[] | select(.title == "External software discovery queue (review required)")] | length')"
+          if [[ "$OPEN" != 0 ]]; then
+            echo 'A discovery-review PR is already open; preserving new candidates in the scan artifact without overwriting an unreviewed PR.'
+            exit 0
+          fi
+          BRANCH="automation/external-software-discovery-$GITHUB_RUN_ID"
+          cp "$PROPOSAL" src/data/externalSoftwareRegister.json
+          node scripts/external-software-register.mjs --refresh
+          node scripts/external-software-register.mjs --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "$BRANCH"
+          git add src/data/externalSoftwareRegister.json docs/EXTERNAL_SOFTWARE_OVERVIEW.md
+          git commit -m "docs(register): propose $CURRENT_COUNT new public repository discoveries for review"
+          gh auth setup-git
+          git push -u origin "$BRANCH"
+          gh pr create --base main --head "$BRANCH" \
+            --title "External software discovery queue (review required)" \
+            --body "Automated A26 discovery *proposal* from Scout run $GITHUB_RUN_ID. $CURRENT_COUNT new public GitHub identities are registered as DISCOVERED ONLY, with no executable permission, no accepted license/security/physics assessment, and no verified project usage. All project and engineering approvals remain separate. Review and curate before protected merge. Source: https://github.com/${{ github.repository }}/actions/runs/$GITHUB_RUN_ID"
       - name: Upload unverified discovery report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: usv01-repository-scout
