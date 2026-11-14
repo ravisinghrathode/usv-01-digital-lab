@@ -93,7 +93,7 @@ export const CadStudioView: React.FC<Props> = ({ particulars, onNavigate, onAskA
   const activeLabel = active ? 'Local inspection mesh · NOT authoritative CAD' : 'Preview only · no authoritative CAD loaded';
   const inspectorModule = conceptual?.module ?? 'workstream-NAV';
 
-  return <div className={focusMode ? 'fixed inset-0 z-[60] flex flex-col overflow-hidden bg-[#0b1522] text-[#f1f5f9] p-3' : 'flex min-h-full flex-col gap-3 bg-[#0b1522] p-3 text-[#f1f5f9] lg:p-4'}>
+  return <div className={focusMode ? 'studio-dark fixed inset-0 z-[60] flex flex-col overflow-hidden bg-[#0b1522] text-[#f1f5f9] p-3' : 'studio-dark flex min-h-full flex-col gap-3 bg-[#0b1522] p-3 text-[#f1f5f9] lg:p-4'}>
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-white/10 bg-[#122338] px-4 py-3">
       <div>
         <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-300">Product workspace / USV-01</div>
