@@ -7,6 +7,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import type { NavigationModule } from './moduleRegistry';
 import { StudioNavigation } from './components/StudioNavigation';
 import { StudioWorkspaceBar } from './components/StudioWorkspaceBar';
+import { StudioContextStrip } from './components/StudioContextStrip';
 import { StudioCommandPalette } from './components/StudioCommandPalette';
 import { DirectorBriefing } from './components/DirectorBriefing';
 import { CadStudioView } from './components/CadStudioView';
@@ -654,6 +655,8 @@ export default function App() {
           onOpenContextGuide={() => setIsContextGuideOpen(true)}
           onOpenVerify={() => setIsVerifyModalOpen(true)}
         />
+
+        <StudioContextStrip />
 
         <StudioWorkspaceBar currentModule={currentModule} onSelectModule={setCurrentModule} openTabs={openTabs} onCloseTab={closeModuleTab} onOpenCommand={() => setCommandOpen(true)} />
 
