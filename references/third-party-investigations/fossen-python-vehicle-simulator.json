@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "recordType": "SOURCE_PINNED_THIRD_PARTY_INVESTIGATION",
-  "status": "PINNED_SOURCE_INSPECTED_ADAPTER_PROPOSED_NOT_STAGED_OR_EXECUTED",
+  "status": "SOURCE_PINNED_REAL_GIT_TREE_STATICALLY_STAGED_NOT_EXECUTED",
   "id": "fossen-python-vehicle-simulator",
   "createdDate": "2026-11-14",
   "upstream": {
@@ -22,7 +22,7 @@
       "numpy",
       "matplotlib"
     ],
-    "gitTreeSha": "TBD_PENDING_AUTOMATED_INTAKE"
+    "gitTreeSha": "80feeef4a79bbc23b539d47a0cae20ea41abb600"
   },
   "userValue": "Offline research comparison for A08 ship motions / A16-A17 marine GNC utilities; not for vessel control.",
   "candidateToolId": "TOOL-EXT-FOSSEN-GNC-SIMULATION",
@@ -39,9 +39,9 @@
     "A26"
   ],
   "trustedAdapter": "integrations/candidates/fossen_python_vehicle_simulator_adapter.py",
-  "adapterStatus": "STATIC_PROPOSAL; UPSTREAM_RUNTIME_NOT_TESTED",
-  "runnerImageDigest": "TBD",
-  "sandboxSecurityReview": "TBD",
+  "adapterStatus": "TRUSTED_ADAPTER_SYNTHETIC_TESTS_PASSED; REAL_UPSTREAM_EXECUTION_PENDING",
+  "runnerImageDigest": "TBD_PENDING_MANUAL_MEASURED_DISPOSABLE_RUN",
+  "sandboxSecurityReview": "TBD_PENDING_A20_APPROVAL",
   "dependenciesCveScan": "TBD",
   "sbom": "TBD",
   "technicalMarineReferenceValidation": "TBD",
@@ -143,7 +143,7 @@
   "readiness": {
     "metadata": "GITHUB_SOURCE_INSPECTED",
     "pinnedSha": "VERIFIED_VIA_GITHUB_CONNECTED_SOURCE",
-    "exactTreeStaged": false,
+    "exactTreeStaged": true,
     "codeExecuted": false,
     "upstreamTestsRun": false,
     "benchmarksPassed": false,
@@ -161,5 +161,16 @@
     "Record source and image provenance, license findings, simulation limitations, independent A15/A23 review",
     "Prepare protected tool-registration PR only after evidence gate; never auto-deploy"
   ],
-  "governanceNotice": "Research-only. Does not authorize vessel parameters, actuators, deployment, code adoption, or baseline release."
+  "governanceNotice": "Research-only. Does not authorize vessel parameters, actuators, deployment, code adoption, or baseline release.",
+  "realSourceIntake": {
+    "verifiedAt": "2026-11-14T11:05:38Z",
+    "sourceOfEvidence": "GITHUB_ACTIONS_PINNED_SOURCE_INTAKE_NOT_NUMERICAL_VALIDATION",
+    "workflowRunUrl": "https://github.com/ravisinghrathode/usv-01-digital-lab/actions/runs/43588332612",
+    "evidenceArtifactUrl": "https://github.com/ravisinghrathode/usv-01-digital-lab/actions/runs/43588332612/artifacts/14111232109",
+    "sourceFilesInspected": 30,
+    "sourceCommit": "a93d1938ba1f78f2580c24c73f003091b2f03cd0",
+    "tree": "80feeef4a79bbc23b539d47a0cae20ea41abb600",
+    "thirdPartyCodeExecuted": false,
+    "sourceInspectionNotSecurityAudit": true
+  }
 }
