@@ -3,7 +3,7 @@ import {BookOpen, GitBranch, ExternalLink, Search, ShieldAlert, CheckCircle2} fr
 import rawRegister from '../data/externalSoftwareRegister.json';
 
 type PlannedUse = {project: string; agents: string[]; purpose: string; sourceEvidence: string};
-type ActualUse = {project: string; agent: string; kind: string; executionEvidence: string; sourceCommit: string};
+type ActualUse = {project: string; agent: string; kind: string; executionEvidence: string; sourceCommit: string; archivalEvidence?: string};
 type SourceEvidence = {type: string; status: string; url: string};
 type ExternalRecord = {
   id: string; name: string; repository: string; repositoryUrl: string; domain: string;
@@ -143,8 +143,14 @@ export const ExternalSoftwareRegisterView: React.FC = () => {
               <span className="text-slate-400">Engineering: {r.engineeringValidation}</span>
               {r.evidence.map((ev, i) => <a key={i} href={ev.url} target="_blank" rel="noopener noreferrer"
                 className="text-cyan-300 hover:underline">{ev.type.replaceAll('_',' ')} <ExternalLink className="w-3 h-3 inline" /></a>)}
-              {r.actualUsage.map((use, i) => <a key={'use-'+i} href={use.executionEvidence} target="_blank" rel="noopener noreferrer"
-                className="text-teal-300 hover:underline">{use.kind} · {use.project} · {use.agent}</a>)}
+              {r.actualUsage.map((use, i) => (
+                <span key={'use-'+i} className="flex items-center gap-2">
+                  <a href={use.executionEvidence} target="_blank" rel="noopener noreferrer"
+                    className="text-teal-300 hover:underline">{use.kind} · {use.project} · {use.agent}</a>
+                  {use.archivalEvidence && <a href={use.archivalEvidence} target="_blank" rel="noopener noreferrer"
+                    className="text-slate-300 hover:underline">Archived evidence</a>}
+                </span>
+              ))}
             </div>
             <p className="text-[11px] text-slate-400"><strong className="text-slate-300">Next action:</strong> {r.nextAction}</p>
           </article>
