@@ -182,6 +182,7 @@
   .studio-x[data-ui="clarity"] .ns3-side.ns3-mobile-closed { display:none; }
   .studio-x[data-ui="clarity"] .ns3-side.ns3-mobile-active { display:flex; }
   .studio-x[data-ui="clarity"] .ns3-side .ns3-expanded { display:block; }
+  .studio-x[data-ui="clarity"] .ns3-side .ns3-expanded.flex { display:flex; }
   .studio-x[data-ui="clarity"] .ns3-side .ns3-compact { display:none; }
   .ns3-side-backdrop.ns3-visible { display:block; position:fixed; inset:0; background:#152d3970; z-index:95; }
   .ns3-mobile-open { display:flex; }
