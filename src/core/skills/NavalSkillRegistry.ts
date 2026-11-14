@@ -22,7 +22,7 @@ export interface NavalSkillContract {
 export const NAVAL_SKILL_CONTRACTS: readonly NavalSkillContract[] = Object.freeze([
   {
     id: 'marine-requirements-and-standards',
-    version: '1.0',
+    version: '1.0' as const,
     documentPath: 'skills/usv01/marine-requirements-and-standards/SKILL.md',
     canonicalAgents: ['A01', 'A02', 'A03', 'A04', 'A18', 'A21', 'A24'],
     procedure: 'Trace requirements to verified source editions, exact vessel configuration, standard applicability, owned verification methods and signed decision rights. Unknown mandatory criteria stay TBD.',
@@ -31,7 +31,7 @@ export const NAVAL_SKILL_CONTRACTS: readonly NavalSkillContract[] = Object.freez
   },
   {
     id: 'cad-configuration-and-mass-cg',
-    version: '1.0',
+    version: '1.0' as const,
     documentPath: 'skills/usv01/cad-configuration-and-mass-cg/SKILL.md',
     canonicalAgents: ['A05', 'A06', 'A08', 'A09', 'A10', 'A11', 'A12', 'A13'],
     procedure: 'Bind geometry, payload and mass/CG inputs to one candidate, revision, source SHA and SI coordinate frame; invalidate affected downstream results whenever controlled upstream inputs change.',
@@ -40,7 +40,7 @@ export const NAVAL_SKILL_CONTRACTS: readonly NavalSkillContract[] = Object.freez
   },
   {
     id: 'numerical-vnv-and-uncertainty',
-    version: '1.0',
+    version: '1.0' as const,
     documentPath: 'skills/usv01/numerical-vnv-and-uncertainty/SKILL.md',
     canonicalAgents: ['A06', 'A07', 'A08', 'A09', 'A10', 'A11', 'A12', 'A13', 'A14', 'A18', 'A23', 'A24'],
     procedure: 'Declare benchmark and tolerance before measurement; validate solver/geometry version, units, convergence and combined uncertainty; distinguish preliminary calculations from qualified independent review.',
@@ -49,7 +49,7 @@ export const NAVAL_SKILL_CONTRACTS: readonly NavalSkillContract[] = Object.freez
   },
   {
     id: 'marine-safety-and-degraded-modes',
-    version: '1.0',
+    version: '1.0' as const,
     documentPath: 'skills/usv01/marine-safety-and-degraded-modes/SKILL.md',
     canonicalAgents: ['A04', 'A16', 'A17', 'A19', 'A20', 'A22', 'A24'],
     procedure: 'Evaluate scenario-specific sensor, COLREG, communications-loss, thermal and launch/recovery hazards. Produce advisory analysis only, never helm/throttle/actuator commands or universal zero-thrust logic.',
@@ -58,7 +58,7 @@ export const NAVAL_SKILL_CONTRACTS: readonly NavalSkillContract[] = Object.freez
   },
   {
     id: 'digital-thread-and-evidence-sync',
-    version: '1.0',
+    version: '1.0' as const,
     documentPath: 'skills/usv01/digital-thread-and-evidence-sync/SKILL.md',
     canonicalAgents: ['A01', 'A02', 'A15', 'A20', 'A21', 'A23', 'A25', 'A26'],
     procedure: 'Link all evidence through immutable configuration and revision IDs. Check source digest, classification and ACL before any Drive/Obsidian synchronization; quarantine all conflicts rather than overwrite.',
@@ -67,7 +67,7 @@ export const NAVAL_SKILL_CONTRACTS: readonly NavalSkillContract[] = Object.freez
   },
   {
     id: 'commissioning-and-acceptance',
-    version: '1.0',
+    version: '1.0' as const,
     documentPath: 'skills/usv01/commissioning-and-acceptance/SKILL.md',
     canonicalAgents: ['A01', 'A03', 'A14', 'A15', 'A18', 'A19', 'A20', 'A21', 'A22', 'A23', 'A24', 'A25', 'A26'],
     procedure: 'Track 26-agent and M00–M08 readiness using source-pinned evidence; separate offline CI, live signed-in Codex run, independent engineering V&V and authorized human approval.',
