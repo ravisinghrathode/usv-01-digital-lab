@@ -13,6 +13,7 @@ import { mkdtemp, readFile, rm, stat } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 import { requireLabCommissioningPolicy } from './LabCommissioningPolicy.ts';
+import { A26_CODEX_AGENT_ID, A26_GPT6_MODEL, selectA26SubscriptionModel } from './A26SubscriptionModelAccess.ts';
 
 export type PilotRole = 'orchestrator' | 'worker' | 'reviewer';
 
@@ -23,6 +24,8 @@ export interface PilotRequest {
   prompt: string;
   workingDirectory: string;
   timeoutMs?: number;
+  /** A26 standard GPT-6 Sol via signed-in ChatGPT, never OpenAI API access. */
+  modelOverride?: typeof A26_GPT6_MODEL;
 }
 
 export interface PilotResult {
@@ -41,14 +44,15 @@ export class SubscriptionCliUnavailable extends Error {}
 
 export interface CliSpec {
   executable: string;
-  args: (prompt: string, finalMessageFile: string) => string[];
+  args: (prompt: string, finalMessageFile: string, modelOverride?: typeof A26_GPT6_MODEL) => string[];
 }
 
-const codexArgs = (prompt: string, finalMessageFile: string): string[] => [
+const codexArgs = (prompt: string, finalMessageFile: string, modelOverride?: typeof A26_GPT6_MODEL): string[] => [
   'exec',
   '--sandbox', 'read-only',
   '--ephemeral',
   '--output-last-message', finalMessageFile,
+  ...(modelOverride ? ['--model', modelOverride] : []),
   prompt
 ];
 
@@ -79,6 +83,11 @@ export function validatePilotRequest(input: PilotRequest): void {
   if (!/^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$/.test(input.agentId)) throw new Error('Invalid agentId');
   if (!input.prompt.trim() || input.prompt.length > 24_000) throw new Error('Invalid prompt');
   if (!input.workingDirectory.startsWith('/')) throw new Error('Absolute workingDirectory required');
+  if (input.modelOverride !== undefined && (
+    input.role !== 'worker' || input.agentId !== A26_CODEX_AGENT_ID ||
+    input.modelOverride !== A26_GPT6_MODEL ||
+    selectA26SubscriptionModel(input.agentId) !== input.modelOverride
+  )) throw new SubscriptionCliUnavailable('A26 standard GPT-6 Sol model override denied: ChatGPT subscription-only A26 authorization required.');
 }
 
 /**
@@ -160,6 +169,10 @@ export async function runSubscriptionCli(input: PilotRequest): Promise<PilotResu
     );
   }
 
+  // Codex itself checks the requested standard GPT-6 Sol model availability.
+  // The previously imposed >=0.153.0 threshold was specific to Astra,
+  // not an evidenced minimum for Sol. Unsupported models fail the CLI run.
+
   const tmpDirectory = await mkdtemp(path.join(os.tmpdir(), 'usv-codex-final-'));
   const finalMessageFile = path.join(tmpDirectory, 'final-message.json');
 
@@ -192,7 +205,7 @@ export async function runSubscriptionCli(input: PilotRequest): Promise<PilotResu
       });
     };
 
-    const child = spawn(spec.executable, spec.args(input.prompt, finalMessageFile), {
+    const child = spawn(spec.executable, spec.args(input.prompt, finalMessageFile, input.modelOverride), {
       cwd: input.workingDirectory, env: childEnv, shell: false,
       stdio: ['ignore', 'pipe', 'pipe']
     });

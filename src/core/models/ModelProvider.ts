@@ -1,5 +1,6 @@
 import { isPaidAiApiAllowed } from './AiBillingPolicy.ts';
 import { evaluateLabCommissioningPolicy } from '../mission-control/LabCommissioningPolicy.ts';
+import { selectA26SubscriptionModel } from '../mission-control/A26SubscriptionModelAccess.ts';
 
 
 export type ExecutionMode =
@@ -336,7 +337,7 @@ export class CodexCliProvider implements IModelProvider {
       evaluateLabCommissioningPolicy(process.env).permitted;
   }
 
-  async generateText(request: ModelPromptRequest): Promise<ModelPromptResponse> {
+  async generateText(request: ModelPromptRequest, _config?: ModelConfig): Promise<ModelPromptResponse> {
     if (!this.isAvailable()) {
       throw new Error('Codex CLI requires an explicitly enabled subscription pilot with paid API disabled.');
     }
@@ -364,6 +365,9 @@ export class CodexCliProvider implements IModelProvider {
     }
     const serverOnlyAdapter = '../mission-control/' + 'SubscriptionCliAdapter.ts';
     const { runSubscriptionCli } = await import(/* @vite-ignore */ serverOnlyAdapter);
+    // A26 uses standard GPT-6 Sol by default in an authorized ChatGPT-signed-in Codex research session.
+    // This selection is not proof of the model the service actually used.
+    const requestedModel = selectA26SubscriptionModel(request.context?.agentId);
     const result = await runSubscriptionCli({
       role: 'worker',
       taskId: (request.correlationId || 'AGENT-CODEX').replace(/[^A-Za-z0-9_.-]/g, '-').slice(0, 80),
@@ -371,7 +375,8 @@ export class CodexCliProvider implements IModelProvider {
         /^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$/.test(request.context.agentId)
           ? request.context.agentId : 'USV-AGENT',
       prompt,
-      workingDirectory: process.cwd()
+      workingDirectory: process.cwd(),
+      modelOverride: requestedModel
     });
     if (result.status !== 'COMPLETED') {
       throw new Error('Codex subscription CLI failed or is unavailable. No AI synthesis completed.');
@@ -389,12 +394,16 @@ export class CodexCliProvider implements IModelProvider {
     }
     return {
       content, parsedJson, providerUsed: 'codex_cli',
-      modelUsed: 'codex-signed-in-session-model-unverified',
+      modelUsed: requestedModel
+        ? 'gpt-6-sol-requested-via-subscription-model-unverified'
+        : 'codex-signed-in-session-model-unverified',
       executionMode: 'LIVE_AI_GENERATION',
       isMock: false, isAiReview: true, evidenceValid: false,
       correlationId: request.correlationId,
       timestamp: new Date().toISOString(),
-      statusMessage: 'Local signed-in Codex CLI output; model identity and engineering evidence not independently attested.'
+      statusMessage: requestedModel
+        ? 'A26 requested standard GPT-6 Sol using a ChatGPT-signed-in CLI; actual model identity and engineering evidence not independently attested.'
+        : 'Local signed-in Codex CLI output; model identity and engineering evidence not independently attested.'
     };
   }
 }
