@@ -38,7 +38,7 @@ The newly added policies are [A26 charter Amendment R2](../EXTERNAL_INTEGRATION_
 
 ## Trusted analytic screens added in the same milestone
 
-`scripts/a26-analytical-oracles.mjs` and its independent `tests/a26-analytical-oracles.test.mjs` provide six **synthetic, deterministic first-principles functions** with seven useful engineering checks. No third-party code is imported or executed.
+`scripts/a26-analytical-oracles.mjs` and its independent `tests/a26-analytical-oracles.test.mjs` provide seven **synthetic, deterministic first-principles functions** with nine negative/positive tests. No third-party code is imported or executed.
 
 | Analytic screen | Explicit synthetic reference | Scope and limitation |
 | --- | --- | --- |
