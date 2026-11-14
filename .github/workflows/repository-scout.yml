@@ -10,6 +10,13 @@ on:
       - 'scripts/repository-integration-planner.mjs'
       - 'tests/repository-integration-planner.test.mjs'
       - 'config/repository-scout.json'
+      - 'src/data/externalSoftwareRegister.json'
+      - 'src/components/ExternalSoftwareRegisterView.tsx'
+      - 'src/App.tsx'
+      - 'src/components/NavigationSidebar.tsx'
+      - 'docs/EXTERNAL_SOFTWARE_OVERVIEW.md'
+      - 'scripts/external-software-register.mjs'
+      - 'tests/external-software-register.test.mjs'
       - 'tests/repository-scout.test.mjs'
       - '.github/workflows/repository-scout.yml'
 
@@ -29,7 +36,9 @@ jobs:
         with:
           node-version: '22'
       - name: Run offline tests
-        run: node --test tests/repository-scout.test.mjs tests/repository-integration.test.mjs tests/repository-integration-planner.test.mjs
+        run: node --test tests/repository-scout.test.mjs tests/repository-integration.test.mjs tests/repository-integration-planner.test.mjs tests/external-software-register.test.mjs
+      - name: Validate permanent register and generated overview
+        run: node scripts/external-software-register.mjs --check
 
   discover:
     name: Search public GitHub repositories
@@ -62,6 +71,11 @@ jobs:
           --scout-report "$RUNNER_TEMP/repository-scout/latest.json"
           --out-dir "$RUNNER_TEMP/repository-scout"
           --limit 5
+      - name: Propose changes to reviewed register from new discoveries (never auto-approve)
+        run: >-
+          node scripts/external-software-register.mjs
+          --scout-report "$RUNNER_TEMP/repository-scout/latest.json"
+          --proposal-out "$RUNNER_TEMP/repository-scout/external-register-proposal.json"
       - name: Upload unverified discovery report
         uses: actions/upload-artifact@v4
         with:

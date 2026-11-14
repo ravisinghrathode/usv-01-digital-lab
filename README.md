@@ -10,6 +10,10 @@ Public source-code workspace and deterministic multi-agent platform for the **US
 
 The **[Master Project Register](docs/MASTER_PROJECT_REGISTER.md)** is the controlled project-level action index for the 15-step Naval Digital Lab recovery plan, covering accountable owners, platform-versus-vessel scope, blockers, decisions and evidence links. It is a source-pinned status snapshot; **read current GitHub PRs/checks before using it** and do not confuse its project action statuses with [independently accepted vessel engineering](docs/CONSOLIDATED_ACCEPTANCE_REGISTER.md).
 
+### External software and project usage tracking
+
+The [External Software Register](docs/EXTERNAL_SOFTWARE_OVERVIEW.md) provides the public-safe, source-controlled inventory of discovered and evaluated engineering software. It explicitly separates planned agent/project usage from verified actual use, and links pinned commits and review evidence. [Operating and maintenance rules](docs/EXTERNAL_SOFTWARE_REGISTER_OPERATING.md) define the protected updates. The lab sidebar includes a read-only **External Software Register** view when this source revision is deployed. No entry implies software or vessel approval.
+
 ## 1. System Overview
 
 The USV-01 Digital Engineering Lab is an operational, modular multi-agent platform combining:
