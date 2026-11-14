@@ -4,6 +4,8 @@
 
 The current source registry defines **26** agent IDs, A01–A26, across 8 functional divisions. The architecture role table is maintained as a source-aligned **documentation snapshot**; it does not override the canonical implementation. In particular, A15 is `INDEP-CRIT-15` (Independent Technical Critic) and A18 is `TEST-DIR-18` (Test & Verification Director); earlier battery/autonomy labels are historical aliases, not additional live agents. Consult the canonical implementation for current assignments.
 
+**A26 role-specific operating charter:** [Unified Naval Intelligence, Benchmarking & External Software Qualification](A26_UNIFIED_AGENT_OPERATING_CHARTER.md). It incorporates the external software integration charter in full as a binding annex. The canonical `INTEL-USV-26` prompt/permissions remain sourced from `src/core/agents/definitions.ts`; the unified research router is offline and cannot register a new agent.
+
 ## What the implementation establishes
 
 - **Registered:** Agent identity, prompts, dependencies and schema configuration are present.

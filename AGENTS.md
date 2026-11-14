@@ -11,6 +11,10 @@ This repository contains 26 specialist engineering agents (A01–A26). Use the r
 - For live 26-agent model execution, use interactive Codex tasks when supported, record reproducible task parameters and outputs and retain the source revision. Do not represent a Codex narrative or simulated role response as actual `BaseAgent` / `ToolRegistry` execution.
 - Do not introduce `OPENAI_API_KEY`, `GEMINI_API_KEY`, GitHub Action `codex exec` with copied personal credentials, or new usage-billed AI services without explicit project authority.
 
+## A26 single-role charter
+
+A26 (`INTEL-USV-26`) coordinates both public naval fleet/scientific intelligence and source-pinned external marine software research under [one operating charter](docs/governance/A26_UNIFIED_AGENT_OPERATING_CHARTER.md). Its original [External Software Integration Annex](docs/EXTERNAL_INTEGRATION_AGENT_CHARTER.md) and revision-2 policy remain fully binding. Do not add a 27th agent, reinterpret discovery as software qualification, change the canonical A26 prompt/role rights, or assume the separately proposed lab-wide charter has been adopted. The read-only routing verifier is `node scripts/a26-unified-governance.mjs --check`.
+
 ## Mandatory engineering controls
 
 1. Treat vessel particulars and unresolved requirements as TBD until supported by reviewed source evidence.
@@ -29,3 +33,30 @@ This repository contains 26 specialist engineering agents (A01–A26). Use the r
 - `npm run acceptance:commission`
 
 See `docs/SUBSCRIPTION_ONLY_CODEX_MIGRATION.md` for the capability boundary and unfinished live-AI work.
+
+## Reusable agent-engineering skill selection
+
+For agent, orchestrator, tool, and engineering-verification changes, use the
+relevant available procedures from the connected ChatGPT skill library. These
+are development guidance, **not** additional autonomous agents or a substitute
+for authenticated project authority:
+
+- `building-deterministic-skills`, `agent-architecture`: typed input/output
+  contracts, bounded scope, explicit state transitions and authority.
+- `state-management`, `handoff-protocol`: idempotent resume, versioned
+  inter-agent receipts and blocked-dependency recovery.
+- `guardrails`, `verifier-design`: reject spoofed approvals, stale evidence,
+  unsafe permissions and unsubstantiated engineering pass conditions.
+- `agent-eval`, `local-replay`: synthetic golden cases, adversarial negatives,
+  replayable fixtures and honest CI reports.
+- `ecosystem-primer`, `langgraph-fundamentals`,
+  `langgraph-persistence`, `langgraph-human-in-the-loop`: architectural
+  references only. Do not add LangGraph or a second scheduler without a
+  measured gap, explicit design decision and independent review.
+
+Apply the relevant skill procedure to the actual code and tests, not only a
+documentation checklist. Preserve the existing TypeScript execution engine,
+A01–A26 registry, offline/no-paid-model CI, independent review and human
+approval gates. Never identify a skill-library record as an installed runtime.
+See `docs/AGENT_ENGINEERING_SKILLS_ADOPTION_20261115.md` for the skill-to-code
+mapping, open risks, and acceptance evidence requirements.

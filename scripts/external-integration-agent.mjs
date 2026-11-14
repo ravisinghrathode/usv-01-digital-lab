@@ -9,6 +9,7 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {validateSpec} from './repository-integration.mjs';
 import {validateRegister,REGISTER_FILE} from './external-software-register.mjs';
+import {readAndValidateA26Charter} from './a26-unified-governance.mjs';
 
 export const POLICY_FILE=fileURLToPath(new URL('../config/external-integration-policy.json',import.meta.url));
 export const CANDIDATE_DIR=fileURLToPath(new URL('../references/third-party-candidates/',import.meta.url));
@@ -154,6 +155,8 @@ function parseArgs(argv){
  return options;
 }
 export async function main(argv=process.argv.slice(2)){
+ // Unified A26 identity/permissions and original binding R2 annex must agree.
+ await readAndValidateA26Charter();
  if(argv[0]==='prepare-all'){
   if(argv.length!==3||argv[1]!=='--out-dir'||!argv[2]||argv[2].startsWith('--'))hold('prepare-all requires --out-dir');
   const files=(await readdir(CANDIDATE_DIR,{withFileTypes:true})).filter(x=>x.isFile()&&/^[a-z][a-z0-9-]{2,60}\.json$/.test(x.name));

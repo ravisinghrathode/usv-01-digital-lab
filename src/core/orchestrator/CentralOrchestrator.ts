@@ -6,6 +6,7 @@ import { ExecutionEngine } from '../engine/ExecutionEngine.ts';
 import { AgentRegistry } from '../registry/AgentRegistry.ts';
 import { ApprovalGateManager } from '../safety/HumanApprovalGate.ts';
 import { AuditLogger } from '../safety/AuditLogger.ts';
+import { verifyApproverSignature } from '../safety/ApproverSigner.ts';
 
 export class CentralOrchestrator {
   private static instance: CentralOrchestrator;
@@ -32,15 +33,9 @@ export class CentralOrchestrator {
   }
 
   public handleGateDecision(gateId: string, decision: 'APPROVED' | 'REJECTED'): void {
-    for (const task of this.tasks.values()) {
-      if (task.approvalGateId === gateId || task.id === gateId) {
-        if (decision === 'APPROVED') {
-          task.status = 'COMPLETED';
-        } else if (decision === 'REJECTED') {
-          task.status = 'FAILED';
-        }
-      }
-    }
+    // Never trust a caller-supplied decision. Only the authenticated gate
+    // manager can finalize an approval; recheck its signed receipt below.
+    this.resolveGateDecision(gateId, decision);
   }
 
   public registerTask(task: EngineeringTask): void {
@@ -150,6 +145,19 @@ export class CentralOrchestrator {
         await Promise.all(
           stage.map(async taskId => {
             const task = this.tasks.get(taskId)!;
+
+            // Idempotent resume: terminal tasks are not re-executed, and a
+            // pending Director decision cannot generate another approval gate.
+            // BLOCKED tasks may be retried once dependencies become satisfied.
+            if (task.status === 'COMPLETED') return;
+            if (task.status === 'WAITING_HUMAN_APPROVAL') {
+              waitingApproval++;
+              return;
+            }
+            if (task.status === 'FAILED') {
+              failed++;
+              return;
+            }
 
             // Fail-closed dependency validation:
             // Downstream tasks MUST NOT execute if any upstream dependency failed or is awaiting approval.
@@ -261,9 +269,31 @@ export class CentralOrchestrator {
     if (!gate) {
       throw new Error(`Approval gate '${gateId}' not found.`);
     }
+    const identity = gate.decidedByIdentity;
+    if (
+      gate.state !== decision ||
+      !gate.decidedAt ||
+      !identity ||
+      identity.role !== 'ENGINEERING_DIRECTOR' ||
+      !identity.userId ||
+      identity.userId === 'usr-unverified' ||
+      !verifyApproverSignature(gateId, decision, identity)
+    ) {
+      this.auditLogger.log({
+        severity: 'SAFETY_CRITICAL',
+        agentId: gate.agentId,
+        taskId: gate.taskId,
+        action: 'UNAUTHENTICATED_GATE_RESOLUTION_BLOCKED',
+        details: { gateId, requestedDecision: decision, recordedState: gate.state }
+      });
+      throw new Error('Engineering authority violation: signed, finalized Director gate decision required.');
+    }
     const task = this.tasks.get(gate.taskId);
     if (!task) {
       throw new Error(`Task '${gate.taskId}' associated with gate '${gateId}' not found.`);
+    }
+    if (task.approvalGateId !== gateId || task.status !== 'WAITING_HUMAN_APPROVAL') {
+      throw new Error('Approval gate does not match a waiting task; duplicate or stale resolution blocked.');
     }
 
     // Engineering invariant: Human approval CANNOT convert an invalid/failed calculation into a verified result!

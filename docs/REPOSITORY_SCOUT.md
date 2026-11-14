@@ -1,5 +1,7 @@
 # USV-01 Repository Scout (read-only technology discovery)
 
+**A26 operating authority:** [one unified naval intelligence and external software charter](governance/A26_UNIFIED_AGENT_OPERATING_CHARTER.md). This document is the binding Scout-specific research procedure and remains subordinate to the existing A26 software integration annex/policy; nothing here authorizes a new agent, third-party execution or engineering release.
+
 ## Scope and purpose
 
 The scout is a **software intelligence utility**, not a 27th engineering agent, not an automated importer, and not a vessel-baseline approval engine. It searches **public GitHub repositories** for tools and reference implementations that may help the USV-01 first-principles engineering lab. Its primary coordinator is the existing **A26 Fleet Intelligence & Benchmark Analyst**; specialized agents evaluate candidate relevance and A15/A23 independently challenge technical claims. The scout only identifies candidates and prepares a review queue.

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect, useRef, useState, useMemo, useId } from 'react';
 import {
   Rotate3d,
   Maximize2,
@@ -78,6 +78,8 @@ export const Vessel3DVisualizer: React.FC<Vessel3DVisualizerProps> = ({
   const [hullType, setHullType] = useState<'CATAMARAN' | 'MONOHULL'>(initialHullType);
   const [showWaterplane, setShowWaterplane] = useState<boolean>(true);
   const [showPhotoRender, setShowPhotoRender] = useState<boolean>(false);
+  const [renderImageState, setRenderImageState] = useState<'primary' | 'fallback' | 'unavailable'>('primary');
+  const canvasHelpId = useId();
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
   // Synchronize dynamic morphing when candidate or prop changes
@@ -190,6 +192,27 @@ export const Vessel3DVisualizer: React.FC<Vessel3DVisualizerProps> = ({
   };
 
   const handleMouseUp = () => setIsDragging(false);
+
+  const handleKeyboardView = (e: React.KeyboardEvent<HTMLCanvasElement>) => {
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      e.preventDefault();
+      setAutoRotate(false);
+      setYaw(prev => prev + (e.key === 'ArrowLeft' ? -0.13 : 0.13));
+    } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      setAutoRotate(false);
+      setPitch(prev => Math.max(-0.25, Math.min(1.55, prev + (e.key === 'ArrowUp' ? -0.13 : 0.13))));
+    } else if (e.key === '+' || e.key === '=') {
+      e.preventDefault();
+      setZoom(prev => Math.min(2.5, prev + 0.15));
+    } else if (e.key === '-' || e.key === '_') {
+      e.preventDefault();
+      setZoom(prev => Math.max(0.6, prev - 0.15));
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      applyCameraPreset('ISOMETRIC');
+    }
+  };
 
   const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
     e.preventDefault();
@@ -1020,18 +1043,23 @@ export const Vessel3DVisualizer: React.FC<Vessel3DVisualizerProps> = ({
           /* Photorealistic Concept Studio Render Card */
           <div className="relative rounded-lg overflow-hidden border border-slate-800 bg-white shadow-inner flex flex-col">
             <div className="relative group">
-              <img
-                src="/usv01_boat_model_render.jpg"
-                alt="USV-01 Autonomous Surface Vessel AI Agent Model"
-                className="w-full object-cover rounded-t max-h-[420px]"
-                onError={(e) => {
-                  // Fallback to relative artifact if public image is loading
-                  (e.target as HTMLImageElement).src = './usv01_boat_model_render_1794444462398.jpg';
-                }}
-              />
+              {renderImageState === 'unavailable'
+                ? <div role="img" aria-label="Concept render unavailable"
+                    className="flex min-h-[240px] items-center justify-center p-8 text-center text-sm text-slate-200">
+                    Concept render not available. The interactive geometry preview remains accessible.
+                  </div>
+                : <img
+                    src={renderImageState === 'primary'
+                      ? '/usv01_boat_model_render.jpg'
+                      : './usv01_boat_model_render_1794444462398.jpg'}
+                    alt="Illustrative vessel concept render; not approved CAD geometry"
+                    className="w-full object-cover rounded-t max-h-[420px]"
+                    loading="lazy"
+                    onError={() => setRenderImageState(prev => prev === 'primary' ? 'fallback' : 'unavailable')}
+                  />}
               <div className="absolute top-3 left-3 bg-slate-950/85 backdrop-blur border border-slate-800 px-2.5 py-1 rounded text-[11px] font-mono text-slate-200 flex items-center gap-1.5 shadow">
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>AI Naval Architecture Finalist Model (11.8m Wave-Piercer)</span>
+                <span>Illustrative vessel concept render — unverified</span>
               </div>
             </div>
 
@@ -1068,6 +1096,10 @@ export const Vessel3DVisualizer: React.FC<Vessel3DVisualizerProps> = ({
           <div className="relative">
             <canvas
               ref={canvasRef}
+              tabIndex={0}
+              aria-label="Interactive vessel concept preview"
+              aria-describedby={canvasHelpId}
+              onKeyDown={handleKeyboardView}
               width={isExpanded ? 800 : 540}
               height={isExpanded ? 460 : 280}
               onMouseDown={handleMouseDown}
@@ -1081,6 +1113,11 @@ export const Vessel3DVisualizer: React.FC<Vessel3DVisualizerProps> = ({
               className="w-full rounded-lg border border-slate-800 bg-white shadow-inner cursor-grab active:cursor-grabbing block"
               style={{ touchAction: 'none' }}
             />
+            <span className="sr-only" id={canvasHelpId}>
+              Use Left and Right arrow keys to orbit horizontally, Up and Down to tilt,
+              plus and minus to zoom, and Home to reset to the isometric view.
+              This model is illustrative and not certified engineering CAD.
+            </span>
 
             {/* Floating Interaction Hint */}
             <div className="absolute top-2 left-2 bg-slate-900/80 backdrop-blur border border-slate-800/80 px-2 py-0.5 rounded text-[10px] font-mono text-slate-400 pointer-events-none flex items-center gap-1.5">
