@@ -48,6 +48,29 @@ npm run mission-control:preflight
 
 Results must be checked and recorded in a trustworthy **redacted** receipt; displaying these commands is not evidence they ran. The existing preflight checks the provider executable and authentication, **not** every clean-Git/environment/resource control. A future source change may strengthen preflight/receipt generation, but it requires its own exact-head protected software approval; do not bypass gates with a mock success.
 
+## Single-command offline A04 readiness probe (proposed software addition)
+
+The project also provides a **proposed** `npm run mission-control:a04-check` preflight on this review branch. It is not authorized for use as a verified production gate until the protected software PR passes its required exact-head CI and human signoff. The probe consumes **no model tokens**, makes no paid API requests, does not invoke a vessel solver, and does not sign or release engineering.
+
+Run only on the **actual authorized host**, after the host checkout is updated to the approved reviewed revision, and after the guarded software PR merges. For example:
+
+```bash
+git fetch origin main
+# The HEAD checked out on the authorized host must match origin/main or the probe refuses readiness.
+USV01_HOST_ID=usv01-mac \
+AI_REVIEW_PROVIDER=codex_cli \
+USV_SUBSCRIPTION_PILOT=enabled \
+USV_ALLOW_PAID_AI_API=false \
+USV_LAB_SCOPE=RESEARCH_ONLY \
+npm run mission-control:a04-check -- --source-sha "$(git rev-parse origin/main)"
+```
+
+`usv01-mac` above is an **illustrative non-secret alias**, not an attested host identity. Use a stable, authorized host alias. The command verifies source HEAD, tracked worktree, repository identity, current operator ownership, a private writable temp file, actual Codex CLI version and ChatGPT subscription login status, and research-only/zero-paid-API policy. It captures resource telemetry for later human review. Auth-status text, hostnames, usernames, filesystem paths and credential values are **not** included in the JSON receipt.
+
+The generated receipt is a private, gitignored `data/a04-host-readiness-*.json` file with mode `0600`, containing a SHA256 fingerprint and only redacted checks. **`PASS_UNATTESTED` does NOT close A04.** A qualified software operations reviewer must inspect the actual sandbox/network controls, source revision, capacity and permissions, then attest the exact receipt and authorize A04 closure through a separate protected status PR. Never paste private credentials or the complete host topology into public GitHub. If the preflight reports `BLOCKED`, keep A04 blocked and A05 unstarted.
+
+**Repository runner inventory (connected GitHub owner account, 14 November 2026):** no registered self-hosted runner was present (`total_count=0`). This does not demonstrate that the local Mac is absent or disconnected; it means GitHub Actions does not currently provide an authenticated execution path to that specific host.
+
 ## Active risk and follow-up
 
 | ID | Risk / action | Owner | Closure evidence |
