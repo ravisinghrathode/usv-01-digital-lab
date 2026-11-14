@@ -1,0 +1,148 @@
+{
+  "schema": "usv01-delivery-milestones/v1",
+  "asOfDate": "2026-11-15",
+  "auditedMainSha": "acc24f33e80af07ee980b23de0f50a74383ea571",
+  "canonicalProjectRegister": "docs/MASTER_PROJECT_REGISTER.md",
+  "evidencePolicy": "TRACKING_ONLY_NO_AUTOMATIC_ENGINEERING_AUTHORITY",
+  "authorizationSnapshot": {
+    "charterV11Adopted": false,
+    "recoveryA04Verified": false,
+    "recoveryA05Verified": false,
+    "liveA06CurrentShaVerified": false,
+    "aiStudioDeployedShaVerified": false,
+    "independentEngineeringQualified": false,
+    "vesselBaselineApproved": false,
+    "engineeringReleaseApproved": false,
+    "paidServiceAuthorization": false,
+    "physicalActuationAuthorization": false
+  },
+  "milestones": [
+    {
+      "id": "M00",
+      "title": "Naval Studio X deployment parity",
+      "status": "BLOCKED",
+      "dependencies": [],
+      "issueUrl": "https://github.com/ravisinghrathode/usv-01-digital-lab/issues/100",
+      "accountable": "Platform operator / independent QA",
+      "acceptanceCriterion": "Studio X running source SHA equals approved GitHub SHA and 24/24 modules pass smoke tests",
+      "acceptanceEvidenceUri": null,
+      "independentReviewAccepted": false,
+      "authorizedPromotion": false
+    },
+    {
+      "id": "M01",
+      "title": "Operating charter v1.1 adoption",
+      "status": "BLOCKED",
+      "dependencies": [],
+      "issueUrl": "https://github.com/ravisinghrathode/usv-01-digital-lab/issues/101",
+      "accountable": "Engineering Director / independent governance reviewer",
+      "acceptanceCriterion": "Qualified independent governance review plus authenticated exact-document charter adoption",
+      "acceptanceEvidenceUri": null,
+      "independentReviewAccepted": false,
+      "authorizedPromotion": false
+    },
+    {
+      "id": "M02",
+      "title": "Trusted A04 host and conditional A05 preflight",
+      "status": "BLOCKED",
+      "dependencies": [],
+      "issueUrl": "https://github.com/ravisinghrathode/usv-01-digital-lab/issues/102",
+      "accountable": "Platform operator / independent ops reviewer",
+      "acceptanceCriterion": "A04 source-pinned private host receipt and independent ops review, then separately accepted same-SHA A05 preflight",
+      "acceptanceEvidenceUri": null,
+      "independentReviewAccepted": false,
+      "authorizedPromotion": false
+    },
+    {
+      "id": "M03",
+      "title": "B03/B05 coupled design digital-thread transactions",
+      "status": "PLANNED",
+      "dependencies": [
+        "M01",
+        "M02"
+      ],
+      "issueUrl": "https://github.com/ravisinghrathode/usv-01-digital-lab/issues/103",
+      "accountable": "A01/A02/A25 / independent software reviewer",
+      "acceptanceCriterion": "Two isolated candidate configurations, two real feedback revisions, dependency invalidation, negative tests and independent software review",
+      "acceptanceEvidenceUri": null,
+      "independentReviewAccepted": false,
+      "authorizedPromotion": false
+    },
+    {
+      "id": "M04",
+      "title": "B04 authoritative study CAD and hydrostatics coupling",
+      "status": "PLANNED",
+      "dependencies": [
+        "M03"
+      ],
+      "issueUrl": "https://github.com/ravisinghrathode/usv-01-digital-lab/issues/104",
+      "accountable": "A05/A06/A09 / independent naval architect",
+      "acceptanceCriterion": "Versioned source geometry, mass/CG consistency, topology-specific golden cases and independent geometric validation",
+      "acceptanceEvidenceUri": null,
+      "independentReviewAccepted": false,
+      "authorizedPromotion": false
+    },
+    {
+      "id": "M05",
+      "title": "B06 numerical benchmarks and independent engineering V&V",
+      "status": "PLANNED",
+      "dependencies": [
+        "M04"
+      ],
+      "issueUrl": "https://github.com/ravisinghrathode/usv-01-digital-lab/issues/105",
+      "accountable": "A06/A07/A10/A11/A13/A14/A18/A24 / qualified engineers",
+      "acceptanceCriterion": "Qualified benchmarks and independent discipline reviews; solver convergence and uncertainty receipts where applicable",
+      "acceptanceEvidenceUri": null,
+      "independentReviewAccepted": false,
+      "authorizedPromotion": false
+    },
+    {
+      "id": "M06",
+      "title": "B07 Drive/Obsidian/Gemini digital thread synchronization",
+      "status": "PLANNED",
+      "dependencies": [
+        "M03"
+      ],
+      "issueUrl": "https://github.com/ravisinghrathode/usv-01-digital-lab/issues/106",
+      "accountable": "A20/A25/A26 / independent security reviewer",
+      "acceptanceCriterion": "Authenticated source-bound ACL/roundtrip/conflict/recovery evidence without editable masters or public restricted content",
+      "acceptanceEvidenceUri": null,
+      "independentReviewAccepted": false,
+      "authorizedPromotion": false
+    },
+    {
+      "id": "M07",
+      "title": "B08 COLREG and degraded marine safety validation",
+      "status": "PLANNED",
+      "dependencies": [
+        "M05"
+      ],
+      "issueUrl": "https://github.com/ravisinghrathode/usv-01-digital-lab/issues/107",
+      "accountable": "A17/A19/A20/A22/A18/A24 / qualified safety engineer",
+      "acceptanceCriterion": "Fault cases, hazards, non-actuating SIL/HIL and qualified review covering drift/link loss, L&R, thermal, acoustic and fouling",
+      "acceptanceEvidenceUri": null,
+      "independentReviewAccepted": false,
+      "authorizedPromotion": false
+    },
+    {
+      "id": "M08",
+      "title": "Charter acceptance E measurable engineering improvement",
+      "status": "PLANNED",
+      "dependencies": [
+        "M01",
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06",
+        "M07"
+      ],
+      "issueUrl": "https://github.com/ravisinghrathode/usv-01-digital-lab/issues/108",
+      "accountable": "A01/A18/A24 / independent engineering and Project Lead",
+      "acceptanceCriterion": "At least two candidates with two real critique-driven revisions and quantified, uncertainty-aware, independently reviewed evidence",
+      "acceptanceEvidenceUri": null,
+      "independentReviewAccepted": false,
+      "authorizedPromotion": false
+    }
+  ]
+}
