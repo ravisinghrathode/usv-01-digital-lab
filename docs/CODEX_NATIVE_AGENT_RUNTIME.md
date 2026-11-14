@@ -43,3 +43,7 @@ The preserved gates require exact revision provenance, mandatory deterministic c
 4. Project Lead signs the exact approved release digest.
 
 Until those exist, the Gemini-to-Codex **software path** may be integrated, but operational certification remains **NOT COMPLETE**. This distinction is intentional and must not be elided.
+
+## A26 optional GPT-6 Astra (ChatGPT subscription, no API)
+
+The A26 external-software research service can optionally select GPT-6 Astra **through the existing subscription-authenticated Codex CLI**, without changing any of the 26 canonical agent prompts, spending on paid APIs or modifying engineering permissions. This is controlled by `USV_A26_GPT6_SUBSCRIPTION=enabled` (default OFF) and requires the standard authenticated subscription pilot with `USV_ALLOW_PAID_AI_API=false`. The A26-only worker invocation adds `--model gpt-6-astra` in a read-only, ephemeral Codex CLI session. If the CLI is older than 0.153.0, login mode is wrong, model is unavailable or subscription usage is exhausted, the request fails closed; no API or mock fallback. Full setup and model-attribution limitations: [A26 GPT-6 subscription](A26_GPT6_SUBSCRIPTION.md).
