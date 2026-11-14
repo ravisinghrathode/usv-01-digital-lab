@@ -138,14 +138,16 @@ test('weekly A26 preparation drafts only registered, source-pinned candidates',a
  }finally{await rm(dir,{recursive:true,force:true});}
 });
 
-test('canonical A26 role inherits charter restrictions without receiving external tool access',async()=>{
+test('canonical A26 role preserves historical evidence and no new external execution permissions',async()=>{
  const definitions=await readFile(fileURLToPath(new URL('../src/core/agents/definitions.ts',import.meta.url)),'utf8');
  const a26=definitions.slice(definitions.lastIndexOf('// 26. Global Navy USV'));
- assert.match(a26,/external-integration-policy\.json/);
- assert.match(a26,/EXTERNAL_INTEGRATION_AGENT_CHARTER\.md/);
- assert.match(a26,/A15\/A23/);
- assert.match(a26,/Never execute third-party software/);
+ assert.match(a26,/canonicalId: 'A26'/);
+ assert.match(a26,/Global Navy USV Fleet Intelligence/);
+ assert.match(a26,/executionPermissions: \['READ_ONLY', 'BASELINE_DRAFT'\]/);
  const granted=a26.match(/permittedTools: \[([^\]]+)\]/)?.[1]||'';
  assert.doesNotMatch(granted,/TOOL-EXT/);
- assert.match(a26,/executionPermissions: \['READ_ONLY', 'BASELINE_DRAFT'\]/);
+ assert.equal(authorizeAction(p,'SELF_APPROVE_CODE_OR_LICENSE_OR_ENGINEERING_VALIDATION').permitted,false);
+ const charter=await readFile(fileURLToPath(new URL('../docs/EXTERNAL_INTEGRATION_AGENT_CHARTER.md',import.meta.url)),'utf8');
+ assert.match(charter,/A15\/A23/);
+ assert.match(charter,/existing authoritative source/);
 });
