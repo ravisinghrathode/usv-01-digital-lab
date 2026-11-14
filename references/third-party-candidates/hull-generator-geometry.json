@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "hull-generator-geometry",
+  "repository": "janibert1/ship-hull-generator",
+  "commit": "262cb29f0a5f90acc7132ee6c1b91efd81d855fd",
+  "sourceTree": "4e3e533ce28fa60f6e4a99095b084e7ad62bfed3",
+  "toolId": "TOOL-EXT-HULL-GEOMETRY",
+  "purpose": "Assess parametric hull geometry generation and dimensional hydrostatic checks against independent marine references.",
+  "agents": [
+    "A05",
+    "A06",
+    "A09",
+    "A15",
+    "A18",
+    "A20",
+    "A21",
+    "A23",
+    "A24",
+    "A26"
+  ],
+  "sourceOfEvidence": "https://github.com/janibert1/ship-hull-generator/tree/262cb29f0a5f90acc7132ee6c1b91efd81d855fd",
+  "execution": "NOT_AUTHORIZED",
+  "approval": "NOT_APPROVED",
+  "evidenceClassification": "STATIC_RESEARCH_ONLY"
+}
