@@ -16,6 +16,8 @@ on:
       - 'scripts/repository-integration-planner.mjs'
       - 'scripts/external-integration-agent.mjs'
       - 'scripts/a26-static-audit.mjs'
+      - 'scripts/a26-analytical-oracles.mjs'
+      - 'tests/a26-analytical-oracles.test.mjs'
       - 'tests/a26-static-audit.test.mjs'
       - 'references/third-party-static-audits/**'
       - 'references/third-party-candidates/**'
@@ -56,7 +58,7 @@ jobs:
         with:
           node-version: '22'
       - name: Run offline tests
-        run: node --test tests/repository-scout.test.mjs tests/repository-integration.test.mjs tests/repository-integration-planner.test.mjs tests/external-software-register.test.mjs tests/external-software-usage.test.mjs tests/external-integration-agent.test.mjs tests/a26-static-audit.test.mjs
+        run: node --test tests/repository-scout.test.mjs tests/repository-integration.test.mjs tests/repository-integration-planner.test.mjs tests/external-software-register.test.mjs tests/external-software-usage.test.mjs tests/external-integration-agent.test.mjs tests/a26-static-audit.test.mjs tests/a26-analytical-oracles.test.mjs
       - name: Verify current A26 pinned-source audits and license/safety review holds
         run: node scripts/a26-static-audit.mjs --check
       - name: Validate permanent register and generated overview
