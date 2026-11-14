@@ -1,50 +1,47 @@
-# Naval Studio — Clarity UI Design Contract
+# NAVAL STUDIO — DOCKYARD / DESIGN A
 
-## Mode and identity
+## Decision
+**Dockyard (A)** is the selected master UI direction for Naval Studio. It supersedes Clarity as the active visual/interaction direction while retaining Clarity's trustworthy light-shell foundation. This is the **Operate** UX mode. The environment is a working naval architecture/design office with variable daylight, long review sessions and frequent transitions from geometric inspection to evidence. A legible neutral control surface surrounds one dark, technically focused CAD workstage.
 
-**Operate.** Professional, high-clarity naval engineering workbench. The visual concept is a **surveyor's drafting desk**: crisp neutral control surfaces and a dark, instrument-like product geometry workstage. Brand character comes from precision, restrained marine-teal accents and disciplined evidence labels, not glowing dashboards, gradients, artificial metrics or decorative motion.
+## Five task-centred areas
+The 24 original module IDs must remain intact; `src/studio/dockyardAreas.ts` is a user-facing IA index, not a replacement registry:
+- **Design & CAD** — CAD Studio, Naval Architecture, Mechanical & Structural, Propulsion, Electrical & Power, Procurement & BOM
+- **Engineering analysis** — Systems Engineering, Hydrodynamics & CFD, Simulation Centre, Real-Time Simulator, Generative Optimizer, Software & Autonomy
+- **Programme decisions** — Project Overview, Risks & Decisions, Shipbuilding Lifecycle, External Software Register, Global USV Fleet, Knowledge Centre, Naval Notebook
+- **Agent workbench** — 26-Agent Directorate, Deterministic Tools
+- **Assurance & evidence** — Traceability Matrix, Verification & Validation, Approval Gates
 
-Clarity is a replacement of the old inconsistent dark **shell**, not of the engineering modules, the digital-thread data or their authorization model. Each feature remains discoverable by ID and module registry entry.
+Every original module appears exactly once among five groups; full module labels remain searchable, pinnable and navigable. Open tabs and existing component states are preserved.
 
-## Direction contract
+## Defining experience
+1. Open **CAD Studio** to a dark viewport with a light product tree and inspector. Source, revision, physical units and release remain explicitly unverified until the authoritative engineering thread supplies them.
+2. Select a conceptual assembly or local OBJ group. The contextual dock displays **discipline-level loaded register records only** — it does not invent a geometry-to-requirement relationship. Imported OBJ groups without allocation say **Not mapped**.
+3. Open a requirement or discipline register, simulation centre, agent investigator or traceability matrix from the contextual dock. These are navigational handoffs to existing workflows, not forged deep links.
+4. Open **Agent workbench** for workflow framing, real loaded decision/risk queues and review routes. It explicitly does *not* claim real-time swarm or execution state. **Open existing orchestrator** exposes the original full agent controls and deterministic tools.
+5. Open **Evidence & assurance** for real requirement → verification-plan → test-record references derived from explicit IDs. **Open full traceability matrix** exposes the original complete matrix.
+6. The Engineering Director approves only through existing human-controlled approval routes. No UI status, agent answer, local mesh or visual change can independently authorize release.
 
-- **First viewport:** product name and current engineering module immediately legible; compact orientation and provenance strip; a full-width primary CAD workstage with a clear dark geometry viewer.
-- **Visual hierarchy:** current task title → product and evidence context → workspace tabs → engineering artifact → contextual details. Muted metadata must remain readable in ambient daylight.
-- **Signature interaction:** jump from any open work tab to any registered engineering module via search, with the selected product and working tabs preserved. Director queue links to real registers.
-- **Responsive structure:** desktop sidebar with grouped module catalogue; compact 72–76 px rail on midsize; keyboard-managed drawer at mobile widths; all actions remain reachable.
-- **Honest risk:** visual consistency of older module implementations is not guaranteed solely by a new shell. Preserve their light palette; migrate legacy components incrementally with real browser verification.
+## Semantic palette / usage
+- Shell background `#eef3f5`; paper `#ffffff`; ink `#142d39`; secondary `#465f6b`; border `#d1dde1`.
+- Maritime teal action `#087187` and light selected `#e1f1f4`.
+- Dark CAD `#0b1c2a`, light instrument text `#e2edf4`. A secondary text role must meet WCAG AA against its actual surface, not only against a token in isolation.
+- Amber `#825719` is reserved for explicit uncertainty, missing evidence and unverified state.
+- Interaction targets minimum 44px for primary controls; responsive evidence tables may scroll horizontally inside their own container.
+- Text-size control uses existing Comfortable/Large preference. No essential information relies on colour alone; focus is keyboard-visible.
+- Visual priority: selected task → configuration/evidence context → engineering artefact → supporting registers → approval path. Avoid decorative KPI cards, fictitious run telemetry and ambiguous 'Verified' badges.
 
-## Semantic palette
+## Implementation ownership
+- `src/moduleRegistry.ts` remains the 24-module authority; `src/studio/dockyardAreas.ts` reorganizes discovery.
+- `src/studio/clarity.css` remains as base; `src/studio/dockyard.css` is a scoped layer applied only via `data-direction="dockyard"`.
+- `CadStudioView` gets light tree/inspector chrome, dark hero viewport and `DockyardContextDock`.
+- `DockyardAgentDesk` is the first screen of `agent-orchestrator`, retaining `AgentOrchestratorView` via explicit full-workflow navigation. The existing `orchestrator-tools` and `orchestrator-approvals` modules are unchanged.
+- `DockyardAssuranceDesk` is the first screen of `traceability`, retaining `TraceabilityMatrixView` through **Open full traceability matrix**. The Verification & Validation module remains unchanged.
+- No source CAD files, geometry measurements, solver algorithms, new approvals or database schema changes are introduced.
 
-| Token | Colour | Usage |
-|---|---|---|
-| ns-canvas | `#eef3f5` | Main workspace ground |
-| ns-paper | `#ffffff` | UI surfaces, cards and navigation |
-| ns-ink | `#152d39` | Primary labels |
-| ns-secondary | `#45606b` | Secondary text |
-| ns-muted | `#526b76` | Metadata |
-| ns-line | `#cedce1` | Borders |
-| ns-accent | `#096b7e` | Primary action and current selection |
-| ns-attention | `#825719` | Unverified/TBD evidence statuses |
-| ns-success | `#175e50` | Affirmative UI status, not technical release |
+## Release and test conditions
+Source tests: typecheck; the existing deterministic suite; all 24 module and IA mappings; UI markup and source contracts; production bundle; safety/governance CI. Browser acceptance: desktop 1440×900 and 1280×800, 768px tablet, 390px and 320px mobile, 200% zoom and both text-size settings; real computed contrast, hover/selected/focus states, keyboard-only navigation and dialog focus; imported/local CAD controls; real record search; the original full agent and traceability views; authentication/approval gates; no clipped UI.
 
-All normal text roles target at least WCAG AA 4.5:1 on their supported light surfaces. Dark CAD/command controls retain a separate high-contrast palette within `studio-dark`. Never pair old Tailwind `bg-slate-950` (currently white) with light CAD text; use scoped overrides or explicit dark surfaces.
+**The GitHub feature PR does not deploy to Google AI Studio.** Merge remains user-controlled. Post-merge synchronized app revision and live browser screenshot testing are a separate acceptance boundary. Until then, the designation is code-implemented, live UI unverified.
 
-## Typography and interaction
-
-System sans for interface labels; tabular numerals in record data; monospace reserved for configuration IDs, hashes and units. Normal UI text at least 13–15 px, with the existing Comfortable/Large user preference; no critical engineering information should rely solely on 10 px labels. Minimum interactive target 44px. Focus ring clearly visible. Module/toolbar/tabs accessible by keyboard. Motion conveys state; reduced-motion users get a static viewer.
-
-## Source layout
-
-`src/studio/clarity.css` contains the new shell's scoped design vocabulary. `StudioNavigation`, `TopBar`, `StudioContextStrip`, `StudioWorkspaceBar`, `DirectorBriefing` express the new workbench. CAD Studio is the dark workstage; other legacy views retain their current product functions.
-
-## Release criteria
-
-1. Typecheck, deterministic tests, bundle and protected engineering governance checks green.
-2. Desktop + tablet + mobile screenshots at Comfortable/Large and 200% browser zoom; no hidden primary commands, unreadable text, or unsanctioned horizontal page scroll.
-3. Native keyboard navigation, focus trapping/restoration in mobile drawer and command palette, CAD camera keys, form/dialog access.
-4. Calculated and browser-computed text contrast for default/hover/selected/error/disabled states.
-5. All 24 module routes, existing workflows, permissions and human approvals still accessible.
-6. Validate actual Google AI Studio source revision separately from GitHub merge.
-
-Until the running application has passed these checks, source-level implementation and CI success do not establish visual or accessibility certification.
+## Skill execution disclosure
+UI UX Pro Max itself was **not present in the available ChatGPT installed-skill catalogue** for this session. Dockyard was selected by the user after concept exploration informed by the prior design study and the available Impeccable design conventions. Do not claim the missing skill was executed.
