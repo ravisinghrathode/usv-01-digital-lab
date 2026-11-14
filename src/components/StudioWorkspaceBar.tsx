@@ -17,7 +17,7 @@ interface Props {
 }
 export const StudioWorkspaceBar:React.FC<Props>=({currentModule,onSelectModule,openTabs=[currentModule],onCloseTab,onOpenCommand})=>{
   const workspace=MODULE_REGISTRY.find(m=>m.id===currentModule)!.workspace;
-  return <div className="border-b border-white/10 bg-[#132236]">
+  return <div className="studio-dark border-b border-white/10 bg-[#132236]">
     <nav aria-label="Workspaces" className="flex items-center gap-1.5 overflow-x-auto px-3 py-1.5">
       {workspaces.map(item=><button key={item.id} type="button" onClick={()=>onSelectModule(item.defaultModule)} aria-current={workspace===item.id?'page':undefined}
         className={`shrink-0 rounded-md px-3 py-1.5 text-xs font-medium ${workspace===item.id?'bg-cyan-400/15 text-cyan-100 ring-1 ring-cyan-400/30':'text-slate-400 hover:bg-white/5 hover:text-white'}`}>{item.label}</button>)}
