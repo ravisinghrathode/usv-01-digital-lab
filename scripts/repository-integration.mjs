@@ -15,7 +15,8 @@ const SHA = /^[0-9a-f]{40}$/;
 const REPO = /^[A-Za-z0-9_.-]{1,100}\/[A-Za-z0-9_.-]{1,100}$/;
 const ID = /^[a-z][a-z0-9-]{2,60}$/;
 const TOOL = /^TOOL-EXT-[A-Z0-9-]{3,50}$/;
-const IMAGE = /^[a-zA-Z0-9_.:/-]+@sha256:[0-9a-f]{64}$/;
+// Accept registry manifest digest OR measured local Docker image config ID.
+const IMAGE = /^(?:[a-zA-Z0-9_.:/-]+@)?sha256:[0-9a-f]{64}$/;
 const MAX_TREE_FILES = 3500;
 const MAX_TREE_BYTES = 150 * 1024 * 1024;
 const MAX_STDOUT_BYTES = 256 * 1024;
