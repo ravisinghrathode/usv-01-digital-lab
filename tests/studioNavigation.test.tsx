@@ -29,8 +29,24 @@ describe('Naval Studio X preservation', () => {
     for (const { id } of MODULE_REGISTRY) {
       expect(app, `${id} must have a view branch`).toContain(`currentModule === '${id}'`);
     }
-    expect(app).toContain('<NavigationSidebar');
     expect(app).toContain('<StudioNavigation');
+    expect(app).toContain('<StudioWorkspaceBar');
+    expect(app).toContain('<CadStudioView');
+  });
+
+  it('exposes only Naval Studio X, including for legacy Classic URLs and saved choices', () => {
+    const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8');
+    const navigation = readFileSync(new URL('../src/components/StudioNavigation.tsx', import.meta.url), 'utf8');
+    expect(app).toContain("useState<NavigationModule>('cad-studio')");
+    expect(app).toContain('className="studio-x flex');
+    expect(app).not.toContain('NavigationSidebar');
+    expect(app).not.toContain('studioLayout');
+    expect(app).not.toContain('initialStudioLayout');
+    expect(app).not.toContain('naval-studio-x-layout');
+    expect(app).not.toContain("searchParams.get('ui')");
+    expect(app).not.toContain('Try Naval Studio X');
+    expect(navigation).not.toContain('onUseClassic');
+    expect(navigation).not.toContain('Switch to classic layout');
   });
 
   it('searches the full catalogue, including hidden groups', () => {
