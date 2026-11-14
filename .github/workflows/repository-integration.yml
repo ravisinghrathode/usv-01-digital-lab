@@ -6,6 +6,8 @@ on:
       - 'scripts/repository-integration.mjs'
       - 'scripts/external-integration-agent.mjs'
       - 'scripts/a26-static-audit.mjs'
+      - 'scripts/a26-analytical-oracles.mjs'
+      - 'tests/a26-analytical-oracles.test.mjs'
       - 'tests/a26-static-audit.test.mjs'
       - 'references/third-party-static-audits/**'
       - 'references/third-party-candidates/**'
@@ -44,7 +46,7 @@ jobs:
         with:
           node-version: '22'
       - name: Tests (no remote execution)
-        run: node --test tests/repository-scout.test.mjs tests/repository-integration.test.mjs tests/repository-integration-planner.test.mjs tests/external-integration-agent.test.mjs tests/a26-static-audit.test.mjs
+        run: node --test tests/repository-scout.test.mjs tests/repository-integration.test.mjs tests/repository-integration-planner.test.mjs tests/external-integration-agent.test.mjs tests/a26-static-audit.test.mjs tests/a26-analytical-oracles.test.mjs
       - name: Verify eight research-only, source-pinned audit dossiers and hold all approvals
         run: node scripts/a26-static-audit.mjs --check
       - name: Contract-test first external candidate adapter (standard library only)
