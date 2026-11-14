@@ -7,6 +7,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import type { NavigationModule } from './moduleRegistry';
 import { StudioNavigation } from './components/StudioNavigation';
 import { StudioWorkspaceBar } from './components/StudioWorkspaceBar';
+import { StudioContextStrip } from './components/StudioContextStrip';
+import { StudioCommandPalette } from './components/StudioCommandPalette';
+import { DirectorBriefing } from './components/DirectorBriefing';
 import { CadStudioView } from './components/CadStudioView';
 import { findModule } from './moduleRegistry';
 import { TopBar } from './components/TopBar';
@@ -97,7 +100,30 @@ import {
 export default function App() {
   // Navigation & UI state
   // One supported application shell: Naval Studio X, opening in the hero-product CAD workspace.
-  const [currentModule, setCurrentModule] = useState<NavigationModule>('cad-studio');
+  const [currentModule, setActiveModule] = useState<NavigationModule>('cad-studio');
+  const [openTabs, setOpenTabs] = useState<NavigationModule[]>(['cad-studio']);
+  const [commandOpen, setCommandOpen] = useState(false);
+  const [detailedOverview, setDetailedOverview] = useState(false);
+  const setCurrentModule = (module: NavigationModule) => {
+    setActiveModule(module);
+    setOpenTabs(tabs => tabs.includes(module) ? tabs : [...tabs, module]);
+  };
+  const closeModuleTab = (module: NavigationModule) => {
+    if (!window.confirm('Close this work tab? Unsaved changes inside it may be discarded.')) return;
+    const remaining = openTabs.filter(tab => tab !== module);
+    if (!remaining.length) remaining.push('cad-studio');
+    setOpenTabs(remaining);
+    if (module === currentModule) setActiveModule(remaining[remaining.length - 1]);
+  };
+  useEffect(() => {
+    const keydown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault(); setCommandOpen(open => !open);
+      }
+    };
+    window.addEventListener('keydown', keydown);
+    return () => window.removeEventListener('keydown', keydown);
+  }, []);
   const [globalSearch, setGlobalSearch] = useState('');
   const [isAiOpen, setIsAiOpen] = useState(false);
   const [aiPrefillPrompt, setAiPrefillPrompt] = useState<string | undefined>();
@@ -591,7 +617,7 @@ export default function App() {
   return (
     <div className="studio-x flex h-screen bg-slate-950 text-slate-100 font-sans antialiased overflow-hidden">
       {/* Studio X is the sole navigation shell. All legacy engineering modules remain in MODULE_REGISTRY. */}
-      <StudioNavigation currentModule={currentModule} onSelectModule={setCurrentModule} />
+      <StudioNavigation currentModule={currentModule} onSelectModule={setCurrentModule} onOpenCommand={() => setCommandOpen(true)} />
 
       {/* Main Workspace Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
@@ -630,12 +656,24 @@ export default function App() {
           onOpenVerify={() => setIsVerifyModalOpen(true)}
         />
 
-        <StudioWorkspaceBar currentModule={currentModule} onSelectModule={setCurrentModule} />
+        <StudioContextStrip />
 
-        {/* Scrollable Workspace Body */}
-        <main className="flex-1 overflow-y-auto bg-slate-950/60 pb-12">
-          {currentModule === 'cad-studio' && <CadStudioView particulars={particulars} onNavigate={setCurrentModule} />}
-          {currentModule === 'overview' && (
+        <StudioWorkspaceBar currentModule={currentModule} onSelectModule={setCurrentModule} openTabs={openTabs} onCloseTab={closeModuleTab} onOpenCommand={() => setCommandOpen(true)} />
+
+        {/* Cached work tabs preserve local component state until deliberately closed. */}
+        <main className="min-h-0 flex-1 overflow-hidden bg-slate-950/60">
+          {openTabs.map(tab => <section key={tab} role="tabpanel" aria-label={findModule(tab).label}
+              aria-hidden={tab !== currentModule}
+              className={tab === currentModule ? 'h-full overflow-y-auto pb-12' : 'hidden'}>
+            {(() => {
+              const currentModule = tab;
+              return <>
+          {currentModule === 'cad-studio' && <CadStudioView particulars={particulars} onNavigate={setCurrentModule} onAskAi={triggerAiQuery} />}
+          {currentModule === 'overview' && (!detailedOverview ? (
+            <DirectorBriefing requirements={requirements} decisions={decisions} risks={risks} simulations={simulations}
+              verificationPlans={verificationPlans} onNavigate={setCurrentModule} onDetailed={() => setDetailedOverview(true)} />
+          ) : <div className="bg-slate-950">
+            <div className="border-b border-white/10 bg-[#14273a] p-3"><button type="button" onClick={() => setDetailedOverview(false)} className="rounded border border-white/15 px-3 py-2 text-xs text-cyan-200">← Return to Director's Briefing</button></div>
             <ProjectOverview
               workstreams={workstreams}
               requirements={requirements}
@@ -647,7 +685,7 @@ export default function App() {
               onNavigate={(mod) => setCurrentModule(mod)}
               onAskAi={triggerAiQuery}
             />
-          )}
+          </div>)}
 
           {(currentModule === 'agent-orchestrator' || currentModule === 'orchestrator-tools' || currentModule === 'orchestrator-approvals') && (
             <AgentOrchestratorView
@@ -831,8 +869,15 @@ export default function App() {
           {currentModule === 'notebook-lm' && (
             <NavalNotebookLMView onAskGlobalAi={triggerAiQuery} />
           )}
+
+              </>;
+            })()}
+          </section>)}
         </main>
       </div>
+
+      {/* Universal module command search; engineering data and permissions stay with their original views. */}
+      <StudioCommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} onSelect={setCurrentModule} />
 
       {/* AI Engineering Assistant Sliding Panel */}
       <AiEngineeringAssistant
