@@ -48,7 +48,7 @@ export const StudioNavigation:React.FC<Props>=({currentModule,onSelectModule,onO
 
   return <>
     {!mobileOpen&&<button type="button" onClick={()=>setMobileOpen(true)} aria-label="Open modules" className="fixed bottom-4 left-4 z-40 flex items-center gap-2 rounded-full bg-[#18344b] px-4 py-3 text-sm text-white lg:hidden"><Menu size={16}/> Modules</button>}
-    <aside aria-label="Studio modules" className={`${mobileOpen?'flex':'hidden lg:flex'} ${collapsed&&!mobileOpen?'lg:w-[64px] lg:min-w-[64px]':'w-72 min-w-72'} fixed inset-y-0 left-0 z-50 h-screen flex-col border-r border-white/10 bg-[#101b2a] shadow-xl transition-[width] duration-200 lg:static lg:shadow-none`}>
+    <aside aria-label="Studio modules" className={`studio-dark ${mobileOpen?'flex':'hidden lg:flex'} ${collapsed&&!mobileOpen?'lg:w-[64px] lg:min-w-[64px]':'w-72 min-w-72'} fixed inset-y-0 left-0 z-50 h-screen flex-col border-r border-white/10 bg-[#101b2a] shadow-xl transition-[width] duration-200 lg:static lg:shadow-none`}>
       <div className={`flex items-center gap-2 border-b border-white/10 ${collapsed?'p-3':'p-4'}`}>
         <div className="rounded-lg border border-cyan-300/20 bg-cyan-400/10 p-2 text-cyan-300"><Anchor size={17}/></div>
         {!collapsed&&<div className="min-w-0 flex-1"><div className="truncate text-sm font-bold tracking-[0.12em] text-white">NAVAL STUDIO X.2</div><div className="text-[10px] text-slate-400">Engineering workbench</div></div>}

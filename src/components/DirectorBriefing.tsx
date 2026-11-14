@@ -22,7 +22,7 @@ export const DirectorBriefing:React.FC<Props>=({requirements,decisions,risks,sim
   const openRisks=risks.filter(r=>r.status==='Open').sort((a,b)=>b.riskScore-a.riskScore);
   const unreviewed=simulations.filter(s=>s.validationStatus!=='Verified');
   const verificationPending=verificationPlans.filter(v=>v.status!=='Closed');
-  return <section aria-label="Programme Director Briefing" className="min-h-full bg-[#0e1b2c] p-4 text-slate-100 lg:p-6">
+  return <section aria-label="Programme Director Briefing" className="studio-dark min-h-full bg-[#0e1b2c] p-4 text-slate-100 lg:p-6">
     <header className="mb-5 flex flex-wrap items-start justify-between gap-4">
       <div><div className="text-[11px] uppercase tracking-[0.17em] text-cyan-300">Programme command / USV-01</div>
         <h1 className="mt-1 text-2xl font-semibold">Director's Engineering Briefing</h1>
