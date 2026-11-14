@@ -35,13 +35,17 @@ export const ExternalSoftwareRegisterView: React.FC = () => {
         r.actualUsage.some(p => p.project === project)) &&
       (!q || fields.includes(q));
   }), [records, search, status, project]);
-  const actualCount = records.reduce((total, r) => total + r.actualUsage.length, 0);
+  const sandboxCount = records.reduce((n, r) => n + r.actualUsage.filter(u => u.kind === 'SANDBOX_EVALUATION').length, 0);
+  const agentInvocationCount = records.reduce((n, r) => n + r.actualUsage.filter(u => u.kind === 'AGENT_TOOL_INVOCATION').length, 0);
+  const engineeringUseCount = records.reduce((n, r) => n + r.actualUsage.filter(u => u.kind === 'ENGINEERING_BASELINE').length, 0);
   const counts = [
     ['Tracked repositories', records.length],
-    ['Under evaluation', records.filter(r => r.lifecycle === 'EVALUATING').length],
-    ['Qualified', records.filter(r => r.lifecycle === 'QUALIFIED').length],
-    ['Integrated', records.filter(r => r.lifecycle === 'INTEGRATED').length],
-    ['Evidence-linked uses', actualCount]
+    ['Discovered', records.filter(r => r.lifecycle === 'DISCOVERED').length],
+    ['Evaluating', records.filter(r => r.lifecycle === 'EVALUATING').length],
+    ['Approved integrations', records.filter(r => r.lifecycle === 'INTEGRATED' && r.adoption === 'APPROVED').length],
+    ['Research sandbox runs', sandboxCount],
+    ['Agent invocations', agentInvocationCount],
+    ['Released engineering uses', engineeringUseCount]
   ] as const;
 
   return (
@@ -63,7 +67,7 @@ export const ExternalSoftwareRegisterView: React.FC = () => {
         <p>This is a versioned source snapshot, not a live runtime monitor. Discovered or tested repositories are NOT approved engineering tools. Planned usage is not recorded as executed usage, and software approval never authorizes vessel control or engineering release.</p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
         {counts.map(([label, value]) => (
           <div key={label} className="border border-slate-800 bg-slate-900/70 rounded p-3">
             <div className="text-xl font-semibold text-slate-100 font-mono">{value}</div>
@@ -126,10 +130,10 @@ export const ExternalSoftwareRegisterView: React.FC = () => {
                   : 'Not allocated'}</div>
               </div>
               <div>
-                <div className="text-slate-500 mb-1">Evidence-linked actual use</div>
+                <div className="text-slate-500 mb-1">Evidence-backed execution (research ≠ design use)</div>
                 <div className="flex items-center gap-2 text-slate-200">
                   {r.actualUsage.length ? <CheckCircle2 className="w-3.5 h-3.5 text-teal-400" /> : <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />}
-                  {r.actualUsage.length} recorded runs · {r.actualUsage.length ? 'View evidence below' : 'No verified project use'}
+                  {r.actualUsage.length} events · {r.actualUsage.filter(u => u.kind === 'SANDBOX_EVALUATION').length} research-only · {r.actualUsage.filter(u => u.kind === 'AGENT_TOOL_INVOCATION').length} agent calls · {r.actualUsage.filter(u => u.kind === 'ENGINEERING_BASELINE').length} accepted engineering uses
                 </div>
               </div>
             </div>
