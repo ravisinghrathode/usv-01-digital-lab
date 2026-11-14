@@ -12,6 +12,6 @@ export const StudioContextStrip:React.FC=()=>{
     <span>Config: <strong className="font-medium text-amber-200">{selection.configurationRevision??'Unassigned / TBD'}</strong></span>
     <span className="max-w-[260px] truncate" title={selection.componentId??'No selected component'}>Selected: {selection.componentId??'None'}</span>
     {selection.geometryFingerprint&&<span className="font-mono" title={'Browser-local mesh SHA-256: '+selection.geometryFingerprint}><Fingerprint size={12} className="mr-1 inline"/> Local SHA-256 {selection.geometryFingerprint.slice(0,12)}…</span>}
-    <span className="ml-auto font-semibold text-amber-200"><ShieldAlert size={12} className="mr-1 inline"/>{selection.evidenceLevel} · Not released</span>
+    <span className="ml-auto font-semibold text-amber-200"><ShieldAlert size={12} className="mr-1 inline"/>{selection.evidenceLevel} · UI context only</span>
   </div>;
 };
