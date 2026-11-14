@@ -7,6 +7,7 @@ import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import os from 'node:os';
+import {readAndValidateA26Charter} from './a26-unified-governance.mjs';
 
 const DEFAULT_CONFIG = fileURLToPath(new URL('../config/repository-scout.json', import.meta.url));
 const PERMISSIVE = new Set(['MIT', 'Apache-2.0', 'BSD-2-Clause', 'BSD-3-Clause', 'ISC', '0BSD', 'Unlicense', 'CC0-1.0']);
@@ -239,6 +240,8 @@ export async function runScout({config, maxQueries = 18, perQuery = 30, limit = 
 }
 
 export async function main(argv = process.argv.slice(2)) {
+  // A26 has one source-derived research charter; reject drift before public scan.
+  await readAndValidateA26Charter();
   const opts = parseArgs(argv);
   const config = validateConfig(JSON.parse(await readFile(opts.config, 'utf8')));
   const fixture = opts.fixture ? JSON.parse(await readFile(opts.fixture, 'utf8')) : null;

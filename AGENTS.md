@@ -11,6 +11,10 @@ This repository contains 26 specialist engineering agents (A01–A26). Use the r
 - For live 26-agent model execution, use interactive Codex tasks when supported, record reproducible task parameters and outputs and retain the source revision. Do not represent a Codex narrative or simulated role response as actual `BaseAgent` / `ToolRegistry` execution.
 - Do not introduce `OPENAI_API_KEY`, `GEMINI_API_KEY`, GitHub Action `codex exec` with copied personal credentials, or new usage-billed AI services without explicit project authority.
 
+## A26 single-role charter
+
+A26 (`INTEL-USV-26`) coordinates both public naval fleet/scientific intelligence and source-pinned external marine software research under [one operating charter](docs/governance/A26_UNIFIED_AGENT_OPERATING_CHARTER.md). Its original [External Software Integration Annex](docs/EXTERNAL_INTEGRATION_AGENT_CHARTER.md) and revision-2 policy remain fully binding. Do not add a 27th agent, reinterpret discovery as software qualification, change the canonical A26 prompt/role rights, or assume the separately proposed lab-wide charter has been adopted. The read-only routing verifier is `node scripts/a26-unified-governance.mjs --check`.
+
 ## Mandatory engineering controls
 
 1. Treat vessel particulars and unresolved requirements as TBD until supported by reviewed source evidence.
