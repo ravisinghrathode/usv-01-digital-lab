@@ -13,6 +13,7 @@ import { DirectorBriefing } from './components/DirectorBriefing';
 import { CadStudioView } from './components/CadStudioView';
 import { findModule } from './moduleRegistry';
 import type { SearchableRecord } from './studio/recordSearch';
+import { studioPanelId, studioTabId } from './studio/workTabs';
 import { parseStudioTextSize, STUDIO_TEXT_PREFERENCE_KEY } from './studio/readability';
 import type { StudioTextSize } from './studio/readability';
 import { TopBar } from './components/TopBar';
@@ -692,8 +693,11 @@ export default function App() {
 
         {/* Cached work tabs preserve local component state until deliberately closed. */}
         <main className="min-h-0 flex-1 overflow-hidden bg-slate-950/60">
-          {openTabs.map(tab => <section key={tab} role="tabpanel" aria-label={findModule(tab).label}
+          {openTabs.map(tab => <section key={tab} role="tabpanel" id={studioPanelId(tab)}
+              aria-labelledby={studioTabId(tab)}
+              aria-label={findModule(tab).label}
               aria-hidden={tab !== currentModule}
+              tabIndex={tab === currentModule ? 0 : -1}
               className={tab === currentModule ? 'h-full overflow-y-auto pb-12' : 'hidden'}>
             {(() => {
               const currentModule = tab;
