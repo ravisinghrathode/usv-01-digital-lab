@@ -1,0 +1,250 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-14T21:13:38.411Z",
+  "sourceRevision": "23c30b3ee2f4a99380ed549058e8a8020acb9a38",
+  "scope": "PUBLIC_METADATA_AND_EXACT_COMMIT_INTAKE_ONLY",
+  "thirdPartyCodeExecuted": false,
+  "approved": false,
+  "receipts": [
+    {
+      "repository": "cybergalactic/MSS",
+      "result": "INTAKE_ONLY_PASSED",
+      "receipt": {
+        "schemaVersion": 1,
+        "phase": "INTAKE_ONLY",
+        "at": "2026-11-14T21:13:27.399Z",
+        "repository": "cybergalactic/MSS",
+        "sourceUrl": "https://github.com/cybergalactic/MSS/tree/78298f0f4822544cd715a66945d0bc3ed37561c8",
+        "commit": "78298f0f4822544cd715a66945d0bc3ed37561c8",
+        "tree": "e6728ed863759d949f5d787a1bd9bd82aef0da67",
+        "defaultBranch": "master",
+        "metadataLicenseSpdx": "MIT",
+        "metadataLicenseIsLegalApproval": false,
+        "upstreamLastPush": "2026-11-14T14:44:33Z",
+        "authorDate": "2026-11-14T14:44:21Z",
+        "securityReview": "NOT_PERFORMED",
+        "adoption": "HOLD_FOR_REVIEW"
+      }
+    },
+    {
+      "repository": "ktuukkan/marine-api",
+      "result": "INTAKE_ONLY_PASSED",
+      "receipt": {
+        "schemaVersion": 1,
+        "phase": "INTAKE_ONLY",
+        "at": "2026-11-14T21:13:28.381Z",
+        "repository": "ktuukkan/marine-api",
+        "sourceUrl": "https://github.com/ktuukkan/marine-api/tree/6224ad6e62e7554a89ae8fe9e9ba54a29df394de",
+        "commit": "6224ad6e62e7554a89ae8fe9e9ba54a29df394de",
+        "tree": "73f13436beb894649c3180037fcedd469b84e5b2",
+        "defaultBranch": "master",
+        "metadataLicenseSpdx": "LGPL-3.0",
+        "metadataLicenseIsLegalApproval": false,
+        "upstreamLastPush": "2026-11-02T23:42:33Z",
+        "authorDate": "2026-09-13T16:23:36Z",
+        "securityReview": "NOT_PERFORMED",
+        "adoption": "HOLD_FOR_REVIEW"
+      }
+    },
+    {
+      "repository": "michaelstolberger27/usv-navigation",
+      "result": "INTAKE_ONLY_PASSED",
+      "receipt": {
+        "schemaVersion": 1,
+        "phase": "INTAKE_ONLY",
+        "at": "2026-11-14T21:13:29.376Z",
+        "repository": "michaelstolberger27/usv-navigation",
+        "sourceUrl": "https://github.com/michaelstolberger27/usv-navigation/tree/54866f24a04987334057ae5c5896dfc3ee8ca058",
+        "commit": "54866f24a04987334057ae5c5896dfc3ee8ca058",
+        "tree": "55c6acec6f52a185f7a07deb9321efc9c0a58a16",
+        "defaultBranch": "main",
+        "metadataLicenseSpdx": "MIT",
+        "metadataLicenseIsLegalApproval": false,
+        "upstreamLastPush": "2026-08-23T13:18:25Z",
+        "authorDate": "2026-08-19T18:58:20Z",
+        "securityReview": "NOT_PERFORMED",
+        "adoption": "HOLD_FOR_REVIEW"
+      }
+    },
+    {
+      "repository": "ntnu-itk-autonomous-ship-lab/colav-simulator",
+      "result": "INTAKE_ONLY_PASSED",
+      "receipt": {
+        "schemaVersion": 1,
+        "phase": "INTAKE_ONLY",
+        "at": "2026-11-14T21:13:30.332Z",
+        "repository": "ntnu-itk-autonomous-ship-lab/colav-simulator",
+        "sourceUrl": "https://github.com/ntnu-itk-autonomous-ship-lab/colav-simulator/tree/a385e0fcbcf7b7de3edaada35d37dd63f2b027c2",
+        "commit": "a385e0fcbcf7b7de3edaada35d37dd63f2b027c2",
+        "tree": "1a801cbff73bde5583f235a106eb9e0bb7fe38e5",
+        "defaultBranch": "main",
+        "metadataLicenseSpdx": "MIT",
+        "metadataLicenseIsLegalApproval": false,
+        "upstreamLastPush": "2026-01-23T07:14:36Z",
+        "authorDate": "2025-12-29T17:17:18Z",
+        "securityReview": "NOT_PERFORMED",
+        "adoption": "HOLD_FOR_REVIEW"
+      }
+    },
+    {
+      "repository": "SINTEF/FEEMS",
+      "result": "INTAKE_ONLY_PASSED",
+      "receipt": {
+        "schemaVersion": 1,
+        "phase": "INTAKE_ONLY",
+        "at": "2026-11-14T21:13:31.471Z",
+        "repository": "SINTEF/FEEMS",
+        "sourceUrl": "https://github.com/SINTEF/FEEMS/tree/ebb05ffdd5e9ed509fe66d8451ed0ff4f7635629",
+        "commit": "ebb05ffdd5e9ed509fe66d8451ed0ff4f7635629",
+        "tree": "c1c3b88470206fbc5e6a28a4b7547ecccdfa6802",
+        "defaultBranch": "main",
+        "metadataLicenseSpdx": "MIT",
+        "metadataLicenseIsLegalApproval": false,
+        "upstreamLastPush": "2026-11-12T09:04:28Z",
+        "authorDate": "2026-11-05T08:25:19Z",
+        "securityReview": "NOT_PERFORMED",
+        "adoption": "HOLD_FOR_REVIEW"
+      }
+    },
+    {
+      "repository": "Neumi/open_echo",
+      "result": "INTAKE_ONLY_PASSED",
+      "receipt": {
+        "schemaVersion": 1,
+        "phase": "INTAKE_ONLY",
+        "at": "2026-11-14T21:13:32.757Z",
+        "repository": "Neumi/open_echo",
+        "sourceUrl": "https://github.com/Neumi/open_echo/tree/0c4e6e78895fdc39a5e90dedaa16e225f1c3c4b7",
+        "commit": "0c4e6e78895fdc39a5e90dedaa16e225f1c3c4b7",
+        "tree": "38da4ec2e072eccf94c0d8c14b27d141a61bd3f2",
+        "defaultBranch": "main",
+        "metadataLicenseSpdx": "UNKNOWN",
+        "metadataLicenseIsLegalApproval": false,
+        "upstreamLastPush": "2026-10-21T09:31:06Z",
+        "authorDate": "2026-10-05T18:26:28Z",
+        "securityReview": "NOT_PERFORMED",
+        "adoption": "HOLD_FOR_REVIEW"
+      }
+    },
+    {
+      "repository": "kavindagehan/asv-autonomous-docking-and-path-tracking",
+      "result": "INTAKE_ONLY_PASSED",
+      "receipt": {
+        "schemaVersion": 1,
+        "phase": "INTAKE_ONLY",
+        "at": "2026-11-14T21:13:33.764Z",
+        "repository": "kavindagehan/asv-autonomous-docking-and-path-tracking",
+        "sourceUrl": "https://github.com/kavindagehan/asv-autonomous-docking-and-path-tracking/tree/b35e82505ceb6cd35294619790f61c4cdc4dff6e",
+        "commit": "b35e82505ceb6cd35294619790f61c4cdc4dff6e",
+        "tree": "105454c4f7a7dbd49169fc053229f995df450078",
+        "defaultBranch": "main",
+        "metadataLicenseSpdx": "MIT",
+        "metadataLicenseIsLegalApproval": false,
+        "upstreamLastPush": "2026-02-24T22:19:50Z",
+        "authorDate": "2026-02-24T22:19:48Z",
+        "securityReview": "NOT_PERFORMED",
+        "adoption": "HOLD_FOR_REVIEW"
+      }
+    },
+    {
+      "repository": "disaster-robotics-proalertas/usv_sim_lsa",
+      "result": "INTAKE_ONLY_PASSED",
+      "receipt": {
+        "schemaVersion": 1,
+        "phase": "INTAKE_ONLY",
+        "at": "2026-11-14T21:13:34.731Z",
+        "repository": "disaster-robotics-proalertas/usv_sim_lsa",
+        "sourceUrl": "https://github.com/disaster-robotics-proalertas/usv_sim_lsa/tree/61e8f4a5f78f18c01dac0d4eea7f4c3c416e6cb8",
+        "commit": "61e8f4a5f78f18c01dac0d4eea7f4c3c416e6cb8",
+        "tree": "468eb58de9cd5f7043d90d80fe8079447535595b",
+        "defaultBranch": "master",
+        "metadataLicenseSpdx": "Apache-2.0",
+        "metadataLicenseIsLegalApproval": false,
+        "upstreamLastPush": "2024-07-07T19:52:52Z",
+        "authorDate": "2024-07-07T19:52:46Z",
+        "securityReview": "NOT_PERFORMED",
+        "adoption": "HOLD_FOR_REVIEW"
+      }
+    },
+    {
+      "repository": "antpial/thesis_USV_gazebo",
+      "result": "INTAKE_ONLY_PASSED",
+      "receipt": {
+        "schemaVersion": 1,
+        "phase": "INTAKE_ONLY",
+        "at": "2026-11-14T21:13:35.664Z",
+        "repository": "antpial/thesis_USV_gazebo",
+        "sourceUrl": "https://github.com/antpial/thesis_USV_gazebo/tree/2b8c4a5df243f126c8d3ce0eeac6aa799c1f2d37",
+        "commit": "2b8c4a5df243f126c8d3ce0eeac6aa799c1f2d37",
+        "tree": "8f679de2ff60c2d25e59d540674387efe27cdb86",
+        "defaultBranch": "main",
+        "metadataLicenseSpdx": "UNKNOWN",
+        "metadataLicenseIsLegalApproval": false,
+        "upstreamLastPush": "2025-12-26T13:38:12Z",
+        "authorDate": "2025-12-26T13:38:11Z",
+        "securityReview": "NOT_PERFORMED",
+        "adoption": "HOLD_FOR_REVIEW"
+      }
+    },
+    {
+      "repository": "aixuexisun/pyfoamsetup",
+      "result": "INTAKE_ONLY_PASSED",
+      "receipt": {
+        "schemaVersion": 1,
+        "phase": "INTAKE_ONLY",
+        "at": "2026-11-14T21:13:36.506Z",
+        "repository": "aixuexisun/pyfoamsetup",
+        "sourceUrl": "https://github.com/aixuexisun/pyfoamsetup/tree/5908aea41bfbde3fad7d6957feab58a50d58e262",
+        "commit": "5908aea41bfbde3fad7d6957feab58a50d58e262",
+        "tree": "348f8c285d48fc1630b0fd6d71381feda0f6de89",
+        "defaultBranch": "master",
+        "metadataLicenseSpdx": "MIT",
+        "metadataLicenseIsLegalApproval": false,
+        "upstreamLastPush": "2017-08-04T12:14:57Z",
+        "authorDate": "2017-08-04T12:14:57Z",
+        "securityReview": "NOT_PERFORMED",
+        "adoption": "HOLD_FOR_REVIEW"
+      }
+    },
+    {
+      "repository": "janibert1/ship-hull-generator",
+      "result": "INTAKE_ONLY_PASSED",
+      "receipt": {
+        "schemaVersion": 1,
+        "phase": "INTAKE_ONLY",
+        "at": "2026-11-14T21:13:37.467Z",
+        "repository": "janibert1/ship-hull-generator",
+        "sourceUrl": "https://github.com/janibert1/ship-hull-generator/tree/262cb29f0a5f90acc7132ee6c1b91efd81d855fd",
+        "commit": "262cb29f0a5f90acc7132ee6c1b91efd81d855fd",
+        "tree": "4e3e533ce28fa60f6e4a99095b084e7ad62bfed3",
+        "defaultBranch": "main",
+        "metadataLicenseSpdx": "GPL-3.0",
+        "metadataLicenseIsLegalApproval": false,
+        "upstreamLastPush": "2026-06-02T19:32:29Z",
+        "authorDate": "2026-06-02T19:15:26Z",
+        "securityReview": "NOT_PERFORMED",
+        "adoption": "HOLD_FOR_REVIEW"
+      }
+    },
+    {
+      "repository": "CaptanG/striptheory",
+      "result": "INTAKE_ONLY_PASSED",
+      "receipt": {
+        "schemaVersion": 1,
+        "phase": "INTAKE_ONLY",
+        "at": "2026-11-14T21:13:38.410Z",
+        "repository": "CaptanG/striptheory",
+        "sourceUrl": "https://github.com/CaptanG/striptheory/tree/ade00fbdfdfae0cf3b93291b778d2d94330dd8e1",
+        "commit": "ade00fbdfdfae0cf3b93291b778d2d94330dd8e1",
+        "tree": "bae3a190e5dbedc5f9be73a6e0154493ecbe7423",
+        "defaultBranch": "main",
+        "metadataLicenseSpdx": "MIT",
+        "metadataLicenseIsLegalApproval": false,
+        "upstreamLastPush": "2025-09-09T18:49:52Z",
+        "authorDate": "2025-09-09T18:49:52Z",
+        "securityReview": "NOT_PERFORMED",
+        "adoption": "HOLD_FOR_REVIEW"
+      }
+    }
+  ]
+}

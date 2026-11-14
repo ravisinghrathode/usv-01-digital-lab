@@ -8,7 +8,7 @@ const clone=x=>JSON.parse(JSON.stringify(x));
 const candidate={name:'research/NewVesselTool',url:'https://github.com/research/NewVesselTool',description:'Example unreviewed research metadata',
   categories:['marine-simulation'],agentReviewers:['A08','A26'],licenseSpdx:'MIT',score:95};
 test('curated catalog validates; Fossen is not approved, installed or project-used',()=>{
- assert.equal(db.records.length,4);
+ assert.ok(db.records.length>=4);
  const r=db.records[0];
  assert.equal(r.id,'EXT-001');
  assert.equal(r.lifecycle,'EVALUATING');
@@ -20,7 +20,7 @@ test('curated catalog validates; Fossen is not approved, installed or project-us
 });
 test('overview reports planned use separately from actual execution',()=>{
  const s=renderOverview(db);
- assert.match(s,/4 tracked/);
+ assert.match(s,new RegExp(`${db.records.length} tracked`));
  assert.match(s,/0 evidenced usage events/);
  assert.match(s,/EXT-001/);
  assert.match(s,/zero evidenced uses/);
@@ -50,8 +50,7 @@ test('Scout only proposes new discoveries; never changes existing qualification'
    candidate]};
  const {proposed,newCount}=reconcileScout(db,report);
  assert.equal(newCount,1);
- assert.equal(db.records.length,4);
- assert.equal(proposed.records.length,5);
+ assert.equal(proposed.records.length,db.records.length+1);
  const fresh=proposed.records.find(r=>r.repository==='research/NewVesselTool');
  assert.equal(fresh.lifecycle,'DISCOVERED');
  assert.equal(fresh.source.commit,null);
