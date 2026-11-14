@@ -29,6 +29,7 @@ export type NavigationModule =
   | 'orchestrator-tools'
   | 'orchestrator-approvals'
   | 'global-usv-fleet'
+  | 'external-software'
   | 'workstream-SYS'
   | 'workstream-NAV'
   | 'workstream-HYD'
@@ -347,6 +348,14 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
               icon={Package}
               active={currentModule === 'procurement-bom'}
               onClick={() => onSelectModule('procurement-bom')}
+            />
+            <RegisterNavItem
+              label="External Software Register"
+              icon={Database}
+              active={currentModule === 'external-software'}
+              badge="SCOUT"
+              badgeType="teal"
+              onClick={() => onSelectModule('external-software')}
             />
             <RegisterNavItem
               label="Knowledge Centre"
