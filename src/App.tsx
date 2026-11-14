@@ -11,6 +11,8 @@ import { StudioContextStrip } from './components/StudioContextStrip';
 import { StudioCommandPalette } from './components/StudioCommandPalette';
 import { DirectorBriefing } from './components/DirectorBriefing';
 import { CadStudioView } from './components/CadStudioView';
+import { DockyardAgentDesk } from './components/DockyardAgentDesk';
+import { DockyardAssuranceDesk } from './components/DockyardAssuranceDesk';
 import { findModule } from './moduleRegistry';
 import type { SearchableRecord } from './studio/recordSearch';
 import { studioPanelId, studioTabId } from './studio/workTabs';
@@ -108,6 +110,8 @@ export default function App() {
   const [openTabs, setOpenTabs] = useState<NavigationModule[]>(['cad-studio']);
   const [commandOpen, setCommandOpen] = useState(false);
   const [detailedOverview, setDetailedOverview] = useState(false);
+  const [fullAgentWorkbench, setFullAgentWorkbench] = useState(false);
+  const [fullAssuranceView, setFullAssuranceView] = useState(false);
   // Comfortable is the new default even for browsers with no saved preference.
   const [textSize, setTextSize] = useState<StudioTextSize>(() => {
     try { return parseStudioTextSize(localStorage.getItem(STUDIO_TEXT_PREFERENCE_KEY)); }
@@ -647,7 +651,7 @@ export default function App() {
   }, [currentModule]);
 
   return (
-    <div className="studio-x flex h-screen bg-slate-950 text-slate-100 font-sans antialiased overflow-hidden" data-text-size={textSize} data-ui="clarity">
+    <div className="studio-x flex h-screen bg-slate-950 text-slate-100 font-sans antialiased overflow-hidden" data-text-size={textSize} data-ui="clarity" data-direction="dockyard">
       {/* Studio X is the sole navigation shell. All legacy engineering modules remain in MODULE_REGISTRY. */}
       <StudioNavigation currentModule={currentModule} onSelectModule={setCurrentModule} onOpenCommand={() => setCommandOpen(true)} />
 
@@ -702,7 +706,8 @@ export default function App() {
             {(() => {
               const currentModule = tab;
               return <>
-          {currentModule === 'cad-studio' && <CadStudioView particulars={particulars} onNavigate={setCurrentModule} onAskAi={triggerAiQuery} />}
+          {currentModule === 'cad-studio' && <CadStudioView particulars={particulars} requirements={requirements} simulations={simulations}
+            verificationPlans={verificationPlans} onNavigate={setCurrentModule} onAskAi={triggerAiQuery} />}
           {currentModule === 'overview' && (!detailedOverview ? (
             <DirectorBriefing requirements={requirements} decisions={decisions} risks={risks} simulations={simulations}
               verificationPlans={verificationPlans} onNavigate={setCurrentModule} onDetailed={() => setDetailedOverview(true)} />
@@ -721,17 +726,19 @@ export default function App() {
             />
           </div>)}
 
-          {(currentModule === 'agent-orchestrator' || currentModule === 'orchestrator-tools' || currentModule === 'orchestrator-approvals') && (
-            <AgentOrchestratorView
-              onAskAi={triggerAiQuery}
-              initialTab={
-                currentModule === 'orchestrator-tools'
-                  ? 'tools'
-                  : currentModule === 'orchestrator-approvals'
-                  ? 'approvals'
-                  : 'orchestrator'
-              }
-            />
+          {currentModule === 'agent-orchestrator' && (!fullAgentWorkbench ? (
+            <DockyardAgentDesk decisions={decisions} risks={risks}
+              onNavigate={setCurrentModule} onOpenFull={() => setFullAgentWorkbench(true)}
+              onAskAi={triggerAiQuery}/>
+          ) : <div className="dy-legacy-workflow">
+            <button type="button" className="dy-return-button" onClick={() => setFullAgentWorkbench(false)}>
+              ← Return to Agent workbench
+            </button>
+            <AgentOrchestratorView onAskAi={triggerAiQuery} initialTab="orchestrator"/>
+          </div>)}
+          {(currentModule === 'orchestrator-tools' || currentModule === 'orchestrator-approvals') && (
+            <AgentOrchestratorView onAskAi={triggerAiQuery}
+              initialTab={currentModule === 'orchestrator-tools' ? 'tools' : 'approvals'}/>
           )}
 
           {currentModule === 'workstream-SYS' && (
@@ -816,16 +823,18 @@ export default function App() {
             />
           )}
 
-          {currentModule === 'traceability' && (
-            <TraceabilityMatrixView
-              requirements={requirements}
-              decisions={decisions}
-              simulations={simulations}
-              verificationPlans={verificationPlans}
-              testRecords={testRecords}
-              onAskAi={triggerAiQuery}
-            />
-          )}
+          {currentModule === 'traceability' && (!fullAssuranceView ? (
+            <DockyardAssuranceDesk requirements={requirements} simulations={simulations}
+              verificationPlans={verificationPlans} testRecords={testRecords}
+              onNavigate={setCurrentModule} onOpenFull={() => setFullAssuranceView(true)}/>
+          ) : <div className="dy-legacy-workflow">
+            <button type="button" className="dy-return-button" onClick={() => setFullAssuranceView(false)}>
+              ← Return to evidence desk
+            </button>
+            <TraceabilityMatrixView requirements={requirements} decisions={decisions}
+              simulations={simulations} verificationPlans={verificationPlans}
+              testRecords={testRecords} onAskAi={triggerAiQuery}/>
+          </div>)}
 
           {currentModule === 'simulations' && (
             <SimulationCentreView

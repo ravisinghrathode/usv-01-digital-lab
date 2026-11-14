@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { ChevronRight, FileWarning, Focus, GitCompare, Layers3, Maximize2, Minimize2, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen, Ruler, ShieldAlert, UploadCloud } from 'lucide-react';
-import type { PrincipalParticulars } from '../types';
+import type { PrincipalParticulars, Requirement, SimulationJob, VerificationPlan, WorkstreamCode } from '../types';
+import { DockyardContextDock } from './DockyardContextDock';
 import type { NavigationModule } from '../moduleRegistry';
 import { useEngineeringContext } from '../studio/engineeringContext';
 import { compareMeshPreviews, MAX_OBJ_BYTES, MeshGeometry, parseObjMesh } from '../studio/meshGeometry';
@@ -30,9 +31,12 @@ interface Props {
   particulars: PrincipalParticulars;
   onNavigate: (module: NavigationModule) => void;
   onAskAi?: (prompt: string) => void;
+  requirements?: readonly Requirement[];
+  simulations?: readonly SimulationJob[];
+  verificationPlans?: readonly VerificationPlan[];
 }
 
-export const CadStudioView: React.FC<Props> = ({ particulars, onNavigate, onAskAi }) => {
+export const CadStudioView: React.FC<Props> = ({ particulars, onNavigate, onAskAi, requirements = [], simulations = [], verificationPlans = [] }) => {
   const { selection, updateSelection, resetGeometry } = useEngineeringContext();
   const [geometryA, setGeometryA] = useState<LocalMesh | null>(null);
   const [geometryB, setGeometryB] = useState<LocalMesh | null>(null);
@@ -163,9 +167,15 @@ export const CadStudioView: React.FC<Props> = ({ particulars, onNavigate, onAskA
       : 'Local inspection mesh · NOT authoritative CAD'
     : 'Preview only · no authoritative CAD loaded';
   const inspectorModule = conceptual?.module ?? 'workstream-NAV';
+  const domainByConcept: Record<string, WorkstreamCode> = {
+    vessel:'NAV',hull:'NAV',structure:'MEC',propulsion:'PRP',
+    power:'ELE',autonomy:'AUT',payload:'SYS'
+  };
+  const selectedDomain = active ? null : (domainByConcept[selected] ?? null);
+  const selectedLabel = active ? selected : (conceptual?.label ?? 'Primary vessel');
 
-  return <div className={focusMode ? 'studio-dark ns3-cad-workstage fixed inset-0 z-[60] flex flex-col overflow-hidden bg-[#0b1522] text-[#f1f5f9] p-3' : 'studio-dark ns3-cad-workstage flex min-h-full flex-col gap-3 bg-[#0b1522] p-3 text-[#f1f5f9] lg:p-4'}>
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-white/10 bg-[#122338] px-4 py-3">
+  return <div className={focusMode ? 'studio-dark dy-cad ns3-cad-workstage fixed inset-0 z-[60] flex flex-col overflow-hidden bg-[#0b1522] text-[#f1f5f9] p-3' : 'studio-dark dy-cad ns3-cad-workstage flex min-h-full flex-col gap-3 bg-[#0b1522] p-3 text-[#f1f5f9] lg:p-4'}>
+    <div className="dy-cad-header flex flex-wrap items-center justify-between gap-3 rounded-lg border border-white/10 bg-[#122338] px-4 py-3">
       <div>
         <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-300">Product workspace / USV-01</div>
         <h1 className="text-lg font-semibold">CAD Studio <span className="text-xs font-normal text-slate-400">Clarity workbench</span></h1>
@@ -177,7 +187,7 @@ export const CadStudioView: React.FC<Props> = ({ particulars, onNavigate, onAskA
         <button type="button" onClick={()=>setFocusMode(!focusMode)} className="flex items-center gap-1 rounded border border-white/20 px-2 py-1.5 text-xs">{focusMode?<Minimize2 size={14}/>:<Maximize2 size={14}/>} {focusMode?'Exit focus':'Focus'}</button>
       </div>
     </div>
-    <div className="flex flex-wrap items-center gap-2 rounded-lg border border-white/10 bg-[#122338] p-2">
+    <div className="dy-cad-toolbar flex flex-wrap items-center gap-2 rounded-lg border border-white/10 bg-[#122338] p-2">
       <button type="button" onClick={()=>inputA.current?.click()} className="flex items-center gap-1 rounded-md bg-cyan-500/15 px-3 py-2 text-xs text-cyan-200 hover:bg-cyan-500/25"><UploadCloud size={14}/> Inspect OBJ A</button>
       <input ref={inputA} aria-label="Import local OBJ A" className="hidden" type="file" accept=".obj" onChange={e=>{const f=e.target.files?.[0];if(f)void loadMesh(f,'A');e.target.value='';}}/>
       <button type="button" onClick={()=>inputB.current?.click()} className="flex items-center gap-1 rounded-md border border-white/20 px-3 py-2 text-xs hover:bg-white/10"><UploadCloud size={14}/> Inspect OBJ B</button>
@@ -223,12 +233,12 @@ export const CadStudioView: React.FC<Props> = ({ particulars, onNavigate, onAskA
       <p className="mt-2 text-amber-200">Neither OBJ file establishes physical units, revision lineage, weight, hydrostatics, solver comparability or engineering release. All such metrics remain TBD. Analysis is stale until independently reconciled with an approved configuration.</p>
     </section>}
     <div className="flex min-h-0 flex-1 flex-col gap-3 xl:flex-row">
-      {treeOpen && <section aria-label="Product structure" className="w-full shrink-0 rounded-lg border border-white/10 bg-[#132236] p-3 xl:w-[205px] xl:resize-x xl:overflow-auto">
+      {treeOpen && <section aria-label="Product structure" className="dy-cad-tree w-full shrink-0 rounded-lg border border-white/10 bg-[#132236] p-3 xl:w-[205px] xl:resize-x xl:overflow-auto">
         <h2 className="mb-2 flex items-center gap-2 text-xs font-semibold text-slate-200"><Layers3 size={14}/> Product tree</h2>
         <p className="mb-3 text-[11px] text-slate-400">{active?'Groups parsed from local OBJ mesh':'Conceptual navigation. Items are not selectable CAD bodies.'}</p>
         {active ? groups.map(group=><button key={group} type="button" onClick={()=>chooseGroup(group)} aria-current={selected===group?'true':undefined} className={`block w-full truncate rounded px-2 py-2 text-left text-xs ${selected===group?'bg-cyan-400/20 text-cyan-100':'text-slate-300 hover:bg-white/10'}`}>{group}</button>) : conceptualAssemblies.map(item=><button key={item.id} type="button" onClick={()=>chooseGroup(item.id)} className={`block w-full rounded px-2 py-2 text-left text-xs ${selected===item.id?'bg-cyan-400/20 text-cyan-100':'text-slate-300 hover:bg-white/10'}`}>{item.label}</button>)}
       </section>}
-      <section aria-label="Hero product viewport" className="ns3-viewport-stage flex min-h-[400px] min-w-0 flex-1 flex-col rounded-lg border border-white/10 bg-[#132236] p-2">
+      <section aria-label="Hero product viewport" className="dy-cad-canvas ns3-viewport-stage flex min-h-[400px] min-w-0 flex-1 flex-col rounded-lg border border-white/10 bg-[#132236] p-2">
         <div className="flex flex-wrap items-center justify-between gap-2 px-2 pb-2">
           <div><h2 className="text-sm font-semibold">USV-01 · Hero product</h2><p className="text-[11px] text-slate-400">{active?active.fileName:'Interactive illustrative vessel mesh'}</p></div>
           <span className="rounded border border-amber-500/30 px-2 py-1 text-[10px] uppercase tracking-wider text-amber-200">Unverified preview</span>
@@ -242,7 +252,7 @@ export const CadStudioView: React.FC<Props> = ({ particulars, onNavigate, onAskA
           <span>{active ? 'Local-only untrusted mesh, not controlled CAD; no units, B-rep, assembly constraints or material properties were imported.' : 'This procedural mesh is for orientation only. It is not the product geometry, a measured model, a CAD revision, or simulation evidence. Orbit, camera, and display modes inspect the preview only.'}</span>
         </div>
       </section>
-      {inspectorOpen && <section aria-label="Object inspector" className="w-full shrink-0 space-y-3 xl:w-[275px] xl:resize-x xl:overflow-auto">
+      {inspectorOpen && <section aria-label="Object inspector" className="dy-cad-inspector w-full shrink-0 space-y-3 xl:w-[275px] xl:resize-x xl:overflow-auto">
         <div className="rounded-lg border border-white/10 bg-[#132236] p-3">
           <h2 className="flex items-center gap-2 text-xs font-semibold"><Ruler size={14}/> Inspector</h2>
           <h3 className="mt-3 break-words text-sm font-semibold">{active ? selected : (conceptual?.label ?? 'Primary vessel')}</h3>
@@ -270,5 +280,8 @@ export const CadStudioView: React.FC<Props> = ({ particulars, onNavigate, onAskA
         </div>
       </section>}
     </div>
+    {!focusMode && <DockyardContextDock domain={selectedDomain} selectedLabel={selectedLabel}
+      requirements={requirements} simulations={simulations} verificationPlans={verificationPlans}
+      onNavigate={onNavigate} onAskAi={onAskAi}/>}
   </div>;
 };
