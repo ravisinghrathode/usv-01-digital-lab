@@ -149,5 +149,5 @@ test('canonical A26 role preserves historical evidence and no new external execu
  assert.equal(authorizeAction(p,'SELF_APPROVE_CODE_OR_LICENSE_OR_ENGINEERING_VALIDATION').permitted,false);
  const charter=await readFile(fileURLToPath(new URL('../docs/EXTERNAL_INTEGRATION_AGENT_CHARTER.md',import.meta.url)),'utf8');
  assert.match(charter,/A15\/A23/);
- assert.match(charter,/existing authoritative source/);
+ assert.match(charter,/Authority derivation/);
 });
