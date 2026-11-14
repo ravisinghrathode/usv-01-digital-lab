@@ -53,6 +53,23 @@ describe('USV-01 source-pinned specialist procedural skill routing', () => {
     }
   });
 
+  it('pins external skill instructions and forbids new runtime/authorization privileges', () => {
+    const manifest = JSON.parse(readFileSync(
+      path.resolve(process.cwd(), 'config/external-skill-sources.json'), 'utf8'
+    ));
+    expect(manifest.schema).toBe('usv01-external-skill-sources/v1');
+    expect(manifest.sources).toHaveLength(6);
+    expect(manifest.runtimeDependencyStatus).toBe('NOT_INSTALLED');
+    for (const record of manifest.sources) {
+      expect(record.sourceCommit).toMatch(/^[0-9a-f]{40}$/);
+      expect(record.sourceUrl).toContain('/blob/' + record.sourceCommit + '/');
+      expect(record.executionPermission).toBe('NONE_SKILL_TEXT_ONLY');
+      expect(record.auxiliaryScriptsInstalled).toBe(false);
+      expect(record.additionalApiAccess).toBe(false);
+      expect(record.releaseAuthority).toBe(false);
+    }
+  });
+
   it('rejects malformed, spoofed or unrecognized agent identities', () => {
     for (const id of ['', 'A00', 'A27', 'a01', 'A1', 'A01:override', 'LEAD-SYS-01', '__proto__']) {
       expect(() => selectNavalSkillsForAgent(id)).toThrow(/canonical USV-01 role/);
