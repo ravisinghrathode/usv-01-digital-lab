@@ -18,10 +18,9 @@ function readPins(): NavigationModule[] {
 interface Props {
   currentModule: NavigationModule;
   onSelectModule: (module: NavigationModule) => void;
-  onUseClassic: () => void;
 }
 
-export const StudioNavigation: React.FC<Props> = ({ currentModule, onSelectModule, onUseClassic }) => {
+export const StudioNavigation: React.FC<Props> = ({ currentModule, onSelectModule }) => {
   const [query, setQuery] = useState('');
   const [mobileOpen, setMobileOpen] = useState(false);
   const [pins, setPins] = useState<NavigationModule[]>(readPins);
@@ -85,7 +84,6 @@ export const StudioNavigation: React.FC<Props> = ({ currentModule, onSelectModul
         </div>;
       })}
     </div>
-    <div className="p-4 border-t border-white/10"><button type="button" onClick={onUseClassic} className="w-full rounded-lg border border-white/10 px-3 py-2 text-xs text-[#94a3b8] hover:text-white hover:border-white/30">Switch to classic layout</button></div>
     </aside>
   </>;
 };
