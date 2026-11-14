@@ -82,7 +82,8 @@ async function githubRun(runId,fetchImpl=fetch,token=process.env.GITHUB_TOKEN||'
  return response.json();
 }
 export async function main(args=process.argv.slice(2)){
- if(args.length!==8||args[0]!=='--receipt'||args[2]!=='--verification'||args[4]!=='--proposal-out'||args[6]!=='--overview-out')invalid('usage: --receipt file --verification file --proposal-out file --overview-out file');
+ const summaryPath=(args.length===10&&args[8]==='--summary-out')?args[9]:null;
+ if(![8,10].includes(args.length)||args[0]!=='--receipt'||args[2]!=='--verification'||args[4]!=='--proposal-out'||args[6]!=='--overview-out'||(args.length===10&&!summaryPath))invalid('usage: --receipt file --verification file --proposal-out file --overview-out file [--summary-out file]');
  const db=validateRegister(JSON.parse(await readFile(REGISTER_FILE,'utf8')));
  const receipt=JSON.parse(await readFile(args[1],'utf8'));
  const raw=await readFile(args[3],'utf8'),verification=JSON.parse(raw);
@@ -94,6 +95,21 @@ export async function main(args=process.argv.slice(2)){
  await mkdir(path.dirname(path.resolve(args[7])),{recursive:true,mode:0o700});
  await writeFile(args[5],JSON.stringify(proposed,null,2)+'\n',{mode:0o600});
  await writeFile(args[7],renderOverview(proposed),{mode:0o600});
+ if(summaryPath){
+  await mkdir(path.dirname(path.resolve(summaryPath)),{recursive:true,mode:0o700});
+  const summary={
+   schemaVersion:1,recordId:EXPECTED_ID,kind:'SANDBOX_EVALUATION',
+   classification:'RESEARCH_ONLY_NO_ENGINEERING_VALIDATION',
+   sourceRepository:EXPECTED_REPO,sourceCommit:receipt.sourceCommit,sourceTree:receipt.sourceTree,
+   project:receipt.project,custodianAgent:receipt.custodianAgent,labHeadSha:receipt.labHeadSha,
+   imageId:receipt.imageId,verificationSha256:receipt.verificationSha256,
+   workflowRun:receipt.runUrl,
+   cases:verification.cases.map(c=>({id:c.caseId,passed:c.passed})),
+   acceptedForEngineering:false,licenseApproved:false,cyberSecurityApproved:false,
+   independentMarineBenchmarkApproved:false,registeredInAgentRuntime:false,vesselRelease:false
+  };
+  await writeFile(summaryPath,JSON.stringify(summary,null,2)+'\n',{mode:0o600});
+ }
  console.log(JSON.stringify({status:'USAGE_REVIEW_PROPOSAL_ONLY',added,run:receipt.runUrl,cases:verification.cases.length,automaticallyApproved:false,automaticallyInstalled:false,engineeringReleased:false}));
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))main().catch(e=>{console.error(e.message);process.exitCode=1;});
