@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "strip-theory-seakeeping",
+  "repository": "CaptanG/striptheory",
+  "commit": "ade00fbdfdfae0cf3b93291b778d2d94330dd8e1",
+  "sourceTree": "bae3a190e5dbedc5f9be73a6e0154493ecbe7423",
+  "toolId": "TOOL-EXT-STRIP-SEAKEEPING",
+  "purpose": "Investigate strip-theory seakeeping against independent Wigley hull analytical and published numerical references.",
+  "agents": [
+    "A07",
+    "A08",
+    "A15",
+    "A18",
+    "A20",
+    "A21",
+    "A23",
+    "A24",
+    "A26"
+  ],
+  "sourceOfEvidence": "https://github.com/CaptanG/striptheory/tree/ade00fbdfdfae0cf3b93291b778d2d94330dd8e1",
+  "execution": "NOT_AUTHORIZED",
+  "approval": "NOT_APPROVED",
+  "evidenceClassification": "STATIC_RESEARCH_ONLY"
+}

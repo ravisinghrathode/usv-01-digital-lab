@@ -21,7 +21,7 @@ const HUMAN=['RUN_UNTRUSTED_EXECUTABLE','BUILD_OR_INSTALL_UPSTREAM_DEPENDENCIES'
 const hold=x=>{throw Error('External integration HOLD: '+x);};
 const hash=x=>createHash('sha256').update(x).digest('hex');
 export function validatePolicy(p){
- if(!p||p.schemaVersion!==1||p.policyId!=='USV01-EXT-INTEGRATION-A26-001'||p.coordinator!=='A26'||p.agentType!=='SUPPORTING_SERVICE_NOT_ADDITIONAL_ENGINEERING_AGENT')hold('unexpected authority');
+ if(!p||p.schemaVersion!==1||p.revision!==2||p.policyId!=='USV01-EXT-INTEGRATION-A26-001'||p.coordinator!=='A26'||p.agentType!=='SUPPORTING_SERVICE_NOT_ADDITIONAL_ENGINEERING_AGENT')hold('unexpected authority');
  if(!Array.isArray(p.sourceOfAuthority)||['docs/SAFETY_AND_GOVERNANCE.md','docs/REPOSITORY_SCOUT.md','docs/REPOSITORY_INTEGRATION.md','docs/EXTERNAL_SOFTWARE_REGISTER_OPERATING.md'].some(x=>!p.sourceOfAuthority.includes(x)))hold('missing governance sources');
  const scope=p.scope||{},h=p.sandboxHardening||{},g=p.humanGates||{},e=p.enforcement||{},r=p.mandatoryRoles||{};
  if(scope.allowedRepositoryVisibility!=='PUBLIC_ONLY'||scope.candidateSource!=='IMMUTABLE_40_HEX_GIT_COMMIT'||scope.projectDataClassification!=='PUBLIC_SOURCE_SAFE_ONLY'||scope.allowedOutputClassification!=='UNVERIFIED_RESEARCH_PROPOSAL'||scope.acceptedRunEnvironment!=='DISPOSABLE_DEDICATED_SANDBOX_ONLY'||!Number.isSafeInteger(scope.maxSourceFiles)||scope.maxSourceFiles<1||scope.maxSourceFiles>3500||!Number.isSafeInteger(scope.maxSourceBytes)||scope.maxSourceBytes<1||scope.maxSourceBytes>157286400)hold('source/data boundary');
@@ -35,6 +35,20 @@ export function validatePolicy(p){
   if(!Array.isArray(p[name])||required.some(x=>!p[name].includes(x)))hold('missing authority '+name);
  }
  if(p.allowedAutonomousActions.some(x=>!SAFE.includes(x)||p.alwaysForbidden.includes(x)||p.blockedWithoutExplicitHumanAuthorization.includes(x)))hold('new or contradictory autonomous permission');
+ for(const k of [
+   'requireActualLicenseFileOrHold','rejectMetadataAsLicenseApproval',
+   'requireTransitiveDependencyAndSbomReview','requireSourcePinAndGitBlobEvidence',
+   'requireIndependentReferenceAndApplicabilityReview','requireUnitsFramesAndUncertainty',
+   'separateResearchAndRuntimeUse','rejectUnlicensedHardwareFirmwareUse',
+   'prohibitForeignCodeExecutionDuringStaticAudit'
+ ])if(p.staticSourceAudit?.[k]!==true)hold('static audit governance violation '+k);
+ if(Object.entries(p.staticSourceAudit||{}).some(([k,v])=>![
+   'requireActualLicenseFileOrHold','rejectMetadataAsLicenseApproval',
+   'requireTransitiveDependencyAndSbomReview','requireSourcePinAndGitBlobEvidence',
+   'requireIndependentReferenceAndApplicabilityReview','requireUnitsFramesAndUncertainty',
+   'separateResearchAndRuntimeUse','rejectUnlicensedHardwareFirmwareUse',
+   'prohibitForeignCodeExecutionDuringStaticAudit'
+ ].includes(k)||v!==true))hold('unexpected static audit permission');
  const gates={sandbox:'EXPLICIT_OPERATOR_DISPATCH_AND_RISK_ACKNOWLEDGEMENT',software:'PROTECTED_SOURCE_EXACT_HEAD_AUTHENTICATED_REVIEW',vessel:'SEPARATE_DIRECTOR_SIGNED_ENGINEERING_RELEASE',license:'HUMAN_LICENSE_ATTRIBUTION_REVIEW',security:'A20_REVIEW_AND_BOUNDED_EVIDENCE',independentPhysics:'A18_A24_REFERENCE_CASES_WITH_A15_A23_CHALLENGE'};
  for(const [k,v] of Object.entries(gates))if(g[k]!==v)hold('missing human gate '+k);
  for(const [k,v] of Object.entries({failClosed:true,scaffoldExecutable:false,autoRegistryWrites:false,autoMerge:false,autoVesselRelease:false,untrustedReadmeAsInstructions:false,qualificationClaimAllowed:false,proposedStatus:'HOLD_FOR_REVIEW'}))if(e[k]!==v)hold('unsafe enforcement '+k);
@@ -55,6 +69,7 @@ export function checkCandidate(spec,register,policy){
  if(!record)hold('candidate must first enter reviewed external software register');
  if(!['DISCOVERED','EVALUATING'].includes(record.lifecycle)||record.adoption!=='NOT_APPROVED'||record.installation!=='NOT_INSTALLED')hold('this coordinator only prepares unapproved research');
  if(record.source.commit&&record.source.commit!==spec.commit)hold('source pin conflicts with register');
+ if(spec.sourceTree&&(!SHA.test(spec.sourceTree)||record.source.tree!==spec.sourceTree))hold('source tree conflicts with immutable candidate manifest');
  if(record.proposedToolId&&record.proposedToolId!==spec.toolId)hold('tool ID conflicts with register');
  const missing=REQUIRED.filter(x=>!spec.agents.includes(x));
  if(missing.length)hold('required agent reviewers '+missing.join(','));

@@ -8,7 +8,8 @@
     "docs/SAFETY_AND_GOVERNANCE.md",
     "docs/REPOSITORY_SCOUT.md",
     "docs/REPOSITORY_INTEGRATION.md",
-    "docs/EXTERNAL_SOFTWARE_REGISTER_OPERATING.md"
+    "docs/EXTERNAL_SOFTWARE_REGISTER_OPERATING.md",
+    "docs/EXTERNAL_INTEGRATION_AGENT_CHARTER.md"
   ],
   "scope": {
     "allowedRepositoryVisibility": "PUBLIC_ONLY",
@@ -103,7 +104,10 @@
     "HUMAN_LICENSE_COMPATIBILITY_REVIEW",
     "INDEPENDENT_A15_A23_TECHNICAL_CHALLENGE",
     "ROLLBACK_AND_REPRODUCIBILITY",
-    "AUTHENTICATED_PROTECTED_SOFTWARE_REVIEW"
+    "AUTHENTICATED_PROTECTED_SOFTWARE_REVIEW",
+    "STATIC_SOURCE_INSPECTION_WITH_PINNED_GIT_BLOB_EVIDENCE",
+    "MODEL_APPLICABILITY_ENVELOPE_WITH_INDEPENDENT_SOURCE",
+    "SUBPACKAGE_LICENSE_AND_TRANSITIVE_DEPENDENCY_RECONCILIATION"
   ],
   "enforcement": {
     "failClosed": true,
@@ -114,5 +118,17 @@
     "autoVesselRelease": false,
     "untrustedReadmeAsInstructions": false,
     "qualificationClaimAllowed": false
+  },
+  "revision": 2,
+  "staticSourceAudit": {
+    "requireActualLicenseFileOrHold": true,
+    "rejectMetadataAsLicenseApproval": true,
+    "requireTransitiveDependencyAndSbomReview": true,
+    "requireSourcePinAndGitBlobEvidence": true,
+    "requireIndependentReferenceAndApplicabilityReview": true,
+    "requireUnitsFramesAndUncertainty": true,
+    "separateResearchAndRuntimeUse": true,
+    "rejectUnlicensedHardwareFirmwareUse": true,
+    "prohibitForeignCodeExecutionDuringStaticAudit": true
   }
 }

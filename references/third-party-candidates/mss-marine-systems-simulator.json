@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "mss-marine-systems-simulator",
+  "repository": "cybergalactic/MSS",
+  "commit": "78298f0f4822544cd715a66945d0bc3ed37561c8",
+  "sourceTree": "e6728ed863759d949f5d787a1bd9bd82aef0da67",
+  "toolId": "TOOL-EXT-MSS-GNC",
+  "purpose": "Assess 6-DOF marine craft dynamics research models and GNU Octave compatibility; no vessel-specific baseline acceptance.",
+  "agents": [
+    "A08",
+    "A15",
+    "A17",
+    "A18",
+    "A20",
+    "A21",
+    "A23",
+    "A24",
+    "A26"
+  ],
+  "sourceOfEvidence": "https://github.com/cybergalactic/MSS/tree/78298f0f4822544cd715a66945d0bc3ed37561c8",
+  "execution": "NOT_AUTHORIZED",
+  "approval": "NOT_APPROVED",
+  "evidenceClassification": "STATIC_RESEARCH_ONLY"
+}

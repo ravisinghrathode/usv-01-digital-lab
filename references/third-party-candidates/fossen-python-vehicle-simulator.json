@@ -16,5 +16,10 @@
     "A23",
     "A24",
     "A26"
-  ]
+  ],
+  "sourceTree": "80feeef4a79bbc23b539d47a0cae20ea41abb600",
+  "sourceOfEvidence": "https://github.com/cybergalactic/PythonVehicleSimulator/tree/a93d1938ba1f78f2580c24c73f003091b2f03cd0",
+  "execution": "NOT_AUTHORIZED",
+  "approval": "NOT_APPROVED",
+  "evidenceClassification": "STATIC_RESEARCH_ONLY"
 }
