@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "ntnu-colav-simulator",
+  "repository": "ntnu-itk-autonomous-ship-lab/colav-simulator",
+  "commit": "a385e0fcbcf7b7de3edaada35d37dd63f2b027c2",
+  "sourceTree": "1a801cbff73bde5583f235a106eb9e0bb7fe38e5",
+  "toolId": "TOOL-EXT-COLAV-SIM",
+  "purpose": "Assess offline marine collision avoidance scenario generation and rule-compliance testing, not navigation authority.",
+  "agents": [
+    "A15",
+    "A17",
+    "A18",
+    "A20",
+    "A21",
+    "A22",
+    "A23",
+    "A24",
+    "A26"
+  ],
+  "sourceOfEvidence": "https://github.com/ntnu-itk-autonomous-ship-lab/colav-simulator/tree/a385e0fcbcf7b7de3edaada35d37dd63f2b027c2",
+  "execution": "NOT_AUTHORIZED",
+  "approval": "NOT_APPROVED",
+  "evidenceClassification": "STATIC_RESEARCH_ONLY"
+}
