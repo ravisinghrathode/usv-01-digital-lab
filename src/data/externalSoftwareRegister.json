@@ -418,31 +418,52 @@
       "firstRecordedOn": "2026-11-14",
       "ownerAgent": "A26",
       "reviewAgents": [
+        "A15",
         "A17",
+        "A18",
+        "A20",
+        "A21",
         "A22",
+        "A23",
         "A24",
         "A26"
       ],
-      "lifecycle": "DISCOVERED",
+      "lifecycle": "EVALUATING",
       "source": {
         "commit": "a385e0fcbcf7b7de3edaada35d37dd63f2b027c2",
         "tree": "1a801cbff73bde5583f235a106eb9e0bb7fe38e5",
-        "verifiedEvidence": null
+        "verifiedEvidence": "https://github.com/ravisinghrathode/usv-01-digital-lab/blob/main/references/third-party-static-audits/A26_P1_STATIC_AUDIT_2026-11-15.json"
       },
       "license": {
         "spdxMetadata": "MIT",
         "review": "PENDING"
       },
-      "securityReview": "NOT_PERFORMED",
+      "securityReview": "PENDING",
       "engineeringValidation": "NOT_VALIDATED",
       "adoption": "NOT_APPROVED",
       "installation": "NOT_INSTALLED",
       "registeredToolId": null,
       "proposedToolId": null,
-      "plannedUsage": [],
+      "plannedUsage": [
+        {
+          "project": "USV-01",
+          "agents": [
+            "A17",
+            "A22"
+          ],
+          "purpose": "Research-only evaluation of colregs simulation applicability; no vessel baseline use",
+          "sourceEvidence": "https://github.com/ravisinghrathode/usv-01-digital-lab/blob/main/references/third-party-static-audits/A26_P1_STATIC_AUDIT_2026-11-15.json"
+        }
+      ],
       "actualUsage": [],
-      "evidence": [],
-      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+      "evidence": [
+        {
+          "type": "PINNED_MANIFEST_LICENSE_STATIC_INSPECTION",
+          "url": "https://github.com/ravisinghrathode/usv-01-digital-lab/blob/main/references/third-party-static-audits/A26_P1_STATIC_AUDIT_2026-11-15.json",
+          "status": "RESEARCH_ONLY_REVIEW_REQUIRED"
+        }
+      ],
+      "nextAction": "A20/A21/A18/A24/A15/A23 review required: EXTERNAL_GIT_DEPENDENCIES_AND_PYTHON_VERSION_BOUND. No foreign runtime, installation or vessel use permitted."
     },
     {
       "id": "EXT-DISC-0feb9e2e2f3a",
@@ -1001,28 +1022,51 @@
         "A11",
         "A13",
         "A14",
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24",
         "A26"
       ],
-      "lifecycle": "DISCOVERED",
+      "lifecycle": "EVALUATING",
       "source": {
         "commit": "ebb05ffdd5e9ed509fe66d8451ed0ff4f7635629",
         "tree": "c1c3b88470206fbc5e6a28a4b7547ecccdfa6802",
-        "verifiedEvidence": null
+        "verifiedEvidence": "https://github.com/ravisinghrathode/usv-01-digital-lab/blob/main/references/third-party-static-audits/A26_P1_STATIC_AUDIT_2026-11-15.json"
       },
       "license": {
         "spdxMetadata": "MIT",
         "review": "PENDING"
       },
-      "securityReview": "NOT_PERFORMED",
+      "securityReview": "PENDING",
       "engineeringValidation": "NOT_VALIDATED",
       "adoption": "NOT_APPROVED",
       "installation": "NOT_INSTALLED",
       "registeredToolId": null,
       "proposedToolId": null,
-      "plannedUsage": [],
+      "plannedUsage": [
+        {
+          "project": "USV-01",
+          "agents": [
+            "A11",
+            "A13",
+            "A14"
+          ],
+          "purpose": "Research-only evaluation of energy propulsion applicability; no vessel baseline use",
+          "sourceEvidence": "https://github.com/ravisinghrathode/usv-01-digital-lab/blob/main/references/third-party-static-audits/A26_P1_STATIC_AUDIT_2026-11-15.json"
+        }
+      ],
       "actualUsage": [],
-      "evidence": [],
-      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+      "evidence": [
+        {
+          "type": "PINNED_MANIFEST_LICENSE_STATIC_INSPECTION",
+          "url": "https://github.com/ravisinghrathode/usv-01-digital-lab/blob/main/references/third-party-static-audits/A26_P1_STATIC_AUDIT_2026-11-15.json",
+          "status": "RESEARCH_ONLY_REVIEW_REQUIRED"
+        }
+      ],
+      "nextAction": "A20/A21/A18/A24/A15/A23 review required: MULTI_PACKAGE_LICENSE_DISCREPANCY. No foreign runtime, installation or vessel use permitted."
     },
     {
       "id": "EXT-DISC-5a23be670b53",
@@ -1037,28 +1081,51 @@
         "A05",
         "A06",
         "A09",
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24",
         "A26"
       ],
-      "lifecycle": "DISCOVERED",
+      "lifecycle": "EVALUATING",
       "source": {
         "commit": "262cb29f0a5f90acc7132ee6c1b91efd81d855fd",
         "tree": "4e3e533ce28fa60f6e4a99095b084e7ad62bfed3",
-        "verifiedEvidence": null
+        "verifiedEvidence": "https://github.com/ravisinghrathode/usv-01-digital-lab/blob/main/references/third-party-static-audits/A26_P1_STATIC_AUDIT_2026-11-15.json"
       },
       "license": {
         "spdxMetadata": "GPL-3.0",
         "review": "PENDING"
       },
-      "securityReview": "NOT_PERFORMED",
+      "securityReview": "PENDING",
       "engineeringValidation": "NOT_VALIDATED",
       "adoption": "NOT_APPROVED",
       "installation": "NOT_INSTALLED",
       "registeredToolId": null,
       "proposedToolId": null,
-      "plannedUsage": [],
+      "plannedUsage": [
+        {
+          "project": "USV-01",
+          "agents": [
+            "A05",
+            "A06",
+            "A09"
+          ],
+          "purpose": "Research-only evaluation of parametric hull applicability; no vessel baseline use",
+          "sourceEvidence": "https://github.com/ravisinghrathode/usv-01-digital-lab/blob/main/references/third-party-static-audits/A26_P1_STATIC_AUDIT_2026-11-15.json"
+        }
+      ],
       "actualUsage": [],
-      "evidence": [],
-      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+      "evidence": [
+        {
+          "type": "PINNED_MANIFEST_LICENSE_STATIC_INSPECTION",
+          "url": "https://github.com/ravisinghrathode/usv-01-digital-lab/blob/main/references/third-party-static-audits/A26_P1_STATIC_AUDIT_2026-11-15.json",
+          "status": "RESEARCH_ONLY_REVIEW_REQUIRED"
+        }
+      ],
+      "nextAction": "A20/A21/A18/A24/A15/A23 review required: GPL_3_AND_LARGE_VESSEL_MODEL_DOMAIN. No foreign runtime, installation or vessel use permitted."
     },
     {
       "id": "EXT-DISC-5ceca9c3b06a",
@@ -1649,28 +1716,51 @@
         "A07",
         "A08",
         "A13",
+        "A15",
+        "A18",
+        "A20",
+        "A21",
+        "A23",
+        "A24",
         "A26"
       ],
-      "lifecycle": "DISCOVERED",
+      "lifecycle": "EVALUATING",
       "source": {
         "commit": "ade00fbdfdfae0cf3b93291b778d2d94330dd8e1",
         "tree": "bae3a190e5dbedc5f9be73a6e0154493ecbe7423",
-        "verifiedEvidence": null
+        "verifiedEvidence": "https://github.com/ravisinghrathode/usv-01-digital-lab/blob/main/references/third-party-static-audits/A26_P1_STATIC_AUDIT_2026-11-15.json"
       },
       "license": {
         "spdxMetadata": "MIT",
         "review": "PENDING"
       },
-      "securityReview": "NOT_PERFORMED",
+      "securityReview": "PENDING",
       "engineeringValidation": "NOT_VALIDATED",
       "adoption": "NOT_APPROVED",
       "installation": "NOT_INSTALLED",
       "registeredToolId": null,
       "proposedToolId": null,
-      "plannedUsage": [],
+      "plannedUsage": [
+        {
+          "project": "USV-01",
+          "agents": [
+            "A07",
+            "A08",
+            "A13"
+          ],
+          "purpose": "Research-only evaluation of seakeeping strip theory applicability; no vessel baseline use",
+          "sourceEvidence": "https://github.com/ravisinghrathode/usv-01-digital-lab/blob/main/references/third-party-static-audits/A26_P1_STATIC_AUDIT_2026-11-15.json"
+        }
+      ],
       "actualUsage": [],
-      "evidence": [],
-      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+      "evidence": [
+        {
+          "type": "PINNED_MANIFEST_LICENSE_STATIC_INSPECTION",
+          "url": "https://github.com/ravisinghrathode/usv-01-digital-lab/blob/main/references/third-party-static-audits/A26_P1_STATIC_AUDIT_2026-11-15.json",
+          "status": "RESEARCH_ONLY_REVIEW_REQUIRED"
+        }
+      ],
+      "nextAction": "A20/A21/A18/A24/A15/A23 review required: HARD_CODED_WIGLEY_AND_DIMENSIONAL_AMBIGUITIES. No foreign runtime, installation or vessel use permitted."
     },
     {
       "id": "EXT-DISC-928ab6a65ec5",
@@ -2116,31 +2206,50 @@
       "firstRecordedOn": "2026-11-14",
       "ownerAgent": "A26",
       "reviewAgents": [
+        "A15",
+        "A18",
         "A19",
         "A20",
         "A21",
+        "A23",
+        "A24",
         "A26"
       ],
-      "lifecycle": "DISCOVERED",
+      "lifecycle": "EVALUATING",
       "source": {
         "commit": "6224ad6e62e7554a89ae8fe9e9ba54a29df394de",
         "tree": "73f13436beb894649c3180037fcedd469b84e5b2",
-        "verifiedEvidence": null
+        "verifiedEvidence": "https://github.com/ravisinghrathode/usv-01-digital-lab/blob/main/references/third-party-static-audits/A26_P1_STATIC_AUDIT_2026-11-15.json"
       },
       "license": {
         "spdxMetadata": "LGPL-3.0",
         "review": "PENDING"
       },
-      "securityReview": "NOT_PERFORMED",
+      "securityReview": "PENDING",
       "engineeringValidation": "NOT_VALIDATED",
       "adoption": "NOT_APPROVED",
       "installation": "NOT_INSTALLED",
       "registeredToolId": null,
       "proposedToolId": null,
-      "plannedUsage": [],
+      "plannedUsage": [
+        {
+          "project": "USV-01",
+          "agents": [
+            "A19"
+          ],
+          "purpose": "Research-only evaluation of nmea0183 ais interface applicability; no vessel baseline use",
+          "sourceEvidence": "https://github.com/ravisinghrathode/usv-01-digital-lab/blob/main/references/third-party-static-audits/A26_P1_STATIC_AUDIT_2026-11-15.json"
+        }
+      ],
       "actualUsage": [],
-      "evidence": [],
-      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+      "evidence": [
+        {
+          "type": "PINNED_MANIFEST_LICENSE_STATIC_INSPECTION",
+          "url": "https://github.com/ravisinghrathode/usv-01-digital-lab/blob/main/references/third-party-static-audits/A26_P1_STATIC_AUDIT_2026-11-15.json",
+          "status": "RESEARCH_ONLY_REVIEW_REQUIRED"
+        }
+      ],
+      "nextAction": "A20/A21/A18/A24/A15/A23 review required: LGPL_LINKING_AND_ATTRIBUTION_REVIEW. No foreign runtime, installation or vessel use permitted."
     },
     {
       "id": "EXT-DISC-b74dfe37ce71",
@@ -2512,30 +2621,51 @@
       "ownerAgent": "A26",
       "reviewAgents": [
         "A12",
+        "A15",
         "A16",
+        "A18",
+        "A20",
         "A21",
+        "A23",
+        "A24",
         "A26"
       ],
-      "lifecycle": "DISCOVERED",
+      "lifecycle": "EVALUATING",
       "source": {
         "commit": "0c4e6e78895fdc39a5e90dedaa16e225f1c3c4b7",
         "tree": "38da4ec2e072eccf94c0d8c14b27d141a61bd3f2",
-        "verifiedEvidence": null
+        "verifiedEvidence": "https://github.com/ravisinghrathode/usv-01-digital-lab/blob/main/references/third-party-static-audits/A26_P1_STATIC_AUDIT_2026-11-15.json"
       },
       "license": {
         "spdxMetadata": "UNKNOWN",
         "review": "PENDING"
       },
-      "securityReview": "NOT_PERFORMED",
+      "securityReview": "PENDING",
       "engineeringValidation": "NOT_VALIDATED",
       "adoption": "NOT_APPROVED",
       "installation": "NOT_INSTALLED",
       "registeredToolId": null,
       "proposedToolId": null,
-      "plannedUsage": [],
+      "plannedUsage": [
+        {
+          "project": "USV-01",
+          "agents": [
+            "A12",
+            "A16"
+          ],
+          "purpose": "Research-only evaluation of sonar bathymetry research applicability; no vessel baseline use",
+          "sourceEvidence": "https://github.com/ravisinghrathode/usv-01-digital-lab/blob/main/references/third-party-static-audits/A26_P1_STATIC_AUDIT_2026-11-15.json"
+        }
+      ],
       "actualUsage": [],
-      "evidence": [],
-      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+      "evidence": [
+        {
+          "type": "PINNED_MANIFEST_LICENSE_STATIC_INSPECTION",
+          "url": "https://github.com/ravisinghrathode/usv-01-digital-lab/blob/main/references/third-party-static-audits/A26_P1_STATIC_AUDIT_2026-11-15.json",
+          "status": "RESEARCH_ONLY_REVIEW_REQUIRED"
+        }
+      ],
+      "nextAction": "A20/A21/A18/A24/A15/A23 review required: UNKNOWN_ROOT_LICENSE_AND_HARDWARE_FIRMWARE_BARRIER. No foreign runtime, installation or vessel use permitted."
     },
     {
       "id": "EXT-DISC-d09c63525631",
@@ -2586,31 +2716,51 @@
       "ownerAgent": "A26",
       "reviewAgents": [
         "A08",
+        "A15",
         "A17",
         "A18",
+        "A20",
+        "A21",
+        "A23",
         "A24",
         "A26"
       ],
-      "lifecycle": "DISCOVERED",
+      "lifecycle": "EVALUATING",
       "source": {
         "commit": "78298f0f4822544cd715a66945d0bc3ed37561c8",
         "tree": "e6728ed863759d949f5d787a1bd9bd82aef0da67",
-        "verifiedEvidence": null
+        "verifiedEvidence": "https://github.com/ravisinghrathode/usv-01-digital-lab/blob/main/references/third-party-static-audits/A26_P1_STATIC_AUDIT_2026-11-15.json"
       },
       "license": {
         "spdxMetadata": "MIT",
         "review": "PENDING"
       },
-      "securityReview": "NOT_PERFORMED",
+      "securityReview": "PENDING",
       "engineeringValidation": "NOT_VALIDATED",
       "adoption": "NOT_APPROVED",
       "installation": "NOT_INSTALLED",
       "registeredToolId": null,
       "proposedToolId": null,
-      "plannedUsage": [],
+      "plannedUsage": [
+        {
+          "project": "USV-01",
+          "agents": [
+            "A08",
+            "A17"
+          ],
+          "purpose": "Research-only evaluation of marine dynamics applicability; no vessel baseline use",
+          "sourceEvidence": "https://github.com/ravisinghrathode/usv-01-digital-lab/blob/main/references/third-party-static-audits/A26_P1_STATIC_AUDIT_2026-11-15.json"
+        }
+      ],
       "actualUsage": [],
-      "evidence": [],
-      "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+      "evidence": [
+        {
+          "type": "PINNED_MANIFEST_LICENSE_STATIC_INSPECTION",
+          "url": "https://github.com/ravisinghrathode/usv-01-digital-lab/blob/main/references/third-party-static-audits/A26_P1_STATIC_AUDIT_2026-11-15.json",
+          "status": "RESEARCH_ONLY_REVIEW_REQUIRED"
+        }
+      ],
+      "nextAction": "A20/A21/A18/A24/A15/A23 review required: MATLAB_OR_GNU_OCTAVE_RUNTIME_DEPENDENCY. No foreign runtime, installation or vessel use permitted."
     },
     {
       "id": "EXT-DISC-d76322be4478",
