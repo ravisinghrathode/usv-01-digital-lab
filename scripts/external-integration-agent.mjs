@@ -3,7 +3,7 @@
  * code, imports upstream modules, grants approvals or writes tool registration.
  * Untrusted source text and AI suggestions are data, not agent instructions.
  */
-import {readFile,writeFile,mkdir} from 'node:fs/promises';
+import {readFile,writeFile,mkdir,readdir} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
@@ -11,6 +11,7 @@ import {validateSpec} from './repository-integration.mjs';
 import {validateRegister,REGISTER_FILE} from './external-software-register.mjs';
 
 export const POLICY_FILE=fileURLToPath(new URL('../config/external-integration-policy.json',import.meta.url));
+export const CANDIDATE_DIR=fileURLToPath(new URL('../references/third-party-candidates/',import.meta.url));
 const AGENT=/^A(0[1-9]|1\d|2[0-6])$/;
 const SHA=/^[0-9a-f]{40}$/;
 const REQUIRED=['A26','A15','A23','A20','A21','A18','A24'];
@@ -138,6 +139,17 @@ function parseArgs(argv){
  return options;
 }
 export async function main(argv=process.argv.slice(2)){
+ if(argv[0]==='prepare-all'){
+  if(argv.length!==3||argv[1]!=='--out-dir'||!argv[2]||argv[2].startsWith('--'))hold('prepare-all requires --out-dir');
+  const files=(await readdir(CANDIDATE_DIR,{withFileTypes:true})).filter(x=>x.isFile()&&/^[a-z][a-z0-9-]{2,60}\.json$/.test(x.name));
+  if(!files.length||files.length>20)hold('reviewed candidate count must be 1..20');
+  for(const x of files){
+   const id=x.name.slice(0,-5);
+   await main(['prepare','--spec',path.join(CANDIDATE_DIR,x.name),'--out-dir',path.join(path.resolve(argv[2]),id)]);
+  }
+  console.log(JSON.stringify({status:'GOVERNED_RESEARCH_PACKAGES_DRAFTED',candidates:files.length,approved:false}));
+  return;
+ }
  const opts=parseArgs(argv);
  const [policy,register,spec]=await Promise.all([
   readFile(POLICY_FILE,'utf8').then(JSON.parse),
