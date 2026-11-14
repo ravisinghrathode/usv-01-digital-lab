@@ -1,91 +1,84 @@
 import React, { useMemo, useState } from 'react';
-import { Anchor, ChevronDown, ChevronRight, LayoutGrid, Menu, Search, Star, X } from 'lucide-react';
+import { Anchor, ChevronDown, ChevronLeft, ChevronRight, Command, LayoutGrid, Menu, PanelLeftOpen, Search, Star, X } from 'lucide-react';
 import { MODULE_GROUPS, MODULE_REGISTRY, NavigationModule, searchModules } from '../moduleRegistry';
+import { useEngineeringContext } from '../studio/engineeringContext';
 
-const PIN_KEY = 'naval-studio-x-pins';
-const DEFAULT_PINS: NavigationModule[] = ['cad-studio', 'overview', 'agent-orchestrator'];
-
-function readPins(): NavigationModule[] {
+const PIN_KEY='naval-studio-x-pins';
+const RAIL_KEY='naval-studio-x-rail-collapsed';
+const DEFAULT_PINS:NavigationModule[]=['cad-studio','overview','agent-orchestrator'];
+function readPins():NavigationModule[]{
   try {
-    const saved = JSON.parse(localStorage.getItem(PIN_KEY) || 'null');
-    if (Array.isArray(saved)) {
-      return saved.filter((id): id is NavigationModule => MODULE_REGISTRY.some((module) => module.id === id));
-    }
-  } catch { /* A bad preference must never block engineering navigation. */ }
+    const parsed=JSON.parse(localStorage.getItem(PIN_KEY)||'null');
+    if(Array.isArray(parsed))return parsed.filter((id):id is NavigationModule=>MODULE_REGISTRY.some(m=>m.id===id));
+  } catch {/* Preferences must not block navigation. */}
   return DEFAULT_PINS;
 }
-
-interface Props {
-  currentModule: NavigationModule;
-  onSelectModule: (module: NavigationModule) => void;
-  onUseClassic: () => void;
+function readRail():boolean{
+  try{return localStorage.getItem(RAIL_KEY)==='true';}catch{return false;}
 }
-
-export const StudioNavigation: React.FC<Props> = ({ currentModule, onSelectModule, onUseClassic }) => {
-  const [query, setQuery] = useState('');
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [pins, setPins] = useState<NavigationModule[]>(readPins);
-  const [openGroups, setOpenGroups] = useState<string[]>([MODULE_REGISTRY.find((m) => m.id === currentModule)?.group || 'Product']);
-  const matches = useMemo(() => searchModules(query), [query]);
-
-  const togglePin = (id: NavigationModule) => {
-    const next = pins.includes(id) ? pins.filter((pin) => pin !== id) : [...pins, id];
-    setPins(next);
-    try { localStorage.setItem(PIN_KEY, JSON.stringify(next)); } catch { /* Preference only. */ }
+interface Props {
+  currentModule:NavigationModule;
+  onSelectModule:(module:NavigationModule)=>void;
+  onOpenCommand?:()=>void;
+}
+export const StudioNavigation:React.FC<Props>=({currentModule,onSelectModule,onOpenCommand})=>{
+  const {selection}=useEngineeringContext();
+  const [collapsed,setCollapsed]=useState(readRail);
+  const [mobileOpen,setMobileOpen]=useState(false);
+  const [query,setQuery]=useState('');
+  const [pins,setPins]=useState<NavigationModule[]>(readPins);
+  const [groups,setGroups]=useState<string[]>([MODULE_REGISTRY.find(m=>m.id===currentModule)?.group||'Product']);
+  const results=useMemo(()=>searchModules(query),[query]);
+  const select=(module:NavigationModule)=>{
+    onSelectModule(module);setMobileOpen(false);
+    setGroups(current=>[...new Set([...current,MODULE_REGISTRY.find(m=>m.id===module)!.group])]);
   };
-  const select = (id: NavigationModule) => {
-    onSelectModule(id);
-    setMobileOpen(false);
-    setOpenGroups((groups) => [...new Set([...groups, MODULE_REGISTRY.find((m) => m.id === id)!.group])]);
+  const toggleRail=()=>{
+    const next=!collapsed;setCollapsed(next);
+    try{localStorage.setItem(RAIL_KEY,String(next));}catch{/* preference only */}
   };
-  const row = (id: NavigationModule, label: string) => (
-    <div key={id} className={`group flex items-center rounded-lg border ${currentModule === id ? 'border-cyan-500/40 bg-cyan-500/10 text-[#cffafe]' : 'border-transparent text-[#cbd5e1] hover:bg-white/5'}`}>
-      <button type="button" onClick={() => select(id)} aria-current={currentModule === id ? 'page' : undefined} className="flex-1 min-w-0 px-3 py-2 text-left text-sm truncate">
-        {label}
-      </button>
-      <button type="button" onClick={() => togglePin(id)} aria-label={`${pins.includes(id) ? 'Unpin' : 'Pin'} ${label}`} title={`${pins.includes(id) ? 'Unpin' : 'Pin'} ${label}`} className={`px-2 py-2 ${pins.includes(id) ? 'text-[#fcd34d]' : 'text-[#64748b] group-hover:text-[#cbd5e1]'}`}>
-        <Star size={13} fill={pins.includes(id) ? 'currentColor' : 'none'} />
-      </button>
-    </div>
-  );
+  const togglePin=(id:NavigationModule)=>{
+    const next=pins.includes(id)?pins.filter(p=>p!==id):[...pins,id];
+    setPins(next);try{localStorage.setItem(PIN_KEY,JSON.stringify(next));}catch{/* preference only */}
+  };
+  const moduleRow=(m:(typeof MODULE_REGISTRY)[number])=><div key={m.id} className={`group flex items-center rounded-md ${m.id===currentModule?'bg-cyan-400/15 text-cyan-100 ring-1 ring-cyan-400/20':'text-slate-300 hover:bg-white/5'}`}>
+    <button type="button" onClick={()=>select(m.id)} aria-current={m.id===currentModule?'page':undefined} className="min-w-0 flex-1 truncate px-3 py-2 text-left text-xs">{m.label}</button>
+    <button type="button" onClick={()=>togglePin(m.id)} aria-label={`${pins.includes(m.id)?'Unpin':'Pin'} ${m.label}`} className={`p-2 ${pins.includes(m.id)?'text-amber-300':'text-slate-500'}`}><Star size={13} fill={pins.includes(m.id)?'currentColor':'none'}/></button>
+  </div>;
 
   return <>
-    {!mobileOpen && <button type="button" onClick={() => setMobileOpen(true)} aria-label="Open modules" className="lg:hidden fixed bottom-4 left-4 z-40 flex items-center gap-2 rounded-full bg-[#18344b] border border-cyan-400/30 px-4 py-3 text-sm text-white shadow-lg"><Menu size={17} /> Modules</button>}
-    <aside aria-label="Studio modules" className={`${mobileOpen ? 'flex' : 'hidden lg:flex'} fixed lg:static inset-y-0 left-0 z-50 w-72 min-w-72 h-screen flex-col bg-[#101b2a] border-r border-white/10 shadow-xl lg:shadow-none`}>
-    <div className="p-5 border-b border-white/10">
-      <div className="flex items-center gap-3">
-        <div className="rounded-xl bg-cyan-400/10 border border-cyan-300/25 p-2 text-[#67e8f9]"><Anchor size={19} /></div>
-        <div><div className="font-bold tracking-[0.15em] text-sm text-white">NAVAL STUDIO X</div><div className="text-[11px] text-[#94a3b8]">Product engineering desktop</div></div>
-        <button type="button" onClick={() => setMobileOpen(false)} aria-label="Close modules" className="lg:hidden ml-auto text-[#94a3b8]"><X size={18} /></button>
+    {!mobileOpen&&<button type="button" onClick={()=>setMobileOpen(true)} aria-label="Open modules" className="fixed bottom-4 left-4 z-40 flex items-center gap-2 rounded-full bg-[#18344b] px-4 py-3 text-sm text-white lg:hidden"><Menu size={16}/> Modules</button>}
+    <aside aria-label="Studio modules" className={`${mobileOpen?'flex':'hidden lg:flex'} ${collapsed&&!mobileOpen?'lg:w-[64px] lg:min-w-[64px]':'w-72 min-w-72'} fixed inset-y-0 left-0 z-50 h-screen flex-col border-r border-white/10 bg-[#101b2a] shadow-xl transition-[width] duration-200 lg:static lg:shadow-none`}>
+      <div className={`flex items-center gap-2 border-b border-white/10 ${collapsed?'p-3':'p-4'}`}>
+        <div className="rounded-lg border border-cyan-300/20 bg-cyan-400/10 p-2 text-cyan-300"><Anchor size={17}/></div>
+        {!collapsed&&<div className="min-w-0 flex-1"><div className="truncate text-sm font-bold tracking-[0.12em] text-white">NAVAL STUDIO X.2</div><div className="text-[10px] text-slate-400">Engineering workbench</div></div>}
+        <button type="button" onClick={()=>setMobileOpen(false)} aria-label="Close modules" className="ml-auto text-slate-300 lg:hidden"><X size={18}/></button>
+        <button type="button" onClick={toggleRail} aria-label={collapsed?'Expand navigation':'Collapse navigation'} title={collapsed?'Expand navigation':'Collapse navigation'} className="hidden rounded p-1.5 text-slate-300 hover:bg-white/10 lg:block">{collapsed?<PanelLeftOpen size={17}/>:<ChevronLeft size={17}/>}</button>
       </div>
-      <div className="mt-5 rounded-xl bg-[#19283b] border border-white/10 p-3">
-        <div className="text-[10px] tracking-[0.2em] uppercase text-[#67e8f9]">Active product</div>
-        <div className="mt-1 font-semibold text-white">USV-01 <span className="text-[#94a3b8] font-normal">/ Primary Vessel</span></div>
-        <div className="text-xs text-[#94a3b8] mt-1">Configuration and baseline remain governed by existing records.</div>
-      </div>
-    </div>
-    <div className="px-4 pt-4">
-      <label className="flex items-center gap-2 rounded-lg border border-white/10 bg-[#0b1421] px-3 py-2 text-[#94a3b8]">
-        <Search size={15} /><span className="sr-only">Search all modules</span>
-        <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Find any module…" className="w-full bg-transparent text-sm text-white placeholder:text-[#64748b] outline-none" />
-      </label>
-      <div className="flex items-center gap-1.5 pt-4 pb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#64748b]"><Star size={12} /> Pinned</div>
-      {pins.map((id) => MODULE_REGISTRY.find((m) => m.id === id)).filter((m): m is (typeof MODULE_REGISTRY)[number] => Boolean(m)).map((m) => row(m.id, m.label))}
-    </div>
-    <div className="flex-1 overflow-y-auto px-4 pt-4 pb-5">
-      <div className="flex items-center gap-1.5 pb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#64748b]"><LayoutGrid size={12} /> All modules · {MODULE_REGISTRY.length}</div>
-      {query ? (matches.length ? matches.map((m) => row(m.id, m.label)) : <p className="text-sm text-[#94a3b8] px-3 py-2">No matching modules</p>) : MODULE_GROUPS.map((group) => {
-        const modules = MODULE_REGISTRY.filter((m) => m.group === group);
-        const expanded = openGroups.includes(group);
-        return <div key={group} className="mb-1">
-          <button type="button" aria-expanded={expanded} onClick={() => setOpenGroups((groups) => expanded ? groups.filter((item) => item !== group) : [...groups, group])} className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider text-[#94a3b8] hover:bg-white/5 hover:text-white">
-            <span>{group} <span className="text-[#64748b] ml-1">{modules.length}</span></span>{expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-          </button>
-          {expanded && <div className="ml-2 border-l border-white/10 pl-2">{modules.map((m) => row(m.id, m.label))}</div>}
-        </div>;
-      })}
-    </div>
-    <div className="p-4 border-t border-white/10"><button type="button" onClick={onUseClassic} className="w-full rounded-lg border border-white/10 px-3 py-2 text-xs text-[#94a3b8] hover:text-white hover:border-white/30">Switch to classic layout</button></div>
+      {collapsed&&!mobileOpen ? <div className="flex flex-1 flex-col items-center gap-2 px-1 py-3">
+        <button type="button" title="Find any module" aria-label="Find any module" onClick={()=>{setCollapsed(false);try{localStorage.setItem(RAIL_KEY,'false');}catch{/* preference only */}}} className="rounded-lg p-3 text-slate-300 hover:bg-white/10"><Search size={18}/></button>
+        {pins.map(id=><button key={id} type="button" title={MODULE_REGISTRY.find(m=>m.id===id)?.label} aria-label={MODULE_REGISTRY.find(m=>m.id===id)?.label} onClick={()=>select(id)} className={`flex h-10 w-10 items-center justify-center rounded-lg text-xs font-bold ${currentModule===id?'bg-cyan-400/20 text-cyan-200':'text-slate-400 hover:bg-white/10'}`}>{MODULE_REGISTRY.findIndex(m=>m.id===id)+1}</button>)}
+        <button type="button" title="All modules" aria-label="Show all modules" onClick={()=>setCollapsed(false)} className="mt-2 rounded-lg p-3 text-slate-300 hover:bg-white/10"><LayoutGrid size={17}/></button>
+        {onOpenCommand&&<button type="button" title="Command search" aria-label="Command search" onClick={onOpenCommand} className="rounded-lg p-3 text-slate-300 hover:bg-white/10"><Command size={17}/></button>}
+      </div> : <>
+        <div className="border-b border-white/10 p-3">
+          <div className="rounded-lg bg-[#1b2d40] p-3"><div className="text-[10px] uppercase tracking-wider text-cyan-300">Active product</div><div className="mt-1 text-sm font-semibold text-white">USV-01 / Primary Vessel</div><div className="mt-1 text-[11px] text-slate-400">Configuration: {selection.configurationRevision??'Unassigned · TBD'}</div></div>
+          <label className="mt-3 flex items-center gap-2 rounded-lg border border-white/10 bg-[#0b1421] px-3 py-2 text-slate-400"><Search size={15}/><span className="sr-only">Search all modules</span><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Find any module…" className="min-w-0 flex-1 bg-transparent text-sm text-white placeholder:text-slate-500 outline-none"/></label>
+          {onOpenCommand&&<button type="button" onClick={onOpenCommand} className="mt-2 flex w-full items-center gap-2 rounded border border-white/10 p-2 text-left text-xs text-slate-300 hover:bg-white/10"><Command size={13}/> Global command search <span className="ml-auto text-slate-500">⌘K</span></button>}
+        </div>
+        <div className="flex-1 overflow-y-auto px-3 py-3">
+          {!query&&<><div className="mb-2 flex items-center gap-2 text-[10px] uppercase tracking-wider text-slate-500"><Star size={12}/> Pinned</div>{pins.map(id=>MODULE_REGISTRY.find(m=>m.id===id)).filter((m):m is (typeof MODULE_REGISTRY)[number]=>Boolean(m)).map(moduleRow)}<div className="mb-2 mt-5 flex items-center gap-2 text-[10px] uppercase tracking-wider text-slate-500"><LayoutGrid size={12}/> All modules · {MODULE_REGISTRY.length}</div></>}
+          {query?results.map(moduleRow):MODULE_GROUPS.map(group=>{
+            const items=MODULE_REGISTRY.filter(m=>m.group===group);
+            const opened=groups.includes(group);
+            return <div key={group} className="mb-1">
+              <button type="button" aria-expanded={opened} onClick={()=>setGroups(current=>opened?current.filter(g=>g!==group):[...current,group])} className="flex w-full items-center justify-between rounded p-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-400 hover:bg-white/5"><span>{group} <span className="text-slate-600">({items.length})</span></span>{opened?<ChevronDown size={14}/>:<ChevronRight size={14}/>}</button>
+              {opened&&<div className="ml-1 border-l border-white/10 pl-2">{items.map(moduleRow)}</div>}
+            </div>;
+          })}
+          {query&&results.length===0&&<p className="p-3 text-sm text-slate-400">No matching modules</p>}
+        </div>
+      </>}
     </aside>
   </>;
 };

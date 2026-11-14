@@ -4,12 +4,14 @@
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { NavigationSidebar, NavigationModule } from './components/NavigationSidebar';
+import type { NavigationModule } from './moduleRegistry';
 import { StudioNavigation } from './components/StudioNavigation';
 import { StudioWorkspaceBar } from './components/StudioWorkspaceBar';
+import { StudioContextStrip } from './components/StudioContextStrip';
+import { StudioCommandPalette } from './components/StudioCommandPalette';
+import { DirectorBriefing } from './components/DirectorBriefing';
 import { CadStudioView } from './components/CadStudioView';
 import { findModule } from './moduleRegistry';
-import { resolveInitialStudioLayout } from './studioLayoutPreference';
 import { TopBar } from './components/TopBar';
 import { ProjectOverview } from './components/ProjectOverview';
 import { SystemsEngineeringView } from './components/SystemsEngineeringView';
@@ -95,26 +97,33 @@ import {
   INITIAL_KNOWLEDGE_NOTES
 } from './data/initialProjectData';
 
-function initialStudioLayout(): boolean {
-  const requested = new URLSearchParams(window.location.search).get('ui');
-  let stored: string | null = null;
-  try { stored = localStorage.getItem('naval-studio-x-layout'); } catch { /* Preference storage unavailable. */ }
-  return resolveInitialStudioLayout(requested, stored);
-}
-
 export default function App() {
   // Navigation & UI state
-  const [currentModule, setCurrentModule] = useState<NavigationModule>(() => initialStudioLayout() ? 'cad-studio' : 'overview');
-  const [studioLayout, setStudioLayout] = useState(initialStudioLayout);
-  const useStudioLayout = (enabled: boolean) => {
-    setStudioLayout(enabled);
-    if (enabled) setCurrentModule('cad-studio');
-    else if (currentModule === 'cad-studio') setCurrentModule('overview');
-    const url = new URL(window.location.href);
-    url.searchParams.delete('ui');
-    window.history.replaceState(null, '', url);
-    try { localStorage.setItem('naval-studio-x-layout', enabled ? 'studio' : 'classic'); } catch { /* Preference only. */ }
+  // One supported application shell: Naval Studio X, opening in the hero-product CAD workspace.
+  const [currentModule, setActiveModule] = useState<NavigationModule>('cad-studio');
+  const [openTabs, setOpenTabs] = useState<NavigationModule[]>(['cad-studio']);
+  const [commandOpen, setCommandOpen] = useState(false);
+  const [detailedOverview, setDetailedOverview] = useState(false);
+  const setCurrentModule = (module: NavigationModule) => {
+    setActiveModule(module);
+    setOpenTabs(tabs => tabs.includes(module) ? tabs : [...tabs, module]);
   };
+  const closeModuleTab = (module: NavigationModule) => {
+    if (!window.confirm('Close this work tab? Unsaved changes inside it may be discarded.')) return;
+    const remaining = openTabs.filter(tab => tab !== module);
+    if (!remaining.length) remaining.push('cad-studio');
+    setOpenTabs(remaining);
+    if (module === currentModule) setActiveModule(remaining[remaining.length - 1]);
+  };
+  useEffect(() => {
+    const keydown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault(); setCommandOpen(open => !open);
+      }
+    };
+    window.addEventListener('keydown', keydown);
+    return () => window.removeEventListener('keydown', keydown);
+  }, []);
   const [globalSearch, setGlobalSearch] = useState('');
   const [isAiOpen, setIsAiOpen] = useState(false);
   const [aiPrefillPrompt, setAiPrefillPrompt] = useState<string | undefined>();
@@ -606,16 +615,9 @@ export default function App() {
   }, [currentModule]);
 
   return (
-    <div className={`flex h-screen bg-slate-950 text-slate-100 font-sans antialiased overflow-hidden ${studioLayout ? 'studio-x' : ''}`}>
-      {/* Left Persistent Navigation Sidebar */}
-      {studioLayout ? <StudioNavigation currentModule={currentModule} onSelectModule={setCurrentModule} onUseClassic={() => useStudioLayout(false)} /> : <NavigationSidebar
-        currentModule={currentModule}
-        onSelectModule={(mod) => setCurrentModule(mod)}
-        openRequirementsCount={requirements.filter((r) => r.status !== 'Archived').length}
-        openDecisionsCount={decisions.filter((d) => d.approvalState !== 'Approved').length}
-        openRisksCount={risks.filter((r) => r.status === 'Open').length}
-        openSimulationsCount={simulations.filter((s) => s.runStatus === 'Under Review' || s.runStatus === 'Running').length}
-      />}
+    <div className="studio-x flex h-screen bg-slate-950 text-slate-100 font-sans antialiased overflow-hidden">
+      {/* Studio X is the sole navigation shell. All legacy engineering modules remain in MODULE_REGISTRY. */}
+      <StudioNavigation currentModule={currentModule} onSelectModule={setCurrentModule} onOpenCommand={() => setCommandOpen(true)} />
 
       {/* Main Workspace Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
@@ -654,42 +656,24 @@ export default function App() {
           onOpenVerify={() => setIsVerifyModalOpen(true)}
         />
 
-        {studioLayout ? <StudioWorkspaceBar currentModule={currentModule} onSelectModule={setCurrentModule} /> : <>
-        <div className="flex justify-end border-b border-cyan-500/20 bg-cyan-500/5 px-4 py-1"><button type="button" onClick={() => useStudioLayout(true)} className="text-xs font-semibold text-cyan-300 hover:underline">Try Naval Studio X →</button></div>
-        {/* Classic primary tab bar retained for rollout and rollback. */}
-        <div className="bg-slate-900 border-b border-slate-800 px-4 py-2 flex items-center gap-1.5 overflow-x-auto text-xs font-mono sticky top-0 z-20 backdrop-blur-md shadow-sm">
-          <span className="text-slate-400 text-[10px] uppercase tracking-wider mr-1.5 font-bold flex items-center gap-1.5 flex-shrink-0">
-            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" /> LAB TABS:
-          </span>
-          {[
-            { id: 'overview', label: '1. Master Overview (3D + Radar + DAG)', icon: '📊' },
-            { id: 'agent-orchestrator', label: '2. 26-Agent Directorate', icon: '🤖' },
-            { id: 'orchestrator-tools', label: '3. Deterministic Naval Tools', icon: '📐' },
-            { id: 'orchestrator-approvals', label: '4. Human Approval Gates', icon: '🛡️' },
-            { id: 'workstream-NAV', label: '5. 3D Naval Architecture', icon: '🚢' },
-            { id: 'realtime-sim', label: '6. Real-Time Boat Simulator', icon: '🧭' },
-            { id: 'generative-optimizer', label: '7. AI Optimizer', icon: '⚡' },
-            { id: 'global-usv-fleet', label: '8. Global USV Intel', icon: '🌐' }
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setCurrentModule(tab.id as NavigationModule)}
-              className={`px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 whitespace-nowrap text-xs font-semibold ${
-                currentModule === tab.id
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-sm shadow-cyan-950/40 ring-1 ring-cyan-500/30'
-                  : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/80 border border-slate-800/60'
-              }`}
-            >
-              <span>{tab.icon}</span>
-              <span>{tab.label}</span>
-            </button>
-          ))}
-        </div></>}
+        <StudioContextStrip />
 
-        {/* Scrollable Workspace Body */}
-        <main className="flex-1 overflow-y-auto bg-slate-950/60 pb-12">
-          {currentModule === 'cad-studio' && <CadStudioView particulars={particulars} onNavigate={setCurrentModule} />}
-          {currentModule === 'overview' && (
+        <StudioWorkspaceBar currentModule={currentModule} onSelectModule={setCurrentModule} openTabs={openTabs} onCloseTab={closeModuleTab} onOpenCommand={() => setCommandOpen(true)} />
+
+        {/* Cached work tabs preserve local component state until deliberately closed. */}
+        <main className="min-h-0 flex-1 overflow-hidden bg-slate-950/60">
+          {openTabs.map(tab => <section key={tab} role="tabpanel" aria-label={findModule(tab).label}
+              aria-hidden={tab !== currentModule}
+              className={tab === currentModule ? 'h-full overflow-y-auto pb-12' : 'hidden'}>
+            {(() => {
+              const currentModule = tab;
+              return <>
+          {currentModule === 'cad-studio' && <CadStudioView particulars={particulars} onNavigate={setCurrentModule} onAskAi={triggerAiQuery} />}
+          {currentModule === 'overview' && (!detailedOverview ? (
+            <DirectorBriefing requirements={requirements} decisions={decisions} risks={risks} simulations={simulations}
+              verificationPlans={verificationPlans} onNavigate={setCurrentModule} onDetailed={() => setDetailedOverview(true)} />
+          ) : <div className="bg-slate-950">
+            <div className="border-b border-white/10 bg-[#14273a] p-3"><button type="button" onClick={() => setDetailedOverview(false)} className="rounded border border-white/15 px-3 py-2 text-xs text-cyan-200">← Return to Director's Briefing</button></div>
             <ProjectOverview
               workstreams={workstreams}
               requirements={requirements}
@@ -701,7 +685,7 @@ export default function App() {
               onNavigate={(mod) => setCurrentModule(mod)}
               onAskAi={triggerAiQuery}
             />
-          )}
+          </div>)}
 
           {(currentModule === 'agent-orchestrator' || currentModule === 'orchestrator-tools' || currentModule === 'orchestrator-approvals') && (
             <AgentOrchestratorView
@@ -885,8 +869,15 @@ export default function App() {
           {currentModule === 'notebook-lm' && (
             <NavalNotebookLMView onAskGlobalAi={triggerAiQuery} />
           )}
+
+              </>;
+            })()}
+          </section>)}
         </main>
       </div>
+
+      {/* Universal module command search; engineering data and permissions stay with their original views. */}
+      <StudioCommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} onSelect={setCurrentModule} />
 
       {/* AI Engineering Assistant Sliding Panel */}
       <AiEngineeringAssistant
