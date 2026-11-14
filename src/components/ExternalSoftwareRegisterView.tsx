@@ -1,6 +1,19 @@
 import React, {useMemo, useState} from 'react';
 import {BookOpen, GitBranch, ExternalLink, Search, ShieldAlert, CheckCircle2} from 'lucide-react';
-import register from '../data/externalSoftwareRegister.json';
+import rawRegister from '../data/externalSoftwareRegister.json';
+
+type PlannedUse = {project: string; agents: string[]; purpose: string; sourceEvidence: string};
+type ActualUse = {project: string; agent: string; kind: string; executionEvidence: string; sourceCommit: string};
+type SourceEvidence = {type: string; status: string; url: string};
+type ExternalRecord = {
+  id: string; name: string; repository: string; repositoryUrl: string; domain: string;
+  description: string; ownerAgent: string; reviewAgents: string[];
+  lifecycle: string; adoption: string; installation: string;
+  license: {spdxMetadata: string; review: string}; engineeringValidation: string;
+  source: {commit: string | null; tree: string | null}; plannedUsage: PlannedUse[];
+  actualUsage: ActualUse[]; evidence: SourceEvidence[]; nextAction: string;
+};
+const register = rawRegister as unknown as {registerId: string; records: ExternalRecord[]};
 
 /**
  * Read-only view of the reviewed source-control register. This is NOT a live
