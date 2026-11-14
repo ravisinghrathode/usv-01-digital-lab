@@ -35,3 +35,18 @@ The newly added policies are [A26 charter Amendment R2](../EXTERNAL_INTEGRATION_
 ## Milestone decision
 
 **Milestone completed in this PR:** pinned static audit, seven safe research-phase lifecycle updates, explicit project/agent research allocations, extended enforced charter, negative tests, and controlled overview. **Not completed:** reusable executing adapters, independent numerical qualification, software licensing approval, full SBOM/CVE security review, external runtime tool permissioning or vessel engineering use. No automated completion claim is permitted until those gates have evidence.
+
+## Trusted analytic screens added in the same milestone
+
+`scripts/a26-analytical-oracles.mjs` and its independent `tests/a26-analytical-oracles.test.mjs` provide six **synthetic, deterministic first-principles functions** with seven useful engineering checks. No third-party code is imported or executed.
+
+| Analytic screen | Explicit synthetic reference | Scope and limitation |
+| --- | --- | --- |
+| Rectangular displaced buoyancy | 2 × 1 × 0.5 m rectangular immersion = 1 m³; seawater 1025 kg/m³, g = 9.80665 m/s² implies 10051.81625 N | Checks SI arithmetic, not any candidate's hull model |
+| Electrical energy | 1200 W × 900 s = 300 Wh | Checks integration units and sign for simple constant load; does not model efficiency or battery chemistry |
+| Closest-point approach | Relative position (100,0) m, velocity (−5,0) m/s yields TCPA=20 s, DCPA=0 m | Checks Cartesian relative-motion geometry, not any COLREG decision |
+| Echo depth | 1500 m/s × 20 ms / 2 = 15 m | Checks ideal two-way propagation, not actual sound-speed profile or bathymetry |
+| NMEA XOR | Public illustrative GPGGA payload checksum = 47 | Checks ASCII XOR only, not real marine telemetry protocol coverage |
+| Ideal Wigley and oscillator | Idealized Wigley volume (4/9)LBT; L=9 m, B=2 m, T=1 m yields 8 m³. SDOF heave screen gives unity static gain and an illustrative resonant gain 10 | Algebraic tests of **explicitly stated** idealizations, not sea-state RAO, stability or vessel motion acceptance |
+
+**Independent verification gate remains HOLD:** a specialist must compare candidate results against these or separately accepted references with pinned inputs, units, frames, uncertainty bounds and an actual isolated execution receipt. A synthetic mathematical identity cannot by itself prove engineering suitability, software license, security, robustness or marine qualification.
