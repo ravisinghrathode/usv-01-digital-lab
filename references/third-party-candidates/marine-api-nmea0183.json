@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "marine-api-nmea0183",
+  "repository": "ktuukkan/marine-api",
+  "commit": "6224ad6e62e7554a89ae8fe9e9ba54a29df394de",
+  "sourceTree": "73f13436beb894649c3180037fcedd469b84e5b2",
+  "toolId": "TOOL-EXT-MARINE-NMEA",
+  "purpose": "Investigate safe parsing of recorded public NMEA 0183 and AIS messages in a research-only compatibility adapter.",
+  "agents": [
+    "A15",
+    "A18",
+    "A19",
+    "A20",
+    "A21",
+    "A23",
+    "A24",
+    "A26"
+  ],
+  "sourceOfEvidence": "https://github.com/ktuukkan/marine-api/tree/6224ad6e62e7554a89ae8fe9e9ba54a29df394de",
+  "execution": "NOT_AUTHORIZED",
+  "approval": "NOT_APPROVED",
+  "evidenceClassification": "STATIC_RESEARCH_ONLY"
+}
