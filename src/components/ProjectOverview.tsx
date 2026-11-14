@@ -41,7 +41,7 @@ import {
   ActivityLogItem
 } from '../types/engineering';
 import { getStatusBadgeClass, getRiskSeverityClass } from '../utils/engineeringUtils';
-import { NavigationModule } from './NavigationSidebar';
+import type { NavigationModule } from '../moduleRegistry';
 import { Vessel3DVisualizer } from './Vessel3DVisualizer';
 import { AgentRegistry } from '../core/registry/AgentRegistry';
 import { CentralOrchestrator } from '../core/orchestrator/CentralOrchestrator';
