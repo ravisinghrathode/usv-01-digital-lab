@@ -103,7 +103,7 @@ export const DirectorBriefing: React.FC<Props> = ({
       <button type="button" onClick={() => onNavigate('agent-orchestrator')}>Agent directorate</button>
     </div>
     <p className="ns3-director-explain" style={{marginTop:16}}>
-      {contract.totalModules}/24 registered workspaces. Deployed Google AI Studio revision and engineering authority must be verified separately.
+      {contract.totalModules}/24 registered workspaces. Deployed Google AI Studio SHA parity: external operator verification required. Engineering release authority is separate.
     </p>
   </section>;
 };
