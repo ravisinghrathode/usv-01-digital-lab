@@ -15,6 +15,7 @@ import {
   Eye,
   CheckCircle2
 } from 'lucide-react';
+import { shouldAnimateViewport } from '../studio/viewportActivity';
 
 export type VesselVisualMode = 'REALISTIC' | 'CFD_PRESSURE' | 'XRAY_STRUCTURAL' | 'WIREFRAME';
 export type CameraPreset = 'ISOMETRIC' | 'SIDE_PROFILE' | 'TOP_PLAN' | 'FRONT_BOW' | 'STERN_AFT';
@@ -91,18 +92,53 @@ export const Vessel3DVisualizer: React.FC<Vessel3DVisualizerProps> = ({
   const animFrameRef = useRef<number | null>(null);
 
   useEffect(() => {
-    let startTime = performance.now();
+    const canvas = canvasRef.current;
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let visible = true;
+    let elapsedActive = 0;
+    let lastTick = 0;
+    const active = () => shouldAnimateViewport(visible, document.hidden, motionQuery.matches);
+
+    // A hidden work tab must not keep its illustrative radar/hull animation running.
+    // Limit React state and geometry reconstruction to ~15 fps when visible.
     const loop = (now: number) => {
-      const dt = (now - startTime) / 1000;
-      setAnimTime(dt);
-      if (autoRotate) {
-        setYaw((prev) => (prev + 0.008) % (Math.PI * 2));
+      animFrameRef.current = null;
+      if (!active()) return;
+      if (now - lastTick >= 66) {
+        const delta = lastTick ? Math.min(0.2, (now - lastTick) / 1000) : 0;
+        elapsedActive += delta;
+        lastTick = now;
+        setAnimTime(elapsedActive);
+        if (autoRotate) setYaw(prev => (prev + 0.024) % (Math.PI * 2));
       }
       animFrameRef.current = requestAnimationFrame(loop);
     };
-    animFrameRef.current = requestAnimationFrame(loop);
+    const syncAnimation = () => {
+      if (active()) {
+        if (animFrameRef.current === null) {
+          lastTick = 0;
+          animFrameRef.current = requestAnimationFrame(loop);
+        }
+      } else {
+        if (animFrameRef.current !== null) cancelAnimationFrame(animFrameRef.current);
+        animFrameRef.current = null;
+      }
+    };
+    const observer = typeof IntersectionObserver === 'undefined' ? null :
+      new IntersectionObserver(entries => {
+        visible = entries[0]?.isIntersecting ?? true;
+        syncAnimation();
+      }, { threshold: 0.01 });
+    if (canvas) observer?.observe(canvas);
+    document.addEventListener('visibilitychange', syncAnimation);
+    motionQuery.addEventListener('change', syncAnimation);
+    syncAnimation();
     return () => {
-      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+      observer?.disconnect();
+      document.removeEventListener('visibilitychange', syncAnimation);
+      motionQuery.removeEventListener('change', syncAnimation);
+      if (animFrameRef.current !== null) cancelAnimationFrame(animFrameRef.current);
+      animFrameRef.current = null;
     };
   }, [autoRotate]);
 

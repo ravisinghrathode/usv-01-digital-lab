@@ -4,10 +4,18 @@ import type { PrincipalParticulars } from '../types';
 import type { NavigationModule } from '../moduleRegistry';
 import { useEngineeringContext } from '../studio/engineeringContext';
 import { compareMeshPreviews, MAX_OBJ_BYTES, MeshGeometry, parseObjMesh } from '../studio/meshGeometry';
+import {
+  coupleGeometryToHydrostatics,
+  generateParametricHull,
+  type GeometryPhysicsHandoffReceipt,
+  type HullTopology,
+  type ParametricHullArtifact,
+  type SectionShape
+} from '../core/cad/ParametricHullPipeline';
 import { MeshViewport } from './MeshViewport';
 import { Vessel3DVisualizer } from './Vessel3DVisualizer';
 
-interface LocalMesh { geometry: MeshGeometry; fileName: string; sha256: string }
+interface LocalMesh { geometry: MeshGeometry; fileName: string; sha256: string; origin: 'LOCAL_OBJ_PREVIEW' | 'PARAMETRIC_STUDY_DRAFT' }
 const conceptualAssemblies: { id: string; label: string; module: NavigationModule }[] = [
   { id: 'vessel', label: 'Primary vessel', module: 'workstream-NAV' },
   { id: 'hull', label: 'Hull form', module: 'workstream-NAV' },
@@ -30,6 +38,11 @@ export const CadStudioView: React.FC<Props> = ({ particulars, onNavigate, onAskA
   const [geometryB, setGeometryB] = useState<LocalMesh | null>(null);
   const [activeSlot, setActiveSlot] = useState<'A' | 'B'>('A');
   const [comparisonOpen, setComparisonOpen] = useState(false);
+  const [parametricOpen, setParametricOpen] = useState(false);
+  const [studyTopology, setStudyTopology] = useState<HullTopology>('MONOHULL');
+  const [studyShape, setStudyShape] = useState<SectionShape>('WIGLEY_PARABOLIC');
+  const [studyArtifact, setStudyArtifact] = useState<ParametricHullArtifact | null>(null);
+  const [studyHandoff, setStudyHandoff] = useState<GeometryPhysicsHandoffReceipt | null>(null);
   const [treeOpen, setTreeOpen] = useState(true);
   const [inspectorOpen, setInspectorOpen] = useState(true);
   const [focusMode, setFocusMode] = useState(false);
@@ -59,7 +72,7 @@ export const CadStudioView: React.FC<Props> = ({ particulars, onNavigate, onAskA
       if (!crypto?.subtle) throw new Error('Cryptographic file fingerprint unavailable: use a secure HTTPS browser');
       const digest = await crypto.subtle.digest('SHA-256', contents);
       const sha256 = Array.from(new Uint8Array(digest), v => v.toString(16).padStart(2,'0')).join('');
-      const loaded = { geometry, fileName:file.name, sha256 };
+      const loaded: LocalMesh = { geometry, fileName:file.name, sha256, origin: 'LOCAL_OBJ_PREVIEW' };
       if (slot === 'A') setGeometryA(loaded); else setGeometryB(loaded);
       setActiveSlot(slot);
       setSelected(geometry.groups[0]);
@@ -70,6 +83,60 @@ export const CadStudioView: React.FC<Props> = ({ particulars, onNavigate, onAskA
       });
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Could not read this mesh');
+    }
+  };
+
+  const generateStudyHull = () => {
+    setError(null);
+    try {
+      const artifact = generateParametricHull({
+        schema: 'usv01-parametric-hull/v1',
+        geometryId: studyTopology === 'CATAMARAN' ? 'STUDY-CAT-01' : 'STUDY-MONO-01',
+        revisionId: 'DRAFT-REV-01',
+        sourceOwnership: 'STUDY_DRAFT_CAD_PREVIEW',
+        units: 'SI_METERS_KG',
+        coordinateConvention: 'X_FWD_FROM_AP_Y_STBD_Z_UP_FROM_BL',
+        topology: studyTopology,
+        sectionShape: studyShape,
+        lwlM: 6.0,
+        loaM: 6.4,
+        hullBeamM: studyTopology === 'CATAMARAN' ? 0.65 : 1.6,
+        demiHullCenterlineSpacingM: studyTopology === 'CATAMARAN' ? 1.8 : undefined,
+        depthM: 0.9,
+        draftDesignM: 0.38,
+        stationCount: 11,
+        interfaces: [
+          { id: 'PROP-PORT', category: 'PROPULSION', xM: 0.2, yM: studyTopology === 'CATAMARAN' ? -0.9 : 0, zM: 0.12, envelopeNotes: 'Hypothetical thruster mount' }
+        ]
+      });
+      const hydroCheck = coupleGeometryToHydrostatics(artifact, {
+        id: 'LC-STUDY-LIGHT',
+        massKg: studyTopology === 'CATAMARAN' ? 1150 : 1200,
+        kgM: 0.42,
+        lcgM: 3.0,
+        tcgM: 0
+      });
+      const mesh = parseObjMesh(artifact.objExportAscii);
+      const loaded: LocalMesh = {
+        geometry: mesh,
+        fileName: `${artifact.spec.geometryId}-${artifact.spec.revisionId}.obj`,
+        sha256: artifact.geometrySha256,
+        origin: 'PARAMETRIC_STUDY_DRAFT'
+      };
+      setStudyArtifact(artifact);
+      setStudyHandoff(hydroCheck);
+      setGeometryA(loaded);
+      setActiveSlot('A');
+      setSelected(mesh.groups[0]);
+      updateSelection({
+        candidateId: artifact.spec.geometryId,
+        configurationRevision: artifact.spec.revisionId,
+        geometryFingerprint: artifact.geometrySha256,
+        componentId: mesh.groups[0],
+        evidenceLevel: 'UNVERIFIED'
+      });
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Study hull generation failed');
     }
   };
 
@@ -87,13 +154,17 @@ export const CadStudioView: React.FC<Props> = ({ particulars, onNavigate, onAskA
   };
 
   const clearLocal = () => {
-    setGeometryA(null);setGeometryB(null);setSelected('vessel');setComparisonOpen(false);setActiveSlot('A');resetGeometry();setError(null);
+    setGeometryA(null);setGeometryB(null);setStudyArtifact(null);setStudyHandoff(null);setSelected('vessel');setComparisonOpen(false);setActiveSlot('A');resetGeometry();setError(null);
   };
 
-  const activeLabel = active ? 'Local inspection mesh · NOT authoritative CAD' : 'Preview only · no authoritative CAD loaded';
+  const activeLabel = active
+    ? active.origin === 'PARAMETRIC_STUDY_DRAFT'
+      ? 'Study parametric draft CAD · NOT approved engineering baseline'
+      : 'Local inspection mesh · NOT authoritative CAD'
+    : 'Preview only · no authoritative CAD loaded';
   const inspectorModule = conceptual?.module ?? 'workstream-NAV';
 
-  return <div className={focusMode ? 'fixed inset-0 z-[60] flex flex-col overflow-hidden bg-[#0b1522] text-[#f1f5f9] p-3' : 'flex min-h-full flex-col gap-3 bg-[#0b1522] p-3 text-[#f1f5f9] lg:p-4'}>
+  return <div className={focusMode ? 'studio-dark fixed inset-0 z-[60] flex flex-col overflow-hidden bg-[#0b1522] text-[#f1f5f9] p-3' : 'studio-dark flex min-h-full flex-col gap-3 bg-[#0b1522] p-3 text-[#f1f5f9] lg:p-4'}>
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-white/10 bg-[#122338] px-4 py-3">
       <div>
         <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-300">Product workspace / USV-01</div>
@@ -114,8 +185,32 @@ export const CadStudioView: React.FC<Props> = ({ particulars, onNavigate, onAskA
       <button type="button" onClick={()=>chooseSlot('A')} aria-pressed={activeSlot==='A'} className={`rounded px-3 py-2 text-xs ${activeSlot==='A'?'bg-cyan-500/20 text-cyan-200':'text-slate-400'}`}>A {geometryA?'✓':'—'}</button>
       <button type="button" onClick={()=>chooseSlot('B')} aria-pressed={activeSlot==='B'} className={`rounded px-3 py-2 text-xs ${activeSlot==='B'?'bg-cyan-500/20 text-cyan-200':'text-slate-400'}`}>B {geometryB?'✓':'—'}</button>
       <button type="button" onClick={()=>setComparisonOpen(!comparisonOpen)} aria-expanded={comparisonOpen} className="flex items-center gap-1 rounded border border-white/20 px-3 py-2 text-xs"><GitCompare size={14}/> Compare</button>
+      <button type="button" onClick={()=>setParametricOpen(!parametricOpen)} aria-expanded={parametricOpen} className="flex items-center gap-1 rounded border border-emerald-400/30 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-200 hover:bg-emerald-500/20"><Ruler size={14}/> Study Parametric CAD</button>
       <button type="button" onClick={clearLocal} className="ml-auto rounded border border-white/20 px-3 py-2 text-xs">Clear session</button>
     </div>
+    {parametricOpen && <section aria-label="Study parametric hull pipeline" className="rounded-lg border border-emerald-400/25 bg-[#14273a] p-3 text-xs text-slate-200">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+        <span className="font-semibold text-emerald-200">Parametric Hull Study Generator (SI meters · STUDY_DRAFT_CAD_UNAPPROVED)</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <select aria-label="Study hull topology" value={studyTopology} onChange={e=>setStudyTopology(e.target.value as HullTopology)} className="rounded border border-white/20 bg-[#0b1522] px-2 py-1 text-xs">
+            <option value="MONOHULL">Monohull</option>
+            <option value="CATAMARAN">Catamaran</option>
+          </select>
+          <select aria-label="Study section shape" value={studyShape} onChange={e=>setStudyShape(e.target.value as SectionShape)} className="rounded border border-white/20 bg-[#0b1522] px-2 py-1 text-xs">
+            <option value="WIGLEY_PARABOLIC">Wigley parabolic</option>
+            <option value="CHINE_V">Chine V</option>
+            <option value="BOX">Box barge</option>
+          </select>
+          <button type="button" onClick={generateStudyHull} className="rounded bg-emerald-500/20 px-3 py-1 font-medium text-emerald-100 hover:bg-emerald-500/30">Generate watertight study hull</button>
+        </div>
+      </div>
+      {studyArtifact && studyHandoff && <div className="mt-2 grid gap-2 rounded bg-[#0b1522] p-2 sm:grid-cols-4">
+        <span>Watertight manifold: <strong>{studyArtifact.meshCheck.watertightManifold ? 'YES' : 'NO'}</strong></span>
+        <span>Equilibrium draft: <strong>{studyHandoff.hydroResult.equilibriumDraftM.toFixed(3)} m</strong></span>
+        <span>GMt (FS-corr): <strong>{(studyHandoff.hydroResult.freeSurfaceCorrectedGmtM ?? studyHandoff.hydroResult.uncorrectedGmtM)?.toFixed(3) ?? 'TBD'} m</strong></span>
+        <span>Geometry digest: <code className="text-[10px]">{studyArtifact.geometrySha256.slice(0, 20)}…</code></span>
+      </div>}
+    </section>}
     {error && <div role="alert" className="rounded-md border border-red-500/50 bg-red-950/50 p-3 text-xs text-red-200">{error}</div>}
     {comparisonOpen && <section aria-label="Geometry candidate comparison" className="rounded-lg border border-cyan-400/20 bg-[#14273a] p-3 text-xs text-slate-300">
       <div className="mb-2 font-semibold text-cyan-200">A/B geometry inspection comparison (not an engineering assessment)</div>

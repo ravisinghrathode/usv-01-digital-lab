@@ -3,6 +3,7 @@ import { AlertTriangle, ArrowRight, ClipboardList, GitBranch, ShieldCheck } from
 import type { Requirement, DesignDecision, EngineeringRisk, SimulationJob, VerificationPlan } from '../types/engineering';
 import type { NavigationModule } from '../moduleRegistry';
 import { useEngineeringContext } from '../studio/engineeringContext';
+import { inspectStudioModuleContract } from '../studio/releaseParity';
 
 interface Props {
   requirements:Requirement[];
@@ -15,12 +16,13 @@ interface Props {
 }
 export const DirectorBriefing:React.FC<Props>=({requirements,decisions,risks,simulations,verificationPlans,onNavigate,onDetailed})=>{
   const {selection}=useEngineeringContext();
+  const studioContract=inspectStudioModuleContract();
   const reqApproved=requirements.filter(r=>r.status==='Approved').length;
   const pending=decisions.filter(d=>d.approvalState!=='Approved').sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt));
   const openRisks=risks.filter(r=>r.status==='Open').sort((a,b)=>b.riskScore-a.riskScore);
   const unreviewed=simulations.filter(s=>s.validationStatus!=='Verified');
   const verificationPending=verificationPlans.filter(v=>v.status!=='Closed');
-  return <section aria-label="Programme Director Briefing" className="min-h-full bg-[#0e1b2c] p-4 text-slate-100 lg:p-6">
+  return <section aria-label="Programme Director Briefing" className="studio-dark min-h-full bg-[#0e1b2c] p-4 text-slate-100 lg:p-6">
     <header className="mb-5 flex flex-wrap items-start justify-between gap-4">
       <div><div className="text-[11px] uppercase tracking-[0.17em] text-cyan-300">Programme command / USV-01</div>
         <h1 className="mt-1 text-2xl font-semibold">Director's Engineering Briefing</h1>
@@ -41,9 +43,9 @@ export const DirectorBriefing:React.FC<Props>=({requirements,decisions,risks,sim
         <p className="mt-2 text-xs text-amber-200">Recorded status is not independently verified completion.</p>
       </div>
       <div className="rounded-xl border border-white/10 bg-[#182a3e] p-4">
-        <div className="flex items-center gap-2 text-xs text-slate-400"><ShieldCheck size={15}/> Evidence maturity</div>
+        <div className="flex items-center gap-2 text-xs text-slate-400"><ShieldCheck size={15}/> Evidence &amp; Studio X parity</div>
         <div className="mt-2 text-lg font-semibold">{unreviewed.length} <span className="text-xs font-normal text-slate-400">simulations without Verified status</span></div>
-        <p className="mt-2 text-xs text-slate-400">{verificationPending.length} verification plans not closed; evidence sources must be checked individually.</p>
+        <p className="mt-2 text-xs text-slate-400">{verificationPending.length} verification plans not closed; Studio X modules: {studioContract.totalModules}/24 registered (deployed AI Studio SHA parity: external operator verification required).</p>
       </div>
     </div>
     <div className="grid gap-4 xl:grid-cols-2">
