@@ -149,3 +149,33 @@ At every subsequent authorized action: (a) read the latest `main` SHA and PR/CI/
 - [Marine systems hold](MAR01_ENGINEERING_CLOSEOUT_REGISTER_20261113.md) · [commissioning runbook](COMMISSIONING_RUNBOOK.md) · [partial integration observations](LIVE_COMMISSIONING_AND_EVIDENCE_INPUTS.md)
 
 **No manufacturing, launch, autonomous vessel operation or safety-critical actuator control is authorized by this register.**
+
+
+## 8. Forward delivery milestones — 15 November 2026 (planning register, NOT engineering approval)
+
+**Audit reference:** reviewed \`main\` at \`acc24f33e80af07ee980b23de0f50a74383ea571\`, before this roadmap branch. The source at this SHA includes merged PR #98 (Naval Studio X single-interface shell); [main governance CI](https://github.com/ravisinghrathode/usv-01-digital-lab/actions/runs/43643905048) succeeded. An accepted source build **does not** verify the separate Google AI Studio live deployment, physical evidence or host. The machine-readable tracking companion is [\`config/delivery-milestones.json\`](../config/delivery-milestones.json); this Master Project Register remains the sole project coordination index and the charter/engineering evidence registers retain their own authorities.
+
+**External software source pipeline:** PRs #78 and #89–#96 are merged. The research register contains discovered candidates and a guarded intake path, but no source candidate is automatically an installed/approved engineering tool. Do not infer actual marine validation or code use from discovery totals.
+
+| Delivery ID | Stage / status at this audit | Verified exit proof to collect | GitHub work item |
+|---|---|---|---|
+| M00 | Immediate / **BLOCKED** on live deployed source proof | Exact AI Studio build SHA equals reviewed \`main\`; 24/24 module smoke checks, auth/data/approval flows and unverified CAD label | [#100](https://github.com/ravisinghrathode/usv-01-digital-lab/issues/100) |
+| M01 | Immediate / **BLOCKED** on independent governance review and authenticated adoption | Charter v1.1 exact-document digest independently reviewed and authenticated adoption (v1.1 remains PROPOSED until then) | [#101](https://github.com/ravisinghrathode/usv-01-digital-lab/issues/101) |
+| M02 | Immediate / **BLOCKED** on actual authorized host | Recovery A04 redacted same-SHA Mac/Codex OAuth host proof + independent ops review; **only then** A05 deterministic preflight | [#102](https://github.com/ravisinghrathode/usv-01-digital-lab/issues/102) |
+| M03 | Engineering software / **PLANNED**; depends on M01, M02 for acceptance | B03/B05 immutable candidate revisions, dependent-calculation invalidation, true two-candidate/two-revision evidence and independent QA | [#103](https://github.com/ravisinghrathode/usv-01-digital-lab/issues/103) |
+| M04 | Engineering software / **PLANNED**; depends on M03 | B04 geometry/offset/mass fidelity, revision hash linkage, export/import and independent hull-property checks | [#104](https://github.com/ravisinghrathode/usv-01-digital-lab/issues/104) |
+| M05 | Engineering verification / **PLANNED**; depends on M04 | B06 authentic reference cases, qualified discipline reviewer attestations and solver uncertainty/convergence where applicable | [#105](https://github.com/ravisinghrathode/usv-01-digital-lab/issues/105) |
+| M06 | Engineering integration / **PLANNED**; depends on M03 | B07 authenticated GitHub/paid Drive/Obsidian/Gemini source-digest and ACL roundtrip, conflict/offline tests | [#106](https://github.com/ravisinghrathode/usv-01-digital-lab/issues/106) |
+| M07 | Marine safety / **PLANNED**; depends on M05 | B08 non-actuating link-loss/COLREG, marine interfaces, fault-injection and qualified SIL/HIL evidence | [#107](https://github.com/ravisinghrathode/usv-01-digital-lab/issues/107) |
+| M08 | Acceptance demonstration / **PLANNED**; depends on M01–M07 | Charter A–E measurable cross-discipline iteration, uncertainty and independent evidence; still **not** automatic vessel release | [#108](https://github.com/ravisinghrathode/usv-01-digital-lab/issues/108) |
+
+### Prioritized next work without bypassing recovery Action A04
+
+1. **In parallel, M00 and M01:** release engineer verifies the *running* Studio X revision and 24 module routes. Qualified governance reviewer checks the charter and records an adoption decision tied to the exact document SHA/digest. Neither task modifies vessel engineering authority.
+2. **M02 is the sequential recovery critical path:** authorized operator runs the existing offline \`mission-control:a04-check\` against clean exact reviewed \`main\` and locally signed-in ChatGPT subscription Codex. Independent software operations reviewer authenticates the non-secret receipt and source; only then update A04 in this register via protected PR. A05 is **not authorized to advance before that closure**; A06 live and A07 host health are later distinct evidence.
+3. **M03 design in research-only drafts:** A01/A02/A25 specify immutable transaction schema, model-vs-source provenance, dependency invalidation and two-candidate/two-feedback test cases. Governed implementation/acceptance must obey M01/M02 controls. No safe-state or hull dimension may be fabricated to turn a test green.
+4. **M04 and M05 engineering fidelity:** replace visual mesh-only geometry with traceable draft parametric CAD and independent mass/hydrostatics coupling; then real model/reference and appropriate CFD/FEA/physical verification under separate authorized hosts and human reviewers.
+5. **M06 integration and M07 marine safety:** implement controlled source/Drive/Obsidian/Gemini roundtrips, independent review, and non-actuating hazard/physics evidence including communications-loss drift, L&R, acoustic wet-end, sealed-hull thermal and condensation.
+6. **M08 acceptance:** only after real data and external independent results, measure actual engineering improvement across revisions, identify every UNKNOWN/FAIL, and obtain separately scoped Project Lead/Engineering Director decisions. Engineering Gate 0 and vessel release **HOLD** remain unchanged absent their own exact-baseline evidence.
+
+**Governance note:** Issues and this planning branch are not GitHub Milestone API objects or signed acceptance records. Status stays BLOCKED/PLANNED until actual evidence, independent approval and any required protected-PR merge. Future updates append a dated delta instead of silently rewriting this audited snapshot.
