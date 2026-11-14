@@ -3,7 +3,8 @@ import {
   Anchor, Box, BrainCircuit, ChevronDown, ChevronLeft, ChevronRight, ClipboardList,
   Compass, LayoutDashboard, Menu, Search, ShieldCheck, Star, Wrench, X
 } from 'lucide-react';
-import { MODULE_GROUPS, MODULE_REGISTRY, NavigationModule, searchModules } from '../moduleRegistry';
+import { MODULE_REGISTRY, NavigationModule, searchModules } from '../moduleRegistry';
+import { DOCKYARD_AREAS, dockyardAreaFor } from '../studio/dockyardAreas';
 import { useEngineeringContext } from '../studio/engineeringContext';
 
 const PIN_KEY = 'naval-studio-x-pins';
@@ -45,7 +46,7 @@ export const StudioNavigation: React.FC<Props> = ({ currentModule, onSelectModul
   const [query, setQuery] = useState('');
   const [pins, setPins] = useState<NavigationModule[]>(readPins);
   const [groups, setGroups] = useState<string[]>([
-    'Product', MODULE_REGISTRY.find(module => module.id === currentModule)?.group ?? 'Product'
+    'product', dockyardAreaFor(currentModule)
   ]);
   const results = useMemo(() => searchModules(query), [query]);
   const drawer = useRef<HTMLElement>(null);
@@ -81,7 +82,7 @@ export const StudioNavigation: React.FC<Props> = ({ currentModule, onSelectModul
   const select = (module: NavigationModule) => {
     onSelectModule(module);
     setMobileOpen(false);
-    setGroups(current => [...new Set([...current, MODULE_REGISTRY.find(m => m.id === module)!.group])]);
+    setGroups(current => [...new Set([...current, dockyardAreaFor(module)])]);
   };
   const toggleRail = () => {
     setCollapsed(prev => {
@@ -157,15 +158,15 @@ export const StudioNavigation: React.FC<Props> = ({ currentModule, onSelectModul
             {pins.map(id => MODULE_REGISTRY.find(m => m.id === id)).filter(
               (module): module is (typeof MODULE_REGISTRY)[number] => Boolean(module)
             ).map(moduleRow)}
-            <div className="ns3-side-label">Engineering modules · {MODULE_REGISTRY.length}</div>
+            <div className="ns3-side-label">All work areas · {MODULE_REGISTRY.length} modules</div>
           </>}
-          {query ? results.map(moduleRow) : MODULE_GROUPS.map(group => {
-            const items = MODULE_REGISTRY.filter(m => m.group === group);
-            const opened = groups.includes(group);
-            return <div key={group}>
+          {query ? results.map(moduleRow) : DOCKYARD_AREAS.map(area => {
+            const items = MODULE_REGISTRY.filter(m => (area.modules as readonly string[]).includes(m.id));
+            const opened = groups.includes(area.id);
+            return <div key={area.id}>
               <button type="button" className="ns3-navgroup-toggle" aria-expanded={opened}
-                onClick={() => setGroups(current => opened ? current.filter(g => g !== group) : [...current, group])}>
-                {group} <span aria-hidden="true">{opened ? <ChevronDown size={17}/> : <ChevronRight size={17}/>}</span>
+                onClick={() => setGroups(current => opened ? current.filter(id => id !== area.id) : [...current, area.id])}>
+                {area.label} <span aria-hidden="true">{opened ? <ChevronDown size={17}/> : <ChevronRight size={17}/>}</span>
               </button>
               {opened && <div>{items.map(moduleRow)}</div>}
             </div>;
