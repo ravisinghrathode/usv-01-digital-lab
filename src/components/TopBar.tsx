@@ -49,7 +49,7 @@ export const TopBar: React.FC<TopBarProps> = ({
   const isDirector = currentUser?.role === 'ENGINEERING_DIRECTOR';
 
   return (
-    <header className="h-14 bg-slate-950/95 border-b border-slate-800 px-4 flex items-center justify-between gap-4 z-10 sticky top-0 backdrop-blur-sm">
+    <header className="studio-dark h-14 bg-slate-950/95 border-b border-slate-800 px-4 flex items-center justify-between gap-4 z-10 sticky top-0 backdrop-blur-sm">
       {/* Breadcrumb & Subsystem Title */}
       <div className="flex items-center gap-3 min-w-0">
         <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
