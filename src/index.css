@@ -61,8 +61,8 @@
 .studio-x .studio-dark .bg-slate-800 { background-color: #253d56; }
 .studio-x .studio-dark .border-slate-800 { border-color: #31445b; }
 .studio-x .studio-dark .border-slate-700 { border-color: #496077; }
-.studio-x .studio-dark .hover\\:bg-slate-800:hover { background-color: #253d56; }
-.studio-x .studio-dark .hover\\:bg-slate-900:hover { background-color: #1e3249; }
+.studio-x .studio-dark .hover\:bg-slate-800:hover { background-color: #253d56; }
+.studio-x .studio-dark .hover\:bg-slate-900:hover { background-color: #1e3249; }
 .studio-x .studio-dark input::placeholder { color: #a8b9cf; }
 .studio-x .studio-dark button { min-height: 34px; }
 
