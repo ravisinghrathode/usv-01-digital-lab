@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "sintef-feems",
+  "repository": "SINTEF/FEEMS",
+  "commit": "ebb05ffdd5e9ed509fe66d8451ed0ff4f7635629",
+  "sourceTree": "c1c3b88470206fbc5e6a28a4b7547ecccdfa6802",
+  "toolId": "TOOL-EXT-FEEMS-ENERGY",
+  "purpose": "Assess marine propulsion, electrical balance, energy and fuel modelling for offline system trades; not a released energy budget.",
+  "agents": [
+    "A11",
+    "A13",
+    "A14",
+    "A15",
+    "A18",
+    "A20",
+    "A21",
+    "A23",
+    "A24",
+    "A26"
+  ],
+  "sourceOfEvidence": "https://github.com/SINTEF/FEEMS/tree/ebb05ffdd5e9ed509fe66d8451ed0ff4f7635629",
+  "execution": "NOT_AUTHORIZED",
+  "approval": "NOT_APPROVED",
+  "evidenceClassification": "STATIC_RESEARCH_ONLY"
+}
