@@ -14,6 +14,10 @@ on:
     paths:
       - 'scripts/repository-scout.mjs'
       - 'scripts/repository-integration-planner.mjs'
+      - 'scripts/external-integration-agent.mjs'
+      - 'config/external-integration-policy.json'
+      - 'tests/external-integration-agent.test.mjs'
+      - 'docs/EXTERNAL_INTEGRATION_AGENT_CHARTER.md'
       - 'tests/repository-integration-planner.test.mjs'
       - 'config/repository-scout.json'
       - 'src/data/externalSoftwareRegister.json'
@@ -47,7 +51,7 @@ jobs:
         with:
           node-version: '22'
       - name: Run offline tests
-        run: node --test tests/repository-scout.test.mjs tests/repository-integration.test.mjs tests/repository-integration-planner.test.mjs tests/external-software-register.test.mjs tests/external-software-usage.test.mjs
+        run: node --test tests/repository-scout.test.mjs tests/repository-integration.test.mjs tests/repository-integration-planner.test.mjs tests/external-software-register.test.mjs tests/external-software-usage.test.mjs tests/external-integration-agent.test.mjs
       - name: Validate permanent register and generated overview
         run: node scripts/external-software-register.mjs --check
 
@@ -86,6 +90,10 @@ jobs:
           --scout-report "$RUNNER_TEMP/repository-scout/latest.json"
           --out-dir "$RUNNER_TEMP/repository-scout"
           --limit 5
+      - name: Draft A26 governed adapter and independent-test review packages for pinned registered candidates
+        run: >-
+          node scripts/external-integration-agent.mjs prepare-all
+          --out-dir "$RUNNER_TEMP/repository-scout/a26-review-packages"
       - name: Propose changes to reviewed register from new discoveries (never auto-approve)
         run: >-
           node scripts/external-software-register.mjs
