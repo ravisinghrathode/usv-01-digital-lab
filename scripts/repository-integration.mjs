@@ -21,7 +21,7 @@ const MAX_TREE_BYTES = 150 * 1024 * 1024;
 const MAX_STDOUT_BYTES = 256 * 1024;
 const VALID_COMMANDS = new Set(['intake', 'stage', 'verify', 'propose']);
 
-export function validateSpec(raw) {
+export function validateSpec(raw, {requireRunner = true} = {}) {
   if (!raw || raw.schemaVersion !== 1 || !ID.test(raw.id ?? '') ||
       !REPO.test(raw.repository ?? '') || !SHA.test(raw.commit ?? '') || !TOOL.test(raw.toolId ?? '')) {
     throw Error('Spec requires schemaVersion=1, safe id, public owner/repo, exact 40-hex commit, TOOL-EXT-* toolId');
@@ -30,13 +30,13 @@ export function validateSpec(raw) {
   if (!Array.isArray(agents) || !agents.length || agents.length > 26 ||
       !agents.every(a => /^A(0[1-9]|1\d|2[0-6])$/.test(a))) throw Error('Invalid assigned engineering reviewers');
   if (typeof raw.purpose !== 'string' || raw.purpose.length < 12 || raw.purpose.length > 500) throw Error('Purpose must be explicit');
-  if (!raw.runner || !IMAGE.test(raw.runner.image ?? '') || !Array.isArray(raw.runner.argv) ||
+  if ((requireRunner || raw.runner !== undefined) && (!raw.runner || !IMAGE.test(raw.runner.image ?? '') || !Array.isArray(raw.runner.argv) ||
       raw.runner.argv.length < 1 || raw.runner.argv.length > 16 ||
-      !raw.runner.argv.every(x => typeof x === 'string' && x.length >= 1 && x.length <= 300 && !/[\r\n\0]/.test(x))) {
+      !raw.runner.argv.every(x => typeof x === 'string' && x.length >= 1 && x.length <= 300 && !/[\r\n\0]/.test(x)))) {
     throw Error('Runner requires a digest-pinned image and bounded argv array; no shell expansion');
   }
-  if (!Array.isArray(raw.cases) || raw.cases.length < 1 || raw.cases.length > 20) throw Error('At least one reference case required (max 20)');
-  for (const c of raw.cases) {
+  if ((requireRunner || raw.cases !== undefined) && (!Array.isArray(raw.cases) || raw.cases.length < 1 || raw.cases.length > 20)) throw Error('At least one reference case required (max 20)');
+  for (const c of (raw.cases || [])) {
     if (!c || !ID.test(c.id ?? '') || !c.input || typeof c.input !== 'object' || Array.isArray(c.input) ||
         !c.expected || typeof c.expected !== 'object' || Array.isArray(c.expected) ||
         !Object.keys(c.expected).length || !Object.values(c.expected).every(v => Number.isFinite(v) || typeof v === 'string' || typeof v === 'boolean') ||
@@ -46,7 +46,7 @@ export function validateSpec(raw) {
     const unknown = Object.keys(c.absoluteTolerance || {}).filter(k => !Object.keys(c.expected).includes(k));
     if (unknown.length) throw Error('Tolerance must correspond to expected value');
   }
-  if (new Set(raw.cases.map(c => c.id)).size !== raw.cases.length) throw Error('Duplicate reference-case IDs');
+  if (raw.cases && new Set(raw.cases.map(c => c.id)).size !== raw.cases.length) throw Error('Duplicate reference-case IDs');
   return raw;
 }
 
@@ -62,6 +62,7 @@ export function parseArgs(argv) {
     opts[arg.slice(2).replace('out-dir', 'outDir')] = argv[++i];
   }
   if (!opts.spec) throw Error('--spec is required');
+  if (command === 'verify' && !opts.execute) throw Error('verify requires --execute and explicit risk acknowledgement');
   if (opts.execute && (command !== 'verify' || !opts.acknowledge)) throw Error('--execute requires verify and explicit risk acknowledgement');
   if (opts.acknowledge && !opts.execute) throw Error('Risk acknowledgement only belongs to --execute');
   return opts;
@@ -75,7 +76,7 @@ async function writeJson(filename, data) {
 async function loadJson(filename) { return JSON.parse(await readFile(filename, 'utf8')); }
 
 export async function githubIntake(spec, fetchImpl = fetch, token = '') {
-  validateSpec(spec);
+  validateSpec(spec, {requireRunner: false});
   const base = `https://api.github.com/repos/${spec.repository}`;
   const headers = {'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', 'User-Agent': 'USV-01-Repository-Integration'};
   if (token) headers.Authorization = `Bearer ${token}`;
@@ -161,7 +162,7 @@ export async function checkSourceTree(dir) {
 
 /** Public source staging does NOT execute project scripts or submodules. */
 export async function stageSource(spec, outDir, exec = execBounded) {
-  validateSpec(spec);
+  validateSpec(spec, {requireRunner: false});
   const base = path.resolve(outDir);
   const source = path.join(base, 'source', spec.id);
   await mkdir(source, {recursive: true, mode: 0o700});
@@ -249,14 +250,15 @@ export async function verifyCandidate(spec, outDir, exec = execBounded) {
 }
 
 export function buildProposal(spec, stage, verification = null) {
-  validateSpec(spec);
+  validateSpec(spec, {requireRunner: false});
   if (!stage || stage.commit !== spec.commit || stage.repo !== spec.repository) throw Error('Stage required for proposal');
   if (verification && (verification.commit !== spec.commit || verification.tree !== stage.tree)) throw Error('Verification source mismatch');
   return {
     schemaVersion: 1, phase: 'INTEGRATION_PROPOSAL_ONLY', toolId: spec.toolId,
-    suggestedIntegration: {entrypoint: 'scripts/repository-integration.mjs', runtime: 'docker', isolated: true, pinnedImage: spec.runner.image, pinnedCommit: spec.commit, repository: spec.repository, interface: 'JSON_STDIN_JSON_STDOUT', agentReviewers: spec.agents},
+    suggestedIntegration: {entrypoint: 'scripts/repository-integration.mjs', runtime: 'docker', isolated: true, pinnedImage: spec.runner?.image || 'NOT_YET_AVAILABLE', pinnedCommit: spec.commit, repository: spec.repository, interface: 'JSON_STDIN_JSON_STDOUT', agentReviewers: spec.agents},
     provenance: {commit: stage.commit, tree: stage.tree, manifests: stage.inspected.manifests},
     reproducibility: verification?.status ?? 'NO_EXECUTION_EVIDENCE',
+    runnableSpecComplete: !!(spec.runner && spec.cases?.length),
     mandatoryReview: {
       technical: 'A15/A23 independent review and appropriate engineering specialists',
       security: 'A20 source/dependency/container/image and supply-chain assessment; CVEs and SBOM TBD',
@@ -272,7 +274,7 @@ export function buildProposal(spec, stage, verification = null) {
 
 export async function main(argv = process.argv.slice(2)) {
   const opts = parseArgs(argv);
-  const spec = validateSpec(await loadJson(opts.spec));
+  const spec = validateSpec(await loadJson(opts.spec), {requireRunner: opts.command === 'verify'});
   const outDir = path.resolve(opts.outDir || path.join(os.tmpdir(), 'usv01-repository-integration', spec.id));
   await mkdir(outDir, {recursive: true, mode: 0o700});
   let result;
