@@ -1,8 +1,9 @@
 import React,{useEffect,useMemo,useRef,useState} from 'react';
-import {ArrowLeft,ArrowRight,ArrowUpRight,BookOpen,Box,ChevronDown,Command,Compass,FileSearch,FlaskConical,GitCompareArrows,HelpCircle,Layers,LockKeyhole,Menu,Network,Search,ShieldCheck,X} from 'lucide-react';
+import {Activity,ArrowLeft,ArrowRight,ArrowUpRight,BookOpen,Bot,Box,CalendarRange,ChevronDown,Command,Compass,FileSearch,FlaskConical,GitCompareArrows,HelpCircle,Layers,LockKeyhole,Menu,Network,Search,ShieldCheck,SlidersHorizontal,X} from 'lucide-react';
 import {Design,Decide,Experiment,Notebook,Worktable} from './v2/Modes';
 import NavalMark from './NavalMark';
 import LiveWorkspace from './LiveWorkspace';
+import {SessionDesk,type LocalSessionDraft} from './SessionDesk';
 const AgentAcademyPanel = React.lazy(() => import('./AgentAcademyPanel'));
 import {useSnapshot} from '../dockyard2/useSnapshot';
 import {searchSourceRegister} from './sourceSearch';
@@ -24,6 +25,7 @@ export default function EngineeringSessionsApp(){
  const [demoMode,setDemoMode]=useState(()=>typeof window!=='undefined'&&new URLSearchParams(window.location.search).get('demo')==='1');
  const [session,setSession]=useState<SessionView>(()=>({...DEFAULT_SESSION,mode:typeof window==='undefined'?'worktable':validMode(window.location.hash.slice(1))}));
  const [trayOpen,setTrayOpen]=useState(false);
+ const [localDraft,setLocalDraft]=useState<LocalSessionDraft|null>(null);
  const [search,setSearch]=useState('');
  const [helpOpen,setHelpOpen]=useState(false);
  const searchDialog=useRef<HTMLDialogElement>(null);
@@ -72,10 +74,10 @@ export default function EngineeringSessionsApp(){
  const addNote=(content:string,kind:Note['kind']='local')=>setSession(old=>({...old,notes:[...old.notes,{id:Date.now()+old.notes.length,content,kind,created:new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}]}));
  const prepareTask=()=>{addNote('Establish reviewed geometry, explicit operating conditions and reproducible mass/stability calculations; request independent technical review before a recommendation.','task');setMode('notebook')};
  const props={session,changeMode:setMode,select,chooseStudy,setPerspective,toggleSync,toggleIsolate,addNote,prepareTask};
- return <div className="es-app">
+ return <div className={session.mode==='worktable'?'es-app ux-workbench-active':'es-app'}>
   <a href="#es-main" className="es-skip">Skip to investigation canvas</a>
   <header className="es-commandbar">
-   <a className="es-brand" href="/#worktable" onClick={e=>{e.preventDefault();setMode('worktable')}}><span className="es-logo"><NavalMark/></span><span><strong>NAVAL AI LAB <span className="es-brand-programme">/ USV-01</span></strong><small>Engineering session</small></span></a>
+   <a className="es-brand" href="/#worktable" onClick={e=>{e.preventDefault();setMode('worktable')}}><span className="es-logo"><NavalMark/></span><span><strong>NAVAL-USV-LAB <span className="es-brand-programme">/ USV-01</span></strong><small>Marine Autonomy Digital Lab</small></span></a>
    <nav className="es-modes" aria-label="Engineering session modes">
     {MODES.map(m=>{const Icon=ICONS[m.id];return <button type="button" key={m.id} aria-current={session.mode===m.id?'page':undefined}
       onClick={()=>setMode(m.id)} title={m.name+' · Alt+'+m.key}><Icon size={17}/><span>{m.name}</span></button>})}
@@ -87,13 +89,22 @@ export default function EngineeringSessionsApp(){
     <a className="es-governed" href="/legacy.html" title="Open original governed engineering lab"><span>Original lab</span> <ArrowUpRight size={14}/></a>
    </div>
   </header>
+  <nav className="ux-primary-nav" aria-label="Naval engineering workspaces">
+   <button type="button" onClick={()=>setMode('worktable')} aria-current={session.mode==='worktable'?'page':undefined}><CalendarRange size={17}/> Engineering Sessions</button>
+   <a href="/legacy.html?module=cad-studio&amp;origin=engineering-sessions"><Box size={17}/> CAD Studio</a>
+   <a href={legacyLink('workstream-NAV')}><SlidersHorizontal size={17}/> Parameters</a>
+   <button type="button" onClick={()=>setMode('experiment')} aria-current={session.mode==='experiment'?'page':undefined}><Activity size={17}/> Analysis</button>
+   <a href={legacyLink('agent-orchestrator')}><Bot size={17}/> Agents</a>
+   <button type="button" onClick={()=>setMode('decide')} aria-current={session.mode==='decide'?'page':undefined}><ShieldCheck size={17}/> Assurance</button>
+  </nav>
   {helpOpen&&<aside className="es-help-popover"><strong>About this workspace</strong><p>Use five workspaces or Alt+1–5. The default uses the authenticated engineering store; records and permissions come from the server. Press Ctrl/Cmd+K to search the 24 governed modules. The optional example tour contains only synthetic data.</p><button type="button" onClick={()=>setHelpOpen(false)}>Close</button></aside>}
   <section className="es-session-spine" aria-label="Persistent engineering investigation context">
    <div className="es-question">
     <span className="es-context-id">{demoMode?INVESTIGATION.id:'PRJ-USV-01'} / USV-01</span>
-    <strong>{demoMode?INVESTIGATION.title:'Authenticated engineering project · controlled source records'}</strong>
+    <strong>{localDraft?localDraft.title:demoMode?INVESTIGATION.title:'Authenticated engineering project · controlled source records'}</strong>
    </div>
    <div className="es-spine-context">
+    {session.mode==='worktable'&&<span><a href={sourceUrl} target="_blank" rel="noreferrer">Source: {verifiedSourceHash?sourceHash.slice(0,8):'revision unverified'}</a></span>}
     {demoMode?<><span><Box size={15}/> Placeholder revisions A + B</span><span><FlaskConical size={15}/> {STUDIES.length} proposed studies</span><span><LockKeyhole size={15}/> Not reviewed</span></>:
      <><span><Box size={15}/> {status==='connected'?snapshot.simulations.filter(s=>!s.isIllustrative).length:'—'} registered studies</span><span><LockKeyhole size={15}/> Human approval required</span></>}
    </div>
@@ -102,13 +113,13 @@ export default function EngineeringSessionsApp(){
    <div className="es-truth-banner es-truth-banner-live" role="note"><span className="es-truth-dot"/> <strong>{status==='connected'?'AUTHENTICATED PROJECT SOURCE':'PROJECT SIGN-IN REQUIRED'}</strong><span>Live register view · only non-illustrative engineering records are counted · no automatic certification or approval</span><span className="es-library-status">{user?'Staff: '+user.userName:'No signed-in staff session'}</span></div>}
   <main className="es-main" id="es-main" ref={main} tabIndex={-1}>
    {demoMode?<>
-    {session.mode==='worktable'&&<Worktable {...props}/>}
+    {session.mode==='worktable'&&<SessionDesk demoMode draft={localDraft} onDraftChange={setLocalDraft} snapshot={snapshot} changeMode={setMode} onRefresh={refresh} onInspectConcept={()=>select('reference')}/>}
     {session.mode==='design'&&<Design {...props}/>}
     {session.mode==='experiment'&&<Experiment {...props}/>}
     {session.mode==='decide'&&<Decide {...props}/>}
     {session.mode==='notebook'&&<Notebook {...props}/>}
    </>:<>
-     <LiveWorkspace mode={session.mode} snapshot={snapshot} status={status} error={error} user={user} onRefresh={refresh} changeMode={setMode}/>
+     {session.mode==='worktable'&&user&&status==='connected'?<SessionDesk demoMode={false} draft={localDraft} onDraftChange={setLocalDraft} snapshot={snapshot} changeMode={setMode} onRefresh={refresh} onInspectConcept={()=>select('reference')}/>:<LiveWorkspace mode={session.mode} snapshot={snapshot} status={status} error={error} user={user} onRefresh={refresh} changeMode={setMode}/>}
      {session.mode==='notebook'&&<React.Suspense fallback={<p>Loading Academy curriculum…</p>}><AgentAcademyPanel/></React.Suspense>}
    </>}
   </main>

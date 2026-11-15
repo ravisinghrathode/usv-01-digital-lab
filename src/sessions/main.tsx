@@ -6,6 +6,7 @@ import './styles.css';
 import './fidelity.css';
 import './v2/design.css';
 import './live.css';
+import './session-desk.css';
 
 const root=document.getElementById('root');
 if(!root)throw Error('Engineering Sessions application root not found.');

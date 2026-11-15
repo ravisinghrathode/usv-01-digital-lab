@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { ChevronRight, FileWarning, Focus, GitCompare, Layers3, Maximize2, Minimize2, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen, Ruler, ShieldAlert, UploadCloud } from 'lucide-react';
+import { ArrowLeft, ChevronRight, FileWarning, Focus, GitCompare, Layers3, Maximize2, Minimize2, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen, Ruler, ShieldAlert, UploadCloud } from 'lucide-react';
 import type { PrincipalParticulars, Requirement, SimulationJob, VerificationPlan, WorkstreamCode } from '../types';
 import { DockyardContextDock } from './DockyardContextDock';
 import type { NavigationModule } from '../moduleRegistry';
@@ -173,10 +173,12 @@ export const CadStudioView: React.FC<Props> = ({ particulars, onNavigate, onAskA
   };
   const selectedDomain = active ? null : (domainByConcept[selected] ?? null);
   const selectedLabel = active ? selected : (conceptual?.label ?? 'Primary vessel');
+  const fromEngineeringSessions = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('origin') === 'engineering-sessions';
 
   return <div className={focusMode ? 'studio-dark dy-cad ns3-cad-workstage fixed inset-0 z-[60] flex flex-col overflow-hidden bg-[#0b1522] text-[#f1f5f9] p-3' : 'studio-dark dy-cad ns3-cad-workstage flex min-h-full flex-col gap-3 bg-[#0b1522] p-3 text-[#f1f5f9] lg:p-4'}>
     <div className="dy-cad-header flex flex-wrap items-center justify-between gap-3 rounded-lg border border-white/10 bg-[#122338] px-4 py-3">
       <div>
+        {fromEngineeringSessions && <a href="/#worktable" className="mb-2 inline-flex min-h-9 items-center gap-2 rounded-md border border-cyan-400/40 bg-cyan-400/10 px-3 py-1.5 text-xs font-semibold text-cyan-100 hover:bg-cyan-400/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200"><ArrowLeft size={15}/> Return to Engineering Sessions</a>}
         <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-300">Product workspace / USV-01</div>
         <h1 className="text-lg font-semibold">CAD Studio <span className="text-xs font-normal text-slate-400">Clarity workbench</span></h1>
       </div>
