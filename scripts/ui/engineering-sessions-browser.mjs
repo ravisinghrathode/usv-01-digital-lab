@@ -25,7 +25,7 @@ try{
  await page.screenshot({path:path.join(output,'sessions-worktable-1440.png'),fullPage:false,animations:'disabled'});
  // Contextual inspector is optional and genuine — not a pinned dashboard card.
  await page.locator('.es-space-left .es-object-node').first().click();
- const inspector=page.getByRole('complementary',{name:'Selected object context inspector'});
+ const inspector=page.getByRole('dialog',{name:'Selected object context inspector'});
  await inspector.waitFor();
  assert(await inspector.getByText('Demonstration-only').isVisible());
  await page.getByRole('button',{name:'Close context inspector'}).click();
