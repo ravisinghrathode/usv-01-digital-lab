@@ -41,6 +41,7 @@ export function authorizeLabRoute(method: string, urlPath: string, role: string)
 
   // Changes to engineering registers and research adoption are engineering actions.
   if (
+    (verb==='POST' && (path==='/session/cad-revisions'||path==='/session/notes')) ||
     (['POST','PUT','PATCH'].includes(verb) && path.startsWith('/data/')) ||
     (verb === 'POST' && /^\/notebook-lm\/clues\/[^/]+\/adopt$/.test(path))
   ) return engineeringWriters.has(role);
