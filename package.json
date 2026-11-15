@@ -64,7 +64,10 @@
     "a26:test": "node --test tests/a26/*.test.mjs",
     "a26:unify": "node scripts/a26/unified-evidence.mjs",
     "a26:rules": "node scripts/a26/r3-policy-check.mjs",
-    "test:aistudio-startup": "node scripts/aistudio/smoke.mjs"
+    "test:aistudio-startup": "node scripts/aistudio/smoke.mjs",
+    "academy:plan": "tsx scripts/run-agent-academy.ts plan",
+    "academy:status": "tsx scripts/run-agent-academy.ts status",
+    "academy:study": "tsx scripts/run-agent-academy.ts --execute"
   },
   "dependencies": {
     "@google/genai": "^3.1.0",
