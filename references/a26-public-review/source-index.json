@@ -1,0 +1,560 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-15T02:29:44.649Z",
+  "records": [
+    {
+      "key": "martac:mantast12",
+      "model": "MANTAS T12",
+      "manufacturer": "MARTAC",
+      "country": "United States",
+      "aliases": [],
+      "statusClaim": "OPERATIONAL_CLAIM",
+      "evidenceStatus": "SOURCE_CORROBORATED_REVIEW_REQUIRED",
+      "confidence": 0.4,
+      "uncertainty": "PUBLIC_SOURCE_ONLY_NOT_INDEPENDENTLY_REVIEWED",
+      "sources": [
+        {
+          "id": "martac-t12",
+          "url": "https://martacsystems.com/proven-products/mantas-t12/",
+          "retrievedAt": "2026-11-15T02:29:34.709Z",
+          "sha256": "sha256:b876060526d7d0163f0bb46a0a1dd51fcbae27312fd85bad021562ab9534f49c",
+          "byteLength": 398231,
+          "contentType": "text/html; charset=utf-8",
+          "blobPath": "blobs/b876060526d7d0163f0bb46a0a1dd51fcbae27312fd85bad021562ab9534f49c.html",
+          "identityConfirmed": true,
+          "claims": [
+            {
+              "field": "length",
+              "value": "3.6 m",
+              "unit": "m",
+              "quotation": "Length - 12 ft (3.6 m)",
+              "sourceId": "martac-t12",
+              "sourceUrl": "https://martacsystems.com/proven-products/mantas-t12/",
+              "sha256": "sha256:b876060526d7d0163f0bb46a0a1dd51fcbae27312fd85bad021562ab9534f49c",
+              "acquiredAt": "2026-11-15T02:29:34.709Z",
+              "evidenceStatus": "QUOTE_MATCHED_UNREVIEWED"
+            }
+          ],
+          "evidenceStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED"
+        }
+      ],
+      "fields": {
+        "length": [
+          {
+            "field": "length",
+            "value": "3.6 m",
+            "unit": "m",
+            "quotation": "Length - 12 ft (3.6 m)",
+            "sourceId": "martac-t12",
+            "sourceUrl": "https://martacsystems.com/proven-products/mantas-t12/",
+            "sha256": "sha256:b876060526d7d0163f0bb46a0a1dd51fcbae27312fd85bad021562ab9534f49c",
+            "acquiredAt": "2026-11-15T02:29:34.709Z",
+            "evidenceStatus": "QUOTE_MATCHED_UNREVIEWED"
+          }
+        ],
+        "beam": [],
+        "draft": [],
+        "displacement": [],
+        "hull": [],
+        "propulsion": [],
+        "speed": [],
+        "endurance": [],
+        "range": [],
+        "payload": [],
+        "status": [],
+        "communications": [],
+        "autonomy": [],
+        "launchRecovery": []
+      },
+      "engineeringReleaseApproved": false
+    },
+    {
+      "key": "martac:devilrayt24",
+      "model": "Devil Ray T24",
+      "manufacturer": "MARTAC",
+      "country": "United States",
+      "aliases": [],
+      "statusClaim": "OPERATIONAL_CLAIM",
+      "evidenceStatus": "SOURCE_CORROBORATED_REVIEW_REQUIRED",
+      "confidence": 0.4,
+      "uncertainty": "PUBLIC_SOURCE_ONLY_NOT_INDEPENDENTLY_REVIEWED",
+      "sources": [
+        {
+          "id": "martac-t24",
+          "url": "https://martacsystems.com/proven-products/devil-ray-t24/",
+          "retrievedAt": "2026-11-15T02:29:35.605Z",
+          "sha256": "sha256:2f476436772c88b0948c50b4469501f397f350bae5f5f8f7d6037b0e25b08685",
+          "byteLength": 397368,
+          "contentType": "text/html; charset=utf-8",
+          "blobPath": "blobs/2f476436772c88b0948c50b4469501f397f350bae5f5f8f7d6037b0e25b08685.html",
+          "identityConfirmed": true,
+          "claims": [],
+          "evidenceStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED"
+        }
+      ],
+      "fields": {
+        "length": [],
+        "beam": [],
+        "draft": [],
+        "displacement": [],
+        "hull": [],
+        "propulsion": [],
+        "speed": [],
+        "endurance": [],
+        "range": [],
+        "payload": [],
+        "status": [],
+        "communications": [],
+        "autonomy": [],
+        "launchRecovery": []
+      },
+      "engineeringReleaseApproved": false
+    },
+    {
+      "key": "oceanaero:triton",
+      "model": "Triton",
+      "manufacturer": "Ocean Aero",
+      "country": "United States",
+      "aliases": [],
+      "statusClaim": "PRODUCT_CLAIM",
+      "evidenceStatus": "SOURCE_CORROBORATED_REVIEW_REQUIRED",
+      "confidence": 0.4,
+      "uncertainty": "PUBLIC_SOURCE_ONLY_NOT_INDEPENDENTLY_REVIEWED",
+      "sources": [
+        {
+          "id": "navy-2022-oceanaero-triton",
+          "url": "https://www.navy.mil/Press-Office/News-Stories/display-news/Article/3227184/us-launches-new-unmanned-ai-systems-integration-event/",
+          "evidenceStatus": "FETCH_FAILED",
+          "error": "ROBOTS_NOT_VERIFIED:403"
+        },
+        {
+          "id": "usni-2026-oceanaero-triton",
+          "url": "https://news.usni.org/2026/06/23/u-s-asymmetric-aid-program-transfers-unmanned-vessels-to-the-philippines-plans-attack-drone-transfer-by-2027",
+          "evidenceStatus": "FETCH_FAILED",
+          "error": "HTTP_403"
+        },
+        {
+          "id": "navalnews-2026-triton",
+          "url": "https://www.navalnews.com/naval-news/2026/06/u-s-transfers-ocean-aero-tritons-to-philippine-navy-usv-unit/",
+          "retrievedAt": "2026-11-15T02:29:37.109Z",
+          "sha256": "sha256:0bd488a524badcf4219a0c8ecf2db68a57d65e7263697bf114e80b0acc7d957f",
+          "byteLength": 388648,
+          "contentType": "text/html; charset=utf-8",
+          "blobPath": "blobs/0bd488a524badcf4219a0c8ecf2db68a57d65e7263697bf114e80b0acc7d957f.html",
+          "identityConfirmed": true,
+          "claims": [],
+          "evidenceStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED"
+        },
+        {
+          "id": "cusnc-2023-triton",
+          "url": "https://www.cusnc.navy.mil/Media/News/Display/Article/3302722/us-uae-naval-forces-complete-first-ever-bilateral-unmanned-exercise/",
+          "evidenceStatus": "FETCH_FAILED",
+          "error": "ROBOTS_NOT_VERIFIED:403"
+        }
+      ],
+      "fields": {
+        "length": [],
+        "beam": [],
+        "draft": [],
+        "displacement": [],
+        "hull": [],
+        "propulsion": [],
+        "speed": [],
+        "endurance": [],
+        "range": [],
+        "payload": [],
+        "status": [],
+        "communications": [],
+        "autonomy": [],
+        "launchRecovery": []
+      },
+      "engineeringReleaseApproved": false
+    },
+    {
+      "key": "exail:drixh8",
+      "model": "DriX H-8",
+      "manufacturer": "Exail",
+      "country": "France",
+      "aliases": [],
+      "statusClaim": "OPERATIONAL_CLAIM",
+      "evidenceStatus": "SOURCE_CORROBORATED_REVIEW_REQUIRED",
+      "confidence": 0.4,
+      "uncertainty": "PUBLIC_SOURCE_ONLY_NOT_INDEPENDENTLY_REVIEWED",
+      "sources": [
+        {
+          "id": "exail-h8",
+          "url": "https://www.exail.com/product/drix-h8-medium-range-usv",
+          "retrievedAt": "2026-11-15T02:29:38.884Z",
+          "sha256": "sha256:8c4fc7b2521b38e830f165d51e5a4581b272e5e0233da7f92352cd2b37bef0a7",
+          "byteLength": 554107,
+          "contentType": "text/html; charset=utf-8",
+          "blobPath": "blobs/8c4fc7b2521b38e830f165d51e5a4581b272e5e0233da7f92352cd2b37bef0a7.html",
+          "identityConfirmed": true,
+          "claims": [],
+          "evidenceStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED"
+        }
+      ],
+      "fields": {
+        "length": [],
+        "beam": [],
+        "draft": [],
+        "displacement": [],
+        "hull": [],
+        "propulsion": [],
+        "speed": [],
+        "endurance": [],
+        "range": [],
+        "payload": [],
+        "status": [],
+        "communications": [],
+        "autonomy": [],
+        "launchRecovery": []
+      },
+      "engineeringReleaseApproved": false
+    },
+    {
+      "key": "exail:drixh9",
+      "model": "DriX H-9",
+      "manufacturer": "Exail",
+      "country": "France",
+      "aliases": [],
+      "statusClaim": "PRODUCT_CLAIM",
+      "evidenceStatus": "SOURCE_CORROBORATED_REVIEW_REQUIRED",
+      "confidence": 0.4,
+      "uncertainty": "PUBLIC_SOURCE_ONLY_NOT_INDEPENDENTLY_REVIEWED",
+      "sources": [
+        {
+          "id": "exail-series-h9",
+          "url": "https://www.exail.com/product-range/drix-series-uncrewed-surface-vessels",
+          "retrievedAt": "2026-11-15T02:29:39.834Z",
+          "sha256": "sha256:44809b4cb6d691d671e5a842563e4427808e785aad0ed81b54783837502336e4",
+          "byteLength": 546131,
+          "contentType": "text/html; charset=utf-8",
+          "blobPath": "blobs/44809b4cb6d691d671e5a842563e4427808e785aad0ed81b54783837502336e4.html",
+          "identityConfirmed": true,
+          "claims": [],
+          "evidenceStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED"
+        }
+      ],
+      "fields": {
+        "length": [],
+        "beam": [],
+        "draft": [],
+        "displacement": [],
+        "hull": [],
+        "propulsion": [],
+        "speed": [],
+        "endurance": [],
+        "range": [],
+        "payload": [],
+        "status": [],
+        "communications": [],
+        "autonomy": [],
+        "launchRecovery": []
+      },
+      "engineeringReleaseApproved": false
+    },
+    {
+      "key": "exail:drixo16",
+      "model": "DriX O-16",
+      "manufacturer": "Exail",
+      "country": "France",
+      "aliases": [],
+      "statusClaim": "PRODUCT_CLAIM",
+      "evidenceStatus": "SOURCE_CORROBORATED_REVIEW_REQUIRED",
+      "confidence": 0.4,
+      "uncertainty": "PUBLIC_SOURCE_ONLY_NOT_INDEPENDENTLY_REVIEWED",
+      "sources": [
+        {
+          "id": "exail-o16",
+          "url": "https://www.exail.com/product/drix-o-16",
+          "retrievedAt": "2026-11-15T02:29:40.908Z",
+          "sha256": "sha256:bf8e6d0dea178fdbc858dc790483cd3da5907e389cded3a8e6a0cff39f4098e4",
+          "byteLength": 480645,
+          "contentType": "text/html; charset=utf-8",
+          "blobPath": "blobs/bf8e6d0dea178fdbc858dc790483cd3da5907e389cded3a8e6a0cff39f4098e4.html",
+          "identityConfirmed": true,
+          "claims": [],
+          "evidenceStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED"
+        }
+      ],
+      "fields": {
+        "length": [],
+        "beam": [],
+        "draft": [],
+        "displacement": [],
+        "hull": [],
+        "propulsion": [],
+        "speed": [],
+        "endurance": [],
+        "range": [],
+        "payload": [],
+        "status": [],
+        "communications": [],
+        "autonomy": [],
+        "launchRecovery": []
+      },
+      "engineeringReleaseApproved": false
+    },
+    {
+      "key": "ocius:bluebottle",
+      "model": "Bluebottle",
+      "manufacturer": "Ocius",
+      "country": "Australia",
+      "aliases": [],
+      "statusClaim": "OPERATIONAL_CLAIM",
+      "evidenceStatus": "SOURCE_CORROBORATED_REVIEW_REQUIRED",
+      "confidence": 0.4,
+      "uncertainty": "PUBLIC_SOURCE_ONLY_NOT_INDEPENDENTLY_REVIEWED",
+      "sources": [
+        {
+          "id": "ocius-bluebottle",
+          "url": "https://ocius.com.au/products/bluebottle/",
+          "retrievedAt": "2026-11-15T02:29:41.771Z",
+          "sha256": "sha256:30ab88e1b5267dbd508310e66a5de178f81415f15deb5e28ce1bc3c8307db1e4",
+          "byteLength": 151315,
+          "contentType": "text/html; charset=utf-8",
+          "blobPath": "blobs/30ab88e1b5267dbd508310e66a5de178f81415f15deb5e28ce1bc3c8307db1e4.html",
+          "identityConfirmed": true,
+          "claims": [],
+          "evidenceStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED"
+        }
+      ],
+      "fields": {
+        "length": [],
+        "beam": [],
+        "draft": [],
+        "displacement": [],
+        "hull": [],
+        "propulsion": [],
+        "speed": [],
+        "endurance": [],
+        "range": [],
+        "payload": [],
+        "status": [],
+        "communications": [],
+        "autonomy": [],
+        "launchRecovery": []
+      },
+      "engineeringReleaseApproved": false
+    },
+    {
+      "key": "teamkuroshiomitsuies:autonomoussurfacevehicle",
+      "model": "Autonomous Surface Vehicle",
+      "manufacturer": "Team KUROSHIO / Mitsui E&S",
+      "country": "Japan",
+      "aliases": [],
+      "statusClaim": "PROTOTYPE_CLAIM",
+      "evidenceStatus": "SOURCE_CORROBORATED_REVIEW_REQUIRED",
+      "confidence": 0.4,
+      "uncertainty": "PUBLIC_SOURCE_ONLY_NOT_INDEPENDENTLY_REVIEWED",
+      "sources": [
+        {
+          "id": "jamstec-kuroshio",
+          "url": "https://www.jamstec.go.jp/team-kuroshio/en/technology/",
+          "retrievedAt": "2026-11-15T02:29:43.364Z",
+          "sha256": "sha256:7fea645add1162fcf276d5b3f2aadc4e704f13faf5d03390d90d53a22e7d9b00",
+          "byteLength": 5766,
+          "contentType": "text/html",
+          "blobPath": "blobs/7fea645add1162fcf276d5b3f2aadc4e704f13faf5d03390d90d53a22e7d9b00.html",
+          "identityConfirmed": true,
+          "claims": [],
+          "evidenceStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED"
+        }
+      ],
+      "fields": {
+        "length": [],
+        "beam": [],
+        "draft": [],
+        "displacement": [],
+        "hull": [],
+        "propulsion": [],
+        "speed": [],
+        "endurance": [],
+        "range": [],
+        "payload": [],
+        "status": [],
+        "communications": [],
+        "autonomy": [],
+        "launchRecovery": []
+      },
+      "engineeringReleaseApproved": false
+    },
+    {
+      "key": "maritimerobotics:otter",
+      "model": "Otter",
+      "manufacturer": "Maritime Robotics",
+      "country": "Norway",
+      "aliases": [],
+      "statusClaim": "PRODUCT_CLAIM",
+      "evidenceStatus": "SOURCE_CORROBORATED_REVIEW_REQUIRED",
+      "confidence": 0.4,
+      "uncertainty": "PUBLIC_SOURCE_ONLY_NOT_INDEPENDENTLY_REVIEWED",
+      "sources": [
+        {
+          "id": "maritimerobotics-otter",
+          "url": "https://www.maritimerobotics.com/otter",
+          "retrievedAt": "2026-11-15T02:29:44.442Z",
+          "sha256": "sha256:996e49f011799169dc7ffe596b529ddf7c2468e865128acd55536a1ebd3df9c1",
+          "byteLength": 154664,
+          "contentType": "text/html; charset=utf-8",
+          "blobPath": "blobs/996e49f011799169dc7ffe596b529ddf7c2468e865128acd55536a1ebd3df9c1.html",
+          "identityConfirmed": true,
+          "claims": [],
+          "evidenceStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED"
+        }
+      ],
+      "fields": {
+        "length": [],
+        "beam": [],
+        "draft": [],
+        "displacement": [],
+        "hull": [],
+        "propulsion": [],
+        "speed": [],
+        "endurance": [],
+        "range": [],
+        "payload": [],
+        "status": [],
+        "communications": [],
+        "autonomy": [],
+        "launchRecovery": []
+      },
+      "engineeringReleaseApproved": false
+    },
+    {
+      "key": "openoceanrobotics:dataxplorer",
+      "model": "Data Xplorer",
+      "manufacturer": "Open Ocean Robotics",
+      "country": "Canada",
+      "aliases": [],
+      "statusClaim": "PRODUCT_CLAIM",
+      "evidenceStatus": "SOURCE_CORROBORATED_REVIEW_REQUIRED",
+      "confidence": 0.4,
+      "uncertainty": "PUBLIC_SOURCE_ONLY_NOT_INDEPENDENTLY_REVIEWED",
+      "sources": [
+        {
+          "id": "oor-dataxplorer",
+          "url": "https://www.openoceanrobotics.com/government-operations",
+          "retrievedAt": "2026-11-15T02:29:44.637Z",
+          "sha256": "sha256:406c809ffec9809294587e38154a877d51befb0f8ffd05e48da01b26fa797914",
+          "byteLength": 1322485,
+          "contentType": "text/html; charset=utf-8",
+          "blobPath": "blobs/406c809ffec9809294587e38154a877d51befb0f8ffd05e48da01b26fa797914.html",
+          "identityConfirmed": true,
+          "claims": [],
+          "evidenceStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED"
+        }
+      ],
+      "fields": {
+        "length": [],
+        "beam": [],
+        "draft": [],
+        "displacement": [],
+        "hull": [],
+        "propulsion": [],
+        "speed": [],
+        "endurance": [],
+        "range": [],
+        "payload": [],
+        "status": [],
+        "communications": [],
+        "autonomy": [],
+        "launchRecovery": []
+      },
+      "engineeringReleaseApproved": false
+    }
+  ],
+  "errors": [
+    {
+      "candidate": "oceanaero:triton",
+      "sourceId": "navy-2022-oceanaero-triton",
+      "error": "ROBOTS_NOT_VERIFIED:403"
+    },
+    {
+      "candidate": "oceanaero:triton",
+      "sourceId": "usni-2026-oceanaero-triton",
+      "error": "HTTP_403"
+    },
+    {
+      "candidate": "oceanaero:triton",
+      "sourceId": "cusnc-2023-triton",
+      "error": "ROBOTS_NOT_VERIFIED:403"
+    }
+  ],
+  "discoveryCandidates": [
+    "https://martacsystems.com/proven-products/mantas-t12/",
+    "https://martacsystems.com/proven-products/devil-ray-t18/",
+    "https://martacsystems.com/proven-products/devil-ray-t24/",
+    "https://martacsystems.com/proven-products/devil-ray-t38/",
+    "https://www.navalnews.com/wp-content/uploads/2026/06/06-23-2026-PR-United-States-Provides-Triton-Unmanned-Systems-to-Strengthen-Philippines-Maritime-Domain-Awareness-2.jpg",
+    "https://www.navalnews.com/naval-news/2024/10/philippines-navy-eyes-usv-unit-to-monitor-waters-aid-warships/",
+    "https://www.navalnews.com/naval-news/2024/11/philippine-navy-receives-u-s-funded-usvs-for-scs-operations/",
+    "https://www.navalnews.com/tag/usv/",
+    "https://www.navalnews.com/naval-news/2026/06/u-s-transfers-ocean-aero-tritons-to-philippine-navy-usv-unit/",
+    "https://www.exail.com/product/a6k-ultra-deep-autonomous-underwater-vehicles",
+    "https://www.exail.com/product-range/drix-series-uncrewed-surface-vessels",
+    "https://www.exail.com/product-range/unmanned-ground-vehicles",
+    "https://www.exail.com/product-range/umis-unmanned-mcm-mine-countermeasure-integrated-system",
+    "https://www.exail.com/product-range/unmanned-surface-vehicles-for-mine-countermeasures",
+    "https://www.exail.com/product-range/autonomous-underwater-vehicles-for-defense-applications",
+    "https://www.exail.com/product-range/oryx-series-uncrewed-surface-vessels-defense",
+    "https://www.exail.com/media-file/7629/exail-datasheet-drix-h-8.pdf",
+    "https://www.exail.com/product/drix-h8-medium-range-usv",
+    "https://www.exail.com/media-file/9910/drix-and-sdb-fully-remote-solutions-for-hydrographic-surveys.pdf",
+    "https://www.exail.com/media-file/9900/drix-to-study-the-mystery-of-coral-rings-in-corsica.pdf",
+    "https://www.exail.com/media-file/9902/case-study-drix-flipix-laciotat-mbes-sbp-sss-mag-gaps.pdf",
+    "https://www.exail.com/media-file/8064/exail-operation-reducing-survey-time-with-new-autoline-feature-drix-usv-mission-report.pdf",
+    "https://www.exail.com/media-file/8063/exail-operation-demonstrating-collaborative-uncrewed-capabilities-drix-usv-mission-report.pdf",
+    "https://www.exail.com/media-file/8062/exail-operation-high-resolution-bathymetric-and-magnetic-survey-in-challenging-conditions-drix-usv-mission-report.pdf",
+    "https://www.exail.com/media-file/8059/exail-operation-drix-real-time-as-laid-subsea-positioning-in-the-mediterranean-sea-drix-usv-mission-report.pdf",
+    "https://www.exail.com/media-file/8061/exail-operation-line-keeping-capabilities-drix-usv-mission-report.pdf",
+    "https://www.exail.com/media-file/8060/exail-operation-multibeam-survey-in-harsh-conditions-drix-usv-mission-report.pdf",
+    "https://www.exail.com/media-file/8058/exail-operation-searching-for-benthic-equipment-lost-on-the-seafloor-drix-usv-mission-report.pdf",
+    "https://www.exail.com/resources/webinars/webinar-multi-drix-usv-over-the-horizon-operation",
+    "https://www.exail.com/resources/webinars/drix-usv-an-efficiency-multiplier",
+    "https://www.exail.com/resources/customer-stories/enhancing-hydrographic-survey-using-uncrewed-surface-vehicles",
+    "https://www.exail.com/news/exail-announces-first-sale-of-drix-h-9-for-civil-offshore-operations-to-a-european-client",
+    "https://www.exail.com/news/exail-expands-presence-in-the-baltic-sea-with-first-drix-h-8-delivery-to-orlen-petrobaltic",
+    "https://www.exail.com/news/ulyx-and-drix-join-forces-for-deep-sea-exploration",
+    "https://www.exail.com/product/drix-o-16",
+    "https://www.exail.com/fr/media-file/9910/drix-and-sdb-fully-remote-solutions-for-hydrographic-surveys.pdf",
+    "https://www.exail.com/media-file/8527/exail-brochure-drix-series-web.pdf",
+    "https://ocius.com.au/products/bluebottle/",
+    "https://www.maritimerobotics.com/otter",
+    "https://www.maritimerobotics.com/platforms/category/usv",
+    "https://www.maritimerobotics.com/otter-x",
+    "https://www.maritimerobotics.com/autonomous-navigation-system",
+    "https://www.openoceanrobotics.com/uncrewed-surface-vehicles",
+    "https://www.openoceanrobotics.com/uncrewed-surface-vehicles/dataxplorer-protect",
+    "https://www.openoceanrobotics.com/uncrewed-surface-vehicles/dataxplorer-enviro",
+    "https://www.openoceanrobotics.com/uncrewed-surface-vehicles/dataxplorer-listen",
+    "https://www.openoceanrobotics.com/uncrewed-surface-vehicles/dataxplorer-survey",
+    "https://www.openoceanrobotics.com/uncrewed-surface-vehicles/dataxplorer-metoc",
+    "https://www.openoceanrobotics.com/uncrewed-surface-vehicles/dx-solar-station",
+    "https://www.openoceanrobotics.com/usv-fleet-operations"
+  ],
+  "report": {
+    "generatedAt": "2026-11-15T02:29:44.649Z",
+    "agentId": "INTEL-USV-26",
+    "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+    "totalCandidateModels": 10,
+    "countriesRepresented": 6,
+    "countries": [
+      "United States",
+      "France",
+      "Australia",
+      "Japan",
+      "Norway",
+      "Canada"
+    ],
+    "identityCorroborated": 10,
+    "fieldEvidenceItems": 1,
+    "sourceFailures": 3,
+    "unreviewedDiscoveryLinks": 50,
+    "globalCompleteness": "UNKNOWN_NOT_CLAIMED",
+    "researchAcceptancePassed": false,
+    "independentlyValidated": 0,
+    "engineeringReleaseApproved": false
+  }
+}

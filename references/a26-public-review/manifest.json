@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "agentId": "INTEL-USV-26",
+  "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+  "reviewStatus": "UNVERIFIED_REVIEW_REQUIRED",
+  "runId": "43667959316",
+  "headSha": "6bca08b51ce9e2a32a923915a461dcc915419b15",
+  "createdAt": "2026-11-15T02:29:46.780Z",
+  "engineeringReleaseApproved": false
+}
