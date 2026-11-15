@@ -16,12 +16,14 @@ on:
       - 'scripts/a26-fleet-campaign.mjs'
       - 'scripts/a26-document-library.mjs'
       - 'scripts/a26-document-register.mjs'
+      - 'scripts/a26-research-handoffs.mjs'
       - 'config/a26-document-research.json'
       - 'config/a26-fleet-discovery.json'
       - 'references/fleet-intelligence/**'
       - 'tests/a26-fleet-discovery.test.mjs'
       - 'tests/a26-document-library.test.mjs'
       - 'tests/a26-fleet-campaign.test.mjs'
+      - 'tests/a26-research-handoffs.test.mjs'
       - '.github/workflows/a26-public-fleet-discovery.yml'
       - 'docs/research/A26_FLEET_DISCOVERY_QUEUE.md'
       - 'docs/research/A26_DOCUMENT_DISCOVERY_QUEUE.md'
@@ -51,7 +53,7 @@ jobs:
         with:
           node-version: '22'
       - name: Offline fleet ingestion, security and evidence tests
-        run: node --test tests/a26-fleet-discovery.test.mjs tests/a26-document-library.test.mjs tests/a26-fleet-campaign.test.mjs
+        run: node --test tests/a26-fleet-discovery.test.mjs tests/a26-document-library.test.mjs tests/a26-fleet-campaign.test.mjs tests/a26-research-handoffs.test.mjs
       - name: Validate governed research configuration and review registers
         run: |
           node scripts/a26-fleet-campaign.mjs --validate-only
@@ -95,6 +97,18 @@ jobs:
           node scripts/a26-document-register.mjs \
             --harvest "$RUNNER_TEMP/a26-documents/papers-and-references.json" \
             --out-dir "$RUNNER_TEMP/a26-documents"
+      - name: Draft unverified engineering research questions from public evidence
+        if: always()
+        run: |
+          if [[ -f "$RUNNER_TEMP/a26-fleet-scout/latest.json" ]] &&
+             [[ -f "$RUNNER_TEMP/a26-documents/papers-and-references.json" ]]; then
+            node scripts/a26-research-handoffs.mjs \
+              --fleet "$RUNNER_TEMP/a26-fleet-scout/latest.json" \
+              --documents "$RUNNER_TEMP/a26-documents/papers-and-references.json" \
+              --out-dir "$RUNNER_TEMP/a26-fleet-scout"
+          else
+            echo "Research handoff held: one or more source reports are unavailable."
+          fi
       - name: Upload unverified run evidence and Obsidian research drafts
         if: always()
         uses: actions/upload-artifact@v4
