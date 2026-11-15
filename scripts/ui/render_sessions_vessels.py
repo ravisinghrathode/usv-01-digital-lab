@@ -224,4 +224,13 @@ def main():
       print("RENDERING "+scene.render.filepath,flush=True)
       bpy.ops.render.render(write_still=True)
       print("COMPLETE "+scene.render.filepath,flush=True)
+      # A real second camera view, not a fake rotated flat illustration.
+      plan_camera=scene.camera
+      plan_camera.location=(0,0,18)
+      plan_camera.rotation_euler=(Vector((0,0,0))-plan_camera.location).to_track_quat('-Z','Y').to_euler()
+      plan_camera.data.ortho_scale=13.7
+      scene.render.filepath=os.path.abspath(os.path.join(args.output,"usv-"+variant+"-plan.png"))
+      print("RENDERING "+scene.render.filepath,flush=True)
+      bpy.ops.render.render(write_still=True)
+      print("COMPLETE "+scene.render.filepath,flush=True)
 if __name__=="__main__":main()
