@@ -27,7 +27,7 @@ export default function EngineeringSessionsApp(){
  const setMode=(mode:Mode)=>{
   setSession(old=>({...old,mode}));
   if(typeof window!=='undefined')window.history.pushState({mode},'',hashForMode(mode));
-  requestAnimationFrame(()=>main.current?.focus());
+  requestAnimationFrame(()=>{main.current?.focus({preventScroll:true});window.scrollTo(0,0);});
  };
  useEffect(()=>{
   const sync=()=>setSession(old=>({...old,mode:validMode(window.location.hash.slice(1))}));
@@ -39,6 +39,7 @@ export default function EngineeringSessionsApp(){
     e.preventDefault();const next=MODES[Number(e.key)-1];if(next){
       setSession(old=>({...old,mode:next.id}));
       window.history.pushState({mode:next.id},'',hashForMode(next.id));
+      requestAnimationFrame(()=>{main.current?.focus({preventScroll:true});window.scrollTo(0,0);});
     }
    }
   };
