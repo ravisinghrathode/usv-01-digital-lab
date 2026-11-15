@@ -31,9 +31,10 @@ import { GLOBAL_NAVY_USVS, GLOBAL_USV_ACADEMIC_PAPERS } from '../data/globalUsvF
 
 interface GlobalUsvFleetViewProps {
   onAskAi?: (prompt: string, record?: any) => void;
+  hideA26Research?: boolean;
 }
 
-export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi }) => {
+export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi, hideA26Research = false }) => {
   const [vessels, setVessels] = useState<OperatingUsvModel[]>(GLOBAL_NAVY_USVS);
   const [selectedVessel, setSelectedVessel] = useState<OperatingUsvModel | null>(GLOBAL_NAVY_USVS[0]);
   const [activeModalTab, setActiveModalTab] = useState<'overview' | 'hull' | 'propulsion' | 'autonomy' | 'combat' | 'papers' | 'benchmark'>('overview');
@@ -282,7 +283,7 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
       </div>
 
       {/* A26 review-only research library: never counted as approved vessels. */}
-      <section aria-label="Worldwide A26 research collection" className="rounded-lg border border-sky-200/30 bg-slate-900/60 p-4 space-y-3">
+      {!hideA26Research && <section aria-label="Worldwide A26 research collection" className="rounded-lg border border-sky-200/30 bg-slate-900/60 p-4 space-y-3">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h3 className="text-base font-semibold text-slate-100">A26 Research Library</h3>
@@ -378,7 +379,7 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
               className="rounded border border-slate-700 px-3 py-1.5 text-xs text-slate-200 disabled:opacity-40">Next</button>
           </div>
         </>}
-      </section>
+      </section>}
 
       {/* Aggregate Stat Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
