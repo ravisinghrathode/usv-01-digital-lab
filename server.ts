@@ -1126,14 +1126,18 @@ app.post('/api/data/reset-demo', async (req, res) => {
       },
       ...initial.INITIAL_ACTIVITY_LOG
     ];
-    dbStore.knowledge_notes = [...initial.INITIAL_KNOWLEDGE_NOTES];
+    // Reset only illustrative notes; protect authenticated session research drafts.
+    const sessionDrafts = (dbStore.knowledge_notes||[]).filter(
+      (note:any)=>typeof note?.id==='string' && note.id.startsWith('SES-NOTE-')
+    );
+    dbStore.knowledge_notes = [...sessionDrafts, ...initial.INITIAL_KNOWLEDGE_NOTES];
     dbStore.power_loads = [...initial.INITIAL_POWER_LOADS];
     dbStore.interfaces = [...initial.INITIAL_INTERFACES];
     dbStore.materials = [...initial.INITIAL_MATERIALS];
     dbStore.load_cases = [...initial.INITIAL_LOAD_CASES];
     dbStore.resistance_estimates = [...initial.INITIAL_RESISTANCE];
     dbStore.weight_cg = [...initial.INITIAL_WEIGHT_CG];
-    dbStore.cad_revisions = [];
+    // CAD source pointers are real project records and never reset as demo data.
     saveStoreToFile();
 
     res.json({ success: true, message: 'Database reset to default illustrative baseline.', data: dbStore });
