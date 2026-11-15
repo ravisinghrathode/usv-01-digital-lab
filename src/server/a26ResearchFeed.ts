@@ -6,8 +6,6 @@
  * Every upstream byte is untrusted data. No model status or engineering release
  * can be inferred from these provisional research records.
  */
-import {readFile} from 'node:fs/promises';
-import path from 'node:path';
 const REPO='ravisinghrathode/usv-01-digital-lab';
 const BRANCH_PREFIX='automation/a26-fleet-discovery-';
 const API='https://api.github.com/repos/'+REPO;
