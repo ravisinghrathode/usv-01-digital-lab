@@ -15,6 +15,58 @@ This repository contains 26 specialist engineering agents (A01–A26). Use the r
 
 A26 (`INTEL-USV-26`) coordinates both public naval fleet/scientific intelligence and source-pinned external marine software research under [one operating charter](docs/governance/A26_UNIFIED_AGENT_OPERATING_CHARTER.md). Its original [External Software Integration Annex](docs/EXTERNAL_INTEGRATION_AGENT_CHARTER.md) and revision-2 policy remain fully binding. Do not add a 27th agent, reinterpret discovery as software qualification, change the canonical A26 prompt/role rights, or assume the separately proposed lab-wide charter has been adopted. The read-only routing verifier is `node scripts/a26-unified-governance.mjs --check`.
 
+## A26 unified public research ingestion policy — proposed rule R3
+
+The A26 role must share **one evidence contract** for naval fleet sightings,
+scientific/engineering documents and retrieved platform source snapshots.
+Separate **discovery adapters** remain permitted because RSS metadata,
+scholarly DOI metadata and manufacturer HTML/PDF have different formats;
+separate competing trusted registries, duplicate research identities,
+or automatic promotions from one lane to the other are prohibited.
+
+1. A26 remains **INTEL-USV-26** (A26), one role, with purpose-specific
+   `FLEET_INTELLIGENCE`, `EXTERNAL_SOFTWARE` and `CORRELATED_RESEARCH`
+   routing unchanged. No new model tool access or authority is conferred.
+2. All public-source research outputs use
+   `PUBLIC_SOURCE_SAFE_ONLY`, a source identifier, URL/DOI, observed time,
+   retrieval status and cryptographic digest when bytes were actually obtained.
+   Differentiate feed-entry hashes, publication metadata hashes and raw-document
+   byte hashes; **never represent a metadata hash as an archived PDF**.
+3. `DISCOVERED_UNVERIFIED`, `QUOTE_MATCHED_UNREVIEWED` and
+   `SOURCE_IDENTITY_CORROBORATED_UNREVIEWED` must remain review inputs.
+   No engineering values or vessel operating status may be silently certified.
+4. `scripts/a26/unified-evidence.mjs` is the shared **read-only
+   consolidation contract**. It accepts the fleet/document registers from
+   the existing A26 worldwide campaign and the source-snapshot index from
+   `scripts/a26/global-research.mjs`, preserving domain type, provenance,
+   uncertainty, conflicts and candidate cross-domain relations.
+5. Never execute retrieved content, bypass robots/licensing, scrape restricted
+   sources, acquire classified Navy/client data into GitHub or use subscription
+   credentials as API credentials. Changes to collection scope, source hosts,
+   license assumptions or data destinations require protected review.
+6. The approved storage roles remain: GitHub for reviewed code and schemas,
+   paid Google Drive for **separately authorized** durable evidence, Obsidian
+   for **review-labelled** graph entries. A generated Obsidian draft is not
+   an assertion that Drive/Obsidian sync has been deployed.
+7. No 14-model or 10-model artificial worldwide discovery cap. Finite seed
+   sets serve acceptance experiments only. Worldwide completeness remains
+   `UNKNOWN_NOT_CLAIMED`; regional/language, source-availability and
+   prototype/operational distinctions must remain explicit.
+8. A26 may generate research review questions for other agents; the
+   receiving engineering discipline must independently validate before
+   adoption. Research approval, software qualification and engineering
+   release are separate gates.
+9. CI may use deterministic, no-billed-AI fixture tests; live source retrieval
+   and model generation must have separate documented results. Do not infer
+   executed validations from workflow definitions.
+10. The original A26 operating charter, source-owned role permissions,
+    external-software Annex R2.01–R2.10, strict dual-AI governance and
+    Director/ECR controls retain precedence. Rule R3 is a proposed
+    implementation clarification, not an unauthorized lab-wide charter adoption.
+
+See `docs/a26-unified-research-integration.md` for the two-PR reconciliation
+and evidence gates.
+
 ## Mandatory engineering controls
 
 1. Treat vessel particulars and unresolved requirements as TBD until supported by reviewed source evidence.
@@ -125,3 +177,47 @@ adaptation; the other three final external records are copies of pinned
 upstream skill instructions. None is a native plugin/runtime installation.
 Do not reinterpret a skill pass as qualified physical engineering evidence,
 current trusted-host commissioning or approved vessel release.
+
+## Naval Design Studio — mandatory UI/UX skills (separate development toolchain)
+
+The Project Lead explicitly requested installation of five frontend design and
+QA skills on 2026-11-15. These are **development-time UI guidance**, not a
+change to the frozen 31 engineering/agent skills, the 26 registered agents,
+the privileged runtime, or the engineering authority structure.
+
+For work on Naval Design Studio, the application shell, dashboards, CAD
+viewport, mobile navigation or accessibility, consult all five pinned skills
+in `.agents/skills/` **before implementing**:
+
+1. `frontend-app-builder/SKILL.md` (OpenAI): create a complete high-fidelity
+   concept and implementation contract; compare the built UI to approved
+   reference imagery rather than judging by a successful build.
+2. `frontend-design/SKILL.md` (Anthropic): develop a distinctive naval
+   engineering art direction and critique typography, hierarchy, layout,
+   contrast, copy, and visual coherence.
+3. `ui-ux-pro-max/SKILL.md` (NextLevelBuilder): search the bundled datasets
+   for product style, design tokens, typography, stack rules and UX pitfalls.
+   The included search tooling needs Python 3 and runs locally.
+4. `frontend-ui-engineering/SKILL.md` (Addy Osmani): implement responsive
+   components, keyboard controls, accessible states, robust interactions,
+   semantic layouts and reusable design tokens.
+5. `browser-testing-with-devtools/SKILL.md` (Addy Osmani): verify the
+   running implementation in a **real, isolated browser**, including computed
+   styles, console/network issues, accessibility tree, screenshot fidelity,
+   narrow viewports and zoom. This skill's Chrome DevTools MCP prerequisite is
+   not installed by copying SKILL.md: if a real browser is unavailable, flag
+   visual acceptance as blocked, never claim it ran.
+
+Apply the workflow **concept → design review → implementation → real browser
+QA → independent critique**. Preserve the existing protected engineering
+record/solver/agent/governance boundaries. Use actual sources, do not fabricate
+release states or vessel metrics. Test at a minimum 1440px, 1280px, 768px,
+390px and 320px widths plus 200% zoom and enlarged-text mode. Record
+screenshots, keyboard/focus results, contrast measurements and material
+mismatches in each UI PR; build/tests alone do not qualify a release.
+
+The project-local installation is readable by compatible repository-aware
+agents, but it **does not install or register these skills inside the ChatGPT
+host's global skill catalogue**. A ChatGPT assistant can explicitly fetch the
+project copies to apply their guidance. For supply-chain metadata and exact
+upstream source commits, see `docs/UI_UX_SKILL_STACK.md`.

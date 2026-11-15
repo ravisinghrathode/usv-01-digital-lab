@@ -1,0 +1,95 @@
+name: Vendor five pinned UI/UX agent skills
+
+on:
+  push:
+    branches:
+      - feat/naval-design-studio-five-ui-skills-20261115
+    paths:
+      - .github/workflows/vendor-five-ui-skills.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  vendor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out project branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Copy pinned original skills into project
+        shell: bash
+        run: |
+          set -euo pipefail
+          stash="$(mktemp -d)"
+          trap 'rm -rf "$stash"' EXIT
+
+          # Source repos are pinned by immutable Git SHA. No upstream setup
+          # scripts, package install hooks or arbitrary downloaded code run.
+          git clone --filter=blob:none --no-checkout https://github.com/openai/plugins.git "$stash/openai"
+          git -C "$stash/openai" checkout --detach d420d13051bffe4543ed39e30fa46b87148e47dd
+
+          git clone --filter=blob:none --no-checkout https://github.com/anthropics/skills.git "$stash/anthropic"
+          git -C "$stash/anthropic" checkout --detach 1780c5e5a552fd4d1c9d6a7b0cab26b0c2bef064
+
+          git clone --filter=blob:none --no-checkout https://github.com/addyosmani/agent-skills.git "$stash/addy"
+          git -C "$stash/addy" checkout --detach 39b723ceebf81474d0557c1fecd01eddab585563
+
+          git clone --filter=blob:none --no-checkout https://github.com/nextlevelbuilder/ui-ux-pro-max-skill.git "$stash/uupm"
+          git -C "$stash/uupm" checkout --detach d643997c82e94742dd3bee43210b0198e8bbba3d
+
+          mkdir -p .agents/skills
+
+          cp -a "$stash/openai/plugins/build-web-apps/skills/frontend-app-builder" .agents/skills/frontend-app-builder
+          cp -a "$stash/anthropic/skills/frontend-design" .agents/skills/frontend-design
+          cp -a "$stash/addy/skills/frontend-ui-engineering" .agents/skills/frontend-ui-engineering
+          cp -a "$stash/addy/skills/browser-testing-with-devtools" .agents/skills/browser-testing-with-devtools
+          cp -a "$stash/uupm/.claude/skills/ui-ux-pro-max" .agents/skills/ui-ux-pro-max
+
+          cp "$stash/addy/LICENSE" .agents/skills/frontend-ui-engineering/LICENSE
+          cp "$stash/addy/LICENSE" .agents/skills/browser-testing-with-devtools/LICENSE
+          cp "$stash/uupm/LICENSE" .agents/skills/ui-ux-pro-max/LICENSE
+          # Anthropic's skill includes its own Apache-2.0 license.
+          # OpenAI's plugin manifest identifies its license as MIT.
+          cp "$stash/openai/plugins/build-web-apps/.codex-plugin/plugin.json" .agents/skills/frontend-app-builder/SOURCE-PLUGIN-MANIFEST.json
+
+          printf '%s\n' \
+            'Skill names:' \
+            '  frontend-app-builder' \
+            '  frontend-design' \
+            '  frontend-ui-engineering' \
+            '  browser-testing-with-devtools' \
+            '  ui-ux-pro-max' > /tmp/naval-ui-skills-list.txt
+
+      - name: Validate five skills and UI UX Pro Max search dependency
+        shell: bash
+        run: |
+          set -euo pipefail
+          for skill in frontend-app-builder frontend-design frontend-ui-engineering browser-testing-with-devtools ui-ux-pro-max; do
+            test -s ".agents/skills/$skill/SKILL.md" || { echo "MISSING: $skill"; exit 1; }
+            grep -q '^name: '"$skill"'$' ".agents/skills/$skill/SKILL.md" || { echo "INVALID HEADER: $skill"; exit 1; }
+          done
+          test -s .agents/skills/ui-ux-pro-max/scripts/search.py
+          test -s .agents/skills/ui-ux-pro-max/data/styles.csv
+          test -s .agents/skills/ui-ux-pro-max/data/stacks/react.csv
+          test -s .agents/skills/frontend-design/LICENSE.txt
+          python3 .agents/skills/ui-ux-pro-max/scripts/search.py --help >/dev/null
+          echo 'Verified five complete agent skill packages.'
+
+      - name: Commit pinned skill packages on installation branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f .agents/skills
+          if git diff --cached --quiet; then
+            echo 'Five skills already at exact pinned content.'
+          else
+            git commit -m "chore(ui): install five pinned UI/UX skills for Naval Design Studio"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi

@@ -1,0 +1,140 @@
+[
+  {
+    "id": "US-MANTAS-T12",
+    "model": "MANTAS T12",
+    "manufacturer": "MARTAC",
+    "country": "United States",
+    "status": "OPERATIONAL_CLAIM",
+    "sources": [
+      {
+        "id": "martac-t12",
+        "url": "https://martacsystems.com/proven-products/mantas-t12/",
+        "claims": [
+          {
+            "field": "length",
+            "value": "3.6 m",
+            "unit": "m",
+            "quote": "Length - 12 ft (3.6 m)"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "US-DEVIL-RAY-T24",
+    "model": "Devil Ray T24",
+    "manufacturer": "MARTAC",
+    "country": "United States",
+    "status": "OPERATIONAL_CLAIM",
+    "sources": [
+      {
+        "id": "martac-t24",
+        "url": "https://martacsystems.com/proven-products/devil-ray-t24/"
+      }
+    ]
+  },
+  {
+    "id": "US-TRITON",
+    "model": "Triton",
+    "manufacturer": "Ocean Aero",
+    "country": "United States",
+    "status": "PRODUCT_CLAIM",
+    "sources": [
+      {
+        "id": "oceanaero-triton",
+        "url": "https://www.oceanaero.com/the-triton"
+      }
+    ]
+  },
+  {
+    "id": "FR-DRIX-H8",
+    "model": "DriX H-8",
+    "manufacturer": "Exail",
+    "country": "France",
+    "status": "OPERATIONAL_CLAIM",
+    "sources": [
+      {
+        "id": "exail-h8",
+        "url": "https://www.exail.com/product/drix-h8-medium-range-usv"
+      }
+    ]
+  },
+  {
+    "id": "FR-DRIX-H9",
+    "model": "DriX H-9",
+    "manufacturer": "Exail",
+    "country": "France",
+    "status": "PRODUCT_CLAIM",
+    "sources": [
+      {
+        "id": "exail-series-h9",
+        "url": "https://www.exail.com/product-range/drix-series-uncrewed-surface-vessels"
+      }
+    ]
+  },
+  {
+    "id": "FR-DRIX-O16",
+    "model": "DriX O-16",
+    "manufacturer": "Exail",
+    "country": "France",
+    "status": "PRODUCT_CLAIM",
+    "sources": [
+      {
+        "id": "exail-o16",
+        "url": "https://www.exail.com/product/drix-o-16"
+      }
+    ]
+  },
+  {
+    "id": "AU-BLUEBOTTLE",
+    "model": "Bluebottle",
+    "manufacturer": "Ocius",
+    "country": "Australia",
+    "status": "OPERATIONAL_CLAIM",
+    "sources": [
+      {
+        "id": "ocius-bluebottle",
+        "url": "https://ocius.com.au/products/bluebottle/"
+      }
+    ]
+  },
+  {
+    "id": "JP-KUROSHIO-ASV",
+    "model": "Autonomous Surface Vehicle",
+    "manufacturer": "Team KUROSHIO / Mitsui E&S",
+    "country": "Japan",
+    "status": "PROTOTYPE_CLAIM",
+    "sources": [
+      {
+        "id": "jamstec-kuroshio",
+        "url": "https://www.jamstec.go.jp/team-kuroshio/en/technology/"
+      }
+    ]
+  },
+  {
+    "id": "NO-OTTER",
+    "model": "Otter",
+    "manufacturer": "Maritime Robotics",
+    "country": "Norway",
+    "status": "PRODUCT_CLAIM",
+    "sources": [
+      {
+        "id": "maritimerobotics-otter",
+        "url": "https://www.maritimerobotics.com/otter"
+      }
+    ]
+  },
+  {
+    "id": "CA-DATA-XPLORER",
+    "model": "Data Xplorer",
+    "manufacturer": "Open Ocean Robotics",
+    "country": "Canada",
+    "status": "PRODUCT_CLAIM",
+    "sources": [
+      {
+        "id": "oor-dataxplorer",
+        "url": "https://www.openoceanrobotics.com/government-operations"
+      }
+    ]
+  }
+]

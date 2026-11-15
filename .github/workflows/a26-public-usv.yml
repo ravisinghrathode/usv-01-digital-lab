@@ -1,0 +1,54 @@
+name: A26 public USV research evidence
+on:
+  push:
+    branches: [main, feat/a26-global-public-usv-research]
+    paths:
+      - 'scripts/a26/**'
+      - 'tests/a26/**'
+      - 'references/a26-public-usv-seeds.json'
+      - 'scripts/a26/unified-evidence.mjs'
+      - 'AGENTS.md'
+      - 'docs/governance/A26_UNIFIED_AGENT_OPERATING_CHARTER.md'
+      - '.github/workflows/a26-public-usv.yml'
+  pull_request:
+    paths:
+      - 'scripts/a26/**'
+      - 'tests/a26/**'
+      - 'references/a26-public-usv-seeds.json'
+      - 'scripts/a26/unified-evidence.mjs'
+  schedule:
+    - cron: '15 4 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/a26/*.test.mjs
+      - run: node scripts/a26/r3-policy-check.mjs
+      - run: node scripts/a26-unified-governance.mjs --check
+  public-collection:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Retrieve only public source evidence, no LLM credentials
+        run: node scripts/a26/global-research.mjs collect
+      - name: Identity discovery acceptance (10 vessels, 5 countries)
+        run: node scripts/a26/acceptance.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a26-public-source-evidence
+          path: .local-concept-research/a26-global-usv/
+          if-no-files-found: warn
+          retention-days: 7

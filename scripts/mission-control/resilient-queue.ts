@@ -4,6 +4,8 @@
  * bounded attempts using the local ChatGPT-signed-in Codex subscription.
  */
 import { execFileSync } from 'node:child_process';
+import { readFileSync, statSync } from 'node:fs';
+import path from 'node:path';
 import { ResilientAgentQueue, type QueueRequest } from '../../src/core/mission-control/ResilientAgentQueue.ts';
 import { requireLabCommissioningPolicy } from '../../src/core/mission-control/LabCommissioningPolicy.ts';
 
@@ -36,12 +38,72 @@ async function main(): Promise<void> {
     }
     // Explicit public/synthetic classification is mandatory, never inferred.
     const dataClassification = arg('--classification', 'PUBLIC_SOURCE_SAFE_ONLY');
+    // A26-only evidence handoff. Source hashes are review inputs, not design approval.
+    const evidencePath = arg('--evidence-index');
+    const unifiedPath = arg('--unified-index');
+    if (evidencePath && unifiedPath) throw new Error('Specify one A26 evidence index, not both');
+    let researchSources: unknown[] = [];
+    if (evidencePath) {
+      if (agentId !== 'INTEL-USV-26' && agentId !== 'A26') {
+        throw new Error('--evidence-index is permitted only for A26');
+      }
+      const absolute = path.resolve(evidencePath);
+      if (statSync(absolute).size > 5 * 1024 * 1024) throw new Error('A26 evidence index exceeds 5 MiB');
+      const index = JSON.parse(readFileSync(absolute, 'utf8'));
+      if (index.schemaVersion !== 1 || !Array.isArray(index.records) || index.report?.engineeringReleaseApproved !== false) {
+        throw new Error('Invalid or unauthorized A26 public-source evidence index');
+      }
+      researchSources = index.records.slice(0, 150).flatMap((record: any) =>
+        (record.sources || []).filter((source: any) =>
+          source.identityConfirmed === true && /^sha256:[a-f0-9]{64}$/.test(String(source.sha256 || ''))
+        ).slice(0, 3).map((source: any) => ({
+          vessel: String(record.model || '').slice(0, 120),
+          country: String(record.country || '').slice(0, 80),
+          url: String(source.url || '').slice(0, 400),
+          sha256: source.sha256,
+          status: 'PUBLIC_SOURCE_CORROBORATED_UNVERIFIED',
+          claims: (source.claims || []).slice(0, 8).map((claim: any) => ({
+            field: String(claim.field).slice(0, 60),
+            value: String(claim.value).slice(0, 120),
+            quote: String(claim.quotation).slice(0, 240)
+          }))
+        }))
+      );
+      if (!researchSources.length) throw new Error('A26 evidence index contains no corroborated sources');
+    }
+    if (unifiedPath) {
+      if (agentId !== 'INTEL-USV-26' && agentId !== 'A26') throw new Error('Unified evidence input is A26-only');
+      const absolute = path.resolve(unifiedPath);
+      if (statSync(absolute).size > 5 * 1024 * 1024) throw new Error('A26 unified evidence index exceeds 5 MiB');
+      const registry = JSON.parse(readFileSync(absolute, 'utf8'));
+      if (registry.schemaVersion !== 1 || registry.agentId !== 'INTEL-USV-26' ||
+          registry.classification !== 'PUBLIC_SOURCE_SAFE_ONLY' ||
+          registry.evidenceContract !== 'A26_UNIFIED_PUBLIC_RESEARCH_V1' ||
+          registry.engineeringReleaseApproved !== false || !Array.isArray(registry.records)) {
+        throw new Error('Invalid A26 unified evidence contract');
+      }
+      researchSources = registry.records.slice(0, 150).map((record: any) => ({
+        evidenceId: String(record.id || '').slice(0, 180),
+        evidenceType: String(record.kind || '').slice(0, 60),
+        title: String(record.title || '').slice(0, 180),
+        url: String(record.url || '').slice(0, 400),
+        sha256: /^sha256:[a-f0-9]{64}$/.test(String(record.sourceHash || '')) ? record.sourceHash : null,
+        status: 'UNVERIFIED_REVIEW_REQUIRED',
+        claims: (record.claims || []).slice(0, 8).map((claim: any) => ({
+          field: String(claim.field || '').slice(0, 60),
+          value: String(claim.value || '').slice(0, 120),
+          quote: String(claim.quotation || '').slice(0, 240)
+        }))
+      }));
+      if (!researchSources.length) throw new Error('A26 unified evidence contract has no research records');
+    }
     const request: QueueRequest = {
       taskId, agentId, commitSha: revision(), priority, lane,
       input: {
         taskId,
         context: { objective, dataClassification, researchOnly: true,
-          engineeringReleaseApproved: false, baselineWritesPermitted: false },
+          engineeringReleaseApproved: false, baselineWritesPermitted: false,
+          researchSources, evidenceClass: 'PUBLIC_SOURCE_COLLECTION_UNVERIFIED' },
         parameters: {}
       }
     };

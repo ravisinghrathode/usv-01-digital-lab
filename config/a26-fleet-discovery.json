@@ -1,0 +1,462 @@
+{
+  "schemaVersion": 1,
+  "agentId": "INTEL-USV-26",
+  "scope": "PUBLIC_MULTISOURCE_RESEARCH_ONLY",
+  "maxItemsPerFeed": 75,
+  "maxCandidates": 2000,
+  "sources": [
+    {
+      "id": "naval-news",
+      "class": "TRADE_PRESS",
+      "url": "https://www.navalnews.com/feed/"
+    },
+    {
+      "id": "usni-news",
+      "class": "TRADE_PRESS",
+      "url": "https://news.usni.org/feed"
+    },
+    {
+      "id": "naval-technology",
+      "class": "TRADE_PRESS",
+      "url": "https://www.naval-technology.com/news/feed/"
+    }
+  ],
+  "searches": [
+    {
+      "id": "worldwide",
+      "query": "unmanned surface vessel navy maritime autonomous"
+    },
+    {
+      "id": "india",
+      "query": "Indian Navy autonomous unmanned surface vessel USV"
+    },
+    {
+      "id": "asia-pacific",
+      "query": "Japan South Korea Singapore Taiwan navy unmanned surface vessel"
+    },
+    {
+      "id": "europe",
+      "query": "Royal Navy France Germany Italy unmanned surface vessel"
+    },
+    {
+      "id": "oceania",
+      "query": "Australia New Zealand navy autonomous surface vessel"
+    },
+    {
+      "id": "middle-east",
+      "query": "Israel Turkey Gulf navy unmanned surface vessel"
+    },
+    {
+      "id": "africa",
+      "query": "Africa navy autonomous unmanned surface vessel"
+    },
+    {
+      "id": "americas",
+      "query": "US Navy Canada Brazil navy unmanned surface vessel"
+    },
+    {
+      "id": "black-sea",
+      "query": "Ukraine maritime unmanned surface vessel navy"
+    },
+    {
+      "id": "science",
+      "query": "autonomous surface vessel trials hydrographic survey navy"
+    },
+    {
+      "id": "prototype-trials",
+      "query": "naval unmanned surface vessel prototype sea trials demonstration"
+    },
+    {
+      "id": "active-fleet",
+      "query": "navy operational unmanned surface vessel commissioned deployed"
+    },
+    {
+      "id": "announced-projects",
+      "query": "navy experimental unmanned surface vessel design programme"
+    },
+    {
+      "id": "civilian-research",
+      "query": "university unmanned surface vessel research prototype testbed"
+    },
+    {
+      "id": "survey-hydrographic",
+      "query": "autonomous survey vessel hydrographic research prototype"
+    },
+    {
+      "id": "manufacturers",
+      "query": "unmanned surface vessel manufacturer product catalogue specification brochure"
+    },
+    {
+      "id": "technical-drawings",
+      "query": "unmanned surface vessel technical drawing hull general arrangement"
+    },
+    {
+      "id": "manuals",
+      "query": "unmanned surface vehicle operator technical manual public PDF"
+    },
+    {
+      "id": "academic-vessels",
+      "query": "autonomous surface vessel prototype marine robotics paper PDF"
+    },
+    {
+      "id": "test-results",
+      "query": "unmanned surface vessel sea trial performance testing report"
+    },
+    {
+      "id": "procurement",
+      "query": "navy unmanned surface vessel contract delivery demonstration"
+    },
+    {
+      "id": "official-us",
+      "query": "site:navy.mil unmanned surface vessel test program"
+    },
+    {
+      "id": "official-uk",
+      "query": "site:royalnavy.mod.uk autonomous surface vessel prototype"
+    },
+    {
+      "id": "official-india",
+      "query": "site:pib.gov.in unmanned surface vessel navy"
+    },
+    {
+      "id": "official-australia",
+      "query": "site:navy.gov.au autonomous surface vessel"
+    },
+    {
+      "id": "official-france",
+      "query": "site:defense.gouv.fr drone naval surface"
+    },
+    {
+      "id": "official-nato",
+      "query": "site:nato.int unmanned surface vehicle trials"
+    },
+    {
+      "id": "china",
+      "query": "China PLAN navy unmanned surface ship prototype"
+    },
+    {
+      "id": "japan",
+      "query": "Japan maritime self defense force autonomous surface vessel prototype"
+    },
+    {
+      "id": "south-korea",
+      "query": "Republic Korea Navy unmanned surface vessel prototype"
+    },
+    {
+      "id": "southeast-asia",
+      "query": "Indonesia Malaysia Thailand Philippines navy unmanned surface vessel"
+    },
+    {
+      "id": "singapore",
+      "query": "Singapore navy autonomous surface vessel trials"
+    },
+    {
+      "id": "south-asia",
+      "query": "India Pakistan Bangladesh Sri Lanka navy unmanned surface craft"
+    },
+    {
+      "id": "central-asia",
+      "query": "Caspian autonomous marine surface drone prototype"
+    },
+    {
+      "id": "turkey",
+      "query": "Türkiye Turkish navy USV prototype armed unmanned surface vessel"
+    },
+    {
+      "id": "israel",
+      "query": "Israel Navy unmanned surface vehicle prototype"
+    },
+    {
+      "id": "gulf",
+      "query": "UAE Saudi Qatar Bahrain maritime drone unmanned surface vessel"
+    },
+    {
+      "id": "africa-west",
+      "query": "Nigeria Ghana naval unmanned surface vessel research"
+    },
+    {
+      "id": "africa-east",
+      "query": "South Africa Kenya Egypt navy unmanned surface vessel"
+    },
+    {
+      "id": "europe-north",
+      "query": "Norway Sweden Finland Denmark naval unmanned surface vessel"
+    },
+    {
+      "id": "europe-west",
+      "query": "Germany Netherlands Belgium navy autonomous surface vessel"
+    },
+    {
+      "id": "europe-south",
+      "query": "Italy Spain Greece Portugal navy unmanned surface vessel"
+    },
+    {
+      "id": "europe-east",
+      "query": "Poland Romania Baltic navy unmanned surface vehicle"
+    },
+    {
+      "id": "russia",
+      "query": "Russia navy unmanned surface vessel maritime drone prototype"
+    },
+    {
+      "id": "ukraine",
+      "query": "Ukraine naval unmanned surface vehicle Magura Sea Baby prototypes"
+    },
+    {
+      "id": "south-america",
+      "query": "Brazil Argentina Chile Colombia navy unmanned surface vessel"
+    },
+    {
+      "id": "north-america",
+      "query": "Canada US navy Coast Guard autonomous surface vessel prototype"
+    },
+    {
+      "id": "oceania-more",
+      "query": "New Zealand Australia autonomous marine drone prototype"
+    },
+    {
+      "id": "arctic",
+      "query": "Arctic unmanned surface vessel research ice autonomous testbed"
+    },
+    {
+      "id": "ocean-science",
+      "query": "oceanographic autonomous surface vessel long endurance prototype"
+    },
+    {
+      "id": "swarm-robotics",
+      "query": "marine unmanned surface vessel swarm research demonstrator"
+    },
+    {
+      "id": "small-usv",
+      "query": "small unmanned surface vessel RHIB autonomous prototype"
+    },
+    {
+      "id": "large-usv",
+      "query": "large displacement unmanned surface vessel programme prototype"
+    },
+    {
+      "id": "commercial-asv",
+      "query": "commercial autonomous surface vessel workboat prototype trials"
+    },
+    {
+      "id": "saildrone",
+      "query": "uncrewed sailing drone hydrographic navy prototype"
+    },
+    {
+      "id": "wind-solar-wave",
+      "query": "wave powered solar unmanned surface vessel prototype"
+    },
+    {
+      "id": "mine-countermeasures",
+      "query": "naval mine countermeasures unmanned surface craft prototypes"
+    },
+    {
+      "id": "anti-submarine",
+      "query": "unmanned surface vessel ASW autonomous prototype trials"
+    },
+    {
+      "id": "robotic-boat",
+      "query": "robot boat autonomous surface craft field trials CAD technical report"
+    },
+    {
+      "id": "archive-historical",
+      "query": "early experimental autonomous surface vessel navy prototype 1990 2000 2010"
+    },
+    {
+      "id": "local-japanese",
+      "query": "無人水上艇 自律 船 海上自衛隊 試作",
+      "locale": {
+        "hl": "ja",
+        "gl": "JP",
+        "ceid": "JP:ja"
+      }
+    },
+    {
+      "id": "local-korean",
+      "query": "무인 수상정 해군 자율 시제품 시험",
+      "locale": {
+        "hl": "ko",
+        "gl": "KR",
+        "ceid": "KR:ko"
+      }
+    },
+    {
+      "id": "local-turkish",
+      "query": "insansız deniz aracı prototip deneme deniz kuvvetleri",
+      "locale": {
+        "hl": "tr",
+        "gl": "TR",
+        "ceid": "TR:tr"
+      }
+    },
+    {
+      "id": "local-french",
+      "query": "drone naval de surface prototype essais marine nationale",
+      "locale": {
+        "hl": "fr",
+        "gl": "FR",
+        "ceid": "FR:fr"
+      }
+    },
+    {
+      "id": "local-german",
+      "query": "unbemanntes Überwasserfahrzeug Prototyp Marine Erprobung",
+      "locale": {
+        "hl": "de",
+        "gl": "DE",
+        "ceid": "DE:de"
+      }
+    },
+    {
+      "id": "local-spanish",
+      "query": "vehículo de superficie no tripulado prototipo marina",
+      "locale": {
+        "hl": "es",
+        "gl": "ES",
+        "ceid": "ES:es"
+      }
+    },
+    {
+      "id": "local-russian",
+      "query": "безэкипажный катер военно морской флот испытания",
+      "locale": {
+        "hl": "ru",
+        "gl": "RU",
+        "ceid": "RU:ru"
+      }
+    },
+    {
+      "id": "local-arabic",
+      "query": "سفينة سطحية غير مأهولة البحرية نموذج أولي",
+      "locale": {
+        "hl": "ar",
+        "gl": "AE",
+        "ceid": "AE:ar"
+      }
+    },
+    {
+      "id": "local-chinese",
+      "query": "無人水面艇 海軍 原型 試驗",
+      "locale": {
+        "hl": "zh-TW",
+        "gl": "TW",
+        "ceid": "TW:zh-Hant"
+      }
+    },
+    {
+      "id": "local-hindi",
+      "query": "मानवरहित सतह पोत नौसेना परीक्षण",
+      "locale": {
+        "hl": "hi",
+        "gl": "IN",
+        "ceid": "IN:hi"
+      }
+    }
+  ],
+  "knownModels": [
+    {
+      "id": "USV-USN-01",
+      "aliases": [
+        "Sea Hunter",
+        "ACTUV"
+      ]
+    },
+    {
+      "id": "USV-USN-02",
+      "aliases": [
+        "Mariner Ghost Fleet Overlord",
+        "USV Mariner",
+        "Ranger unmanned vessel"
+      ]
+    },
+    {
+      "id": "USV-UKR-01",
+      "aliases": [
+        "MAGURA V5"
+      ]
+    },
+    {
+      "id": "USV-UKR-02",
+      "aliases": [
+        "Sea Baby"
+      ]
+    },
+    {
+      "id": "USV-TUR-01",
+      "aliases": [
+        "ULAQ"
+      ]
+    },
+    {
+      "id": "USV-TUR-02",
+      "aliases": [
+        "MARLIN SIDA",
+        "MARLIN SİDA"
+      ]
+    },
+    {
+      "id": "USV-ISR-01",
+      "aliases": [
+        "Seagull USV"
+      ]
+    },
+    {
+      "id": "USV-ISR-02",
+      "aliases": [
+        "Protector USV"
+      ]
+    },
+    {
+      "id": "USV-GBR-01",
+      "aliases": [
+        "Madfox MAST-13",
+        "MAST-13"
+      ]
+    },
+    {
+      "id": "USV-FRA-01",
+      "aliases": [
+        "DriX"
+      ]
+    },
+    {
+      "id": "USV-AUS-01",
+      "aliases": [
+        "Bluebottle"
+      ]
+    },
+    {
+      "id": "USV-CHN-01",
+      "aliases": [
+        "JARI USV",
+        "JARI Combat"
+      ]
+    },
+    {
+      "id": "USV-SGP-01",
+      "aliases": [
+        "Venus 16"
+      ]
+    },
+    {
+      "id": "USV-IND-01",
+      "aliases": [
+        "Sagar Spotter"
+      ]
+    }
+  ],
+  "historicalSearches": [
+    "unmanned surface vehicle naval prototype",
+    "autonomous surface vessel technology demonstrator",
+    "uncrewed naval vessel experimental craft",
+    "robotic boat autonomous prototype ocean",
+    "unmanned marine vessel historical prototype",
+    "unmanned surface vehicle list navy",
+    "naval mine countermeasures surface drone history",
+    "autonomous marine surface craft research vessel",
+    "oceanographic autonomous surface vehicle prototype",
+    "unmanned surface vessel manufacturer class",
+    "autonomous surface vessel experimental test platform",
+    "navy unmanned surface combatant prototypes"
+  ]
+}
