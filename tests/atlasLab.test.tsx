@@ -15,8 +15,10 @@ import {parseObj} from '../src/dockyard2/mesh';
 const source=(p:string)=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 describe('Atlas — a genuinely new naval engineering interface',()=>{
  const p={snapshot:illustrativeSnapshot,sourceLabel:'Illustrative records'};
- it('ships as a separate entry and never imports Dockyard or Lab3 UI components or style sheets',()=>{
-   expect(source('atlas.html')).toContain('/src/atlas/main.tsx');
+ it('retires the Atlas entry in favor of the canonical interface while retaining historical components',()=>{
+   expect(source('atlas.html')).toContain('window.location.replace');
+   expect(source('atlas.html')).toContain('url=/');
+   expect(source('atlas.html')).not.toContain('/src/atlas/main.tsx');
    expect(source('src/atlas/main.tsx')).toContain("import './styles.css'");
    expect(source('vite.config.ts')).toContain("navalAtlas: path.resolve(import.meta.dirname, 'atlas.html')");
    expect(source('package.json')).toContain('dev:naval-atlas');
