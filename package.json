@@ -49,6 +49,7 @@
     "prepare": "node -e \"const fs = require('fs'); try { fs.copyFileSync('scripts/pre-push.sh', '.git/hooks/pre-push'); fs.chmodSync('.git/hooks/pre-push', 0o755); } catch {}\" || true",
     "mission-control:test": "vitest run tests/subscriptionCliAdapter.test.ts tests/gitRevisionGuard.test.ts tests/missionControlCoordinator.test.ts tests/aiBillingPolicy.test.ts tests/quotaResilience.test.ts",
     "mission-control:preflight": "tsx scripts/mission-control/preflight.ts",
+    "mission-control:model-health": "tsx scripts/mission-control/dual-model-health.ts",
     "mission-control:a04-check": "tsx scripts/mission-control/a04-trusted-host-check.ts",
     "mission-control:pilot": "tsx scripts/mission-control/run-pilot.ts",
     "mission-control:docker:validate": "docker compose config --quiet",
@@ -63,7 +64,10 @@
     "a26:test": "node --test tests/a26/*.test.mjs",
     "a26:unify": "node scripts/a26/unified-evidence.mjs",
     "a26:rules": "node scripts/a26/r3-policy-check.mjs",
-    "test:aistudio-startup": "node scripts/aistudio/smoke.mjs"
+    "test:aistudio-startup": "node scripts/aistudio/smoke.mjs",
+    "academy:plan": "tsx scripts/run-agent-academy.ts plan",
+    "academy:status": "tsx scripts/run-agent-academy.ts status",
+    "academy:study": "tsx scripts/run-agent-academy.ts --execute"
   },
   "dependencies": {
     "@google/genai": "^3.1.0",
