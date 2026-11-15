@@ -5,6 +5,13 @@ on:
     branches: [main]
     paths:
       - 'src/sessions/**'
+      - 'server.ts'
+      - 'src/server/**'
+      - 'src/core/storage/**'
+      - 'src/core/auth/**'
+      - 'src/types/engineering.ts'
+      - 'tests/liveEngineeringSessions.test.tsx'
+      - 'tests/projectStorePersistence.test.ts'
       - 'src/dockyard2/**'
       - 'index.html'
       - 'legacy.html'
@@ -22,6 +29,13 @@ on:
   pull_request:
     paths:
       - 'src/sessions/**'
+      - 'server.ts'
+      - 'src/server/**'
+      - 'src/core/storage/**'
+      - 'src/core/auth/**'
+      - 'src/types/engineering.ts'
+      - 'tests/liveEngineeringSessions.test.tsx'
+      - 'tests/projectStorePersistence.test.ts'
       - 'src/dockyard2/**'
       - 'src/main.tsx'
       - 'index.html'
