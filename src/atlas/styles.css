@@ -376,4 +376,72 @@ button{cursor:pointer}
  .at-directory-groups{grid-template-columns:1fr}
  .at-studio-links{gap:12px}
 }
+/* Viewport-verified spatial priority:
+ * inspector text must NEVER stretch the hero drawing and bury simulations. */
+.at-nav-narrow,.at-cad-short{display:none}
+@media(min-width:1111px){
+ .at-canvas-assembly{height:420px}
+ .at-product-rail,.at-sheet{min-height:0}
+ .at-product-inspector{min-height:0;overflow-y:auto;overscroll-behavior:contain}
+ .at-drawing-surface{min-height:0}
+ .at-sheet-bar,.at-sheet-bottom{flex-shrink:0}
+ .at-assembly{min-height:52px;padding:10px 9px}
+ .at-library-end{padding:10px 12px}
+}
+@media(max-width:1110px){
+ /* Re-order children across the product wrapper without duplicating content:
+    product shelf → drawing → simulation runway → engineering inspector. */
+ .at-studio{display:flex;flex-direction:column}
+ .at-canvas-assembly,.at-canvas-assembly.at-inspector-hidden{display:contents}
+ .at-studio-heading{order:0}
+ .at-product-rail{
+   order:1;min-width:0;border:1px solid var(--at-line);border-bottom:0;
+   display:flex;flex-direction:row;align-items:center;overflow:hidden
+ }
+ .at-rail-heading{flex:none;border-bottom:0;padding:9px 12px}
+ .at-assembly-list{display:flex;flex-direction:row;overflow-x:auto;gap:3px;padding:5px;flex:1}
+ .at-assembly{flex:0 0 auto;min-width:112px;width:auto;min-height:45px;padding:7px}
+ .at-library-end{display:none}
+ .at-sheet{order:2;min-height:0;border:1px solid var(--at-line)}
+ .at-drawing-surface{height:335px;min-height:335px;flex:none}
+ .at-runway{order:3}
+ .at-product-inspector{
+   order:4;display:block;border:1px solid var(--at-line);border-top:0;
+   overflow:visible;padding:0 17px 16px
+ }
+ .at-inspector-caveat{margin-bottom:0}
+ .at-studio-links{order:5}
+}
+@media(max-width:720px){
+ .at-product-rail{flex-direction:column;align-items:stretch}
+ .at-rail-heading{padding:7px 9px}
+ .at-assembly-list{padding:4px 7px 8px}
+ .at-assembly{min-height:47px}
+ .at-drawing-surface{height:285px;min-height:285px}
+ .at-product-inspector{padding:0 14px 15px}
+}
+@media(max-width:460px){
+ .at-nav-wide,.at-cad-full{display:none}
+ .at-nav-narrow,.at-cad-short{display:inline}
+ .at-global-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;overflow:visible}
+ .at-global-nav button{min-width:0;overflow:hidden;text-overflow:ellipsis;padding:7px 2px;font-size:12px}
+ .at-studio-heading{flex-wrap:nowrap;align-items:center;gap:8px}
+ .at-studio-heading>div:first-child{flex:1;min-width:0}
+ .at-studio-heading h1{font-size:22px}
+ .at-studio-heading p{font-size:12px}
+ .at-studio-head-actions{flex:none}
+ .at-neutral-state{display:none}
+ .at-action-secondary{min-height:38px;padding:6px 9px}
+ .at-drawing-surface{height:250px;min-height:250px}
+ .at-sheet-bar{min-height:48px}
+ .at-sheet-bottom{min-height:48px}
+ .at-runway-heading{padding:10px}
+}
+@media(max-width:360px){
+ .at-global-nav button{font-size:11px}
+ .at-studio-heading p{display:none}
+ .at-drawing-surface{height:210px;min-height:210px}
+ .at-assembly-list{padding:3px 6px 6px}
+ .at-assembly{min-height:43px}
+}
 @media(prefers-reduced-motion:reduce){.at-app *, .at-app *::before,.at-app *::after{transition:none!important;scroll-behavior:auto!important}}
