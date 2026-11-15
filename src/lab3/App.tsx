@@ -155,7 +155,12 @@ export default function NavalAiLabApp(){
 
     <dialog ref={catalogDialog} id="nl-module-catalog" aria-label="Engineering module catalogue" className="nl-catalog" onClose={()=>catalogTrigger.current?.focus()}>
         <div className="nl-catalog-header"><div><h2>All engineering modules</h2><p>24 existing governed workspaces, grouped by task</p></div>
-          <button type="button" aria-label="Close catalogue" onClick={()=>catalogDialog.current?.close()}><X size={21}/></button></div>
+          <div className="nl-catalog-actions">
+            <button type="button" className="nl-catalog-text" aria-pressed={large} onClick={()=>setLarge(v=>!v)}>
+              Text: {large?'Large':'Standard'}
+            </button>
+            <button type="button" aria-label="Close catalogue" onClick={()=>catalogDialog.current?.close()}><X size={21}/></button>
+          </div></div>
         <div className="nl-catalog-groups">{DOCKYARD_AREAS.map(group=><section key={group.id}>
           <h3>{group.label}</h3>
           {group.modules.map(m=><a href={moduleLink(m)} key={m}>{MODULE_REGISTRY.find(x=>x.id===m)?.label}<ArrowUpRight size={15}/></a>)}
