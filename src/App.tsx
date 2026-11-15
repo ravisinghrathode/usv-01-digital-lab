@@ -13,7 +13,7 @@ import { DirectorBriefing } from './components/DirectorBriefing';
 import { CadStudioView } from './components/CadStudioView';
 import { DockyardAgentDesk } from './components/DockyardAgentDesk';
 import { DockyardAssuranceDesk } from './components/DockyardAssuranceDesk';
-import { findModule } from './moduleRegistry';
+import { findModule, MODULE_REGISTRY } from './moduleRegistry';
 import type { SearchableRecord } from './studio/recordSearch';
 import { studioPanelId, studioTabId } from './studio/workTabs';
 import { parseStudioTextSize, STUDIO_TEXT_PREFERENCE_KEY } from './studio/readability';
@@ -106,7 +106,12 @@ import {
 export default function App() {
   // Navigation & UI state
   // One supported application shell: Naval Studio X, opening in the hero-product CAD workspace.
-  const [currentModule, setActiveModule] = useState<NavigationModule>('cad-studio');
+  const [currentModule, setActiveModule] = useState<NavigationModule>(() => {
+    // Safe read-only deep link from independent Dockyard 2.0; never bypasses auth.
+    if (typeof window === 'undefined') return 'cad-studio';
+    const target = new URLSearchParams(window.location.search).get('module');
+    return MODULE_REGISTRY.find(m => m.id === target)?.id ?? 'cad-studio';
+  });
   const [openTabs, setOpenTabs] = useState<NavigationModule[]>(['cad-studio']);
   const [commandOpen, setCommandOpen] = useState(false);
   const [detailedOverview, setDetailedOverview] = useState(false);
