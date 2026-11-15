@@ -24,7 +24,7 @@ try{
  assert.equal(await page.locator('.es-study-selector').count(),0);
  await page.screenshot({path:path.join(output,'sessions-worktable-1440.png'),fullPage:false,animations:'disabled'});
  // Contextual inspector is optional and genuine — not a pinned dashboard card.
- await page.getByRole('button',{name:/Inspect Reference configuration/}).click();
+ await page.locator('.es-space-left .es-object-node').first().click();
  const inspector=page.getByRole('complementary',{name:'Selected object context inspector'});
  await inspector.waitFor();
  assert(await inspector.getByText('Demonstration-only').isVisible());
