@@ -378,8 +378,12 @@ export class CodexCliProvider implements IModelProvider {
       workingDirectory: process.cwd(),
       modelOverride: requestedModel
     });
+    if (result.status === 'QUOTA_EXHAUSTED') {
+      throw new Error('USV_QUOTA_WAIT: Codex subscription usage allowance exhausted. No AI synthesis completed.');
+    }
     if (result.status !== 'COMPLETED') {
-      throw new Error('Codex subscription CLI failed or is unavailable. No AI synthesis completed.');
+      throw new Error('Codex subscription CLI failed or is unavailable. No AI synthesis completed. ' +
+        result.stderr.slice(0, 500));
     }
     const content = result.stdout.trim();
     let parsedJson: Record<string, any>;
