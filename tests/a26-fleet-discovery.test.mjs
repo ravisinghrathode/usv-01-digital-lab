@@ -23,14 +23,17 @@ const sample = '<rss><channel>' +
   '</channel></rss>';
 
 test('bounded global sources, restricted feed hosts and seeded alias coverage',()=>{
-  assert.equal(sourcePlan(config).length,13);
-  assert.equal(config.knownModels.length,14);
+  assert.equal(sourcePlan(config).length,63);
+  assert.equal(config.knownModels.length,14); // Aliases seed the known list; not a 14-model collection limit.
+  assert.equal(config.maxCandidates,2000);
   assert.throws(()=>validateFeedUrl('http://www.navalnews.com/feed/'));
   assert.throws(()=>validateFeedUrl('https://localhost/private'));
   assert.throws(()=>validateFeedUrl('https://169.254.169.254/feed'));
   assert.throws(()=>validateFeedUrl('https://www.navalnews.com:444/feed'));
   assert.throws(()=>validateFeedUrl('https://news.google.com/evil'));
   assert.ok(sourcePlan(config).some(x=>x.id==='google-india'));
+  assert.ok(sourcePlan(config).some(x=>x.id==='google-prototype-trials'));
+  assert.ok(sourcePlan(config).some(x=>x.id==='google-manuals'));
   assert.throws(()=>validateConfig({...config,agentId:'A27'}));
 });
 test('RSS entries preserve safe public links and exact published date',()=>{
