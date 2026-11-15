@@ -67,9 +67,9 @@ export default function EngineeringSessionsApp(){
       onClick={()=>setMode(m.id)} title={m.name+' · Alt+'+m.key}><Icon size={17}/><span>{m.name}</span></button>})}
    </nav>
    <div className="es-global-actions">
-    <button type="button" className="es-search-trigger" ref={searchTrigger} onClick={()=>{setSearch('');searchDialog.current?.showModal();}} aria-label="Search engineering records and modules"><Search size={19}/><span>Find anything</span><kbd>⌘ K</kbd></button>
+    <button type="button" className="es-search-trigger" ref={searchTrigger} onClick={()=>{setSearch('');searchDialog.current?.showModal();}}><Search size={19}/><span>Find anything</span><kbd>⌘ K</kbd></button>
     <button type="button" className="es-help-button" onClick={()=>setHelpOpen(v=>!v)} aria-expanded={helpOpen} aria-label="Toggle prototype help"><HelpCircle size={20}/></button>
-    <a className="es-governed" href="/legacy.html" aria-label="Open original governed engineering lab" title="Open original governed engineering lab"><span>Original lab</span> <ArrowUpRight size={14}/></a>
+    <a className="es-governed" href="/legacy.html" title="Open original governed engineering lab"><span>Original lab</span> <ArrowUpRight size={14}/></a>
    </div>
   </header>
   {helpOpen&&<aside className="es-help-popover"><strong>About this concept</strong><p>Use the five modes above or Alt+1–5. Choose an object to inspect it. Press Ctrl/Cmd+K to search. This is an interactive design demonstration with synthetic records—not a live, verified engineering session.</p><button type="button" onClick={()=>setHelpOpen(false)}>Close</button></aside>}
@@ -116,7 +116,7 @@ export default function EngineeringSessionsApp(){
   </dialog>
   <dialog ref={searchDialog} className="es-search-dialog" aria-label="Search the engineering lab" onClose={()=>searchTrigger.current?.focus()} onToggle={e=>{if((e.currentTarget as HTMLDialogElement).open)requestAnimationFrame(()=>searchField.current?.focus());}}>
    <header><h2>Find anything</h2><button type="button" aria-label="Close search" onClick={()=>searchDialog.current?.close()}><X size={20}/></button></header>
-   <label className="es-search-field"><Search size={20}/><input type="search" ref={searchField} value={search} onChange={e=>setSearch(e.target.value)}
+   <label className="es-search-field"><Search size={20}/><input id="engineering-session-search" name="query" type="search" ref={searchField} value={search} onChange={e=>setSearch(e.target.value)}
      onKeyDown={e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();searchDialog.current?.close();}}} placeholder="Search a concept object or a protected engineering module" aria-label="Search demonstration objects and engineering modules"/></label>
    <p>Demonstration objects open the contextual inspector. Matching engineering register records are labelled by source state and open their protected register, not a certified case.</p>
    <div className="es-search-results">{results.length===0?<p>No matching example object or module.</p>:

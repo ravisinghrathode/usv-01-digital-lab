@@ -47,3 +47,19 @@ The user rejected the first implementation as a downgrade from the concept image
 ## Visual design release criterion
 
 Any future UX PR must compare an actual captured screenshot against the selected baseline concept images **and** preserve the engineering truth contract. Readability, imagery, hierarchy, spacing, keyboard/touch behaviour, task completeness and source legitimacy are independent pass/fail dimensions. A working UI that visually regresses toward generic dashboard cards is not acceptable.
+
+## Documented design review — 2026-11-15
+
+**Review surface:** isolated local browser at `/sessions.html`, feature branch `feat/engineering-sessions-visual-fidelity-v2-20261115`. The default `/` route was not changed.
+
+**Visual review:** inspected live 1440×900 screenshots of Worktable, Design, Experiment, Decide and Notebook, plus the 320px Worktable view. The review found five distinct compositions that follow the approved investigation-first hierarchy: a vessel-led worktable, a wide paired design view, a dark source-gated experiment theatre, a connected evidence argument with a human-review boundary, and a chronological research notebook. The high-resolution vessel renders carry the primary visual weight. Their illustrative status remains explicit; no solver result or engineering approval is implied.
+
+The 320px capture exposed mode labels that were too small in the original single-row navigation. The narrow layout now uses two rows with 12px labels and 46px touch targets. Live browser checks at 320, 375, 390, 768, 1024, 1280 and 1440 CSS pixels found no horizontal overflow, all five modes present, and the main vessel image loaded. A 1280px page with CSS zoom set to 200% also retained all five visible modes without horizontal overflow.
+
+**Accessibility findings and corrections:** live Lighthouse checks initially found insufficient contrast in small status labels and two controls whose accessible names did not match their visible labels. Those issues were corrected, along with the search input's missing form identifier. After correction, all five desktop modes scored 100 for accessibility; the mobile Worktable navigation audit also scored 100. Best Practices scored 100. Keyboard review confirmed mode shortcuts, search focus on open, Escape close, and focus return to the search trigger. Reduced-motion emulation was enabled; the session styles disable animation and transitions under that preference. A local notebook observation remained present after switching modes, and its copy confirms it is session-only and not saved to the programme record.
+
+**Build and interaction checks:** `npm run build` completed successfully. The targeted V2 interface and baseline tests passed (2 files, 8 tests). Search and mode interactions were exercised in the live browser. The local browser console showed no runtime errors after the review changes. The existing GitHub browser workflow at commit `8da38bb` also passed its isolated interaction and viewport journey; it predates the local accessibility-only follow-up changes and does not replace CI on the next commit.
+
+**Review disposition:** the candidate passes this local visual and accessibility review for continued review on `/sessions.html`. The original lab remains the default, and the candidate is not approved for route cutover. The repository contains the written baseline but not its original concept-image files, so a side-by-side image comparison against those source images could not be documented here. Independent human design signoff, screen-reader review, production authentication/source verification, and protected merge/deployment review remain required.
+
+The Lighthouse run also reported pre-existing site discovery issues (`robots.txt`, `llms.txt`, and the ARD manifest); those are outside this screen redesign and did not affect the accessibility scores.

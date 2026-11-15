@@ -25,9 +25,9 @@ export function Worktable({session,changeMode,select}:Props){
     <div className="v2-vessel-lightstage">
       <div className="v2-ambience-orbit v2-orbit-a" aria-hidden="true"/><div className="v2-ambience-orbit v2-orbit-b" aria-hidden="true"/>
       <VesselVisual/>
-      <button className="v2-model-pin v2-pin-one" type="button" onClick={()=>select('reference')} aria-label="Inspect reference configuration">
+      <button className="v2-model-pin v2-pin-one" type="button" onClick={()=>select('reference')}>
        <span>01</span><strong>Reference configuration</strong></button>
-      <button className="v2-model-pin v2-pin-two" type="button" onClick={()=>select('candidate')} aria-label="Inspect lightweight candidate"><span>02</span><strong>Lightweight candidate</strong></button>
+      <button className="v2-model-pin v2-pin-two" type="button" onClick={()=>select('candidate')}><span>02</span><strong>Lightweight candidate</strong></button>
     </div>
     <div className="v2-board-foot">
      <span><Box size={16}/> Illustrative twin-hull research platform</span>
