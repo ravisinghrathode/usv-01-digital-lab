@@ -74,6 +74,7 @@ try{
  await page.getByRole('heading',{name:'Make every investigation recoverable.'}).waitFor();
  await page.waitForFunction(()=>window.scrollY<12);
  assert((await page.evaluate(()=>window.scrollY))<12,'Mode switch must return to the new screen top');
+ await page.screenshot({path:path.join(output,'v2-notebook-1440-top.png'),fullPage:false,animations:'disabled'});
  assert(await page.getByText('Verification task draft').isVisible());
  const note=page.getByRole('textbox',{name:'Add a local research observation'});
  await note.fill('Verify launch and recovery load conditions before accepting a lighter hull.');
