@@ -14,6 +14,8 @@ import path from 'node:path';
 import os from 'node:os';
 import { requireLabCommissioningPolicy } from './LabCommissioningPolicy.ts';
 import { A26_CODEX_AGENT_ID, A26_GPT6_MODEL, selectA26SubscriptionModel } from './A26SubscriptionModelAccess.ts';
+import { CHATGPT_SOL_MODEL, dualProviderEnabled } from '../models/DualSubscriptionRoutingPolicy.ts';
+import { AgentRegistry } from '../registry/AgentRegistry.ts';
 import { QuotaResilience, isQuotaFailure } from './QuotaResilience.ts';
 
 export type PilotRole = 'orchestrator' | 'worker' | 'reviewer';
@@ -26,7 +28,7 @@ export interface PilotRequest {
   workingDirectory: string;
   timeoutMs?: number;
   /** A26 standard GPT-6 Sol via signed-in ChatGPT, never OpenAI API access. */
-  modelOverride?: typeof A26_GPT6_MODEL;
+  modelOverride?: typeof A26_GPT6_MODEL | typeof CHATGPT_SOL_MODEL;
 }
 
 export interface PilotResult {
@@ -45,10 +47,10 @@ export class SubscriptionCliUnavailable extends Error {}
 
 export interface CliSpec {
   executable: string;
-  args: (prompt: string, finalMessageFile: string, modelOverride?: typeof A26_GPT6_MODEL) => string[];
+  args: (prompt: string, finalMessageFile: string, modelOverride?: typeof A26_GPT6_MODEL | typeof CHATGPT_SOL_MODEL) => string[];
 }
 
-const codexArgs = (prompt: string, finalMessageFile: string, modelOverride?: typeof A26_GPT6_MODEL): string[] => [
+const codexArgs = (prompt: string, finalMessageFile: string, modelOverride?: typeof A26_GPT6_MODEL | typeof CHATGPT_SOL_MODEL): string[] => [
   'exec',
   '--sandbox', 'read-only',
   '--ephemeral',
@@ -84,11 +86,18 @@ export function validatePilotRequest(input: PilotRequest): void {
   if (!/^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$/.test(input.agentId)) throw new Error('Invalid agentId');
   if (!input.prompt.trim() || input.prompt.length > 24_000) throw new Error('Invalid prompt');
   if (!input.workingDirectory.startsWith('/')) throw new Error('Absolute workingDirectory required');
-  if (input.modelOverride !== undefined && (
-    input.role !== 'worker' || input.agentId !== A26_CODEX_AGENT_ID ||
-    input.modelOverride !== A26_GPT6_MODEL ||
-    selectA26SubscriptionModel(input.agentId) !== input.modelOverride
-  )) throw new SubscriptionCliUnavailable('A26 standard GPT-6 Sol model override denied: ChatGPT subscription-only A26 authorization required.');
+  if (input.modelOverride !== undefined) {
+    const isCanonicalSpecialist = AgentRegistry.getInstance().getAllAgents()
+      .some(agent => agent.id === input.agentId);
+    const approvedGlobalSol = input.modelOverride === CHATGPT_SOL_MODEL &&
+      input.role === 'worker' && isCanonicalSpecialist && dualProviderEnabled();
+    const approvedLegacyA26 = input.modelOverride === A26_GPT6_MODEL &&
+      input.role === 'worker' && input.agentId === A26_CODEX_AGENT_ID &&
+      selectA26SubscriptionModel(input.agentId) === input.modelOverride;
+    if (!approvedGlobalSol && !approvedLegacyA26) {
+      throw new SubscriptionCliUnavailable('Sol model override denied: a canonical research-only agent and an explicitly approved subscription route are required.');
+    }
+  }
 }
 
 /**

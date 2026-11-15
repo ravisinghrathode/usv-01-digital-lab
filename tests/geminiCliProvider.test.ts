@@ -25,12 +25,19 @@ describe('Gemini CLI operator-authenticated provider',()=>{
       '-e','none','--approval-mode','plan','--output-format','json','--prompt'
     ]));
     expect(cwdSeen).toMatch(/usv-gemini-cli-/);
-    expect(out.providerUsed).toBe('gemini');
+    expect(out.providerUsed).toBe('gemini_cli');
     expect(out.modelUsed).toBe('gemini-3.5-pro');
     expect(out.executionMode).toBe('LIVE_AI_GENERATION');
     expect(out.parsedJson?.disciplineSummary).toBe('ok');
     expect(out.isMock).toBe(false);
     expect(out.evidenceValid).toBe(false);
+  });
+  it('reports a requested-only model identity as unverified if model stats are absent',async()=>{
+    const provider=new GeminiCliProvider({runner:async()=>({
+      stdout:JSON.stringify({response:'{"disciplineSummary":"research"}',stats:{}}),stderr:''
+    })});
+    const result=await provider.generateText(request,{modelName:'gemini-3.1-pro-preview'});
+    expect(result.modelUsed).toBe('gemini-3.1-pro-preview-requested-unverified');
   });
   it('fails closed on CLI authentication/error envelope or non-JSON stdout',async()=>{
     const auth=new GeminiCliProvider({runner:async()=>({
