@@ -37,8 +37,8 @@ import { AgentOrchestratorView } from './components/AgentOrchestratorView';
 import { RealtimeSimulationView } from './components/RealtimeSimulationView';
 import { ShipBuildingProcessView } from './components/ShipBuildingProcessView';
 import { GenerativeOptimizerView } from './components/GenerativeOptimizerView';
-import { GlobalUsvFleetView } from './components/GlobalUsvFleetView';
-import { ExternalSoftwareRegisterView } from './components/ExternalSoftwareRegisterView';
+import { UsvModelsLiveView } from './components/UsvModelsLiveView';
+import { RepositoryResearchView } from './components/RepositoryResearchView';
 import { NavalNotebookLMView } from './components/NavalNotebookLMView';
 import { AiEngineeringAssistant } from './components/AiEngineeringAssistant';
 import { NewRecordModal } from './components/NewRecordModal';
@@ -912,11 +912,11 @@ export default function App() {
           )}
 
           {currentModule === 'global-usv-fleet' && (
-            <GlobalUsvFleetView onAskAi={triggerAiQuery} />
+            <UsvModelsLiveView onAskAi={triggerAiQuery} />
           )}
 
           {currentModule === 'external-software' && (
-            <ExternalSoftwareRegisterView />
+            <RepositoryResearchView />
           )}
 
           {currentModule === 'notebook-lm' && (

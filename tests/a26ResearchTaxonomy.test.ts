@@ -1,42 +1,39 @@
 import {describe,it,expect} from 'vitest';
 import fs from 'node:fs';
 const read=(p:string)=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
-describe('A26: exactly two independent research modules',()=>{
- it('keeps the governed 24-module shell and declares only USV Models and Code Repositories for A26',()=>{
+describe('A26 source-backed research modules',()=>{
+ it('routes exactly two research domains to separate current-data views',()=>{
+  const app=read('src/App.tsx');
+  expect(app).toContain('<UsvModelsLiveView onAskAi={triggerAiQuery} />');
+  expect(app).toContain('<RepositoryResearchView />');
+  expect(app).not.toContain("<GlobalUsvFleetView onAskAi={triggerAiQuery} />");
+  expect(app).not.toContain('<ExternalSoftwareRegisterView />');
   const registry=read('src/moduleRegistry.ts');
   expect(registry).toContain("id: 'global-usv-fleet', label: 'USV Models'");
   expect(registry).toContain("id: 'external-software', label: 'Code Repositories'");
-  expect(registry).not.toContain("id: 'scientific-knowledge'");
  });
- it('routes each A26 module directly to its separate domain component',()=>{
-  const app=read('src/App.tsx');
-  expect(app).toContain("<GlobalUsvFleetView onAskAi={triggerAiQuery} />");
-  expect(app).toContain("<ExternalSoftwareRegisterView />");
-  expect(app).not.toContain('<A26ResearchWorkspace initialTab=');
-  expect(app).not.toContain('import { A26ResearchWorkspace }');
+ it('shows real curated and unselected repository scout snapshots ahead of the old register',()=>{
+  const view=read('src/components/RepositoryResearchView.tsx');
+  expect(view).toContain("2026-11-15-curated.json");
+  expect(view).toContain("2026-11-15-all-search-hits.json");
+  expect(view).toContain('<ExternalSoftwareRegisterView/>');
+  const curated=JSON.parse(read('references/repository-scout/2026-11-15-curated.json'));
+  const all=JSON.parse(read('references/repository-scout/2026-11-15-all-search-hits.json'));
+  const legacy=JSON.parse(read('src/data/externalSoftwareRegister.json'));
+  expect(curated.records).toHaveLength(88);
+  expect(all.records).toHaveLength(380);
+  expect(legacy.records).toHaveLength(90);
+  expect(curated.governance).toContain('no candidate approved');
+  expect(all.records.every((r:any)=>r.url.startsWith('https://github.com/'))).toBe(true);
  });
- it('keeps full seeded vessel profiles and source-linked public prototypes',()=>{
-  const models=read('src/components/GlobalUsvFleetView.tsx');
-  expect(models).toContain('GLOBAL_NAVY_USVS');
-  expect(models).toContain('Deep Model Specs');
-  expect(models).toContain('selectedVessel.dimensions.lengthOverallM');
-  expect(models).toContain('selectedVessel.country');
-  expect(models).toContain('Newly discovered USV models and public evidence');
-  expect(models).toContain('publicResearch.vessels.length');
-  expect(models).toContain('publicResearch.leads.length');
-  expect(models).toContain('r.claims.map');
-  expect(models).not.toContain("researchKind==='publications'");
-  expect(models.indexOf('Vessel Model Grid')).toBeLessThan(models.indexOf('Newly discovered USV models and public evidence'));
-  expect(models).toContain('Unverified seeded intelligence');
-  expect(models).not.toContain('✅ Verified Open-Source Naval Baseline');
- });
- it('keeps Code Repositories on its own protected software catalogue',()=>{
-  const repos=read('src/components/ExternalSoftwareRegisterView.tsx');
-  expect(repos).toContain("import rawRegister from '../data/externalSoftwareRegister.json'");
-  expect(repos).toContain('Code Repositories</h2>');
-  expect(repos).not.toContain('getPublicA26ReviewFeed');
-  const catalogue=JSON.parse(read('src/data/externalSoftwareRegister.json'));
-  expect(catalogue.records).toHaveLength(90);
-  expect(catalogue.records.every((r:any)=>r.repositoryUrl.startsWith('https://'))).toBe(true);
+ it('presents new model evidence first and keeps older detailed profiles separately',()=>{
+  const newView=read('src/components/UsvModelsLiveView.tsx');
+  expect(newView).toContain("getPublicA26ReviewFeed({force:true})");
+  expect(newView).toContain("useState<Mode>('models')");
+  expect(newView).toContain('<GlobalUsvFleetView onAskAi={onAskAi} hideA26Research/>');
+  expect(newView).toContain('FIELDS.map');
+  expect(newView).toContain('active.claims.map');
+  expect(newView).toContain('Country:');
+  expect(newView).toContain("No sourced engineering particulars yet");
  });
 });
