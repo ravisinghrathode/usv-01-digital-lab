@@ -22,6 +22,7 @@ try {
    await page.locator('.nl-hero-grid').waitFor();
  };
  await load();
+ await page.screenshot({path:path.join(output,'naval-ai-lab-initial-1440.png'),fullPage:true,animations:'disabled'});
  assert.equal(await page.locator('.nl-hero-grid').count(),1);
  assert.equal(await page.getByRole('heading',{name:'Product workstage'}).count(),1);
  assert.equal(await page.getByRole('heading',{name:'Simulation workbench'}).count(),1);
@@ -42,15 +43,15 @@ try {
  await page.getByRole('searchbox',{name:'Search simulation, requirement, risk and module records'}).fill('hydrodynamics');
  assert((await page.locator('.nl-search-hits a').count())>0,'Search should find engineering records');
  await page.keyboard.press('Escape');
- assert.equal(await page.getByRole('dialog',{name:'Search the naval engineering lab'}).isVisible(),false);
- assert.equal(await page.evaluate(()=>document.activeElement?.getAttribute('aria-label')),'Search records and modules');
+ await page.getByRole('dialog',{name:'Search the naval engineering lab'}).waitFor({state:'hidden'});
+ await page.waitForFunction(()=>document.activeElement?.getAttribute('aria-label')==='Search records and modules');
 
  await page.getByRole('button',{name:'All modules'}).click();
  const catalogue=page.getByRole('dialog',{name:'Engineering module catalogue'});
  await catalogue.waitFor();
  assert.equal(await catalogue.locator('a[href^="/legacy.html?module="]').count(),24,'All registered modules must be reachable');
  await page.keyboard.press('Escape');
- assert.equal(await catalogue.isVisible(),false);
+ await catalogue.waitFor({state:'hidden'});
 
  await page.getByRole('navigation',{name:'Naval laboratory workspaces'}).getByRole('button',{name:'Simulations'}).click();
  await page.getByRole('heading',{name:'Simulation & physics laboratory'}).waitFor();
