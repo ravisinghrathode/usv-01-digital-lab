@@ -110,7 +110,11 @@ export function DesignScreen({snapshot,sourceLabel}:Props) {
         <div className="d2-panelbottom">Conceptual hierarchy. A local mesh is never automatically mapped to a part or requirement.</div>
       </aside>
       {view==='compare'?<div className="d2-compare-stage">
-        <div><h3>Candidate A</h3>{stage(meshA,'Imported OBJ candidate A')}</div>
+        <div><h3>Candidate A</h3>{meshA?stage(meshA,'Imported OBJ candidate A'):
+        <div className="d2-awaiting"><GitCompare size={26}/><strong>No candidate A loaded</strong>
+          <p>Import the first local OBJ mesh to begin a meaningful visual comparison.</p>
+          <button type="button" className="d2-button" onClick={()=>uploadA.current?.click()}>Import OBJ A</button>
+        </div>}</div>
         <div><h3>Candidate B</h3>{meshB?stage(meshB,'Imported OBJ candidate B'):
           <div className="d2-awaiting"><GitCompare size={26}/><strong>No candidate B loaded</strong>
             <p>Import a second local OBJ mesh to compare visual geometry.</p>
