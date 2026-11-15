@@ -6,7 +6,7 @@ import { legacyModuleUrl, legacyRootRedirect } from '../src/dockyard2/domain';
 const read = (file:string)=>readFileSync(new URL('../'+file,import.meta.url),'utf8');
 
 describe('Engineering Sessions becomes the standard interface',()=>{
-  it('serves Engineering Sessions at root and preserves previous and governed routes',()=>{
+  it('serves Engineering Sessions at root, redirects retired UI, and preserves governed routes',()=>{
     const index=read('index.html');
     const legacy=read('legacy.html');
     const alias=read('dockyard2.html');
@@ -16,11 +16,12 @@ describe('Engineering Sessions becomes the standard interface',()=>{
     expect(index).not.toContain('src/main.tsx');
     expect(legacy).toContain('src/main.tsx');
     expect(legacy).not.toContain('src/dockyard2/main.tsx');
-    expect(alias).toContain('src/dockyard2/main.tsx');
+    expect(alias).toContain('window.location.replace');
+    expect(alias).not.toContain('src/dockyard2/main.tsx');
     expect(config).toContain("legacyEngineering: path.resolve(import.meta.dirname, 'legacy.html')");
     expect(config).toContain("navalDesignStudio: path.resolve(import.meta.dirname, 'index.html')");
   });
-  it('keeps the previous interface and original editor independently reachable',()=>{
+  it('keeps the original governed editor reachable while historical presentation code stays non-default',()=>{
     const app=read('src/dockyard2/App.tsx');
     const originalTopBar=read('src/components/TopBar.tsx');
     const sessions=read('src/sessions/App.tsx');
