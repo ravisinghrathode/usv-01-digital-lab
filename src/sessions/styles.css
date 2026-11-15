@@ -365,4 +365,34 @@ button{cursor:pointer}
  .es-tray-preview button{font-size:11px;white-space:nowrap;padding:6px 9px}
  .es-tray-toggle{font-size:11px}
 }
+/* Keep disclosure fully readable while making product visible sooner on tiny displays. */
+.es-truth-short{display:none}
+@media(max-width:470px){
+ .es-truth-long{display:none}
+ .es-truth-short{display:inline}
+}
+@media(max-width:360px){
+ .es-commandbar{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:0;padding:6px 8px 0}
+ .es-brand{min-width:0}
+ .es-brand small{display:none}
+ .es-global-actions{gap:4px}
+ .es-global-actions .es-search-trigger,.es-global-actions .es-help-button,.es-global-actions .es-governed{min-width:33px;width:33px;height:35px;padding:0}
+ .es-governed span{display:none}
+ .es-modes{order:0;grid-column:1/-1;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;padding-bottom:5px}
+ .es-modes button{min-height:47px;font-size:10px;padding:5px 0}
+ .es-session-spine{padding:6px 10px;gap:3px}
+ .es-context-id{font-size:10px;padding:3px 5px;margin-bottom:2px}
+ .es-question strong{font-size:13px;line-height:1.3}
+ .es-spine-context{gap:6px}
+ .es-spine-context span:nth-child(2){display:none}
+ .es-truth-banner{padding:5px 10px;gap:6px}
+ .es-truth-banner strong{font-size:9px}
+ .es-main{padding:10px 9px 18px}
+ .es-screen-header{gap:5px;margin-bottom:7px}
+ .es-screen-header h2{font-size:21px;line-height:1.15;margin:3px 0}
+ .es-screen-header p{display:none}
+ .es-workspace{gap:6px}
+ .es-vessel-display{min-height:217px}
+ .es-vessel-display .es-vessel-svg{height:217px;min-height:210px}
+}
 @media(prefers-reduced-motion:reduce){.es-app *, .es-app *::before,.es-app *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
