@@ -1,7 +1,9 @@
 name: Sessions — Build Original 3D Product Visuals
 
 on:
-  pull_request:
+  push:
+    branches:
+      - 'feat/sessions-visual-fidelity-rebuild-20261115'
     paths:
       - 'scripts/ui/render_sessions_vessels.py'
       - '.github/workflows/sessions-render-original-assets.yml'
