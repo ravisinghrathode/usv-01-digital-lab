@@ -154,8 +154,8 @@ const emptyJournal = (): CandidateJournal =>
   ({schema: 'usv01-candidate-journal/v1', events: []});
 const states = (): Record<AnalysisDomain, AnalysisStatus> =>
   Object.fromEntries(DOMAINS.map(domain => [domain,
-    ENGINEERING_DEPENDENCIES[domain].length ? 'BLOCKED' : 'NOT_RUN']))
-    as Record<AnalysisDomain, AnalysisStatus>;
+    ENGINEERING_DEPENDENCIES[domain].length ? 'BLOCKED' : 'NOT_RUN'
+  ])) as Record<AnalysisDomain, AnalysisStatus>;
 
 function validateAction(action: CandidateAction): void {
   if (!action || typeof action !== 'object') throw new Error('M03_INVALID_ACTION');
