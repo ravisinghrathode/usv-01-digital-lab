@@ -373,12 +373,12 @@ button{cursor:pointer}
 }
 @media(max-width:360px){
  .es-commandbar{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:0;padding:6px 8px 0}
- .es-brand{min-width:0}
+ .es-brand{min-width:0;grid-column:1;grid-row:1}
  .es-brand small{display:none}
- .es-global-actions{gap:4px}
+ .es-global-actions{gap:4px;grid-column:2;grid-row:1}
  .es-global-actions .es-search-trigger,.es-global-actions .es-help-button,.es-global-actions .es-governed{min-width:33px;width:33px;height:35px;padding:0}
  .es-governed span{display:none}
- .es-modes{order:0;grid-column:1/-1;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;padding-bottom:5px}
+ .es-modes{order:0;grid-column:1/-1;grid-row:2;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;padding-bottom:5px}
  .es-modes button{min-height:47px;font-size:10px;padding:5px 0}
  .es-session-spine{padding:6px 10px;gap:3px}
  .es-context-id{font-size:10px;padding:3px 5px;margin-bottom:2px}
