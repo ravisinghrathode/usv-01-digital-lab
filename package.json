@@ -7,6 +7,7 @@
     "dev": "tsx server.ts",
     "start": "tsx server.ts",
     "dev:ui": "vite",
+    "dev:dockyard2": "vite --open /dockyard2.html",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest run --reporter=default --reporter=json --outputFile=governance/reports/test-results.json",

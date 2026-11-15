@@ -14,6 +14,10 @@ export default defineConfig({
   build: {
     chunkSizeWarningLimit: 1500,
     rollupOptions: {
+      input: {
+        navalStudio: path.resolve(import.meta.dirname, 'index.html'),
+        dockyard2: path.resolve(import.meta.dirname, 'dockyard2.html')
+      },
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {

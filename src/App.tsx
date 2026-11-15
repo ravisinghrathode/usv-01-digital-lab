@@ -13,7 +13,7 @@ import { DirectorBriefing } from './components/DirectorBriefing';
 import { CadStudioView } from './components/CadStudioView';
 import { DockyardAgentDesk } from './components/DockyardAgentDesk';
 import { DockyardAssuranceDesk } from './components/DockyardAssuranceDesk';
-import { findModule } from './moduleRegistry';
+import { findModule, MODULE_REGISTRY } from './moduleRegistry';
 import type { SearchableRecord } from './studio/recordSearch';
 import { studioPanelId, studioTabId } from './studio/workTabs';
 import { parseStudioTextSize, STUDIO_TEXT_PREFERENCE_KEY } from './studio/readability';
@@ -126,6 +126,16 @@ export default function App() {
     setActiveModule(module);
     setOpenTabs(tabs => tabs.includes(module) ? tabs : [...tabs, module]);
   };
+  // Dockyard 2.0 can navigate to an original module, but baseline startup and
+  // every existing authorization path remain unchanged. Ignore invalid IDs.
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get('module');
+    const module = MODULE_REGISTRY.find(m => m.id === requested);
+    if (module) {
+      setActiveModule(module.id);
+      setOpenTabs(tabs => tabs.includes(module.id) ? tabs : [...tabs, module.id]);
+    }
+  }, []);
   const closeModuleTab = (module: NavigationModule) => {
     if (!window.confirm('Close this work tab? Unsaved changes inside it may be discarded.')) return;
     const remaining = openTabs.filter(tab => tab !== module);
