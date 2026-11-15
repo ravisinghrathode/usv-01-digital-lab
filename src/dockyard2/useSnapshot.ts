@@ -9,6 +9,7 @@ export function useSnapshot() {
   const [status,setStatus]=useState<SnapshotStatus>('illustrative');
   const [user,setUser]=useState<ApproverIdentity|null>(getCurrentUser);
   const [error,setError]=useState('');
+  const [refreshVersion,setRefreshVersion]=useState(0);
   useEffect(()=>{
     let mounted=true,rev=0;
     const unsubscribe=subscribeAuthState(next=>{
