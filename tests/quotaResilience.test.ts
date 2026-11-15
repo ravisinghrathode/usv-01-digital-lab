@@ -175,6 +175,41 @@ describe('Resilient A01-A26 task queue', () => {
     expect((await queue.status()).counts.COMPLETED).toBe(0);
   });
 
+  it('serializes simultaneous queue workers and holds source drift for review', async () => {
+    const dir = await sandbox();
+    const file = path.join(dir, 'queue.json');
+    const quota = new QuotaResilience(path.join(dir, 'quota.json'));
+    let calls = 0;
+    let release: (() => void) | undefined;
+    const gate = new Promise<void>(resolve => { release = resolve; });
+    const runner = async (_id: string, input: AgentExecutionInput) => {
+      calls++;
+      await gate;
+      return modelOutput(input);
+    };
+    const queue1 = new ResilientAgentQueue(file, quota, Date.now, runner,
+      async () => ({ clean: true }));
+    const queue2 = new ResilientAgentQueue(file, quota, Date.now, runner,
+      async () => ({ clean: true }));
+    await queue1.enqueue(request('CONCURRENT-1'));
+    await queue1.enqueue(request('CONCURRENT-2'));
+    const first = queue1.runOne(dir);
+    // Allow the first claimant to record its RUNNING state.
+    for (let k = 0; k < 100; k++) {
+      if ((await queue1.status()).counts.RUNNING === 1) break;
+      await new Promise(resolve => setTimeout(resolve, 5));
+    }
+    expect((await queue2.runOne(dir)).taskId).toBeNull();
+    release?.();
+    expect((await first).taskId).toBe('CONCURRENT-1');
+    expect(calls).toBe(1);
+
+    const drift = new ResilientAgentQueue(file, quota, Date.now, runner,
+      async () => { throw new Error('Working tree HEAD does not match requested evidence commit'); });
+    expect((await drift.runOne(dir)).state).toBe('BLOCKED_REVIEW');
+    expect(calls).toBe(1);
+  });
+
   it('never silently retries an expired in-flight lease after a crash', async () => {
     const dir = await sandbox();
     const file = path.join(dir, 'queue.json');
