@@ -196,7 +196,8 @@ def build(variant):
     cam.data.type="ORTHO";cam.data.ortho_scale=15.8
     scene=bpy.context.scene;scene.camera=cam
     scene.render.engine="CYCLES";scene.cycles.samples=30
-    scene.cycles.use_denoising=True
+    # Ubuntu runner's Blender 4.0 build does not include Intel OpenImageDenoiser.
+    scene.cycles.use_denoising=False
     scene.render.resolution_x=1720;scene.render.resolution_y=970
     scene.render.resolution_percentage=100
     scene.render.image_settings.file_format="PNG"
