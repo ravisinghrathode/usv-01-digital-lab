@@ -13,7 +13,13 @@ import {
 export const ACADEMY_SIGNATURE_DOMAIN = 'USV01_AGENT_ACADEMY_V1\n';
 
 export function academyEvidenceBytes(record: SignedQualificationRecord): Buffer {
-  return Buffer.from(ACADEMY_SIGNATURE_DOMAIN + JSON.stringify(record.evidence), 'utf8');
+  // Bind reviewer and Director identities as well as assessment content.
+  // Otherwise an actor could relabel a signed record without invalidating it.
+  return Buffer.from(ACADEMY_SIGNATURE_DOMAIN + JSON.stringify({
+    evidence: record.evidence,
+    reviewer: { identity: record.reviewer.identity, qualification: record.reviewer.qualification },
+    director: { identity: record.director.identity }
+  }), 'utf8');
 }
 
 function parseEd25519PublicKey(pem: string): KeyObject {
