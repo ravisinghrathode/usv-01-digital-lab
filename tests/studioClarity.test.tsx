@@ -74,9 +74,10 @@ describe('Naval Studio Clarity — new interface contract', () => {
     const tabs = renderToStaticMarkup(<StudioWorkspaceBar currentModule="overview"
       onSelectModule={()=>{}} openTabs={['cad-studio','overview','workstream-HYD']}
       onCloseTab={()=>{}} textSize="large" onChangeTextSize={()=>{}}/>);
-    expect(tabs).toContain('Product &amp; CAD');
+    expect(tabs).toContain('Design');
+    expect(tabs).toContain('Agents');
     expect(tabs).toContain('Programme');
-    expect(tabs).toContain('Engineering');
+    expect(tabs).toContain('Analysis');
     expect(tabs).toContain('Assurance');
     expect(tabs).toContain('Text: Large');
     expect(tabs).toContain('aria-selected="true"');

@@ -1,0 +1,273 @@
+/*
+ * DOCKYARD / Design A. Operate-first maritime engineering interface.
+ * Existing Clarity selectors are inherited; these rules commit the selected
+ * task-centred design without retheming legacy engineering forms.
+ */
+.studio-x[data-direction="dockyard"] {
+  --dy-ink:#142d39;
+  --dy-muted:#465f6b;
+  --dy-border:#d1dde1;
+  --dy-paper:#ffffff;
+  --dy-canvas:#eef3f5;
+  --dy-accent:#087187;
+  --dy-accent-soft:#e1f1f4;
+  --dy-warning:#825719;
+  --dy-warning-soft:#fff5dc;
+  --dy-font:14px;
+  background:var(--dy-canvas);
+  color:var(--dy-ink);
+}
+.studio-x[data-direction="dockyard"][data-text-size="large"] {
+  --dy-font:16px;
+}
+.studio-x[data-direction="dockyard"] .ns3-main > header.ns3-topbar {
+  background:#ffffff;
+  border-color:var(--dy-border);
+  min-height:72px;
+}
+.studio-x[data-direction="dockyard"] .ns3-side { background:#f7fafb; }
+.studio-x[data-direction="dockyard"] .ns3-side-product {
+  border-radius:8px;
+  box-shadow:none;
+}
+.studio-x[data-direction="dockyard"] .ns3-navitem,
+.studio-x[data-direction="dockyard"] .ns3-workspace-tab,
+.studio-x[data-direction="dockyard"] .ns3-worktab-button { font-size:var(--dy-font); }
+.studio-x[data-direction="dockyard"] .ns3-navgroup-toggle { letter-spacing:0; font-size:13px; }
+.studio-x[data-direction="dockyard"] .ns3-workspace-tab[aria-current="page"] {
+  border-bottom-width:3px;
+  font-weight:770;
+}
+.studio-x[data-direction="dockyard"] .ns3-context { background:#f8fafb; }
+.studio-x[data-direction="dockyard"] .ns3-content { background:#eef3f5; }
+.studio-x[data-direction="dockyard"] .ns3-tabstrip { background:#f7fafb; }
+.studio-x[data-direction="dockyard"] .ns3-worktab:has([aria-selected="true"]) { box-shadow:inset 0 3px 0 #087187; }
+
+/* White tool surfaces frame the dark geometry stage: design, not a full
+   dark interface. This mapping fixes Clarity's remaining slate collision. */
+.studio-x[data-direction="dockyard"] .dy-cad {
+  background:#eef3f5 !important;
+  color:#142d39 !important;
+  gap:12px;
+}
+.studio-x[data-direction="dockyard"] .dy-cad-header,
+.studio-x[data-direction="dockyard"] .dy-cad-toolbar,
+.studio-x[data-direction="dockyard"] .dy-cad-tree,
+.studio-x[data-direction="dockyard"] .dy-cad-inspector > div {
+  background:#fff !important;
+  color:#142d39 !important;
+  border-color:#d1dde1 !important;
+  border-radius:9px;
+}
+.studio-x[data-direction="dockyard"] .dy-cad-header { padding:15px 17px; }
+.studio-x[data-direction="dockyard"] .dy-cad-toolbar { padding:10px; }
+.studio-x[data-direction="dockyard"] .dy-cad-tree {
+  box-shadow:none;
+  max-height:700px;
+}
+.studio-x[data-direction="dockyard"] .dy-cad-inspector {
+  color:#142d39;
+}
+.studio-x[data-direction="dockyard"] .dy-cad-header .text-slate-400,
+.studio-x[data-direction="dockyard"] .dy-cad-toolbar .text-slate-400,
+.studio-x[data-direction="dockyard"] .dy-cad-tree .text-slate-400,
+.studio-x[data-direction="dockyard"] .dy-cad-inspector .text-slate-400,
+.studio-x[data-direction="dockyard"] .dy-cad-inspector .text-slate-300 {
+  color:#49626e !important;
+}
+.studio-x[data-direction="dockyard"] .dy-cad-header .text-slate-200,
+.studio-x[data-direction="dockyard"] .dy-cad-header .text-slate-100,
+.studio-x[data-direction="dockyard"] .dy-cad-toolbar .text-slate-200,
+.studio-x[data-direction="dockyard"] .dy-cad-tree .text-slate-200,
+.studio-x[data-direction="dockyard"] .dy-cad-tree .text-slate-300,
+.studio-x[data-direction="dockyard"] .dy-cad-inspector .text-slate-200 {
+  color:#142d39 !important;
+}
+.studio-x[data-direction="dockyard"] .dy-cad-header .text-cyan-300,
+.studio-x[data-direction="dockyard"] .dy-cad-inspector .text-cyan-200,
+.studio-x[data-direction="dockyard"] .dy-cad-inspector .text-cyan-300,
+.studio-x[data-direction="dockyard"] .dy-cad-toolbar .text-cyan-200 {
+  color:#075f73 !important;
+}
+.studio-x[data-direction="dockyard"] .dy-cad-toolbar [aria-pressed="true"],
+.studio-x[data-direction="dockyard"] .dy-cad-tree [aria-current="true"] {
+  background:#dceff2 !important;
+  color:#075f73 !important;
+}
+.studio-x[data-direction="dockyard"] .dy-cad-toolbar button,
+.studio-x[data-direction="dockyard"] .dy-cad-header button,
+.studio-x[data-direction="dockyard"] .dy-cad-tree button,
+.studio-x[data-direction="dockyard"] .dy-cad-inspector button {
+  min-height:44px;
+  border-color:#b8ced6;
+}
+.studio-x[data-direction="dockyard"] .dy-cad-toolbar button:hover,
+.studio-x[data-direction="dockyard"] .dy-cad-header button:hover,
+.studio-x[data-direction="dockyard"] .dy-cad-tree button:hover,
+.studio-x[data-direction="dockyard"] .dy-cad-inspector button:hover {
+  background:#e9f3f5;
+}
+.studio-x[data-direction="dockyard"] .dy-cad-canvas {
+  background:#0b1c2a !important;
+  border-color:#44677e !important;
+  color:#f0f7fb !important;
+  min-height:520px;
+}
+.studio-x[data-direction="dockyard"] .dy-cad-canvas .text-slate-400,
+.studio-x[data-direction="dockyard"] .dy-cad-canvas .text-slate-500 {
+  color:#b7ccda !important;
+}
+.studio-x[data-direction="dockyard"] .dy-cad-canvas .text-slate-200,
+.studio-x[data-direction="dockyard"] .dy-cad-canvas .text-slate-300 {
+  color:#e2edf4 !important;
+}
+.studio-x[data-direction="dockyard"] .dy-cad-canvas .bg-slate-950 {
+  background:#122638 !important;
+}
+.studio-x[data-direction="dockyard"] .dy-cad-canvas button {
+  min-height:44px;
+  color:#e9f5fa;
+}
+.studio-x[data-direction="dockyard"] .dy-cad-canvas .text-amber-200,
+.studio-x[data-direction="dockyard"] .dy-cad-canvas .text-amber-300 {
+  color:#f7d89d !important;
+}
+/* Remaining CAD advanced controls use a deliberate dark instrument panel
+   so none inherit the light-shell text palette by accident. */
+.studio-x[data-direction="dockyard"] .dy-cad > section[aria-label="Study parametric hull pipeline"],
+.studio-x[data-direction="dockyard"] .dy-cad > section[aria-label="Geometry candidate comparison"] {
+  background:#142b3b;
+  color:#e5f2f8;
+}
+.studio-x[data-direction="dockyard"] .dy-cad > section[aria-label="Study parametric hull pipeline"] .text-slate-200,
+.studio-x[data-direction="dockyard"] .dy-cad > section[aria-label="Geometry candidate comparison"] .text-slate-300 {
+  color:#e5f2f8 !important;
+}
+
+/* The context dock is deliberately NOT four KPI cards. Four dense factual
+   columns expose the source, state, action and uncertainty. */
+.dy-context-dock {
+  border:1px solid var(--dy-border);
+  border-radius:10px;
+  background:#fff;
+  color:var(--dy-ink);
+  overflow:hidden;
+}
+.dy-dock-heading {
+  display:flex; align-items:center; justify-content:space-between;
+  gap:10px; padding:13px 17px; border-bottom:1px solid var(--dy-border);
+}
+.dy-dock-heading h2 { font-size:17px; font-weight:770; margin:0; }
+.dy-dock-heading p { color:var(--dy-muted);font-size:13px; margin:4px 0 0; }
+.dy-evidence-tag { flex-shrink:0; padding:6px 9px;border-radius:6px; color:var(--dy-warning);background:var(--dy-warning-soft);font-size:12px;font-weight:750; }
+.dy-dock-grid { display:grid;grid-template-columns:repeat(4,minmax(0,1fr)); }
+.dy-dock-cell { padding:15px 16px; min-width:0;border-right:1px solid var(--dy-border);display:flex;flex-direction:column;gap:4px; }
+.dy-dock-cell:last-child { border-right:0; }
+.dy-dock-cell > svg { color:#087187; margin-bottom:5px; }
+.dy-dock-cell h3 { margin:0; font-size:14px; font-weight:770; }
+.dy-dock-cell strong { font-size:var(--dy-font);font-weight:740; }
+.dy-dock-cell p { font-size:13px;line-height:1.5;color:var(--dy-muted);margin:1px 0 12px;flex:1;overflow-wrap:anywhere; }
+.dy-dock-cell button { min-height:40px;display:flex;justify-content:flex-start;align-items:center;gap:5px;color:#08667b;font-size:13px;font-weight:740;align-self:flex-start; }
+.dy-dock-disclosure { margin:0;padding:10px 17px;background:#f8fafb;color:var(--dy-muted);font-size:12px;line-height:1.5;border-top:1px solid var(--dy-border); }
+
+/* Agent workbench and assurance are first-class operating surfaces.
+   They lead to the existing full workflows, not a second shadow engine. */
+.dy-desk {
+  padding:clamp(16px,2.5vw,34px);
+  background:#eef3f5;
+  color:#142d39;
+  min-height:100%;
+}
+.dy-desk-header {
+  display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;
+  padding-bottom:18px;border-bottom:1px solid #cbd9de;
+}
+.dy-desk-header h1 { margin:0;font-size:clamp(23px,2.4vw,31px);letter-spacing:-.028em;font-weight:790;line-height:1.15; }
+.dy-desk-header p { margin:8px 0 0;font-size:var(--dy-font);color:#465f6b;line-height:1.55;max-width:75ch; }
+.dy-button,.dy-return-button {
+  display:inline-flex;min-height:44px;align-items:center;gap:7px;
+  padding:9px 13px;border:1px solid #b4cad3;border-radius:7px;
+  color:#095f72;background:#fff;font-size:14px;font-weight:740;text-align:left;
+}
+.dy-button--primary { color:#fff;background:#087187;border-color:#087187; }
+.dy-button--primary:hover { background:#07586c; }
+.dy-return-button { margin:12px; }
+.dy-legacy-workflow { min-height:100%;background:#eef3f5; }
+.dy-desk-facts {
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;
+  margin:19px 0;background:#fff;border:1px solid #d1dde1;border-radius:9px;overflow:hidden;
+}
+.dy-desk-facts > div { padding:17px 20px;border-right:1px solid #d1dde1; }
+.dy-desk-facts > div:last-child {border:0}
+.dy-desk-facts span,.dy-desk-facts small { display:block;color:#465f6b;font-size:13px;line-height:1.45; }
+.dy-desk-facts strong { display:block;margin:8px 0;font-size:24px;line-height:1.12;font-weight:800;color:#142d39;overflow-wrap:anywhere; }
+.dy-desk-panel { background:#fff;border:1px solid #d1dde1;border-radius:9px;overflow:hidden;min-width:0; }
+.dy-desk-panel-head { display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;border-bottom:1px solid #d1dde1;padding:15px 18px; }
+.dy-desk-panel-head h2 {font-size:17px;font-weight:780;margin:0}
+.dy-desk-panel-head p {margin:0;font-size:13px;color:#465f6b}
+.dy-desk-panel-head button {display:grid;place-items:center;min-width:44px;min-height:44px;color:#087187;border-radius:6px}
+.dy-desk-columns {display:grid;grid-template-columns:1.15fr 1fr;gap:15px;margin-top:15px;}
+.dy-agent-stages {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;list-style:none;margin:0;padding:0}
+.dy-agent-stages li {display:flex;gap:12px;padding:21px 16px;border-right:1px solid #d1dde1;min-width:0;}
+.dy-agent-stages li:last-child {border:0}
+.dy-agent-stages li span {display:block;font-size:14px;font-weight:760}
+.dy-agent-stages li p {margin:6px 0 0;font-size:13px;color:#465f6b;line-height:1.5}
+.dy-stage-icon {width:35px;height:35px;flex:none;display:grid;place-items:center;color:#075f73;background:#e1f1f4;border-radius:7px}
+.dy-ledger-row {width:100%;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:13px 18px;text-align:left;border-bottom:1px solid #e1e9ec;min-height:58px}
+.dy-ledger-row:hover,.dy-action-row:hover {background:#f0f7f8}
+.dy-ledger-row strong {display:block;font-size:var(--dy-font);font-weight:700;line-height:1.4}
+.dy-ledger-row small {display:block;color:#526975;font-size:12px;margin-top:5px}
+.dy-ledger-row em {flex-shrink:0;font-style:normal;color:#825719;background:#fff5dc;border-radius:5px;padding:5px 7px;font-size:12px;font-weight:750}
+.dy-action-row {width:100%;display:flex;align-items:center;gap:12px;text-align:left;padding:15px 18px;border-bottom:1px solid #e1e9ec;min-height:61px}
+.dy-action-row > svg:first-child {color:#087187;flex:none}
+.dy-action-row > svg:last-child {color:#087187;flex:none;margin-left:auto}
+.dy-action-row > span {font-size:var(--dy-font);font-weight:760;flex:1}
+.dy-action-row small {display:block;color:#465f6b;font-size:12px;font-weight:460;margin-top:4px}
+.dy-desk-panel > .dy-button {margin:16px}
+.dy-empty {color:#465f6b;padding:14px 18px;font-size:13px;line-height:1.55}
+.dy-record-disclaimer {font-size:13px;line-height:1.55;color:#526975;max-width:98ch;margin:16px 0 0;}
+.dy-matrix-scroll {overflow-x:auto;scrollbar-width:thin}
+.dy-matrix {width:100%;min-width:680px;border-collapse:collapse;font-size:14px}
+.dy-matrix th {text-align:left;background:#f6f9fa;color:#465f6b;padding:12px 15px;font-weight:780;border-bottom:1px solid #d1dde1}
+.dy-matrix td {padding:13px 15px;border-bottom:1px solid #e1e9ec;vertical-align:top;color:#334f5d}
+.dy-matrix td strong {display:block;color:#142d39;font-weight:740}
+.dy-matrix td small {display:block;color:#526975;font-size:12px;margin-top:5px}
+.dy-evidence-list {display:flex;justify-content:space-between;gap:16px;padding:13px 18px;border-bottom:1px solid #e1e9ec;font-size:14px}
+.dy-evidence-list span {color:#465f6b}
+.dy-evidence-list strong {font-weight:760;text-align:right;overflow-wrap:anywhere}
+
+/* Design-specific typography and zoom rules. */
+.studio-x[data-direction="dockyard"][data-text-size="large"] .dy-dock-cell p,
+.studio-x[data-direction="dockyard"][data-text-size="large"] .dy-dock-disclosure,
+.studio-x[data-direction="dockyard"][data-text-size="large"] .dy-agent-stages li p,
+.studio-x[data-direction="dockyard"][data-text-size="large"] .dy-record-disclaimer,
+.studio-x[data-direction="dockyard"][data-text-size="large"] .dy-matrix td {
+  font-size:15px;
+}
+@media(max-width:1230px) {
+  .dy-dock-grid {grid-template-columns:repeat(2,minmax(0,1fr));}
+  .dy-dock-cell:nth-child(2){border-right:0}
+  .dy-dock-cell:nth-child(-n+2){border-bottom:1px solid var(--dy-border)}
+  .dy-agent-stages {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dy-agent-stages li:nth-child(2){border-right:0}
+  .dy-agent-stages li:nth-child(-n+2){border-bottom:1px solid #d1dde1}
+}
+@media(max-width:830px) {
+  .dy-desk-columns {grid-template-columns:1fr}
+  .dy-desk-facts {grid-template-columns:1fr}
+  .dy-desk-facts > div {border-right:0;border-bottom:1px solid #d1dde1}
+  .dy-desk-facts > div:last-child {border:0}
+  .studio-x[data-direction="dockyard"] .dy-cad-canvas {min-height:390px}
+}
+@media(max-width:550px) {
+  .dy-dock-grid,.dy-agent-stages {grid-template-columns:1fr}
+  .dy-dock-cell,.dy-agent-stages li {border-right:0;border-bottom:1px solid #d1dde1}
+  .dy-dock-cell:last-child,.dy-agent-stages li:last-child{border-bottom:0}
+  .dy-dock-heading {align-items:flex-start;flex-direction:column}
+  .dy-desk {padding:14px}
+  .dy-desk-header {padding-bottom:12px}
+  .dy-evidence-list {flex-direction:column;gap:5px}
+}
+@media (prefers-reduced-motion:reduce) {
+  .studio-x[data-direction="dockyard"] * {scroll-behavior:auto}
+}

@@ -27,12 +27,20 @@ describe('USV-01 authority routing: distinguish lab software from vessel design'
       'src/core/verification/VerifyUsv01Engine.ts',
       'src/core/tools/ToolRegistry.ts',
       'src/core/orchestrator/CentralOrchestrator.ts',
+      'src/core/engine/BaseAgent.ts',
+      'src/core/skills/NavalSkillRegistry.ts',
+      'skills/usv01/marine-requirements-and-standards/SKILL.md',
+      'skills/usv01/commissioning-and-acceptance/SKILL.md',
+      'AGENTS.md',
+      'config/external-skill-sources.json',
       'src/core/registry/AgentRegistry.ts',
       'package.json'
     ];
     for (const file of protectedFiles) {
       expect(approvalRouteForChangedFiles([file]), file).toBe('PROTECTED_SOFTWARE_SECURITY');
     }
+    expect(classifyFile('skills/usv01/marine-requirements-and-standards/SKILL.md').risk).toBe('CRITICAL');
+    expect(classifyFile('src/core/skills/NavalSkillRegistry.ts').risk).toBe('CRITICAL');
     expect(classifyFile('scripts/governance/stage-e-enforce.ts').risk).toBe('CRITICAL');
     expect(classifyFile('.github/workflows/safety-governance-gate.yml').risk).toBe('CRITICAL');
   });
