@@ -13,11 +13,18 @@ on:
     branches: [ main ]
     paths:
       - 'scripts/a26-fleet-discovery.mjs'
+      - 'scripts/a26-fleet-campaign.mjs'
+      - 'scripts/a26-document-library.mjs'
+      - 'scripts/a26-document-register.mjs'
+      - 'config/a26-document-research.json'
       - 'config/a26-fleet-discovery.json'
       - 'references/fleet-intelligence/**'
       - 'tests/a26-fleet-discovery.test.mjs'
+      - 'tests/a26-document-library.test.mjs'
+      - 'tests/a26-fleet-campaign.test.mjs'
       - '.github/workflows/a26-public-fleet-discovery.yml'
       - 'docs/research/A26_FLEET_DISCOVERY_QUEUE.md'
+      - 'docs/research/A26_DOCUMENT_DISCOVERY_QUEUE.md'
       - 'docs/vault/usv-fleet/candidate-notes/**'
 
 permissions:
@@ -44,16 +51,19 @@ jobs:
         with:
           node-version: '22'
       - name: Offline fleet ingestion, security and evidence tests
-        run: node --test tests/a26-fleet-discovery.test.mjs
-      - name: Validate governed research configuration and review register
-        run: node scripts/a26-fleet-discovery.mjs --validate-only
+        run: node --test tests/a26-fleet-discovery.test.mjs tests/a26-document-library.test.mjs tests/a26-fleet-campaign.test.mjs
+      - name: Validate governed research configuration and review registers
+        run: |
+          node scripts/a26-fleet-campaign.mjs --validate-only
+          node scripts/a26-document-library.mjs --validate-only
+          node scripts/a26-document-register.mjs --validate-only
 
   discover:
     name: Discover public worldwide naval USV research leads
     if: github.event_name != 'pull_request' && inputs.validate_only != true
     needs: verify
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     permissions:
       contents: write
       pull-requests: write
@@ -73,15 +83,26 @@ jobs:
       - name: Retrieve bounded public RSS and Atom metadata with source receipts
         run: |
           set -euo pipefail
-          node scripts/a26-fleet-discovery.mjs \
-            --max-sources 13 \
+          node scripts/a26-fleet-campaign.mjs \
+            --batch-size 24 --max-batches 4 \
             --out-dir "$RUNNER_TEMP/a26-fleet-scout"
+      - name: Discover public scholarly papers and open licensed files
+        continue-on-error: true
+        run: |
+          node scripts/a26-document-library.mjs \
+            --out-dir "$RUNNER_TEMP/a26-documents" \
+            --download-open-licensed --max-downloads 8
+          node scripts/a26-document-register.mjs \
+            --harvest "$RUNNER_TEMP/a26-documents/papers-and-references.json" \
+            --out-dir "$RUNNER_TEMP/a26-documents"
       - name: Upload unverified run evidence and Obsidian research drafts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: a26-fleet-public-research-${{ github.run_id }}
-          path: ${{ runner.temp }}/a26-fleet-scout/
+          path: |
+            ${{ runner.temp }}/a26-fleet-scout/
+            ${{ runner.temp }}/a26-documents/
           if-no-files-found: warn
           retention-days: 60
       - name: Propose protected review PR only if new source evidence exists
@@ -100,8 +121,14 @@ jobs:
             echo 'No feeds were reached; do not claim a completed collection.' >&2
             exit 1
           fi
-          if cmp -s "$PROPOSAL" references/fleet-intelligence/discovery-register.json; then
-            echo 'No new source evidence; reviewed research register unchanged.'
+          HAS_FLEET=1
+          HAS_DOCS=0
+          if cmp -s "$PROPOSAL" references/fleet-intelligence/discovery-register.json; then HAS_FLEET=0; fi
+          if [[ -f "$RUNNER_TEMP/a26-documents/document-register-proposal.json" ]] &&             ! cmp -s "$RUNNER_TEMP/a26-documents/document-register-proposal.json" references/fleet-intelligence/document-register.json; then
+            HAS_DOCS=1
+          fi
+          if [[ "$HAS_FLEET" -eq 0 && "$HAS_DOCS" -eq 0 ]]; then
+            echo 'No new source evidence; committed research registers unchanged.'
             exit 0
           fi
           OPEN="$(gh pr list --state open --limit 100 --json title --jq '[.[] | select(.title == "A26 public naval USV fleet research leads (review required)")] | length')"
@@ -110,16 +137,25 @@ jobs:
             exit 0
           fi
           BRANCH="automation/a26-fleet-discovery-$GITHUB_RUN_ID"
-          cp "$PROPOSAL" references/fleet-intelligence/discovery-register.json
-          cp "$RUNNER_TEMP/a26-fleet-scout/review-queue.md" docs/research/A26_FLEET_DISCOVERY_QUEUE.md
+          if [[ "$HAS_FLEET" -eq 1 ]]; then
+            cp "$PROPOSAL" references/fleet-intelligence/discovery-register.json
+            cp "$RUNNER_TEMP/a26-fleet-scout/review-queue.md" docs/research/A26_FLEET_DISCOVERY_QUEUE.md
+          fi
+          if [[ "$HAS_DOCS" -eq 1 ]]; then
+            cp "$RUNNER_TEMP/a26-documents/document-register-proposal.json" references/fleet-intelligence/document-register.json
+            cp "$RUNNER_TEMP/a26-documents/document-review-queue.md" docs/research/A26_DOCUMENT_DISCOVERY_QUEUE.md
+          fi
           mkdir -p docs/vault/usv-fleet/candidate-notes
           cp "$RUNNER_TEMP/a26-fleet-scout/candidate-notes/"*.md docs/vault/usv-fleet/candidate-notes/ 2>/dev/null || true
-          node scripts/a26-fleet-discovery.mjs --validate-only
+          node scripts/a26-fleet-campaign.mjs --validate-only
+          node scripts/a26-document-register.mjs --validate-only
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git switch -c "$BRANCH"
           git add references/fleet-intelligence/discovery-register.json \
             docs/research/A26_FLEET_DISCOVERY_QUEUE.md \
+            docs/research/A26_DOCUMENT_DISCOVERY_QUEUE.md \
+            references/fleet-intelligence/document-register.json \
             docs/vault/usv-fleet/candidate-notes
           git commit -m 'docs(a26): propose source-linked naval USV research leads for independent review'
           gh auth setup-git
