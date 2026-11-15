@@ -22,7 +22,7 @@ export async function checkR3(getFile=get){
   [core,/engineeringReleaseApproved:false/,'NO_RELEASE_GUARD_MISSING'],
   [queue,/--unified-index/,'A26_QUEUE_HANDOFF_MISSING'],
   [collector,/consolidate\(\{snapshots:index\}\)/,'SOURCE_COLLECTOR_NOT_UNIFIED'],
-  [legacy,/R2\.01/,'LEGACY_R2_CHECK_MISSING']
+  [legacy,/const R2=Array\.from/,'LEGACY_R2_CHECK_MISSING']
  ];
  const missing=required.filter(([value,pattern])=>!pattern.test(value)).map(x=>x[2]);
  if(missing.length)throw Error('A26_R3_GOVERNANCE_HOLD:'+missing.join(','));
