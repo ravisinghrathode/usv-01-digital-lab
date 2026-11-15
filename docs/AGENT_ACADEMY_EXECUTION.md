@@ -64,3 +64,57 @@ Do not commit sensitive responses, licensed standards, private keys or unseen ex
 For EACH of the 26 roles on the current approved source revision: completed authenticated study; accessible source review; five foundation topics; specialist practice; unseen foundation exam at least 90%; unseen specialist exam at least 95%; all critical safety cases passed; actual mandatory tools exercised against verified inputs; independent accepted truth/reference benchmark; separate reviewer and Director signatures bound to evidence SHA/source SHA.
 
 Only academy-status.json with independentlyQualified equal to 26 may trigger a positive notification. A badge, prompt, CI pass, or 26 role responses is NOT enough. All design baselines, physical verification, safety release, human engineering authority and vessel actuation remain separate blocked gates.
+
+
+## 7. Codex provider-quota to Gemini Hydrogen automatic study fallback
+
+The first Academy implementation called the Codex CLI directly and thus
+did not use the existing dual-provider router. A Codex quota event therefore
+left pilot roles without completed study receipts. The bounded Academy fallback
+now lives in src/core/academy/AcademyQuotaFallback.ts.
+
+Before enabling this route, the operator must verify Google sign-in is the
+already authorized Gemini CLI OAuth session, not an API-key or Vertex mode.
+Only public excerpts from the source-controlled Academy teaching files
+COHORT_01_OPEN_BOOK_LESSONS.md and ALL_26_ROLE_STUDY_MAP.md are sent to
+Google. The original Codex prompt, vessel project context, controlled
+standards, client data, repository files, private tools and evidence are
+NOT transferred. Gemini CLI runs in an isolated temporary working directory.
+
+For an expressly approved public-only campaign, use from a clean reviewed
+repository revision:
+
+    AI_REVIEW_PROVIDER=codex_cli USV_SUBSCRIPTION_PILOT=enabled \
+      USV_ALLOW_PAID_AI_API=false USV_LAB_SCOPE=RESEARCH_ONLY \
+      USV_DUAL_PROVIDER_ROUTING=enabled USV_GEMINI_FALLBACK_APPROVED=true \
+      USV_GEMINI_OAUTH_REVIEWED=true \
+      USV_GEMINI_DATA_CLASSIFICATION=PUBLIC_NON_SENSITIVE \
+      npm run academy:study -- --agents A05,A06,A07,A14,A17
+
+These Gemini environment values are explicit host-operator data-rights and
+authentication attestations, not flags to set without such review.
+
+The runner first attempts Codex. On a provider quota failure or existing
+provider-quota circuit breaker, it requests gemini-4-hydrogen through the
+signed-in Gemini CLI with no paid AI API or model mock. A separate persistent
+Gemini quota ledger resides at ~/.usv01/runtime/gemini-quota.json. A local
+request-budget stop or corrupt quota ledger MUST NOT be bypassed by changing
+vendors. Safety refusal, invalid JSON, missing sign-in, wrong model,
+unsupported transfer, missing source revision or other provider errors fail
+closed.
+
+A Gemini exercise is recorded as COMPLETED_UNGRADED only when the actual
+CLI metadata reports Hydrogen as the executed model, the role/SHA match,
+and the educational report has nonempty worked reasoning, source gaps and
+safety boundaries while explicitly denying qualification/release authority.
+A requested-only model name, downgraded model, static mock or incomplete
+response does not count. Per-role attempt and study-output records store
+the provider, verified model identifier, public-excerpt SHA-256, Git revision
+and response SHA-256. The status/progress report includes the selected
+provider for every attempted role. Research outputs are local and ignored
+by Git; review classification before moving them to other storage.
+
+Open-book Academy study is not model-weight fine-tuning, examination or
+vessel release. Unseen independent blind exams, reference benchmarks,
+critical safety performance and independent reviewer plus human Engineering
+Director signatures are still required before supervised research approval.
