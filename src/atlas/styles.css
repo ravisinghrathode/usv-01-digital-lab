@@ -444,4 +444,38 @@ button{cursor:pointer}
  .at-assembly-list{padding:3px 6px 6px}
  .at-assembly{min-height:43px}
 }
+/* Visual QA polish: never overflow a bounded drafting rail into the physics dock. */
+.at-library-end{display:none!important}
+.at-vessel-svg{transform:scale(1.11);transform-origin:center}
+.at-ribbon-short{display:none}
+.at-runway-availability{
+ flex:2;min-width:210px;border-left:1px solid #35536b;display:flex;
+ flex-direction:column;justify-content:center;gap:6px;padding:14px 23px;
+ color:#c2d6e2;background:linear-gradient(90deg,#142e45,#19374f);
+}
+.at-runway-availability strong{font-size:13px;font-weight:720;color:#e5eff6}
+.at-runway-availability span{font-size:12px;line-height:1.5;max-width:44ch}
+@media(max-width:460px){
+ .at-runway-heading{flex-wrap:nowrap;align-items:center;gap:7px}
+ .at-runway-heading>div:first-child{min-width:0;flex:1}
+ .at-runway-heading p{font-size:11px;line-height:1.35}
+ .at-ribbon-full{display:none}
+ .at-ribbon-short{display:inline}
+ .at-ribbon-link{flex:none;white-space:nowrap;font-size:12px}
+ .at-runway-availability{min-width:175px;padding:10px}
+}
+@media(max-width:360px){
+ .at-brand small{display:none}
+ .at-brand strong{font-size:15px}
+ .at-logo{width:29px;height:29px}
+ .at-project-identity>span:last-child{display:none}
+ .at-rail-heading{display:none}
+ .at-studio-heading{margin-bottom:8px}
+ .at-drawing-surface{height:177px;min-height:177px}
+ .at-sheet-bar{min-height:43px}
+ .at-sheet-bottom{min-height:42px}
+ .at-runway-heading{padding:8px}
+ .at-runway h2{font-size:14px}
+ .at-runway-heading p{font-size:10px}
+}
 @media(prefers-reduced-motion:reduce){.at-app *, .at-app *::before,.at-app *::after{transition:none!important;scroll-behavior:auto!important}}
