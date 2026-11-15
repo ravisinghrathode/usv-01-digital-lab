@@ -1,7 +1,7 @@
 name: USV-01 26-Agent Authenticated ChatGPT Commissioning
 
-# Never execute unreviewed PR code on a runner that holds a ChatGPT session or
-# private attestation key. This workflow can run only from protected main.
+# GitHub Actions in this PUBLIC repository run credential-free checks only.
+# All authenticated model work takes place on an operator-approved local host.
 on:
   workflow_dispatch:
     inputs:
@@ -61,87 +61,19 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
 
+  # PUBLIC REPOSITORY SECURITY BLOCK:
+  # Do not register a credential-bearing self-hosted runner here. A PR from
+  # an untrusted fork could create another workflow targeting its label.
+  # Authenticated Codex/Gemini commissioning uses the locally approved host,
+  # never GitHub-hosted or self-hosted Actions on this public repo.
   live:
     if: ${{ github.ref == 'refs/heads/main' && inputs.mode == 'live' }}
-    # The operator provisions and authenticates this trusted, isolated host.
-    # Do not change this to a public GitHub runner or execute a pull-request SHA.
-    runs-on: [self-hosted, usv01-codex]
-    timeout-minutes: 180
-    env:
-      AI_REVIEW_PROVIDER: codex_cli
-      USV_SUBSCRIPTION_PILOT: enabled
-      USV_ALLOW_PAID_AI_API: 'false'
-      USV_LAB_SCOPE: RESEARCH_ONLY
-      # Enable primary GPT-6.1 Sol for all 26 registered specialists.
-      # All Gemini transfer switches default to disabled and require reviewed
-      # PUBLIC_NON_SENSITIVE input before any cross-provider fallback.
-      USV_DUAL_PROVIDER_ROUTING: enabled
-      USV_GEMINI_FALLBACK_APPROVED: ${{ vars.USV_GEMINI_FALLBACK_APPROVED }}
-      USV_GEMINI_OAUTH_REVIEWED: ${{ vars.USV_GEMINI_OAUTH_REVIEWED }}
-      USV_GEMINI_DATA_CLASSIFICATION: ${{ vars.USV_GEMINI_DATA_CLASSIFICATION }}
-      USV01_HOST_ID: ${{ vars.USV01_HOST_ID }}
-      USV_HOST_ATTESTATION_PRIVATE_KEY_FILE: ${{ vars.USV_HOST_ATTESTATION_PRIVATE_KEY_FILE }}
-      USV_HOST_ATTESTATION_PUBLIC_KEY: ${{ vars.USV_HOST_ATTESTATION_PUBLIC_KEY }}
-      USV_INDEPENDENT_REVIEWER_PUBLIC_KEY: ${{ vars.USV_INDEPENDENT_REVIEWER_PUBLIC_KEY }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
     steps:
-      - name: Checkout exact protected main revision
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - name: Install Bun
-        uses: oven-sh/setup-bun@v2
-      - name: Install immutable dependencies
-        run: bun install --frozen-lockfile
-      # A04 is a local, no-model preflight. Independent ops review is
-      # separately represented by a SHA-pinned repository owner variable.
-      - name: Verify local A04 host readiness without model calls
-        run: npm run mission-control:a04-check -- --source-sha "$GITHUB_SHA"
-      - name: Require independently reviewed A04 authorization for exact source
-        env:
-          USV_A04_AUTHORIZED_SHA: ${{ vars.USV_A04_AUTHORIZED_SHA }}
+      - name: Block credentialed live model work on public GitHub Actions
         shell: bash
         run: |
-          if [[ ! "$USV_A04_AUTHORIZED_SHA" =~ ^[0-9a-f]{40}$ ]] || [[ "$USV_A04_AUTHORIZED_SHA" != "$GITHUB_SHA" ]]; then
-            echo "BLOCKED: reviewed A04 host approval for this exact main revision is absent."
-            exit 1
-          fi
-      - name: Gate Gemini transfer on reviewed, publicly transferable catalog
-        env:
-          CATALOG_PATH: ${{ inputs.catalog_path }}
-        run: npm run mission-control:gemini-catalog -- --catalog "$CATALOG_PATH"
-      - name: Record dual-provider zero-model host availability
-        run: npm run mission-control:model-health
-      - name: Verify signed-in ChatGPT OAuth CLI without paid API calls
-        run: npm run mission-control:preflight
-      - name: Run all 26 specialists as dependency-aware Codex campaign
-        env:
-          CATALOG_PATH: ${{ inputs.catalog_path }}
-        run: npm run acceptance:codex-agents -- --catalog "$CATALOG_PATH" --execute
-      - name: Generate fresh signed execution-host evidence
-        run: npm run mission-control:attest-host
-      - name: Require signed current-source operational gate, report independent gaps
-        run: |
-          npm run acceptance:full-26 -- \
-            --report data/codex-26-agent-matrix.json \
-            --preflight data/codex-26-agent-preflight.json \
-            --host data/codex-host-health.json \
-            --reviews data/independent-reviews.json \
-            --source-sha "$GITHUB_SHA" \
-            --require-operational
-      - name: Upload exact-source 26-agent evidence and blockers
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: usv01-26-agent-live-evidence
-          path: |
-            data/codex-26-agent-progress.json
-            data/codex-26-agent-preflight.json
-            data/codex-26-agent-matrix.json
-            data/codex-host-health.json
-            governance/reports/26-agent-engineering-campaign-status.json
-          if-no-files-found: warn
-          retention-days: 30
+          echo "::error::USV_PUBLIC_RUNNER_BLOCKED: this repository is public. Never register an OAuth/Ed25519-key holding self-hosted runner here."
+          echo "Commission locally on a separately approved host: npm run mission-control:private-commission -- --source-sha <reviewed-sha> --catalog <controlled-catalog> --execute"
+          exit 1

@@ -7,6 +7,15 @@
 2. **Secondary on explicit transport errors:** Google Gemini CLI, request `gemini-4-hydrogen` through its existing operator Google sign-in. The model must be supported by that account, CLI and current rollout; capture the model ID returned by the tool. No API-key or Vertex fallback.
 3. **No fallback:** safety refusal, content denial, schema/JSON failure, deterministic calculation failure, engineering/TBD gate, missing transfer approval, ambiguous CLI error, or both providers unavailable.
 
+## Secure execution boundary
+
+This GitHub repository is public. **Do not register or use a self-hosted GitHub
+Actions runner containing OAuth subscriptions, private signing keys or
+confidential engineering artifacts.** Use the independently reviewed local
+`npm run mission-control:private-commission` supervisor from an operator
+Mac. Public GitHub Actions run only deterministic zero-model checks.
+A GitHub `live` dispatch fails closed with `USV_PUBLIC_RUNNER_BLOCKED`.
+
 ## Required controlled host values
 On the already independently approved A04 host, under the operator's private environment and after applicable information-security review:
 
