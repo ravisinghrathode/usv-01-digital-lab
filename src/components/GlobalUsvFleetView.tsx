@@ -45,39 +45,43 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
   const [scrapeLogs, setScrapeLogs] = useState<string[]>([]);
   const [syncSuccessToast, setSyncSuccessToast] = useState<string | null>(null);
 
-  // A26 proposal queues are separate from the curated fleet model catalogue.
-  // No discovery is counted as an operational vessel or certified paper.
-  const [publicResearch, setPublicResearch] = useState<{
-    researchLeads: number;
-    documentReferences: number;
-    state: 'LOADING' | 'READY' | 'UNAVAILABLE';
-  }>({researchLeads: 0, documentReferences: 0, state: 'LOADING'});
-
-  useEffect(() => {
-    let active = true;
-    const refresh = async () => {
-      try {
-        const [fleetResponse, docResponse] = await Promise.all([
-          authenticatedFetch('/api/usv-intel/discoveries'),
-          authenticatedFetch('/api/usv-intel/document-discoveries')
-        ]);
-        if (!fleetResponse.ok || !docResponse.ok) throw new Error('Research registers unavailable');
-        const [fleet, docs] = await Promise.all([fleetResponse.json(), docResponse.json()]);
-        if (!fleet.success || !docs.success) throw new Error('Research registers invalid');
-        if (active) setPublicResearch({
-          researchLeads: Number(fleet.researchLeads) || 0,
-          documentReferences: Number(docs.count) || 0,
-          state: 'READY'
-        });
-      } catch {
-        if (active) setPublicResearch({
-          researchLeads: 0, documentReferences: 0, state: 'UNAVAILABLE'
-        });
+  // Unverified public research is deliberately separate from accepted vessel data.
+  type ResearchLead = {id:string;title:string;summary:string;status:string;sources:Array<{url:string|null}>};
+  type ResearchDocument = {id:string;title:string;doi:string|null;sourceUrl:string|null;pdfUrl:string|null;status:string};
+  const [publicResearch,setPublicResearch]=useState<{
+    leads:ResearchLead[];publications:ResearchDocument[];sourceRevision:string;sourceUrl:string;
+    state:'LOADING'|'READY'|'UNAVAILABLE';
+  }>({leads:[],publications:[],sourceRevision:'',sourceUrl:'',state:'LOADING'});
+  const [researchKind,setResearchKind]=useState<'leads'|'publications'>('leads');
+  const [researchQuery,setResearchQuery]=useState('');
+  const [researchPage,setResearchPage]=useState(0);
+  const [researchReload,setResearchReload]=useState(0);
+  useEffect(()=>{
+    let mounted=true;
+    const refresh=async()=>{
+      try{
+        const response=await authenticatedFetch('/api/usv-intel/research-feed');
+        if(!response.ok)throw Error('Research feed unavailable');
+        const d=await response.json();
+        if(!d.success||d.researchStatus!=='UNVERIFIED_PUBLIC_RESEARCH'||
+          d.engineeringReleaseApproved!==false||!Array.isArray(d.leads)||!Array.isArray(d.publications))
+          throw Error('Invalid research feed');
+        if(mounted)setPublicResearch({leads:d.leads,publications:d.publications,
+          sourceRevision:d.sourceRevision||'',sourceUrl:d.sourceUrl||'',state:'READY'});
+      }catch{
+        if(mounted)setPublicResearch(v=>({...v,state:'UNAVAILABLE'}));
       }
     };
     void refresh();
-    return () => { active = false; };
-  }, []);
+    return ()=>{mounted=false;};
+  },[researchReload]);
+  const visibleResearch=useMemo(()=>{
+    const rows=researchKind==='leads'?publicResearch.leads:publicResearch.publications;
+    const q=researchQuery.toLowerCase().trim();
+    return q?rows.filter(r=>(r.id+' '+r.title).toLowerCase().includes(q)):rows;
+  },[researchKind,publicResearch.leads,publicResearch.publications,researchQuery]);
+  const researchTotalPages=Math.max(1,Math.ceil(visibleResearch.length/20));
+  const visibleResearchPage=visibleResearch.slice(researchPage*20,(researchPage+1)*20);
 
   // Available unique countries
   const countries = useMemo(() => {
@@ -253,39 +257,89 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
         </div>
       </div>
 
-      {/* A26 discovery evidence is a separate review lane, not a vessel count. */}
-      <section aria-label="Worldwide A26 research collection" className="rounded-lg border border-sky-200/30 bg-slate-900/60 p-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+      {/* A26 review-only research library: never counted as approved vessels. */}
+      <section aria-label="Worldwide A26 research collection" className="rounded-lg border border-sky-200/30 bg-slate-900/60 p-4 space-y-3">
+        <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h3 className="text-sm font-semibold text-slate-100">Worldwide USV research collection</h3>
-            <p className="mt-1 max-w-2xl text-xs leading-5 text-slate-300">
-              Operational craft, prototypes and trials across global public sources.
-              Discovery leads and paper links require independent review; they are not added to the accepted fleet automatically.
+            <h3 className="text-base font-semibold text-slate-100">A26 Research Library</h3>
+            <p className="mt-1 text-xs text-slate-300 max-w-2xl">
+              Automatically collected public USV research and scholarly publications. All entries are unverified review material, not approved engineering data.
             </p>
+            {publicResearch.state==='READY' && <p className="mt-1 text-[11px] text-slate-400">
+              Source revision: <span className="font-mono">{publicResearch.sourceRevision.slice(0,12)}</span>
+            </p>}
           </div>
-          <a
-            href="https://github.com/ravisinghrathode/usv-01-digital-lab/actions/workflows/a26-public-fleet-discovery.yml"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-md border border-sky-400/40 px-3 py-2 text-xs font-semibold text-sky-200 hover:border-sky-300 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
-          >
-            <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-            Collector runs &amp; evidence
-          </a>
+          <div className="flex flex-wrap gap-2">
+            <button type="button" onClick={()=>{setPublicResearch(v=>({...v,state:'LOADING'}));setResearchReload(v=>v+1);}}
+              className="inline-flex items-center gap-1 rounded border border-slate-600 px-3 py-2 text-xs text-slate-200 hover:bg-slate-800">
+              <RefreshCw className="w-3 h-3"/> Refresh data
+            </button>
+            <a href="https://github.com/ravisinghrathode/usv-01-digital-lab/actions/workflows/a26-public-fleet-discovery.yml"
+              target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded border border-sky-400/40 px-3 py-2 text-xs text-sky-200">
+              <ExternalLink className="w-3 h-3"/> Collection runs
+            </a>
+          </div>
         </div>
-        <div className="mt-3 flex flex-wrap gap-x-8 gap-y-2 border-t border-slate-700/70 pt-3 text-xs" aria-live="polite">
-          <span className="text-slate-200">
-            <strong className="font-semibold text-slate-50">Research leads:</strong>{' '}
-            {publicResearch.state === 'READY' ? publicResearch.researchLeads : publicResearch.state === 'LOADING' ? 'Loading…' : 'Unavailable'}
-          </span>
-          <span className="text-slate-200">
-            <strong className="font-semibold text-slate-50">Publication records:</strong>{' '}
-            {publicResearch.state === 'READY' ? publicResearch.documentReferences : publicResearch.state === 'LOADING' ? 'Loading…' : 'Unavailable'}
-          </span>
-          <span className="text-amber-200">
-            Verification: pending · Global completeness: unknown
-          </span>
-        </div>
+        {publicResearch.state==='UNAVAILABLE'&&<p role="alert" className="text-xs text-amber-300">
+          Research source unavailable; no records have been deleted. Check the GitHub review branch and server credentials.
+        </p>}
+        {publicResearch.state==='LOADING'&&<p role="status" className="text-xs text-slate-300">Loading latest A26 review records…</p>}
+        {publicResearch.state==='READY'&&<>
+          <div className="flex flex-wrap gap-3 text-xs text-slate-300">
+            <span><strong className="font-mono text-lg text-white">{publicResearch.leads.length}</strong> USV leads</span>
+            <span><strong className="font-mono text-lg text-white">{publicResearch.publications.length}</strong> publications</span>
+            <span className="text-amber-300">Verification pending · Global completeness unknown</span>
+          </div>
+          <div className="flex items-center flex-wrap gap-2">
+            <button type="button" aria-pressed={researchKind==='leads'}
+              onClick={()=>{setResearchKind('leads');setResearchPage(0);}}
+              className={`px-3 py-1 rounded border text-xs ${researchKind==='leads'?'border-sky-400 bg-sky-500/10 text-sky-200':'border-slate-700 text-slate-300'}`}>
+              USV research ({publicResearch.leads.length})
+            </button>
+            <button type="button" aria-pressed={researchKind==='publications'}
+              onClick={()=>{setResearchKind('publications');setResearchPage(0);}}
+              className={`px-3 py-1 rounded border text-xs ${researchKind==='publications'?'border-sky-400 bg-sky-500/10 text-sky-200':'border-slate-700 text-slate-300'}`}>
+              Scientific literature ({publicResearch.publications.length})
+            </button>
+            {publicResearch.sourceUrl && <a href={publicResearch.sourceUrl} target="_blank" rel="noopener noreferrer"
+              className="ml-auto text-xs text-sky-300 underline">Source review branch</a>}
+          </div>
+          <label className="block text-xs text-slate-300">Search research library
+            <input type="search" value={researchQuery} onChange={e=>{setResearchQuery(e.target.value);setResearchPage(0);}}
+              placeholder="Search publications and research leads"
+              className="mt-1 w-full rounded border border-slate-700 bg-slate-950 p-2 text-sm text-slate-100 placeholder-slate-500"/>
+          </label>
+          <p className="text-[11px] text-slate-400" aria-live="polite">
+            {visibleResearch.length} matching records · Page {researchPage+1} of {researchTotalPages}
+          </p>
+          <div role="list" className="max-h-[450px] overflow-y-auto space-y-2">
+            {visibleResearchPage.map(r=>{
+              const urls=researchKind==='leads'&&'sources' in r
+                ? r.sources.map(x=>x.url).filter((v):v is string=>!!v)
+                : ('doi' in r?[r.doi,r.sourceUrl,r.pdfUrl].filter((v):v is string=>!!v):[]);
+              return <article role="listitem" key={r.id} className="p-3 border border-slate-700 rounded bg-slate-950/60">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="text-sm font-semibold text-slate-100 break-words">{r.title||r.id}</div>
+                  <span className="text-[10px] text-amber-300 shrink-0">UNVERIFIED</span>
+                </div>
+                <p className="text-[10px] font-mono text-slate-500 mt-1 break-all">{r.id}</p>
+                {'summary' in r&&r.summary&&<p className="mt-1 text-xs text-slate-400">{r.summary}</p>}
+                <div className="mt-2 flex gap-3 flex-wrap">
+                  {urls.slice(0,3).map((url,i)=><a href={url} key={url+i} target="_blank" rel="noopener noreferrer"
+                    className="text-xs text-sky-300 underline underline-offset-2">Source {i+1}</a>)}
+                  {!urls.length&&<span className="text-xs text-amber-300">No accessible source link</span>}
+                </div>
+              </article>;
+            })}
+            {!visibleResearchPage.length&&<p className="text-xs text-slate-400 p-3">No matching research records.</p>}
+          </div>
+          <div className="flex justify-between">
+            <button type="button" disabled={researchPage===0} onClick={()=>setResearchPage(v=>Math.max(0,v-1))}
+              className="rounded border border-slate-700 px-3 py-1.5 text-xs text-slate-200 disabled:opacity-40">Previous</button>
+            <button type="button" disabled={researchPage+1>=researchTotalPages} onClick={()=>setResearchPage(v=>v+1)}
+              className="rounded border border-slate-700 px-3 py-1.5 text-xs text-slate-200 disabled:opacity-40">Next</button>
+          </div>
+        </>}
       </section>
 
       {/* Aggregate Stat Cards */}
