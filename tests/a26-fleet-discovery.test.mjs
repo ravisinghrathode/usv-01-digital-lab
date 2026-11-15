@@ -56,6 +56,18 @@ test('Atom xml and numeric entities are handled without HTML execution',()=>{
   assert.throws(()=>parseFeed('<!DOCTYPE foo><rss>'+sample+'</rss>'));
   assert.throws(()=>parseFeed('x'.repeat(650001)));
 });
+test('catalogues public imagery and document attachment links without downloading',()=>{
+  const feed='<rss><item><title>Prototype USV research report published</title>'+
+    '<link>https://news.usni.org/2026/report</link>'+
+    '<enclosure url="https://www.navalnews.com/public/report.pdf" type="application/pdf"/>'+
+    '<media:thumbnail url="https://www.navalnews.com/public/photo.jpg" type="image/jpeg"/>'+
+    '<description>Autonomous surface vessel</description></item></rss>';
+  const result=parseFeed(feed);
+  assert.equal(result[0].linkedFiles.length,2);
+  assert.ok(result[0].linkedFiles.every(x=>x.fileBytesDownloaded===false));
+  assert.ok(result[0].linkedFiles.every(x=>x.license==='UNKNOWN_REVIEW_REQUIRED'));
+});
+
 test('fixture scan discovers mentions, not verified vessels or numeric properties',async()=>{
   const result=await runScout({config,maxSources:1,fixture:{'naval-news':sample},now:at});
   assert.equal(result.sourcesSucceeded,1);
