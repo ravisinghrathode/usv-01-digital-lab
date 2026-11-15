@@ -8,6 +8,7 @@ import { mkdir, readFile, writeFile, rename, stat } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import net from 'node:net';
+import { consolidate } from './unified-evidence.mjs';
 
 const ROOT = path.resolve('.local-concept-research/a26-global-usv');
 const SEEDS = new URL('../../references/a26-public-usv-seeds.json', import.meta.url);
@@ -199,6 +200,9 @@ export async function collect({registryPath,outputDir=ROOT,staleDays=7,fetcher=f
     discoveryCandidates:[...discovery].slice(0,5000),report};
   await atomicJson(path.join(outputDir,'evidence-index.json'),index);
   await atomicJson(path.join(outputDir,'coverage-report.json'),report);
+  // Every manufacturer/institution collector run publishes the same A26
+  // evidence contract as fleet/knowledge adapters, with zero auto-certification.
+  await atomicJson(path.join(outputDir,'unified-a26-evidence.json'),consolidate({snapshots:index}));
   return report;
 }
 if(process.argv[1] && path.resolve(process.argv[1])===path.resolve(new URL(import.meta.url).pathname)){
