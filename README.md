@@ -14,6 +14,12 @@ The **[Master Project Register](docs/MASTER_PROJECT_REGISTER.md)** is the contro
 
 The [unified A26 naval intelligence and external software operating charter](docs/governance/A26_UNIFIED_AGENT_OPERATING_CHARTER.md) governs one A26 role with two linked research responsibilities, without changing the canonical 26-agent roster. The [External Integration Annex](docs/EXTERNAL_INTEGRATION_AGENT_CHARTER.md) and unchanged machine-enforced `config/external-integration-policy.json` retain all R2 software safeguards, reviewer gates and strict non-execution rules. Scout and integration command-line entrypoints validate the unified charter before acting. No automatic third-party execution or runtime adoption. The [External Software Register](docs/EXTERNAL_SOFTWARE_OVERVIEW.md) provides the public-safe, source-controlled inventory of discovered and evaluated engineering software. It explicitly separates planned agent/project usage from verified actual use, and links pinned commits and review evidence. [Operating and maintenance rules](docs/EXTERNAL_SOFTWARE_REGISTER_OPERATING.md) define the protected updates. The lab sidebar includes a read-only **External Software Register** view when this source revision is deployed. No entry implies software or vessel approval.
 
+## Standard application interface
+
+**Naval AI Lab — Engineering Sessions** is the sole active presentation at `/` (also `/sessions.html`). The retired Dockyard, Atlas, and Lab3 entry URLs (`/dockyard2.html`, `/atlas.html`, and `/naval-lab.html`) redirect to the standard interface; their old visual frontends are not included as active entry bundles. `/legacy.html` remains the original **governed engineering workbench**, because this demonstration-first UI does not yet replace authenticated technical record editing, agent orchestration, or approval workflows. The Engineering Sessions sample investigation is explicitly synthetic and is not approved vessel evidence.
+
+The GitHub `main` branch is the source baseline, **not evidence of a deployed Google AI Studio preview**. An external AI Studio project must be synchronized/redeployed separately. Never mark the externally hosted app as live solely because source code builds or a GitHub commit exists.
+
 ## 1. System Overview
 
 The USV-01 Digital Engineering Lab is an operational, modular multi-agent platform combining:
@@ -22,7 +28,7 @@ The USV-01 Digital Engineering Lab is an operational, modular multi-agent platfo
 - **Deterministic Naval Tools Suite** for hydrostatics ($KM_T, GM_T$), hydrodynamic resistance ($P_E, P_B$), mass balance ($KG, LCG, TCG$), DC electrical load sheets, bottom slamming scantlings, and COLREGS 1972 encounter kinematics.
 - **Human Authority Approval Gates** requiring explicit Engineering Director sign-off on safety-critical decisions.
 - **Shared Memory & Parameter Register** with strict `TBD` tracking and live Obsidian `[[wikilink]]` vault export.
-- **Interactive Command Dashboard** (Vite + React + Tailwind + Lucide).
+- **Engineering Sessions interface** (Vite + React), with the original governed workbench retained separately.
 
 ---
 
