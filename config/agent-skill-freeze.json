@@ -1,0 +1,71 @@
+{
+  "schema": "usv01-agent-skills-freeze/v1",
+  "effectiveDate": "2026-11-15",
+  "state": "FROZEN_ON_APPROVED_MERGE",
+  "authority": "PROJECT_LEAD_REQUEST_FINAL_SEVEN_SKILLS",
+  "agentCount": 26,
+  "policy": "No further skill acquisition or new skill runtime integration after this batch without a separately authorized, exact-head reviewed, governed change. Security patches and correction of existing skills may occur under existing engineering/software controls; they do not silently expand the allowlists.",
+  "previousConnectedAgentEngineeringSkills": [
+    "building-deterministic-skills",
+    "agent-architecture",
+    "state-management",
+    "handoff-protocol",
+    "guardrails",
+    "verifier-design",
+    "agent-eval",
+    "local-replay",
+    "ecosystem-primer",
+    "langgraph-fundamentals",
+    "langgraph-persistence",
+    "langgraph-human-in-the-loop"
+  ],
+  "externalConnectedDevelopmentSkills": [
+    "security-threat-model",
+    "security-best-practices",
+    "agent-supply-chain",
+    "build-evidence-map",
+    "eval-engineering",
+    "skill-creator",
+    "test-gap-audit",
+    "github-actions-hardening",
+    "playwright",
+    "gh-fix-ci"
+  ],
+  "projectOwnedRoutedSkills": [
+    "marine-requirements-and-standards",
+    "cad-configuration-and-mass-cg",
+    "numerical-vnv-and-uncertainty",
+    "marine-safety-and-degraded-modes",
+    "digital-thread-and-evidence-sync",
+    "commissioning-and-acceptance",
+    "agent-runtime-resilience",
+    "cad-to-physics-coupling",
+    "agent-qualification-campaign"
+  ],
+  "newFinalBatch": {
+    "external": [
+      "test-gap-audit",
+      "github-actions-hardening",
+      "playwright",
+      "gh-fix-ci"
+    ],
+    "projectOwned": [
+      "agent-runtime-resilience",
+      "cad-to-physics-coupling",
+      "agent-qualification-campaign"
+    ]
+  },
+  "noAdditionalRuntimeFramework": true,
+  "noNewPaidModelApis": true,
+  "noAutonomousEngineeringApproval": true,
+  "noClaimOfEngineeringQualification": true,
+  "exceptionsRequire": [
+    "documented need and risk evaluation",
+    "explicit Project Lead authorization",
+    "source and license security review",
+    "frozen registry and manifest update",
+    "exact-head protected software/security peer review",
+    "passing deterministic CI",
+    "qualified engineering/Director review where vessel impacts exist"
+  ]
+}
