@@ -1,0 +1,44 @@
+name: Sessions — Build Original 3D Product Visuals
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  render-authored-vessel-assets:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Install open-source Blender rendering runtime
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends blender
+      - name: Render original reference and alternative example vessel assets
+        run: |
+          set -euo pipefail
+          mkdir -p public/sessions/media
+          blender --background --python scripts/ui/render_sessions_vessels.py -- --output public/sessions/media
+          test -s public/sessions/media/usv-reference.png
+          test -s public/sessions/media/usv-candidate.png
+          file public/sessions/media/usv-*.png
+      - name: Save reviewable render artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sessions-original-vessel-3d-renders
+          path: public/sessions/media/usv-*.png
+          retention-days: 14
+      - name: Commit rendered assets to this feature branch
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/sessions/media/usv-reference.png public/sessions/media/usv-candidate.png
+          if ! git diff --cached --quiet; then
+            git commit -m "art(sessions): add source-generated original 3D naval vessel concept previews"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
