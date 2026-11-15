@@ -89,19 +89,23 @@ let dbStore: Record<string, any[]> = {
   materials: [],
   load_cases: [],
   resistance_estimates: [],
-  weight_cg: []
+  weight_cg: [],
+  cad_revisions: []
 };
 
 const APPROVED_DATA_COLLECTIONS = new Set([
   'requirements', 'design_decisions', 'engineering_risks', 'simulation_jobs',
   'verification_plans', 'test_records', 'components', 'activity_log',
   'knowledge_notes', 'power_loads', 'interfaces', 'materials', 'load_cases',
-  'resistance_estimates', 'weight_cg'
+  'resistance_estimates', 'weight_cg', 'cad_revisions'
 ]);
 
 const validateDataCollection = (req: express.Request, res: express.Response, next: express.NextFunction) => {
   if (!APPROVED_DATA_COLLECTIONS.has(req.params.collection)) {
     return res.status(400).json({ success: false, error: 'Unknown engineering data collection.' });
+  }
+  if (req.params.collection === 'cad_revisions' && req.method !== 'GET') {
+    return res.status(403).json({ success: false, error: 'CAD source registration requires the bounded governed session endpoint.' });
   }
   if (req.params.collection === 'activity_log' && req.method !== 'GET') {
     return res.status(403).json({ success: false, error: 'Audit history cannot be edited through the general CRUD API.' });
@@ -147,6 +151,7 @@ const seedStoreIfEmpty = async () => {
       dbStore.load_cases = [...initial.INITIAL_LOAD_CASES];
       dbStore.resistance_estimates = [...initial.INITIAL_RESISTANCE];
       dbStore.weight_cg = [...initial.INITIAL_WEIGHT_CG];
+      dbStore.cad_revisions = [];
       saveStoreToFile();
     } catch (err) {
       console.warn('Could not auto-seed dbStore:', err);
@@ -1128,12 +1133,84 @@ app.post('/api/data/reset-demo', async (req, res) => {
     dbStore.load_cases = [...initial.INITIAL_LOAD_CASES];
     dbStore.resistance_estimates = [...initial.INITIAL_RESISTANCE];
     dbStore.weight_cg = [...initial.INITIAL_WEIGHT_CG];
+    dbStore.cad_revisions = [];
     saveStoreToFile();
 
     res.json({ success: true, message: 'Database reset to default illustrative baseline.', data: dbStore });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
   }
+});
+
+// Engineering Sessions writes are bounded unapproved drafts. No UI-provided
+// role, author, state, approval, data collection, or record ID is trusted.
+function persistSessionDraft(collection: 'cad_revisions'|'knowledge_notes', item:Record<string,unknown>, user:AuthenticatedUser) {
+  const previousRows=dbStore[collection];
+  const previousLog=dbStore.activity_log;
+  dbStore[collection]=[item,...(previousRows||[])];
+  dbStore.activity_log=[{
+    id:'LOG-'+crypto.randomUUID(),
+    timestamp:new Date().toISOString(),
+    userId:user.userId,userName:user.userName,action:'CREATE',
+    recordType:collection.toUpperCase(),recordId:String(item.id),
+    details:'Registered unverified Engineering Sessions draft'
+  },...(previousLog||[])];
+  try { saveStoreToFile(); }
+  catch(error) {
+    dbStore[collection]=previousRows;
+    dbStore.activity_log=previousLog;
+    throw error;
+  }
+}
+
+// Only a source reference and digest are registered. CAD bytes are not hosted
+// or transformed here; this is not a proof of geometry validity.
+app.post('/api/session/cad-revisions', (req,res)=>{
+  const {title,revision,fileLabel,sourceUrl,sourceSha256,notes}=req.body||{};
+  if(typeof title!=='string'||!title.trim()||title.length>140||
+     typeof revision!=='string'||!revision.trim()||revision.length>60||
+     typeof fileLabel!=='string'||!fileLabel.trim()||fileLabel.length>180||
+     typeof sourceUrl!=='string'||sourceUrl.length>1200||
+     typeof sourceSha256!=='string'||!/^[a-fA-F0-9]{64}$/.test(sourceSha256)||
+     (notes!==undefined&&(typeof notes!=='string'||notes.length>1200))) {
+    return res.status(400).json({success:false,error:'A title, revision, file name, HTTPS source URL and exact SHA-256 digest are required.'});
+  }
+  let parsed:URL;
+  try{parsed=new URL(sourceUrl)}catch{return res.status(400).json({success:false,error:'Invalid CAD source URL'});}
+  if(parsed.protocol!=='https:'||parsed.username||parsed.password)
+    return res.status(400).json({success:false,error:'CAD reference must be an HTTPS URL without embedded credentials.'});
+  const user=(req as any).user as AuthenticatedUser;
+  const now=new Date().toISOString();
+  const item={
+    id:'CAD-'+crypto.randomUUID(),projectId:'PRJ-USV-01',
+    title:title.trim(),revision:revision.trim(),fileLabel:fileLabel.trim(),
+    sourceUrl:parsed.href,sourceSha256:sourceSha256.toLowerCase(),
+    notes:typeof notes==='string'?notes.trim():'',
+    recordStatus:'SOURCE_REGISTERED_UNVERIFIED',createdBy:user.userId,
+    createdAt:now,updatedAt:now,isIllustrative:false
+  };
+  try{persistSessionDraft('cad_revisions',item,user);return res.status(201).json({success:true,item});}
+  catch{return res.status(500).json({success:false,error:'CAD source pointer could not be persisted.'});}
+});
+
+// Store project notes, not ephemeral React text; preserve human authority.
+// The server assigns identity and fixed unverified state, never approval.
+app.post('/api/session/notes', (req,res)=>{
+  const {title,content}=req.body||{};
+  if(typeof title!=='string'||!title.trim()||title.length>140||
+     typeof content!=='string'||!content.trim()||content.length>5000)
+    return res.status(400).json({success:false,error:'Draft title (max 140) and content (max 5000) are required.'});
+  const user=(req as any).user as AuthenticatedUser;
+  const now=new Date().toISOString();
+  const item={
+    id:'SES-NOTE-'+crypto.randomUUID(),title:title.trim(),
+    category:'Research Note',subsystems:[],
+    contentMarkdown:content.trim(),lastUpdated:now,createdDate:now,
+    author:user.userName,lastRevision:'DRAFT-01',
+    verificationStatus:'DRAFT_UNVERIFIED'
+  };
+  try{persistSessionDraft('knowledge_notes',item,user);return res.status(201).json({success:true,item});}
+  catch{return res.status(500).json({success:false,error:'Research draft could not be persisted.'});}
 });
 
 // 4. Collection CRUD
