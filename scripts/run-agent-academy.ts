@@ -210,6 +210,13 @@ async function study() {
       roleResults:summary, certifiedAgents:0, independentReviewPending:true
     });
   }
+  console.log('ACADEMY_STUDY_ATTEMPTS: ' + JSON.stringify({
+    sourceSha, selectedAgents:selected.length,
+    completedUngraded:summary.filter(r => r.status === 'COMPLETED_UNGRADED').length,
+    roleResults:summary,
+    detailDirectory:'data/academy/study-outputs/',
+    independentlyQualifiedByThisExecution:0
+  }, null, 2));
   status();
   if (summary.some(r => r.status !== 'COMPLETED_UNGRADED')) process.exitCode = 1;
 }
