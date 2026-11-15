@@ -1,0 +1,126 @@
+{
+  "schema_version": "1.0.0",
+  "baseline_id": "NAL-UX-BL-001",
+  "name": "Naval AI Lab — Engineering Sessions",
+  "baseline_status": "DESIGN_DIRECTION_SELECTED",
+  "revision": "1.0",
+  "selected_date": "2026-11-15",
+  "scope": "UX_DESIGN_ONLY_NOT_ENGINEERING_RELEASE",
+  "implementation_status": "NOT_IMPLEMENTED",
+  "deployment_status": "NOT_CLAIMED",
+  "governance": {
+    "approvals": [
+      "PROJECT_LEAD_DESIGN_DIRECTION_SELECTED"
+    ],
+    "engineering_authority_unchanged": true,
+    "human_release_required": true,
+    "frozen_engineering_agent_count": 26,
+    "design_skills": [
+      "frontend-app-builder",
+      "frontend-design",
+      "ui-ux-pro-max",
+      "frontend-ui-engineering",
+      "browser-testing-with-devtools"
+    ]
+  },
+  "primary_object": "investigation",
+  "persistent_context": [
+    "project_id",
+    "investigation_id",
+    "selected_configuration_revisions",
+    "selected_study_id",
+    "operating_conditions_id",
+    "evidence_selection",
+    "active_mode"
+  ],
+  "modes": [
+    {
+      "id": "worktable",
+      "label": "Worktable",
+      "hero": "investigation_objects",
+      "focus": "Orient around a question and linked candidate/evidence objects"
+    },
+    {
+      "id": "design",
+      "label": "Design",
+      "hero": "configuration_geometry_or_source_required_state",
+      "focus": "Inspect and compare real geometry"
+    },
+    {
+      "id": "experiment",
+      "label": "Experiment",
+      "hero": "verified_physics_result_or_source_required_state",
+      "focus": "Explore actual simulation studies and conditions"
+    },
+    {
+      "id": "decide",
+      "label": "Decide",
+      "hero": "evidence_argument_map",
+      "focus": "Review support, conflicts, unknowns and permissions"
+    },
+    {
+      "id": "notebook",
+      "label": "Notebook",
+      "hero": "versioned_investigation_timeline",
+      "focus": "Preserve traceable reasoning and agent receipts"
+    }
+  ],
+  "interface_tokens": {
+    "color": {
+      "work_surface": "#F7F8F6",
+      "ink": "#102A43",
+      "action": "#1554C0",
+      "border": "#DCE3E8",
+      "sea_teal": "#267E8A",
+      "caution": "#9B601B",
+      "verified": "#176341"
+    },
+    "typography": {
+      "preferred_sans": "IBM Plex Sans, Inter, sans-serif",
+      "technical_mono": "IBM Plex Mono, ui-monospace, monospace",
+      "font_sizes_px": {
+        "metadata": 12,
+        "support": 14,
+        "body": 16,
+        "section": 20,
+        "screen_title": 30
+      }
+    },
+    "density": "progressive_disclosure",
+    "max_content_line_length_chars": 80,
+    "minimum_touch_target_px": 44,
+    "reduced_motion_required": true
+  },
+  "information_priority": [
+    "current_activity_primary_artifact",
+    "contextual_inputs_evidence_and_tools",
+    "global_project_utilities"
+  ],
+  "accepted_constraints": [
+    "NO_PERMANENT_24_MODULE_SIDEBAR_AS_PRIMARY_NAV",
+    "NO_DARK_CAD_PLUS_SIMULATION_DASHBOARD_CARDS",
+    "NO_FAKE_PHYSICS_IMAGES_AS_RESULTS",
+    "NO_UNVERIFIED_CAD_AS_APPROVED_CONFIGURATION",
+    "NO_UNSUPPORTED_KPI_OR_READINESS_CLAIMS",
+    "AGENTS_CONTEXTUAL_NOT_GLOBAL_MODULE_TABS",
+    "MODE_SWITCH_PRESERVES_INVESTIGATION_CONTEXT",
+    "APPROVAL_REQUIRES_EXISTING_PROTECTED_HUMAN_RECORD",
+    "NO_DEFAULT_ROUTE_CUTOVER_WITHOUT_SEPARATE_APPROVAL"
+  ],
+  "source_states": [
+    "SOURCE_MISSING",
+    "UNREVIEWED",
+    "TOOL_CHECKED",
+    "INDEPENDENT_REVIEWED",
+    "APPROVED"
+  ],
+  "screen_contract_file": "docs/design/ENGINEERING_SESSIONS_UX_BASELINE_V1.md",
+  "interaction_file": "docs/design/ENGINEERING_SESSIONS_INTERACTION_REFINEMENT.md",
+  "implementation_preconditions": [
+    "ACCEPT_FIDELITY_REVIEWED_HIGH_FIDELITY_SCREENS",
+    "REVIEW_SESSION_DATA_CONTRACT",
+    "MAP_EXISTING_GOVERNED_TOOLS_AND_24_MODULES",
+    "VERIFY_REAL_BROWSER_AND_ACCESSIBILITY",
+    "AUTHORIZE_RELEASE_SEPARATELY"
+  ]
+}
