@@ -20,7 +20,7 @@ test('73 global news and research searches are covered in every campaign',async(
     now:'2026-11-15T00:00:00Z'});
   assert.equal(result.sourcesAttempted,73);
   assert.equal(result.sourcesSucceeded,73);
-  assert.equal(result.campaignBatches.length,3);
+  assert.equal(result.campaignBatches.length,4);
   assert.equal(result.newResearchLeads,1);
   assert.equal(result.register.records.length,1);
   assert.equal(result.globalCoverageComplete,false);
