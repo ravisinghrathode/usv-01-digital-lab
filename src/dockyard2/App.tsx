@@ -27,7 +27,7 @@ function areaFromHash():WorkArea {
 const statusText={
   illustrative:'Illustrative local registers',
   loading:'Loading authenticated records',
-  connected:'Authenticated engineering snapshot',
+  connected:'Server records loaded · signed-in session',
   unavailable:'Server records unavailable · sample shown'
 } as const;
 
@@ -74,7 +74,7 @@ export default function DockyardApp() {
     }catch(e){setAuthError(e instanceof Error?e.message:'Login unsuccessful. Check your credentials.');}
     finally{setAuthBusy(false);}
   };
-  const sourceLabel=status==='connected'?'Authenticated records':'Illustrative records';
+  const sourceLabel=status==='connected'?'Server records':'Illustrative records';
   const areaLabel=areas.find(a=>a.id===area)?.label||'Design';
   return <div className={'d2-app'+(large?' d2-large':'')}>
     <header className="d2-topbar">
@@ -148,7 +148,7 @@ export default function DockyardApp() {
         {hits.length===0&&<p className="d2-empty">No matching records or modules. Try another engineering term.</p>}
         {hits.map(hit=><a key={hit.key} className="d2-search-hit" href={legacyModuleUrl(hit.module)}>
           <span className="d2-hit-icon">{hit.kind==='Module'?<Box size={19}/>:<FileSearch size={19}/>}</span>
-          <span><strong>{hit.title}</strong><small>{hit.kind} · {hit.subtitle}{hit.illustrative?' · Illustrative':''}</small></span>
+          <span><strong>{hit.title}</strong><small>{hit.kind} · {hit.subtitle}{hit.illustrative||status!=='connected'?' · Illustrative/sample source':''}</small></span>
           <ArrowUpRight size={18} aria-hidden="true"/>
         </a>)}
       </div>
