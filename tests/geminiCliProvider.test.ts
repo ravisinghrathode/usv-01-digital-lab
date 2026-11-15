@@ -25,7 +25,7 @@ describe('Gemini CLI operator-authenticated provider',()=>{
       '-e','none','--approval-mode','plan','--output-format','json','--prompt'
     ]));
     expect(cwdSeen).toMatch(/usv-gemini-cli-/);
-    expect(out.providerUsed).toBe('gemini');
+    expect(out.providerUsed).toBe('gemini_cli');
     expect(out.modelUsed).toBe('gemini-3.5-pro');
     expect(out.executionMode).toBe('LIVE_AI_GENERATION');
     expect(out.parsedJson?.disciplineSummary).toBe('ok');

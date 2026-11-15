@@ -253,7 +253,8 @@ export class GeminiCliProvider implements IModelProvider {
   private binary:string;
   constructor(options:{runner?:GeminiCliRunner;binary?:string}={}){
     this.runner=options.runner;
-    this.binary=options.binary||((typeof process!=='undefined'&&process.env?.GEMINI_CLI_BINARY)||'gemini');
+    // A fixed executable prevents an environment-injected arbitrary program.
+    this.binary=options.binary||'gemini';
   }
   private async run(args:string[],cwd:string,timeout=120000){
     // Only operator-managed Google OAuth may be used in the zero-paid-API
@@ -319,7 +320,7 @@ export class GeminiCliProvider implements IModelProvider {
       const actualModel=modelStats&&typeof modelStats==='object'&&!Array.isArray(modelStats)
         ? Object.keys(modelStats)[0]||requestedModel : requestedModel;
       return {
-        content,parsedJson,providerUsed:'gemini',modelUsed:actualModel,
+        content,parsedJson,providerUsed:'gemini_cli',modelUsed:actualModel,
         executionMode:'LIVE_AI_GENERATION',isAiReview:true,isMock:false,evidenceValid:false,
         correlationId:request.correlationId||'corr-gem-cli-'+Date.now(),
         timestamp:new Date().toISOString(),
