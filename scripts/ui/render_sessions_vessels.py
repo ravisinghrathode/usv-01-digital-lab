@@ -202,7 +202,7 @@ def build(variant):
     scene.render.image_settings.file_format="PNG"
     scene.render.image_settings.color_mode="RGBA"
     scene.render.film_transparent=True
-    scene.render.film_transparent_glass=True if hasattr(scene.render, "film_transparent_glass") else False
+
     scene.view_settings.view_transform='Standard'
     scene.view_settings.look='Medium High Contrast'
     scene.view_settings.exposure=0
