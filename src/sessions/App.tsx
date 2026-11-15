@@ -2,6 +2,7 @@ import React,{useEffect,useMemo,useRef,useState} from 'react';
 import {ArrowLeft,ArrowRight,ArrowUpRight,BookOpen,Box,ChevronDown,Command,Compass,FileSearch,FlaskConical,GitCompareArrows,HelpCircle,Layers,LockKeyhole,Menu,Network,Search,ShieldCheck,X} from 'lucide-react';
 import {Design,Decide,Experiment,Notebook,Worktable} from './v2/Modes';
 import NavalMark from './NavalMark';
+import LiveWorkspace from './LiveWorkspace';
 import {useSnapshot} from '../dockyard2/useSnapshot';
 import {searchSourceRegister} from './sourceSearch';
 import {DEFAULT_SESSION,ENTITIES,INVESTIGATION,MODES,STUDIES,currentEntity,hashForMode,legacyLink,searchItems,validMode,type EntityId,type Mode,type Note,type Perspective,type SessionView,type StudyId} from './model';
@@ -18,7 +19,8 @@ const ICONS:Record<Mode,React.ComponentType<{size?:number}>>={
  worktable:Network,design:Box,experiment:FlaskConical,decide:ShieldCheck,notebook:BookOpen
 };
 export default function EngineeringSessionsApp(){
- const {snapshot,status}=useSnapshot();
+ const {snapshot,status,user,error,refresh}=useSnapshot();
+ const [demoMode,setDemoMode]=useState(()=>typeof window!=='undefined'&&new URLSearchParams(window.location.search).get('demo')==='1');
  const [session,setSession]=useState<SessionView>(()=>({...DEFAULT_SESSION,mode:typeof window==='undefined'?'worktable':validMode(window.location.hash.slice(1))}));
  const [trayOpen,setTrayOpen]=useState(false);
  const [search,setSearch]=useState('');
@@ -28,7 +30,10 @@ export default function EngineeringSessionsApp(){
  const searchTrigger=useRef<HTMLButtonElement>(null);
  const searchField=useRef<HTMLInputElement>(null);
  const main=useRef<HTMLElement>(null);
- const results=useMemo(()=>[...searchItems(search),...searchSourceRegister(snapshot,search,status==='connected')].slice(0,75),[search,snapshot,status]);
+ const results=useMemo(()=>[
+  ...searchItems(search).filter(item=>demoMode||!item.id.startsWith('entity:')),
+  ...(status==='connected'?searchSourceRegister(snapshot,search,true):[])
+ ].slice(0,75),[search,snapshot,status,demoMode]);
  const selected=currentEntity(session.selected);
  useEffect(()=>{const dialog=inspectorDialog.current;if(!dialog)return;
   if(session.inspector&&selected){if(!dialog.open)dialog.showModal();}
@@ -75,40 +80,44 @@ export default function EngineeringSessionsApp(){
       onClick={()=>setMode(m.id)} title={m.name+' · Alt+'+m.key}><Icon size={17}/><span>{m.name}</span></button>})}
    </nav>
    <div className="es-global-actions">
+    <button type="button" className="es-demo-button" aria-pressed={demoMode} onClick={()=>{setDemoMode(v=>!v);setSession(old=>({...old,inspector:false}));}}>{demoMode?'Return to live project':'Example tour'}</button>
     <button type="button" className="es-search-trigger" ref={searchTrigger} onClick={()=>{setSearch('');searchDialog.current?.showModal();}} aria-label="Find anything ⌘ K"><Search size={19}/><span>Find anything</span><kbd>⌘ K</kbd></button>
     <button type="button" className="es-help-button" onClick={()=>setHelpOpen(v=>!v)} aria-expanded={helpOpen} aria-label="Toggle workspace help"><HelpCircle size={20}/></button>
     <a className="es-governed" href="/legacy.html" title="Open original governed engineering lab"><span>Original lab</span> <ArrowUpRight size={14}/></a>
    </div>
   </header>
-  {helpOpen&&<aside className="es-help-popover"><strong>About this workspace</strong><p>Use the five modes above or Alt+1–5. Choose an object to inspect it. Press Ctrl/Cmd+K to search. This example investigation uses synthetic records—not a live, verified engineering session.</p><button type="button" onClick={()=>setHelpOpen(false)}>Close</button></aside>}
+  {helpOpen&&<aside className="es-help-popover"><strong>About this workspace</strong><p>Use five workspaces or Alt+1–5. The default uses the authenticated engineering store; records and permissions come from the server. Press Ctrl/Cmd+K to search the 24 governed modules. The optional example tour contains only synthetic data.</p><button type="button" onClick={()=>setHelpOpen(false)}>Close</button></aside>}
   <section className="es-session-spine" aria-label="Persistent engineering investigation context">
    <div className="es-question">
-    <span className="es-context-id">{INVESTIGATION.id} / {INVESTIGATION.project}</span>
-    <strong>{INVESTIGATION.title}</strong>
+    <span className="es-context-id">{demoMode?INVESTIGATION.id:'PRJ-USV-01'} / USV-01</span>
+    <strong>{demoMode?INVESTIGATION.title:'Authenticated engineering project · controlled source records'}</strong>
    </div>
    <div className="es-spine-context">
-    <span><Box size={15}/> Placeholder revisions A + B</span>
-    <span><FlaskConical size={15}/> {STUDIES.length} proposed studies</span>
-    <span><LockKeyhole size={15}/> Not reviewed</span>
+    {demoMode?<><span><Box size={15}/> Placeholder revisions A + B</span><span><FlaskConical size={15}/> {STUDIES.length} proposed studies</span><span><LockKeyhole size={15}/> Not reviewed</span></>:
+     <><span><Box size={15}/> {status==='connected'?snapshot.simulations.filter(s=>!s.isIllustrative).length:'—'} registered studies</span><span><LockKeyhole size={15}/> Human approval required</span></>}
    </div>
   </section>
-  <div className="es-truth-banner" role="note"><span className="es-truth-dot"/> <strong>EXAMPLE INVESTIGATION</strong><span className="es-truth-long">All investigation objects are synthetic. No real USV-01 geometry, results or approvals are represented.</span><span className="es-truth-short">No approved CAD, results or decisions.</span><span className="es-library-status">Source register: {status==='connected'?'Authenticated records':status==='loading'?'Loading…':'Illustrative fallback'}</span></div>
+  {demoMode?<div className="es-truth-banner" role="note"><span className="es-truth-dot"/> <strong>EXAMPLE INVESTIGATION</strong><span className="es-truth-long">All investigation objects are synthetic. No real USV-01 geometry, results or approvals are represented.</span><span className="es-truth-short">No approved CAD, results or decisions.</span><span className="es-library-status">Explicit demonstration mode</span></div>:
+   <div className="es-truth-banner es-truth-banner-live" role="note"><span className="es-truth-dot"/> <strong>{status==='connected'?'AUTHENTICATED PROJECT SOURCE':'PROJECT SIGN-IN REQUIRED'}</strong><span>Live register view · only non-illustrative engineering records are counted · no automatic certification or approval</span><span className="es-library-status">{user?'Staff: '+user.userName:'No signed-in staff session'}</span></div>}
   <main className="es-main" id="es-main" ref={main} tabIndex={-1}>
-   {session.mode==='worktable'&&<Worktable {...props}/>}
-   {session.mode==='design'&&<Design {...props}/>}
-   {session.mode==='experiment'&&<Experiment {...props}/>}
-   {session.mode==='decide'&&<Decide {...props}/>}
-   {session.mode==='notebook'&&<Notebook {...props}/>}
+   {demoMode?<>
+    {session.mode==='worktable'&&<Worktable {...props}/>}
+    {session.mode==='design'&&<Design {...props}/>}
+    {session.mode==='experiment'&&<Experiment {...props}/>}
+    {session.mode==='decide'&&<Decide {...props}/>}
+    {session.mode==='notebook'&&<Notebook {...props}/>}
+   </>:<LiveWorkspace mode={session.mode} snapshot={snapshot} status={status} error={error} user={user} onRefresh={refresh} changeMode={setMode}/>}
   </main>
   <div className="es-session-tray">
-   <button type="button" className="es-tray-toggle" aria-expanded={trayOpen} onClick={()=>setTrayOpen(v=>!v)}><Layers size={17}/> Session objects <span>{ENTITIES.length}</span><ChevronDown size={16}/></button>
-   <div className="es-tray-preview"><button type="button" onClick={()=>select('reference')}>Reference</button><button type="button" onClick={()=>select('candidate')}>Candidate</button><button type="button" onClick={()=>{chooseStudy(session.study);setMode('experiment')}}>Study</button><button type="button" onClick={()=>setMode('decide')}>Review blockers</button></div>
-   <span className="es-tray-safe">Session state only · no project writes · <a href={sourceUrl} target="_blank" rel="noreferrer" title="Source revision used to build this interface">GitHub source: {verifiedSourceHash?sourceHash.slice(0,8):'revision unverified'}</a></span>
+   {demoMode?<><button type="button" className="es-tray-toggle" aria-expanded={trayOpen} onClick={()=>setTrayOpen(v=>!v)}><Layers size={17}/> Session objects <span>{ENTITIES.length}</span><ChevronDown size={16}/></button>
+   <div className="es-tray-preview"><button type="button" onClick={()=>select('reference')}>Reference</button><button type="button" onClick={()=>select('candidate')}>Candidate</button><button type="button" onClick={()=>{chooseStudy(session.study);setMode('experiment')}}>Study</button><button type="button" onClick={()=>setMode('decide')}>Review blockers</button></div></>:
+   <div className="es-tray-preview"><span>Project source: {status==='connected'?'authenticated':'unavailable'} · edits are server-audited unverified drafts · no automatic approvals</span></div>}
+   <span className="es-tray-safe"><a href={sourceUrl} target="_blank" rel="noreferrer" title="Source revision used to build this interface">GitHub source: {verifiedSourceHash?sourceHash.slice(0,8):'revision unverified'}</a></span>
   </div>
-  {trayOpen&&<section className="es-tray-expanded" aria-label="All investigation objects">
+  {demoMode&&trayOpen&&<section className="es-tray-expanded" aria-label="All investigation objects">
     {ENTITIES.map(e=><button type="button" key={e.id} onClick={()=>{select(e.id);setTrayOpen(false);}}><strong>{e.title}</strong><span>{e.status}</span></button>)}
    </section>}
-  <dialog ref={inspectorDialog} className="es-inspector" aria-label="Selected object context inspector"
+  {demoMode&&<dialog ref={inspectorDialog} className="es-inspector" aria-label="Selected object context inspector"
    onClose={()=>setSession(old=>({...old,inspector:false}))}>
   {selected&&<>
    <header><span>OBJECT CONTEXT / {selected.type.toUpperCase()}</span><button type="button" aria-label="Close context inspector" onClick={()=>inspectorDialog.current?.close()}><X size={20}/></button></header>
@@ -121,12 +130,12 @@ export default function EngineeringSessionsApp(){
    </div>
    <div className="es-inspector-caveat">An example object is not a linked source record. The button above opens the existing protected module, not a matching certified artifact.</div>
   </>}
-  </dialog>
+  </dialog>}
   <dialog ref={searchDialog} className="es-search-dialog" aria-label="Search the engineering lab" onClose={()=>searchTrigger.current?.focus()} onToggle={e=>{if((e.currentTarget as HTMLDialogElement).open)requestAnimationFrame(()=>searchField.current?.focus());}}>
    <header><h2>Find anything</h2><button type="button" aria-label="Close search" onClick={()=>searchDialog.current?.close()}><X size={20}/></button></header>
    <label className="es-search-field"><Search size={20}/><input id="engineering-session-search" name="query" type="search" ref={searchField} value={search} onChange={e=>setSearch(e.target.value)}
      onKeyDown={e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();searchDialog.current?.close();}}} placeholder="Search a concept object or a protected engineering module" aria-label="Search demonstration objects and engineering modules"/></label>
-   <p>Demonstration objects open the contextual inspector. Matching engineering register records are labelled by source state and open their protected register, not a certified case.</p>
+   <p>{demoMode?'Example objects open an inspector; project records open governed modules.':'Authenticated project records and all 24 governed modules are available here. Links do not approve or certify their target.'}</p>
    <div className="es-search-results">{results.length===0?<p>No matching example object or module.</p>:
      results.map(r=>r.id.startsWith('entity:')?
       <button type="button" key={r.id} onClick={()=>{select(r.id.slice(7) as EntityId);searchDialog.current?.close();}}><FileSearch size={17}/><span><strong>{r.title}</strong><small>{r.meta} · example</small></span><ArrowRight size={14}/></button>:
