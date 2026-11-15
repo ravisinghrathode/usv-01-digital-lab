@@ -82,8 +82,7 @@ export function mapScholarlyWork(work,query,retrievedAt){
     documentStatus:'PUBLIC_METADATA_UNVERIFIED',
     researchTerms:[query],
     retrievedAt,
-    evidenceHash:'sha256:'+hash(JSON.stringify({id,title,doi,license,pdfUrl,authors,
-      retrievedAt}))
+    evidenceHash:'sha256:'+hash(JSON.stringify({id,title,doi,license,pdfUrl,authors}))
   };
   return paper;
 }
