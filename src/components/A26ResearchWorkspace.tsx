@@ -4,7 +4,6 @@ import {authenticatedFetch} from '../core/auth/authClient';
 import {getPublicA26ReviewFeed,type A26PublicFeed} from '../core/intelligence/a26PublicResearchFallback';
 import {GlobalUsvFleetView} from './GlobalUsvFleetView';
 import {ExternalSoftwareRegisterView} from './ExternalSoftwareRegisterView';
-import type {NavigationModule} from '../moduleRegistry';
 
 export type A26ResearchTab='global-usv-fleet'|'scientific-knowledge'|'external-software';
 const tabs:ReadonlyArray<{id:A26ResearchTab;label:string;detail:string}>=[
@@ -14,12 +13,14 @@ const tabs:ReadonlyArray<{id:A26ResearchTab;label:string;detail:string}>=[
 ];
 type Feed=Pick<A26PublicFeed,'leads'|'publications'|'vessels'|'runId'|'sourceRevision'|'sourceUrl'>;
 type State='LOADING'|'READY'|'UNAVAILABLE'|'AUTH_REQUIRED';
-interface Props{tab:A26ResearchTab;onTabChange:(tab:NavigationModule)=>void;onAskAi?:(prompt:string,record?:any)=>void;}
+interface Props{initialTab:'global-usv-fleet'|'external-software';onAskAi?:(prompt:string,record?:any)=>void;}
 const safeUrl=(input:unknown)=>{
  try{if(typeof input!=='string')return null;const u=new URL(input);return u.protocol==='https:'?u.href:null;}
  catch{return null;}
 };
-export const A26ResearchWorkspace:React.FC<Props>=({tab,onTabChange,onAskAi})=>{
+export const A26ResearchWorkspace:React.FC<Props>=({initialTab,onAskAi})=>{
+ const [tab,setTab]=useState<A26ResearchTab>(initialTab);
+ useEffect(()=>setTab(initialTab),[initialTab]);
  const [feed,setFeed]=useState<Feed|null>(null);
  const [state,setState]=useState<State>('LOADING');
  const [message,setMessage]=useState('');
@@ -68,7 +69,7 @@ export const A26ResearchWorkspace:React.FC<Props>=({tab,onTabChange,onAskAi})=>{
   </header>
   <div role="tablist" aria-label="Research data categories" className="grid grid-cols-1 gap-2 sm:grid-cols-3">
    {tabs.map(t=><button key={t.id} type="button" role="tab" aria-selected={tab===t.id}
-    onClick={()=>onTabChange(t.id)}
+    onClick={()=>setTab(t.id)}
     className={'rounded-lg border p-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300 '+
       (tab===t.id?'border-cyan-400 bg-cyan-950/40 text-slate-50':'border-slate-700 bg-slate-900 text-slate-200 hover:border-slate-500')}>
     <span className="block text-sm font-semibold">{t.label}</span>
