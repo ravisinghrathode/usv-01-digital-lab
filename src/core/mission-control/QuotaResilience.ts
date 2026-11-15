@@ -35,7 +35,7 @@ export class QuotaHoldError extends Error {
 }
 
 export function isQuotaFailure(message: string): boolean {
-  return /USV_QUOTA_WAIT|QUOTA_EXHAUSTED|(?:reached|hit|exceeded|exhausted)[\\s\\S]{0,60}(?:usage|rate|request|message|token|credit)[ -]?(?:limit|quota|allowance)|(?:usage|rate|request|subscription|account|message|token|credit)[ -]?(?:limit|quota|allowance|cap)[\s\S]{0,90}(?:reach|exceed|exhaust|reset|deplet|hit|unavail)|(?:limit|quota|allowance)[\s\S]{0,70}(?:reached|exceeded|exhausted)|too many requests|http\s*429|\b429\s*(?:too many|rate limit)/i.test(message);
+  return /USV_QUOTA_WAIT|QUOTA_EXHAUSTED|(?:reached|hit|exceeded|exhausted)[\s\S]{0,60}(?:usage|rate|request|message|token|credit)[ -]?(?:limit|quota|allowance)|(?:usage|rate|request|subscription|account|message|token|credit)[ -]?(?:limit|quota|allowance|cap)[\s\S]{0,90}(?:reach|exceed|exhaust|reset|deplet|hit|unavail)|(?:limit|quota|allowance)[\s\S]{0,70}(?:reached|exceeded|exhausted)|too many requests|http\s*429|\b429\s*(?:too many|rate limit)/i.test(message);
 }
 function positiveInteger(value: string | undefined, fallback: number, ceiling: number): number {
   const number = Number(value);
