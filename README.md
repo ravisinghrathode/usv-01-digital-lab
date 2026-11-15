@@ -16,7 +16,7 @@ The [unified A26 naval intelligence and external software operating charter](doc
 
 ## Standard application interface
 
-**Naval AI Lab — Engineering Sessions** is the sole active presentation at `/` (also `/sessions.html`). The retired Dockyard, Atlas, and Lab3 entry URLs (`/dockyard2.html`, `/atlas.html`, and `/naval-lab.html`) redirect to the standard interface; their old visual frontends are not included as active entry bundles. `/legacy.html` remains the original **governed engineering workbench**, because this demonstration-first UI does not yet replace authenticated technical record editing, agent orchestration, or approval workflows. The Engineering Sessions sample investigation is explicitly synthetic and is not approved vessel evidence.
+**Naval AI Lab — Engineering Sessions** is the sole active presentation at `/` (also `/sessions.html`). Follow [Google AI Studio synchronization and runtime instructions](docs/integrations/GOOGLE_AI_STUDIO_SYNC.md) to import/pull this same GitHub `main` into an AI Studio Build workspace; pushing GitHub code alone does not refresh the existing Studio preview. The UI now displays the build's source commit when Git metadata is available, and the CI workflow tests both real `npm run dev` startup and the compiled browser UI. The retired Dockyard, Atlas, and Lab3 entry URLs (`/dockyard2.html`, `/atlas.html`, and `/naval-lab.html`) redirect to the standard interface; their old visual frontends are not included as active entry bundles. `/legacy.html` remains the original **governed engineering workbench**, because this demonstration-first UI does not yet replace authenticated technical record editing, agent orchestration, or approval workflows. The Engineering Sessions sample investigation is explicitly synthetic and is not approved vessel evidence.
 
 The GitHub `main` branch is the source baseline, **not evidence of a deployed Google AI Studio preview**. An external AI Studio project must be synchronized/redeployed separately. Never mark the externally hosted app as live solely because source code builds or a GitHub commit exists.
 
@@ -45,6 +45,9 @@ npm test
 
 # Build production bundle
 npm run build
+
+# Verify full-stack startup used by imported AI Studio apps
+npm run test:aistudio-startup
 
 # Launch interactive local development server
 npm run dev
