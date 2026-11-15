@@ -35,7 +35,7 @@ export class QuotaHoldError extends Error {
 }
 
 export function isQuotaFailure(message: string): boolean {
-  return /USV_QUOTA_WAIT|QUOTA_EXHAUSTED|(?:usage|rate|request|subscription|account|message|token|credit)[ -]?(?:limit|quota|allowance|cap)[\s\S]{0,90}(?:reach|exceed|exhaust|reset|deplet|hit|unavail)|(?:limit|quota|allowance)[\s\S]{0,70}(?:reached|exceeded|exhausted)|too many requests|http\s*429|\b429\s*(?:too many|rate limit)/i.test(message);
+  return /USV_QUOTA_WAIT|QUOTA_EXHAUSTED|(?:reached|hit|exceeded|exhausted)[\\s\\S]{0,60}(?:usage|rate|request|message|token|credit)[ -]?(?:limit|quota|allowance)|(?:usage|rate|request|subscription|account|message|token|credit)[ -]?(?:limit|quota|allowance|cap)[\s\S]{0,90}(?:reach|exceed|exhaust|reset|deplet|hit|unavail)|(?:limit|quota|allowance)[\s\S]{0,70}(?:reached|exceeded|exhausted)|too many requests|http\s*429|\b429\s*(?:too many|rate limit)/i.test(message);
 }
 function positiveInteger(value: string | undefined, fallback: number, ceiling: number): number {
   const number = Number(value);
@@ -80,8 +80,9 @@ export class QuotaResilience {
   }
   private snapshot(state: QuotaState, now: number): QuotaSnapshot {
     this.validate(state);
-    const windowStartedAt = state.windowStartedAt || now;
-    const spent = now - windowStartedAt >= this.windowMs ? 0 : state.attemptsInWindow;
+    const windowStartedAt = !state.windowStartedAt || now - state.windowStartedAt >= this.windowMs
+      ? now : state.windowStartedAt;
+    const spent = windowStartedAt === state.windowStartedAt ? state.attemptsInWindow : 0;
     const windowEnds = windowStartedAt + this.windowMs;
     const retryAt = Math.max(state.blockedUntil > now ? state.blockedUntil : 0,
       spent >= this.maxCalls ? windowEnds : 0);
