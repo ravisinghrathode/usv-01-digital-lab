@@ -33,7 +33,7 @@ function quotaBudget() {
     recordQuotaFailure: vi.fn(async () => ({ state: 'WAITING_FOR_QUOTA' }))
   };
 }
-function completed(req: ModelPromptRequest, model = GEMINI_HYDROGEN_MODEL): ModelPromptResponse {
+function completed(req: ModelPromptRequest, model: string = GEMINI_HYDROGEN_MODEL): ModelPromptResponse {
   const body = {
     canonicalId: req.context.canonicalId,
     sourceSha: req.context.sourceSha,
