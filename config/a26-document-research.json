@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "agentId": "INTEL-USV-26",
+  "perQuery": 25,
+  "maxDownloads": 8,
+  "queries": [
+    "unmanned surface vehicle prototype naval architecture",
+    "autonomous surface vessel sea trials engineering",
+    "uncrewed surface vessel system design and verification",
+    "unmanned surface vehicle hydrodynamic resistance seakeeping",
+    "autonomous surface craft collision avoidance COLREGs",
+    "unmanned surface vehicle propulsion energy endurance",
+    "unmanned surface vessel control guidance navigation",
+    "robotic boat autonomous surface vessel design research",
+    "uncrewed surface vessel maritime sensors sonar",
+    "autonomous survey vessel oceanographic robotics",
+    "wave propelled unmanned surface vehicle long endurance",
+    "naval unmanned surface vessel technology demonstrator",
+    "unmanned surface craft composite hull structural analysis",
+    "unmanned surface vehicle launch and recovery",
+    "USV digital twin marine systems engineering",
+    "unmanned surface vessel thermal management power system",
+    "unmanned surface vehicle mechanical design drawing",
+    "autonomous surface vessel prototype field experiment"
+  ]
+}
