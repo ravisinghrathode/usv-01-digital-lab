@@ -16,6 +16,8 @@ on:
       - 'package-lock.json'
       - 'vite.config.ts'
       - 'scripts/ui/engineering-sessions-browser.mjs'
+      - 'scripts/aistudio/**'
+      - 'docs/integrations/GOOGLE_AI_STUDIO_SYNC.md'
       - '.github/workflows/engineering-sessions-browser.yml'
   pull_request:
     paths:
@@ -32,6 +34,8 @@ on:
       - 'package-lock.json'
       - 'vite.config.ts'
       - 'scripts/ui/engineering-sessions-browser.mjs'
+      - 'scripts/aistudio/**'
+      - 'docs/integrations/GOOGLE_AI_STUDIO_SYNC.md'
       - '.github/workflows/engineering-sessions-browser.yml'
   workflow_dispatch:
 
@@ -52,6 +56,8 @@ jobs:
           cache: npm
       - name: Install locked application
         run: npm ci
+      - name: Test real Node + Express + Vite startup for AI Studio imports
+        run: npm run test:aistudio-startup
       - name: Install isolated browser runner only
         run: npm install --no-save --package-lock=false --ignore-scripts playwright@1.56.1
       - name: Build deployable frontend
