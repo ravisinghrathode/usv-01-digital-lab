@@ -154,6 +154,11 @@ def build(variant):
     line("Windscreen upper frame",(-1.75,-1.24,2.87),(-1.75,1.24,2.87),.020,gunmetal)
     line("Windscreen middle pillar",(-2.31,0,2.40),(-1.75,0,2.87),.018,gunmetal)
     line("Windscreen lower trim",(-2.31,-1.24,2.41),(-2.31,1.24,2.41),.021,gunmetal)
+    # Visible front glazed facade for the concept camera; kept strictly
+    # illustrative rather than claiming a real bridge-frame geometry.
+    forwardglass=cube("Visible tinted forward bridge glass",(-2.46,0,2.57),(.06,2.19,.59),glass,.025)
+    forwardglass.rotation_euler[1]=-.17
+    line("Window vertical divider",(-2.50,0,2.28),(-2.40,0,2.89),.016,gunmetal)
     for side in [-1,1]:
       cube("Port or starboard pilothouse glazing",(-.28,side*1.45,2.46),(1.98,.05,.66),glass,.065)
       cube("Rear utility glazing",(1.31,side*1.17,2.42),(.18,.05,.56),glass,.025)
