@@ -1,6 +1,7 @@
 import React,{useEffect,useMemo,useRef,useState} from 'react';
 import {ArrowLeft,ArrowRight,ArrowUpRight,BookOpen,Box,ChevronDown,Command,Compass,FileSearch,FlaskConical,GitCompareArrows,HelpCircle,Layers,LockKeyhole,Menu,Network,Search,ShieldCheck,X} from 'lucide-react';
-import {Decide,Design,Experiment,Notebook,Worktable} from './ModeScreens';
+import {Design,Worktable} from './FidelityWorktable';
+import {Decide,Experiment,Notebook} from './FidelityPhysicsReview';
 import {DEFAULT_SESSION,ENTITIES,INVESTIGATION,MODES,STUDIES,currentEntity,hashForMode,legacyLink,searchItems,validMode,type EntityId,type Mode,type Note,type Perspective,type SessionView,type StudyId} from './model';
 
 const ICONS:Record<Mode,React.ComponentType<{size?:number}>>={
