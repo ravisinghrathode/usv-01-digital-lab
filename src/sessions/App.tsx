@@ -103,6 +103,7 @@ export default function EngineeringSessionsApp(){
     <strong>{localDraft?localDraft.title:demoMode?INVESTIGATION.title:'Authenticated engineering project · controlled source records'}</strong>
    </div>
    <div className="es-spine-context">
+    {session.mode==='worktable'&&<span><a href={sourceUrl} target="_blank" rel="noreferrer">Source: {verifiedSourceHash?sourceHash.slice(0,8):'revision unverified'}</a></span>}
     {demoMode?<><span><Box size={15}/> Placeholder revisions A + B</span><span><FlaskConical size={15}/> {STUDIES.length} proposed studies</span><span><LockKeyhole size={15}/> Not reviewed</span></>:
      <><span><Box size={15}/> {status==='connected'?snapshot.simulations.filter(s=>!s.isIllustrative).length:'—'} registered studies</span><span><LockKeyhole size={15}/> Human approval required</span></>}
    </div>
