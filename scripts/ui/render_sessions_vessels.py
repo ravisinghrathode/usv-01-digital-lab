@@ -146,8 +146,14 @@ def build(variant):
     cube("Cabin roof with chamfer",(-.23,0,3.12),(3.17,2.88,.21),gunmetal,.11)
     cube("Cabin roof white top",(-.22,0,3.22),(3.08,2.80,.067),white,.08)
     # Wide uninterrupted tinted bridge windscreen and cheek windows
-    frontglass=cube("Angular forward windscreen",(-1.87,0,2.50),(.065,2.48,.53),glass,.055)
-    frontglass.rotation_euler[1]=-.22
+    # Externally visible inclined glazed bridge window (original version sat
+    # behind the cabin skin and disappeared from front product renders).
+    roof_mesh("Continuous inclined forward windscreen",[
+      (-2.31,-1.22,2.39),(-2.31,1.22,2.39),
+      (-1.75,1.19,2.88),(-1.75,-1.19,2.88)],glass)
+    line("Windscreen upper frame",(-1.75,-1.24,2.87),(-1.75,1.24,2.87),.020,gunmetal)
+    line("Windscreen middle pillar",(-2.31,0,2.40),(-1.75,0,2.87),.018,gunmetal)
+    line("Windscreen lower trim",(-2.31,-1.24,2.41),(-2.31,1.24,2.41),.021,gunmetal)
     for side in [-1,1]:
       cube("Port or starboard pilothouse glazing",(-.28,side*1.45,2.46),(1.98,.05,.66),glass,.065)
       cube("Rear utility glazing",(1.31,side*1.17,2.42),(.18,.05,.56),glass,.025)
