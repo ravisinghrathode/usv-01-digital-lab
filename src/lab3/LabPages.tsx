@@ -5,6 +5,7 @@ import { linkedEvidence, type Snapshot } from '../dockyard2/domain';
 import type { WorkstreamCode, Requirement } from '../types/engineering';
 import { VesselStage } from './VesselStage';
 import { SimulationBench } from './SimulationBench';
+import { AgentAcademyPanel } from './AgentAcademyPanel';
 import { engineeringSignals, moduleLink, PRODUCT_FACETS, type ProductFacetId, type LabSection } from './navigation';
 
 function Go({id,children,className='nl-text-link'}:{id:NavigationModule;children:React.ReactNode;className?:string}){
@@ -197,6 +198,7 @@ export function AgentsPage({snapshot,sourceLabel}:Common){
       <p>Delegate research and draft concepts. Separate independent review from authorization.</p></div>
       <div className="nl-intro-actions"><Go id="agent-orchestrator" className="nl-button nl-button-primary">Open agent orchestrator</Go></div>
     </div>
+    <AgentAcademyPanel/>
     <section className="nl-agent-chain" aria-label="Four-step governed agent work">
       {[['01','Investigate','Gather source evidence'],['02','Propose','Draft alternatives'],['03','Challenge','Independent physics and traceability review'],['04','Authorize','Human-controlled approval']].map(([n,name,desc])=>
         <div key={n}><span>{n}</span><h2>{name}</h2><p>{desc}</p></div>)}
