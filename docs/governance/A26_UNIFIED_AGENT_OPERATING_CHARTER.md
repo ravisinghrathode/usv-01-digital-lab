@@ -92,3 +92,47 @@ node --test tests/a26-unified-governance.test.mjs
 ```
 
 The unified controller rejects contradictory mode permissions and remains research-only. Existing A26 workflow and software register APIs keep their own original, stricter domain controls. Changes to any authority require an exact-head protected PR and negative test evidence; changes that touch an approved engineering design require their distinct Director/ECR authorization.
+
+
+## R3 — Unified evidence intake and public research lane separation (proposed revision)
+
+The established A26 role **shall not** operate independent trusted knowledge
+and USV-technology registries that lose provenance when combined. Its
+purpose-specific acquisition lanes may differ in discovery mechanisms but must
+publish into **one research evidence contract** for subsequent cross-domain
+reconciliation. Three intake classes are explicit:
+
+- `FLEET_LEAD`: public RSS, trade-press, multilingual or historical metadata.
+  These are *leads*, not verified operating vessels.
+- `KNOWLEDGE_DOCUMENT`: public scholarly metadata, DOIs and permitted
+  open-access document observations. Licensing and downloaded bytes are
+  independently represented; a DOI alone is not PDF evidence.
+- `USV_SOURCE_SNAPSHOT`: retrieved manufacturer/institution source bytes
+  with a SHA-256 digest and any literal field quotations. Identity and
+  quotations remain unreviewed, not engineering approval.
+
+The read-only contract consolidator at `scripts/a26/unified-evidence.mjs`
+produces `A26_UNIFIED_PUBLIC_RESEARCH_V1`, explicit evidence class,
+source-version conflicts and draft-only graph relations. This is a
+*proposed implementation*, not a substitute for protected review under
+the previously binding Annex R2.01–R2.10.
+
+A26 shall preserve original source URL, retrieval timestamp, digest class,
+license/retrieval status, classification and missing/uncertain values.
+Claims may advance from discovery to independent validation only via
+authenticated specialist review. No automatic engineering release, third-party
+code execution, unapproved tool permissions or public disclosure of
+restricted Navy/client material follows this ingestion work.
+
+Google Drive durable archival and Obsidian trusted-graph publication require
+separately authenticated integrations and evidence of successful synchronization.
+GitHub Actions artifacts and locally generated vault notes are **not** proof
+of permanent archival or a trusted knowledge-graph update. Worldwide coverage
+remains unknown: seed counts, source plan counts and research lead counts
+must not be presented as all global naval USVs.
+
+The PR #123 discovery/document lanes and PR #126 cited source-snapshot lane
+must be reconciled on an exact-head code revision, with separate offline,
+live-source and human-review acceptance reports. No second A26, new model
+provider, baseline modification or weakening of the parent A26 charter
+is authorized.

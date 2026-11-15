@@ -54,7 +54,13 @@
     "mission-control:attest-host": "tsx scripts/mission-control/attest-codex-host.ts",
     "acceptance:sign-independent": "tsx scripts/engineering/sign-external-review.ts",
     "mission-control:quota": "tsx scripts/mission-control/resilient-queue.ts",
-    "mission-control:quota:install-mac": "bash scripts/mission-control/install-quota-worker.sh"
+    "mission-control:quota:install-mac": "bash scripts/mission-control/install-quota-worker.sh",
+    "a26:collect": "node scripts/a26/global-research.mjs collect",
+    "a26:report": "node scripts/a26/global-research.mjs report",
+    "a26:accept": "node scripts/a26/acceptance.mjs",
+    "a26:test": "node --test tests/a26/*.test.mjs",
+    "a26:unify": "node scripts/a26/unified-evidence.mjs",
+    "a26:rules": "node scripts/a26/r3-policy-check.mjs"
   },
   "dependencies": {
     "@google/genai": "^3.1.0",
