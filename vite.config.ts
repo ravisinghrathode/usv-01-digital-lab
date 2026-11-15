@@ -15,7 +15,8 @@ export default defineConfig({
     chunkSizeWarningLimit: 1500,
     rollupOptions: {
       input: {
-        navalStudio: path.resolve(import.meta.dirname, 'index.html'),
+        navalDesignStudio: path.resolve(import.meta.dirname, 'index.html'),
+        legacyEngineering: path.resolve(import.meta.dirname, 'legacy.html'),
         dockyard2: path.resolve(import.meta.dirname, 'dockyard2.html')
       },
       output: {

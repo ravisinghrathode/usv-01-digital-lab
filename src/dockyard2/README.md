@@ -1,48 +1,47 @@
-# Dockyard 2.0 — independent Naval Studio frontend
+# Naval Design Studio — standard USV-01 interface
 
-## Status and route
+**Product name:** Naval Design Studio  
+**Origin:** Dockyard 2.0 (retained internally as `src/dockyard2` to avoid breaking imports)  
+**State:** Default **read-only engineering interface** with protected legacy editor handoffs. It is **not** a new engineering approval authority.
 
-A **new React UI**, not a restyle of `src/App.tsx`. Two distinct Vite HTML entries are built:
+## Entry points and source ownership
 
-- `/` — original Naval Studio, all 24 modules, record editors, deterministic tools, authentication and approval gates.
-- `/dockyard2.html` — new task-centred Dockyard 2.0 interface, independently designed components and CSS; read-only engineering views backed by existing typed data contracts.
+- `/` or `/index.html`: **Naval Design Studio** — the standard workbench. Uses `src/dockyard2/main.tsx` and independent UI styles/components.
+- `/legacy.html`: **Legacy Engineering Workbench** — original `src/main.tsx` application, which retains editing, CAD study features, agents, record imports, calculations and all authorization/approval workflows.
+- `/dockyard2.html`: compatibility URL for previous previews; now uses the **same Naval Design Studio** UI.
+- `/legacy.html?module=<registered-ID>`: opens one of the original 24 registered modules. Legacy `/?module=ID` links are forwarded only for valid registered IDs; unrecognized `module` queries stay in the new UI.
 
-Run `npm run dev:dockyard2` in the repository to open the new app. `npm run build` builds both entry points in `dist`.
+`vite.config.ts` builds all three HTML entries. Express serves the static HTML assets, with `dist/index.html` as its fallback. The primary product is the new interface — the legacy UI is an explicit option for full workflows rather than the default.
 
-## What is implemented
+Run:
 
-- Five unified workspaces: Design & CAD, Engineering Analysis, Agents, Director and Evidence & Assurance
-- CAD hero workstage, conceptual product tree, selection inspector, assembly/illustrative-section/OBJ A-B comparison modes
-- Local file-only OBJ parser and canvas viewer with rotation, zoom, keyboard operation, safety limits and strict no-upload behaviour
-- Context dock for requirements, simulations, agent work and verification plans, explicitly matched by **discipline**, not fabricated component links
-- Actual loaded engineering registers in engineering/agent/programme/evidence screens; source labels distinguish seed illustrative data from authenticated server snapshots
-- Native dialog search over all 24 module names and loaded records, complete module catalogue, deep links to original governed module routes
-- Existing staff login/session and authenticated snapshot API reused without new server writes, engineering authority or data schemas
-- Light, industrial high-contrast design system with responsive desktop rail and mobile bottom navigation, enlarged text and reduced-motion styling
+```bash
+npm ci
+npm run dev:naval-design-studio
+```
 
-## Engineering data and security boundary
+The general `npm run dev:ui` and `npm run dev` server commands also now open the standard app at the root route. `npm run dev:dockyard2` remains available for old scripts and preview links.
 
-The new read-only frontend never writes engineering records, edits a requirement, signs a gate or launches a solver. The original app owns those workflows, with its existing authentication and governance. `/?module=<ID>` is a **navigation instruction only**, checked against the 24-ID registry; it is not an authorization bypass.
+## Standard experience
 
-When unauthenticated, sample register entries come from existing `initialProjectData` and are prominently labelled illustrative. After authenticated login, `/api/data/snapshot` is loaded through the existing session-backed `authenticatedFetch`. A successful server response, including an empty array, replaces the illustrative dataset. A missing/failed response reverts to labelled examples with a visible error; the UI never silently passes samples off as live.
+- New light, high-contrast engineering application shell and CAD-first viewport.
+- Five main workspaces: Design & CAD, Engineering Analysis, Agents, Director, Evidence & Assurance.
+- Local OBJ A/B visual inspection, schematic section, component tree and inspector. No STEP/B-rep authority, simulated physics data or fabricated vessel dimensions.
+- Requirements, risk, simulation and verification lists from existing schema and current authenticated snapshot (when available).
+- Search for loaded records and the full catalogue of 24 original modules, with deep links to the protected editor.
+- Persistent engineering context, component-level source disclaimers, mobile bottom navigation and adjustable text scale.
+- Existing staff authentication client; new UI makes **no privileged writes**.
 
-An OBJ is read locally using `File.text()`. No upload is performed. The rasterized mesh is a limited **triangle projection**, not STEP/B-rep CAD, and does not derive dimensions, mass properties, hydrodynamics or structural results. The 2D vessel and cross-section are original concept illustrations.
+## Preservation of engineering authority
 
-## Original workflows
+The existing original app at `/legacy.html` remains authoritative for all create/edit/import/export, solver launch, agent execution, engineering verification and human approval actions. No functionality is removed. Authentication/authorization is enforced by the same backend as before. The new UI is a read-only lens over project data and **cannot** release a vessel configuration.
 
-Dockyard 2.0 is a **read-only companion while the engineering editors migrate**. Search results and every catalogue module link to the original app using `/?module=...`. The original App now safely accepts only registered module IDs from that parameter and leaves all existing authority rules intact. Browser Back returns to Dockyard. The original editor is the explicit handoff for writes and approvals.
+Sample records are visibly marked illustrative. A signed-in user may load data from `/api/data/snapshot` using the existing session client. Failed, unavailable and unauthenticated states are labelled — they do not become silently 'approved' records. Local OBJ files remain local to the browser.
 
-## Test coverage / acceptance
+## Acceptance before live cutover
 
-`tests/dockyard2.test.tsx` covers the independent app root, 24-module catalogue/deep link, strict snapshot parsing, document provenance, pure OBJ parsing/limits, all five SSR screen renders and selected contrast pairs. The repository CI should also run TypeScript, the deterministic suite, production bundle and protected governance gates.
+The user's choice establishes **Naval Design Studio as the intended default interface**. A pull request configures the code but is not evidence of a deployed switch.
 
-**Still required before replacing Naval Studio's main route:**
+A release still requires TypeScript, deterministic/safety tests, both production bundles, protected human governance sign-off, and hands-on browser QA at 1440, 1280, 768, 390 and 320 pixels; 200% zoom; keyboard and screen-reader navigation; all 24 legacy module handoffs and authentic staff session behaviour. Visual acceptance and the Google AI Studio deployment must be independently verified. No AI agent may self-approve the gate.
 
-1. Inspect **running** `/dockyard2.html` at 1440×900, 1280×800, 768×1024, 390×844 and 320×700, plus browser zoom 200% and the enlarged text setting.
-2. Keyboard-only and assistive-technology checks for tab order, dialog focus/return, search, module catalogue, component tree and OBJ canvas.
-3. Confirm real authenticated snapshot loads with an appropriately provisioned test account, and no unauthorized writes. Verify empty/expired-session/unavailable-api states.
-4. Exercise legacy module transitions, all 24 workflows, review gates, high-risk CAD previews, local OBJ parsing on real representative files and memory/CPU profiling.
-5. Do browser-computed WCAG AA text/control/focus contrast checks on light/dark surfaces, not just the unit-tested token pairs.
-6. Explicitly verify the synchronized Google AI Studio deployed build and SHA; GitHub CI success does **not** prove deployment.
-
-Never merge or replace `/` merely because CI is green. The user must approve main-route cutover after these gates.
+The default UI may intentionally remain read-only while legacy editors are available; full feature-parity migration is a **separate** engineering change and must not be asserted completed by this routing work.
