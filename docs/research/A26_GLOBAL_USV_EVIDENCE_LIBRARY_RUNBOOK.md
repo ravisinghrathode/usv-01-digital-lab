@@ -4,10 +4,12 @@
 
 ## Implemented discovery lanes
 
-1. **Worldwide fleet and prototype leads:** `scripts/a26-fleet-campaign.mjs` executes 73 public news/technical search feeds in up to four bounded batches. Ten searches use original-language regional editions for Japan, Korea, Türkiye, France, Germany, Spain, Russia, Arabic-speaking navies, Chinese-language sources and India. It also checks three public naval trade-press feeds. Every attempted feed gets a timestamp, retrieval outcome and source hash.
+1. **Worldwide fleet and prototype leads:** `scripts/a26-fleet-campaign.mjs` executes 85 public discovery searches (73 current news/technical searches plus 12 historical public-encyclopedia searches) in up to four bounded batches. Ten searches use original-language regional editions for Japan, Korea, Türkiye, France, Germany, Spain, Russia, Arabic-speaking navies, Chinese-language sources and India. It also checks three public naval trade-press feeds. Every attempted feed gets a timestamp, retrieval outcome and source hash.
 2. **Technical documents and scientific learning:** `scripts/a26-document-library.mjs` searches OpenAlex for 18 USV-specific research and engineering subjects. It creates a DOI/author/publication/OA-link manifest with source hashes and version observations, without assuming OpenAlex's metadata certifies content. Research paper and technical report candidates remain unverified, separate from engineering baseline.
 3. **Files and photographs:** RSS/Atom enclosure links for PDFs, photos and supplementary files are captured as links marked `UNKNOWN_REVIEW_REQUIRED`. Optional `--download-open-licensed` retrieves up to eight PDF files per run **only** when a supported open license is present in source metadata **and** the PDF host is on the restricted allowlist. Files are byte-capped, hashed and treated as untrusted; there is no execution, automatic PDF rendering or unsupported license claim. CAD/model/source files from other hosts are **linked for later license and safety review**, not automatically downloaded.
 4. **Knowledge graph and Obsidian:** the collector generates separate `candidate-notes` Markdown with source links, publication timestamps, hashes and unresolved verification questions. It never overwrites trusted `docs/vault/usv-fleet/<model>.md` notes or makes claims about USV-01 design validity.
+
+The historical source is encyclopedia metadata, never independent official validation; its published date may be unavailable and is explicitly marked UNKNOWN. Original-language titles are retained for later translation and source checks.
 
 ## Persistent review structures
 
@@ -34,6 +36,6 @@
 
 ## Scope limits and provenance
 
-News/RSS search is not a complete Internet crawler. Language and indexing bias, unavailable public-source files, proprietary drawings, publication licensing, API quotas and access restrictions prevent literal collection of every worldwide craft and all its files. The transparent dashboard shows leads and publication records separately from the 14 seeded catalogue. A working model, a prototype, a proposed concept and a press announcement are **different evidence categories** that must not be conflated.
+RSS news and Wikipedia search are discovery indexes, not a complete Internet crawler. Language and indexing bias, unavailable public-source files, proprietary drawings, publication licensing, API quotas and access restrictions prevent literal collection of every worldwide craft and all its files. The transparent dashboard shows leads and publication records separately from the 14 seeded catalogue. A working model, a prototype, a proposed concept and a press announcement are **different evidence categories** that must not be conflated.
 
 Sources and docs: [OpenAlex Works API](https://help.openalex.org/api/endpoints/) and [OpenAlex OA locations and licenses](https://help.openalex.org/data/works/open-access/).
