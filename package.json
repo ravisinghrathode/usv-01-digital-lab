@@ -9,6 +9,7 @@
     "dev:ui": "vite",
     "dev:dockyard2": "vite --open /dockyard2.html",
     "dev:naval-design-studio": "vite --open /",
+    "dev:naval-ai-lab": "vite --open /naval-lab.html",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest run --reporter=default --reporter=json --outputFile=governance/reports/test-results.json",
