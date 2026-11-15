@@ -11,8 +11,11 @@ import {INVESTIGATION,type Mode} from './model';
  * Local investigation drafts are never represented as server records.
  */
 type Dock='tasks'|'parameters'|'evidence'|'issues'|'history';
+export interface LocalSessionDraft{title:string;objective:string}
 interface Props{
  demoMode:boolean;
+ draft:LocalSessionDraft|null;
+ onDraftChange:(draft:LocalSessionDraft)=>void;
  snapshot:Snapshot;
  changeMode:(mode:Mode)=>void;
  onRefresh:()=>void;
@@ -40,7 +43,7 @@ const proposedTasks=[
 ];
 const sourceOnly=<T extends {isIllustrative:boolean}>(items:T[])=>items.filter(row=>row.isIllustrative===false);
 
-export function SessionDesk({demoMode,snapshot,changeMode,onRefresh}:Props){
+export function SessionDesk({demoMode,snapshot,draft:localDraft,onDraftChange,changeMode,onRefresh}:Props){
  const [dock,setDock]=useState<Dock>('tasks');
  const [draftOpen,setDraftOpen]=useState(false);
  const draftDialog=useRef<HTMLDialogElement>(null);
@@ -51,7 +54,6 @@ export function SessionDesk({demoMode,snapshot,changeMode,onRefresh}:Props){
  },[draftOpen]);
  const [draftTitle,setDraftTitle]=useState('');
  const [draftObjective,setDraftObjective]=useState('');
- const [localDraft,setLocalDraft]=useState<{title:string;objective:string}|null>(null);
  const [query,setQuery]=useState('');
  const [variant,setVariant]=useState<'reference'|'candidate'>('reference');
  const reqs=demoMode?[]:sourceOnly(snapshot.requirements);
@@ -177,7 +179,7 @@ export function SessionDesk({demoMode,snapshot,changeMode,onRefresh}:Props){
   <dialog ref={draftDialog} className="ux-draft-dialog" aria-labelledby="ux-draft-title" onClose={()=>setDraftOpen(false)} onCancel={()=>setDraftOpen(false)}>
     <header><h2 id="ux-draft-title">Create a local session draft</h2><button type="button" aria-label="Close new session draft" onClick={()=>setDraftOpen(false)}><X size={19}/></button></header>
     <p>Until an authoritative session backend is connected, this draft exists only on this page. It is not saved, assigned, approved, or dispatched.</p>
-    <form onSubmit={e=>{e.preventDefault();if(draftTitle.trim()&&draftObjective.trim()){setLocalDraft({title:draftTitle.trim(),objective:draftObjective.trim()});setDraftOpen(false);}}}>
+    <form onSubmit={e=>{e.preventDefault();if(draftTitle.trim()&&draftObjective.trim()){onDraftChange({title:draftTitle.trim(),objective:draftObjective.trim()});setDraftOpen(false);}}}>
      <label>Session title<input autoFocus required maxLength={120} value={draftTitle} onChange={e=>setDraftTitle(e.target.value)} placeholder="Define the engineering question"/></label>
      <label>Engineering objective<textarea required rows={4} maxLength={1000} value={draftObjective} onChange={e=>setDraftObjective(e.target.value)} placeholder="Define scope, success criteria and required evidence"/></label>
      <div><button type="button" onClick={()=>setDraftOpen(false)}>Cancel</button><button type="submit" className="ux-primary">Use local draft <ArrowRight size={15}/></button></div>
