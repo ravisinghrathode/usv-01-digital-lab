@@ -127,7 +127,19 @@ export function parseFeed(xml,maxItems=45) {
     const summary = cleanText(tag(b,'description') || tag(b,'summary') || tag(b,'content'),360);
     const dt = Date.parse(cleanText(tag(b,'pubDate') || tag(b,'published') || tag(b,'updated'),90));
     const publishedAt = Number.isFinite(dt) ? new Date(dt).toISOString() : null;
-    rows.push({title,url,summary,publishedAt});
+    // Index linked source files as unverified pointers only. Nothing is
+    // downloaded/executed without a separate license and source safety gate.
+    const linkedFiles=[];
+    for(const media of b.matchAll(/<(?:enclosure|media:content|media:thumbnail)\b[^>]*\/?>/gi)){
+      const attrs=media[0];
+      const link=attrs.match(/\burl=["']([^"']+)["']/i);
+      const type=attrs.match(/\btype=["']([^"']+)["']/i);
+      const asset=articleUrl(cleanText(link?.[1],1300));
+      if(!asset||linkedFiles.some(x=>x.url===asset)||linkedFiles.length>=6)continue;
+      linkedFiles.push({url:asset,mimeType:cleanText(type?.[1],100)||'UNKNOWN',
+        license:'UNKNOWN_REVIEW_REQUIRED',fileBytesDownloaded:false});
+    }
+    rows.push({title,url,summary,publishedAt,linkedFiles});
   }
   return rows;
 }
@@ -201,6 +213,7 @@ function newCandidate(item,source,feedDigest,now,knownModels) {
       publishedAt:item.publishedAt,
       retrievedAt:now,
       feedSha256:'sha256:' + feedDigest,
+      linkedFiles:item.linkedFiles || [],
       entrySha256:'sha256:' + sha(JSON.stringify(item))
     }]
   };
@@ -300,6 +313,7 @@ export function toObsidianCandidate(r) {
     '','Operator, operational status, dimensions and performance: UNKNOWN.','',
     '## Source metadata',''];
   for(const e of r.evidence){
+    for(const file of (e.linkedFiles || [])) lines.push('- Source-linked file (license UNKNOWN): '+file.url+' ('+file.mimeType+')');
     lines.push('- '+e.publicArticleUrl+' ('+e.sourceId+', '+(e.publishedAt||'date UNKNOWN')+
       ', entry '+e.entrySha256+')');
   }
