@@ -38,6 +38,7 @@ import { RealtimeSimulationView } from './components/RealtimeSimulationView';
 import { ShipBuildingProcessView } from './components/ShipBuildingProcessView';
 import { GenerativeOptimizerView } from './components/GenerativeOptimizerView';
 import { A26ResearchWorkspace } from './components/A26ResearchWorkspace';
+import { ExternalSoftwareRegisterView } from './components/ExternalSoftwareRegisterView';
 import { NavalNotebookLMView } from './components/NavalNotebookLMView';
 import { AiEngineeringAssistant } from './components/AiEngineeringAssistant';
 import { NewRecordModal } from './components/NewRecordModal';
@@ -910,8 +911,12 @@ export default function App() {
             />
           )}
 
-          {(currentModule === 'global-usv-fleet' || currentModule === 'external-software') && (
-            <A26ResearchWorkspace initialTab={currentModule} onAskAi={triggerAiQuery} />
+          {currentModule === 'global-usv-fleet' && (
+            <A26ResearchWorkspace initialTab="global-usv-fleet" onAskAi={triggerAiQuery} />
+          )}
+
+          {currentModule === 'external-software' && (
+            <ExternalSoftwareRegisterView />
           )}
 
           {currentModule === 'notebook-lm' && (
