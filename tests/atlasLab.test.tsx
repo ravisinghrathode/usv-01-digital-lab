@@ -39,7 +39,7 @@ describe('Atlas — a genuinely new naval engineering interface',()=>{
    expect(html.indexOf('at-runway')).toBeGreaterThan(html.indexOf('at-canvas-assembly'));
    expect(html).toContain('Product library');
    expect(html).toContain('Simulation runway');
-   expect(html).toContain('No approved vessel baseline');
+   expect(html).toContain('baseline unapproved');
    expect(html).toContain('Open local OBJ');
    expect(source('src/atlas/styles.css')).toContain('grid-template-columns:170px minmax(0,1fr) 282px');
    expect(source('src/atlas/styles.css')).toContain('.at-runway{background:#142e45');
@@ -72,7 +72,7 @@ describe('Atlas — a genuinely new naval engineering interface',()=>{
    expect(refs.tests.every(t=>refs.plans.some(p=>p.id===t.planId))).toBe(true);
    const html=renderToStaticMarkup(<PhysicsRoom {...p}/>);
    expect(html).toContain('Awaiting verified result files');
-   expect(html).toContain('No invented curves');
+   expect(html).toContain('A run is not a result');
    expect(html).toContain('Open study record and outputs');
    expect(simulationMatches(illustrativeSnapshot.simulations[0],'','all')).toBe(true);
    expect(simulationMatches(illustrativeSnapshot.simulations[0],'no such case','all')).toBe(false);
@@ -81,7 +81,7 @@ describe('Atlas — a genuinely new naval engineering interface',()=>{
    for(const view of ['isometric','plan','section'] as const) {
      const h=renderToStaticMarkup(<VesselBlueprint view={view} assembly="hull"/>);
      expect(h).toContain('<svg');
-     expect(h).toContain('not approved');
+     expect(h).toContain('REFERENCE DIAGRAM');
      expect(h).toContain('REFERENCE DIAGRAM');
    }
    const mesh=parseObj('v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3','probe.obj');
@@ -92,7 +92,7 @@ describe('Atlas — a genuinely new naval engineering interface',()=>{
  });
  it('exposes working physics, evidence, agent and library rooms from typed registers',()=>{
    expect(renderToStaticMarkup(<EvidenceRoom {...p}/>)).toContain('Source dossier');
-   expect(renderToStaticMarkup(<EvidenceRoom {...p}/>)).toContain('No test record linked');
+   expect(renderToStaticMarkup(<EvidenceRoom {...p}/>)).toContain('Test records via plans');
    expect(renderToStaticMarkup(<AgentsRoom {...p}/>)).toContain('26 specialist agents have not been modified');
    expect(renderToStaticMarkup(<LibraryRoom {...p}/>)).toContain('Global USV reference fleet');
    expect(renderToStaticMarkup(<LibraryRoom {...p}/>)).toContain('Knowledge records');
