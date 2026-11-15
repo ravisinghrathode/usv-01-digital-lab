@@ -912,11 +912,8 @@ export default function App() {
             />
           )}
 
-          {(currentModule === 'global-usv-fleet' ||
-            currentModule === 'scientific-knowledge' ||
-            currentModule === 'external-software') && (
-            <A26ResearchWorkspace tab={currentModule}
-              onTabChange={setCurrentModule} onAskAi={triggerAiQuery} />
+          {(currentModule === 'global-usv-fleet' || currentModule === 'external-software') && (
+            <A26ResearchWorkspace initialTab={currentModule} onAskAi={triggerAiQuery} />
           )}
 
           {currentModule === 'notebook-lm' && (
