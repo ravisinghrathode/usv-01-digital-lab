@@ -221,3 +221,28 @@ agents, but it **does not install or register these skills inside the ChatGPT
 host's global skill catalogue**. A ChatGPT assistant can explicitly fetch the
 project copies to apply their guidance. For supply-chain metadata and exact
 upstream source commits, see `docs/UI_UX_SKILL_STACK.md`.
+
+## Selected future UX design baseline: Engineering Sessions (`NAL-UX-BL-001`)
+
+On 2026-11-15, the Project Lead selected **Engineering Sessions** as the
+future Naval AI Lab interaction baseline. All new visual/interface design work
+must start from `docs/design/ENGINEERING_SESSIONS_UX_BASELINE_V1.md` and
+`docs/design/ENGINEERING_SESSIONS_INTERACTION_REFINEMENT.md`, with canonical
+machine-readable metadata in `config/engineering-sessions-ux-baseline.json`.
+
+**The primary UI object is an investigation, not a dashboard or application
+module.** Five adaptive work modes (Worktable, Design, Experiment, Decide,
+Notebook) must preserve selected project, configuration revision, study,
+conditions and evidence context. Design emphasizes real product geometry;
+Experiment real source-backed physics; Decide versioned evidence, uncertainty
+and independent review. No 24-module sidebar / dark CAD + simulation card
+pattern should be proposed as the new default design, and no hypothetical
+vessel values or synthetic CFD curves may be presented as verified data.
+
+This is an **authorized UX design direction**, not a product cutover, vessel
+configuration approval, engineering signoff, new runtime, or authorization
+to modify the frozen 26 agents/31 engineering skills. The five approved
+frontend skills remain a **separate development toolchain**. Future
+implementation needs its own feature PR, genuine browser/accessibility
+verification, backend data-contract assessment and protected human release.
+Do not silently promote unbuilt design screens into the existing live app.
