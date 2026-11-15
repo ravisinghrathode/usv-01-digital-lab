@@ -1,6 +1,6 @@
 ---
 name: agent-runtime-resilience
-description: Design safe, deterministic runtime resilience for the canonical 26 USV-01 agents: bounded retries, quota limits, idempotent resume, source-pinned checkpoint recovery and fail-closed provider outages.
+description: "Design safe, deterministic runtime resilience for the canonical 26 USV-01 agents: bounded retries, quota limits, idempotent resume, source-pinned checkpoint recovery and fail-closed provider outages."
 ---
 
 # agent-runtime-resilience
