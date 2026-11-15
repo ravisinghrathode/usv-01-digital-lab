@@ -16,9 +16,19 @@ const failures=[];
 try {
  const page=await browser.newPage({viewport:{width:1440,height:900},deviceScaleFactor:1});
  page.on('pageerror',error=>failures.push(error.message));
+ page.on('pageerror',error=>console.error('[naval-lab pageerror]',error.message));
+ page.on('console',message=>{if(message.type()==='error')console.error('[naval-lab console error]',message.text());});
+ page.on('response',response=>{if(response.status()>=400 && response.url().includes('127.0.0.1'))console.error('[naval-lab http error]',response.status(),response.url());});
  const load=async()=>{
    await page.goto(base+'/naval-lab.html#lab',{waitUntil:'domcontentloaded'});
-   await page.getByRole('heading',{name:'Naval AI Lab',exact:true}).waitFor();
+   try { await page.getByRole('heading',{name:'Naval AI Lab',exact:true}).waitFor(); }
+   catch (error) {
+     console.error('[naval-lab debug] URL', page.url());
+     console.error('[naval-lab debug] Title', await page.title());
+     console.error('[naval-lab debug] Body', (await page.locator('body').innerText().catch(()=>'' )).slice(0,2000));
+     console.error('[naval-lab debug] Page errors', failures);
+     throw error;
+   }
    await page.locator('.nl-hero-grid').waitFor();
  };
  await load();
