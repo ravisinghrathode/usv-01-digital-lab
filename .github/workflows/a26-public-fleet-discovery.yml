@@ -1,0 +1,186 @@
+name: USV-01 A26 Worldwide Public Fleet Scout
+
+on:
+  workflow_dispatch:
+    inputs:
+      validate_only:
+        description: 'Only validate source register, no network or model calls'
+        type: boolean
+        default: false
+  schedule:
+    - cron: '23 4 * * 2,5'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'scripts/a26-fleet-discovery.mjs'
+      - 'scripts/a26-fleet-campaign.mjs'
+      - 'scripts/a26-document-library.mjs'
+      - 'scripts/a26-document-register.mjs'
+      - 'scripts/a26-research-handoffs.mjs'
+      - 'config/a26-document-research.json'
+      - 'config/a26-fleet-discovery.json'
+      - 'references/fleet-intelligence/**'
+      - 'tests/a26-fleet-discovery.test.mjs'
+      - 'tests/a26-document-library.test.mjs'
+      - 'tests/a26-fleet-campaign.test.mjs'
+      - 'tests/a26-research-handoffs.test.mjs'
+      - '.github/workflows/a26-public-fleet-discovery.yml'
+      - 'docs/research/A26_FLEET_DISCOVERY_QUEUE.md'
+      - 'docs/research/A26_DOCUMENT_DISCOVERY_QUEUE.md'
+      - 'docs/vault/usv-fleet/candidate-notes/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: a26-fleet-scout-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Test public fleet collector without network or AI
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      USV_ALLOW_PAID_AI_API: 'false'
+      USV_NO_PAID_API: '1'
+      USV_SUBSCRIPTION_PILOT: disabled
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Offline fleet ingestion, security and evidence tests
+        run: node --test tests/a26-fleet-discovery.test.mjs tests/a26-document-library.test.mjs tests/a26-fleet-campaign.test.mjs tests/a26-research-handoffs.test.mjs
+      - name: Validate governed research configuration and review registers
+        run: |
+          node scripts/a26-fleet-campaign.mjs --validate-only
+          node scripts/a26-document-library.mjs --validate-only
+          node scripts/a26-document-register.mjs --validate-only
+
+  discover:
+    name: Discover public worldwide naval USV research leads
+    if: github.event_name != 'pull_request' && inputs.validate_only != true
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    env:
+      USV_ALLOW_PAID_AI_API: 'false'
+      USV_NO_PAID_API: '1'
+      USV_SUBSCRIPTION_PILOT: disabled
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Retrieve bounded public RSS and Atom metadata with source receipts
+        run: |
+          set -euo pipefail
+          node scripts/a26-fleet-campaign.mjs \
+            --batch-size 24 --max-batches 4 \
+            --out-dir "$RUNNER_TEMP/a26-fleet-scout"
+      - name: Discover public scholarly papers and open licensed files
+        continue-on-error: true
+        run: |
+          node scripts/a26-document-library.mjs \
+            --out-dir "$RUNNER_TEMP/a26-documents" \
+            --download-open-licensed --max-downloads 8
+          node scripts/a26-document-register.mjs \
+            --harvest "$RUNNER_TEMP/a26-documents/papers-and-references.json" \
+            --out-dir "$RUNNER_TEMP/a26-documents"
+      - name: Draft unverified engineering research questions from public evidence
+        if: always()
+        run: |
+          if [[ -f "$RUNNER_TEMP/a26-fleet-scout/latest.json" ]] &&
+             [[ -f "$RUNNER_TEMP/a26-documents/papers-and-references.json" ]]; then
+            node scripts/a26-research-handoffs.mjs \
+              --fleet "$RUNNER_TEMP/a26-fleet-scout/latest.json" \
+              --documents "$RUNNER_TEMP/a26-documents/papers-and-references.json" \
+              --out-dir "$RUNNER_TEMP/a26-fleet-scout"
+          else
+            echo "Research handoff held: one or more source reports are unavailable."
+          fi
+      - name: Upload unverified run evidence and Obsidian research drafts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a26-fleet-public-research-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/a26-fleet-scout/
+            ${{ runner.temp }}/a26-documents/
+          if-no-files-found: warn
+          retention-days: 60
+      - name: Propose protected review PR only if new source evidence exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          REPORT="$RUNNER_TEMP/a26-fleet-scout/latest.json"
+          PROPOSAL="$RUNNER_TEMP/a26-fleet-scout/proposal-register.json"
+          if [[ ! -f "$REPORT" || ! -f "$PROPOSAL" ]]; then
+            echo 'No valid report and proposal; fail closed.' >&2
+            exit 1
+          fi
+          SUCCESS="$(node -e 'const fs=require("fs");const j=JSON.parse(fs.readFileSync(process.argv[1]));process.stdout.write(String(j.sourcesSucceeded))' "$REPORT")"
+          if [[ "$SUCCESS" -eq 0 ]]; then
+            echo 'No feeds were reached; do not claim a completed collection.' >&2
+            exit 1
+          fi
+          HAS_FLEET=1
+          HAS_DOCS=0
+          if cmp -s "$PROPOSAL" references/fleet-intelligence/discovery-register.json; then HAS_FLEET=0; fi
+          if [[ -f "$RUNNER_TEMP/a26-documents/document-register-proposal.json" ]] &&             ! cmp -s "$RUNNER_TEMP/a26-documents/document-register-proposal.json" references/fleet-intelligence/document-register.json; then
+            HAS_DOCS=1
+          fi
+          if [[ "$HAS_FLEET" -eq 0 && "$HAS_DOCS" -eq 0 ]]; then
+            echo 'No new source evidence; committed research registers unchanged.'
+            exit 0
+          fi
+          OPEN="$(gh pr list --state open --limit 100 --json title --jq '[.[] | select(.title == "A26 public naval USV fleet research leads (review required)")] | length')"
+          if [[ "$OPEN" != 0 ]]; then
+            echo 'An A26 fleet review PR is already pending; new evidence stays in run artifacts.'
+            exit 0
+          fi
+          BRANCH="automation/a26-fleet-discovery-$GITHUB_RUN_ID"
+          if [[ "$HAS_FLEET" -eq 1 ]]; then
+            cp "$PROPOSAL" references/fleet-intelligence/discovery-register.json
+            cp "$RUNNER_TEMP/a26-fleet-scout/review-queue.md" docs/research/A26_FLEET_DISCOVERY_QUEUE.md
+          fi
+          if [[ "$HAS_DOCS" -eq 1 ]]; then
+            cp "$RUNNER_TEMP/a26-documents/document-register-proposal.json" references/fleet-intelligence/document-register.json
+            cp "$RUNNER_TEMP/a26-documents/document-review-queue.md" docs/research/A26_DOCUMENT_DISCOVERY_QUEUE.md
+          fi
+          mkdir -p docs/vault/usv-fleet/candidate-notes
+          cp "$RUNNER_TEMP/a26-fleet-scout/candidate-notes/"*.md docs/vault/usv-fleet/candidate-notes/ 2>/dev/null || true
+          node scripts/a26-fleet-campaign.mjs --validate-only
+          node scripts/a26-document-register.mjs --validate-only
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "$BRANCH"
+          git add references/fleet-intelligence/discovery-register.json \
+            docs/research/A26_FLEET_DISCOVERY_QUEUE.md \
+            docs/research/A26_DOCUMENT_DISCOVERY_QUEUE.md \
+            references/fleet-intelligence/document-register.json \
+            docs/vault/usv-fleet/candidate-notes
+          git commit -m 'docs(a26): propose source-linked naval USV research leads for independent review'
+          gh auth setup-git
+          git push -u origin "$BRANCH"
+          if ! gh pr create --base main --head "$BRANCH" \
+            --title "A26 public naval USV fleet research leads (review required)" \
+            --body "A26 public-source DISCOVERY ONLY. Leads are RSS/Atom metadata, not verified model identity, operational status or engineering particulars. No fleet baseline is approved. Source run: https://github.com/${{ github.repository }}/actions/runs/$GITHUB_RUN_ID"; then
+            echo '::warning::GitHub token could not open review PR. Branch and run evidence remain available.'
+            echo "Review branch: https://github.com/${{ github.repository }}/tree/$BRANCH" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          # GITHUB_TOKEN-created PRs do not automatically trigger normal PR checks.
+          gh workflow run a26-public-fleet-discovery.yml --ref "$BRANCH" -f validate_only=true
+          gh workflow run safety-governance-gate.yml --ref "$BRANCH" -f run_openfoam=false
