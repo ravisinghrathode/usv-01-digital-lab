@@ -30,6 +30,8 @@ jobs:
         with:
           node-version: '22'
       - run: node --test tests/a26/*.test.mjs
+      - run: node scripts/a26/r3-policy-check.mjs
+      - run: node scripts/a26-unified-governance.mjs --check
   public-collection:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
