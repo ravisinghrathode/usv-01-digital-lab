@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 1,
+  "agentId": "INTEL-USV-26",
+  "scope": "PUBLIC_METADATA_RESEARCH_ONLY",
+  "maxItemsPerFeed": 45,
+  "maxCandidates": 500,
+  "sources": [
+    {
+      "id": "naval-news",
+      "class": "TRADE_PRESS",
+      "url": "https://www.navalnews.com/feed/"
+    },
+    {
+      "id": "usni-news",
+      "class": "TRADE_PRESS",
+      "url": "https://news.usni.org/feed"
+    },
+    {
+      "id": "naval-technology",
+      "class": "TRADE_PRESS",
+      "url": "https://www.naval-technology.com/news/feed/"
+    }
+  ],
+  "searches": [
+    {
+      "id": "worldwide",
+      "query": "unmanned surface vessel navy maritime autonomous"
+    },
+    {
+      "id": "india",
+      "query": "Indian Navy autonomous unmanned surface vessel USV"
+    },
+    {
+      "id": "asia-pacific",
+      "query": "Japan South Korea Singapore Taiwan navy unmanned surface vessel"
+    },
+    {
+      "id": "europe",
+      "query": "Royal Navy France Germany Italy unmanned surface vessel"
+    },
+    {
+      "id": "oceania",
+      "query": "Australia New Zealand navy autonomous surface vessel"
+    },
+    {
+      "id": "middle-east",
+      "query": "Israel Turkey Gulf navy unmanned surface vessel"
+    },
+    {
+      "id": "africa",
+      "query": "Africa navy autonomous unmanned surface vessel"
+    },
+    {
+      "id": "americas",
+      "query": "US Navy Canada Brazil navy unmanned surface vessel"
+    },
+    {
+      "id": "black-sea",
+      "query": "Ukraine maritime unmanned surface vessel navy"
+    },
+    {
+      "id": "science",
+      "query": "autonomous surface vessel trials hydrographic survey navy"
+    }
+  ],
+  "knownModels": [
+    {
+      "id": "USV-USN-01",
+      "aliases": [
+        "Sea Hunter",
+        "ACTUV"
+      ]
+    },
+    {
+      "id": "USV-USN-02",
+      "aliases": [
+        "Mariner Ghost Fleet Overlord",
+        "USV Mariner",
+        "Ranger unmanned vessel"
+      ]
+    },
+    {
+      "id": "USV-UKR-01",
+      "aliases": [
+        "MAGURA V5"
+      ]
+    },
+    {
+      "id": "USV-UKR-02",
+      "aliases": [
+        "Sea Baby"
+      ]
+    },
+    {
+      "id": "USV-TUR-01",
+      "aliases": [
+        "ULAQ"
+      ]
+    },
+    {
+      "id": "USV-TUR-02",
+      "aliases": [
+        "MARLIN SIDA",
+        "MARLIN SİDA"
+      ]
+    },
+    {
+      "id": "USV-ISR-01",
+      "aliases": [
+        "Seagull USV"
+      ]
+    },
+    {
+      "id": "USV-ISR-02",
+      "aliases": [
+        "Protector USV"
+      ]
+    },
+    {
+      "id": "USV-GBR-01",
+      "aliases": [
+        "Madfox MAST-13",
+        "MAST-13"
+      ]
+    },
+    {
+      "id": "USV-FRA-01",
+      "aliases": [
+        "DriX"
+      ]
+    },
+    {
+      "id": "USV-AUS-01",
+      "aliases": [
+        "Bluebottle"
+      ]
+    },
+    {
+      "id": "USV-CHN-01",
+      "aliases": [
+        "JARI USV",
+        "JARI Combat"
+      ]
+    },
+    {
+      "id": "USV-SGP-01",
+      "aliases": [
+        "Venus 16"
+      ]
+    },
+    {
+      "id": "USV-IND-01",
+      "aliases": [
+        "Sagar Spotter"
+      ]
+    }
+  ]
+}
