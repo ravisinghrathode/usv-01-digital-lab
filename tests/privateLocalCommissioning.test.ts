@@ -3,7 +3,6 @@ import {mkdtempSync,mkdirSync,writeFileSync,symlinkSync,rmSync} from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import fs from 'node:fs';
-import path from 'node:path';
 import {inspectPrivateCommissionGate,resolveControlledCatalog}
   from '../scripts/mission-control/private-live-commission.ts';
 
