@@ -15,6 +15,58 @@ This repository contains 26 specialist engineering agents (A01–A26). Use the r
 
 A26 (`INTEL-USV-26`) coordinates both public naval fleet/scientific intelligence and source-pinned external marine software research under [one operating charter](docs/governance/A26_UNIFIED_AGENT_OPERATING_CHARTER.md). Its original [External Software Integration Annex](docs/EXTERNAL_INTEGRATION_AGENT_CHARTER.md) and revision-2 policy remain fully binding. Do not add a 27th agent, reinterpret discovery as software qualification, change the canonical A26 prompt/role rights, or assume the separately proposed lab-wide charter has been adopted. The read-only routing verifier is `node scripts/a26-unified-governance.mjs --check`.
 
+## A26 unified public research ingestion policy — proposed rule R3
+
+The A26 role must share **one evidence contract** for naval fleet sightings,
+scientific/engineering documents and retrieved platform source snapshots.
+Separate **discovery adapters** remain permitted because RSS metadata,
+scholarly DOI metadata and manufacturer HTML/PDF have different formats;
+separate competing trusted registries, duplicate research identities,
+or automatic promotions from one lane to the other are prohibited.
+
+1. A26 remains **INTEL-USV-26** (A26), one role, with purpose-specific
+   `FLEET_INTELLIGENCE`, `EXTERNAL_SOFTWARE` and `CORRELATED_RESEARCH`
+   routing unchanged. No new model tool access or authority is conferred.
+2. All public-source research outputs use
+   `PUBLIC_SOURCE_SAFE_ONLY`, a source identifier, URL/DOI, observed time,
+   retrieval status and cryptographic digest when bytes were actually obtained.
+   Differentiate feed-entry hashes, publication metadata hashes and raw-document
+   byte hashes; **never represent a metadata hash as an archived PDF**.
+3. `DISCOVERED_UNVERIFIED`, `QUOTE_MATCHED_UNREVIEWED` and
+   `SOURCE_IDENTITY_CORROBORATED_UNREVIEWED` must remain review inputs.
+   No engineering values or vessel operating status may be silently certified.
+4. `scripts/a26/unified-evidence.mjs` is the shared **read-only
+   consolidation contract**. It accepts the fleet/document registers from
+   the existing A26 worldwide campaign and the source-snapshot index from
+   `scripts/a26/global-research.mjs`, preserving domain type, provenance,
+   uncertainty, conflicts and candidate cross-domain relations.
+5. Never execute retrieved content, bypass robots/licensing, scrape restricted
+   sources, acquire classified Navy/client data into GitHub or use subscription
+   credentials as API credentials. Changes to collection scope, source hosts,
+   license assumptions or data destinations require protected review.
+6. The approved storage roles remain: GitHub for reviewed code and schemas,
+   paid Google Drive for **separately authorized** durable evidence, Obsidian
+   for **review-labelled** graph entries. A generated Obsidian draft is not
+   an assertion that Drive/Obsidian sync has been deployed.
+7. No 14-model or 10-model artificial worldwide discovery cap. Finite seed
+   sets serve acceptance experiments only. Worldwide completeness remains
+   `UNKNOWN_NOT_CLAIMED`; regional/language, source-availability and
+   prototype/operational distinctions must remain explicit.
+8. A26 may generate research review questions for other agents; the
+   receiving engineering discipline must independently validate before
+   adoption. Research approval, software qualification and engineering
+   release are separate gates.
+9. CI may use deterministic, no-billed-AI fixture tests; live source retrieval
+   and model generation must have separate documented results. Do not infer
+   executed validations from workflow definitions.
+10. The original A26 operating charter, source-owned role permissions,
+    external-software Annex R2.01–R2.10, strict dual-AI governance and
+    Director/ECR controls retain precedence. Rule R3 is a proposed
+    implementation clarification, not an unauthorized lab-wide charter adoption.
+
+See `docs/a26-unified-research-integration.md` for the two-PR reconciliation
+and evidence gates.
+
 ## Mandatory engineering controls
 
 1. Treat vessel particulars and unresolved requirements as TBD until supported by reviewed source evidence.
