@@ -11,9 +11,9 @@ const BRANCH_PREFIX='automation/a26-fleet-discovery-';
 const API='https://api.github.com/repos/'+REPO;
 const MAX_BYTES=5*1024*1024;
 const CACHE_MS=60_000;
-let cache={expires:0, value:null};
-const clean=(v,n=300)=>String(v??'').replace(/[\u0000-\u001f\u007f<>]/g,' ').trim().slice(0,n);
-function safeUrl(value){
+let cache:{expires:number;value:any}={expires:0, value:null};
+const clean=(v:unknown,n=300)=>String(v??'').replace(/[\u0000-\u001f\u007f<>]/g,' ').trim().slice(0,n);
+function safeUrl(value:unknown){
   try{const u=new URL(String(value));return u.protocol==='https:' && !u.username&&!u.password ? u.href.slice(0,1200):null;}
   catch{return null;}
 }
@@ -24,7 +24,7 @@ function headers(){
   return {'Accept':'application/vnd.github+json','User-Agent':'USV01-A26-Research-Reader/1.0',
     ...(token?{'Authorization':'Bearer '+token}:{})};
 }
-async function getJson(url,fetcher){
+async function getJson(url:string,fetcher:typeof fetch):Promise<any>{
   const u=new URL(url);
   if(u.protocol!=='https:'||u.hostname!=='api.github.com'||!u.pathname.startsWith('/repos/'+REPO+'/'))
     throw Error('A26_UNTRUSTED_REMOTE_HOST');
@@ -39,19 +39,20 @@ async function getJson(url,fetcher){
   }finally{await reader.cancel().catch(()=>{});}
   return JSON.parse(Buffer.concat(parts).toString('utf8'));
 }
-async function latestBranch(fetcher){
-  // GitHub REST branch listings are bounded. Explicit snapshot references avoid
-  // inferring a trusted release from a draft research PR.
-  const listed=await getJson(API+'/branches?per_page=100',fetcher);
-  if(!Array.isArray(listed))throw Error('A26_BRANCH_LIST_INVALID');
-  const eligible=listed.filter(b=>typeof b.name==='string' &&
-    /^automation\/a26-fleet-discovery-[0-9]{6,15}$/.test(b.name) &&
-    /^[a-f0-9]{40}$/.test(String(b.commit?.sha||'')));
-  eligible.sort((a,b)=>Number(b.name.slice(BRANCH_PREFIX.length))-Number(a.name.slice(BRANCH_PREFIX.length)));
-  if(eligible.length===0)throw Error('A26_NO_PUBLISHED_REVIEW_BRANCH');
-  return {branch:eligible[0].name,revision:eligible[0].commit.sha};
+async function latestBranch(fetcher: typeof fetch){
+  // GitHub matching-refs resolves ALL automation refs by prefix, avoiding the
+  // silent omission caused by first-page branch listings in large repos.
+  const listed=await getJson(API+'/git/matching-refs/heads/automation/a26-fleet-discovery-',fetcher);
+  if(!Array.isArray(listed)||listed.length>10000)throw Error('A26_SOURCE_REF_LIST_INVALID');
+  const eligible=listed.filter(item=>
+    typeof item.ref==='string' &&
+    /^refs\/heads\/automation\/a26-fleet-discovery-[0-9]{6,15}$/.test(item.ref) &&
+    /^[a-f0-9]{40}$/.test(String(item.object?.sha||'')));
+  eligible.sort((a,b)=>Number(b.ref.split('-').at(-1))-Number(a.ref.split('-').at(-1)));
+  if(!eligible.length)throw Error('A26_NO_PUBLISHED_REVIEW_BRANCH');
+  return {branch:eligible[0].ref.replace(/^refs\/heads\//,''),revision:eligible[0].object.sha};
 }
-async function fileFromCommit(p,sha,fetcher){
+async function fileFromCommit(p:string,sha:string,fetcher:typeof fetch){
   const item=await getJson(API+'/contents/'+p+'?ref='+sha,fetcher);
   if(item.type!=='file'||item.encoding!=='base64'||typeof item.content!=='string'||item.size>MAX_BYTES)
     throw Error('A26_INVALID_REVIEW_FILE');
@@ -59,7 +60,7 @@ async function fileFromCommit(p,sha,fetcher){
   if(binary.length>MAX_BYTES)throw Error('A26_REVIEW_FILE_TOO_LARGE');
   return JSON.parse(binary.toString('utf8'));
 }
-export function shapeResearchFeed(fleet,docs,source){
+export function shapeResearchFeed(fleet:any,docs:any,source:{branch:string;revision:string}){
   if(fleet?.schemaVersion!==1||fleet.agentId!=='INTEL-USV-26'||
      fleet.classification!=='PUBLIC_SOURCE_SAFE_ONLY'||!Array.isArray(fleet.records)||
      fleet.records.length>2000||!fleet.records.every(r=>r.status==='DISCOVERED_UNVERIFIED'))
@@ -92,7 +93,7 @@ export function shapeResearchFeed(fleet,docs,source){
     leads,publications,independentlyVerified:0,
     engineeringReleaseApproved:false,knowledgeGraphApproved:false};
 }
-export async function loadA26ResearchFeed({fetcher=fetch,force=false}={}){
+export async function loadA26ResearchFeed({fetcher=fetch,force=false}:{fetcher?:typeof fetch;force?:boolean}={}){
   if(!force&&cache.value&&Date.now()<cache.expires)return cache.value;
   // Fail closed on errors. Do not substitute an empty baseline and report 0
   // records when fresh research exists but GitHub is temporarily inaccessible.
