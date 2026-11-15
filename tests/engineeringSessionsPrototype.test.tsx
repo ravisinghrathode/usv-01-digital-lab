@@ -47,8 +47,9 @@ describe('Engineering Sessions — standard investigation interface',()=>{
   expect(DEFAULT_SESSION.selected).toBeNull();
   const app=renderToStaticMarkup(<EngineeringSessionsApp/>);
   expect(app).toContain('Persistent engineering investigation context');
-  expect(app).toContain('EXAMPLE INVESTIGATION');
-  expect(app).toContain('All investigation objects are synthetic');
+  expect(app).toContain('PROJECT SIGN-IN REQUIRED');
+  expect(app).toContain('Open the real engineering workspace.');
+  expect(app).not.toContain('EXAMPLE INVESTIGATION');
   expect(app).toContain('Naval AI Lab');
   expect(app).toContain('Session objects');
   for(const m of MODES)expect(app).toContain(m.name);
