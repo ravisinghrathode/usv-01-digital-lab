@@ -3,7 +3,7 @@ import {Activity,ArrowLeft,ArrowRight,ArrowUpRight,BookOpen,Bot,Box,CalendarRang
 import {Design,Decide,Experiment,Notebook,Worktable} from './v2/Modes';
 import NavalMark from './NavalMark';
 import LiveWorkspace from './LiveWorkspace';
-import {SessionDesk} from './SessionDesk';
+import {SessionDesk,type LocalSessionDraft} from './SessionDesk';
 import {useSnapshot} from '../dockyard2/useSnapshot';
 import {searchSourceRegister} from './sourceSearch';
 import {DEFAULT_SESSION,ENTITIES,INVESTIGATION,MODES,STUDIES,currentEntity,hashForMode,legacyLink,searchItems,validMode,type EntityId,type Mode,type Note,type Perspective,type SessionView,type StudyId} from './model';
@@ -24,6 +24,7 @@ export default function EngineeringSessionsApp(){
  const [demoMode,setDemoMode]=useState(()=>typeof window!=='undefined'&&new URLSearchParams(window.location.search).get('demo')==='1');
  const [session,setSession]=useState<SessionView>(()=>({...DEFAULT_SESSION,mode:typeof window==='undefined'?'worktable':validMode(window.location.hash.slice(1))}));
  const [trayOpen,setTrayOpen]=useState(false);
+ const [localDraft,setLocalDraft]=useState<LocalSessionDraft|null>(null);
  const [search,setSearch]=useState('');
  const [helpOpen,setHelpOpen]=useState(false);
  const searchDialog=useRef<HTMLDialogElement>(null);
@@ -99,7 +100,7 @@ export default function EngineeringSessionsApp(){
   <section className="es-session-spine" aria-label="Persistent engineering investigation context">
    <div className="es-question">
     <span className="es-context-id">{demoMode?INVESTIGATION.id:'PRJ-USV-01'} / USV-01</span>
-    <strong>{demoMode?INVESTIGATION.title:'Authenticated engineering project · controlled source records'}</strong>
+    <strong>{localDraft?localDraft.title:demoMode?INVESTIGATION.title:'Authenticated engineering project · controlled source records'}</strong>
    </div>
    <div className="es-spine-context">
     {demoMode?<><span><Box size={15}/> Placeholder revisions A + B</span><span><FlaskConical size={15}/> {STUDIES.length} proposed studies</span><span><LockKeyhole size={15}/> Not reviewed</span></>:
@@ -110,12 +111,12 @@ export default function EngineeringSessionsApp(){
    <div className="es-truth-banner es-truth-banner-live" role="note"><span className="es-truth-dot"/> <strong>{status==='connected'?'AUTHENTICATED PROJECT SOURCE':'PROJECT SIGN-IN REQUIRED'}</strong><span>Live register view · only non-illustrative engineering records are counted · no automatic certification or approval</span><span className="es-library-status">{user?'Staff: '+user.userName:'No signed-in staff session'}</span></div>}
   <main className="es-main" id="es-main" ref={main} tabIndex={-1}>
    {demoMode?<>
-    {session.mode==='worktable'&&<SessionDesk demoMode snapshot={snapshot} changeMode={setMode} onRefresh={refresh}/>}
+    {session.mode==='worktable'&&<SessionDesk demoMode draft={localDraft} onDraftChange={setLocalDraft} snapshot={snapshot} changeMode={setMode} onRefresh={refresh}/>}
     {session.mode==='design'&&<Design {...props}/>}
     {session.mode==='experiment'&&<Experiment {...props}/>}
     {session.mode==='decide'&&<Decide {...props}/>}
     {session.mode==='notebook'&&<Notebook {...props}/>}
-   </>:session.mode==='worktable'&&user&&status==='connected'?<SessionDesk demoMode={false} snapshot={snapshot} changeMode={setMode} onRefresh={refresh}/>:<LiveWorkspace mode={session.mode} snapshot={snapshot} status={status} error={error} user={user} onRefresh={refresh} changeMode={setMode}/>}
+   </>:session.mode==='worktable'&&user&&status==='connected'?<SessionDesk demoMode={false} draft={localDraft} onDraftChange={setLocalDraft} snapshot={snapshot} changeMode={setMode} onRefresh={refresh}/>:<LiveWorkspace mode={session.mode} snapshot={snapshot} status={status} error={error} user={user} onRefresh={refresh} changeMode={setMode}/>}
   </main>
   <div className="es-session-tray">
    {demoMode?<><button type="button" className="es-tray-toggle" aria-expanded={trayOpen} onClick={()=>setTrayOpen(v=>!v)}><Layers size={17}/> Session objects <span>{ENTITIES.length}</span><ChevronDown size={16}/></button>
