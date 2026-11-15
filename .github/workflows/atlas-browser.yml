@@ -1,0 +1,55 @@
+name: Atlas — Independent Browser QA
+
+on:
+  pull_request:
+    paths:
+      - 'src/atlas/**'
+      - 'atlas.html'
+      - 'vite.config.ts'
+      - 'scripts/ui/atlas-browser-check.mjs'
+      - '.github/workflows/atlas-browser.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser-acceptance:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install project exactly from lockfile
+        run: npm ci
+      - name: Install isolated browser test tool (not production dependency)
+        run: npm install --no-save --package-lock=false --ignore-scripts playwright@1.56.1
+      - name: Launch Vite with no authenticated profile
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx vite --host 127.0.0.1 --port 3000 > /tmp/atlas-vite.log 2>&1 &
+          for i in {1..40}; do
+            if curl -fsS http://127.0.0.1:3000/atlas.html > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/atlas-vite.log
+          exit 1
+      - name: Check new architecture, interactions, viewports and CSS zoom
+        run: node scripts/ui/atlas-browser-check.mjs
+        env:
+          ATLAS_BASE_URL: http://127.0.0.1:3000
+          ATLAS_SCREENSHOTS: artifacts/atlas
+      - name: Preserve actual browser screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-visual-qa
+          path: artifacts/atlas
+          retention-days: 14
+          if-no-files-found: ignore
