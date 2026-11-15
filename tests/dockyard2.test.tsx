@@ -16,10 +16,10 @@ import { DesignScreen } from '../src/dockyard2/DesignScreen';
 import { AnalysisScreen, AgentsScreen, DirectorScreen, EvidenceScreen } from '../src/dockyard2/Screens';
 const source=(path:string)=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
 
-describe('Naval Design Studio standard interface',()=>{
+describe('Previous Naval Design Studio interface',()=>{
   it('has an independent HTML entry and does not reuse the old UI shell',()=>{
-    expect(source('index.html')).toContain('<title>Naval Design Studio | USV-01</title>');
-    expect(source('index.html')).toContain('src/dockyard2/main.tsx');
+    expect(source('index.html')).toContain('<title>Naval AI Lab | Engineering Sessions | USV-01</title>');
+    expect(source('index.html')).toContain('src/sessions/main.tsx');
     expect(source('legacy.html')).toContain('src/main.tsx');
     expect(source('dockyard2.html')).toContain('src/dockyard2/main.tsx');
     expect(source('vite.config.ts')).toContain("navalDesignStudio: path.resolve(import.meta.dirname, 'index.html')");

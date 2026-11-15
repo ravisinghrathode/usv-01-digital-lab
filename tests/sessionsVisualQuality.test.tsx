@@ -24,11 +24,12 @@ describe('Engineering Sessions V2 — visual and interaction fidelity',()=>{
  it('renders the new screen components in the actual application, not the old simplified wireframes',()=>{
    const app=read('src/sessions/App.tsx');
    const main=read('src/sessions/main.tsx');
-   expect(app).toContain("from './FidelityWorktable'");
-   expect(app).toContain("from './FidelityPhysicsReview'");
+   expect(app).toContain("from './v2/Modes'");
+   expect(app).not.toContain("from './FidelityPhysicsReview'");
    expect(app).not.toContain("from './ModeScreens'");
    expect(main).toContain("import './fidelity.css'");
-   expect(read('index.html')).toContain('/src/dockyard2/main.tsx');
+   expect(main).toContain("import './v2/design.css'");
+   expect(read('index.html')).toContain('/src/sessions/main.tsx');
    expect(read('legacy.html')).toContain('/src/main.tsx');
  });
  it('gives the Worktable a dramatic product stage, component controls, connected graph and contextual inspector',()=>{

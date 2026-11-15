@@ -26,7 +26,7 @@ describe('Atlas — a genuinely new naval engineering interface',()=>{
      expect(text).not.toContain("from '../lab3/");
      expect(text).not.toContain("import '../dockyard2/dockyard.css'");
    }
-   expect(source('index.html')).toContain('/src/dockyard2/main.tsx');
+   expect(source('index.html')).toContain('/src/sessions/main.tsx');
    expect(source('legacy.html')).toContain('/src/main.tsx');
  });
  it('changes the actual layout topology, not only colours, from dual card dashboard to one drawing board and full-width simulation runway',()=>{

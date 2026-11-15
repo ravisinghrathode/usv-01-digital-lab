@@ -57,9 +57,9 @@ export const TopBar: React.FC<TopBarProps> = ({
       </div>
     </div>
     <div className="ns3-topbar-actions">
-      <a href="/" className="ns3-action" aria-label="Return to Naval Design Studio"
-        title="Return to Naval Design Studio standard interface">
-        <ArrowLeft size={18} aria-hidden="true"/><span className="ns3-action-label">Naval Design Studio</span>
+      <a href="/" className="ns3-action" aria-label="Return to Engineering Sessions"
+        title="Return to Engineering Sessions">
+        <ArrowLeft size={18} aria-hidden="true"/><span className="ns3-action-label">Engineering Sessions</span>
       </a>
       <button type="button" className="ns3-action" onClick={onOpenSearch}
         aria-label="Search loaded engineering records and modules"

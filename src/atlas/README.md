@@ -12,7 +12,8 @@ npm run dev:naval-atlas
 ```
 
 The Vite development server opens `/atlas.html`. The production bundle includes
-it alongside `/` (standard Naval Design Studio), `/naval-lab.html` (earlier
+it alongside `/` (standard Engineering Sessions), `/dockyard2.html` (previous
+Naval Design Studio), `/naval-lab.html` (earlier
 prototype) and `/legacy.html` (protected original engineering editor).
 
 ## Product-centric topology
