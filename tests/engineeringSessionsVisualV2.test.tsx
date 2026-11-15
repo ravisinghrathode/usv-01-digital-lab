@@ -54,7 +54,7 @@ describe('Engineering Sessions V2 — visual baseline fidelity and trust boundar
   expect(decision).toContain('Recommendation withheld');
   expect(decision).toContain('Not requested / not approved');
   expect(STUDIES.every(x=>x.validation==='NOT_REVIEWED'&&x.resultState==='NO_REVIEWABLE_RESULT')).toBe(true);
-  expect(ENTITIES.every(e=>e.status!=='Approved')).toBe(true);
+  expect(ENTITIES.every(e=>['Example','Source required','Review pending','Unestablished'].includes(e.status))).toBe(true);
  });
  it('preserves the existing React investigation context and exact original route/permissions',()=>{
   const app=src('src/sessions/App.tsx');
