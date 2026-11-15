@@ -6,6 +6,21 @@
  * Every upstream byte is untrusted data. No model status or engineering release
  * can be inferred from these provisional research records.
  */
+/**
+ * Compatibility export for AI Studio workspaces that still import this error
+ * from an older server.ts. Current main uses the generic fail-closed route.
+ * Preserve the named runtime export to prevent a Node ESM link-time crash
+ * while a Studio workspace is being synchronized from canonical main.
+ *
+ * This does not change remote trust, source approval, or error handling.
+ */
+export class A26UpstreamError extends Error {
+  constructor(message='A26 research source unavailable') {
+    super(message);
+    this.name='A26UpstreamError';
+  }
+}
+
 const REPO='ravisinghrathode/usv-01-digital-lab';
 const BRANCH_PREFIX='automation/a26-fleet-discovery-';
 const API='https://api.github.com/repos/'+REPO;
