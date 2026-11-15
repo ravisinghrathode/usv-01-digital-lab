@@ -63,7 +63,7 @@ describe('Agent Academy Hydrogen fallback', () => {
     const detailed = publicAcademyStudyExcerpt(process.cwd(), 'A05');
     const tabular = publicAcademyStudyExcerpt(process.cwd(), 'A01');
     expect(detailed.text).toContain('## A05');
-    expect(tabular.text).toContain('| A01 |');
+    expect(tabular.text).toContain('| A01 Systems Architect |');
     expect(detailed.text).toContain('F01');
     expect(detailed.text).not.toContain('USV01_PROJECT_CONTEXT.md');
     expect(detailed.sha256).toMatch(/^[a-f0-9]{64}$/);
