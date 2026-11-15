@@ -34,6 +34,7 @@ import { validateECRFile } from './scripts/governance/ecr-tool.ts';
 import { ResilientAgentQueue } from './src/core/mission-control/ResilientAgentQueue.ts';
 import { GlobalUsvIntelligenceAgent } from './src/core/agents/GlobalUsvIntelligenceAgent.ts';
 import { GlobalIntelligenceLearningBridge } from './src/core/intelligence/GlobalIntelligenceLearningBridge.ts';
+import { loadA26ResearchFeed } from './src/server/a26ResearchFeed.ts';
 import http from 'http';
 import { VerifyUsv01Engine } from './src/core/verification/VerifyUsv01Engine.ts';
 import { getLabReadinessSnapshot } from './src/core/verification/LabReadiness.ts';
@@ -1291,6 +1292,23 @@ const runPeriodicIntelUpdate = async () => {
 
 const intelIntervalTimer = setInterval(runPeriodicIntelUpdate, updateIntervalHours * 3600 * 1000);
 if (intelIntervalTimer.unref) intelIntervalTimer.unref();
+
+// A26 research review feed is deliberately separate from the engineering
+// baseline and accepted fleet catalogue. Authenticated GET only. The source
+// is the newest bounded, review-only GitHub Actions proposal branch.
+app.get('/api/usv-intel/research-feed', async (_req, res) => {
+  try {
+    const feed = await loadA26ResearchFeed();
+    res.setHeader('Cache-Control', 'private, max-age=30');
+    res.json(feed);
+  } catch (error) {
+    // A failed upstream read must not be presented as an empty success.
+    res.status(503).json({success:false,agentId:'INTEL-USV-26',
+      source:'GITHUB_UNVERIFIED_REVIEW_BRANCH',researchStatus:'SOURCE_UNAVAILABLE',
+      error:'A26 review data unavailable; see the GitHub Actions research evidence and latest review PR',
+      engineeringReleaseApproved:false});
+  }
+});
 
 // Read-only, authenticated A26 PUBLIC research leads. These are metadata
 // proposals from a separate protected GitHub workflow, never fleet acceptance.
