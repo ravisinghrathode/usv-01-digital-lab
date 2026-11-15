@@ -33,6 +33,6 @@ export function useSnapshot() {
     });
     void validateSession().catch(()=>{});
     return()=>{mounted=false;rev++;unsubscribe();};
-  },[]);
-  return {snapshot,status,user,error};
+  },[refreshVersion]);
+  return {snapshot,status,user,error,refresh:()=>setRefreshVersion(x=>x+1)};
 }
