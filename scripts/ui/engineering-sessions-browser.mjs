@@ -72,6 +72,8 @@ try{
  // Local-only draft and cross-mode study preservation.
  await page.getByRole('button',{name:'Prepare verification task'}).click();
  await page.getByRole('heading',{name:'Make every investigation recoverable.'}).waitFor();
+ await page.waitForFunction(()=>window.scrollY<12);
+ assert((await page.evaluate(()=>window.scrollY))<12,'Mode switch must return to the new screen top');
  assert(await page.getByText('Verification task draft').isVisible());
  const note=page.getByRole('textbox',{name:'Add a local research observation'});
  await note.fill('Verify launch and recovery load conditions before accepting a lighter hull.');
