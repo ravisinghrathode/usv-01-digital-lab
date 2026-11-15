@@ -19,8 +19,11 @@ try{
  const page=await browser.newPage({viewport:{width:1440,height:900},deviceScaleFactor:1});
  page.on('pageerror',e=>errors.push(e.message));
  const mode=(name)=>page.getByRole('navigation',{name:'Engineering session modes'}).getByRole('button',{name,exact:true});
- await page.goto(base+'/#worktable',{waitUntil:'domcontentloaded'});
+ const rootResponse=await page.goto(base+'/#worktable',{waitUntil:'domcontentloaded'});
+ assert(rootResponse?.ok(),'Default / route failed to serve the built application');
+ assert.match(await page.title(),/Naval AI Lab.*Engineering Sessions/);
  await page.getByRole('heading',{name:'Design begins with a question.'}).waitFor();
+ assert(await page.locator('a[href="/legacy.html"]').count()>0,'Original lab recovery link is missing');
  assert(await page.getByText('EXAMPLE INVESTIGATION').isVisible());
  assert.equal(await page.locator('.v2-worktable-board').count(),1);
  assert.equal(await page.locator('.v2-research-rail').count(),1);
@@ -129,6 +132,31 @@ try{
   'Zoom hides a primary activity mode '+JSON.stringify(tab));
  await page.screenshot({path:path.join(output,'v2-css-zoom-200.png'),fullPage:false,animations:'disabled'});
  await page.evaluate(()=>{document.documentElement.style.zoom=''});
+ // The promoted production root and preserved multi-entry HTML routes must all work.
+ const aliasResponse=await page.goto(base+'/sessions.html#worktable',{waitUntil:'domcontentloaded'});
+ assert(aliasResponse?.ok(),'Engineering Sessions alias /sessions.html does not load');
+ await page.getByRole('heading',{name:'Design begins with a question.'}).waitFor();
+ for(const [url,title] of [
+  ['/legacy.html',/Legacy Engineering Workbench/],
+  ['/dockyard2.html',/Previous Interface/]
+ ]){
+  const response=await page.goto(base+url,{waitUntil:'domcontentloaded'});
+  assert(response?.ok(),'Preserved entry route returned an HTTP error: '+url);
+  assert.match(await page.title(),title,'Wrong HTML served for '+url);
+  await page.locator('#root').waitFor();
+ }
+ // Simulate a missing dynamically imported session chunk. The default route
+ // must retain usable links instead of leaving a blank application shell.
+ const failurePage=await browser.newPage();
+ let blocked=0;
+ try{
+  await failurePage.route('**/assets/App-*.js',route=>{blocked++;return route.abort('failed')});
+  const response=await failurePage.goto(base+'/',{waitUntil:'domcontentloaded'});
+  assert(response?.ok(),'Cannot serve the recovery HTML');
+  await failurePage.getByRole('heading',{name:'Engineering Sessions could not open.'}).waitFor();
+  assert(blocked>0,'The recovery test did not intercept the session feature bundle');
+  assert(await failurePage.getByRole('link',{name:'Open original engineering lab'}).isVisible());
+ }finally{await failurePage.close()}
  assert.deepEqual(errors,[],'Unexpected browser runtime errors');
- console.log('PASS — V2 original Blender images, 5 modes, 24 governed tools, source safety, 5 viewports and 200% CSS zoom.');
+ console.log('PASS — compiled root, session alias, original interfaces, startup recovery, 5 modes, 24 governed tools and 5 responsive viewports.');
 }finally{await browser.close();}
