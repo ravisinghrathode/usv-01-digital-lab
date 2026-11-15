@@ -39,7 +39,7 @@ export function Studio({snapshot,sourceLabel,onNavigate}:Props){
       <p>Explore the product. Run the evidence trail. Work from the source.</p></div>
     <div className="at-studio-head-actions">
       <span className="at-neutral-state">Working concept · baseline unapproved</span>
-      <a className="at-action at-action-secondary" href={legacyRoute('cad-studio')}>Open CAD engineering <ArrowUpRight size={15}/></a>
+      <a className="at-action at-action-secondary" href={legacyRoute('cad-studio')}><span className="at-cad-full">Open CAD engineering</span><span className="at-cad-short">CAD</span><ArrowUpRight size={15}/></a>
     </div>
    </header>
    <div className={'at-canvas-assembly'+(!inspector?' at-inspector-hidden':'')}>
