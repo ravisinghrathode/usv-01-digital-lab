@@ -16,6 +16,14 @@
 .es-global-actions button,.es-governed{border-radius:8px;color:#18395e;background:#fff;border:1px solid #d6e0e9;min-height:43px}
 .es-search-trigger{min-width:166px}
 .es-governed{font-weight:740;color:#235593!important}
+.es-brand{min-width:245px}
+.es-brand strong{font-size:17px;letter-spacing:-.032em;white-space:nowrap}
+.es-brand-programme{font-weight:810;color:#1554a6}
+.es-brand small{font-size:12px;letter-spacing:-.01em;font-weight:640;margin-top:4px}
+.es-logo{height:44px;width:54px}
+.es-logo svg{width:49px;height:37px}
+@media(max-width:1370px){.es-brand{min-width:165px}.es-brand-programme{display:none}}
+@media(max-width:470px){.es-logo{height:34px;width:40px}.es-logo svg{width:39px;height:30px}.es-brand strong{font-size:15px}.es-brand small{font-size:10px}}
 .es-session-spine{padding:11px clamp(18px,2.2vw,38px);background:#fff;border-bottom:1px solid #e4e9ed;min-height:61px}
 .es-context-id{background:#eaf2fc;color:#1455a2;font-size:11px;font-weight:800;border-radius:5px;padding:5px 8px}
 .es-question strong{font-size:16px;font-weight:800;letter-spacing:-.015em}
