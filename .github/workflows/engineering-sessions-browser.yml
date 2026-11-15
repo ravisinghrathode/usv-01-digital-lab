@@ -1,6 +1,22 @@
 name: Engineering Sessions — Isolated Browser QA
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/sessions/**'
+      - 'src/dockyard2/**'
+      - 'index.html'
+      - 'legacy.html'
+      - 'dockyard2.html'
+      - 'naval-lab.html'
+      - 'atlas.html'
+      - 'sessions.html'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'vite.config.ts'
+      - 'scripts/ui/engineering-sessions-browser.mjs'
+      - '.github/workflows/engineering-sessions-browser.yml'
   pull_request:
     paths:
       - 'src/sessions/**'
@@ -9,6 +25,8 @@ on:
       - 'index.html'
       - 'legacy.html'
       - 'dockyard2.html'
+      - 'naval-lab.html'
+      - 'atlas.html'
       - 'sessions.html'
       - 'package.json'
       - 'package-lock.json'
@@ -47,7 +65,9 @@ jobs:
             if curl -fsS http://127.0.0.1:3000/ >/dev/null &&
                curl -fsS http://127.0.0.1:3000/sessions.html >/dev/null &&
                curl -fsS http://127.0.0.1:3000/legacy.html >/dev/null &&
-               curl -fsS http://127.0.0.1:3000/dockyard2.html >/dev/null; then exit 0; fi
+               curl -fsS http://127.0.0.1:3000/dockyard2.html >/dev/null &&
+               curl -fsS http://127.0.0.1:3000/naval-lab.html >/dev/null &&
+               curl -fsS http://127.0.0.1:3000/atlas.html >/dev/null; then exit 0; fi
             sleep 1
           done
           cat /tmp/engineering-sessions-vite.log
