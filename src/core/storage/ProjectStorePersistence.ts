@@ -6,7 +6,7 @@ import { createHash, randomBytes } from 'node:crypto';
 export const STORE_COLLECTIONS = [
   'requirements','design_decisions','engineering_risks','simulation_jobs','verification_plans',
   'test_records','components','activity_log','knowledge_notes','power_loads','interfaces',
-  'materials','load_cases','resistance_estimates','weight_cg'
+  'materials','load_cases','resistance_estimates','weight_cg','cad_revisions'
 ] as const;
 
 /** Reject truncated or contaminated stores rather than silently reseeding demo data. */
@@ -44,6 +44,20 @@ export function loadProjectStore(filename: string): Record<string, any[]> | null
     decoded = JSON.parse(fs.readFileSync(filename, 'utf8'));
   } catch {
     throw new Error('Existing persisted project store is corrupt/unreadable; refusing demo-data reset');
+  }
+  // Only the new empty CAD-reference register is optional in older stores.
+  // Verify the complete pre-migration schema first; never reseed or drop records.
+  if(decoded && !Array.isArray(decoded) && typeof decoded==='object' &&
+     !Object.hasOwn(decoded,'cad_revisions')) {
+    const legacy=decoded as Record<string,unknown>;
+    const expected=new Set<string>(STORE_COLLECTIONS);
+    for(const name of STORE_COLLECTIONS.filter(name=>name!=='cad_revisions')) {
+      if(!Array.isArray(legacy[name]))throw Error('Project store missing array collection: '+name);
+    }
+    for(const name of Object.keys(legacy)) {
+      if(!expected.has(name))throw Error('Unexpected project store collection: '+name);
+    }
+    decoded={...legacy,cad_revisions:[]};
   }
   validateProjectStore(decoded);
   return decoded;
