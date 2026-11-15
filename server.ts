@@ -1292,6 +1292,42 @@ const runPeriodicIntelUpdate = async () => {
 const intelIntervalTimer = setInterval(runPeriodicIntelUpdate, updateIntervalHours * 3600 * 1000);
 if (intelIntervalTimer.unref) intelIntervalTimer.unref();
 
+// Read-only, authenticated A26 PUBLIC research leads. These are metadata
+// proposals from a separate protected GitHub workflow, never fleet acceptance.
+app.get('/api/usv-intel/discoveries', (_req, res) => {
+  try {
+    const file = path.join(__dirname, 'references/fleet-intelligence/discovery-register.json');
+    const register = JSON.parse(fs.readFileSync(file, 'utf8'));
+    if (register.schemaVersion !== 1 || register.agentId !== 'INTEL-USV-26' ||
+      !Array.isArray(register.records) ||
+      !register.records.every((r: any) => r.status === 'DISCOVERED_UNVERIFIED')) {
+      return res.status(503).json({success: false, error: 'Public discovery register not trustworthy'});
+    }
+    res.json({
+      success: true,
+      agentId: 'INTEL-USV-26',
+      researchStatus: 'DISCOVERED_UNVERIFIED',
+      newlyIndependentlyVerifiedVessels: 0,
+      engineeringReleaseApproved: false,
+      researchLeads: register.records.length,
+      source: 'COMMITTED_UNVERIFIED_REVIEW_QUEUE_NOT_LIVE_FETCH',
+      workflowUrl: 'https://github.com/ravisinghrathode/usv-01-digital-lab/actions/workflows/a26-public-fleet-discovery.yml',
+      records: register.records.slice(0, 80).map((r: any) => ({
+        id: r.id, title: r.title,
+        knownModelIds: r.knownModelIds,
+        firstSeenAt: r.firstSeenAt,
+        sourceLinks: Array.isArray(r.evidence)
+          ? r.evidence.slice(0, 4).map((e: any) => e.publicArticleUrl)
+          : [],
+        status: 'DISCOVERED_UNVERIFIED'
+      }))
+    });
+  } catch {
+    res.status(503).json({ success: false,
+      error: 'A26 public discovery register unavailable; no live evidence claim possible' });
+  }
+});
+
 app.get('/api/usv-intel/status', (req, res) => {
   res.json({
     success: true,
