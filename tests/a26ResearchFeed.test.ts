@@ -38,7 +38,7 @@ describe('A26 read-only Lab research feed',()=>{
 
  it('serves source-linked unverified documents and leads, never engineering authority',()=>{
    const r=shapeResearchFeed(fleet,documents,meta);
-   expect(r.counts).toEqual({fleetLeads:1,publications:1});
+   expect(r.counts).toEqual({fleetLeads:1,publications:1,vesselSourceRecords:0,sourceFailures:0});
    expect(r.engineeringReleaseApproved).toBe(false);
    expect(r.knowledgeGraphApproved).toBe(false);
    expect(r.leads[0].sources[0].url).toBe('https://example.org/usv');
