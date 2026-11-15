@@ -38,7 +38,7 @@ describe('Engineering Sessions V2 — visual and interaction fidelity',()=>{
   expect(html).toContain('Hull &amp; buoyancy');
   expect(html).toContain('VISUAL FOCUS');
   expect(html).toContain('Reduce mass while preserving stability');
-  expect(html).toContain('No approved CAD');
+  expect(html).toContain('Geometry not verified');
  });
  it('creates original 3D vessel renders from a checked-in Blender source, including true independent plan views',()=>{
   const source=read('scripts/ui/render_sessions_vessels.py');
