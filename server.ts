@@ -990,6 +990,46 @@ app.post('/api/verify/execute', async (req, res) => {
   }
 });
 
+// Authenticated submission to the SAME HOST's durable research queue. This
+// endpoint does not start models, change source, bypass quota or approve output.
+app.post('/api/mission-control/quota-enqueue', async (req, res) => {
+  try {
+    const { taskId, agentId, objective, priority = 5, lane = 'MODEL_AGENT' } = req.body || {};
+    if (typeof taskId !== 'string' || typeof agentId !== 'string' ||
+      typeof objective !== 'string' || !objective.trim() ||
+      objective.length > 4000 || !Number.isSafeInteger(priority) ||
+      !['MODEL_AGENT', 'OFFLINE_SCHEMA_CHECK'].includes(lane)) {
+      return res.status(400).json({ success: false, error: 'Invalid bounded public research request.' });
+    }
+    const commitSha = execFileSync('git', ['rev-parse', 'HEAD'], {
+      cwd: process.cwd(), encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe']
+    }).trim();
+    const row = await new ResilientAgentQueue().enqueue({
+      taskId, agentId, lane, priority, commitSha,
+      input: {
+        taskId, parameters: {},
+        context: {
+          objective, dataClassification: 'PUBLIC_SOURCE_SAFE_ONLY',
+          researchOnly: true, engineeringReleaseApproved: false,
+          baselineWritesPermitted: false
+        }
+      }
+    });
+    AuditLogger.getInstance().log({
+      severity: 'INFO', agentId: row.agentId, taskId: row.taskId,
+      action: 'BOUNDED_PUBLIC_RESEARCH_QUEUED',
+      details: { commitSha: row.commitSha, state: row.state, lane: row.lane }
+    });
+    res.status(202).json({
+      success: true, taskId: row.taskId, state: row.state,
+      pinnedCommit: row.commitSha, engineeringReleaseApproved: false
+    });
+  } catch (error: any) {
+    res.status(409).json({ success: false,
+      error: (error instanceof Error ? error.message : 'Queue submission rejected').slice(0, 300) });
+  }
+});
+
 // Authenticated, read-only quota and queue telemetry. The snapshot exposes no
 // prompts, access tokens or engineering release authority.
 app.get('/api/mission-control/quota-status', async (_req, res) => {
