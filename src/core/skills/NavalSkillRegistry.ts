@@ -6,7 +6,7 @@
  * call external providers or promote engineering outputs to accepted baselines.
  * Complete human-readable procedures are in skills/usv01/<id>/SKILL.md.
  */
-export const NAVAL_SKILL_REGISTRY_VERSION = 'usv01-specialist-skill-registry/v1' as const;
+export const NAVAL_SKILL_REGISTRY_VERSION = 'usv01-specialist-skill-registry/v2' as const;
 
 export interface NavalSkillContract {
   readonly id: string;
@@ -73,7 +73,34 @@ export const NAVAL_SKILL_CONTRACTS: readonly NavalSkillContract[] = Object.freez
     procedure: 'Track 26-agent and M00–M08 readiness using source-pinned evidence; separate offline CI, live signed-in Codex run, independent engineering V&V and authorized human approval.',
     evidenceRequirement: 'Exact source SHA, host receipt, per-role runtime/tool result, review identity and milestone-specific signed acceptance.',
     failClosedOn: 'Synthetic/stale execution presented as current, skipped physical testing, unapproved software promotion or engineering release.'
-  }
+  },
+  {
+    id: 'agent-runtime-resilience',
+    version: '1.0' as const,
+    documentPath: 'skills/usv01/agent-runtime-resilience/SKILL.md',
+    canonicalAgents: ['A01', 'A15', 'A18', 'A20', 'A24', 'A25', 'A26'],
+    procedure: 'Enforce finite token/time/tool-call budgets, explicit retry classes, idempotent checkpoints and fail-closed signed human approval; never substitute a paid model API when the host fails.',
+    evidenceRequirement: 'Source SHA, configuration/revision, task/correlation IDs, checkpoint digest, retry ledger, budget consumption and gate receipt.',
+    failClosedOn: 'Unbounded retry, quota overrun, stale checkpoint, duplicate side effect, unapproved credentials/provider or missing signed approval.'
+  },
+  {
+    id: 'cad-to-physics-coupling',
+    version: '1.0' as const,
+    documentPath: 'skills/usv01/cad-to-physics-coupling/SKILL.md',
+    canonicalAgents: ['A01', 'A05', 'A06', 'A07', 'A08', 'A09', 'A10', 'A11', 'A12', 'A13', 'A14', 'A18', 'A21', 'A24'],
+    procedure: 'Use one versioned CAD topology and mass/CG source; reconcile SI coordinates, per-discipline load cases and solver input hashes; invalidate downstream physics after any upstream geometry or mass change.',
+    evidenceRequirement: 'Geometry and mass/CG SHA-256, candidate/revision, topology, unit/axis contract, invalidation graph and actual solver receipts where executed.',
+    failClosedOn: 'Mixed-candidate values, unqualified topology formulas, unversioned geometry, stale numerical receipts or unresolved physical load cases.'
+  },
+  {
+    id: 'agent-qualification-campaign',
+    version: '1.0' as const,
+    documentPath: 'skills/usv01/agent-qualification-campaign/SKILL.md',
+    canonicalAgents: ['A01', 'A02', 'A15', 'A18', 'A23', 'A24', 'A25', 'A26'],
+    procedure: 'Qualify 26 roles on frozen controlled cases and adversarial negatives; distinguish CI checks, real host/model execution, qualified independent V&V and human release and measure before/after with uncertainty.',
+    evidenceRequirement: '26-role case matrix, exact source/host/model receipts, reference oracle digests, rubric, negative tests, independent reviewer identity and unresolved blockers.',
+    failClosedOn: 'Stale or mock run presented as live, LLM self-review called independent, unsourced benchmark, untested role or false engineering release.'
+
 ].map(skill => Object.freeze({ ...skill, canonicalAgents: Object.freeze(skill.canonicalAgents) })));
 
 const CANONICAL_AGENT_ID = /^A(?:0[1-9]|1[0-9]|2[0-6])$/;
