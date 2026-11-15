@@ -19,7 +19,15 @@ try{
  const page=await browser.newPage({viewport:{width:1440,height:900},deviceScaleFactor:1});
  page.on('pageerror',e=>errors.push(e.message));
  const mode=(name)=>page.getByRole('navigation',{name:'Engineering session modes'}).getByRole('button',{name,exact:true});
- const rootResponse=await page.goto(base+'/#worktable',{waitUntil:'domcontentloaded'});
+ // The default landing route must NEVER present synthetic records as live.
+ const liveRoot=await page.goto(base+'/',{waitUntil:'domcontentloaded'});
+ assert(liveRoot?.ok(),'Default live root did not serve');
+ await page.getByRole('heading',{name:'Open the real engineering workspace.'}).waitFor();
+ assert(await page.getByRole('form',{name:'Staff sign in'}).count()===0 || await page.getByRole('heading',{name:'Staff sign in'}).isVisible());
+ assert.equal(await page.getByText('EXAMPLE INVESTIGATION').count(),0,'Default silently fell back to synthetic investigation');
+ assert(await page.getByRole('button',{name:'Example tour'}).isVisible(),'Explicit demo opt-in is missing');
+ // Exercise the separately labelled synthetic visual design without credentials.
+ const rootResponse=await page.goto(base+'/?demo=1#worktable',{waitUntil:'domcontentloaded'});
  assert(rootResponse?.ok(),'Default / route failed to serve the built application');
  assert.match(await page.title(),/Naval AI Lab.*Engineering Sessions/);
  await page.getByRole('heading',{name:'Design begins with a question.'}).waitFor();
@@ -133,7 +141,7 @@ try{
  await page.screenshot({path:path.join(output,'v2-css-zoom-200.png'),fullPage:false,animations:'disabled'});
  await page.evaluate(()=>{document.documentElement.style.zoom=''});
  // The promoted production root and preserved multi-entry HTML routes must all work.
- const aliasResponse=await page.goto(base+'/sessions.html#worktable',{waitUntil:'domcontentloaded'});
+ const aliasResponse=await page.goto(base+'/sessions.html?demo=1#worktable',{waitUntil:'domcontentloaded'});
  assert(aliasResponse?.ok(),'Engineering Sessions alias /sessions.html does not load');
  await page.getByRole('heading',{name:'Design begins with a question.'}).waitFor();
  // The original governed editor remains accessible; retired visual shells do not.
@@ -144,7 +152,7 @@ try{
  for(const retired of ['/dockyard2.html','/naval-lab.html','/atlas.html']){
   await page.goto(base+retired,{waitUntil:'domcontentloaded'});
   await page.waitForURL(url=>url.pathname==='/' && !url.search,{timeout:10000});
-  await page.getByRole('heading',{name:'Design begins with a question.'}).waitFor();
+  await page.getByRole('heading',{name:'Open the real engineering workspace.'}).waitFor();
   assert.match(await page.title(),/Naval AI Lab.*Engineering Sessions/);
  }
  // Preserve old deep links to protected technical modules through the root router.
@@ -163,5 +171,5 @@ try{
   assert(await failurePage.getByRole('link',{name:'Open original engineering lab'}).isVisible());
  }finally{await failurePage.close()}
  assert.deepEqual(errors,[],'Unexpected browser runtime errors');
- console.log('PASS — compiled root, canonical redirects, original governed workbench, startup recovery, 5 modes, 24 governed tools and 5 responsive viewports.');
+ console.log('PASS — live-first authentication, explicit demo tour, canonical redirects, governed editor, recovery, 5 modes, 24 protected tools and responsive viewports.');
 }finally{await browser.close();}
