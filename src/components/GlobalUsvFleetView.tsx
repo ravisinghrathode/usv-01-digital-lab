@@ -49,16 +49,15 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi,
 
   // Unverified public research is deliberately separate from accepted vessel data.
   type ResearchLead = {id:string;title:string;summary:string;status:string;sources:Array<{url:string|null}>};
-  type ResearchDocument = {id:string;title:string;doi:string|null;sourceUrl:string|null;pdfUrl:string|null;status:string};
   type ResearchVessel = {id:string;model:string;manufacturer:string;country:string;status:string;
     confidence:number;sources:Array<{url:string|null;sha256:string|null;identityCorroborated:boolean}>;
     claims:Array<{field:string;value:string;quotation:string;sourceUrl:string|null}>};
   const [publicResearch,setPublicResearch]=useState<{
-    leads:ResearchLead[];publications:ResearchDocument[];vessels:ResearchVessel[];sourceRevision:string;sourceUrl:string;runId:string;
+    leads:ResearchLead[];vessels:ResearchVessel[];sourceRevision:string;sourceUrl:string;runId:string;
     sourceMode:'LAB_BACKEND'|'PUBLIC_GITHUB_READ_ONLY';
     state:'LOADING'|'READY'|'UNAVAILABLE';
-  }>({leads:[],publications:[],vessels:[],sourceRevision:'',sourceUrl:'',runId:'',sourceMode:'LAB_BACKEND',state:'LOADING'});
-  const [researchKind,setResearchKind]=useState<'leads'|'publications'|'vessels'>('leads');
+  }>({leads:[],vessels:[],sourceRevision:'',sourceUrl:'',runId:'',sourceMode:'LAB_BACKEND',state:'LOADING'});
+  const [researchKind,setResearchKind]=useState<'leads'|'vessels'>('vessels');
   const [researchQuery,setResearchQuery]=useState('');
   const [researchPage,setResearchPage]=useState(0);
   const [researchReload,setResearchReload]=useState(0);
@@ -87,7 +86,7 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi,
           d=await getPublicA26ReviewFeed();
           sourceMode='PUBLIC_GITHUB_READ_ONLY';
         }
-        if(mounted)setPublicResearch({leads:d.leads,publications:d.publications,vessels:d.vessels,
+        if(mounted)setPublicResearch({leads:d.leads,vessels:d.vessels,
           runId:String(d.runId||''),sourceRevision:d.sourceRevision||'',sourceUrl:d.sourceUrl||'',
           sourceMode,state:'READY'});
       }catch{
@@ -101,10 +100,10 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi,
     return ()=>{mounted=false;clearInterval(poll);};
   },[researchReload]);
   const visibleResearch=useMemo(()=>{
-    const rows=researchKind==='leads'?publicResearch.leads:researchKind==='publications'?publicResearch.publications:publicResearch.vessels;
+    const rows=researchKind==='leads'?publicResearch.leads:publicResearch.vessels;
     const q=researchQuery.toLowerCase().trim();
     return q?rows.filter(r=>(r.id+' '+('title' in r?r.title:r.model+' '+r.manufacturer+' '+r.country)).toLowerCase().includes(q)):rows;
-  },[researchKind,publicResearch.leads,publicResearch.publications,publicResearch.vessels,researchQuery]);
+  },[researchKind,publicResearch.leads,publicResearch.vessels,researchQuery]);
   const researchTotalPages=Math.max(1,Math.ceil(visibleResearch.length/20));
   const visibleResearchPage=visibleResearch.slice(researchPage*20,(researchPage+1)*20);
 
@@ -233,21 +232,21 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi,
             <span className="text-xs text-slate-500 font-mono">GLOBAL NAVAL FLEET INTELLIGENCE</span>
           </div>
           <h2 className="text-xl font-bold text-slate-100 mt-1 flex items-center gap-2">
-            Operating Naval USV Fleet Registry & Technical Model Intelligence
+            USV Models & Prototypes — Global Technical Catalogue
           </h2>
           <p className="text-xs text-slate-400 mt-0.5">
-            Automated intelligence scraping and academic paper synthesis of operational uncrewed surface vessels across global navies with comparative benchmarking against USV-01.
+            Browse detailed vessel and prototype profiles by country, mission and specifications. Public research remains separate from seeded model particulars until independently reviewed.
           </p>
           <div className="flex items-center gap-2.5 mt-2 text-[11px] font-mono flex-wrap">
             <span className="flex items-center gap-1.5 text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 rounded">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              STATUS: Cached Data — No Live Refresh Performed
+              Seeded catalogue · unverified specifications
             </span>
             <span className="text-slate-400 bg-slate-900 border border-slate-800 px-2 py-0.5 rounded">
-              SEEDED CATALOGUE: 14 UNVERIFIED MODELS
+              SEEDED CATALOGUE: {vessels.length} UNVERIFIED MODELS
             </span>
             <span className="text-sky-300 bg-sky-950/50 border border-sky-800/40 px-2 py-0.5 rounded">
-              RESEARCH REPOSITORY
+              USV MODELS · PROTOTYPES
             </span>
           </div>
         </div>
@@ -281,105 +280,6 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi,
           )}
         </div>
       </div>
-
-      {/* A26 review-only research library: never counted as approved vessels. */}
-      {!hideA26Research && <section aria-label="Worldwide A26 research collection" className="rounded-lg border border-sky-200/30 bg-slate-900/60 p-4 space-y-3">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h3 className="text-base font-semibold text-slate-100">A26 Research Library</h3>
-            <p className="mt-1 text-xs text-slate-300 max-w-2xl">
-              Automatically collected public USV research and scholarly publications. All entries are unverified review material, not approved engineering data.
-            </p>
-            {publicResearch.state==='READY' && <p className="mt-1 text-[11px] text-slate-400">
-              Source revision: <span className="font-mono">{publicResearch.sourceRevision.slice(0,12)}</span>
-              <span className="ml-2">{publicResearch.sourceMode==='PUBLIC_GITHUB_READ_ONLY'?'Public research · direct GitHub feed':'Lab research API'}</span>
-              {publicResearch.runId&&<a className="ml-2 underline text-sky-300" target="_blank" rel="noopener noreferrer"
-                href={`https://github.com/ravisinghrathode/usv-01-digital-lab/actions/runs/${publicResearch.runId}`}>Live evidence run</a>}
-            </p>}
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <button type="button" onClick={()=>{setPublicResearch(v=>({...v,state:'LOADING'}));setResearchReload(v=>v+1);}}
-              className="inline-flex items-center gap-1 rounded border border-slate-600 px-3 py-2 text-xs text-slate-200 hover:bg-slate-800">
-              <RefreshCw className="w-3 h-3"/> Refresh data
-            </button>
-            <a href="https://github.com/ravisinghrathode/usv-01-digital-lab/actions/workflows/a26-public-fleet-discovery.yml"
-              target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded border border-sky-400/40 px-3 py-2 text-xs text-sky-200">
-              <ExternalLink className="w-3 h-3"/> Collection runs
-            </a>
-          </div>
-        </div>
-        {publicResearch.state==='UNAVAILABLE'&&<p role="alert" className="text-xs text-amber-300">
-          Research source unavailable; no records have been deleted. Check the GitHub review branch and server credentials.
-        </p>}
-        {publicResearch.state==='LOADING'&&<p role="status" className="text-xs text-slate-300">Loading latest A26 review records…</p>}
-        {publicResearch.state==='READY'&&<>
-          <div className="flex flex-wrap gap-3 text-xs text-slate-300">
-            <span><strong className="font-mono text-lg text-white">{publicResearch.leads.length}</strong> USV leads</span>
-            <span><strong className="font-mono text-lg text-white">{publicResearch.publications.length}</strong> publications</span>
-            <span><strong className="font-mono text-lg text-white">{publicResearch.vessels.length}</strong> source-corroborated vessels</span>
-            <span className="text-amber-300">Verification pending · Global completeness unknown</span>
-          </div>
-          <div className="flex items-center flex-wrap gap-2">
-            <button type="button" aria-pressed={researchKind==='leads'}
-              onClick={()=>{setResearchKind('leads');setResearchPage(0);}}
-              className={`px-3 py-1 rounded border text-xs ${researchKind==='leads'?'border-sky-400 bg-sky-500/10 text-sky-200':'border-slate-700 text-slate-300'}`}>
-              USV research ({publicResearch.leads.length})
-            </button>
-            <button type="button" aria-pressed={researchKind==='publications'}
-              onClick={()=>{setResearchKind('publications');setResearchPage(0);}}
-              className={`px-3 py-1 rounded border text-xs ${researchKind==='publications'?'border-sky-400 bg-sky-500/10 text-sky-200':'border-slate-700 text-slate-300'}`}>
-              Scientific literature ({publicResearch.publications.length})
-            </button>
-            <button type="button" aria-pressed={researchKind==='vessels'}
-              onClick={()=>{setResearchKind('vessels');setResearchPage(0);}}
-              className={`px-3 py-1 rounded border text-xs ${researchKind==='vessels'?'border-sky-400 bg-sky-500/10 text-sky-200':'border-slate-700 text-slate-300'}`}>
-              Vessel source records ({publicResearch.vessels.length})
-            </button>
-            {publicResearch.sourceUrl && <a href={publicResearch.sourceUrl} target="_blank" rel="noopener noreferrer"
-              className="ml-auto text-xs text-sky-300 underline">Source review branch</a>}
-          </div>
-          <label className="block text-xs text-slate-300">Search research library
-            <input type="search" value={researchQuery} onChange={e=>{setResearchQuery(e.target.value);setResearchPage(0);}}
-              placeholder="Search publications and research leads"
-              className="mt-1 w-full rounded border border-slate-700 bg-slate-950 p-2 text-sm text-slate-100 placeholder-slate-500"/>
-          </label>
-          <p className="text-[11px] text-slate-400" aria-live="polite">
-            {visibleResearch.length} matching records · Page {researchPage+1} of {researchTotalPages}
-          </p>
-          <div role="list" className="max-h-[450px] overflow-y-auto space-y-2">
-            {visibleResearchPage.map(r=>{
-              const urls='sources' in r
-                ? r.sources.map(x=>x.url).filter((v):v is string=>!!v)
-                : ('doi' in r?[r.doi,r.sourceUrl,r.pdfUrl].filter((v):v is string=>!!v):[]);
-              return <article role="listitem" key={r.id} className="p-3 border border-slate-700 rounded bg-slate-950/60">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="text-sm font-semibold text-slate-100 break-words">{'title' in r?(r.title||r.id):r.model+' · '+r.manufacturer+' · '+r.country}</div>
-                  <span className="text-[10px] text-amber-300 shrink-0">UNVERIFIED</span>
-                </div>
-                <p className="text-[10px] font-mono text-slate-500 mt-1 break-all">{r.id}</p>
-                {'summary' in r&&r.summary&&<p className="mt-1 text-xs text-slate-400">{r.summary}</p>}
-                {'claims' in r && r.claims.length>0 && <div className="mt-2 text-xs text-slate-300">
-                  {r.claims.slice(0,4).map((claim,i)=><p key={i} className="break-words">
-                    <strong>{claim.field}:</strong> {claim.value} — quotation matched, not independently verified
-                  </p>)}
-                </div>}
-                <div className="mt-2 flex gap-3 flex-wrap">
-                  {urls.slice(0,3).map((url,i)=><a href={url} key={url+i} target="_blank" rel="noopener noreferrer"
-                    className="text-xs text-sky-300 underline underline-offset-2">Source {i+1}</a>)}
-                  {!urls.length&&<span className="text-xs text-amber-300">No accessible source link</span>}
-                </div>
-              </article>;
-            })}
-            {!visibleResearchPage.length&&<p className="text-xs text-slate-400 p-3">No matching research records.</p>}
-          </div>
-          <div className="flex justify-between">
-            <button type="button" disabled={researchPage===0} onClick={()=>setResearchPage(v=>Math.max(0,v-1))}
-              className="rounded border border-slate-700 px-3 py-1.5 text-xs text-slate-200 disabled:opacity-40">Previous</button>
-            <button type="button" disabled={researchPage+1>=researchTotalPages} onClick={()=>setResearchPage(v=>v+1)}
-              className="rounded border border-slate-700 px-3 py-1.5 text-xs text-slate-200 disabled:opacity-40">Next</button>
-          </div>
-        </>}
-      </section>}
 
       {/* Aggregate Stat Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -727,7 +627,7 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi,
                     </div>
                     <div className="flex justify-between py-1 border-b border-slate-800/80">
                       <span className="text-slate-400">Analyst Verification</span>
-                      <span className="font-mono text-emerald-400">✅ Verified Open-Source Naval Baseline</span>
+                      <span className="font-mono text-emerald-400">Unverified seeded intelligence — independently review before use</span>
                     </div>
                   </div>
                 </div>
@@ -842,7 +742,7 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi,
                   <div className="flex justify-between py-1.5 border-b border-slate-800">
                     <span className="text-slate-400">COLREGS 1972 Compliance</span>
                     <span className="font-mono text-emerald-400 font-semibold">
-                      {selectedVessel.autonomy.colregsCompliance ? '✅ Certified COLREGS Compliant' : '⚠️ Teleoperated Guidance'}
+                      {selectedVessel.autonomy.colregsCompliance ? 'Reported COLREGS support — unverified' : 'Teleoperation reported — unverified'}
                     </span>
                   </div>
                   <div className="flex justify-between py-1.5 border-b border-slate-800">
@@ -1022,6 +922,102 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi,
           </div>
         </div>
       )}
+      {/* A26 review-only research library: never counted as approved vessels. */}
+      {!hideA26Research && <section aria-label="Worldwide A26 research collection" className="rounded-lg border border-sky-200/30 bg-slate-900/60 p-4 space-y-3">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h3 className="text-base font-semibold text-slate-100">Newly discovered USV models and public evidence</h3>
+            <p className="mt-1 text-xs text-slate-300 max-w-2xl">
+              Source-linked model identities and discovery leads. Quoted specifications remain unreviewed; missing particulars remain TBD. Discovery articles are not distinct models.
+            </p>
+            {publicResearch.state==='READY' && <p className="mt-1 text-[11px] text-slate-400">
+              Source revision: <span className="font-mono">{publicResearch.sourceRevision.slice(0,12)}</span>
+              <span className="ml-2">{publicResearch.sourceMode==='PUBLIC_GITHUB_READ_ONLY'?'Public research · direct GitHub feed':'Lab research API'}</span>
+              {publicResearch.runId&&<a className="ml-2 underline text-sky-300" target="_blank" rel="noopener noreferrer"
+                href={`https://github.com/ravisinghrathode/usv-01-digital-lab/actions/runs/${publicResearch.runId}`}>Live evidence run</a>}
+            </p>}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button type="button" onClick={()=>{setPublicResearch(v=>({...v,state:'LOADING'}));setResearchReload(v=>v+1);}}
+              className="inline-flex items-center gap-1 rounded border border-slate-600 px-3 py-2 text-xs text-slate-200 hover:bg-slate-800">
+              <RefreshCw className="w-3 h-3"/> Refresh data
+            </button>
+            <a href="https://github.com/ravisinghrathode/usv-01-digital-lab/actions/workflows/a26-public-fleet-discovery.yml"
+              target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded border border-sky-400/40 px-3 py-2 text-xs text-sky-200">
+              <ExternalLink className="w-3 h-3"/> Collection runs
+            </a>
+          </div>
+        </div>
+        {publicResearch.state==='UNAVAILABLE'&&<p role="alert" className="text-xs text-amber-300">
+          Research source unavailable; no records have been deleted. Check the GitHub review branch and server credentials.
+        </p>}
+        {publicResearch.state==='LOADING'&&<p role="status" className="text-xs text-slate-300">Loading latest A26 review records…</p>}
+        {publicResearch.state==='READY'&&<>
+          <div className="flex flex-wrap gap-3 text-xs text-slate-300">
+            <span><strong className="font-mono text-lg text-white">{publicResearch.leads.length}</strong> USV leads</span>
+            <span><strong className="font-mono text-lg text-white">{publicResearch.vessels.length}</strong> source-corroborated vessels</span>
+            <span className="text-amber-300">Verification pending · Global completeness unknown</span>
+          </div>
+          <div className="flex items-center flex-wrap gap-2">
+            <button type="button" aria-pressed={researchKind==='leads'}
+              onClick={()=>{setResearchKind('leads');setResearchPage(0);}}
+              className={`px-3 py-1 rounded border text-xs ${researchKind==='leads'?'border-sky-400 bg-sky-500/10 text-sky-200':'border-slate-700 text-slate-300'}`}>
+              Public discovery leads ({publicResearch.leads.length})
+            </button>
+            <button type="button" aria-pressed={researchKind==='vessels'}
+              onClick={()=>{setResearchKind('vessels');setResearchPage(0);}}
+              className={`px-3 py-1 rounded border text-xs ${researchKind==='vessels'?'border-sky-400 bg-sky-500/10 text-sky-200':'border-slate-700 text-slate-300'}`}>
+              Model evidence profiles ({publicResearch.vessels.length})
+            </button>
+            {publicResearch.sourceUrl && <a href={publicResearch.sourceUrl} target="_blank" rel="noopener noreferrer"
+              className="ml-auto text-xs text-sky-300 underline">Source review branch</a>}
+          </div>
+          <label className="block text-xs text-slate-300">Search research library
+            <input type="search" value={researchQuery} onChange={e=>{setResearchQuery(e.target.value);setResearchPage(0);}}
+              placeholder="Search model, manufacturer, country, prototype or discovery lead"
+              className="mt-1 w-full rounded border border-slate-700 bg-slate-950 p-2 text-sm text-slate-100 placeholder-slate-500"/>
+          </label>
+          <p className="text-[11px] text-slate-400" aria-live="polite">
+            {visibleResearch.length} matching records · Page {researchPage+1} of {researchTotalPages}
+          </p>
+          <div role="list" className="max-h-[450px] overflow-y-auto space-y-2">
+            {visibleResearchPage.map(r=>{
+              const urls=r.sources.map(x=>x.url).filter((v):v is string=>!!v);
+              return <article role="listitem" key={r.id} className="p-3 border border-slate-700 rounded bg-slate-950/60">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="text-sm font-semibold text-slate-100 break-words">{'title' in r?(r.title||r.id):r.model+' · '+r.manufacturer+' · '+r.country}</div>
+                  <span className="text-[10px] text-amber-300 shrink-0">PUBLIC · UNVERIFIED</span>
+                </div>
+                <p className="text-[10px] font-mono text-slate-500 mt-1 break-all">{r.id}</p>
+                {'summary' in r&&r.summary&&<p className="mt-1 text-xs text-slate-400">{r.summary}</p>}
+                {'claims' in r && <div className="mt-2 space-y-2 text-xs text-slate-300">
+                  <p className="font-semibold text-slate-200">Reported specifications · source quotations</p>
+                  {r.claims.length?r.claims.map((claim,i)=><p key={i} className="break-words">
+                    <strong className="capitalize">{claim.field}:</strong> {claim.value} <span className="text-amber-300"> · unreviewed</span>
+                    {claim.quotation&&<span className="block pl-2 text-slate-400">“{claim.quotation}”</span>}
+                    {claim.sourceUrl&&<a href={claim.sourceUrl} target="_blank" rel="noopener noreferrer"
+                      className="ml-2 text-sky-300 underline">Evidence</a>}
+                  </p>):<p className="text-amber-200">Dimensions, propulsion, speed, range and payload: TBD — no independently reviewed technical specifications.</p>}
+                </div>}
+                <div className="mt-2 flex gap-3 flex-wrap">
+                  {urls.slice(0,3).map((url,i)=><a href={url} key={url+i} target="_blank" rel="noopener noreferrer"
+                    className="text-xs text-sky-300 underline underline-offset-2">Source {i+1}</a>)}
+                  {!urls.length&&<span className="text-xs text-amber-300">No accessible source link</span>}
+                </div>
+              </article>;
+            })}
+            {!visibleResearchPage.length&&<p className="text-xs text-slate-400 p-3">No matching research records.</p>}
+          </div>
+          <div className="flex justify-between">
+            <button type="button" disabled={researchPage===0} onClick={()=>setResearchPage(v=>Math.max(0,v-1))}
+              className="rounded border border-slate-700 px-3 py-1.5 text-xs text-slate-200 disabled:opacity-40">Previous</button>
+            <button type="button" disabled={researchPage+1>=researchTotalPages} onClick={()=>setResearchPage(v=>v+1)}
+              className="rounded border border-slate-700 px-3 py-1.5 text-xs text-slate-200 disabled:opacity-40">Next</button>
+          </div>
+        </>}
+      </section>}
+
+
     </div>
   );
 };
