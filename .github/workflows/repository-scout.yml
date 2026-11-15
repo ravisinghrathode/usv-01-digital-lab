@@ -78,9 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
-      actions: write
       contents: write
-      pull-requests: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -115,47 +113,54 @@ jobs:
           node scripts/external-software-register.mjs
           --scout-report "$RUNNER_TEMP/repository-scout/latest.json"
           --proposal-out "$RUNNER_TEMP/repository-scout/external-register-proposal.json"
-      - name: Open a controlled review PR for new discoveries (never approve software)
+      - name: Auto-publish read-only repository discovery snapshot (no PR)
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          PROPOSAL="$RUNNER_TEMP/repository-scout/external-register-proposal.json"
           REPORT="$RUNNER_TEMP/repository-scout/latest.json"
-          CURRENT_COUNT="$(node -e "const fs=require('fs');const old=require('./src/data/externalSoftwareRegister.json');const x=JSON.parse(fs.readFileSync(process.argv[1]));process.stdout.write(String(x.records.length-old.records.length))" "$PROPOSAL")"
-          if [[ "$CURRENT_COUNT" -eq 0 ]]; then
-            echo 'No new external repositories; current register remains authoritative.'
-            exit 0
-          fi
-          OPEN="$(gh pr list --state open --limit 100 --json title --jq '[.[] | select(.title == "External software discovery queue (review required)")] | length')"
-          if [[ "$OPEN" != 0 ]]; then
-            echo 'A discovery-review PR is already open; preserving new candidates in the scan artifact without overwriting an unreviewed PR.'
-            exit 0
-          fi
-          BRANCH="automation/external-software-discovery-$GITHUB_RUN_ID"
-          cp "$PROPOSAL" src/data/externalSoftwareRegister.json
-          node scripts/external-software-register.mjs --refresh
-          node scripts/external-software-register.mjs --check
+          test -s "$REPORT"
+          node -e '
+            const fs=require("node:fs");
+            const report=JSON.parse(fs.readFileSync(process.argv[1],"utf8"));
+            if(report.schemaVersion!==1||report.provider!=="GITHUB_PUBLIC_REPOSITORY_SEARCH"||
+              !Array.isArray(report.candidates)||report.completedQueries<1||
+              report.candidates.length>300||!report.candidates.every(r=>
+                typeof r.name==="string" && r.url==="https://github.com/"+r.name &&
+                r.adoptionStatus==="DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW"))
+              throw Error("Unsafe repository discovery cannot be published");
+          ' "$REPORT"
+          BRANCH="research/live-code-repositories"
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git switch -c "$BRANCH"
-          git add src/data/externalSoftwareRegister.json docs/EXTERNAL_SOFTWARE_OVERVIEW.md
-          git commit -m "docs(register): propose $CURRENT_COUNT new public repository discoveries for review"
-          gh auth setup-git
-          git push -u origin "$BRANCH"
-          if ! gh pr create --base main --head "$BRANCH" \
-            --title "External software discovery queue (review required)" \
-            --body "Automated A26 discovery *proposal* from Scout run $GITHUB_RUN_ID. $CURRENT_COUNT new public GitHub identities are registered as DISCOVERED ONLY, with no executable permission, no accepted license/security/physics assessment, and no verified project usage. All project and engineering approvals remain separate. Review and curate before protected merge. Source: https://github.com/${{ github.repository }}/actions/runs/$GITHUB_RUN_ID"; then
-            echo '::warning::GitHub Actions could not create the review PR. The unapproved proposal branch and scan artifact remain available.'
-            echo "Review branch: https://github.com/${{ github.repository }}/tree/$BRANCH" >> "$GITHUB_STEP_SUMMARY"
-            echo "Scan artifact: https://github.com/${{ github.repository }}/actions/runs/$GITHUB_RUN_ID" >> "$GITHUB_STEP_SUMMARY"
-            exit 0
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null; then
+            git fetch origin "refs/heads/$BRANCH:refs/remotes/origin/$BRANCH"
+            git switch -C "$BRANCH" "origin/$BRANCH"
+          else
+            git switch -c "$BRANCH"
           fi
-          # GITHUB_TOKEN-created PRs do not emit normal pull_request check runs.
-          # workflow_dispatch is an allowed exception; it checks the exact PR head.
-          gh workflow run repository-scout.yml --ref "$BRANCH" -f validate_only=true
-          gh workflow run safety-governance-gate.yml --ref "$BRANCH" -f run_openfoam=false
+          mkdir -p references/live-research
+          node -e '
+            const fs=require("node:fs");
+            const report=JSON.parse(fs.readFileSync(process.argv[1],"utf8"));
+            const output={
+              schemaVersion:1,agentId:"INTEL-USV-26",
+              classification:"PUBLIC_SOURCE_SAFE_ONLY",
+              reviewStatus:"UNVERIFIED_REVIEW_REQUIRED",
+              engineeringReleaseApproved:false,softwareAdoptionApproved:false,
+              runId:process.env.GITHUB_RUN_ID,sourceRevision:process.env.GITHUB_SHA,
+              generatedAt:report.generatedAt,provider:report.provider,
+              completedQueries:report.completedQueries,plannedQueries:report.plannedQueries,
+              coverageComplete:false,errors:report.errors,candidates:report.candidates
+            };
+            fs.writeFileSync("references/live-research/repository-scout.json",JSON.stringify(output,null,2)+"\n");
+          ' "$REPORT"
+          git add references/live-research/repository-scout.json
+          git commit -m "data(a26): update unverified public code discoveries from run $GITHUB_RUN_ID"
+          gh auth setup-git
+          git push origin "HEAD:refs/heads/$BRANCH"
+          echo "Research-only repository feed refreshed, with no PR or adoption approval: https://github.com/ravisinghrathode/usv-01-digital-lab/tree/$BRANCH" >> "$GITHUB_STEP_SUMMARY"
       - name: Upload unverified discovery report
         if: always()
         uses: actions/upload-artifact@v4
