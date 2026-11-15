@@ -47,7 +47,7 @@ jobs:
       - name: Source-level 26-agent preflight with zero model calls
         env:
           CATALOG_PATH: ${{ inputs.catalog_path }}
-        run: npm run acceptance:codex-agents -- --catalog "$CATALOG_PATH"
+        run: npm run acceptance:codex-agents -- --catalog "$CATALOG_PATH" --require-ready
       - name: Produce fail-closed three-gate assessment
         run: npm run acceptance:full-26 -- --source-sha "$GITHUB_SHA"
       - name: Upload unverified preflight and blockers
@@ -89,6 +89,19 @@ jobs:
         uses: oven-sh/setup-bun@v2
       - name: Install immutable dependencies
         run: bun install --frozen-lockfile
+      # A04 is a local, no-model preflight. Independent ops review is
+      # separately represented by a SHA-pinned repository owner variable.
+      - name: Verify local A04 host readiness without model calls
+        run: npm run mission-control:a04-check -- --source-sha "$GITHUB_SHA"
+      - name: Require independently reviewed A04 authorization for exact source
+        env:
+          USV_A04_AUTHORIZED_SHA: ${{ vars.USV_A04_AUTHORIZED_SHA }}
+        shell: bash
+        run: |
+          if [[ ! "$USV_A04_AUTHORIZED_SHA" =~ ^[0-9a-f]{40}$ ]] || [[ "$USV_A04_AUTHORIZED_SHA" != "$GITHUB_SHA" ]]; then
+            echo "BLOCKED: reviewed A04 host approval for this exact main revision is absent."
+            exit 1
+          fi
       - name: Verify signed-in ChatGPT OAuth CLI without paid API calls
         run: npm run mission-control:preflight
       - name: Run all 26 specialists as dependency-aware Codex campaign
@@ -97,7 +110,7 @@ jobs:
         run: npm run acceptance:codex-agents -- --catalog "$CATALOG_PATH" --execute
       - name: Generate fresh signed execution-host evidence
         run: npm run mission-control:attest-host
-      - name: Evaluate all three operational and independent evidence gates
+      - name: Require signed current-source operational gate, report independent gaps
         run: |
           npm run acceptance:full-26 -- \
             --report data/codex-26-agent-matrix.json \
@@ -105,7 +118,7 @@ jobs:
             --host data/codex-host-health.json \
             --reviews data/independent-reviews.json \
             --source-sha "$GITHUB_SHA" \
-            --require-all
+            --require-operational
       - name: Upload exact-source 26-agent evidence and blockers
         if: always()
         uses: actions/upload-artifact@v4
