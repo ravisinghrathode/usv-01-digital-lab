@@ -144,8 +144,11 @@ export function Decide({select,changeMode,prepareTask}:Props){
     <div className="v2-argument-connectors" aria-hidden="true"/>
     <div className="v2-proof-stream">
      {FLOW.map((item,i)=><button type="button" key={item.id} className={'v2-proof-node'+(item.id==='uncertainty'?' v2-proof-risk':'')} onClick={()=>select(item.id)}>
-       <span className="v2-proof-index">{String(i+1).padStart(2,'0')}</span><span className="v2-proof-details"><small>{item.kind}</small><strong>{record(item.id).title}</strong><em>{item.detail}</em></span><ChevronRight size={17}/></button>)}
+       <span className="v2-proof-index">{String(i+1).padStart(2,'0')}</span>
+       {item.id==='candidate'&&<span className="v2-proof-thumb" aria-hidden="true"><VesselVisual variant="candidate" compact/></span>}
+       <span className="v2-proof-details"><small>{item.kind}</small><strong>{record(item.id).title}</strong><em>{item.detail}</em></span><ChevronRight size={17}/></button>)}
     </div>
+    <p className="v2-evidence-key"><Network size={15}/> All relationships shown here are proposed investigation links, not verified programme traceability.</p>
     <div className="v2-proof-outcome"><LockKeyhole size={20}/><div><strong>Recommendation withheld</strong><p>There is not enough verified evidence to authorize any design change.</p></div></div>
    </div>
    <aside className="v2-review-pane">
