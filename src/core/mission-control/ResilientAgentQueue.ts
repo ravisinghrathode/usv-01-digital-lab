@@ -171,6 +171,21 @@ export class ResilientAgentQueue {
           recordEvent(state, row, 'CRASH_RECOVERY_REQUIRES_REVIEW');
         }
       }
+      // A single queue worker may claim one model task at a time, even when
+      // launchd/manual dispatches overlap across different processes.
+      if (Object.values(state.tasks).some(row => row.state === 'RUNNING')) {
+        return null;
+      }
+      if (quota.state === 'AVAILABLE') {
+        for (const row of Object.values(state.tasks)) {
+          if (row.state === 'WAITING_FOR_QUOTA' &&
+            (!row.nextAttemptAt || Date.parse(row.nextAttemptAt) <= now)) {
+            row.state = 'RESUMABLE';
+            row.updatedAt = new Date(now).toISOString();
+            recordEvent(state, row, 'QUOTA_ELIGIBLE_NOT_PROVIDER_ATTESTED');
+          }
+        }
+      }
       const eligible = Object.values(state.tasks)
         .filter(row => row.state === 'PENDING' || row.state === 'RESUMABLE' ||
           (row.state === 'WAITING_FOR_QUOTA' && (!row.nextAttemptAt ||
@@ -255,7 +270,10 @@ export class ResilientAgentQueue {
         const current = await this.quota.status();
         retryAt = current.retryAfter || new Date(this.clock() + 60 * 60_000).toISOString();
       } else {
-        outcome = 'FAILED';
+        // A source revision mismatch must not be auto-retried under a changed
+        // baseline or falsely classified as a completed engineering attempt.
+        outcome = /HEAD|Git revision|tracked modifications|pinned commit/i.test(reason)
+          ? 'BLOCKED_REVIEW' : 'FAILED';
       }
     }
     await mutateDurableState(this.file, emptyQueue, state => {
