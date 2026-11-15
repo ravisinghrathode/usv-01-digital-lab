@@ -2,6 +2,8 @@ import React,{useEffect,useMemo,useRef,useState} from 'react';
 import {ArrowLeft,ArrowRight,ArrowUpRight,BookOpen,Box,ChevronDown,Command,Compass,FileSearch,FlaskConical,GitCompareArrows,HelpCircle,Layers,LockKeyhole,Menu,Network,Search,ShieldCheck,X} from 'lucide-react';
 import {Design,Worktable} from './FidelityWorktable';
 import NavalMark from './NavalMark';
+import {useSnapshot} from '../dockyard2/useSnapshot';
+import {searchSourceRegister} from './sourceSearch';
 import {Decide,Experiment,Notebook} from './FidelityPhysicsReview';
 import {DEFAULT_SESSION,ENTITIES,INVESTIGATION,MODES,STUDIES,currentEntity,hashForMode,legacyLink,searchItems,validMode,type EntityId,type Mode,type Note,type Perspective,type SessionView,type StudyId} from './model';
 
@@ -9,6 +11,7 @@ const ICONS:Record<Mode,React.ComponentType<{size?:number}>>={
  worktable:Network,design:Box,experiment:FlaskConical,decide:ShieldCheck,notebook:BookOpen
 };
 export default function EngineeringSessionsApp(){
+ const {snapshot,status}=useSnapshot();
  const [session,setSession]=useState<SessionView>(()=>({...DEFAULT_SESSION,mode:typeof window==='undefined'?'worktable':validMode(window.location.hash.slice(1))}));
  const [trayOpen,setTrayOpen]=useState(false);
  const [search,setSearch]=useState('');
@@ -18,7 +21,7 @@ export default function EngineeringSessionsApp(){
  const searchTrigger=useRef<HTMLButtonElement>(null);
  const searchField=useRef<HTMLInputElement>(null);
  const main=useRef<HTMLElement>(null);
- const results=useMemo(()=>searchItems(search),[search]);
+ const results=useMemo(()=>[...searchItems(search),...searchSourceRegister(snapshot,search,status==='connected')].slice(0,75),[search,snapshot,status]);
  const selected=currentEntity(session.selected);
  useEffect(()=>{const dialog=inspectorDialog.current;if(!dialog)return;
   if(session.inspector&&selected){if(!dialog.open)dialog.showModal();}
@@ -27,7 +30,7 @@ export default function EngineeringSessionsApp(){
  const setMode=(mode:Mode)=>{
   setSession(old=>({...old,mode}));
   if(typeof window!=='undefined')window.history.pushState({mode},'',hashForMode(mode));
-  requestAnimationFrame(()=>main.current?.focus());
+  requestAnimationFrame(()=>{main.current?.focus({preventScroll:true});window.scrollTo(0,0);});
  };
  useEffect(()=>{
   const sync=()=>setSession(old=>({...old,mode:validMode(window.location.hash.slice(1))}));
@@ -39,6 +42,7 @@ export default function EngineeringSessionsApp(){
     e.preventDefault();const next=MODES[Number(e.key)-1];if(next){
       setSession(old=>({...old,mode:next.id}));
       window.history.pushState({mode:next.id},'',hashForMode(next.id));
+      requestAnimationFrame(()=>{main.current?.focus({preventScroll:true});window.scrollTo(0,0);});
     }
    }
   };
@@ -81,7 +85,7 @@ export default function EngineeringSessionsApp(){
     <span><LockKeyhole size={15}/> Not reviewed</span>
    </div>
   </section>
-  <div className="es-truth-banner" role="note"><span className="es-truth-dot"/> <strong>INTERACTIVE UX PROTOTYPE</strong><span className="es-truth-long">All engineering objects are synthetic examples. No real USV-01 geometry, results or approvals are represented.</span><span className="es-truth-short">No approved CAD, results or decisions.</span></div>
+  <div className="es-truth-banner" role="note"><span className="es-truth-dot"/> <strong>INTERACTIVE UX PROTOTYPE</strong><span className="es-truth-long">All engineering objects are synthetic examples. No real USV-01 geometry, results or approvals are represented.</span><span className="es-truth-short">No approved CAD, results or decisions.</span><span className="es-library-status">Source register: {status==='connected'?'Authenticated records':status==='loading'?'Loading…':'Illustrative fallback'}</span></div>
   <main className="es-main" id="es-main" ref={main} tabIndex={-1}>
    {session.mode==='worktable'&&<Worktable {...props}/>}
    {session.mode==='design'&&<Design {...props}/>}
@@ -115,7 +119,7 @@ export default function EngineeringSessionsApp(){
    <header><h2>Find anything</h2><button type="button" aria-label="Close search" onClick={()=>searchDialog.current?.close()}><X size={20}/></button></header>
    <label className="es-search-field"><Search size={20}/><input type="search" ref={searchField} value={search} onChange={e=>setSearch(e.target.value)}
      onKeyDown={e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();searchDialog.current?.close();}}} placeholder="Search a concept object or a protected engineering module" aria-label="Search demonstration objects and engineering modules"/></label>
-   <p>Demonstration objects open the contextual inspector. Live engineering modules open the protected original lab.</p>
+   <p>Demonstration objects open the contextual inspector. Matching engineering register records are labelled by source state and open their protected register, not a certified case.</p>
    <div className="es-search-results">{results.length===0?<p>No matching example object or module.</p>:
      results.map(r=>r.id.startsWith('entity:')?
       <button type="button" key={r.id} onClick={()=>{select(r.id.slice(7) as EntityId);searchDialog.current?.close();}}><FileSearch size={17}/><span><strong>{r.title}</strong><small>{r.meta} · example</small></span><ArrowRight size={14}/></button>:

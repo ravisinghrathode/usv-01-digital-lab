@@ -530,4 +530,53 @@
  .vf-notebook-paper-head h3{font-size:23px}
  .vf-notebook-timeline li{gap:13px}
 }
+/* Screenshot-driven final visual hierarchy correction.
+ * The investigation title already lives in the persistent session spine;
+ * repeating it above the hero delayed access to the actual vessel and graph. */
+.es-library-status{font-size:10px;letter-spacing:0;color:#5d7583;margin-left:auto;font-weight:690;white-space:nowrap}
+@media(max-width:700px){.es-library-status{display:none}}
+.vf-worktable>.vf-page-title{display:none}
+.vf-product-hero{isolation:isolate}
+.vf-worktable .vf-part-disclaimer{display:none}
+.vf-worktable .vf-part-selector{top:123px}
+.vf-worktable .vf-part-selector button{min-height:32px}
+.vf-worktable .vf-hero-render{left:137px;top:59px;bottom:25px;right:-12px}
+.vf-worktable .vf-hero-render .vf-vessel-visual{transform:scale(1.27)}
+.vf-worktable .vf-hero-bottom{bottom:12px;left:18px;gap:11px}
+.vf-worktable .vf-view-controls{bottom:12px}
+.vf-worktable .vf-relationship-flow{min-height:164px;padding:8px 12px 10px}
+.vf-hero-compare{color:#1857a7!important}
+.vf-worktable .vf-design-entity strong{font-size:12px}
+.vf-worktable .vf-source-nodes strong{font-size:12px}
+.vf-investigation-inspector .vf-property-section h3{font-size:15px}
+.vf-inspector-vessel strong{font-size:13px}
+.vf-assumptions{font-size:12px}
+.vf-evidence-checks strong,.vf-evidence-checks small{font-size:11px}
+.vf-worktable .vf-inspector-tabs button{font-size:13px}
+.vf-worktable .vf-relationship header h3{font-size:18px}
+.vf-immersive-stage .vf-scene-product .vf-vessel-visual{transform:scale(1.15)}
+@media(min-width:701px){
+ .vf-worktable .vf-product-hero{min-height:408px}
+}
+@media(max-width:700px){
+ .vf-worktable .vf-part-selector{top:94px;left:10px;width:143px}
+ .vf-worktable .vf-part-selector button{min-height:30px}
+ .vf-worktable .vf-hero-render{top:45px;left:105px;bottom:26px;right:-9px}
+ .vf-worktable .vf-hero-render .vf-vessel-visual{transform:scale(1.18)}
+ .vf-worktable .vf-relationship-flow{min-height:0;padding:10px}
+}
+@media(max-width:470px){
+ .vf-worktable .vf-part-selector{top:78px;left:7px;width:109px}
+ .vf-worktable .vf-part-selector button{min-height:29px;padding:5px;font-size:9px}
+ .vf-worktable .vf-hero-render{top:41px;left:81px;bottom:26px;right:-9px}
+ .vf-worktable .vf-hero-render .vf-vessel-visual{transform:scale(1.21)}
+ .vf-worktable .vf-hero-bottom{left:7px;bottom:6px;gap:6px}
+ .vf-worktable .vf-hero-bottom button{font-size:9px;gap:3px}
+ .vf-worktable .vf-hero-bottom .vf-hero-compare{display:none}
+ .vf-worktable .vf-view-controls{bottom:6px;right:6px}
+ .vf-worktable .vf-relationship header h3{font-size:14px}
+ .vf-worktable .vf-design-entity strong{font-size:11px}
+ .vf-worktable .vf-source-nodes strong{font-size:10px}
+ .vf-immersive-stage .vf-scene-product .vf-vessel-visual{transform:scale(1.03)}
+}
 @media(prefers-reduced-motion:reduce){.vf-mode *, .vf-mode *::before,.vf-mode *::after{transition:none!important;animation:none!important}}

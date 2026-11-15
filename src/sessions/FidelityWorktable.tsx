@@ -49,7 +49,8 @@ export function Worktable({session,changeMode,select}:SessionProps){
        <button type="button" onClick={()=>select('reference')}><Info size={15}/> Source</button>
      </div>
      <div className="vf-hero-bottom"><span><span className="vf-live-dot"/> Original artistic 3D visualization</span>
-       <button type="button" onClick={()=>select('reference')}>Inspect concept <ArrowUpRight size={16}/></button></div>
+       <button type="button" onClick={()=>select('reference')}>Inspect concept <ArrowUpRight size={16}/></button>
+       <button type="button" className="vf-hero-compare" onClick={()=>changeMode('design')}><GitCompareArrows size={15}/> Compare concepts <ArrowRight size={14}/></button></div>
     </article>
     <section className="vf-relationship">
      <header><div><span className="vf-eyebrow"><Waypoints size={14}/> LIVE INVESTIGATION CONTEXT — EXAMPLE</span>

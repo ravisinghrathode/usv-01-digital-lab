@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'feat/sessions-visual-fidelity-rebuild-20261115'
+      - 'fix/sessions-v2-visual-acceptance-20261115'
     paths:
       - 'scripts/ui/render_sessions_vessels.py'
       - '.github/workflows/sessions-render-original-assets.yml'
