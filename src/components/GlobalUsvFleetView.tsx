@@ -76,7 +76,10 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
       }
     };
     void refresh();
-    return ()=>{mounted=false;};
+    // Refresh the review library automatically while open; no manual import
+    // or dedicated operator action is required for newly published A26 data.
+    const poll=setInterval(()=>{void refresh();},120_000);
+    return ()=>{mounted=false;clearInterval(poll);};
   },[researchReload]);
   const visibleResearch=useMemo(()=>{
     const rows=researchKind==='leads'?publicResearch.leads:researchKind==='publications'?publicResearch.publications:publicResearch.vessels;
@@ -270,6 +273,8 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
             </p>
             {publicResearch.state==='READY' && <p className="mt-1 text-[11px] text-slate-400">
               Source revision: <span className="font-mono">{publicResearch.sourceRevision.slice(0,12)}</span>
+              {publicResearch.runId&&<a className="ml-2 underline text-sky-300" target="_blank" rel="noopener noreferrer"
+                href={`https://github.com/ravisinghrathode/usv-01-digital-lab/actions/runs/${publicResearch.runId}`}>Live evidence run</a>}
             </p>}
           </div>
           <div className="flex flex-wrap gap-2">
