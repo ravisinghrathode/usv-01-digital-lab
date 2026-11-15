@@ -359,6 +359,8 @@ button{cursor:pointer}
  .nl-filter-label{width:100%;justify-content:space-between}
 }
 @media(max-width:360px){
+ .nl-topbar{flex-wrap:wrap;gap:8px}
+ .nl-topbar-actions{width:100%;justify-content:flex-end}
  .nl-brand-type small{display:none}
  .nl-brand-type strong{font-size:15px}
  .nl-brand-symbol{height:34px;width:34px}
