@@ -115,6 +115,8 @@ async function study() {
       'Role: ' + c.canonicalId + ' / ' + c.name + ' / ' + c.specialism,
       'Source revision: ' + sourceSha,
       'Read AGENTS.md, USV01_PROJECT_CONTEXT.md and relevant repository skill files if available.',
+      'For A05/A06/A07/A14/A17 read docs/academy/COHORT_01_OPEN_BOOK_LESSONS.md, and work through the role-specific lesson.',
+      'For every role, do not claim a document was accessed unless the CLI really read it.',
       'Do NOT claim that an inaccessible textbook/paid standard has been read.',
       'Do NOT change code or design parameters; remain in read-only research scope.',
       'Establish fundamental concepts, assumptions, SI units, sources and validity limits for this role.',
@@ -159,7 +161,9 @@ async function study() {
       { attempt, ungradedAgentResponse: output, engineeringReleaseApproved:false });
     summary.push({ agent:c.canonicalId, status: attempt.status, outputSha256:attempt.outputSha256 });
     writeJson(path.join(outDir, 'study-progress.json'), {
-      sourceSha, completed:selected.length, attempted:summary.length,
+      sourceSha, cohortSize:selected.length,
+      completedUngraded:summary.filter(r=>r.status==='COMPLETED_UNGRADED').length,
+      attempted:summary.length,
       roleResults:summary, certifiedAgents:0, independentReviewPending:true
     });
   }
