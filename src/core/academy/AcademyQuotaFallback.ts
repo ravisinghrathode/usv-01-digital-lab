@@ -77,7 +77,7 @@ export function publicAcademyStudyExcerpt(root: string, canonicalId: string): {
     const end = Math.min(...[otherStart, footer, first.length].filter(n => n > detailedStart));
     speciality = first.slice(detailedStart, end);
   } else {
-    const tableLine = map.split('\n').find(line => line.startsWith('| ' + canonicalId + ' |'));
+    const tableLine = map.split('\n').find(line => line.startsWith('| ' + canonicalId + ' '));
     if (!tableLine) throw new Error('USV_GEMINI_PUBLIC_LESSON_INVALID: no role exercise');
     speciality = tableLine;
   }
