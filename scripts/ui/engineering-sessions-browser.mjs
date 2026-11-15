@@ -33,7 +33,7 @@ try{
  await img.evaluate(el=>el.decode());
  assert((await img.evaluate(el=>el.naturalWidth))>=1400,'Blender high-res model failed to load');
  assert((await img.getAttribute('src')).includes('usv-reference.png'));
- await page.getByRole('button',{name:'Inspect reference configuration'}).click();
+ await page.locator('.v2-pin-one').click();
  const inspector=page.getByRole('dialog',{name:'Selected object context inspector'});
  await inspector.waitFor();
  assert(await inspector.getByText('Demonstration-only').isVisible());
