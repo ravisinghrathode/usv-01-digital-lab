@@ -26,7 +26,7 @@ export default function EngineeringSessionsApp(){
  const setMode=(mode:Mode)=>{
   setSession(old=>({...old,mode}));
   if(typeof window!=='undefined')window.history.pushState({mode},'',hashForMode(mode));
-  requestAnimationFrame(()=>main.current?.focus());
+  requestAnimationFrame(()=>{main.current?.focus({preventScroll:true});window.scrollTo({top:0,behavior:'auto'});});
  };
  useEffect(()=>{
   const sync=()=>setSession(old=>({...old,mode:validMode(window.location.hash.slice(1))}));
