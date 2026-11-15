@@ -19,9 +19,9 @@ try{
  const page=await browser.newPage({viewport:{width:1440,height:900},deviceScaleFactor:1});
  page.on('pageerror',e=>errors.push(e.message));
  const mode=(name)=>page.getByRole('navigation',{name:'Engineering session modes'}).getByRole('button',{name,exact:true});
- await page.goto(base+'/sessions.html#worktable',{waitUntil:'domcontentloaded'});
+ await page.goto(base+'/#worktable',{waitUntil:'domcontentloaded'});
  await page.getByRole('heading',{name:'Design begins with a question.'}).waitFor();
- assert(await page.getByText('INTERACTIVE UX PROTOTYPE').isVisible());
+ assert(await page.getByText('EXAMPLE INVESTIGATION').isVisible());
  assert.equal(await page.locator('.v2-worktable-board').count(),1);
  assert.equal(await page.locator('.v2-research-rail').count(),1);
  assert.equal(await page.locator('.v2-vessel-lightstage').count(),1);

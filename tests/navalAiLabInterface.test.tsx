@@ -19,7 +19,7 @@ describe('Naval AI Lab — clean-room visual workbench',()=>{
     expect(source('naval-lab.html')).toContain('/src/lab3/main.tsx');
     expect(source('vite.config.ts')).toContain("navalAiLab: path.resolve(import.meta.dirname, 'naval-lab.html')");
     expect(source('package.json')).toContain('dev:naval-ai-lab');
-    expect(source('index.html')).toContain('/src/dockyard2/main.tsx');
+    expect(source('index.html')).toContain('/src/sessions/main.tsx');
     expect(source('legacy.html')).toContain('/src/main.tsx');
     expect(source('src/lab3/main.tsx')).toContain("import './styles.css'");
     expect(source('src/lab3/App.tsx')).not.toContain("import '../dockyard2/dockyard.css'");

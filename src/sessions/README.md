@@ -1,6 +1,6 @@
 ## Visual-fidelity V2 acceptance (2026-11-15)
 
-The programme selected **Engineering Sessions** as its future UX baseline.
+The programme selected **Engineering Sessions** as the standard UX baseline.
 The original initial V1 render did **not** meet that baseline and is superseded
 by the source-controlled V2 implementation:
 
@@ -29,11 +29,12 @@ agents, solvers, approvals and data mutations remain unchanged.
 Real-browser acceptance includes mode navigation and top-of-page focus,
 product-stage prominence, source-visible missing-result states, responsive
 mobile hierarchy and screenshot comparisons; passing tests alone is
-insufficient for visual release. No promotion to `/` is implicit.
+insufficient for visual release. The separately authorized root cutover is
+not an engineering release or data-approval event.
 
-# Engineering Sessions — Connected Prototype
+# Engineering Sessions — Standard Interface
 
-**Implementation:** Standalone **interactive UX demonstration** at `/sessions.html`, based on the Project Lead's selected `NAL-UX-BL-001` direction (design spec in PR #134, not yet the deployed standard). This PR exists to evaluate the operating model before a governed redesign. This is not a read/write integration into the source project.
+**Implementation:** Standard investigation interface at `/` and compatibility preview `/sessions.html`, based on the Project Lead-selected `NAL-UX-BL-001` direction. Engineering examples remain synthetic, source states are explicit, and existing write/approval routes stay in the governed workspace.
 
 ## Why this is materially different
 
@@ -49,10 +50,10 @@ The compact session spine remains visible in every mode. A context inspector ope
 
 ## Evidence integrity
 
-**Every content object and technical drawing in this preview is synthetic and visibly labelled.** `DEMO-INV-01`, placeholder revisions A/B and proposed studies do not correspond to approved USV-01 CAD data. There are **no genuine hull files, verified parameter values, solver results, active agent tasks, certified requirements or human approvals** in this prototype.
+**The active investigation and its technical drawings are synthetic and visibly labelled.** `DEMO-INV-01`, placeholder revisions A/B and proposed studies do not correspond to approved USV-01 CAD data. There are **no genuine hull files, verified parameter values, solver results, active agent tasks, certified requirements or human approvals** in this example.
 
-- No API or database calls.
-- No credential, authentication, solver execution, agent scheduling, approval write or original repo mutation.
+- The shared read-only snapshot adapter may fetch `/api/data/snapshot` for authenticated register search. The investigation itself, its configurations and its studies remain synthetic.
+- No credential, solver execution, agent scheduling, approval write or original repo mutation.
 - Source links open the existing guarded `/legacy.html?module=...` workspace without claiming the matching example object exists there.
 - Any draft note/task is kept only in React component state and is **not saved**, signed, dispatched or approved.
 - Unsupported numerical comparisons remain unavailable regardless of rendering.
@@ -64,7 +65,7 @@ npm ci
 npm run dev:engineering-sessions
 ```
 
-Navigate to `http://localhost:3000/sessions.html#worktable` when running the standard Vite dev command. The existing `/` Naval Design Studio, `/naval-lab.html`, `/atlas.html`, and the governed `/legacy.html` are unchanged.
+Navigate to `http://localhost:3000/#worktable` when running the standard Vite dev command. `/sessions.html` remains an alias, `/dockyard2.html` preserves the previous Naval Design Studio, and `/legacy.html` preserves the governed engineering workspace.
 
 The browser workflow `.github/workflows/engineering-sessions-browser.yml` captures the five-mode end-to-end journey plus 1440/1280/768/390/320 viewport screenshots, 200% CSS zoom, keyboard search, all 24 module links, inspector behaviour and no accidental horizontal overflow.
 
@@ -80,4 +81,4 @@ The design milestone passes only when an actual naval engineer can:
 - select a study, see the precise output gap and retain it across Design/Decide/Notebook;
 - draft a verification action and locate the human approval authority without falsely claiming execution.
 
-Production requires a separate governed investigation data contract, real CAD/solver adapters, browser accessibility testing, independent review and approved routing cutover. Do **not** promote this standalone prototype into `/` merely because CI is green.
+Future production engineering workflows require a governed investigation data contract, real CAD/solver adapters, screen-reader testing and independent technical review. The current route cutover does not make this example investigation persistent or release engineering data.

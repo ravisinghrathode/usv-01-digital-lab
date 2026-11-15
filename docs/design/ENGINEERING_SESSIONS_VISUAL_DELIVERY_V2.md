@@ -1,8 +1,8 @@
 # Engineering Sessions — High-Fidelity Visual Delivery V2
 
 **Target UX baseline:** `NAL-UX-BL-001` (Project Lead-selected Engineering Sessions design direction).
-**UI surface:** `/sessions.html` (standalone candidate, not the default `/`).
-**Status:** implemented visual feature branch, pending protected human review/merge/deployment.
+**UI surface:** `/` (standard interface), with `/sessions.html` retained as an alias.
+**Status:** visual feature and root-route cutover authorized by the Project Lead; hosted checks and external deployment verification are separate.
 **Engineering source status:** demonstration only; no actual approved USV-01 geometry, calculations, verified CFD or shipboard measurements.
 
 ## Why this is a genuine visual rebuild
@@ -35,14 +35,14 @@ The user rejected the first implementation as a downgrade from the concept image
 8. Capture five viewport widths: 1440, 1280, 768, 390 and 320; verify no horizontal overflow and a meaningful product visual in the initial viewport.
 9. Test CSS zoom at 200%, and that changing modes returns the viewport to the new activity's top.
 
-**Important test boundary:** automated screenshots and DOM assertions cannot substitute for independent naval usability, actual visual design signoff, screen-reader testing, accessible real CAD camera interaction, production authentication and source verification. Those remain outstanding before route cutover.
+**Important test boundary:** automated screenshots and DOM assertions cannot substitute for independent naval usability, screen-reader testing, accessible real CAD camera interaction, production authentication and source verification. These remain separate from the UI route cutover and from any engineering release.
 
 ## Review risks / outstanding engineering integration
 
 - The Blender illustration models are concept assets only. To support real source comparison, implement a reviewed, revision-aware CAD adapter with approved source geometry. UI is explicitly prevented from drawing mass or stability claims from visuals.
 - Scientific playback, CFD maps, hydrostatic plots and numeric tables require actual source-backed, unit-aware results, solver provenance, boundary conditions, convergence, uncertainty and independent review. Without them, keep the current source-required scientific state.
 - The demonstration investigation `DEMO-INV-01` and its evidence objects are synthetic. Backend investigation lifecycle, versioned notebook, multi-user permissions and agent dispatch require separate governed implementation.
-- Do not merge, promote `/sessions.html` to `/`, or claim deployment solely because CI passes. Preserve the protected human authorization chain and verify the deployed exact commit after release.
+- The Project Lead authorized promoting the reviewed interface to `/`. This UI route change does not release engineering data, change the 26-agent authority map, or bypass protected engineering approvals. Verify the exact hosted deployment before claiming it is live.
 
 ## Visual design release criterion
 
@@ -50,7 +50,7 @@ Any future UX PR must compare an actual captured screenshot against the selected
 
 ## Documented design review — 2026-11-15
 
-**Review surface:** isolated local browser at `/sessions.html`, local branch `feat/engineering-sessions-visual-fidelity-v2-20261115` rebased onto current `main` (`ae33723`). The default `/` route was not changed.
+**Review surface:** isolated local browser at `/sessions.html`, local branch `feat/engineering-sessions-visual-fidelity-v2-20261115` rebased onto `main` (`ae33723`). The original implementation was reviewed before this authorized root-route change.
 
 **Visual review:** inspected live 1440×900 screenshots of Worktable, Design, Experiment, Decide and Notebook, plus the 320px Worktable view. The review found five distinct compositions that follow the approved investigation-first hierarchy: a vessel-led worktable, a wide paired design view, a dark source-gated experiment theatre, a connected evidence argument with a human-review boundary, and a chronological research notebook. The high-resolution vessel renders carry the primary visual weight. Their illustrative status remains explicit; no solver result or engineering approval is implied.
 
@@ -60,6 +60,6 @@ The 320px capture exposed mode labels that were too small in the original single
 
 **Build and interaction checks:** `npm run build` completed successfully. The targeted V2, baseline, source-search and A26 browser-feed tests passed (4 files, 16 tests); the deterministic A26 Node suite passed (12 tests). Search and mode interactions were exercised in the live browser, including result filtering and Escape focus restoration. The local browser console showed no runtime errors after the review changes. The existing GitHub browser workflow at commit `8da38bb` passed its isolated interaction and viewport journey; it predates this local rebase and accessibility follow-up, so it does not replace hosted CI on a future PR.
 
-**Review disposition:** the candidate passes this local visual and accessibility review for continued review on `/sessions.html`. The original lab remains the default, and the candidate is not approved for route cutover. PR #142 was closed unmerged in favor of merged PR #140; this rebased review branch is local-only and has no hosted checks on its current head. The repository contains the written baseline but not its original concept-image files, so a side-by-side image comparison against those source images could not be documented here. Independent human design signoff, screen-reader review, production authentication/source verification, and protected merge/deployment review remain required.
+**Review disposition:** the Project Lead explicitly authorized the UI cutover on 2026-11-15. The feature branch will be checked through a new protected PR; PR #142 remains closed unmerged in favor of #140. The repository contains the written baseline but not its original concept-image files, so a direct side-by-side comparison against those files was unavailable. The interface continues to mark examples as synthetic and does not claim live CAD, verified simulation, production authentication, or engineering approval. Merging source code does not by itself verify deployment to the separately hosted application.
 
 The Lighthouse run also reported pre-existing site discovery issues (`robots.txt`, `llms.txt`, and the ARD manifest); those are outside this screen redesign and did not affect the accessibility scores.

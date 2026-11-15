@@ -29,7 +29,7 @@ describe('Engineering Sessions V2 — visual and interaction fidelity',()=>{
    expect(app).not.toContain("from './ModeScreens'");
    expect(main).toContain("import './fidelity.css'");
    expect(main).toContain("import './v2/design.css'");
-   expect(read('index.html')).toContain('/src/dockyard2/main.tsx');
+   expect(read('index.html')).toContain('/src/sessions/main.tsx');
    expect(read('legacy.html')).toContain('/src/main.tsx');
  });
  it('gives the Worktable a dramatic product stage, component controls, connected graph and contextual inspector',()=>{

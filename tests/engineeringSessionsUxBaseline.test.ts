@@ -3,12 +3,12 @@ import {readFileSync} from 'node:fs';
 const read=(path:string)=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
 const contract=JSON.parse(read('config/engineering-sessions-ux-baseline.json'));
 
-describe('Engineering Sessions — approved future UX direction, not a release',()=>{
+describe('Engineering Sessions — approved UX direction, not an engineering release',()=>{
  it('names and versions one explicitly design-only baseline',()=>{
   expect(contract.baseline_id).toBe('NAL-UX-BL-001');
   expect(contract.baseline_status).toBe('DESIGN_DIRECTION_SELECTED');
   expect(contract.scope).toBe('UX_DESIGN_ONLY_NOT_ENGINEERING_RELEASE');
-  expect(contract.implementation_status).toBe('NOT_IMPLEMENTED');
+  expect(contract.implementation_status).toBe('IMPLEMENTED');
   expect(contract.deployment_status).toBe('NOT_CLAIMED');
   expect(contract.governance.human_release_required).toBe(true);
   expect(contract.governance.engineering_authority_unchanged).toBe(true);
@@ -30,7 +30,7 @@ describe('Engineering Sessions — approved future UX direction, not a release',
    'APPROVAL_REQUIRES_EXISTING_PROTECTED_HUMAN_RECORD'
   ]));
  });
- it('keeps existing runtime untouched and points all developers at the future design baseline',()=>{
+ it('preserves engineering authority and points the standard interface at its selected UX baseline',()=>{
   const base=read('docs/design/ENGINEERING_SESSIONS_UX_BASELINE_V1.md');
   const refinement=read('docs/design/ENGINEERING_SESSIONS_INTERACTION_REFINEMENT.md');
   expect(base).toContain('W1 — Investigation Worktable');
@@ -39,8 +39,9 @@ describe('Engineering Sessions — approved future UX direction, not a release',
   expect(refinement).toContain('S2 — Design: synchronized A/B analysis');
   expect(refinement).toContain('No comparable mass properties');
   expect(read('DESIGN.md')).toContain('NAL-UX-BL-001');
+  expect(read('index.html')).toContain('/src/sessions/main.tsx');
   expect(read('AGENTS.md')).toContain('Selected future UX design baseline');
-  expect(read('index.html')).toContain('/src/dockyard2/main.tsx');
+  expect(read('index.html')).toContain('/src/sessions/main.tsx');
   expect(read('legacy.html')).toContain('/src/main.tsx');
  });
 });

@@ -63,7 +63,7 @@ describe('Engineering Sessions V2 — visual baseline fidelity and trust boundar
   expect(app).toContain('setSession(old=>({...old,mode})');
   expect(app).toContain('legacyLink(selected.module)');
   expect(src('src/sessions/main.tsx')).toContain("import './v2/design.css'");
-  expect(src('index.html')).toContain('/src/dockyard2/main.tsx');
+  expect(src('index.html')).toContain('/src/sessions/main.tsx');
   expect(src('legacy.html')).toContain('/src/main.tsx');
  });
  it('respects responsive, typography, reduced-motion and actual image art direction',()=>{

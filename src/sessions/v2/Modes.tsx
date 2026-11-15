@@ -123,7 +123,7 @@ export function Experiment({session,chooseStudy,select,changeMode}:Props){
         <small>{s.discipline}</small><strong>{s.title}</strong><span>Result missing</span></button>)}
     </div>
    </div>
-   <div className="v2-physics-footer"><span><LockKeyhole size={17}/> Playback and synthetic CFD overlays are intentionally disabled. No solver has run in this prototype.</span><button type="button" onClick={()=>{select(study.id)}}>Inspect case assumptions <ArrowRight size={16}/></button><button type="button" onClick={()=>changeMode('decide')}>Review blockers <ArrowRight size={16}/></button></div>
+   <div className="v2-physics-footer"><span><LockKeyhole size={17}/> Playback and synthetic CFD overlays are intentionally disabled. No solver has run for this example investigation.</span><button type="button" onClick={()=>{select(study.id)}}>Inspect case assumptions <ArrowRight size={16}/></button><button type="button" onClick={()=>changeMode('decide')}>Review blockers <ArrowRight size={16}/></button></div>
  </section>;
 }
 

@@ -1,28 +1,28 @@
-# Naval Design Studio — standard USV-01 interface
+# Previous Naval Design Studio interface
 
 **Product name:** Naval Design Studio  
 **Origin:** Dockyard 2.0 (retained internally as `src/dockyard2` to avoid breaking imports)  
-**State:** Default **read-only engineering interface** with protected legacy editor handoffs. It is **not** a new engineering approval authority.
+**State:** Previous read-only interface retained at `/dockyard2.html`. It is **not** an engineering approval authority.
 
 ## Entry points and source ownership
 
-- `/` or `/index.html`: **Naval Design Studio** — the standard workbench. Uses `src/dockyard2/main.tsx` and independent UI styles/components.
+- `/` or `/index.html`: **Engineering Sessions** — the standard investigation-oriented interface.
 - `/legacy.html`: **Legacy Engineering Workbench** — original `src/main.tsx` application, which retains editing, CAD study features, agents, record imports, calculations and all authorization/approval workflows.
-- `/dockyard2.html`: compatibility URL for previous previews; now uses the **same Naval Design Studio** UI.
-- `/legacy.html?module=<registered-ID>`: opens one of the original 24 registered modules. Legacy `/?module=ID` links are forwarded only for valid registered IDs; unrecognized `module` queries stay in the new UI.
+- `/dockyard2.html`: previous **Naval Design Studio** interface, retained as an alternate entry.
+- `/legacy.html?module=<registered-ID>`: opens one of the original 24 registered modules. Legacy `/?module=ID` links are forwarded only for valid registered IDs; unrecognized `module` queries stay in Engineering Sessions.
 
 `vite.config.ts` builds all three HTML entries. Express serves the static HTML assets, with `dist/index.html` as its fallback. The primary product is the new interface — the legacy UI is an explicit option for full workflows rather than the default.
 
-Run:
+To run the previous interface:
 
 ```bash
 npm ci
-npm run dev:naval-design-studio
+npm run dev:dockyard2
 ```
 
-The general `npm run dev:ui` and `npm run dev` server commands also now open the standard app at the root route. `npm run dev:dockyard2` remains available for old scripts and preview links.
+The general `npm run dev:ui` and `npm run dev` server commands open Engineering Sessions at the root route.
 
-## Standard experience
+## Previous experience
 
 - New light, high-contrast engineering application shell and CAD-first viewport.
 - Five main workspaces: Design & CAD, Engineering Analysis, Agents, Director, Evidence & Assurance.

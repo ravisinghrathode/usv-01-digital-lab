@@ -20,13 +20,14 @@ const props={
  addNote:(_s:string)=>{},
  prepareTask:()=>{}
 };
-describe('Engineering Sessions — connected high fidelity investigation prototype',()=>{
- it('isolates new interface from all older dashboards, preserves default & governed runtime',()=>{
+describe('Engineering Sessions — standard investigation interface',()=>{
+ it('serves the new standard at root and preserves prior and governed routes',()=>{
   expect(source('sessions.html')).toContain('/src/sessions/main.tsx');
   expect(source('src/sessions/main.tsx')).toContain("import './styles.css'");
   expect(source('vite.config.ts')).toContain("engineeringSessions: path.resolve(import.meta.dirname, 'sessions.html')");
   expect(source('package.json')).toContain('dev:engineering-sessions');
-  expect(source('index.html')).toContain('/src/dockyard2/main.tsx');
+  expect(source('index.html')).toContain('/src/sessions/main.tsx');
+  expect(source('dockyard2.html')).toContain('/src/dockyard2/main.tsx');
   expect(source('legacy.html')).toContain('/src/main.tsx');
   const app=source('src/sessions/App.tsx');
   expect(app).not.toContain("from '../atlas/");
@@ -45,8 +46,8 @@ describe('Engineering Sessions — connected high fidelity investigation prototy
   expect(DEFAULT_SESSION.selected).toBeNull();
   const app=renderToStaticMarkup(<EngineeringSessionsApp/>);
   expect(app).toContain('Persistent engineering investigation context');
-  expect(app).toContain('INTERACTIVE UX PROTOTYPE');
-  expect(app).toContain('All engineering objects are synthetic examples');
+  expect(app).toContain('EXAMPLE INVESTIGATION');
+  expect(app).toContain('All investigation objects are synthetic');
   expect(app).toContain('Naval AI Lab');
   expect(app).toContain('Session objects');
   for(const m of MODES)expect(app).toContain(m.name);
