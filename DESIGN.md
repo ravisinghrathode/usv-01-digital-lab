@@ -1,4 +1,16 @@
-# NAVAL STUDIO — DOCKYARD / DESIGN A
+# Naval Design Studio — Standard Application Design
+
+Naval Design Studio is the user-selected **canonical product name**. The standalone Dockyard 2.0 UI is the **standard application**, served at `/` and `/index.html`. The old Naval Studio frontend is retained at `/legacy.html` solely to operate its existing editors, agent execution, CAD study tools and protected engineering approval workflows. Previous `/?module=ID` URLs safely preserve legacy access to registered IDs.
+
+The visual direction is a daylight-readable engineering control shell with a **dominant dark CAD viewport**, restrained maritime teal, disciplined typography, product selection, and contextual requirements/analysis/agent/evidence links. The five global workspaces are Design, Analysis, Agents, Director and Evidence. The explicit authority boundary remains: read-only default UI, guarded original engineering workflows.
+
+**Default cutover is a routing and product identity change, not full migration of 24 engineering modules.** Missing evidence is marked unverified; imported meshes and 2D illustrations are never approved CAD. Build/typecheck/tests and human review are mandatory before merge; device/browser and Google AI Studio deployment acceptance are separate verifications. See `src/dockyard2/README.md` for exact runtime and legacy routing.
+
+---
+
+## Historical Dockyard Design A foundation
+
+The design below documents the earlier incremental Dockyard/Clarity implementation still retained as the legacy editor. It is no longer the default UI architecture.
 
 ## Decision
 **Dockyard (A)** is the selected master UI direction for Naval Studio. It supersedes Clarity as the active visual/interaction direction while retaining Clarity's trustworthy light-shell foundation. This is the **Operate** UX mode. The environment is a working naval architecture/design office with variable daylight, long review sessions and frequent transitions from geometric inspection to evidence. A legible neutral control surface surrounds one dark, technically focused CAD workstage.

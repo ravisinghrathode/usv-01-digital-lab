@@ -7,7 +7,7 @@ import { DOCKYARD_AREAS } from '../src/studio/dockyardAreas';
 import { contrastRatio } from '../src/studio/readability';
 import {
   areaForModule, domainForPart, illustrativeSnapshot,
-  legacyModuleUrl, linkedEvidence, parseServerSnapshot,
+  legacyModuleUrl, legacyRootRedirect, linkedEvidence, parseServerSnapshot,
   requestedLegacyModule, searchLoaded
 } from '../src/dockyard2/domain';
 import { MAX_OBJ_BYTES, meshBounds, parseObj } from '../src/dockyard2/mesh';
@@ -16,15 +16,21 @@ import { DesignScreen } from '../src/dockyard2/DesignScreen';
 import { AnalysisScreen, AgentsScreen, DirectorScreen, EvidenceScreen } from '../src/dockyard2/Screens';
 const source=(path:string)=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
 
-describe('Dockyard 2.0 standalone application',()=>{
+describe('Naval Design Studio standard interface',()=>{
   it('has an independent HTML entry and does not reuse the old UI shell',()=>{
+    expect(source('index.html')).toContain('<title>Naval Design Studio | USV-01</title>');
+    expect(source('index.html')).toContain('src/dockyard2/main.tsx');
+    expect(source('legacy.html')).toContain('src/main.tsx');
     expect(source('dockyard2.html')).toContain('src/dockyard2/main.tsx');
+    expect(source('vite.config.ts')).toContain("navalDesignStudio: path.resolve(import.meta.dirname, 'index.html')");
+    expect(source('vite.config.ts')).toContain("legacyEngineering: path.resolve(import.meta.dirname, 'legacy.html')");
     expect(source('vite.config.ts')).toContain('dockyard2.html');
+    expect(source('package.json')).toContain('dev:naval-design-studio');
     expect(source('package.json')).toContain('dev:dockyard2');
     const app=source('src/dockyard2/App.tsx');
     expect(app).not.toContain("from '../components/StudioNavigation'");
     expect(app).not.toContain("from '../components/CadStudioView'");
-    expect(app).toContain('DockyardApp');
+    expect(app).toContain('NavalDesignStudioApp');
     expect(app).toContain('<DesignScreen');
     expect(app).toContain('<AgentsScreen');
     expect(app).toContain('<EvidenceScreen');
@@ -36,10 +42,13 @@ describe('Dockyard 2.0 standalone application',()=>{
     expect(new Set(ids).size).toBe(24);
     expect([...ids].sort()).toEqual(MODULE_REGISTRY.map(x=>x.id).sort());
     for(const id of ids){
-      expect(legacyModuleUrl(id)).toBe('/?module='+encodeURIComponent(id));
+      expect(legacyModuleUrl(id)).toBe('/legacy.html?module='+encodeURIComponent(id));
+      expect(legacyRootRedirect('?module='+encodeURIComponent(id))).toBe(legacyModuleUrl(id));
       expect(requestedLegacyModule('?module='+encodeURIComponent(id))).toBe(id);
       expect(['design','analysis','agents','director','evidence']).toContain(areaForModule(id));
     }
+    expect(legacyRootRedirect('?module=unknown')).toBeNull();
+    expect(legacyRootRedirect('?x=y')).toBeNull();
     expect(requestedLegacyModule('?module=undefined')).toBe('cad-studio');
     expect(requestedLegacyModule('?module=invalid%3Cscript%3E')).toBe('cad-studio');
     expect(source('src/App.tsx')).toContain('new URLSearchParams(window.location.search)');
@@ -84,7 +93,8 @@ describe('Dockyard 2.0 standalone application',()=>{
   it('renders the five original read-only work surfaces with real register data',()=>{
     const props={snapshot:illustrativeSnapshot,sourceLabel:'Illustrative records'};
     const app=renderToStaticMarkup(<DockyardApp/>);
-    expect(app).toContain('DOCKYARD');
+    expect(app).toContain('Naval Design Studio');
+    expect(app).toContain('href="/legacy.html"');
     expect(app).toContain('All 24 modules');
     expect(app).toContain('Illustrative local registers');
     expect(app).toContain('Main engineering workspaces');

@@ -9,7 +9,7 @@ import { MODULE_REGISTRY } from '../moduleRegistry';
 import { login, logout } from '../core/auth/authClient';
 import { DesignScreen } from './DesignScreen';
 import { AnalysisScreen, AgentsScreen, DirectorScreen, EvidenceScreen } from './Screens';
-import { legacyModuleUrl, searchLoaded, type WorkArea } from './domain';
+import { legacyModuleUrl, legacyRootRedirect, searchLoaded, type WorkArea } from './domain';
 import { useSnapshot } from './useSnapshot';
 
 const areas:{id:WorkArea;label:string;icon:React.ComponentType<{size?:number}>}[]=[
@@ -31,7 +31,7 @@ const statusText={
   unavailable:'Server records unavailable · sample shown'
 } as const;
 
-export default function DockyardApp() {
+export default function NavalDesignStudioApp() {
   const {snapshot,status,user,error}=useSnapshot();
   const [area,setArea]=useState<WorkArea>(areaFromHash);
   const [large,setLarge]=useState(false);
@@ -52,6 +52,14 @@ export default function DockyardApp() {
     if(typeof window!=='undefined')window.history.replaceState(null,'','#'+next);
     requestAnimationFrame(()=>main.current?.focus());
   };
+  useEffect(()=>{
+    // Preserve previously shared links to governed modules, which historically
+    // lived at /?module=<id>. No unrecognized module can be selected here.
+    if(window.location.pathname==='/'||window.location.pathname==='/index.html'){
+      const legacy = legacyRootRedirect(window.location.search);
+      if(legacy){window.location.replace(legacy);return;}
+    }
+  },[]);
   useEffect(()=>{
     const onHash=()=>setArea(areaFromHash());
     const key=(event:KeyboardEvent)=>{
@@ -78,9 +86,9 @@ export default function DockyardApp() {
   const areaLabel=areas.find(a=>a.id===area)?.label||'Design';
   return <div className={'d2-app'+(large?' d2-large':'')}>
     <header className="d2-topbar">
-      <a className="d2-brand" href="/dockyard2.html#design" onClick={e=>{e.preventDefault();navigate('design');}}>
+      <a className="d2-brand" href="/#design" onClick={e=>{if(window.location.pathname==='/'||window.location.pathname==='/index.html'){e.preventDefault();navigate('design');}}}>
         <span className="d2-brandmark" aria-hidden="true"><Compass size={22}/></span>
-        <span><strong>DOCKYARD <em>2.0</em></strong><small>NAVAL STUDIO · USV-01</small></span>
+        <span><strong>Naval Design Studio</strong><small>USV-01 · DIGITAL ENGINEERING</small></span>
       </a>
       <div className="d2-top-actions">
         <button ref={searchTrigger} className="d2-top-button" type="button" onClick={openSearch}
@@ -167,13 +175,13 @@ export default function DockyardApp() {
           })}
         </section>)}
       </div>
-      <a href="/" className="d2-button d2-original-link">Open original Naval Studio <ArrowUpRight size={17}/></a>
+      <a href="/legacy.html" className="d2-button d2-original-link">Open legacy engineering workbench <ArrowUpRight size={17}/></a>
     </dialog>
     <dialog ref={loginDialog} className="d2-dialog d2-login" aria-label="Staff sign-in">
       <div className="d2-dialog-head"><h2>Engineering staff sign-in</h2>
         <button type="button" aria-label="Close sign-in" onClick={()=>loginDialog.current?.close()}><X size={20}/></button></div>
       <form onSubmit={e=>{void signIn(e);}} className="d2-authform">
-        <p>Uses the existing Naval Studio identity service. Read-only Dockyard pages never authorize engineering release.</p>
+        <p>Uses the existing USV-01 identity service. Read-only Naval Design Studio views never authorize engineering release.</p>
         <label htmlFor="d2-userid">Staff user ID</label>
         <input id="d2-userid" autoComplete="username" required value={userId}
           onChange={e=>setUserId(e.target.value)}/>
