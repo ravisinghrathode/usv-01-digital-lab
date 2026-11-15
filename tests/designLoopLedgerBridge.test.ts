@@ -1,4 +1,5 @@
 import {afterEach,describe,expect,it} from 'vitest';
+import {createHash} from 'node:crypto';
 import {mkdtemp,rm} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -12,7 +13,9 @@ function example(runId:string):DesignLoopReport{
   const rev=(index:number,geometry:number)=>({
     index,screened:{
       parameters:{lwlMeters:geometry,beamMeters:2},conceptTopology:'MONOHULL',
-      inputDigest:'input-'+geometry,sourceKind:'MODEL_PROPOSAL_UNVERIFIED',
+      inputDigest:'sha256:'+createHash('sha256').update(
+        JSON.stringify({lwlMeters:geometry,beamMeters:2})).digest('hex'),
+      sourceKind:'MODEL_PROPOSAL_UNVERIFIED',
       unverifiedMetricProvenance:{},missingEngineeringInputs:['mass and CG'],
       screenResults:[],solverEvaluations:[]
     },critique:{findings:['Revise source assumptions'],openTbdItems:['CG unknown'],
@@ -66,9 +69,13 @@ describe('M03 design-loop bridge is research-only and source-pinned',()=>{
      .rejects.toThrow(/RELEASE_REFUSED/);
    const unchanged=example('RUN-D');
    unchanged.revisions[1].screened.parameters.lwlMeters=10;
-   unchanged.revisions[1].screened.inputDigest='input-10';
+   unchanged.revisions[1].screened.inputDigest=unchanged.revisions[0].screened.inputDigest;
    await expect(recordUnverifiedDesignLoop(unchanged,store,options('CAND-D')))
      .rejects.toThrow(/NO_ACTUAL_PROPOSAL_CHANGE/);
+   const inconsistent=example('RUN-BAD-DIGEST');
+   inconsistent.revisions[1].screened.inputDigest='sha256:'+'b'.repeat(64);
+   await expect(recordUnverifiedDesignLoop(inconsistent,store,options('CAND-BAD')))
+     .rejects.toThrow(/REPORT_INPUT_DIGEST_MISMATCH/);
    const noCritique=example('RUN-E');
    noCritique.revisions[0].critique.findings=[];
    noCritique.revisions[0].critique.openTbdItems=[];

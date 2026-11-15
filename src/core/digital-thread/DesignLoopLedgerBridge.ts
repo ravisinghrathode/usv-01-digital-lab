@@ -4,6 +4,7 @@
  * as released engineering data. No live model, tool or approval is invoked.
  */
 import type { DesignLoopReport, DesignRevision } from '../optimizer/AgentDesignLoop.ts';
+import { createHash } from 'node:crypto';
 import {
   CandidateLedger, sha256,
   type CandidateEvent, type Classification, type Sha256
@@ -24,6 +25,10 @@ function screenedDigest(rev:DesignRevision,sourceSha:string):Sha256 {
   }
   if(Object.values(rev.screened.parameters).some(n=>typeof n!=='number'||!Number.isFinite(n)))
     throw new Error('M03_INVALID_MODEL_NUMBER');
+  const originalDigest='sha256:'+createHash('sha256')
+    .update(JSON.stringify(rev.screened.parameters)).digest('hex');
+  if(rev.screened.inputDigest!==originalDigest)
+    throw new Error('M03_REPORT_INPUT_DIGEST_MISMATCH');
   return sha256({
     classification:'UNVERIFIED_MODEL_PROPOSAL_HASH_ONLY',
     sourceSha,topology:rev.screened.conceptTopology,
