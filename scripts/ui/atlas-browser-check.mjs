@@ -30,6 +30,7 @@ try{
  assert(shelf&&sheet&&inspector&&runway,'All primary regions must have dimensions');
  assert(Math.abs(shelf.y-sheet.y)<=4 && Math.abs(sheet.y-inspector.y)<=4,'Product shelf, canvas and inspector must form a continuous desktop drafting board');
  assert(runway.y>=sheet.y+sheet.height-3,'Simulation runway must follow product board');
+ assert(runway.y<900,'Simulation runway must enter the initial 1440x900 viewport');
  assert(sheet.width>shelf.width*2,'Vessel drawing sheet should dominate the instrument panel');
  // An assembly selection updates its adjacent source inspector.
  await page.getByRole('group',{name:'Select product assembly'}).getByRole('button',{name:/Hull/}).click();
@@ -84,6 +85,15 @@ try{
   assert(dimensions.scroll<=dimensions.visible+2,'Unexpected horizontal overflow at '+width+': '+JSON.stringify(dimensions));
   assert(await page.locator('.at-drawing-surface').isVisible(),'No product drawing at '+width);
   assert(await page.locator('.at-runway').isVisible(),'Simulation dock missing at '+width);
+  const dock=await page.locator('.at-runway').boundingBox();
+  assert(dock&&dock.y<height,'Simulation runway below the initial viewport at '+width+'px');
+  if(width<=1110){
+    const details=await page.locator('.at-product-inspector').boundingBox();
+    assert(details&&dock.y<details.y,'Inspector must follow simulations at '+width+'px');
+  }
+  if(width<=460){
+    assert.equal(await page.getByRole('navigation',{name:'Lab workspaces'}).getByRole('button').count(),5);
+  }
   await page.screenshot({path:path.join(output,'atlas-'+width+'-viewport.png'),fullPage:false,animations:'disabled'});
   await page.screenshot({path:path.join(output,'atlas-'+width+'-full.png'),fullPage:true,animations:'disabled'});
  }
