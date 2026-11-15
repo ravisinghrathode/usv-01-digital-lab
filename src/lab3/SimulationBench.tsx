@@ -55,6 +55,14 @@ export function SimulationBench({simulations,sourceLabel,compact=false}:Props){
         No solver output is visualized until a source-backed, reviewable result is attached.
       </div>
     </div>:<div className="nl-sim-warning">No simulation or solver results can be inferred.</div>}
+    {selected&&<div className="nl-sim-result" aria-label="Simulation results availability">
+      <div className="nl-sim-result-top"><span>RESULT VIEWER</span><span>NO VERIFIED PLOT</span></div>
+      <div className="nl-sim-result-empty">
+        <FlaskConical size={25} aria-hidden="true"/>
+        <strong>Source-backed result required</strong>
+        <p>Geometry, boundary conditions and outputs must be reviewed in the Simulation Centre before displaying performance data.</p>
+      </div>
+    </div>}
     <div className="nl-simulation-footer">
       <a className="nl-text-link" href={moduleLink('simulations')}>Open Simulation Centre <ArrowUpRight size={15}/></a>
       <span>No solver launched here</span>
