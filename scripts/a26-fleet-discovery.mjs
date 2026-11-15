@@ -15,7 +15,7 @@ const REGISTER_PATH = fileURLToPath(new URL('../references/fleet-intelligence/di
 const FEED_HOSTS = new Set(['www.navalnews.com','news.usni.org',
   'www.naval-technology.com','news.google.com']);
 const SIGNAL = /\b(?:USV|ASV|unmanned surface (?:vessel|vehicle|craft)|uncrewed surface (?:vessel|vehicle|craft)|autonomous surface (?:vessel|vehicle|craft)|maritime (?:surface )?drone|drone boat|surface drone|robotic surface vessel)\b/i;
-const MAX_BYTES = 650000, MAX_SOURCES = 16, MAX_RECORDS = 500, MAX_EVIDENCE = 12;
+const MAX_BYTES = 650000, MAX_SOURCES = 24, MAX_RECORDS = 2000, MAX_EVIDENCE = 24;
 const sha = value => createHash('sha256').update(value).digest('hex');
 
 export function cleanText(value, max = 280) {
@@ -62,9 +62,9 @@ function articleUrl(input) {
 }
 export function validateConfig(c) {
   if (!c || c.schemaVersion !== 1 || c.agentId !== 'INTEL-USV-26' ||
-    c.scope !== 'PUBLIC_METADATA_RESEARCH_ONLY' ||
+    c.scope !== 'PUBLIC_MULTISOURCE_RESEARCH_ONLY' ||
     !Array.isArray(c.sources) || c.sources.length < 2 || c.sources.length > 6 ||
-    !Array.isArray(c.searches) || c.searches.length < 5 || c.searches.length > 10 ||
+    !Array.isArray(c.searches) || c.searches.length < 5 || c.searches.length > 80 ||
     !Array.isArray(c.knownModels) || c.knownModels.length < 14 ||
     !Number.isInteger(c.maxItemsPerFeed) || c.maxItemsPerFeed < 1 ||
     c.maxItemsPerFeed > 75 || c.maxCandidates !== MAX_RECORDS) {
@@ -107,7 +107,7 @@ export function sourcePlan(config) {
       }
       return {id:'google-' + q.id,class:'AGGREGATOR_METADATA',url:validateFeedUrl(url.toString())};
     })
-  ].slice(0,MAX_SOURCES);
+  ];
 }
 const tag = (block,name) => {
   const re = new RegExp('<' + name + '(?:\\s[^>]*)?>([\\s\\S]*?)<\\/' + name + '\\s*>','i');
@@ -206,17 +206,18 @@ function newCandidate(item,source,feedDigest,now,knownModels) {
   };
 }
 export async function runScout({config,baseline=emptyRegister(),fixture=null,
-  fetchImpl=fetch,now=new Date().toISOString(),maxSources=MAX_SOURCES}) {
+  fetchImpl=fetch,now=new Date().toISOString(),maxSources=MAX_SOURCES,sourceOffset=0}) {
   validateConfig(config);validateRegister(baseline);
   if (!Number.isSafeInteger(maxSources) || maxSources<1 || maxSources>MAX_SOURCES) {
     throw Error('INVALID_SOURCE_LIMIT');
   }
   const plan=sourcePlan(config);
+  if (!Number.isSafeInteger(sourceOffset) || sourceOffset < 0 || sourceOffset >= plan.length) throw Error('INVALID_SOURCE_OFFSET');
   const register=structuredClone(baseline);
   const indexed=new Map(register.records.map(r=>[r.id,r]));
   const receipts=[]; let leads=0,evidenceAdded=0,duplicates=0,headlineHits=0;
-  let limited=maxSources<plan.length;
-  for (const source of plan.slice(0,maxSources)) {
+  let limited=maxSources<plan.length - sourceOffset || sourceOffset>0;
+  for (const source of plan.slice(sourceOffset,sourceOffset+maxSources)) {
     try {
       const xml=fixture ? fixture[source.id] : await getFeed(source.url,fetchImpl);
       if (typeof xml !== 'string') throw Error('FIXTURE_SOURCE_MISSING');
@@ -257,6 +258,7 @@ export async function runScout({config,baseline=emptyRegister(),fixture=null,
   return {schemaVersion:1,agentId:'INTEL-USV-26',
     collectedAt:now,sourceRevision:'UNKNOWN',
     executionMode:fixture?'OFFLINE_FIXTURE':'PUBLIC_RSS_METADATA',
+    sourceOffset,totalSourcePlan:plan.length,
     evidenceType:'PUBLIC_RSS_HEADLINES_NOT_VERIFIED_VESSELS',
     sourcesAttempted:receipts.length,sourcesSucceeded:success,
     sourcesFailed:receipts.length-success,sourceReceipts:receipts,
@@ -306,7 +308,7 @@ export function toObsidianCandidate(r) {
   return lines.join('\n');
 }
 function parseArgs(argv) {
-  const out={};const fields=new Set(['--config','--previous','--out-dir','--fixture','--max-sources']);
+  const out={};const fields=new Set(['--config','--previous','--out-dir','--fixture','--max-sources','--source-offset']);
   for(let i=0;i<argv.length;i++){
     const k=argv[i];
     if(k==='--validate-only'){out.validateOnly=true;continue;}
@@ -328,7 +330,8 @@ export async function main(argv=process.argv.slice(2)) {
   const fixture=a.fixture?JSON.parse(await readFile(a.fixture,'utf8')):null;
   const outDir=a['out-dir']||path.join(os.tmpdir(),'usv01-fleet-scout');
   const report=await runScout({config,baseline,fixture,
-    maxSources:a['max-sources']===undefined?MAX_SOURCES:Number(a['max-sources'])});
+    maxSources:a['max-sources']===undefined?MAX_SOURCES:Number(a['max-sources']),
+    sourceOffset:a['source-offset']===undefined?0:Number(a['source-offset'])});
   try {report.sourceRevision=execFileSync('git',['rev-parse','HEAD'],
     {encoding:'utf8',timeout:5000}).trim();}catch{}
   await mkdir(outDir,{recursive:true,mode:0o700});
