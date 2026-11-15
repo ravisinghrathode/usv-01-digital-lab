@@ -119,8 +119,8 @@
     "status": "PRODUCT_CLAIM",
     "sources": [
       {
-        "id": "norwegian-otter-2024",
-        "url": "https://fosenregionen.no/wp-content/uploads/2024/11/Eirik-MR-241029-Fosenmote-Maritime-Robotics-Teknologiske-losninger-fra-Fosen-for-nasjonal-beredskap.pdf"
+        "id": "maritimerobotics-otter",
+        "url": "https://www.maritimerobotics.com/otter"
       }
     ]
   },
@@ -132,8 +132,8 @@
     "status": "PRODUCT_CLAIM",
     "sources": [
       {
-        "id": "nrc-canadian-mass",
-        "url": "https://nrc-publications.canada.ca/eng/view/ft/?id=a1ebf591-9647-49f4-b145-7c53a8273a08"
+        "id": "oor-dataxplorer",
+        "url": "https://www.openoceanrobotics.com/government-operations"
       }
     ]
   }
