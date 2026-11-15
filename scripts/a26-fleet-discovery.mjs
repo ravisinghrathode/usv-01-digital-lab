@@ -65,6 +65,9 @@ export function validateConfig(c) {
     c.scope !== 'PUBLIC_MULTISOURCE_RESEARCH_ONLY' ||
     !Array.isArray(c.sources) || c.sources.length < 2 || c.sources.length > 6 ||
     !Array.isArray(c.searches) || c.searches.length < 5 || c.searches.length > 80 ||
+    !Array.isArray(c.historicalSearches) || c.historicalSearches.length < 3 ||
+    c.historicalSearches.length > 30 ||
+    !c.historicalSearches.every(q => typeof q === 'string' && q.length >= 12 && q.length <= 160) ||
     !Array.isArray(c.knownModels) || c.knownModels.length < 14 ||
     !Number.isInteger(c.maxItemsPerFeed) || c.maxItemsPerFeed < 1 ||
     c.maxItemsPerFeed > 75 || c.maxCandidates !== MAX_RECORDS) {
@@ -112,6 +115,14 @@ export function sourcePlan(config) {
         url.searchParams.set(k,v);
       }
       return {id:'google-' + q.id,class:'AGGREGATOR_METADATA',url:validateFeedUrl(url.toString())};
+    }),
+    ...config.historicalSearches.map((query,i) => {
+      const url=new URL('https://en.wikipedia.org/w/api.php');
+      for(const [k,v] of [['action','query'],['list','search'],
+        ['srsearch',query],['srlimit','25'],['format','json'],['formatversion','2']]){
+        url.searchParams.set(k,v);
+      }
+      return {id:'historical-'+i,class:'ENCYCLOPEDIA_METADATA',url:url.toString()};
     })
   ];
 }
@@ -148,6 +159,46 @@ export function parseFeed(xml,maxItems=45) {
     rows.push({title,url,summary,publishedAt,linkedFiles});
   }
   return rows;
+}
+function parseHistorical(json,max=25){
+  const doc=JSON.parse(json);
+  if(!doc||!Array.isArray(doc.query?.search))throw Error('MALFORMED_HISTORICAL_SEARCH');
+  return doc.query.search.slice(0,max).flatMap(item=>{
+    const pageid=Number(item.pageid);
+    if(!Number.isSafeInteger(pageid)||pageid<1)return [];
+    const title=cleanText(item.title,240);
+    if(!title)return [];
+    const summary=cleanText(item.snippet,360);
+    return [{title,summary,
+      url:'https://en.wikipedia.org/?curid='+pageid,publishedAt:null,
+      linkedFiles:[]}];
+  });
+}
+async function getHistorical(url,fetchImpl){
+  const u=new URL(url);
+  if(u.protocol!=='https:'||u.hostname!=='en.wikipedia.org'||
+    u.pathname!=='/w/api.php'||u.username||u.password||u.port||
+    u.searchParams.get('action')!=='query'||u.searchParams.get('list')!=='search'||
+    u.searchParams.get('format')!=='json')throw Error('UNAUTHORIZED_HISTORICAL_SOURCE');
+  const response=await fetchImpl(url,{
+    method:'GET',redirect:'error',signal:AbortSignal.timeout(12000),
+    headers:{Accept:'application/json'}
+  });
+  if(!response.ok)throw Error('HTTP_'+response.status);
+  if(!/json/i.test(response.headers.get('content-type')||''))throw Error('HISTORICAL_NOT_JSON');
+  if(Number(response.headers.get('content-length')||0)>MAX_BYTES||!response.body)
+    throw Error('HISTORICAL_RESPONSE_TOO_LARGE');
+  const rd=response.body.getReader();let size=0;const chunks=[];
+  try{
+    while(true){
+      const {value,done}=await rd.read();
+      if(done)break;
+      size+=value.byteLength;
+      if(size>MAX_BYTES)throw Error('HISTORICAL_RESPONSE_TOO_LARGE');
+      chunks.push(Buffer.from(value));
+    }
+  }finally{await rd.cancel().catch(()=>{});}
+  return Buffer.concat(chunks).toString('utf8');
 }
 async function getFeed(url,fetchImpl) {
   validateFeedUrl(url);
@@ -238,10 +289,12 @@ export async function runScout({config,baseline=emptyRegister(),fixture=null,
   let limited=maxSources<plan.length - sourceOffset || sourceOffset>0;
   for (const source of plan.slice(sourceOffset,sourceOffset+maxSources)) {
     try {
-      const xml=fixture ? fixture[source.id] : await getFeed(source.url,fetchImpl);
+      const xml=fixture ? fixture[source.id] : source.class==='ENCYCLOPEDIA_METADATA'
+        ? await getHistorical(source.url,fetchImpl) : await getFeed(source.url,fetchImpl);
       if (typeof xml !== 'string') throw Error('FIXTURE_SOURCE_MISSING');
       const feedDigest=sha(xml);
-      const entries=parseFeed(xml,config.maxItemsPerFeed);
+      const entries=source.class==='ENCYCLOPEDIA_METADATA'
+        ? parseHistorical(xml,config.maxItemsPerFeed) : parseFeed(xml,config.maxItemsPerFeed);
       let relevant=0;
       for (const item of entries) {
         if (!SIGNAL.test(item.title + ' ' + item.summary)) continue;
@@ -278,7 +331,7 @@ export async function runScout({config,baseline=emptyRegister(),fixture=null,
     collectedAt:now,sourceRevision:'UNKNOWN',
     executionMode:fixture?'OFFLINE_FIXTURE':'PUBLIC_RSS_METADATA',
     sourceOffset,totalSourcePlan:plan.length,
-    evidenceType:'PUBLIC_RSS_HEADLINES_NOT_VERIFIED_VESSELS',
+    evidenceType:'PUBLIC_RSS_AND_ENCYCLOPEDIA_METADATA_NOT_VERIFIED_VESSELS',
     sourcesAttempted:receipts.length,sourcesSucceeded:success,
     sourcesFailed:receipts.length-success,sourceReceipts:receipts,
     relevantHeadlines:headlineHits,newResearchLeads:leads,
