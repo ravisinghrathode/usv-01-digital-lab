@@ -84,6 +84,64 @@
       "auxiliaryScriptsInstalled": false,
       "additionalApiAccess": false,
       "releaseAuthority": false
+    },
+    {
+      "name": "test-gap-audit",
+      "repo": "github/awesome-copilot",
+      "sourceCommit": "8ecd5b17f02fe5fbebf35eccd1867265eded811f",
+      "path": "skills/test-gap-audit/SKILL.md",
+      "license": "MIT",
+      "scope": "Review missing and weak tests (adapted text-only skill record)",
+      "sourceUrl": "https://github.com/github/awesome-copilot/blob/8ecd5b17f02fe5fbebf35eccd1867265eded811f/skills/test-gap-audit/SKILL.md",
+      "executionPermission": "NONE_SKILL_TEXT_ONLY",
+      "auxiliaryScriptsInstalled": false,
+      "additionalApiAccess": false,
+      "releaseAuthority": false,
+      "libraryRepresentation": "SOURCE_ATTRIBUTED_PORTABLE_ADAPTATION"
+    },
+    {
+      "name": "github-actions-hardening",
+      "repo": "github/awesome-copilot",
+      "sourceCommit": "8ecd5b17f02fe5fbebf35eccd1867265eded811f",
+      "path": "skills/github-actions-hardening/SKILL.md",
+      "license": "MIT",
+      "scope": "Review GitHub Actions trust boundary and token security",
+      "sourceUrl": "https://github.com/github/awesome-copilot/blob/8ecd5b17f02fe5fbebf35eccd1867265eded811f/skills/github-actions-hardening/SKILL.md",
+      "executionPermission": "NONE_SKILL_TEXT_ONLY",
+      "auxiliaryScriptsInstalled": false,
+      "additionalApiAccess": false,
+      "releaseAuthority": false,
+      "libraryRepresentation": "PINNED_UPSTREAM_TEXT"
+    },
+    {
+      "name": "playwright",
+      "repo": "openai/skills",
+      "sourceCommit": "49f948faa9258a0c61caceaf225e179651397431",
+      "path": "skills/.curated/playwright/SKILL.md",
+      "license": "Apache-2.0",
+      "scope": "Plan and verify genuine browser UI smoke tests if browser access exists",
+      "sourceUrl": "https://github.com/openai/skills/blob/49f948faa9258a0c61caceaf225e179651397431/skills/.curated/playwright/SKILL.md",
+      "executionPermission": "NONE_SKILL_TEXT_ONLY",
+      "auxiliaryScriptsInstalled": false,
+      "additionalApiAccess": false,
+      "releaseAuthority": false,
+      "libraryRepresentation": "PINNED_UPSTREAM_TEXT"
+    },
+    {
+      "name": "gh-fix-ci",
+      "repo": "openai/skills",
+      "sourceCommit": "49f948faa9258a0c61caceaf225e179651397431",
+      "path": "skills/.curated/gh-fix-ci/SKILL.md",
+      "license": "Apache-2.0",
+      "scope": "Inspect real GitHub Actions CI failures and propose controlled fixes",
+      "sourceUrl": "https://github.com/openai/skills/blob/49f948faa9258a0c61caceaf225e179651397431/skills/.curated/gh-fix-ci/SKILL.md",
+      "executionPermission": "NONE_SKILL_TEXT_ONLY",
+      "auxiliaryScriptsInstalled": false,
+      "additionalApiAccess": false,
+      "releaseAuthority": false,
+      "libraryRepresentation": "PINNED_UPSTREAM_TEXT"
     }
-  ]
+  ],
+  "skillExpansionFrozen": true,
+  "freezePolicyFile": "config/agent-skill-freeze.json"
 }
