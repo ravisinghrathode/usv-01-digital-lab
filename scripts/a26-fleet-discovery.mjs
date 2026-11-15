@@ -83,6 +83,11 @@ export function validateConfig(c) {
       typeof q.query !== 'string' || q.query.length < 12 || q.query.length > 160) {
       throw Error('INVALID_PUBLIC_SEARCH');
     }
+    if (q.locale && (!/^[a-z]{2}(?:-[A-Za-z0-9]{2,8})*$/.test(q.locale.hl) ||
+      !/^[A-Z]{2}$/.test(q.locale.gl) ||
+      !/^[A-Z]{2}:[A-Za-z0-9-]{2,20}$/.test(q.locale.ceid))) {
+      throw Error('INVALID_SOURCE_LOCALE');
+    }
     queries.add(q.id);
   }
   const models = new Set();
@@ -102,7 +107,8 @@ export function sourcePlan(config) {
     ...config.sources.map(s => ({...s,url:validateFeedUrl(s.url)})),
     ...config.searches.map(q => {
       const url = new URL('https://news.google.com/rss/search');
-      for (const [k,v] of [['q',q.query],['hl','en-US'],['gl','US'],['ceid','US:en']]) {
+      const l=q.locale || {hl:'en-US',gl:'US',ceid:'US:en'};
+      for (const [k,v] of [['q',q.query],['hl',l.hl],['gl',l.gl],['ceid',l.ceid]]) {
         url.searchParams.set(k,v);
       }
       return {id:'google-' + q.id,class:'AGGREGATOR_METADATA',url:validateFeedUrl(url.toString())};
