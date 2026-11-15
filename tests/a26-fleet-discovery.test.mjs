@@ -23,7 +23,7 @@ const sample = '<rss><channel>' +
   '</channel></rss>';
 
 test('bounded global sources, restricted feed hosts and seeded alias coverage',()=>{
-  assert.equal(sourcePlan(config).length,73);
+  assert.equal(sourcePlan(config).length,85);
   assert.equal(config.knownModels.length,14); // Aliases seed the known list; not a 14-model collection limit.
   assert.equal(config.maxCandidates,2000);
   assert.throws(()=>validateFeedUrl('http://www.navalnews.com/feed/'));
@@ -36,6 +36,9 @@ test('bounded global sources, restricted feed hosts and seeded alias coverage',(
   assert.ok(sourcePlan(config).some(x=>x.id==='google-manuals'));
   assert.ok(sourcePlan(config).some(x=>x.id==='google-local-japanese' && x.url.includes('ceid=JP%3Aja')));
   assert.ok(sourcePlan(config).some(x=>x.id==='google-local-chinese'));
+  assert.equal(config.historicalSearches.length,12);
+  assert.ok(sourcePlan(config).some(x=>x.class==='ENCYCLOPEDIA_METADATA'));
+
   assert.throws(()=>validateConfig({...config,searches:[{...config.searches[0],locale:{hl:'en',gl:'XX',ceid:'bad'}}]}));
   assert.throws(()=>validateConfig({...config,agentId:'A27'}));
 });
@@ -69,6 +72,18 @@ test('catalogues public imagery and document attachment links without downloadin
   assert.equal(result[0].linkedFiles.length,2);
   assert.ok(result[0].linkedFiles.every(x=>x.fileBytesDownloaded===false));
   assert.ok(result[0].linkedFiles.every(x=>x.license==='UNKNOWN_REVIEW_REQUIRED'));
+});
+
+test('historical public search records seed unverified prototype research leads',async()=>{
+  const source=sourcePlan(config).find(s=>s.class==='ENCYCLOPEDIA_METADATA');
+  const json=JSON.stringify({query:{search:[{pageid:654,title:'Experimental autonomous surface vessel',
+    snippet:'The USV was a prototype research vessel.'}]}});
+  const scan=await runScout({config,sourceOffset:73,maxSources:1,
+    fixture:{[source.id]:json},now:at});
+  assert.equal(scan.newResearchLeads,1);
+  assert.equal(scan.register.records[0].status,'DISCOVERED_UNVERIFIED');
+  assert.equal(scan.register.records[0].operatorNavy,'UNKNOWN');
+  assert.match(scan.register.records[0].evidence[0].publicArticleUrl,/wikipedia.org/);
 });
 
 test('Japanese prototype headlines survive multilingual filtering and deduplication',async()=>{
