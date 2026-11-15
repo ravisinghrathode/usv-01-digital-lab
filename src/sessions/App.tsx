@@ -67,7 +67,7 @@ export default function EngineeringSessionsApp(){
       onClick={()=>setMode(m.id)} title={m.name+' · Alt+'+m.key}><Icon size={17}/><span>{m.name}</span></button>})}
    </nav>
    <div className="es-global-actions">
-    <button type="button" className="es-search-trigger" ref={searchTrigger} onClick={()=>{setSearch('');searchDialog.current?.showModal();}}><Search size={19}/><span>Find anything</span><kbd>⌘ K</kbd></button>
+    <button type="button" className="es-search-trigger" ref={searchTrigger} onClick={()=>{setSearch('');searchDialog.current?.showModal();}} aria-label="Find anything ⌘ K"><Search size={19}/><span>Find anything</span><kbd>⌘ K</kbd></button>
     <button type="button" className="es-help-button" onClick={()=>setHelpOpen(v=>!v)} aria-expanded={helpOpen} aria-label="Toggle prototype help"><HelpCircle size={20}/></button>
     <a className="es-governed" href="/legacy.html" title="Open original governed engineering lab"><span>Original lab</span> <ArrowUpRight size={14}/></a>
    </div>

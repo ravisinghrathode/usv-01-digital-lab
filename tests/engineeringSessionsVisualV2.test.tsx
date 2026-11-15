@@ -59,6 +59,7 @@ describe('Engineering Sessions V2 — visual baseline fidelity and trust boundar
  it('preserves the existing React investigation context and exact original route/permissions',()=>{
   const app=src('src/sessions/App.tsx');
   expect(app).toContain("from './v2/Modes'");
+  expect(app).toContain('aria-label="Find anything ⌘ K"');
   expect(app).toContain('setSession(old=>({...old,mode})');
   expect(app).toContain('legacyLink(selected.module)');
   expect(src('src/sessions/main.tsx')).toContain("import './v2/design.css'");
