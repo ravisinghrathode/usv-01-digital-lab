@@ -125,3 +125,47 @@ adaptation; the other three final external records are copies of pinned
 upstream skill instructions. None is a native plugin/runtime installation.
 Do not reinterpret a skill pass as qualified physical engineering evidence,
 current trusted-host commissioning or approved vessel release.
+
+## Naval Design Studio — mandatory UI/UX skills (separate development toolchain)
+
+The Project Lead explicitly requested installation of five frontend design and
+QA skills on 2026-11-15. These are **development-time UI guidance**, not a
+change to the frozen 31 engineering/agent skills, the 26 registered agents,
+the privileged runtime, or the engineering authority structure.
+
+For work on Naval Design Studio, the application shell, dashboards, CAD
+viewport, mobile navigation or accessibility, consult all five pinned skills
+in `.agents/skills/` **before implementing**:
+
+1. `frontend-app-builder/SKILL.md` (OpenAI): create a complete high-fidelity
+   concept and implementation contract; compare the built UI to approved
+   reference imagery rather than judging by a successful build.
+2. `frontend-design/SKILL.md` (Anthropic): develop a distinctive naval
+   engineering art direction and critique typography, hierarchy, layout,
+   contrast, copy, and visual coherence.
+3. `ui-ux-pro-max/SKILL.md` (NextLevelBuilder): search the bundled datasets
+   for product style, design tokens, typography, stack rules and UX pitfalls.
+   The included search tooling needs Python 3 and runs locally.
+4. `frontend-ui-engineering/SKILL.md` (Addy Osmani): implement responsive
+   components, keyboard controls, accessible states, robust interactions,
+   semantic layouts and reusable design tokens.
+5. `browser-testing-with-devtools/SKILL.md` (Addy Osmani): verify the
+   running implementation in a **real, isolated browser**, including computed
+   styles, console/network issues, accessibility tree, screenshot fidelity,
+   narrow viewports and zoom. This skill's Chrome DevTools MCP prerequisite is
+   not installed by copying SKILL.md: if a real browser is unavailable, flag
+   visual acceptance as blocked, never claim it ran.
+
+Apply the workflow **concept → design review → implementation → real browser
+QA → independent critique**. Preserve the existing protected engineering
+record/solver/agent/governance boundaries. Use actual sources, do not fabricate
+release states or vessel metrics. Test at a minimum 1440px, 1280px, 768px,
+390px and 320px widths plus 200% zoom and enlarged-text mode. Record
+screenshots, keyboard/focus results, contrast measurements and material
+mismatches in each UI PR; build/tests alone do not qualify a release.
+
+The project-local installation is readable by compatible repository-aware
+agents, but it **does not install or register these skills inside the ChatGPT
+host's global skill catalogue**. A ChatGPT assistant can explicitly fetch the
+project copies to apply their guidance. For supply-chain metadata and exact
+upstream source commits, see `docs/UI_UX_SKILL_STACK.md`.
