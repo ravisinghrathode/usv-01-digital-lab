@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import {Activity,ArrowRight,Box,,ArrowUpRight,BookOpen,Check,ChevronRight,ClipboardCheck,Clock3,Database,FileClock,FileQuestion,FileText,FlaskConical,GitBranch,Info,LockKeyhole,NotebookPen,Pause,Plus,Search,ShieldAlert,ShieldCheck,SlidersHorizontal,Target,TriangleAlert,Users} from 'lucide-react';
+import {Activity,ArrowRight,Box,ArrowUpRight,BookOpen,Check,ChevronRight,ClipboardCheck,Clock3,Database,FileClock,FileQuestion,FileText,FlaskConical,GitBranch,Info,LockKeyhole,NotebookPen,Pause,Plus,Search,ShieldAlert,ShieldCheck,SlidersHorizontal,Target,TriangleAlert,Users} from 'lucide-react';
 import {VesselVisual} from './VesselVisual';
 import {ContextTag,ObjectRow,SourceLink,SourceNotice,type SessionProps} from './FidelityCommon';
 import {STUDIES,INVESTIGATION,currentStudy,type EntityId} from './model';
