@@ -1,5 +1,5 @@
 import {describe,it,expect} from 'vitest';
-import {shapeResearchFeed} from '../src/server/a26ResearchFeed';
+import {A26UpstreamError,loadA26ResearchFeed,shapeResearchFeed} from '../src/server/a26ResearchFeed';
 
 const meta={branch:'automation/a26-fleet-discovery-43666126420',revision:'a'.repeat(40)};
 const fleet={schemaVersion:1,agentId:'INTEL-USV-26',classification:'PUBLIC_SOURCE_SAFE_ONLY',
@@ -21,6 +21,14 @@ const manifest={schemaVersion:1,agentId:'INTEL-USV-26',
  classification:'PUBLIC_SOURCE_SAFE_ONLY',reviewStatus:'UNVERIFIED_REVIEW_REQUIRED',
  engineeringReleaseApproved:false,runId:'43666390118'};
 describe('A26 read-only Lab research feed',()=>{
+ it('provides stable ESM exports required by previously imported AI Studio server.ts',()=>{
+   expect(typeof loadA26ResearchFeed).toBe('function');
+   const error=new A26UpstreamError('unavailable');
+   expect(error).toBeInstanceOf(Error);
+   expect(error).toBeInstanceOf(A26UpstreamError);
+   expect(error.name).toBe('A26UpstreamError');
+   expect(error.message).toBe('unavailable');
+ });
  it('exposes vessel source snapshots without engineering promotion',()=>{
    const r=shapeResearchFeed(fleet,documents,meta,sourceIndex,manifest);
    expect(r.counts).toEqual({fleetLeads:1,publications:1,vesselSourceRecords:1,sourceFailures:3});
