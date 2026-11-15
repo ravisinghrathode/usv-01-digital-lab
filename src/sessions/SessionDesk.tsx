@@ -79,6 +79,10 @@ export function SessionDesk({demoMode,snapshot,draft:localDraft,onDraftChange,ch
     <p>USV-01 / ENGINEERING WORKBENCH</p><h1>{activeTitle}</h1>
     <span>{localDraft?'Unsaved local investigation draft':demoMode?'Illustrative engineering session':'Authenticated project register view · not a certified baseline'}</span>
    </div></div>
+   <div className="ux-role-charter" aria-label="Dual AI design and independent review role charter; not live execution status">
+    <span><strong>ChatGPT</strong><small>Design role</small></span>
+    <span><strong>Gemini</strong><small>Independent review role</small></span>
+   </div>
    <span className="ux-state-warning"><ShieldAlert size={15}/> UNVERIFIED {localDraft?'DRAFT':'WORKSPACE'}</span>
   </header>
   <div className="ux-process" aria-label="Engineering workflow stages">
