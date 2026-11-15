@@ -1,0 +1,89 @@
+{
+  "schema": "usv01-external-skill-sources/v1",
+  "captureDate": "2026-11-15",
+  "project": "USV-01 Naval Digital Lab",
+  "trustBoundary": "CONNECTED_CHATGPT_SKILL_LIBRARY_NOT_NATIVE_RUNTIME",
+  "installationEvidence": "SAVED_AS_RETRIEVABLE_INSTRUCTION_RECORDS",
+  "staticReview": "SOURCE_FRONTMATTER_LICENSE_AND_PROVENANCE_CHECK_ONLY_NOT_A_FULL_CODE_SECURITY_AUDIT",
+  "runtimeDependencyStatus": "NOT_INSTALLED",
+  "sources": [
+    {
+      "name": "security-threat-model",
+      "repo": "openai/skills",
+      "sourceCommit": "49f948faa9258a0c61caceaf225e179651397431",
+      "path": "skills/.curated/security-threat-model/SKILL.md",
+      "license": "Apache-2.0",
+      "scope": "Explicit source-code threat modeling only",
+      "sourceUrl": "https://github.com/openai/skills/blob/49f948faa9258a0c61caceaf225e179651397431/skills/.curated/security-threat-model/SKILL.md",
+      "executionPermission": "NONE_SKILL_TEXT_ONLY",
+      "auxiliaryScriptsInstalled": false,
+      "additionalApiAccess": false,
+      "releaseAuthority": false
+    },
+    {
+      "name": "security-best-practices",
+      "repo": "openai/skills",
+      "sourceCommit": "49f948faa9258a0c61caceaf225e179651397431",
+      "path": "skills/.curated/security-best-practices/SKILL.md",
+      "license": "Apache-2.0",
+      "scope": "Explicit TypeScript/Python security audit only",
+      "sourceUrl": "https://github.com/openai/skills/blob/49f948faa9258a0c61caceaf225e179651397431/skills/.curated/security-best-practices/SKILL.md",
+      "executionPermission": "NONE_SKILL_TEXT_ONLY",
+      "auxiliaryScriptsInstalled": false,
+      "additionalApiAccess": false,
+      "releaseAuthority": false
+    },
+    {
+      "name": "agent-supply-chain",
+      "repo": "github/awesome-copilot",
+      "sourceCommit": "8ecd5b17f02fe5fbebf35eccd1867265eded811f",
+      "path": "skills/agent-supply-chain/SKILL.md",
+      "license": "MIT",
+      "scope": "Review provenance, version pins and agent/tool packages without executing them",
+      "sourceUrl": "https://github.com/github/awesome-copilot/blob/8ecd5b17f02fe5fbebf35eccd1867265eded811f/skills/agent-supply-chain/SKILL.md",
+      "executionPermission": "NONE_SKILL_TEXT_ONLY",
+      "auxiliaryScriptsInstalled": false,
+      "additionalApiAccess": false,
+      "releaseAuthority": false
+    },
+    {
+      "name": "build-evidence-map",
+      "repo": "github/awesome-copilot",
+      "sourceCommit": "8ecd5b17f02fe5fbebf35eccd1867265eded811f",
+      "path": "skills/build-evidence-map/SKILL.md",
+      "license": "MIT",
+      "scope": "Link supporting, contradicting and missing technical evidence",
+      "sourceUrl": "https://github.com/github/awesome-copilot/blob/8ecd5b17f02fe5fbebf35eccd1867265eded811f/skills/build-evidence-map/SKILL.md",
+      "executionPermission": "NONE_SKILL_TEXT_ONLY",
+      "auxiliaryScriptsInstalled": false,
+      "additionalApiAccess": false,
+      "releaseAuthority": false
+    },
+    {
+      "name": "eval-engineering",
+      "repo": "langchain-ai/langchain-skills",
+      "sourceCommit": "32d6228affabb653720d6c20187a8a7afc292478",
+      "path": "config/skills/eval-engineering/SKILL.md",
+      "license": "MIT",
+      "scope": "Author structured offline agent evaluations; optional Harbor tooling uninstalled",
+      "sourceUrl": "https://github.com/langchain-ai/langchain-skills/blob/32d6228affabb653720d6c20187a8a7afc292478/config/skills/eval-engineering/SKILL.md",
+      "executionPermission": "NONE_SKILL_TEXT_ONLY",
+      "auxiliaryScriptsInstalled": false,
+      "additionalApiAccess": false,
+      "releaseAuthority": false
+    },
+    {
+      "name": "skill-creator",
+      "repo": "openai/skills",
+      "sourceCommit": "49f948faa9258a0c61caceaf225e179651397431",
+      "path": "skills/.system/skill-creator/SKILL.md",
+      "license": "Apache-2.0",
+      "scope": "Author and quality-review specialist SKILL.md contracts",
+      "sourceUrl": "https://github.com/openai/skills/blob/49f948faa9258a0c61caceaf225e179651397431/skills/.system/skill-creator/SKILL.md",
+      "executionPermission": "NONE_SKILL_TEXT_ONLY",
+      "auxiliaryScriptsInstalled": false,
+      "additionalApiAccess": false,
+      "releaseAuthority": false
+    }
+  ]
+}

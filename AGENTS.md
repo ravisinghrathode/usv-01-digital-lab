@@ -60,3 +60,37 @@ A01–A26 registry, offline/no-paid-model CI, independent review and human
 approval gates. Never identify a skill-library record as an installed runtime.
 See `docs/AGENT_ENGINEERING_SKILLS_ADOPTION_20261115.md` for the skill-to-code
 mapping, open risks, and acceptance evidence requirements.
+
+## USV-01 specialist skill policy v1 (protected source)
+
+The **six USV-01-owned skills** are under `skills/usv01/<skill-id>/SKILL.md`.
+The complete procedures remain research-only until reviewed. The trusted,
+short-form runtime mappings in `src/core/skills/NavalSkillRegistry.ts`
+select them exclusively by the registered `AgentSpec.canonicalId`; the
+existing `BaseAgent` attaches them to source-owned system guidance and
+logs which IDs were selected. Do not derive role/skill routing from an
+untrusted user prompt, retrieved source, or browser parameter.
+
+- **A01/A02/A03/A04/A18/A21/A24:** marine requirements and standards.
+- **A05/A06/A08/A09/A10/A11/A12/A13:** CAD, mass and CG configuration.
+- **A06/A07/A08/A09/A10/A11/A12/A13/A14/A18/A23/A24:** numerical V&V.
+- **A04/A16/A17/A19/A20/A22/A24:** marine safety and degraded modes.
+- **A01/A02/A15/A20/A21/A23/A25/A26:** evidence and digital-thread sync.
+- **A01/A03/A14/A15/A18/A19/A20/A21/A22/A23/A24/A25/A26:** commissioning.
+
+The **six extra upstream development skills** (`security-threat-model`,
+`security-best-practices`, `agent-supply-chain`,
+`build-evidence-map`, `eval-engineering`, `skill-creator`) are
+text-only references in the connected ChatGPT skill library. Their pinned
+upstream source and licenses are in `config/external-skill-sources.json`.
+They are **not** added to the model runtime and do not install scripts,
+plugins, LangGraph or any new API dependency.
+
+The engineering skill documentation and runtime registry are protected
+software-security paths: update only through exact-head PR review and
+governance CI. Test routing via `tests/navalSkillRegistry.test.ts` and
+`tests/governanceApprovalRoutes.test.ts`. Neither passing these tests
+nor applying a procedure means an agent ran a live model, an engineering
+result was externally validated, or a vessel baseline was released.
+Full adoption/hold and threat review:
+`docs/SPECIALIST_SKILLS_SUPPLY_CHAIN_AND_ACCEPTANCE_20261115.md`.

@@ -71,7 +71,15 @@ export function classifyFile(filePath: string): { categories: ChangeCategory[]; 
     norm.startsWith('governance/ecr/')
   );
 
+  // Source-controlled agent skill policies and authoring instructions can
+  // change trusted system prompts: classify them as security-sensitive.
+  const trustedSkillAuthorityControl = norm.startsWith('skills/usv01/') ||
+    norm.startsWith('src/core/skills/') ||
+    norm === 'AGENTS.md' ||
+    norm === 'config/external-skill-sources.json';
+
   // Category matching
+  if (trustedSkillAuthorityControl) categories.push('SECURITY');
   if (autonomyOrSafetyAcceptance || governanceAuthorityControl) {
     categories.push('SAFETY');
   }
@@ -204,6 +212,11 @@ export function isProtectedSoftwareAuthorityPath(file: string): boolean {
     p.startsWith('src/core/safety/') ||
     p.startsWith('src/core/tools/') ||
     p.startsWith('src/core/orchestrator/') ||
+    p.startsWith('src/core/engine/') ||
+    p.startsWith('src/core/skills/') ||
+    p.startsWith('skills/usv01/') ||
+    p === 'AGENTS.md' ||
+    p === 'config/external-skill-sources.json' ||
     p.startsWith('src/core/registry/') ||
     (p.startsWith('src/core/verification/') &&
       /(Gate|Acceptance|Approval|Authority|Policy|Release|EvidenceDecision|VerifyUsv01|Safety|Autonomy|Permission)/i
