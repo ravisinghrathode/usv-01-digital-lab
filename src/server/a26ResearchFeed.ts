@@ -60,7 +60,7 @@ async function fileFromCommit(p:string,sha:string,fetcher:typeof fetch){
   if(binary.length>MAX_BYTES)throw Error('A26_REVIEW_FILE_TOO_LARGE');
   return JSON.parse(binary.toString('utf8'));
 }
-export function shapeResearchFeed(fleet:any,docs:any,source:{branch:string;revision:string}){
+export function shapeResearchFeed(fleet:any,docs:any,source:{branch:string;revision:string},snapshots?:any,manifest?:any){
   if(fleet?.schemaVersion!==1||fleet.agentId!=='INTEL-USV-26'||
      fleet.classification!=='PUBLIC_SOURCE_SAFE_ONLY'||!Array.isArray(fleet.records)||
      fleet.records.length>2000||!fleet.records.every((r:any)=>r.status==='DISCOVERED_UNVERIFIED'))
@@ -84,13 +84,46 @@ export function shapeResearchFeed(fleet:any,docs:any,source:{branch:string;revis
     publishedAt:clean(r.publishedAt,40),
     license:clean(r.openLicenseMetadata,90),status:'REVIEW_REQUIRED'
   }));
+  let vessels:any[]=[];
+  let sourceFailures=0;
+  if (snapshots!==undefined) {
+    if(snapshots?.schemaVersion!==1||snapshots.report?.engineeringReleaseApproved!==false||
+       !Array.isArray(snapshots.records)||snapshots.records.length>2000)
+       throw Error('A26_UNTRUSTED_SOURCE_SNAPSHOTS');
+    vessels=snapshots.records.map((record:any)=>({
+      id:clean(record.key,200), model:clean(record.model,160),
+      manufacturer:clean(record.manufacturer,160),country:clean(record.country,80),
+      confidence:typeof record.confidence==='number' ? Math.max(0,Math.min(1,record.confidence)):0,
+      status:'UNVERIFIED_REVIEW_REQUIRED',
+      sources:(Array.isArray(record.sources)?record.sources:[]).slice(0,12).map((item:any)=>({
+        url:safeUrl(item.url),sha256:/^sha256:[a-f0-9]{64}$/.test(String(item.sha256||''))?String(item.sha256):null,
+        retrievedAt:clean(item.retrievedAt,50),
+        status:clean(item.evidenceStatus,90),
+        identityCorroborated:item.identityConfirmed===true
+      })),
+      claims:Object.values(record.fields||{}).flat().slice(0,30).map((claim:any)=>({
+        field:clean(claim.field,80),value:clean(claim.value,150),unit:clean(claim.unit,40),
+        quotation:clean(claim.quotation,400),sourceUrl:safeUrl(claim.sourceUrl),
+        status:'QUOTE_MATCHED_UNREVIEWED'
+      }))
+    }));
+    sourceFailures=Number(snapshots.report?.sourceFailures)||0;
+  }
+  if(manifest!==undefined && (
+    manifest?.schemaVersion!==1||manifest.agentId!=='INTEL-USV-26'||
+    manifest.classification!=='PUBLIC_SOURCE_SAFE_ONLY'||
+    manifest.engineeringReleaseApproved!==false||
+    manifest.reviewStatus!=='UNVERIFIED_REVIEW_REQUIRED'
+  ))throw Error('A26_REVIEW_MANIFEST_INVALID');
   return {success:true,agentId:'INTEL-USV-26',classification:'PUBLIC_SOURCE_SAFE_ONLY',
     researchStatus:'UNVERIFIED_PUBLIC_RESEARCH',source:'GITHUB_UNVERIFIED_REVIEW_BRANCH',
     sourceBranch:source.branch,sourceRevision:source.revision,
     sourceUrl:'https://github.com/'+REPO+'/tree/'+source.branch,
     retrievedAt:new Date().toISOString(),
-    counts:{fleetLeads:leads.length,publications:publications.length},
-    leads,publications,independentlyVerified:0,
+    counts:{fleetLeads:leads.length,publications:publications.length,
+      vesselSourceRecords:vessels.length, sourceFailures},
+    leads,publications,vessels,runId:manifest?.runId||null,
+    independentlyVerified:0,
     engineeringReleaseApproved:false,knowledgeGraphApproved:false};
 }
 export async function loadA26ResearchFeed({fetcher=fetch,force=false}:{fetcher?:typeof fetch;force?:boolean}={}){
@@ -98,11 +131,13 @@ export async function loadA26ResearchFeed({fetcher=fetch,force=false}:{fetcher?:
   // Fail closed on errors. Do not substitute an empty baseline and report 0
   // records when fresh research exists but GitHub is temporarily inaccessible.
   const source=await latestBranch(fetcher);
-  const [fleet,docs]=await Promise.all([
+  const [fleet,docs,snapshots,manifest]=await Promise.all([
     fileFromCommit('references/fleet-intelligence/discovery-register.json',source.revision,fetcher),
-    fileFromCommit('references/fleet-intelligence/document-register.json',source.revision,fetcher)
+    fileFromCommit('references/fleet-intelligence/document-register.json',source.revision,fetcher),
+    fileFromCommit('references/a26-public-review/source-index.json',source.revision,fetcher),
+    fileFromCommit('references/a26-public-review/manifest.json',source.revision,fetcher)
   ]);
-  const data=shapeResearchFeed(fleet,docs,source);
+  const data=shapeResearchFeed(fleet,docs,source,snapshots,manifest);
   cache={expires:Date.now()+CACHE_MS,value:data};
   return data;
 }

@@ -48,11 +48,14 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
   // Unverified public research is deliberately separate from accepted vessel data.
   type ResearchLead = {id:string;title:string;summary:string;status:string;sources:Array<{url:string|null}>};
   type ResearchDocument = {id:string;title:string;doi:string|null;sourceUrl:string|null;pdfUrl:string|null;status:string};
+  type ResearchVessel = {id:string;model:string;manufacturer:string;country:string;status:string;
+    confidence:number;sources:Array<{url:string|null;sha256:string|null;identityCorroborated:boolean}>;
+    claims:Array<{field:string;value:string;quotation:string;sourceUrl:string|null}>};
   const [publicResearch,setPublicResearch]=useState<{
-    leads:ResearchLead[];publications:ResearchDocument[];sourceRevision:string;sourceUrl:string;
+    leads:ResearchLead[];publications:ResearchDocument[];vessels:ResearchVessel[];sourceRevision:string;sourceUrl:string;runId:string;
     state:'LOADING'|'READY'|'UNAVAILABLE';
-  }>({leads:[],publications:[],sourceRevision:'',sourceUrl:'',state:'LOADING'});
-  const [researchKind,setResearchKind]=useState<'leads'|'publications'>('leads');
+  }>({leads:[],publications:[],vessels:[],sourceRevision:'',sourceUrl:'',runId:'',state:'LOADING'});
+  const [researchKind,setResearchKind]=useState<'leads'|'publications'|'vessels'>('leads');
   const [researchQuery,setResearchQuery]=useState('');
   const [researchPage,setResearchPage]=useState(0);
   const [researchReload,setResearchReload]=useState(0);
@@ -64,22 +67,25 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
         if(!response.ok)throw Error('Research feed unavailable');
         const d=await response.json();
         if(!d.success||d.researchStatus!=='UNVERIFIED_PUBLIC_RESEARCH'||
-          d.engineeringReleaseApproved!==false||!Array.isArray(d.leads)||!Array.isArray(d.publications))
+          d.engineeringReleaseApproved!==false||!Array.isArray(d.leads)||!Array.isArray(d.publications)||!Array.isArray(d.vessels))
           throw Error('Invalid research feed');
-        if(mounted)setPublicResearch({leads:d.leads,publications:d.publications,
-          sourceRevision:d.sourceRevision||'',sourceUrl:d.sourceUrl||'',state:'READY'});
+        if(mounted)setPublicResearch({leads:d.leads,publications:d.publications,vessels:d.vessels,
+          runId:String(d.runId||''),sourceRevision:d.sourceRevision||'',sourceUrl:d.sourceUrl||'',state:'READY'});
       }catch{
         if(mounted)setPublicResearch(v=>({...v,state:'UNAVAILABLE'}));
       }
     };
     void refresh();
-    return ()=>{mounted=false;};
+    // Refresh the review library automatically while open; no manual import
+    // or dedicated operator action is required for newly published A26 data.
+    const poll=setInterval(()=>{void refresh();},120_000);
+    return ()=>{mounted=false;clearInterval(poll);};
   },[researchReload]);
   const visibleResearch=useMemo(()=>{
-    const rows=researchKind==='leads'?publicResearch.leads:publicResearch.publications;
+    const rows=researchKind==='leads'?publicResearch.leads:researchKind==='publications'?publicResearch.publications:publicResearch.vessels;
     const q=researchQuery.toLowerCase().trim();
-    return q?rows.filter(r=>(r.id+' '+r.title).toLowerCase().includes(q)):rows;
-  },[researchKind,publicResearch.leads,publicResearch.publications,researchQuery]);
+    return q?rows.filter(r=>(r.id+' '+('title' in r?r.title:r.model+' '+r.manufacturer+' '+r.country)).toLowerCase().includes(q)):rows;
+  },[researchKind,publicResearch.leads,publicResearch.publications,publicResearch.vessels,researchQuery]);
   const researchTotalPages=Math.max(1,Math.ceil(visibleResearch.length/20));
   const visibleResearchPage=visibleResearch.slice(researchPage*20,(researchPage+1)*20);
 
@@ -267,6 +273,8 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
             </p>
             {publicResearch.state==='READY' && <p className="mt-1 text-[11px] text-slate-400">
               Source revision: <span className="font-mono">{publicResearch.sourceRevision.slice(0,12)}</span>
+              {publicResearch.runId&&<a className="ml-2 underline text-sky-300" target="_blank" rel="noopener noreferrer"
+                href={`https://github.com/ravisinghrathode/usv-01-digital-lab/actions/runs/${publicResearch.runId}`}>Live evidence run</a>}
             </p>}
           </div>
           <div className="flex flex-wrap gap-2">
@@ -288,6 +296,7 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
           <div className="flex flex-wrap gap-3 text-xs text-slate-300">
             <span><strong className="font-mono text-lg text-white">{publicResearch.leads.length}</strong> USV leads</span>
             <span><strong className="font-mono text-lg text-white">{publicResearch.publications.length}</strong> publications</span>
+            <span><strong className="font-mono text-lg text-white">{publicResearch.vessels.length}</strong> source-corroborated vessels</span>
             <span className="text-amber-300">Verification pending · Global completeness unknown</span>
           </div>
           <div className="flex items-center flex-wrap gap-2">
@@ -300,6 +309,11 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
               onClick={()=>{setResearchKind('publications');setResearchPage(0);}}
               className={`px-3 py-1 rounded border text-xs ${researchKind==='publications'?'border-sky-400 bg-sky-500/10 text-sky-200':'border-slate-700 text-slate-300'}`}>
               Scientific literature ({publicResearch.publications.length})
+            </button>
+            <button type="button" aria-pressed={researchKind==='vessels'}
+              onClick={()=>{setResearchKind('vessels');setResearchPage(0);}}
+              className={`px-3 py-1 rounded border text-xs ${researchKind==='vessels'?'border-sky-400 bg-sky-500/10 text-sky-200':'border-slate-700 text-slate-300'}`}>
+              Vessel source records ({publicResearch.vessels.length})
             </button>
             {publicResearch.sourceUrl && <a href={publicResearch.sourceUrl} target="_blank" rel="noopener noreferrer"
               className="ml-auto text-xs text-sky-300 underline">Source review branch</a>}
@@ -314,16 +328,21 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
           </p>
           <div role="list" className="max-h-[450px] overflow-y-auto space-y-2">
             {visibleResearchPage.map(r=>{
-              const urls=researchKind==='leads'&&'sources' in r
+              const urls='sources' in r
                 ? r.sources.map(x=>x.url).filter((v):v is string=>!!v)
                 : ('doi' in r?[r.doi,r.sourceUrl,r.pdfUrl].filter((v):v is string=>!!v):[]);
               return <article role="listitem" key={r.id} className="p-3 border border-slate-700 rounded bg-slate-950/60">
                 <div className="flex items-start justify-between gap-2">
-                  <div className="text-sm font-semibold text-slate-100 break-words">{r.title||r.id}</div>
+                  <div className="text-sm font-semibold text-slate-100 break-words">{'title' in r?(r.title||r.id):r.model+' · '+r.manufacturer+' · '+r.country}</div>
                   <span className="text-[10px] text-amber-300 shrink-0">UNVERIFIED</span>
                 </div>
                 <p className="text-[10px] font-mono text-slate-500 mt-1 break-all">{r.id}</p>
                 {'summary' in r&&r.summary&&<p className="mt-1 text-xs text-slate-400">{r.summary}</p>}
+                {'claims' in r && r.claims.length>0 && <div className="mt-2 text-xs text-slate-300">
+                  {r.claims.slice(0,4).map((claim,i)=><p key={i} className="break-words">
+                    <strong>{claim.field}:</strong> {claim.value} — quotation matched, not independently verified
+                  </p>)}
+                </div>}
                 <div className="mt-2 flex gap-3 flex-wrap">
                   {urls.slice(0,3).map((url,i)=><a href={url} key={url+i} target="_blank" rel="noopener noreferrer"
                     className="text-xs text-sky-300 underline underline-offset-2">Source {i+1}</a>)}
