@@ -91,7 +91,8 @@ describe('M03 candidate draft digital-thread',()=>{
       expect(after.domainStates[domain]).toBe('BLOCKED');
       expect(after.domainEvidence[domain]).toBeUndefined();
     }
-    await expect(ledger.append(evidence('CAND-A',head,'REV-01','GEOMETRY')))
+    await expect(ledger.append({...evidence('CAND-A',head,'REV-01','GEOMETRY'),
+      txId:'STALE-REVISION-NEW-TX'}))
       .rejects.toThrow(/STALE_EVIDENCE_SOURCE/);
   });
   it('invalidates previously observed downstream evidence on FAIL and does not launder approvals',async()=>{
