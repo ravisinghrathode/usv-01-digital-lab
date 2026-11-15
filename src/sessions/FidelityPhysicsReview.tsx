@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import {Activity,ArrowRight,ArrowUpRight,BookOpen,Check,ChevronRight,ClipboardCheck,Clock3,Database,FileClock,FileQuestion,FileText,FlaskConical,GitBranch,Info,LockKeyhole,NotebookPen,Pause,Plus,Search,ShieldAlert,ShieldCheck,SlidersHorizontal,Target,TriangleAlert,Users,Waveform} from 'lucide-react';
+import {Activity,ArrowRight,ArrowUpRight,BookOpen,Check,ChevronRight,ClipboardCheck,Clock3,Database,FileClock,FileQuestion,FileText,FlaskConical,GitBranch,Info,LockKeyhole,NotebookPen,Pause,Plus,Search,ShieldAlert,ShieldCheck,SlidersHorizontal,Target,TriangleAlert,Users} from 'lucide-react';
 import {VesselVisual} from './VesselVisual';
 import {ContextTag,ObjectRow,SourceLink,SourceNotice,type SessionProps} from './FidelityCommon';
 import {STUDIES,INVESTIGATION,currentStudy,type EntityId} from './model';
@@ -99,10 +99,6 @@ export function Experiment({session,chooseStudy,select,changeMode}:SessionProps)
   </div>
  </section>;
 }
-
-const ARGUMENT_OBJECTS:[
- EntityId,EntityId,EntityId,EntityId
-]=['req-mass','candidate','mass-study','uncertainty'];
 
 export function Decide({session,select,changeMode,prepareTask}:SessionProps){
  const [view,setView]=useState<'argument'|'source'>('argument');
