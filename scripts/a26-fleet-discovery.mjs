@@ -29,6 +29,7 @@ export function cleanText(value, max = 280) {
       return cp > 0 && cp <= 0x10ffff && !(cp >= 0xd800 && cp <= 0xdfff)
         ? String.fromCodePoint(cp) : '';
     })
+    .replace(/<[^>]*>/g,' ')
     .replace(/[\u0000-\u001f\u007f]/g,' ').replace(/\s+/g,' ').trim();
   return txt.slice(0,max);
 }
