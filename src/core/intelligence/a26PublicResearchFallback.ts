@@ -48,6 +48,13 @@ async function jsonRequest(url:string,fetcher:typeof fetch):Promise<any>{
   if(body.length>MAX_BYTES)throw Error('A26_PUBLIC_SOURCE_TOO_LARGE');
   return JSON.parse(body);
 }
+async function stableSource(fetcher:typeof fetch){
+  const response=await jsonRequest(GITHUB+'/git/ref/heads/research/live-a26',fetcher);
+  if(response?.ref!=='refs/heads/research/live-a26'||
+     !/^[a-f0-9]{40}$/.test(String(response.object?.sha||'')))
+    throw Error('A26_LIVE_REF_INVALID');
+  return {sha:response.object.sha as string,branch:'research/live-a26'};
+}
 async function publishedSource(fetcher:typeof fetch){
   const refs=await jsonRequest(GITHUB+'/git/matching-refs/heads/automation/a26-fleet-discovery-',fetcher);
   if(!Array.isArray(refs)||refs.length>10000)throw Error('A26_NO_PUBLIC_REVIEW_BRANCH');
@@ -89,7 +96,7 @@ export function validatePublicFeed(fleet:any,docs:any,sourceIndex:any,manifest:a
     manifest.engineeringReleaseApproved!==false||
     !/^\d{6,15}$/.test(String(manifest.runId||''))||
     !/^[a-f0-9]{40}$/.test(String(manifest.headSha||''))||
-    manifest.runId!==source.branch.slice('automation/a26-fleet-discovery-'.length))
+    (source.branch!=='research/live-a26' && manifest.runId!==source.branch.slice('automation/a26-fleet-discovery-'.length)))
     throw Error('A26_PUBLIC_MANIFEST_INVALID');
   return {
     success:true,researchStatus:'UNVERIFIED_PUBLIC_RESEARCH',
@@ -126,7 +133,9 @@ export async function getPublicA26ReviewFeed({
   fetcher=fetch,force=false
 }:{fetcher?:typeof fetch;force?:boolean}={}):Promise<A26PublicFeed>{
   if(!force&&snapshot&&Date.now()<snapshot.expires)return snapshot.data;
-  const source=await publishedSource(fetcher);
+  // Prefer the stable, automatically updated research-only ref. Older numbered review
+  // branches remain a backwards-compatible fallback during first rollout.
+  const source=await stableSource(fetcher).catch(()=>publishedSource(fetcher));
   const [fleet,docs,sources,manifest]=await Promise.all([
     pinnedFile('references/fleet-intelligence/discovery-register.json',source.sha,fetcher),
     pinnedFile('references/fleet-intelligence/document-register.json',source.sha,fetcher),
