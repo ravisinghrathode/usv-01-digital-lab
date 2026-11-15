@@ -63,22 +63,22 @@ async function fileFromCommit(p:string,sha:string,fetcher:typeof fetch){
 export function shapeResearchFeed(fleet:any,docs:any,source:{branch:string;revision:string}){
   if(fleet?.schemaVersion!==1||fleet.agentId!=='INTEL-USV-26'||
      fleet.classification!=='PUBLIC_SOURCE_SAFE_ONLY'||!Array.isArray(fleet.records)||
-     fleet.records.length>2000||!fleet.records.every(r=>r.status==='DISCOVERED_UNVERIFIED'))
+     fleet.records.length>2000||!fleet.records.every((r:any)=>r.status==='DISCOVERED_UNVERIFIED'))
     throw Error('A26_UNTRUSTED_FLEET_REGISTER');
   if(docs?.schemaVersion!==1||docs.agentId!=='INTEL-USV-26'||
      docs.classification!=='PUBLIC_SOURCE_SAFE_ONLY'||
      docs.reviewStatus!=='UNVERIFIED_PUBLIC_DOCUMENTS'||!Array.isArray(docs.records)||
-     docs.records.length>3000||!docs.records.every(r=>r.reviewStatus==='REVIEW_REQUIRED'))
+     docs.records.length>3000||!docs.records.every((r:any)=>r.reviewStatus==='REVIEW_REQUIRED'))
     throw Error('A26_UNTRUSTED_DOCUMENT_REGISTER');
-  const leads=fleet.records.map(r=>({
+  const leads=fleet.records.map((r:any)=>({
     id:clean(r.id,160),title:clean(r.title),summary:clean(r.summary,480),
     firstSeenAt:clean(r.firstSeenAt,40),status:'DISCOVERED_UNVERIFIED',
-    sources:Array.isArray(r.evidence)?r.evidence.slice(0,4).map(e=>({
+    sources:Array.isArray(r.evidence)?r.evidence.slice(0,4).map((e:any)=>({
       url:safeUrl(e.publicArticleUrl),sha256:clean(e.entrySha256,80),
       publishedAt:clean(e.publishedAt,40)
-    })).filter(e=>e.url):[]
+    })).filter((e:{url:string|null})=>e.url):[]
   }));
-  const publications=docs.records.map(r=>({
+  const publications=docs.records.map((r:any)=>({
     id:clean(r.id,160),title:clean(r.title),doi:safeUrl(r.doi),
     sourceUrl:safeUrl(r.sourceUrl),pdfUrl:safeUrl(r.fullTextPdfLink),
     publishedAt:clean(r.publishedAt,40),
