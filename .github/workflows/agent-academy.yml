@@ -1,0 +1,56 @@
+name: Agent Academy - 26 Role Curriculum and Evidence Gates
+
+on:
+  pull_request:
+    paths:
+      - 'src/core/academy/**'
+      - 'tests/agentAcademy.test.ts'
+      - 'scripts/run-agent-academy.ts'
+      - 'docs/AGENT_ACADEMY_EXECUTION.md'
+      - '.github/workflows/agent-academy.yml'
+      - 'package.json'
+  push:
+    branches: [main]
+    paths:
+      - 'src/core/academy/**'
+      - 'tests/agentAcademy.test.ts'
+      - 'scripts/run-agent-academy.ts'
+      - 'package.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  academy-deterministic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout pinned source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Immutable dependency installation
+        run: bun install --frozen-lockfile
+      - name: All 26 curricula and fail-closed status (zero AI calls)
+        run: npm run academy:plan
+      - name: Tests for missing grades and forged independent signatures
+        run: npx vitest run tests/agentAcademy.test.ts
+      - name: Compile whole app
+        run: npm run lint
+      - name: Upload NOT-QUALIFIED status evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-academy-offline-status
+          path: |
+            data/academy/curricula.json
+            data/academy/academy-status.json
+          if-no-files-found: warn
+          retention-days: 30

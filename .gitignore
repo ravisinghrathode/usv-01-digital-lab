@@ -16,3 +16,6 @@ data/*.json
 
 # Unreviewed mission briefs and provider-generated research (never commit by default)
 .local-concept-research/
+
+# Private role-study outputs, licensed-source checks and qualification records
+/data/academy/

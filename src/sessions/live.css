@@ -74,3 +74,23 @@
 .lv-cad-inspector .at-mesh-toolbar button{min-width:33px;min-height:33px;border:1px solid #b6cddd;background:white;border-radius:6px}
 .lv-cad-inspector .at-local-mesh svg{display:block;width:100%;height:auto;max-height:350px;border:1px solid #c3d7e2;border-radius:7px;margin:8px 0;background:white}
 .lv-cad-inspector .at-mesh-disclaimer{display:block;font-size:11px;color:#567489}
+
+
+/* Read-only Agent Academy catalogue in the actual standard Engineering Sessions UI. */
+.es-academy{margin:22px 0 32px;border:1px solid var(--es-border,#b4c9d0);background:var(--es-paper,#fff);border-radius:16px;overflow:hidden;color:inherit}
+.es-academy-header{padding:20px 24px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:18px;border-bottom:1px solid #dbe5e9}
+.es-academy-header h2{font-size:clamp(20px,2.4vw,28px);line-height:1.3;margin:6px 0}
+.es-academy-header p{margin:0;line-height:1.5;max-width:630px}
+.es-academy-kicker{font-size:12px;font-weight:800;letter-spacing:.07em;display:flex;align-items:center;gap:8px}
+.es-academy-hold{font-size:11px;letter-spacing:.04em;font-weight:800;display:flex;align-items:center;gap:6px;border:1px solid #d8b98b;padding:7px 10px;border-radius:6px}
+.es-academy-content{padding:20px 24px;display:flex;flex-direction:column;gap:14px}
+.es-academy-content>p{margin:0;max-width:900px;line-height:1.65}
+.es-academy-content>label{font-size:13px;font-weight:700}
+.es-academy-content>select{max-width:600px;width:100%;padding:10px;border:1px solid #a3b9c0;background:transparent;border-radius:8px;color:inherit;font:inherit}
+.es-academy-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:6px 0}
+.es-academy-facts>div{padding:12px;background:rgba(100,138,155,.07);border-radius:8px;min-width:0;overflow-wrap:anywhere}
+.es-academy-facts dt{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.055em;opacity:.7;margin-bottom:6px}
+.es-academy-facts dd{margin:0;line-height:1.55;font-size:14px}
+.es-academy-note{border-left:3px solid #aa7f42;padding:8px 14px}
+.es-academy-content>a{display:inline-flex;align-items:center;gap:7px;text-decoration:underline;font-size:14px;font-weight:700;align-self:flex-start}
+@media(max-width:720px){.es-academy-header,.es-academy-content{padding:16px}.es-academy-facts{grid-template-columns:1fr}}

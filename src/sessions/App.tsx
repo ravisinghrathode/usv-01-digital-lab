@@ -3,6 +3,7 @@ import {ArrowLeft,ArrowRight,ArrowUpRight,BookOpen,Box,ChevronDown,Command,Compa
 import {Design,Decide,Experiment,Notebook,Worktable} from './v2/Modes';
 import NavalMark from './NavalMark';
 import LiveWorkspace from './LiveWorkspace';
+const AgentAcademyPanel = React.lazy(() => import('./AgentAcademyPanel'));
 import {useSnapshot} from '../dockyard2/useSnapshot';
 import {searchSourceRegister} from './sourceSearch';
 import {DEFAULT_SESSION,ENTITIES,INVESTIGATION,MODES,STUDIES,currentEntity,hashForMode,legacyLink,searchItems,validMode,type EntityId,type Mode,type Note,type Perspective,type SessionView,type StudyId} from './model';
@@ -106,7 +107,10 @@ export default function EngineeringSessionsApp(){
     {session.mode==='experiment'&&<Experiment {...props}/>}
     {session.mode==='decide'&&<Decide {...props}/>}
     {session.mode==='notebook'&&<Notebook {...props}/>}
-   </>:<LiveWorkspace mode={session.mode} snapshot={snapshot} status={status} error={error} user={user} onRefresh={refresh} changeMode={setMode}/>}
+   </>:<>
+     <LiveWorkspace mode={session.mode} snapshot={snapshot} status={status} error={error} user={user} onRefresh={refresh} changeMode={setMode}/>
+     {session.mode==='notebook'&&<React.Suspense fallback={<p>Loading Academy curriculum…</p>}><AgentAcademyPanel/></React.Suspense>}
+   </>}
   </main>
   <div className="es-session-tray">
    {demoMode?<><button type="button" className="es-tray-toggle" aria-expanded={trayOpen} onClick={()=>setTrayOpen(v=>!v)}><Layers size={17}/> Session objects <span>{ENTITIES.length}</span><ChevronDown size={16}/></button>
