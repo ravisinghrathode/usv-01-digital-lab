@@ -67,6 +67,11 @@ describe('Agent Academy Hydrogen fallback', () => {
     expect(detailed.text).toContain('F01');
     expect(detailed.text).not.toContain('USV01_PROJECT_CONTEXT.md');
     expect(detailed.sha256).toMatch(/^[a-f0-9]{64}$/);
+    for (let i = 1; i <= 26; i++) {
+      const id = 'A' + String(i).padStart(2, '0');
+      const lesson = publicAcademyStudyExcerpt(process.cwd(), id);
+      expect(lesson.text).toContain(id);
+    }
     expect(() => publicAcademyStudyExcerpt(process.cwd(), 'A27')).toThrow();
   });
 
