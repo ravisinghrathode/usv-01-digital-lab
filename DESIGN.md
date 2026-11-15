@@ -1,3 +1,7 @@
+> **New UX direction selected (2026-11-15):** **Naval AI Lab — Engineering Sessions** is the canonical **future UI/UX design baseline** `NAL-UX-BL-001`. The Project Lead selected the adaptive investigation-based model (Worktable, Design, Experiment, Decide, Notebook) and explicitly rejected further Dockyard/Lab3/Atlas dashboard-style iteration as the target design. Read [the baseline](docs/design/ENGINEERING_SESSIONS_UX_BASELINE_V1.md), [screen/interaction refinement](docs/design/ENGINEERING_SESSIONS_INTERACTION_REFINEMENT.md) and [machine-readable contract](config/engineering-sessions-ux-baseline.json) before future frontend development. **This does not change which application currently runs at `/`**, does not approve vessel engineering, and does not imply implementation or deployment. The following material is the **current/historical implementation**, not the new design specification.
+
+---
+
 # Naval Design Studio — Standard Application Design
 
 Naval Design Studio is the user-selected **canonical product name**. The standalone Dockyard 2.0 UI is the **standard application**, served at `/` and `/index.html`. The old Naval Studio frontend is retained at `/legacy.html` solely to operate its existing editors, agent execution, CAD study tools and protected engineering approval workflows. Previous `/?module=ID` URLs safely preserve legacy access to registered IDs.
