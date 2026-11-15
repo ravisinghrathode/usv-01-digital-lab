@@ -11,8 +11,9 @@ procedural/research skills or the 26-agent runtime.
 Location: `.agents/skills/<skill-id>/SKILL.md`. Installed by the verified
 `Vendor five pinned UI/UX agent skills` GitHub Actions workflow, which
 cloned official upstream repositories at immutable commits and copied complete
-skill folders including shipped references, scripts and data. No downloaded
-source scripts were executed by the installer.
+skill folders including shipped references, scripts and data. No package-install hooks or external setup scripts were run. The bundled
+UI UX Pro Max search script was invoked with \`--help\` solely to confirm
+that it starts in the controlled GitHub Actions environment.
 
 | Skill | Publisher / original directory | Pinned commit | Purpose |
 | --- | --- | --- | --- |
