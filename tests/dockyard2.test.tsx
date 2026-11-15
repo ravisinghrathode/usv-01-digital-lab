@@ -17,11 +17,13 @@ import { AnalysisScreen, AgentsScreen, DirectorScreen, EvidenceScreen } from '..
 const source=(path:string)=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
 
 describe('Previous Naval Design Studio interface',()=>{
-  it('has an independent HTML entry and does not reuse the old UI shell',()=>{
+  it('redirects the retired Dockyard entry to Engineering Sessions and preserves governed access',()=>{
     expect(source('index.html')).toContain('<title>Naval AI Lab | Engineering Sessions | USV-01</title>');
     expect(source('index.html')).toContain('src/sessions/main.tsx');
     expect(source('legacy.html')).toContain('src/main.tsx');
-    expect(source('dockyard2.html')).toContain('src/dockyard2/main.tsx');
+    expect(source('dockyard2.html')).toContain('window.location.replace');
+    expect(source('dockyard2.html')).toContain('url=/');
+    expect(source('dockyard2.html')).not.toContain('src/dockyard2/main.tsx');
     expect(source('vite.config.ts')).toContain("navalDesignStudio: path.resolve(import.meta.dirname, 'index.html')");
     expect(source('vite.config.ts')).toContain("legacyEngineering: path.resolve(import.meta.dirname, 'legacy.html')");
     expect(source('vite.config.ts')).toContain('dockyard2.html');
