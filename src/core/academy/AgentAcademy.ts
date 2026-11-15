@@ -102,6 +102,12 @@ export interface StudyAttempt {
   sourceSha: string;
   stage: 'OPEN_BOOK_STUDY' | 'WORKED_EXERCISE' | 'BLIND_ASSESSMENT';
   provider: string;
+  /** Only a provider-reported model identity; never infer from the request. */
+  modelUsed?: string;
+  /** True only for an authorized, verified Codex-provider-quota switch. */
+  fallbackReason?: 'CODEX_QUOTA';
+  /** Hash of PUBLIC lesson excerpts provided to isolated Gemini CLI. */
+  publicMaterialSha256?: string;
   status: 'COMPLETED_UNGRADED' | 'FAILED' | 'UNAVAILABLE' | 'QUOTA_EXHAUSTED';
   outputSha256?: string;
   timestamp: string;
