@@ -182,6 +182,20 @@
  .ux-primary-nav :is(button,a){white-space:nowrap}
 }
 @media(max-width:640px){
+ .ux-workbench-active .es-commandbar{display:flex;flex-wrap:wrap;gap:7px;min-height:0}
+ .ux-workbench-active .es-brand{order:0;width:100%;min-width:0}
+ .ux-workbench-active .es-brand strong{font-size:17px}
+ .ux-workbench-active .es-global-actions{order:1;width:100%;justify-content:flex-end;flex-wrap:wrap;gap:5px}
+ .ux-workbench-active .es-global-actions button,.ux-workbench-active .es-governed{min-height:36px;height:36px;padding:4px 8px;font-size:11px}
+ .ux-workbench-active .es-modes{order:2;flex:none;display:flex;flex-wrap:nowrap;overflow-x:auto;width:100%;max-width:none;height:auto;gap:3px}
+ .ux-workbench-active .es-modes button{flex:none;min-height:38px;padding:7px 9px;font-size:11px}
+ .ux-work-grid{display:flex;flex-direction:column}
+ .ux-main-column{order:0}
+ .ux-session-list{order:1}
+ .ux-traceability{order:2}
+ .ux-overview-pair{display:flex;flex-direction:column}
+ .ux-model-panel{order:0}
+ .ux-objective{order:1}
  .ux-desk-heading-title h1{font-size:18px}
  .ux-overview-pair,.ux-mini-grid{grid-template-columns:1fr}
  .ux-work-grid,.ux-session-list{display:block}
