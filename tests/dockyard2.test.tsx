@@ -94,7 +94,7 @@ describe('Dockyard 2.0 standalone application',()=>{
     expect(design).toContain('Import OBJ B');
     expect(design).toContain('Engineering context');
     expect(design).toContain('NOT VERIFIED CAD');
-    expect(design).toContain('No approved');
+    expect(design).toContain('Unverified');
     const analysis=renderToStaticMarkup(<AnalysisScreen {...props}/>);
     expect(analysis).toContain('Engineering analysis');
     expect(analysis).toContain('Solver register');
