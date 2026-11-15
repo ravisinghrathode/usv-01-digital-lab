@@ -1,8 +1,9 @@
 import React,{useEffect,useMemo,useRef,useState} from 'react';
-import {ArrowLeft,ArrowRight,ArrowUpRight,BookOpen,Box,ChevronDown,Command,Compass,FileSearch,FlaskConical,GitCompareArrows,HelpCircle,Layers,LockKeyhole,Menu,Network,Search,ShieldCheck,X} from 'lucide-react';
+import {Activity,ArrowLeft,ArrowRight,ArrowUpRight,BookOpen,Bot,Box,CalendarRange,ChevronDown,Command,Compass,FileSearch,FlaskConical,GitCompareArrows,HelpCircle,Layers,LockKeyhole,Menu,Network,Search,ShieldCheck,SlidersHorizontal,X} from 'lucide-react';
 import {Design,Decide,Experiment,Notebook,Worktable} from './v2/Modes';
 import NavalMark from './NavalMark';
 import LiveWorkspace from './LiveWorkspace';
+import {SessionDesk} from './SessionDesk';
 import {useSnapshot} from '../dockyard2/useSnapshot';
 import {searchSourceRegister} from './sourceSearch';
 import {DEFAULT_SESSION,ENTITIES,INVESTIGATION,MODES,STUDIES,currentEntity,hashForMode,legacyLink,searchItems,validMode,type EntityId,type Mode,type Note,type Perspective,type SessionView,type StudyId} from './model';
@@ -71,7 +72,7 @@ export default function EngineeringSessionsApp(){
  const addNote=(content:string,kind:Note['kind']='local')=>setSession(old=>({...old,notes:[...old.notes,{id:Date.now()+old.notes.length,content,kind,created:new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}]}));
  const prepareTask=()=>{addNote('Establish reviewed geometry, explicit operating conditions and reproducible mass/stability calculations; request independent technical review before a recommendation.','task');setMode('notebook')};
  const props={session,changeMode:setMode,select,chooseStudy,setPerspective,toggleSync,toggleIsolate,addNote,prepareTask};
- return <div className="es-app">
+ return <div className={session.mode==='worktable'?'es-app ux-workbench-active':'es-app'}>
   <a href="#es-main" className="es-skip">Skip to investigation canvas</a>
   <header className="es-commandbar">
    <a className="es-brand" href="/#worktable" onClick={e=>{e.preventDefault();setMode('worktable')}}><span className="es-logo"><NavalMark/></span><span><strong>NAVAL AI LAB <span className="es-brand-programme">/ USV-01</span></strong><small>Engineering session</small></span></a>
@@ -86,6 +87,14 @@ export default function EngineeringSessionsApp(){
     <a className="es-governed" href="/legacy.html" title="Open original governed engineering lab"><span>Original lab</span> <ArrowUpRight size={14}/></a>
    </div>
   </header>
+  <nav className="ux-primary-nav" aria-label="Naval engineering workspaces">
+   <button type="button" onClick={()=>setMode('worktable')} aria-current={session.mode==='worktable'?'page':undefined}><CalendarRange size={17}/> Engineering Sessions</button>
+   <a href="/legacy.html?module=cad-studio&amp;origin=engineering-sessions"><Box size={17}/> CAD Studio</a>
+   <a href={legacyLink('workstream-NAV')}><SlidersHorizontal size={17}/> Parameters</a>
+   <button type="button" onClick={()=>setMode('experiment')} aria-current={session.mode==='experiment'?'page':undefined}><Activity size={17}/> Analysis</button>
+   <a href={legacyLink('agent-orchestrator')}><Bot size={17}/> Agents</a>
+   <button type="button" onClick={()=>setMode('decide')} aria-current={session.mode==='decide'?'page':undefined}><ShieldCheck size={17}/> Assurance</button>
+  </nav>
   {helpOpen&&<aside className="es-help-popover"><strong>About this workspace</strong><p>Use five workspaces or Alt+1–5. The default uses the authenticated engineering store; records and permissions come from the server. Press Ctrl/Cmd+K to search the 24 governed modules. The optional example tour contains only synthetic data.</p><button type="button" onClick={()=>setHelpOpen(false)}>Close</button></aside>}
   <section className="es-session-spine" aria-label="Persistent engineering investigation context">
    <div className="es-question">
@@ -101,12 +110,12 @@ export default function EngineeringSessionsApp(){
    <div className="es-truth-banner es-truth-banner-live" role="note"><span className="es-truth-dot"/> <strong>{status==='connected'?'AUTHENTICATED PROJECT SOURCE':'PROJECT SIGN-IN REQUIRED'}</strong><span>Live register view · only non-illustrative engineering records are counted · no automatic certification or approval</span><span className="es-library-status">{user?'Staff: '+user.userName:'No signed-in staff session'}</span></div>}
   <main className="es-main" id="es-main" ref={main} tabIndex={-1}>
    {demoMode?<>
-    {session.mode==='worktable'&&<Worktable {...props}/>}
+    {session.mode==='worktable'&&<SessionDesk demoMode snapshot={snapshot} changeMode={setMode} onRefresh={refresh}/>}
     {session.mode==='design'&&<Design {...props}/>}
     {session.mode==='experiment'&&<Experiment {...props}/>}
     {session.mode==='decide'&&<Decide {...props}/>}
     {session.mode==='notebook'&&<Notebook {...props}/>}
-   </>:<LiveWorkspace mode={session.mode} snapshot={snapshot} status={status} error={error} user={user} onRefresh={refresh} changeMode={setMode}/>}
+   </>:session.mode==='worktable'&&user&&status==='connected'?<SessionDesk demoMode={false} snapshot={snapshot} changeMode={setMode} onRefresh={refresh}/>:<LiveWorkspace mode={session.mode} snapshot={snapshot} status={status} error={error} user={user} onRefresh={refresh} changeMode={setMode}/>}
   </main>
   <div className="es-session-tray">
    {demoMode?<><button type="button" className="es-tray-toggle" aria-expanded={trayOpen} onClick={()=>setTrayOpen(v=>!v)}><Layers size={17}/> Session objects <span>{ENTITIES.length}</span><ChevronDown size={16}/></button>
