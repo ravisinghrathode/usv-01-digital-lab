@@ -136,15 +136,20 @@ try{
  const aliasResponse=await page.goto(base+'/sessions.html#worktable',{waitUntil:'domcontentloaded'});
  assert(aliasResponse?.ok(),'Engineering Sessions alias /sessions.html does not load');
  await page.getByRole('heading',{name:'Design begins with a question.'}).waitFor();
- for(const [url,title] of [
-  ['/legacy.html',/Legacy Engineering Workbench/],
-  ['/dockyard2.html',/Previous Interface/]
- ]){
-  const response=await page.goto(base+url,{waitUntil:'domcontentloaded'});
-  assert(response?.ok(),'Preserved entry route returned an HTTP error: '+url);
-  assert.match(await page.title(),title,'Wrong HTML served for '+url);
-  await page.locator('#root').waitFor();
+ // The original governed editor remains accessible; retired visual shells do not.
+ const governedResponse=await page.goto(base+'/legacy.html',{waitUntil:'domcontentloaded'});
+ assert(governedResponse?.ok(),'Original governed engineering workbench is unavailable');
+ assert.match(await page.title(),/Legacy Engineering Workbench/);
+ await page.locator('#root').waitFor();
+ for(const retired of ['/dockyard2.html','/naval-lab.html','/atlas.html']){
+  await page.goto(base+retired,{waitUntil:'domcontentloaded'});
+  await page.waitForURL(url=>url.pathname==='/' && !url.search,{timeout:10000});
+  await page.getByRole('heading',{name:'Design begins with a question.'}).waitFor();
+  assert.match(await page.title(),/Naval AI Lab.*Engineering Sessions/);
  }
+ // Preserve old deep links to protected technical modules through the root router.
+ await page.goto(base+'/dockyard2.html?module=cad-studio',{waitUntil:'domcontentloaded'});
+ await page.waitForURL(url=>url.pathname==='/legacy.html' && url.searchParams.get('module')==='cad-studio',{timeout:10000});
  // Simulate a missing dynamically imported session chunk. The default route
  // must retain usable links instead of leaving a blank application shell.
  const failurePage=await browser.newPage();
@@ -158,5 +163,5 @@ try{
   assert(await failurePage.getByRole('link',{name:'Open original engineering lab'}).isVisible());
  }finally{await failurePage.close()}
  assert.deepEqual(errors,[],'Unexpected browser runtime errors');
- console.log('PASS — compiled root, session alias, original interfaces, startup recovery, 5 modes, 24 governed tools and 5 responsive viewports.');
+ console.log('PASS — compiled root, canonical redirects, original governed workbench, startup recovery, 5 modes, 24 governed tools and 5 responsive viewports.');
 }finally{await browser.close();}
