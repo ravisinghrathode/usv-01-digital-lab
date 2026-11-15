@@ -51,6 +51,12 @@ export function authorizeLabRoute(method: string, urlPath: string, role: string)
     path === '/orchestrator/execute-workflow'
   )) return engineeringWriters.has(role) || verificationRoles.has(role);
 
+  // Queued research submission is explicitly restricted; server handlers may
+  // only enqueue bounded public research, never approve or release results.
+  if (verb === 'POST' && path === '/mission-control/quota-enqueue') {
+    return engineeringWriters.has(role) || verificationRoles.has(role);
+  }
+
   // Network/API-expensive tasks need an authorized operational role.
   if (verb === 'POST' && path === '/usv-intel/scrape')
     return role === 'ENGINEERING_DIRECTOR' || role === 'LEAD_SYSTEMS_ENGINEER';

@@ -14,6 +14,7 @@ import path from 'node:path';
 import os from 'node:os';
 import { requireLabCommissioningPolicy } from './LabCommissioningPolicy.ts';
 import { A26_CODEX_AGENT_ID, A26_GPT6_MODEL, selectA26SubscriptionModel } from './A26SubscriptionModelAccess.ts';
+import { QuotaResilience, isQuotaFailure } from './QuotaResilience.ts';
 
 export type PilotRole = 'orchestrator' | 'worker' | 'reviewer';
 
@@ -32,7 +33,7 @@ export interface PilotResult {
   role: PilotRole;
   taskId: string;
   agentId: string;
-  status: 'COMPLETED' | 'FAILED' | 'UNAVAILABLE';
+  status: 'COMPLETED' | 'FAILED' | 'UNAVAILABLE' | 'QUOTA_EXHAUSTED';
   stdout: string;
   stderr: string;
   exitCode: number | null;
@@ -169,6 +170,11 @@ export async function runSubscriptionCli(input: PilotRequest): Promise<PilotResu
     );
   }
 
+  // Every CLI role and every specialist shares this persistent host budget.
+  // A quota HOLD is raised before spawn; it never causes a paid fallback.
+  const quota = new QuotaResilience();
+  await quota.reserve();
+
   // Codex itself checks the requested standard GPT-6 Sol model availability.
   // The previously imposed >=0.153.0 threshold was specific to Astra,
   // not an evidenced minimum for Sol. Unsupported models fail the CLI run.
@@ -196,6 +202,18 @@ export async function runSubscriptionCli(input: PilotRequest): Promise<PilotResu
           status = 'FAILED';
           stderr = 'Codex finished without a parseable final-message artifact';
         }
+      }
+      try {
+        if (status === 'COMPLETED') {
+          await quota.recordSuccess();
+        } else if (status === 'FAILED' && !timedOut && isQuotaFailure(stderr + '\n' + stdout)) {
+          await quota.recordQuotaFailure();
+          status = 'QUOTA_EXHAUSTED';
+          stderr = 'USV_QUOTA_WAIT: Codex subscription usage allowance exhausted. ' + stderr.slice(0, 500);
+        }
+      } catch (error: any) {
+        status = 'FAILED';
+        stderr = 'QUOTA_LEDGER_UNAVAILABLE: ' + (error?.message || String(error));
       }
       await rm(tmpDirectory, { recursive: true, force: true }).catch(() => {});
       resolve({
