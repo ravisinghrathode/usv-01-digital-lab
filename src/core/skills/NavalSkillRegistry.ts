@@ -100,7 +100,7 @@ export const NAVAL_SKILL_CONTRACTS: readonly NavalSkillContract[] = Object.freez
     procedure: 'Qualify 26 roles on frozen controlled cases and adversarial negatives; distinguish CI checks, real host/model execution, qualified independent V&V and human release and measure before/after with uncertainty.',
     evidenceRequirement: '26-role case matrix, exact source/host/model receipts, reference oracle digests, rubric, negative tests, independent reviewer identity and unresolved blockers.',
     failClosedOn: 'Stale or mock run presented as live, LLM self-review called independent, unsourced benchmark, untested role or false engineering release.'
-
+  }
 ].map(skill => Object.freeze({ ...skill, canonicalAgents: Object.freeze(skill.canonicalAgents) })));
 
 const CANONICAL_AGENT_ID = /^A(?:0[1-9]|1[0-9]|2[0-6])$/;
