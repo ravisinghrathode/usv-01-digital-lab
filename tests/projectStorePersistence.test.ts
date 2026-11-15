@@ -19,11 +19,29 @@ describe('Safety-critical engineering store integrity and restore drills', () =>
       expect(fs.readdirSync(folder)).toEqual(['project_store.json']);
       const drill = runIsolatedRestoreDrill(baseline);
       expect(drill.status).toBe('ISOLATED_RESTORE_DRILL_PASS_UNCERTIFIED');
-      expect(drill.collectionCount).toBe(15);
+      expect(drill.collectionCount).toBe(16);
       expect(drill.productionRestoreVerified).toBe(false);
     } finally {
       fs.rmSync(folder, { recursive: true, force: true });
     }
+  });
+
+  it('migrates an intact 15-collection store to an empty CAD register without losing data',()=>{
+    const folder=fs.mkdtempSync(path.join(os.tmpdir(),'usv01-store-'));
+    try{
+      const filename=path.join(folder,'project_store.json');
+      const oldStore=store();
+      delete oldStore.cad_revisions;
+      oldStore.requirements=[{id:'REQ-PRESERVE',title:'Controlled existing record'}];
+      fs.writeFileSync(filename,JSON.stringify(oldStore));
+      const migrated=loadProjectStore(filename)!;
+      expect(migrated.requirements).toEqual(oldStore.requirements);
+      expect(migrated.cad_revisions).toEqual([]);
+      expect(Object.keys(migrated)).toHaveLength(16);
+      expect(JSON.parse(fs.readFileSync(filename,'utf8'))).toEqual(oldStore);
+      saveProjectStore(migrated,filename);
+      expect(loadProjectStore(filename)).toEqual(migrated);
+    }finally{fs.rmSync(folder,{recursive:true,force:true});}
   });
 
   it('fails closed instead of reseeding when an existing store is corrupt', () => {
