@@ -63,7 +63,7 @@ mapping, open risks, and acceptance evidence requirements.
 
 ## USV-01 specialist skill policy v1 (protected source)
 
-The **six USV-01-owned skills** are under `skills/usv01/<skill-id>/SKILL.md`.
+The **nine USV-01-owned skills** are under `skills/usv01/<skill-id>/SKILL.md`.
 The complete procedures remain research-only until reviewed. The trusted,
 short-form runtime mappings in `src/core/skills/NavalSkillRegistry.ts`
 select them exclusively by the registered `AgentSpec.canonicalId`; the
@@ -77,10 +77,15 @@ untrusted user prompt, retrieved source, or browser parameter.
 - **A04/A16/A17/A19/A20/A22/A24:** marine safety and degraded modes.
 - **A01/A02/A15/A20/A21/A23/A25/A26:** evidence and digital-thread sync.
 - **A01/A03/A14/A15/A18/A19/A20/A21/A22/A23/A24/A25/A26:** commissioning.
+- **A01/A15/A18/A20/A24/A25/A26:** runtime resilience and provider budget recovery.
+- **A01/A05/A06/A07/A08/A09/A10/A11/A12/A13/A14/A18/A21/A24:** CAD-to-physics evidence coupling.
+- **A01/A02/A15/A18/A23/A24/A25/A26:** 26-agent qualification campaigns.
 
-The **six extra upstream development skills** (`security-threat-model`,
+The **ten extra upstream development skills** (`security-threat-model`,
 `security-best-practices`, `agent-supply-chain`,
-`build-evidence-map`, `eval-engineering`, `skill-creator`) are
+`build-evidence-map`, `eval-engineering`, `skill-creator`,
+`test-gap-audit`, `github-actions-hardening`, `playwright`,
+`gh-fix-ci`) are
 text-only references in the connected ChatGPT skill library. Their pinned
 upstream source and licenses are in `config/external-skill-sources.json`.
 They are **not** added to the model runtime and do not install scripts,
@@ -94,3 +99,29 @@ nor applying a procedure means an agent ran a live model, an engineering
 result was externally validated, or a vessel baseline was released.
 Full adoption/hold and threat review:
 `docs/SPECIALIST_SKILLS_SUPPLY_CHAIN_AND_ACCEPTANCE_20261115.md`.
+
+
+## FINAL SKILL FREEZE — adopted roster only
+
+Following the Project Lead's 2026-11-15 instruction to adopt the final seven
+skills and stop, the Naval AI Lab agent/engineering roster is **frozen at 31
+skills**: 12 pre-existing agent-engineering references, 10 external
+development-skill references (including the final four) and 9 source-controlled
+USV-01 specialist procedures (including the final three). This does **not**
+change the canonical **26-agent count**. The exact reviewed allowlist and
+exception criteria are in `config/agent-skill-freeze.json` and
+`config/external-skill-sources.json`; source-controlled procedural contracts
+remain in `skills/usv01/` and deterministic routing in
+`src/core/skills/NavalSkillRegistry.ts`.
+
+Do not install or propose additional skills, agents, orchestration frameworks,
+MCP providers or paid model integrations simply to increase capability counts.
+An addition requires a documented gap, explicit Project Lead authorization,
+source and security review, exact-head protected software approval and passing
+CI. Maintenance of an already approved skill without changing its identity
+remains possible under the same applicable software/engineering governance.
+The `test-gap-audit` connected record is a source-attributed portable
+adaptation; the other three final external records are copies of pinned
+upstream skill instructions. None is a native plugin/runtime installation.
+Do not reinterpret a skill pass as qualified physical engineering evidence,
+current trusted-host commissioning or approved vessel release.
