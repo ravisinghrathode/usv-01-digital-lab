@@ -50,6 +50,11 @@ on:
 permissions:
   contents: read
 
+# Serialise publisher runs so the stable research branch advances without force pushes.
+concurrency:
+  group: a26-repository-scout-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   validate:
     name: Validate scout (offline)
