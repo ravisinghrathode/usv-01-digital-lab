@@ -291,34 +291,34 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
       {/* Aggregate Stat Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <div className="p-3 rounded bg-slate-900 border border-slate-800">
-          <div className="text-[11px] text-slate-400">Total USVs Cataloged</div>
+          <div className="text-[11px] text-slate-400">Seeded USV records</div>
           <div className="text-xl font-bold font-mono text-slate-100 mt-0.5">{stats.total} Models</div>
           <div className="text-[10px] text-slate-500 mt-0.5">Across {stats.countriesCount} nations</div>
         </div>
         <div className="p-3 rounded bg-slate-900 border border-slate-800">
-          <div className="text-[11px] text-slate-400">Combat Deployed</div>
-          <div className="text-xl font-bold font-mono text-rose-400 mt-0.5">{stats.combatProven} Proven</div>
-          <div className="text-[10px] text-rose-500/80 mt-0.5">Black Sea combat sinkings</div>
+          <div className="text-[11px] text-slate-400">Listed as Combat Deployed</div>
+          <div className="text-xl font-bold font-mono text-rose-400 mt-0.5">{stats.combatProven} Reported</div>
+          <div className="text-[10px] text-rose-500/80 mt-0.5">Operating status not independently checked</div>
         </div>
         <div className="p-3 rounded bg-slate-900 border border-slate-800">
           <div className="text-[11px] text-slate-400">High-Speed (&gt;35 kt)</div>
-          <div className="text-xl font-bold font-mono text-amber-400 mt-0.5">{stats.highSpeed} Craft</div>
-          <div className="text-[10px] text-amber-500/80 mt-0.5">Planing &amp; waterjet</div>
+          <div className="text-xl font-bold font-mono text-amber-400 mt-0.5">{stats.highSpeed} Listed</div>
+          <div className="text-[10px] text-amber-500/80 mt-0.5">Source values require verification</div>
         </div>
         <div className="p-3 rounded bg-slate-900 border border-slate-800">
           <div className="text-[11px] text-slate-400">Long Endurance (&gt;72h)</div>
-          <div className="text-xl font-bold font-mono text-emerald-400 mt-0.5">{stats.longEndurance} Vessels</div>
-          <div className="text-[10px] text-emerald-500/80 mt-0.5">Up to 180 days persistent</div>
+          <div className="text-xl font-bold font-mono text-emerald-400 mt-0.5">{stats.longEndurance} Listed</div>
+          <div className="text-[10px] text-emerald-500/80 mt-0.5">Endurance values are unverified</div>
         </div>
         <div className="p-3 rounded bg-slate-900 border border-slate-800">
-          <div className="text-[11px] text-slate-400">Naval Operators</div>
-          <div className="text-xl font-bold font-mono text-cyan-400 mt-0.5">{stats.countriesCount} Navies</div>
-          <div className="text-[10px] text-slate-500 mt-0.5">US, UK, TR, UA, IL, FR...</div>
+          <div className="text-[11px] text-slate-400">Countries represented</div>
+          <div className="text-xl font-bold font-mono text-cyan-400 mt-0.5">{stats.countriesCount} Countries</div>
+          <div className="text-[10px] text-slate-500 mt-0.5">Initial seeded catalogue only</div>
         </div>
         <div className="p-3 rounded bg-slate-900 border border-slate-800">
           <div className="text-[11px] text-slate-400">Academic Papers</div>
-          <div className="text-xl font-bold font-mono text-purple-400 mt-0.5">{stats.totalPapers} Papers</div>
-          <div className="text-[10px] text-purple-400/80 mt-0.5">IEEE / DTIC / SNAME</div>
+          <div className="text-xl font-bold font-mono text-purple-400 mt-0.5">{stats.totalPapers} Entries</div>
+          <div className="text-[10px] text-purple-400/80 mt-0.5">Publication identity to be reviewed</div>
         </div>
       </div>
 
