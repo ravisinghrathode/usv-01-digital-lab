@@ -6,7 +6,7 @@ import {illustrativeSnapshot,type Snapshot} from '../src/dockyard2/domain';
 
 const render=(demoMode:boolean,snapshot:Snapshot=illustrativeSnapshot,draft:null|{title:string;objective:string}=null)=>
  renderToStaticMarkup(React.createElement(SessionDesk,{
-  demoMode,snapshot,draft,onDraftChange:()=>{},onRefresh:()=>{},changeMode:()=>{}
+  demoMode,snapshot,draft,onDraftChange:()=>{},onRefresh:()=>{},onInspectConcept:()=>{},changeMode:()=>{}
  }));
 
 describe('Engineering Sessions UX integrity',()=>{
