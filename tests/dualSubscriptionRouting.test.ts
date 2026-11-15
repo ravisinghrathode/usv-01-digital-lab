@@ -75,6 +75,7 @@ describe('26 specialist dual subscription transport policy',()=>{
     expect(codexFallbackReason(new Error('unsafe request refused'))).toBeNull();
     expect(codexFallbackReason(new Error('invalid JSON output'))).toBeNull();
     expect(codexFallbackReason(new Error('approval denied'))).toBeNull();
+    expect(codexFallbackReason(new Error('model output contains USV_QUOTA_WAIT but cannot be accepted'))).toBeNull();
   });
   it('uses the best requested Gemini Pro when unavailable Sol transport is safely classified',async()=>{
     optInGemini();
@@ -97,6 +98,20 @@ describe('26 specialist dual subscription transport policy',()=>{
       expect(result.providerUsed).toBe('gemini_cli');
       expect(result.evidenceValid).toBe(false);
       expect(result.statusMessage).toContain('NOT engineering approval');
+    }finally{router.registerProvider(oldCodex);router.registerProvider(oldGemini)}
+  });
+  it('refuses a Gemini lower-model downgrade without falsely reporting a Pro execution',async()=>{
+    optInGemini();
+    const router=ModelProviderRouter.getInstance();
+    const oldCodex=router.getProvider('codex_cli')!;
+    const oldGemini=router.getProvider('gemini_cli')!;
+    try{
+      router.registerProvider({name:'codex_cli',isAvailable:()=>true,
+        generateText:async()=>{throw new Error('USV_CODEX_MODEL_UNAVAILABLE: unavailable')}});
+      router.registerProvider({name:'gemini_cli',isAvailable:()=>true,
+        generateText:async()=>({...stub('gemini_cli'),modelUsed:'gemini-3.8-flash'})});
+      await expect(router.generate(prompt,{preferredProvider:'codex_cli'})).rejects
+        .toThrow(/USV_GEMINI_MODEL_NOT_VERIFIED/);
     }finally{router.registerProvider(oldCodex);router.registerProvider(oldGemini)}
   });
   it('does not use Gemini when Codex succeeds, or when the failure is a safety refusal',async()=>{

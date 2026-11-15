@@ -321,7 +321,10 @@ export class GeminiCliProvider implements IModelProvider {
       // without model usage metadata from Gemini CLI.
       const reportedModels=modelStats&&typeof modelStats==='object'&&!Array.isArray(modelStats)
         ? Object.keys(modelStats) : [];
-      const actualModel=reportedModels[0]||requestedModel+'-requested-unverified';
+      const actualModel=reportedModels.length === 1
+        ? reportedModels[0] : reportedModels.length > 1
+          ? reportedModels.join(',') + '-multi-model-observed'
+          : requestedModel + '-requested-unverified';
       return {
         content,parsedJson,providerUsed:'gemini_cli',modelUsed:actualModel,
         executionMode:'LIVE_AI_GENERATION',isAiReview:true,isMock:false,evidenceValid:false,
@@ -849,9 +852,15 @@ export class ModelProviderRouter {
               ...config, preferredProvider: 'gemini_cli', modelName: GEMINI_PRO_MODEL
             });
           }
-          if (secondary.providerUsed !== 'gemini_cli' &&
-              secondary.providerUsed !== 'gemini') {
+          if (secondary.providerUsed !== 'gemini_cli') {
             throw new Error('USV_GEMINI_PROVIDER_MISMATCH: claimed Gemini CLI transport does not match.');
+          }
+          // Do not silently use a lower model or a requested-only label.
+          // A multi-model Gemini run counts only when Pro is explicitly
+          // present in documented per-model usage statistics.
+          const observedModels = secondary.modelUsed.replace(/-multi-model-observed$/, '').split(',');
+          if (!observedModels.includes(GEMINI_PRO_MODEL)) {
+            throw new Error('USV_GEMINI_MODEL_NOT_VERIFIED: required Gemini Pro was not observed in CLI model usage metadata.');
           }
           // A completed Gemini reply is advisory, never human-independent
           // engineering validation. Preserve actual selected model provenance.

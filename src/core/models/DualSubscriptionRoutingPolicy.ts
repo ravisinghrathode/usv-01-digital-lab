@@ -37,13 +37,13 @@ export function codexFallbackReason(error: unknown): SafeFallbackReason | null {
   // different vendor to evade a local research budget or broken ledger.
   if (/LOCAL_REQUEST_BUDGET_EXHAUSTED|QUOTA_LEDGER_UNAVAILABLE|QUOTA_LEDGER_CORRUPT/.test(message))
     return null;
-  if (/\bUSV_QUOTA_WAIT\b|\bQUOTA_EXHAUSTED\b/.test(message))
+  if (/^(?:USV_QUOTA_WAIT\b|QUOTA_EXHAUSTED\b)/.test(message))
     return 'CODEX_QUOTA';
-  if (/\bUSV_CODEX_AUTH_UNAVAILABLE\b|Codex must be signed in with a ChatGPT subscription/.test(message))
+  if (/^(?:USV_CODEX_AUTH_UNAVAILABLE\b|Codex must be signed in with a ChatGPT subscription)/.test(message))
     return 'CODEX_AUTH_UNAVAILABLE';
-  if (/\bUSV_CODEX_TRANSPORT_UNAVAILABLE\b/.test(message))
+  if (/^USV_CODEX_TRANSPORT_UNAVAILABLE\b/.test(message))
     return 'CODEX_TRANSPORT_UNAVAILABLE';
-  if (/\bUSV_CODEX_MODEL_UNAVAILABLE\b/.test(message))
+  if (/^USV_CODEX_MODEL_UNAVAILABLE\b/.test(message))
     return 'CODEX_MODEL_UNAVAILABLE';
   return null;
 }
