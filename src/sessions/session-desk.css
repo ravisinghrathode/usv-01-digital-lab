@@ -30,7 +30,7 @@
 .ux-workbench-active .es-truth-banner-live{background:#0d3340;color:#c3e5e7;border-color:#1f5d64}
 .ux-workbench-active .es-library-status{color:#e4f4f9}
 .ux-workbench-active .es-main{padding:14px clamp(12px,1.4vw,24px) 18px}
-.ux-workbench-active .es-session-tray{background:#091d2e;color:#bed4e1;border-color:#1c435e}
+.ux-workbench-active .es-session-tray,.ux-workbench-active .es-tray-expanded{display:none}
 .ux-workbench-active .es-session-tray a{color:#9ed8f1}
 .ux-workbench-active .es-help-popover{background:#0d2d45;border-color:#2c617c;color:#e5f3ff}
 .ux-workbench-active .es-help-popover p{color:#aec8d9}
