@@ -78,7 +78,7 @@ export function Design({session,changeMode,select,setPerspective,toggleSync,togg
     <div className="v2-design-meta"><div><span>{i===0?'DESIGN A / REFERENCE':'DESIGN B / EXPERIMENTAL'}</span><strong>{i===0?'Current design concept':'Lightweight design proposal'}</strong></div><span className="v2-model-provenance">ILLUSTRATIVE GEOMETRY</span></div>
     <div className="v2-design-image">
       <div className="v2-design-grid" aria-hidden="true"/>
-      {session.perspective==='plan'&&id==='reference'||id==='candidate'&&!session.cameraSync&&session.candidatePerspective==='plan'?<div className="v2-plan-placeholder"><VesselVisual variant={id}/><span>Plan-view geometry requires an approved CAD source</span></div>:<VesselVisual variant={id}/>}
+      <VesselVisual variant={id} perspective={id==='candidate'&&!session.cameraSync?session.candidatePerspective:session.perspective}/>
       {session.isolate&&<div className="v2-isolation-guide"><ScanLine size={16}/> Hull interfaces highlighted in illustration only</div>}
     </div>
     <div className="v2-design-pane-foot">
