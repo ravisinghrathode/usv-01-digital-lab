@@ -232,7 +232,8 @@ button{cursor:pointer}
 .es-tray-expanded strong{font-size:12px}
 .es-tray-expanded span{color:#8b5b1d;font-size:11px}
 .es-inspector-backdrop{position:fixed;inset:0;background:#071e2d44;z-index:29;border:0}
-.es-inspector{position:fixed;top:0;right:0;bottom:0;width:min(420px,100vw);z-index:30;background:#fff;box-shadow:-14px 0 45px #092a3e35;overflow:auto;padding:0 25px 25px}
+.es-inspector{position:fixed;top:0;right:0;bottom:0;left:auto;width:min(420px,100vw);max-width:100vw;max-height:100dvh;margin:0 0 0 auto;z-index:30;background:#fff;border:0;border-radius:0;box-shadow:-14px 0 45px #092a3e35;overflow:auto;padding:0 25px 25px}
+.es-inspector::backdrop{background:#071e2d66}
 .es-inspector header{min-height:69px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #d9e5eb}
 .es-inspector header span{color:#59778a;font-size:11px;font-weight:800;letter-spacing:.1em}
 .es-inspector header button{display:grid;place-items:center;border:0;background:#f0f5f7;border-radius:7px;width:42px;height:42px;color:#476b80}
