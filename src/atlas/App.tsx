@@ -61,7 +61,7 @@ export default function AtlasLab(){
     </a>
     <nav className="at-global-nav" aria-label="Lab workspaces">
       {ROOMS.map(r=><button type="button" key={r.id} aria-current={room===r.id?'page':undefined}
-       onClick={()=>changeRoom(r.id)}>{r.label}</button>)}
+       onClick={()=>changeRoom(r.id)}><span className="at-nav-wide">{r.label}</span><span className="at-nav-narrow">{r.id==='studio'?'Vessel':r.id==='agents'?'Agents':r.label}</span></button>)}
     </nav>
     <div className="at-header-tools">
       <button type="button" className="at-search-button" ref={searchTrigger}
