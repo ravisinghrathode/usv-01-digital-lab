@@ -533,6 +533,8 @@
 /* Screenshot-driven final visual hierarchy correction.
  * The investigation title already lives in the persistent session spine;
  * repeating it above the hero delayed access to the actual vessel and graph. */
+.es-library-status{font-size:10px;letter-spacing:0;color:#5d7583;margin-left:auto;font-weight:690;white-space:nowrap}
+@media(max-width:700px){.es-library-status{display:none}}
 .vf-worktable>.vf-page-title{display:none}
 .vf-product-hero{isolation:isolate}
 .vf-worktable .vf-part-disclaimer{display:none}
