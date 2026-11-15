@@ -82,7 +82,8 @@ function runStep(cwd:string,env:NodeJS.ProcessEnv,label:string,args:string[]):vo
   console.log('USV PRIVATE COMMISSION: '+label);
   const result=spawnSync('npm',['run',...args],{
     cwd,env,shell:false,stdio:'inherit',
-    timeout:60*60*1000
+    timeout:label.startsWith('Authenticated research-only 26-agent')
+      ? 180*60*1000 : 60*60*1000
   });
   if(result.error || result.status!==0)
     throw new Error('USV_PRIVATE_COMMISSION_FAILED_CLOSED: '+label);
@@ -121,6 +122,11 @@ async function main():Promise<void>{
     throw new Error('USV_PRIVATE_COMMISSION_UNAPPROVED_GIT_REMOTE');
   await assertUsvRepositoryWorkingDirectory(cwd);
   await assertPinnedCleanGitRevision(cwd,sourceSha);
+  const reviewedMain=execFileSync('git',['rev-parse','refs/remotes/origin/main'],{
+    cwd,encoding:'utf8',timeout:8000
+  }).trim();
+  if(reviewedMain!==sourceSha)
+    throw new Error('USV_PRIVATE_COMMISSION_SOURCE_NOT_PINNED_TO_ORIGIN_MAIN');
   const catalog=resolveControlledCatalog(cwd,catalogArg);
 
   // Preserve only the approved subscription and research flags. Billing/API

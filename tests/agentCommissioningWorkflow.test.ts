@@ -35,6 +35,8 @@ describe('Public repo zero-model and private-local live commissioning',()=>{
    expect(local).toContain('mission-control:gemini-catalog');
    expect(local).toContain('mission-control:model-health');
    expect(local).toContain('mission-control:preflight');
+   expect(local).toContain('refs/remotes/origin/main');
+   expect(local).toContain('USV_PRIVATE_COMMISSION_SOURCE_NOT_PINNED_TO_ORIGIN_MAIN');
  });
  it('requires signed host health but never equates it with external engineering acceptance',()=>{
    expect(local).toContain('mission-control:attest-host');

@@ -10,7 +10,8 @@ credential-free GitHub-hosted runner. **DO NOT REGISTER `usv01-codex` ON THIS
 PUBLIC REPOSITORY.** See https://docs.github.com/en/actions/reference/security/secure-use.
 
 Use a dedicated, authorized operator-owned local Mac host (not a GitHub Actions
-runner) and a clean exact-source checkout. After an independent A04 host review,
+runner) and a clean exact-source checkout with an up-to-date
+`refs/remotes/origin/main` reference matching the independently reviewed SHA. After an independent A04 host review,
 the operator sets `USV_A04_AUTHORIZED_SHA` to the exact approved 40-character
 source commit and a stable nonsecret `USV01_HOST_ID`. No key or ChatGPT/Google
 cached session leaves the machine. The runner fails closed if invoked under
