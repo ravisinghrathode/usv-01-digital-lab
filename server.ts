@@ -1328,6 +1328,35 @@ app.get('/api/usv-intel/discoveries', (_req, res) => {
   }
 });
 
+// Separate documentary research catalogue; records are unverified and
+// may link to open-access publications, but are never certified papers.
+app.get('/api/usv-intel/document-discoveries', (_req, res) => {
+  try {
+    const file = path.join(__dirname, 'references/fleet-intelligence/document-register.json');
+    const register = JSON.parse(fs.readFileSync(file, 'utf8'));
+    if (register.schemaVersion !== 1 || register.agentId !== 'INTEL-USV-26' ||
+      register.reviewStatus !== 'UNVERIFIED_PUBLIC_DOCUMENTS' ||
+      !Array.isArray(register.records) ||
+      !register.records.every((r: any) => r.reviewStatus === 'REVIEW_REQUIRED')) {
+      return res.status(503).json({success: false, error: 'Document research index is invalid'});
+    }
+    res.json({success: true,agentId: 'INTEL-USV-26',
+      researchStatus: 'UNVERIFIED_PUBLIC_DOCUMENTS',
+      count: register.records.length, independentlyVerified: 0,
+      releaseApproved: false,
+      records: register.records.slice(0, 100).map((r: any) => ({
+        id: r.id, title: r.title, publishedAt: r.publishedAt,
+        doi: r.doi, sourceUrl: r.sourceUrl,
+        fullTextPdfLink: r.fullTextPdfLink,
+        openLicenseMetadata: r.openLicenseMetadata,
+        metadataConflict: !!r.pendingMetadataChange,
+        status: 'REVIEW_REQUIRED'
+      }))});
+  } catch {
+    res.status(503).json({success: false,error:'A26 documentary research index unavailable'});
+  }
+});
+
 app.get('/api/usv-intel/status', (req, res) => {
   res.json({
     success: true,
