@@ -31,6 +31,7 @@ import {
 } from './scripts/governance/ecr-approval.ts';
 import { DEFAULT_PRIVATE_KEY_PATH } from './scripts/governance/director-keygen.ts';
 import { validateECRFile } from './scripts/governance/ecr-tool.ts';
+import { ResilientAgentQueue } from './src/core/mission-control/ResilientAgentQueue.ts';
 import { GlobalUsvIntelligenceAgent } from './src/core/agents/GlobalUsvIntelligenceAgent.ts';
 import { GlobalIntelligenceLearningBridge } from './src/core/intelligence/GlobalIntelligenceLearningBridge.ts';
 import http from 'http';
@@ -986,6 +987,20 @@ app.post('/api/verify/execute', async (req, res) => {
     res.json({ success: true, report });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Authenticated, read-only quota and queue telemetry. The snapshot exposes no
+// prompts, access tokens or engineering release authority.
+app.get('/api/mission-control/quota-status', async (_req, res) => {
+  try {
+    const status = await new ResilientAgentQueue().status();
+    res.json({ success: true, status });
+  } catch (error: any) {
+    res.status(503).json({
+      success: false,
+      error: 'Quota/queue state unavailable; automatic model dispatch must remain on hold.'
+    });
   }
 });
 
