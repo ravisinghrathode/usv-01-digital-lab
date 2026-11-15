@@ -112,6 +112,26 @@ export type SimulationRunStatus =
   | 'Under Review' 
   | 'Approved';
 
+/**
+ * An authenticated source pointer, not a CAD upload, validated mesh, or
+ * approved vessel baseline. Files remain in controlled external storage.
+ */
+export interface CadRevision {
+  id: string;
+  projectId: 'PRJ-USV-01';
+  title: string;
+  revision: string;
+  fileLabel: string;
+  sourceUrl: string;
+  sourceSha256: string;
+  notes: string;
+  recordStatus: 'SOURCE_REGISTERED_UNVERIFIED';
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+  isIllustrative: false;
+}
+
 export interface SimulationJob {
   id: string;
   projectId: string;
