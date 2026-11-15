@@ -8,18 +8,20 @@ import {emptyDocumentRegister,mergeDocumentSources,
   validateDocumentRegister,documentMarkdown} from '../scripts/a26-document-register.mjs';
 const config=JSON.parse(await readFile(fileURLToPath(
   new URL('../config/a26-fleet-discovery.json',import.meta.url)),'utf8'));
+const historical=JSON.stringify({query:{search:[{pageid:123,title:'Prototype autonomous surface vessel sea trial',
+  snippet:'Unmanned surface vessel research and trials'}]}});
 const sample='<rss><channel><item>'+
   '<title>Prototype autonomous surface vessel sea trial</title>'+
   '<link>https://news.usni.org/public-test</link>'+
   '<description>USV research vessel</description></item></channel></rss>';
-test('73 global news and research searches are covered in every campaign',async()=>{
+test('85 global news and research searches are covered in every campaign',async()=>{
   const plan=sourcePlan(config);
-  assert.equal(plan.length,73);
-  const fixtures=Object.fromEntries(plan.map(p=>[p.id,sample]));
+  assert.equal(plan.length,85);
+  const fixtures=Object.fromEntries(plan.map(p=>[p.id,p.class==='ENCYCLOPEDIA_METADATA'?historical:sample]));
   const result=await campaign({config,fixtures,batchSize:24,maxBatches:4,
     now:'2026-11-15T00:00:00Z'});
-  assert.equal(result.sourcesAttempted,73);
-  assert.equal(result.sourcesSucceeded,73);
+  assert.equal(result.sourcesAttempted,85);
+  assert.equal(result.sourcesSucceeded,85);
   assert.equal(result.campaignBatches.length,4);
   assert.equal(result.newResearchLeads,1);
   assert.equal(result.register.records.length,1);
@@ -29,7 +31,7 @@ test('73 global news and research searches are covered in every campaign',async(
 });
 test('repeated public campaign does not accumulate identical evidence',async()=>{
   const plan=sourcePlan(config);
-  const fixtures=Object.fromEntries(plan.map(p=>[p.id,sample]));
+  const fixtures=Object.fromEntries(plan.map(p=>[p.id,p.class==='ENCYCLOPEDIA_METADATA'?historical:sample]));
   const first=await campaign({config,fixtures,batchSize:24,maxBatches:4,
     now:'2026-11-15T00:00:00Z'});
   const second=await campaign({config,baseline:first.register,fixtures,
@@ -42,7 +44,7 @@ test('partial outages are visible and do not certify global discovery',async()=>
   const result=await campaign({config,fixtures:{'naval-news':sample},batchSize:24,
     maxBatches:4,now:'2026-11-15T00:00:00Z'});
   assert.equal(result.sourcesSucceeded,1);
-  assert.equal(result.sourcesFailed,72);
+  assert.equal(result.sourcesFailed,84);
   assert.equal(result.globalCoverageComplete,false);
   assert.equal(result.register.records.length,1);
 });
