@@ -21,13 +21,14 @@ const props={
  prepareTask:()=>{}
 };
 describe('Engineering Sessions — standard investigation interface',()=>{
- it('serves the new standard at root and preserves prior and governed routes',()=>{
+ it('serves the new standard at root, redirects retired UI, and preserves governed routes',()=>{
   expect(source('sessions.html')).toContain('/src/sessions/main.tsx');
   expect(source('src/sessions/main.tsx')).toContain("import './styles.css'");
   expect(source('vite.config.ts')).toContain("engineeringSessions: path.resolve(import.meta.dirname, 'sessions.html')");
   expect(source('package.json')).toContain('dev:engineering-sessions');
   expect(source('index.html')).toContain('/src/sessions/main.tsx');
-  expect(source('dockyard2.html')).toContain('/src/dockyard2/main.tsx');
+  expect(source('dockyard2.html')).toContain('window.location.replace');
+  expect(source('dockyard2.html')).not.toContain('/src/dockyard2/main.tsx');
   expect(source('legacy.html')).toContain('/src/main.tsx');
   const app=source('src/sessions/App.tsx');
   expect(app).not.toContain("from '../atlas/");
