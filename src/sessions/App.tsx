@@ -64,7 +64,7 @@ export default function EngineeringSessionsApp(){
    <div className="es-global-actions">
     <button type="button" className="es-search-trigger" ref={searchTrigger} onClick={()=>{setSearch('');searchDialog.current?.showModal();}} aria-label="Search engineering records and modules"><Search size={19}/><span>Find anything</span><kbd>⌘ K</kbd></button>
     <button type="button" className="es-help-button" onClick={()=>setHelpOpen(v=>!v)} aria-expanded={helpOpen} aria-label="Toggle prototype help"><HelpCircle size={20}/></button>
-    <a className="es-governed" href="/legacy.html" title="Open original governed engineering lab">Original lab <ArrowUpRight size={14}/></a>
+    <a className="es-governed" href="/legacy.html" aria-label="Open original governed engineering lab" title="Open original governed engineering lab"><span>Original lab</span> <ArrowUpRight size={14}/></a>
    </div>
   </header>
   {helpOpen&&<aside className="es-help-popover"><strong>About this concept</strong><p>Use the five modes above or Alt+1–5. Choose an object to inspect it. Press Ctrl/Cmd+K to search. This is an interactive design demonstration with synthetic records—not a live, verified engineering session.</p><button type="button" onClick={()=>setHelpOpen(false)}>Close</button></aside>}
@@ -79,7 +79,7 @@ export default function EngineeringSessionsApp(){
     <span><LockKeyhole size={15}/> Not reviewed</span>
    </div>
   </section>
-  <div className="es-truth-banner" role="note"><span className="es-truth-dot"/> <strong>INTERACTIVE UX PROTOTYPE</strong><span>All engineering objects are synthetic examples. No real USV-01 geometry, results or approvals are represented.</span></div>
+  <div className="es-truth-banner" role="note"><span className="es-truth-dot"/> <strong>INTERACTIVE UX PROTOTYPE</strong><span className="es-truth-long">All engineering objects are synthetic examples. No real USV-01 geometry, results or approvals are represented.</span><span className="es-truth-short">No approved CAD, results or decisions.</span></div>
   <main className="es-main" id="es-main" ref={main} tabIndex={-1}>
    {session.mode==='worktable'&&<Worktable {...props}/>}
    {session.mode==='design'&&<Design {...props}/>}
