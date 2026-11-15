@@ -1,5 +1,5 @@
-import React,{useState} from 'react';
-import {Activity,ArrowRight,ArrowUpRight,BookOpen,Box,CalendarRange,CheckCircle2,ChevronRight,ClipboardList,FileCheck2,FileText,FlaskConical,GitBranch,Layers3,LockKeyhole,Network,Plus,RefreshCw,Search,ShieldAlert,ShieldCheck,SlidersHorizontal,Workflow,X} from 'lucide-react';
+import React,{useEffect,useRef,useState} from 'react';
+import {Activity,ArrowRight,ArrowUpRight,BookOpen,Box,CalendarRange,ChevronRight,ClipboardList,FileCheck2,FileText,FlaskConical,GitBranch,Layers3,LockKeyhole,Network,Plus,RefreshCw,Search,ShieldAlert,ShieldCheck,SlidersHorizontal,Workflow,X} from 'lucide-react';
 import type {Snapshot} from '../dockyard2/domain';
 import {legacyModuleUrl} from '../dockyard2/domain';
 import {VesselVisual} from './VesselVisual';
@@ -43,6 +43,12 @@ const sourceOnly=<T extends {isIllustrative:boolean}>(items:T[])=>items.filter(r
 export function SessionDesk({demoMode,snapshot,changeMode,onRefresh}:Props){
  const [dock,setDock]=useState<Dock>('tasks');
  const [draftOpen,setDraftOpen]=useState(false);
+ const draftDialog=useRef<HTMLDialogElement>(null);
+ useEffect(()=>{
+  const dialog=draftDialog.current;if(!dialog)return;
+  if(draftOpen&&!dialog.open)dialog.showModal();
+  if(!draftOpen&&dialog.open)dialog.close();
+ },[draftOpen]);
  const [draftTitle,setDraftTitle]=useState('');
  const [draftObjective,setDraftObjective]=useState('');
  const [localDraft,setLocalDraft]=useState<{title:string;objective:string}|null>(null);
@@ -58,9 +64,9 @@ export function SessionDesk({demoMode,snapshot,changeMode,onRefresh}:Props){
  const objective=localDraft?localDraft.objective:demoMode?
   'Explore hull alternatives and identify the engineering evidence needed for a defensible design decision.':
   'Review source-backed engineering records, identify gaps, and initiate controlled design and verification work.';
- const list=(
-  dock==='evidence'?simulations.map(r=>({id:r.id,title:r.name,detail:r.runStatus,href:legacyModuleUrl('simulations')})).concat(
-   tests.map(r=>({id:r.id,title:'Verification test '+r.id,detail:r.resultStatus,href:legacyModuleUrl('workstream-VNV')}))):
+ const list:{id:string;title:string;detail:string;href:string}[]=(
+  dock==='evidence'?[...simulations.map(r=>({id:r.id,title:r.name,detail:String(r.runStatus),href:legacyModuleUrl('simulations')})),
+   ...tests.map(r=>({id:r.id,title:'Verification test '+r.id,detail:String(r.resultStatus),href:legacyModuleUrl('workstream-VNV')}))]:
   dock==='issues'?risks.map(r=>({id:r.id,title:r.description,detail:r.status,href:legacyModuleUrl('risks-decisions')})):
   dock==='history'?decisions.map(r=>({id:r.id,title:r.title,detail:r.approvalState,href:legacyModuleUrl('risks-decisions')})):[]);
  const matched=list.filter(item=>(item.id+' '+item.title+' '+item.detail).toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
@@ -168,8 +174,7 @@ export function SessionDesk({demoMode,snapshot,changeMode,onRefresh}:Props){
     <div className="ux-dock-empty"><FileText size={19}/> No matching, source-backed records in this view.</div>}
    </div>
   </section>
-  {draftOpen&&<div className="ux-dialog-backdrop" role="presentation">
-   <div className="ux-draft-dialog" role="dialog" aria-modal="true" aria-labelledby="ux-draft-title">
+  <dialog ref={draftDialog} className="ux-draft-dialog" aria-labelledby="ux-draft-title" onClose={()=>setDraftOpen(false)} onCancel={()=>setDraftOpen(false)}>
     <header><h2 id="ux-draft-title">Create a local session draft</h2><button type="button" aria-label="Close new session draft" onClick={()=>setDraftOpen(false)}><X size={19}/></button></header>
     <p>Until an authoritative session backend is connected, this draft exists only on this page. It is not saved, assigned, approved, or dispatched.</p>
     <form onSubmit={e=>{e.preventDefault();if(draftTitle.trim()&&draftObjective.trim()){setLocalDraft({title:draftTitle.trim(),objective:draftObjective.trim()});setDraftOpen(false);}}}>
@@ -177,6 +182,6 @@ export function SessionDesk({demoMode,snapshot,changeMode,onRefresh}:Props){
      <label>Engineering objective<textarea required rows={4} maxLength={1000} value={draftObjective} onChange={e=>setDraftObjective(e.target.value)} placeholder="Define scope, success criteria and required evidence"/></label>
      <div><button type="button" onClick={()=>setDraftOpen(false)}>Cancel</button><button type="submit" className="ux-primary">Use local draft <ArrowRight size={15}/></button></div>
     </form>
-   </div></div>}
+   </dialog>
   </section>;
 }
