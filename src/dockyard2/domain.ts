@@ -1,5 +1,5 @@
 /**
- * Dockyard 2.0 uses the existing engineering schema and the same authenticated
+ * Naval Design Studio uses the existing engineering schema and the same authenticated
  * snapshot endpoint as Naval Studio. No new engineering data store or authority.
  */
 import type {
@@ -60,7 +60,13 @@ export function parseServerSnapshot(input: unknown): Snapshot {
   };
 }
 export function legacyModuleUrl(id:NavigationModule):string {
-  return '/?module='+encodeURIComponent(id);
+  return '/legacy.html?module='+encodeURIComponent(id);
+}
+/** Recognize a registered pre-cutover /?module= link and preserve it at the legacy editor. */
+export function legacyRootRedirect(search:string):string|null {
+  const requested = new URLSearchParams(search).get('module');
+  const known = MODULE_REGISTRY.find(m=>m.id===requested);
+  return known ? legacyModuleUrl(known.id) : null;
 }
 export function requestedLegacyModule(search:string):NavigationModule {
   const requested = new URLSearchParams(search).get('module');
