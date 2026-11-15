@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { authenticatedFetch } from '../core/auth/authClient';
+import { getPublicA26ReviewFeed } from '../core/intelligence/a26PublicResearchFallback';
 import {
   Globe,
   Search,
@@ -53,8 +54,9 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
     claims:Array<{field:string;value:string;quotation:string;sourceUrl:string|null}>};
   const [publicResearch,setPublicResearch]=useState<{
     leads:ResearchLead[];publications:ResearchDocument[];vessels:ResearchVessel[];sourceRevision:string;sourceUrl:string;runId:string;
+    sourceMode:'LAB_BACKEND'|'PUBLIC_GITHUB_READ_ONLY';
     state:'LOADING'|'READY'|'UNAVAILABLE';
-  }>({leads:[],publications:[],vessels:[],sourceRevision:'',sourceUrl:'',runId:'',state:'LOADING'});
+  }>({leads:[],publications:[],vessels:[],sourceRevision:'',sourceUrl:'',runId:'',sourceMode:'LAB_BACKEND',state:'LOADING'});
   const [researchKind,setResearchKind]=useState<'leads'|'publications'|'vessels'>('leads');
   const [researchQuery,setResearchQuery]=useState('');
   const [researchPage,setResearchPage]=useState(0);
@@ -63,14 +65,30 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
     let mounted=true;
     const refresh=async()=>{
       try{
-        const response=await authenticatedFetch('/api/usv-intel/research-feed');
-        if(!response.ok)throw Error('Research feed unavailable');
-        const d=await response.json();
-        if(!d.success||d.researchStatus!=='UNVERIFIED_PUBLIC_RESEARCH'||
-          d.engineeringReleaseApproved!==false||!Array.isArray(d.leads)||!Array.isArray(d.publications)||!Array.isArray(d.vessels))
-          throw Error('Invalid research feed');
+        let d:any;
+        let sourceMode:'LAB_BACKEND'|'PUBLIC_GITHUB_READ_ONLY'='LAB_BACKEND';
+        try{
+          const response=await authenticatedFetch('/api/usv-intel/research-feed');
+          // Invalid/expired sessions must never be bypassed by a fallback.
+          if(response.status===401||response.status===403)
+            throw Error('A26_LAB_AUTHORIZATION_REQUIRED');
+          const type=response.headers.get('content-type')||'';
+          if(!response.ok||!type.includes('application/json'))throw Error('A26_BACKEND_NOT_AVAILABLE');
+          d=await response.json();
+          if(!d.success||d.researchStatus!=='UNVERIFIED_PUBLIC_RESEARCH'||
+            d.engineeringReleaseApproved!==false||!Array.isArray(d.leads)||
+            !Array.isArray(d.publications)||!Array.isArray(d.vessels))
+            throw Error('A26_BACKEND_RESEARCH_FEED_INVALID');
+        }catch(err){
+          if(err instanceof Error&&err.message==='A26_LAB_AUTHORIZATION_REQUIRED')throw err;
+          // The stand-alone Vite / Google AI Studio Lab often has no Express
+          // server. Read only the repository's PUBLIC unverified review data.
+          d=await getPublicA26ReviewFeed();
+          sourceMode='PUBLIC_GITHUB_READ_ONLY';
+        }
         if(mounted)setPublicResearch({leads:d.leads,publications:d.publications,vessels:d.vessels,
-          runId:String(d.runId||''),sourceRevision:d.sourceRevision||'',sourceUrl:d.sourceUrl||'',state:'READY'});
+          runId:String(d.runId||''),sourceRevision:d.sourceRevision||'',sourceUrl:d.sourceUrl||'',
+          sourceMode,state:'READY'});
       }catch{
         if(mounted)setPublicResearch(v=>({...v,state:'UNAVAILABLE'}));
       }
@@ -273,6 +291,7 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
             </p>
             {publicResearch.state==='READY' && <p className="mt-1 text-[11px] text-slate-400">
               Source revision: <span className="font-mono">{publicResearch.sourceRevision.slice(0,12)}</span>
+              <span className="ml-2">{publicResearch.sourceMode==='PUBLIC_GITHUB_READ_ONLY'?'Public research · direct GitHub feed':'Lab research API'}</span>
               {publicResearch.runId&&<a className="ml-2 underline text-sky-300" target="_blank" rel="noopener noreferrer"
                 href={`https://github.com/ravisinghrathode/usv-01-digital-lab/actions/runs/${publicResearch.runId}`}>Live evidence run</a>}
             </p>}
