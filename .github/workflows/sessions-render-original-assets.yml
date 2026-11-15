@@ -1,6 +1,10 @@
 name: Sessions — Build Original 3D Product Visuals
 
 on:
+  pull_request:
+    paths:
+      - 'scripts/ui/render_sessions_vessels.py'
+      - '.github/workflows/sessions-render-original-assets.yml'
   workflow_dispatch:
 
 permissions:
@@ -14,6 +18,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: true
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
       - name: Install open-source Blender rendering runtime
         run: |
           sudo apt-get update -qq
@@ -41,9 +46,9 @@ jobs:
           if ! git diff --cached --quiet; then
             git commit -m "art(sessions): add source-generated original 3D naval vessel concept previews"
             for attempt in 1 2 3; do
-              git fetch origin "${GITHUB_REF_NAME}"
-              git rebase "origin/${GITHUB_REF_NAME}"
-              if git push origin "HEAD:${GITHUB_REF_NAME}"; then exit 0; fi
+              git fetch origin "${{ github.event.pull_request.head.ref || github.ref_name }}"
+              git rebase "origin/${{ github.event.pull_request.head.ref || github.ref_name }}"
+              if git push origin "HEAD:${{ github.event.pull_request.head.ref || github.ref_name }}"; then exit 0; fi
               sleep 3
             done
             echo "Unable to publish reproducible render assets after three retries" >&2
