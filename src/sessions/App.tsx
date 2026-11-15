@@ -12,11 +12,16 @@ export default function EngineeringSessionsApp(){
  const [search,setSearch]=useState('');
  const [helpOpen,setHelpOpen]=useState(false);
  const searchDialog=useRef<HTMLDialogElement>(null);
+ const inspectorDialog=useRef<HTMLDialogElement>(null);
  const searchTrigger=useRef<HTMLButtonElement>(null);
  const searchField=useRef<HTMLInputElement>(null);
  const main=useRef<HTMLElement>(null);
  const results=useMemo(()=>searchItems(search),[search]);
  const selected=currentEntity(session.selected);
+ useEffect(()=>{const dialog=inspectorDialog.current;if(!dialog)return;
+  if(session.inspector&&selected){if(!dialog.open)dialog.showModal();}
+  else if(dialog.open)dialog.close();
+ },[session.inspector,session.selected]);
  const setMode=(mode:Mode)=>{
   setSession(old=>({...old,mode}));
   if(typeof window!=='undefined')window.history.pushState({mode},'',hashForMode(mode));
@@ -90,8 +95,10 @@ export default function EngineeringSessionsApp(){
   {trayOpen&&<section className="es-tray-expanded" aria-label="All investigation objects">
     {ENTITIES.map(e=><button type="button" key={e.id} onClick={()=>{select(e.id);setTrayOpen(false);}}><strong>{e.title}</strong><span>{e.status}</span></button>)}
    </section>}
-  {session.inspector&&selected&&<><button type="button" className="es-inspector-backdrop" aria-label="Close context inspector" onClick={()=>setSession(old=>({...old,inspector:false}))}/><aside className="es-inspector" aria-label="Selected object context inspector">
-   <header><span>OBJECT CONTEXT / {selected.type.toUpperCase()}</span><button type="button" aria-label="Close context inspector" onClick={()=>setSession(old=>({...old,inspector:false}))}><X size={20}/></button></header>
+  <dialog ref={inspectorDialog} className="es-inspector" aria-label="Selected object context inspector"
+   onClose={()=>setSession(old=>({...old,inspector:false}))}>
+  {selected&&<>
+   <header><span>OBJECT CONTEXT / {selected.type.toUpperCase()}</span><button type="button" aria-label="Close context inspector" onClick={()=>inspectorDialog.current?.close()}><X size={20}/></button></header>
    <div className="es-inspector-subject"><span>SELECTED OBJECT</span><h2>{selected.title}</h2><p>{selected.subtitle}</p></div>
    <dl><div><dt>Source status</dt><dd>{selected.status}</dd></div><div><dt>Source identity</dt><dd>Demonstration-only</dd></div><div><dt>Review state</dt><dd>Not reviewed</dd></div><div><dt>Engineering authority</dt><dd>None</dd></div></dl>
    <h3>What this means</h3><p>{selected.description}</p>
@@ -100,7 +107,8 @@ export default function EngineeringSessionsApp(){
     {selected.type==='revision'&&<button type="button" className="es-secondary" onClick={()=>{setSession(old=>({...old,inspector:false}));setMode('design')}}>Open design comparison <ArrowRight size={15}/></button>}
    </div>
    <div className="es-inspector-caveat">A demo object is not a linked source record. The button above opens the existing protected module, not a matching certified artifact.</div>
-  </aside></>}
+  </>}
+  </dialog>
   <dialog ref={searchDialog} className="es-search-dialog" aria-label="Search the engineering lab" onClose={()=>searchTrigger.current?.focus()} onToggle={e=>{if((e.currentTarget as HTMLDialogElement).open)requestAnimationFrame(()=>searchField.current?.focus());}}>
    <header><h2>Find anything</h2><button type="button" aria-label="Close search" onClick={()=>searchDialog.current?.close()}><X size={20}/></button></header>
    <label className="es-search-field"><Search size={20}/><input type="search" ref={searchField} value={search} onChange={e=>setSearch(e.target.value)}
