@@ -115,6 +115,7 @@ async function study() {
       'Role: ' + c.canonicalId + ' / ' + c.name + ' / ' + c.specialism,
       'Source revision: ' + sourceSha,
       'Read AGENTS.md, USV01_PROJECT_CONTEXT.md and relevant repository skill files if available.',
+      'Read docs/academy/ALL_26_ROLE_STUDY_MAP.md and complete the exercise assigned to your exact canonical role.',
       'For A05/A06/A07/A14/A17 read docs/academy/COHORT_01_OPEN_BOOK_LESSONS.md, and work through the role-specific lesson.',
       'For every role, do not claim a document was accessed unless the CLI really read it.',
       'Do NOT claim that an inaccessible textbook/paid standard has been read.',
