@@ -1,0 +1,55 @@
+name: Engineering Sessions — Isolated Browser QA
+
+on:
+  pull_request:
+    paths:
+      - 'src/sessions/**'
+      - 'sessions.html'
+      - 'vite.config.ts'
+      - 'scripts/ui/engineering-sessions-browser.mjs'
+      - '.github/workflows/engineering-sessions-browser.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prototype-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked application
+        run: npm ci
+      - name: Install isolated browser runner only
+        run: npm install --no-save --package-lock=false --ignore-scripts playwright@1.56.1
+      - name: Start unauthenticated demo preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx vite --host 127.0.0.1 --port 3000 > /tmp/engineering-sessions-vite.log 2>&1 &
+          for i in {1..40}; do
+            if curl -fsS http://127.0.0.1:3000/sessions.html >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/engineering-sessions-vite.log
+          exit 1
+      - name: Verify investigation journey, source truth, accessibility basics and viewports
+        run: node scripts/ui/engineering-sessions-browser.mjs
+        env:
+          SESSIONS_BASE_URL: http://127.0.0.1:3000
+          SESSIONS_ARTIFACTS: artifacts/engineering-sessions
+      - name: Retain session screenshots for independent UI review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: engineering-sessions-visual-qa
+          path: artifacts/engineering-sessions
+          retention-days: 14
+          if-no-files-found: ignore
