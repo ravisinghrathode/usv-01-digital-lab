@@ -56,6 +56,10 @@
 .ux-desk-heading-title p{font-size:10px;letter-spacing:.08em;color:#6fd5e9;font-weight:750;margin-bottom:3px}
 .ux-desk-heading-title h1{font-size:clamp(18px,1.6vw,25px);letter-spacing:-.035em;line-height:1.25;font-weight:750;color:#f2faff}
 .ux-desk-heading-title span:not(.ux-square-icon){color:#a3bfce;font-size:11px}
+.ux-role-charter{display:flex;align-items:center;gap:7px;margin-left:auto}
+.ux-role-charter span{display:flex;flex-direction:column;gap:2px;padding:6px 10px;border:1px solid #2b6179;border-radius:7px;background:#0b2b42}
+.ux-role-charter strong{font-size:11px;font-weight:750;color:#eaf9ff}
+.ux-role-charter small{font-size:9px;color:#8dc9db}
 .ux-state-warning{display:inline-flex;align-items:center;gap:8px;border:1px solid #9a6d2d;border-radius:6px;background:#362912;color:#ffcd76;padding:8px 12px;font-size:11px;font-weight:800;letter-spacing:.055em;white-space:nowrap}
 .ux-process{border:1px solid var(--ux-line-quiet);border-radius:9px;background:#092036;padding:11px 18px;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0}
 .ux-process button{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;background:transparent;color:#a2bccd;border:0;font-size:11px;position:relative}
@@ -172,7 +176,10 @@
  .ux-trace-guard,.ux-refresh{margin-top:8px}
 }
 @media(max-width:900px){
- .ux-work-grid{grid-template-columns:minmax(0,1fr)}
+ .ux-work-grid{display:flex;flex-direction:column}
+ .ux-main-column{order:0}
+ .ux-session-list{order:1}
+ .ux-traceability{order:2}
  .ux-session-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:8px}
  .ux-session-list>.ux-card-title,.ux-session-list>.ux-sidebar-note,.ux-session-list>.ux-list-group{grid-column:1/-1}
  .ux-new-session{width:auto}
@@ -196,6 +203,7 @@
  .ux-overview-pair{display:flex;flex-direction:column}
  .ux-model-panel{order:0}
  .ux-objective{order:1}
+ .ux-role-charter{display:none}
  .ux-desk-heading-title h1{font-size:18px}
  .ux-overview-pair,.ux-mini-grid{grid-template-columns:1fr}
  .ux-work-grid,.ux-session-list{display:block}
