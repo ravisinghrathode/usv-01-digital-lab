@@ -1,6 +1,8 @@
 import React,{useEffect,useMemo,useRef,useState} from 'react';
 import {ArrowLeft,ArrowRight,ArrowUpRight,BookOpen,Box,ChevronDown,Command,Compass,FileSearch,FlaskConical,GitCompareArrows,HelpCircle,Layers,LockKeyhole,Menu,Network,Search,ShieldCheck,X} from 'lucide-react';
-import {Decide,Design,Experiment,Notebook,Worktable} from './ModeScreens';
+import {Design,Worktable} from './FidelityWorktable';
+import NavalMark from './NavalMark';
+import {Decide,Experiment,Notebook} from './FidelityPhysicsReview';
 import {DEFAULT_SESSION,ENTITIES,INVESTIGATION,MODES,STUDIES,currentEntity,hashForMode,legacyLink,searchItems,validMode,type EntityId,type Mode,type Note,type Perspective,type SessionView,type StudyId} from './model';
 
 const ICONS:Record<Mode,React.ComponentType<{size?:number}>>={
@@ -56,7 +58,7 @@ export default function EngineeringSessionsApp(){
  return <div className="es-app">
   <a href="#es-main" className="es-skip">Skip to investigation canvas</a>
   <header className="es-commandbar">
-   <a className="es-brand" href="/sessions.html#worktable" onClick={e=>{e.preventDefault();setMode('worktable')}}><span className="es-logo"><Compass size={22}/></span><span><strong>Naval AI Lab</strong><small>ENGINEERING SESSIONS</small></span></a>
+   <a className="es-brand" href="/sessions.html#worktable" onClick={e=>{e.preventDefault();setMode('worktable')}}><span className="es-logo"><NavalMark/></span><span><strong>NAVAL AI LAB <span className="es-brand-programme">/ USV-01</span></strong><small>Engineering session</small></span></a>
    <nav className="es-modes" aria-label="Engineering session modes">
     {MODES.map(m=>{const Icon=ICONS[m.id];return <button type="button" key={m.id} aria-current={session.mode===m.id?'page':undefined}
       onClick={()=>setMode(m.id)} title={m.name+' · Alt+'+m.key}><Icon size={17}/><span>{m.name}</span></button>})}
