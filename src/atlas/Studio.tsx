@@ -39,7 +39,7 @@ export function Studio({snapshot,sourceLabel,onNavigate}:Props){
       <p>Explore the product. Run the evidence trail. Work from the source.</p></div>
     <div className="at-studio-head-actions">
       <span className="at-neutral-state">Working concept · baseline unapproved</span>
-      <a className="at-action at-action-secondary" href={legacyRoute('cad-studio')}>Open CAD engineering <ArrowUpRight size={15}/></a>
+      <a className="at-action at-action-secondary" href={legacyRoute('cad-studio')}><span className="at-cad-full">Open CAD engineering</span><span className="at-cad-short">CAD</span><ArrowUpRight size={15}/></a>
     </div>
    </header>
    <div className={'at-canvas-assembly'+(!inspector?' at-inspector-hidden':'')}>
@@ -111,7 +111,7 @@ export function Studio({snapshot,sourceLabel,onNavigate}:Props){
      <div className="at-runway-heading">
       <div><span className="at-runway-icon"><FlaskConical size={19}/></span>
        <div><h2>Simulation runway</h2><p>Inspect solver cases in the context of this vessel</p></div></div>
-      <button type="button" className="at-ribbon-link" onClick={()=>onNavigate('physics')}>Explore physics laboratory <ArrowUpRight size={16}/></button>
+      <button type="button" className="at-ribbon-link" onClick={()=>onNavigate('physics')}><span className="at-ribbon-full">Explore physics laboratory</span><span className="at-ribbon-short">Physics</span><ArrowUpRight size={16}/></button>
      </div>
      <div className="at-runway-tabs" role="group" aria-label="Select simulation record">
       {snapshot.simulations.length===0?<span className="at-runway-empty">No runs recorded in the loaded register.</span>:
@@ -119,6 +119,10 @@ export function Studio({snapshot,sourceLabel,onNavigate}:Props){
         className="at-run-tab" aria-pressed={picked?.id===s.id} onClick={()=>setSelectedRun(s.id)}>
         <span>{s.discipline}</span><strong>{s.name}</strong><small>{s.runStatus} {s.isIllustrative?'· Sample':''}</small>
        </button>)}
+      {snapshot.simulations.length>0&&<div className="at-runway-availability">
+       <strong>Result viewer requires evidence</strong>
+       <span>Plots and calculated outputs remain unavailable until traceable source files are reviewed.</span>
+      </div>}
      </div>
      {picked?<div className="at-run-detail">
        <div className="at-run-ident"><span className="at-run-id">{picked.id}</span><strong>{picked.name}</strong><span>Recorded state: {picked.runStatus}</span></div>
