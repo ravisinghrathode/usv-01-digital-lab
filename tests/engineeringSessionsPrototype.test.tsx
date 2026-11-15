@@ -51,7 +51,8 @@ describe('Engineering Sessions — standard investigation interface',()=>{
   expect(app).toContain('Open the real engineering workspace.');
   expect(app).not.toContain('EXAMPLE INVESTIGATION');
   expect(app).toContain('Naval AI Lab');
-  expect(app).toContain('Session objects');
+  expect(app).toContain('Project source:');
+  expect(app).not.toContain('Illustrative fallback');
   for(const m of MODES)expect(app).toContain(m.name);
  });
  it('renders five structurally different workspaces instead of the same dashboard layout',()=>{
