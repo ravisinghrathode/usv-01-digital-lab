@@ -1,8 +1,8 @@
 # Engineering Sessions — High-Fidelity Visual Delivery V2
 
-**Target UX baseline:** `NAL-UX-BL-001` (Project Lead-selected Engineering Sessions design direction).  
-**UI surface:** `/sessions.html` (standalone candidate, not the default `/`).  
-**Status:** implemented visual feature branch, pending protected human review/merge/deployment.  
+**Target UX baseline:** `NAL-UX-BL-001` (Project Lead-selected Engineering Sessions design direction).
+**UI surface:** `/sessions.html` (standalone candidate, not the default `/`).
+**Status:** implemented visual feature branch, pending protected human review/merge/deployment.
 **Engineering source status:** demonstration only; no actual approved USV-01 geometry, calculations, verified CFD or shipboard measurements.
 
 ## Why this is a genuine visual rebuild
