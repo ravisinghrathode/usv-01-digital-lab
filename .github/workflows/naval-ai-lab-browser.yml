@@ -17,6 +17,8 @@ permissions:
 jobs:
   browser-qa:
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
     timeout-minutes: 18
     steps:
       - name: Checkout repository
@@ -31,7 +33,9 @@ jobs:
       - name: Install isolated Playwright test runner
         run: |
           npm install --no-save --package-lock=false --ignore-scripts playwright@1.56.1
-          npx playwright install --with-deps chromium
+          # Chromium and its OS dependencies are already bundled in the
+          # pinned Ubuntu 24.04 Playwright container; the host Ubuntu 26.04
+          # GitHub runner is unsupported by this pinned Playwright version.
       - name: Launch isolated Naval AI Lab preview
         shell: bash
         run: |
