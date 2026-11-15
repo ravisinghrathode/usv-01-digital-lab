@@ -169,6 +169,7 @@ export default function NavalAiLabApp(){
         <button type="button" aria-label="Close search" onClick={()=>searchDialog.current?.close()}><X size={20}/></button></div>
       <label className="nl-search-field"><Search size={20}/><input ref={firstSearch} value={query}
         onChange={e=>setQuery(e.target.value)} type="search"
+        onKeyDown={e=>{if(e.key==="Escape"){e.preventDefault();e.stopPropagation();searchDialog.current?.close();}}}
         placeholder="Find a simulation, requirement, agent tool or module"
         aria-label="Search simulation, requirement, risk and module records"/></label>
       <p className="nl-dialog-note">Searches this session's loaded records and all 24 module routes. Results open the original protected workflow.</p>
