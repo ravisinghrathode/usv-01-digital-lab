@@ -25,7 +25,8 @@ export default function NavalAiLabApp(){
   const [passphrase,setPassphrase]=useState('');
   const [loginBusy,setLoginBusy]=useState(false);
   const [loginError,setLoginError]=useState('');
-  const [catalogOpen,setCatalogOpen]=useState(false);
+  const catalogDialog=useRef<HTMLDialogElement>(null);
+  const catalogTrigger=useRef<HTMLButtonElement>(null);
   const searchDialog=useRef<HTMLDialogElement>(null);
   const loginDialog=useRef<HTMLDialogElement>(null);
   const firstSearch=useRef<HTMLInputElement>(null);
@@ -38,7 +39,7 @@ export default function NavalAiLabApp(){
   const navigate=(to:LabSection)=>{
     if(typeof window!=='undefined')window.history.pushState(null,'','#'+to);
     setSection(to);
-    setCatalogOpen(false);
+    if(catalogDialog.current?.open)catalogDialog.current.close();
     requestAnimationFrame(()=>mainRef.current?.focus());
   };
   useEffect(()=>{
@@ -89,8 +90,8 @@ export default function NavalAiLabApp(){
           aria-label="Search records and modules" aria-keyshortcuts="Control+K Meta+K">
           <Search size={17}/><span>Search the lab</span><kbd>⌘ K</kbd>
         </button>
-        <button type="button" className="nl-header-action" onClick={()=>setCatalogOpen(v=>!v)}
-          aria-expanded={catalogOpen} aria-controls="nl-module-catalog" title="Browse all engineering modules">
+        <button type="button" ref={catalogTrigger} className="nl-header-action" onClick={()=>catalogDialog.current?.showModal()}
+          aria-haspopup="dialog" aria-controls="nl-module-catalog" title="Browse all engineering modules">
           <Menu size={19}/><span>All modules</span>
         </button>
         <button type="button" className="nl-header-action nl-type-toggle"
@@ -152,17 +153,14 @@ export default function NavalAiLabApp(){
         <Icon size={20}/><span>{item.label}</span></button>;})}
     </nav>
 
-    {catalogOpen&&<div className="nl-catalog-backdrop" onClick={()=>setCatalogOpen(false)}>
-      <section id="nl-module-catalog" role="dialog" aria-label="Engineering module catalogue" aria-modal="true"
-        className="nl-catalog" onClick={e=>e.stopPropagation()}>
+    <dialog ref={catalogDialog} id="nl-module-catalog" aria-label="Engineering module catalogue" className="nl-catalog" onClose={()=>catalogTrigger.current?.focus()}>
         <div className="nl-catalog-header"><div><h2>All engineering modules</h2><p>24 existing governed workspaces, grouped by task</p></div>
-          <button type="button" aria-label="Close catalogue" onClick={()=>setCatalogOpen(false)}><X size={21}/></button></div>
+          <button type="button" aria-label="Close catalogue" onClick={()=>catalogDialog.current?.close()}><X size={21}/></button></div>
         <div className="nl-catalog-groups">{DOCKYARD_AREAS.map(group=><section key={group.id}>
           <h3>{group.label}</h3>
           {group.modules.map(m=><a href={moduleLink(m)} key={m}>{MODULE_REGISTRY.find(x=>x.id===m)?.label}<ArrowUpRight size={15}/></a>)}
         </section>)}</div>
-      </section>
-    </div>}
+    </dialog>
     <dialog className="nl-search-dialog" ref={searchDialog} aria-label="Search the naval engineering lab"
       onClose={()=>searchButton.current?.focus()} onToggle={e=>{
         if((e.target as HTMLDialogElement).open)requestAnimationFrame(()=>firstSearch.current?.focus());
