@@ -12,14 +12,14 @@ const sample='<rss><channel><item>'+
   '<title>Prototype autonomous surface vessel sea trial</title>'+
   '<link>https://news.usni.org/public-test</link>'+
   '<description>USV research vessel</description></item></channel></rss>';
-test('63 global news and research searches are covered in every campaign',async()=>{
+test('73 global news and research searches are covered in every campaign',async()=>{
   const plan=sourcePlan(config);
-  assert.equal(plan.length,63);
+  assert.equal(plan.length,73);
   const fixtures=Object.fromEntries(plan.map(p=>[p.id,sample]));
   const result=await campaign({config,fixtures,batchSize:24,maxBatches:4,
     now:'2026-11-15T00:00:00Z'});
-  assert.equal(result.sourcesAttempted,63);
-  assert.equal(result.sourcesSucceeded,63);
+  assert.equal(result.sourcesAttempted,73);
+  assert.equal(result.sourcesSucceeded,73);
   assert.equal(result.campaignBatches.length,3);
   assert.equal(result.newResearchLeads,1);
   assert.equal(result.register.records.length,1);
@@ -42,7 +42,7 @@ test('partial outages are visible and do not certify global discovery',async()=>
   const result=await campaign({config,fixtures:{'naval-news':sample},batchSize:24,
     maxBatches:4,now:'2026-11-15T00:00:00Z'});
   assert.equal(result.sourcesSucceeded,1);
-  assert.equal(result.sourcesFailed,62);
+  assert.equal(result.sourcesFailed,72);
   assert.equal(result.globalCoverageComplete,false);
   assert.equal(result.register.records.length,1);
 });
