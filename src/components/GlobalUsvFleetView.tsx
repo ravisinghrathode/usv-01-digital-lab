@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { authenticatedFetch } from '../core/auth/authClient';
 import {
   Globe,
   Search,
@@ -43,6 +44,40 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
   const [scrapeConsoleOpen, setScrapeConsoleOpen] = useState(false);
   const [scrapeLogs, setScrapeLogs] = useState<string[]>([]);
   const [syncSuccessToast, setSyncSuccessToast] = useState<string | null>(null);
+
+  // A26 proposal queues are separate from the curated fleet model catalogue.
+  // No discovery is counted as an operational vessel or certified paper.
+  const [publicResearch, setPublicResearch] = useState<{
+    researchLeads: number;
+    documentReferences: number;
+    state: 'LOADING' | 'READY' | 'UNAVAILABLE';
+  }>({researchLeads: 0, documentReferences: 0, state: 'LOADING'});
+
+  useEffect(() => {
+    let active = true;
+    const refresh = async () => {
+      try {
+        const [fleetResponse, docResponse] = await Promise.all([
+          authenticatedFetch('/api/usv-intel/discoveries'),
+          authenticatedFetch('/api/usv-intel/document-discoveries')
+        ]);
+        if (!fleetResponse.ok || !docResponse.ok) throw new Error('Research registers unavailable');
+        const [fleet, docs] = await Promise.all([fleetResponse.json(), docResponse.json()]);
+        if (!fleet.success || !docs.success) throw new Error('Research registers invalid');
+        if (active) setPublicResearch({
+          researchLeads: Number(fleet.researchLeads) || 0,
+          documentReferences: Number(docs.count) || 0,
+          state: 'READY'
+        });
+      } catch {
+        if (active) setPublicResearch({
+          researchLeads: 0, documentReferences: 0, state: 'UNAVAILABLE'
+        });
+      }
+    };
+    void refresh();
+    return () => { active = false; };
+  }, []);
 
   // Available unique countries
   const countries = useMemo(() => {
@@ -180,7 +215,7 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
               STATUS: Cached Data — No Live Refresh Performed
             </span>
             <span className="text-slate-400 bg-slate-900 border border-slate-800 px-2 py-0.5 rounded">
-              VERIFIED ARCHIVE: {new Date().toISOString().split('T')[0]}
+              SEEDED CATALOGUE: 14 UNVERIFIED MODELS
             </span>
             <span className="text-sky-300 bg-sky-950/50 border border-sky-800/40 px-2 py-0.5 rounded">
               RESEARCH REPOSITORY
@@ -217,6 +252,41 @@ export const GlobalUsvFleetView: React.FC<GlobalUsvFleetViewProps> = ({ onAskAi 
           )}
         </div>
       </div>
+
+      {/* A26 discovery evidence is a separate review lane, not a vessel count. */}
+      <section aria-label="Worldwide A26 research collection" className="rounded-lg border border-sky-200/30 bg-slate-900/60 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 className="text-sm font-semibold text-slate-100">Worldwide USV research collection</h3>
+            <p className="mt-1 max-w-2xl text-xs leading-5 text-slate-300">
+              Operational craft, prototypes and trials across global public sources.
+              Discovery leads and paper links require independent review; they are not added to the accepted fleet automatically.
+            </p>
+          </div>
+          <a
+            href="https://github.com/ravisinghrathode/usv-01-digital-lab/actions/workflows/a26-public-fleet-discovery.yml"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-md border border-sky-400/40 px-3 py-2 text-xs font-semibold text-sky-200 hover:border-sky-300 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
+          >
+            <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+            Collector runs &amp; evidence
+          </a>
+        </div>
+        <div className="mt-3 flex flex-wrap gap-x-8 gap-y-2 border-t border-slate-700/70 pt-3 text-xs" aria-live="polite">
+          <span className="text-slate-200">
+            <strong className="font-semibold text-slate-50">Research leads:</strong>{' '}
+            {publicResearch.state === 'READY' ? publicResearch.researchLeads : publicResearch.state === 'LOADING' ? 'Loading…' : 'Unavailable'}
+          </span>
+          <span className="text-slate-200">
+            <strong className="font-semibold text-slate-50">Publication records:</strong>{' '}
+            {publicResearch.state === 'READY' ? publicResearch.documentReferences : publicResearch.state === 'LOADING' ? 'Loading…' : 'Unavailable'}
+          </span>
+          <span className="text-amber-200">
+            Verification: pending · Global completeness: unknown
+          </span>
+        </div>
+      </section>
 
       {/* Aggregate Stat Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
