@@ -19,6 +19,7 @@ interface Props{
  snapshot:Snapshot;
  changeMode:(mode:Mode)=>void;
  onRefresh:()=>void;
+ onInspectConcept:()=>void;
 }
 const stages:{label:string;mode:Mode;detail:string}[]=[
  {label:'Define',mode:'worktable',detail:'Scope the investigation'},
@@ -43,7 +44,7 @@ const proposedTasks=[
 ];
 const sourceOnly=<T extends {isIllustrative:boolean}>(items:T[])=>items.filter(row=>row.isIllustrative===false);
 
-export function SessionDesk({demoMode,snapshot,draft:localDraft,onDraftChange,changeMode,onRefresh}:Props){
+export function SessionDesk({demoMode,snapshot,draft:localDraft,onDraftChange,changeMode,onRefresh,onInspectConcept}:Props){
  const [dock,setDock]=useState<Dock>('tasks');
  const [draftOpen,setDraftOpen]=useState(false);
  const draftDialog=useRef<HTMLDialogElement>(null);
@@ -129,7 +130,7 @@ export function SessionDesk({demoMode,snapshot,draft:localDraft,onDraftChange,ch
         <button type="button" aria-pressed={variant==='candidate'} onClick={()=>setVariant('candidate')}>Alternative image</button>
        </div>
       </div>
-      <footer><span>No verified geometry is linked to this preview.</span><a className="ux-primary" href="/legacy.html?module=cad-studio&amp;origin=engineering-sessions"><Box size={15}/> Open in CAD Studio <ArrowUpRight size={15}/></a></footer>
+      <footer><span>No verified geometry is linked to this preview.</span>{demoMode&&<button type="button" className="ux-inline-action" onClick={onInspectConcept}>Inspect concept source <ArrowRight size={14}/></button>}<a className="ux-primary" href="/legacy.html?module=cad-studio&amp;origin=engineering-sessions"><Box size={15}/> Open in CAD Studio <ArrowUpRight size={15}/></a></footer>
      </article>
     </div>
     <div className="ux-mini-grid">
