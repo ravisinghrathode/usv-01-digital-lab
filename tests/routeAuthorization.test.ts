@@ -36,6 +36,15 @@ describe('USV-01 server-side route authorization', () => {
     expect(authorizeLabRoute('PATCH', '/new-sensitive-feature', 'ENGINEERING_DIRECTOR')).toBe(false);
   });
 
+  it('restricts durable research enqueue and keeps telemetry read-only', () => {
+    expect(authorizeLabRoute('POST', '/mission-control/quota-enqueue', 'LEAD_SYSTEMS_ENGINEER')).toBe(true);
+    expect(authorizeLabRoute('POST', '/mission-control/quota-enqueue', 'VVT_SPECIALIST')).toBe(true);
+    expect(authorizeLabRoute('POST', '/mission-control/quota-enqueue', 'SECURITY_ANALYST')).toBe(false);
+    expect(authorizeLabRoute('POST', '/mission-control/quota-enqueue', 'UNKNOWN')).toBe(false);
+    expect(authorizeLabRoute('GET', '/mission-control/quota-status', 'VVT_SPECIALIST')).toBe(true);
+    expect(authorizeLabRoute('POST', '/mission-control/quota-status', 'ENGINEERING_DIRECTOR')).toBe(false);
+  });
+
   it('requires engineering authority for adopting NotebookLM clues', () => {
     expect(authorizeLabRoute('POST', '/notebook-lm/clues/123/adopt', 'NAVAL_ARCHITECT')).toBe(true);
     expect(authorizeLabRoute('POST', '/notebook-lm/clues/123/adopt', 'VVT_SPECIALIST')).toBe(false);

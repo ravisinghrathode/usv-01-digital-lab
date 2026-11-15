@@ -8,6 +8,8 @@ on:
       - 'scripts/mission-control/**'
       - 'tests/missionControlCoordinator.test.ts'
       - 'tests/subscriptionCliAdapter.test.ts'
+      - 'tests/quotaResilience.test.ts'
+      - 'server.ts'
       - 'tests/gitRevisionGuard.test.ts'
       - 'tests/aiBillingPolicy.test.ts'
       - 'src/core/models/AiBillingPolicy.ts'
