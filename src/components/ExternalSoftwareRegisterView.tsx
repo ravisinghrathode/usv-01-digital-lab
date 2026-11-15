@@ -53,8 +53,8 @@ export const ExternalSoftwareRegisterView: React.FC = () => {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="font-mono text-xs text-cyan-400 uppercase tracking-wider">A26 · Research asset governance</p>
-          <h2 className="text-xl font-semibold text-slate-100 mt-1">External Software & Repository Register</h2>
-          <p className="text-xs text-slate-400 mt-1">Permanent source-controlled catalogue · {register.registerId}</p>
+          <h2 className="text-xl font-semibold text-slate-100 mt-1">Code Repositories</h2>
+          <p className="text-xs text-slate-400 mt-1">Public engineering software repositories · protected register {register.registerId}</p>
         </div>
         <a href="https://github.com/ravisinghrathode/usv-01-digital-lab/blob/main/docs/EXTERNAL_SOFTWARE_OVERVIEW.md"
           target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-3 py-2 rounded border border-slate-700 text-xs text-cyan-300 hover:bg-slate-800">
