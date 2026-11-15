@@ -76,7 +76,8 @@ export function classifyFile(filePath: string): { categories: ChangeCategory[]; 
   const trustedSkillAuthorityControl = norm.startsWith('skills/usv01/') ||
     norm.startsWith('src/core/skills/') ||
     norm === 'AGENTS.md' ||
-    norm === 'config/external-skill-sources.json';
+    norm === 'config/external-skill-sources.json' ||
+    norm === 'config/agent-skill-freeze.json';
 
   // Category matching
   if (trustedSkillAuthorityControl) categories.push('SECURITY');
@@ -217,6 +218,7 @@ export function isProtectedSoftwareAuthorityPath(file: string): boolean {
     p.startsWith('skills/usv01/') ||
     p === 'AGENTS.md' ||
     p === 'config/external-skill-sources.json' ||
+    p === 'config/agent-skill-freeze.json' ||
     p.startsWith('src/core/registry/') ||
     (p.startsWith('src/core/verification/') &&
       /(Gate|Acceptance|Approval|Authority|Policy|Release|EvidenceDecision|VerifyUsv01|Safety|Autonomy|Permission)/i

@@ -30,9 +30,9 @@ describe('USV-01 source-pinned specialist procedural skill routing', () => {
       }
     }
     expect(found.size).toBe(26);
-    expect(NAVAL_SKILL_CONTRACTS).toHaveLength(6);
-    expect(new Set(NAVAL_SKILL_CONTRACTS.map(s => s.id)).size).toBe(6);
-    expect(NAVAL_SKILL_REGISTRY_VERSION).toBe('usv01-specialist-skill-registry/v1');
+    expect(NAVAL_SKILL_CONTRACTS).toHaveLength(9);
+    expect(new Set(NAVAL_SKILL_CONTRACTS.map(s => s.id)).size).toBe(9);
+    expect(NAVAL_SKILL_REGISTRY_VERSION).toBe('usv01-specialist-skill-registry/v2');
   });
 
   it('is source backed: each routed skill has a complete procedural contract', () => {
@@ -58,7 +58,7 @@ describe('USV-01 source-pinned specialist procedural skill routing', () => {
       path.resolve(process.cwd(), 'config/external-skill-sources.json'), 'utf8'
     ));
     expect(manifest.schema).toBe('usv01-external-skill-sources/v1');
-    expect(manifest.sources).toHaveLength(6);
+    expect(manifest.sources).toHaveLength(10);
     expect(manifest.runtimeDependencyStatus).toBe('NOT_INSTALLED');
     for (const record of manifest.sources) {
       expect(record.sourceCommit).toMatch(/^[0-9a-f]{40}$/);
@@ -92,6 +92,9 @@ describe('USV-01 source-pinned specialist procedural skill routing', () => {
     expect(buildNavalSkillSystemGuidance('A26')).toContain('digital-thread-and-evidence-sync');
     expect(buildNavalSkillSystemGuidance('A05')).toContain('cad-configuration-and-mass-cg');
     expect(buildNavalSkillSystemGuidance('A17')).toContain('marine-safety-and-degraded-modes');
+    expect(buildNavalSkillSystemGuidance('A01')).toContain('agent-runtime-resilience');
+    expect(buildNavalSkillSystemGuidance('A05')).toContain('cad-to-physics-coupling');
+    expect(buildNavalSkillSystemGuidance('A18')).toContain('agent-qualification-campaign');
   });
 
   it('actually selects trusted skill instructions in the existing BaseAgent prompt, not from user overrides', async () => {

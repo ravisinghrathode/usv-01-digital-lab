@@ -33,6 +33,7 @@ describe('USV-01 authority routing: distinguish lab software from vessel design'
       'skills/usv01/commissioning-and-acceptance/SKILL.md',
       'AGENTS.md',
       'config/external-skill-sources.json',
+      'config/agent-skill-freeze.json',
       'src/core/registry/AgentRegistry.ts',
       'package.json'
     ];
@@ -41,6 +42,7 @@ describe('USV-01 authority routing: distinguish lab software from vessel design'
     }
     expect(classifyFile('skills/usv01/marine-requirements-and-standards/SKILL.md').risk).toBe('CRITICAL');
     expect(classifyFile('src/core/skills/NavalSkillRegistry.ts').risk).toBe('CRITICAL');
+    expect(classifyFile('config/agent-skill-freeze.json').risk).toBe('CRITICAL');
     expect(classifyFile('scripts/governance/stage-e-enforce.ts').risk).toBe('CRITICAL');
     expect(classifyFile('.github/workflows/safety-governance-gate.yml').risk).toBe('CRITICAL');
   });
