@@ -67,6 +67,9 @@ try {
    await page.setViewportSize({width,height});
    await load();
    await page.evaluate(()=>document.fonts.ready);
+   // Reset focus/scroll inherited from the earlier keyboard-navigation smoke.
+   // A focused Skip link should be tested, but not appear in default-state screenshots.
+   await page.evaluate(()=>{document.activeElement?.blur?.();window.scrollTo(0,0);});
    const dimensions=await page.evaluate(()=>({
      clientWidth:document.documentElement.clientWidth,
      scrollWidth:document.documentElement.scrollWidth
@@ -77,6 +80,7 @@ try {
    const nav=page.getByRole('navigation',{name:'Mobile workspaces'});
    if(width<=880)assert(await nav.isVisible(),'Mobile nav missing at '+width);
    else assert(!(await nav.isVisible()),'Mobile nav incorrectly visible at '+width);
+   await page.screenshot({path:path.join(output,'naval-ai-lab-'+width+'-viewport.png'),fullPage:false,animations:'disabled'});
    await page.screenshot({path:path.join(output,'naval-ai-lab-'+width+'.png'),fullPage:true,animations:'disabled'});
    if(width===390){
      await nav.getByRole('button',{name:'Simulations'}).click();
