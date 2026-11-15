@@ -41,7 +41,19 @@
     "status": "PRODUCT_CLAIM",
     "sources": [
       {
-        "id": "usnavy-natively-reported-triton",
+        "id": "navy-2022-oceanaero-triton",
+        "url": "https://www.navy.mil/Press-Office/News-Stories/display-news/Article/3227184/us-launches-new-unmanned-ai-systems-integration-event/"
+      },
+      {
+        "id": "usni-2026-oceanaero-triton",
+        "url": "https://news.usni.org/2026/06/23/u-s-asymmetric-aid-program-transfers-unmanned-vessels-to-the-philippines-plans-attack-drone-transfer-by-2027"
+      },
+      {
+        "id": "navalnews-2026-triton",
+        "url": "https://www.navalnews.com/naval-news/2026/06/u-s-transfers-ocean-aero-tritons-to-philippine-navy-usv-unit/"
+      },
+      {
+        "id": "cusnc-2023-triton",
         "url": "https://www.cusnc.navy.mil/Media/News/Display/Article/3302722/us-uae-naval-forces-complete-first-ever-bilateral-unmanned-exercise/"
       }
     ]
