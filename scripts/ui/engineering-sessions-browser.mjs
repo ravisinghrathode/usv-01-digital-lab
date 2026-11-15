@@ -121,6 +121,12 @@ try{
  await page.evaluate(()=>{document.documentElement.style.zoom='2'});
  const zoom=await page.evaluate(()=>({viewport:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth}));
  assert(zoom.scroll<=zoom.viewport+2,'CSS 200% zoom horizontal overflow '+JSON.stringify(zoom));
+ const zoomTabs=await page.getByRole('navigation',{name:'Engineering session modes'}).getByRole('button').evaluateAll(
+  buttons=>buttons.map(b=>{const r=b.getBoundingClientRect();return{left:r.left,right:r.right,width:r.width,screen:window.innerWidth,visible:r.height>0};})
+ );
+ assert.equal(zoomTabs.length,5);
+ for(const tab of zoomTabs)assert(tab.visible&&tab.width>=30&&tab.left>=-1&&tab.right<=tab.screen+1,
+  'Zoom hides a primary activity mode '+JSON.stringify(tab));
  await page.screenshot({path:path.join(output,'v2-css-zoom-200.png'),fullPage:false,animations:'disabled'});
  await page.evaluate(()=>{document.documentElement.style.zoom=''});
  assert.deepEqual(errors,[],'Unexpected browser runtime errors');
