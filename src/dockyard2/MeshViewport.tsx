@@ -40,10 +40,17 @@ export function MeshViewport({mesh,title}:Props) {
           y:height/2-(y*cp-rz*sp)*Math.min(width,height)*1.4*zoom,
           depth:y*sp+rz*cp};
       };
-      const projected=mesh.vertices.map(project);
+      // Project only vertices referenced by sampled triangles. A 250k-vertex
+      // OBJ should not project every vertex during every orbit gesture.
+      const projected=new Map<number,ReturnType<typeof project>>();
+      const point=(index:number)=>{
+        let result=projected.get(index);
+        if(!result){result=project(mesh.vertices[index]);projected.set(index,result);}
+        return result;
+      };
       const faces: {xy:{x:number;y:number}[];depth:number;shade:number}[]=[];
       for(let i=0;i<mesh.faces.length;i+=step){
-        const f=mesh.faces[i],points=[projected[f.a],projected[f.b],projected[f.c]];
+        const f=mesh.faces[i],points=[point(f.a),point(f.b),point(f.c)];
         if(points.some(p=>!p))continue;
         const dx=points[1].x-points[0].x,dy=points[1].y-points[0].y;
         const ex=points[2].x-points[0].x,ey=points[2].y-points[0].y;
