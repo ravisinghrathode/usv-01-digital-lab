@@ -76,7 +76,7 @@ export default function EngineeringSessionsApp(){
  return <div className={session.mode==='worktable'?'es-app ux-workbench-active':'es-app'}>
   <a href="#es-main" className="es-skip">Skip to investigation canvas</a>
   <header className="es-commandbar">
-   <a className="es-brand" href="/#worktable" onClick={e=>{e.preventDefault();setMode('worktable')}}><span className="es-logo"><NavalMark/></span><span><strong>NAVAL AI LAB <span className="es-brand-programme">/ USV-01</span></strong><small>Engineering session</small></span></a>
+   <a className="es-brand" href="/#worktable" onClick={e=>{e.preventDefault();setMode('worktable')}}><span className="es-logo"><NavalMark/></span><span><strong>NAVAL-USV-LAB <span className="es-brand-programme">/ USV-01</span></strong><small>Marine Autonomy Digital Lab</small></span></a>
    <nav className="es-modes" aria-label="Engineering session modes">
     {MODES.map(m=>{const Icon=ICONS[m.id];return <button type="button" key={m.id} aria-current={session.mode===m.id?'page':undefined}
       onClick={()=>setMode(m.id)} title={m.name+' · Alt+'+m.key}><Icon size={17}/><span>{m.name}</span></button>})}
