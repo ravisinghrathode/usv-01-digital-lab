@@ -24,7 +24,7 @@ try{
  page.on('pageerror',e=>errors.push(e.message));
  const mode=(name)=>page.getByRole('navigation',{name:'Engineering session modes'}).getByRole('button',{name,exact:true});
  await page.goto(base+'/sessions.html#worktable',{waitUntil:'domcontentloaded'});
- await page.getByRole('heading',{name:/USV-01.*product investigation/}).waitFor();
+ await page.locator('.vf-product-hero').waitFor();
  assert(await page.getByText('INTERACTIVE UX PROTOTYPE').isVisible());
  assert(await page.locator('.vf-product-hero').count()===1);
  assert(await page.locator('.vf-relationship-flow').count()===1);
@@ -33,6 +33,8 @@ try{
  const inspector=await page.locator('.vf-investigation-inspector').boundingBox();
  assert(hero&&inspector&&hero.width>inspector.width*1.65,'Product must be the hero, inspector secondary');
  assert(Math.abs(hero.y-inspector.y)<6,'Product and contextual information should align');
+ const relations=await page.locator('.vf-relationship-flow').boundingBox();
+ assert(relations&&relations.y<785,'Investigation graph must enter first desktop viewport beneath product');
  await page.getByRole('group',{name:'Conceptual component focus'}).getByRole('button',{name:'Hull & buoyancy'}).click();
  assert(await page.getByText('Focus: Hull & buoyancy').isVisible());
  await page.getByRole('group',{name:'Model view selection'}).getByRole('button',{name:'Plan'}).click();
@@ -59,6 +61,7 @@ try{
  // Design: different geometry layout; synchronized real camera view switching.
  await mode('Design').click();
  await page.getByRole('heading',{name:'Configuration comparison'}).waitFor();
+ assert(await page.evaluate(()=>window.scrollY)<3,'Mode switch should preserve visible global header');
  assert.equal(await page.locator('.vf-design-scene').count(),2);
  assert(await page.getByText('Performance difference cannot be calculated yet.').isVisible());
  await page.getByRole('group',{name:'Reference model projection'}).getByRole('button',{name:'Plan view'}).click();
