@@ -1,9 +1,9 @@
-import React from 'react';
+import React,{useState} from 'react';
 
 /** An original illustrative vessel render used only as non-authoritative UI concept art.
  * All technical shapes are deliberately dimensionless. Not a CAD, hydrostatics or solver output.
  */
-export function VesselVisual({variant='reference',compact=false,mode='studio'}:{
+function DiagramFallback({variant='reference',compact=false,mode='studio'}:{
  variant?:'reference'|'candidate';compact?:boolean;mode?:'studio'|'ocean'|'blueprint'
 }){
  const candidate=variant==='candidate';
@@ -92,4 +92,21 @@ export function VesselVisual({variant='reference',compact=false,mode='studio'}:{
    <text x="1170" y="654" textAnchor="end">{candidate?'EXPLORATORY':'REFERENCE'} / NO CONFIGURATION ID</text>
   </g>
  </svg>;
+}
+
+/** Prefer the repository's original, reproducible Blender assets for visual
+ * fidelity. The SVG is the offline/asset-error fallback, never approved CAD.
+ */
+export function VesselVisual({variant='reference',compact=false,mode='studio',perspective='iso'}:{
+ variant?:'reference'|'candidate';compact?:boolean;mode?:'studio'|'ocean'|'blueprint';perspective?:'iso'|'plan'
+}){
+ const [failed,setFailed]=useState(false);
+ const asset='/sessions/media/usv-'+variant+(perspective==='plan'?'-plan':'')+'.png';
+ return <div className={'ses-visual ses-render-root ses-visual-'+mode+(compact?' ses-visual-small':'')}>
+  {failed?<DiagramFallback variant={variant} compact={compact} mode={mode}/>:
+   <img key={asset} className="ses-render-image" src={asset} draggable={false} loading="eager" decoding="async"
+    alt={variant==='reference'?'Original Blender-rendered, illustrative USV reference concept; not source CAD':
+       'Original Blender-rendered, illustrative alternative USV concept; not source CAD'}
+    onError={()=>setFailed(true)}/>}
+ </div>;
 }
