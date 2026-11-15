@@ -209,14 +209,14 @@ export default function LiveWorkspace({mode,snapshot,status,error,user,onRefresh
    <Source id="orchestrator-approvals">Go to human approval gates</Source>
   </>}
   {mode==='notebook'&&<>
-   {intro('SOURCE-BACKED NOTEBOOK / 05','Persistent project research drafts','Save unverified, attributable notes directly to the existing authenticated knowledge register—not temporary browser state.','knowledge-centre')}
+   {intro('SOURCE-BACKED NOTEBOOK / 05','Server-backed project research drafts','Save unverified, attributable notes to the authenticated knowledge register, rather than temporary browser state. Host filesystem durability must be separately verified.','knowledge-centre')}
    <div className="lv-columns"><article className="lv-panel"><h3>Saved session drafts ({projectNotes.length})</h3>
     {projectNotes.length?projectNotes.slice(0,30).map(n=><div key={n.id} className="lv-record"><RecordLink module="knowledge-centre" id={n.id}/><strong>{n.title}</strong><p>{n.contentMarkdown}</p><small>{field(n.verificationStatus)} · {field(n.author)} · {field(n.lastUpdated)}</small></div>):<Unavailable title="No saved session notes" detail="Create a draft to persist it with your authenticated staff identity. Unsaved text is not project evidence."/>}
    </article><article className="lv-panel"><h3>New unverified project note</h3>
     {canWrite?<form className="lv-draft-form" onSubmit={async e=>{e.preventDefault();if(await register('/api/session/notes',{title:noteTitle,content:noteBody})){setNoteTitle('');setNoteBody('');}}}>
      <label>Title<input required maxLength={140} value={noteTitle} onChange={e=>setNoteTitle(e.target.value)}/></label>
      <label>Observation, assumptions, or action<textarea required rows={7} maxLength={5000} value={noteBody} onChange={e=>setNoteBody(e.target.value)}/></label>
-     <div className="lv-attention"><LockKeyhole size={16}/> Saved as DRAFT_UNVERIFIED, with server-attested staff identity and an audit event. This does not create an approved engineering decision.</div>
+     <div className="lv-attention"><LockKeyhole size={16}/> Saved as DRAFT_UNVERIFIED, with server-attested staff identity and an audit event. This does not create an approved engineering decision. AI Studio preview filesystems may be ephemeral; persistence after redeploy is not guaranteed without approved durable storage.</div>
      <button className="v2-solid" type="submit" disabled={saving}>{saving?'Saving…':'Save unverified project draft'}<ArrowRight size={15}/></button>
     </form>:<p className="lv-muted">Your authenticated role is read-only. Governed project notes require engineering writer authority.</p>}
    </article></div>
