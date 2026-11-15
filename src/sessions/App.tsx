@@ -6,6 +6,14 @@ import {useSnapshot} from '../dockyard2/useSnapshot';
 import {searchSourceRegister} from './sourceSearch';
 import {DEFAULT_SESSION,ENTITIES,INVESTIGATION,MODES,STUDIES,currentEntity,hashForMode,legacyLink,searchItems,validMode,type EntityId,type Mode,type Note,type Perspective,type SessionView,type StudyId} from './model';
 
+declare const __USV_SOURCE_REVISION__:string;
+
+const sourceHash=__USV_SOURCE_REVISION__;
+const verifiedSourceHash=/^[0-9a-f]{40}$/.test(sourceHash);
+const sourceUrl=verifiedSourceHash
+ ? 'https://github.com/ravisinghrathode/usv-01-digital-lab/commit/'+sourceHash
+ : 'https://github.com/ravisinghrathode/usv-01-digital-lab/tree/main';
+
 const ICONS:Record<Mode,React.ComponentType<{size?:number}>>={
  worktable:Network,design:Box,experiment:FlaskConical,decide:ShieldCheck,notebook:BookOpen
 };
@@ -95,7 +103,7 @@ export default function EngineeringSessionsApp(){
   <div className="es-session-tray">
    <button type="button" className="es-tray-toggle" aria-expanded={trayOpen} onClick={()=>setTrayOpen(v=>!v)}><Layers size={17}/> Session objects <span>{ENTITIES.length}</span><ChevronDown size={16}/></button>
    <div className="es-tray-preview"><button type="button" onClick={()=>select('reference')}>Reference</button><button type="button" onClick={()=>select('candidate')}>Candidate</button><button type="button" onClick={()=>{chooseStudy(session.study);setMode('experiment')}}>Study</button><button type="button" onClick={()=>setMode('decide')}>Review blockers</button></div>
-   <span className="es-tray-safe">Session state only · no project writes</span>
+   <span className="es-tray-safe">Session state only · no project writes · <a href={sourceUrl} target="_blank" rel="noreferrer" title="Source revision used to build this interface">GitHub source: {verifiedSourceHash?sourceHash.slice(0,8):'revision unverified'}</a></span>
   </div>
   {trayOpen&&<section className="es-tray-expanded" aria-label="All investigation objects">
     {ENTITIES.map(e=><button type="button" key={e.id} onClick={()=>{select(e.id);setTrayOpen(false);}}><strong>{e.title}</strong><span>{e.status}</span></button>)}
