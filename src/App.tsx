@@ -620,8 +620,6 @@ export default function App() {
         return 'Deterministic Naval Tools & Solvers';
       case 'external-software':
         return 'Code Repositories';
-      case 'scientific-knowledge':
-        return 'Scientific Knowledge';
       case 'orchestrator-approvals':
         return 'Human Authority Approval Gates (Stage D)';
       case 'workstream-SYS':
