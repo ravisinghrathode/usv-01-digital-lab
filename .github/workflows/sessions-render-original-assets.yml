@@ -40,5 +40,12 @@ jobs:
           git add public/sessions/media/usv-*.png
           if ! git diff --cached --quiet; then
             git commit -m "art(sessions): add source-generated original 3D naval vessel concept previews"
-            git push origin "HEAD:${GITHUB_REF_NAME}"
+            for attempt in 1 2 3; do
+              git fetch origin "${GITHUB_REF_NAME}"
+              git rebase "origin/${GITHUB_REF_NAME}"
+              if git push origin "HEAD:${GITHUB_REF_NAME}"; then exit 0; fi
+              sleep 3
+            done
+            echo "Unable to publish reproducible render assets after three retries" >&2
+            exit 1
           fi
