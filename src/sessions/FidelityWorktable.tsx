@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import {Activity,ArrowRight,ArrowUpRight,Box,Check,ChevronDown,ClipboardCheck,FileClock,FileQuestion,FileText,FlaskConical,Focus,GitBranch,GitCompareArrows,Info,Layers3,ListFilter,Maximize2,Network,ScanLine,ShieldAlert,ShieldCheck,SlidersHorizontal,Target,Waypoint} from 'lucide-react';
+import {Activity,ArrowRight,ArrowUpRight,Box,Check,ChevronDown,ClipboardCheck,FileClock,FileQuestion,FileText,FlaskConical,Focus,GitBranch,GitCompareArrows,Info,Layers3,ListFilter,Maximize2,Network,ScanLine,ShieldAlert,ShieldCheck,SlidersHorizontal,Target,Waypoints} from 'lucide-react';
 import {VesselVisual} from './VesselVisual';
 import {ContextTag,ObjectRow,SourceLink,SourceNotice,type SessionProps} from './FidelityCommon';
 import {INVESTIGATION,type EntityId} from './model';
@@ -52,7 +52,7 @@ export function Worktable({session,changeMode,select}:SessionProps){
        <button type="button" onClick={()=>select('reference')}>Inspect concept <ArrowUpRight size={16}/></button></div>
     </article>
     <section className="vf-relationship">
-     <header><div><span className="vf-eyebrow"><Waypoint size={14}/> LIVE INVESTIGATION CONTEXT — EXAMPLE</span>
+     <header><div><span className="vf-eyebrow"><Waypoints size={14}/> LIVE INVESTIGATION CONTEXT — EXAMPLE</span>
         <h3>Reduce mass while preserving stability</h3></div>
       <button type="button" onClick={()=>changeMode('decide')}>Evidence map <ArrowRight size={14}/></button>
      </header>
