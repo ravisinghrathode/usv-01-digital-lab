@@ -15,8 +15,10 @@ const source=(path:string)=>readFileSync(new URL('../'+path,import.meta.url),'ut
 
 describe('Naval AI Lab — clean-room visual workbench',()=>{
   const props={snapshot:illustrativeSnapshot,sourceLabel:'Illustrative records'};
-  it('builds a separate application without replacing the standard or legacy interfaces',()=>{
-    expect(source('naval-lab.html')).toContain('/src/lab3/main.tsx');
+  it('retires the old Lab3 entry while retaining its non-authoritative components for regression coverage',()=>{
+    expect(source('naval-lab.html')).toContain('window.location.replace');
+    expect(source('naval-lab.html')).toContain('url=/');
+    expect(source('naval-lab.html')).not.toContain('/src/lab3/main.tsx');
     expect(source('vite.config.ts')).toContain("navalAiLab: path.resolve(import.meta.dirname, 'naval-lab.html')");
     expect(source('package.json')).toContain('dev:naval-ai-lab');
     expect(source('index.html')).toContain('/src/sessions/main.tsx');
