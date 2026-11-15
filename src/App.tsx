@@ -33,12 +33,11 @@ import { RisksDecisionsView } from './components/RisksDecisionsView';
 import { ProcurementBOMView } from './components/ProcurementBOMView';
 import { TraceabilityMatrixView } from './components/TraceabilityMatrixView';
 import { KnowledgeCentreView } from './components/KnowledgeCentreView';
-import { ExternalSoftwareRegisterView } from './components/ExternalSoftwareRegisterView';
 import { AgentOrchestratorView } from './components/AgentOrchestratorView';
 import { RealtimeSimulationView } from './components/RealtimeSimulationView';
 import { ShipBuildingProcessView } from './components/ShipBuildingProcessView';
 import { GenerativeOptimizerView } from './components/GenerativeOptimizerView';
-import { GlobalUsvFleetView } from './components/GlobalUsvFleetView';
+import { A26ResearchWorkspace } from './components/A26ResearchWorkspace';
 import { NavalNotebookLMView } from './components/NavalNotebookLMView';
 import { AiEngineeringAssistant } from './components/AiEngineeringAssistant';
 import { NewRecordModal } from './components/NewRecordModal';
@@ -620,7 +619,9 @@ export default function App() {
       case 'orchestrator-tools':
         return 'Deterministic Naval Tools & Solvers';
       case 'external-software':
-        return 'External Software & Repository Register';
+        return 'Code Repositories';
+      case 'scientific-knowledge':
+        return 'Scientific Knowledge';
       case 'orchestrator-approvals':
         return 'Human Authority Approval Gates (Stage D)';
       case 'workstream-SYS':
@@ -911,12 +912,11 @@ export default function App() {
             />
           )}
 
-          {currentModule === 'global-usv-fleet' && (
-            <GlobalUsvFleetView onAskAi={triggerAiQuery} />
-          )}
-
-          {currentModule === 'external-software' && (
-            <ExternalSoftwareRegisterView />
+          {(currentModule === 'global-usv-fleet' ||
+            currentModule === 'scientific-knowledge' ||
+            currentModule === 'external-software') && (
+            <A26ResearchWorkspace tab={currentModule}
+              onTabChange={setCurrentModule} onAskAi={triggerAiQuery} />
           )}
 
           {currentModule === 'notebook-lm' && (
