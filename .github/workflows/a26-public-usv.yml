@@ -6,12 +6,16 @@ on:
       - 'scripts/a26/**'
       - 'tests/a26/**'
       - 'references/a26-public-usv-seeds.json'
+      - 'scripts/a26/unified-evidence.mjs'
+      - 'AGENTS.md'
+      - 'docs/governance/A26_UNIFIED_AGENT_OPERATING_CHARTER.md'
       - '.github/workflows/a26-public-usv.yml'
   pull_request:
     paths:
       - 'scripts/a26/**'
       - 'tests/a26/**'
       - 'references/a26-public-usv-seeds.json'
+      - 'scripts/a26/unified-evidence.mjs'
   schedule:
     - cron: '15 4 * * *'
   workflow_dispatch:
