@@ -39,6 +39,30 @@ describe('A26 browser read-only feed for standalone Vite Lab',()=>{
    expect(()=>validatePublicFeed(fleet,{...docs,classification:'RESTRICTED'},sources,manifest,source))
      .toThrow('A26_PUBLIC_DOCUMENTS_INVALID');
  });
+ it('prefers the stable live research branch without falling back to numbered refs',async()=>{
+   const files:any={
+     'references/fleet-intelligence/discovery-register.json':fleet,
+     'references/fleet-intelligence/document-register.json':docs,
+     'references/a26-public-review/source-index.json':sources,
+     'references/a26-public-review/manifest.json':manifest
+   };
+   const seen:string[]=[];
+   const fake=(async(url:RequestInfo|URL)=>{
+     const value=String(url);seen.push(value);
+     if(value.includes('/git/ref/heads/research/live-a26'))return json({
+       ref:'refs/heads/research/live-a26',object:{sha:SHA}
+     });
+     if(value.includes('matching-refs'))throw Error('Legacy refs must not be queried');
+     const file=Object.keys(files).find(path=>value.includes('/contents/'+path));
+     if(!file)return new Response('Not found',{status:404});
+     return json({type:'file',encoding:'base64',content:encoded(files[file]),
+       size:JSON.stringify(files[file]).length});
+   }) as typeof fetch;
+   const result=await getPublicA26ReviewFeed({fetcher:fake,force:true});
+   expect(result.sourceUrl).toContain('/tree/research/live-a26');
+   expect(result.vessels).toHaveLength(1);
+   expect(seen).toHaveLength(5);
+ });
  it('fetches the newest public review branch and four SHA-pinned GitHub records',async()=>{
    const files:any={
      'references/fleet-intelligence/discovery-register.json':fleet,
@@ -62,7 +86,7 @@ describe('A26 browser read-only feed for standalone Vite Lab',()=>{
    const result=await getPublicA26ReviewFeed({fetcher:fake,force:true});
    expect(result.runId).toBe(RUN);
    expect(result.vessels).toHaveLength(1);
-   expect(seen).toHaveLength(5);
+   expect(seen).toHaveLength(6);
    expect(seen.every(url=>url.startsWith('https://api.github.com/repos/ravisinghrathode/usv-01-digital-lab/'))).toBe(true);
  });
 });

@@ -2026,6 +2026,37 @@
       ]
     },
     {
+      "id": "A26-FLEET-649b753b3a069b39",
+      "title": "U.S. Navy Christens Newest Unmanned Surface Vessel, Vanguard - www.navy.mil",
+      "summary": "U.S. Navy Christens Newest Unmanned Surface Vessel, Vanguard &nbsp;&nbsp; www.navy.mil",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-15T04:23:47.323Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-official-us",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=site%3Anavy.mil+unmanned+surface+vessel+test+program&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMizwFBVV95cUxPOEVZV2NhQzk0TTl2NzNvR0tWUkdtalM3cnlDY1ZUTDBHYU1rREJINE5IVW12eG81c19qZ0xid2x0OUtNNlAxbm5fQVNLTWlzSFVCaC1wYzM4LWJGTGlqYW5pNFpSa2VPdEIyVXdJeEdwUkE3cHRBalJQbFlCTEhPX1hFekRoX05iTWp2enNQUUFfdWk5Zi03M09fcFJaOEMycmlHSVcwMzBrNUlIdTFTaWpVNkNHTjJuSlVkT1Y1YkZiRnY2SkxHaWpFNlJXd2c?oc=5",
+          "publishedAt": "2024-05-06T07:00:00.000Z",
+          "retrievedAt": "2026-11-15T04:23:47.323Z",
+          "feedSha256": "sha256:71a2cee020fdc85b9ecc120f61927e72278ee812ece511050fb3ccaf1c804eba",
+          "linkedFiles": [],
+          "entrySha256": "sha256:940e9bee198783ed1bde32b295385366d709a0cc6c61e36aa8cd0f28d743697c"
+        }
+      ]
+    },
+    {
       "id": "A26-FLEET-65597351cd2f78e7",
       "title": "Turkish Naval Forces",
       "summary": "(ISR), anti- surface warfare (ASuW), force protection and mine countermeasure support missions. The SALVO is a tactical unmanned surface vehicle developed",
@@ -2741,6 +2772,37 @@
           "feedSha256": "sha256:10b1d8ade3ce48f81344c4a4984189585ceb606b6364fab583a64b80a9599cc9",
           "linkedFiles": [],
           "entrySha256": "sha256:7a921a8e338f2856f13d54aec653f487c24ac1cb384f130961284bada37c8a9a"
+        }
+      ]
+    },
+    {
+      "id": "A26-FLEET-8503bdbd6d61960d",
+      "title": "Unmanned Surface Vessel Division One Makes Its First Port Visit in Yokosuka, Japan - Pacific Fleet (.mil)",
+      "summary": "Unmanned Surface Vessel Division One Makes Its First Port Visit in Yokosuka, Japan &nbsp;&nbsp; Pacific Fleet (.mil)",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-15T04:23:47.323Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-official-us",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=site%3Anavy.mil+unmanned+surface+vessel+test+program&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxPYTZwOW4tZlhvZEEtaElqc3FPbTZIQ21SaG9MRC1xZTB6Q3NLeUMtNzROWGpjemgtUC0wWUZBRWVUT0FiZUhLN2ZleFI0cGZyTHhZdzktdEQ5RGNIR3V3Q05YUGVpZXR4b19sZnM2azdmVW1ZbjRGUHc5b3lhY3BjNUUtN0lDQXNHa1psMGFpMlExNFZ3NzZJUXVkVnlzTDFqcGpqM2kzMzRRMjhYVUFNcXRDdnZJcGNMMUVnX0VJcTRDeXpXUmZoUERFdlBFM1g5?oc=5",
+          "publishedAt": "2023-09-21T07:00:00.000Z",
+          "retrievedAt": "2026-11-15T04:23:47.323Z",
+          "feedSha256": "sha256:71a2cee020fdc85b9ecc120f61927e72278ee812ece511050fb3ccaf1c804eba",
+          "linkedFiles": [],
+          "entrySha256": "sha256:1165e087105e29d7f4586013fbe0c8145c7dbd8ce6ec079595409beb466ab2b3"
         }
       ]
     },
@@ -4836,6 +4898,37 @@
       ]
     },
     {
+      "id": "A26-FLEET-e28568ee487f440e",
+      "title": "Turkish Navy Commissions Sancar Armed Unmanned Surface Vehicle - The Defense Post",
+      "summary": "Turkish Navy Commissions Sancar Armed Unmanned Surface Vehicle &nbsp;&nbsp; The Defense Post",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-15T04:23:47.323Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-middle-east",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=Israel+Turkey+Gulf+navy+unmanned+surface+vessel&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMidEFVX3lxTE1Gc3pMUF9GRm9WMldnVElHLXNqX0M1SmViU21vWFZUbEdvQmxmbXF3VjRlN1c2dkdxaVlQaDRSWEZWOERiUWIzVnNPc1RlWUJsR214dTRBQW52Ukp3b0g3SzZiZHRBc3Fxd0ZYcDgxbUI1VVdq0gF6QVVfeXFMTkFBNGdUQ0FPZkVvT0RzQ29qWml6RkFmRF9WTEJJeVhyRi1Vb0ZOUmN6Z1J3Y1FsTkx2d1RKa2lMZUhjOENvX1BUa1VVM1hVUXZOdUZQc1Z2aFNYQnRBaGNrcFJrSmlyQVBnYUVLRHVSSUpXVjdEUV9MT3c?oc=5",
+          "publishedAt": "2026-02-26T08:00:00.000Z",
+          "retrievedAt": "2026-11-15T04:23:47.323Z",
+          "feedSha256": "sha256:1a49e3b0257d3e0b8818ecd027b8279f0272671ef440731bd81c4fdd038bc773",
+          "linkedFiles": [],
+          "entrySha256": "sha256:8bc167d6d2fe9c91e978ca494e6aa181d54f1b25231051689b3d247d9a902350"
+        }
+      ]
+    },
+    {
       "id": "A26-FLEET-e4f4115da986d302",
       "title": "Royal Australian Navy",
       "summary": "a A$1.7 billion investment, entering service from early 2026. Uncrewed Surface Vessel (USV): the autonomous Bluebottle surveillance platform, designed",
@@ -5394,6 +5487,37 @@
           "feedSha256": "sha256:7e1ba92ca80760a884ccca39f39e9ff5edf0cd91c62e5b784bc96ddb01f363e4",
           "linkedFiles": [],
           "entrySha256": "sha256:c7e02959b4fc536d539a187a6b76d009d41ea66fcf6fcf8bd830730d13ca1fc8"
+        }
+      ]
+    },
+    {
+      "id": "A26-FLEET-fadedfa42ab5f077",
+      "title": "Unmanned surface vessel to counter China: HD Hyundai and US Anduril combine forces, complete construction in one year - 머니투데이",
+      "summary": "Unmanned surface vessel to counter China: HD Hyundai and US Anduril combine forces, complete construction in one year &nbsp;&nbsp; 머니투데이",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-15T04:23:47.323Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-worldwide",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=unmanned+surface+vessel+navy+maritime+autonomous&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMicEFVX3lxTFBEZGpfY041RTVneXZRaVd0RE5IRzA0dDB6ZXNLSHprcm1rdGtzWHpzandWQkhGSVcyWGs0bTlyZEY0M2UyVWlBNEQwTXVTTFdzSWFRWEo2NjBiWWRNSTcwcmNIUUJTWFhFMVBIcmdSM0Y?oc=5",
+          "publishedAt": "2026-11-15T03:00:00.000Z",
+          "retrievedAt": "2026-11-15T04:23:47.323Z",
+          "feedSha256": "sha256:530bfcca4cb8045e38e1011c07cb40890c4201f8ca3e55f2f13f9069901fb893",
+          "linkedFiles": [],
+          "entrySha256": "sha256:eb1395e2bb4fbb310d35170cced033348b38645cf0b2eab4017dfed0f78ce7a4"
         }
       ]
     },

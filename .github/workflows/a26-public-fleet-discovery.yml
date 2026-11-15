@@ -68,8 +68,6 @@ jobs:
     timeout-minutes: 30
     permissions:
       contents: write
-      pull-requests: write
-      actions: write
     env:
       USV_ALLOW_PAID_AI_API: 'false'
       USV_NO_PAID_API: '1'
@@ -137,76 +135,50 @@ jobs:
             ${{ runner.temp }}/a26-unified/
           if-no-files-found: warn
           retention-days: 60
-      - name: Propose protected review PR only if new source evidence exists
+      - name: Auto-publish unverified research to dedicated live data branch (no PR)
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           REPORT="$RUNNER_TEMP/a26-fleet-scout/latest.json"
           PROPOSAL="$RUNNER_TEMP/a26-fleet-scout/proposal-register.json"
-          if [[ ! -f "$REPORT" || ! -f "$PROPOSAL" ]]; then
-            echo 'No valid report and proposal; fail closed.' >&2
-            exit 1
-          fi
-          SUCCESS="$(node -e 'const fs=require("fs");const j=JSON.parse(fs.readFileSync(process.argv[1]));process.stdout.write(String(j.sourcesSucceeded))' "$REPORT")"
-          if [[ "$SUCCESS" -eq 0 ]]; then
-            echo 'No feeds were reached; do not claim a completed collection.' >&2
-            exit 1
-          fi
-          HAS_FLEET=1
-          HAS_DOCS=0
-          if cmp -s "$PROPOSAL" references/fleet-intelligence/discovery-register.json; then HAS_FLEET=0; fi
-          if [[ -f "$RUNNER_TEMP/a26-documents/document-register-proposal.json" ]] &&             ! cmp -s "$RUNNER_TEMP/a26-documents/document-register-proposal.json" references/fleet-intelligence/document-register.json; then
-            HAS_DOCS=1
-          fi
-          # Always publish the latest successful acquisition to a review-only
-          # source branch, even if an earlier review PR remains open or no new
-          # identity was discovered. Never promote this into an approved baseline.
-          BRANCH="automation/a26-fleet-discovery-$GITHUB_RUN_ID"
-          if [[ "$HAS_FLEET" -eq 1 ]]; then
-            cp "$PROPOSAL" references/fleet-intelligence/discovery-register.json
-            cp "$RUNNER_TEMP/a26-fleet-scout/review-queue.md" docs/research/A26_FLEET_DISCOVERY_QUEUE.md
-          fi
-          if [[ "$HAS_DOCS" -eq 1 ]]; then
-            cp "$RUNNER_TEMP/a26-documents/document-register-proposal.json" references/fleet-intelligence/document-register.json
-            cp "$RUNNER_TEMP/a26-documents/document-review-queue.md" docs/research/A26_DOCUMENT_DISCOVERY_QUEUE.md
-          fi
-          # Review-only JSON is safe to display without engineering approval.
-          # Keep this data out of the controlled project store and main baseline.
+          test -s "$REPORT" && test -s "$PROPOSAL"
+          test -s "$RUNNER_TEMP/a26-documents/document-register-proposal.json"
           test -s "$RUNNER_TEMP/a26-snapshots/evidence-index.json"
           test -s "$RUNNER_TEMP/a26-unified/unified-a26-evidence.json"
-          mkdir -p references/a26-public-review
+          SUCCESS="$(node -e 'const r=require(process.argv[1]);process.stdout.write(String(r.sourcesSucceeded))' "$REPORT")"
+          if [[ "$SUCCESS" -eq 0 ]]; then
+            echo 'No successful source acquisition: refuse to publish new snapshot' >&2
+            exit 1
+          fi
+          BRANCH="research/live-a26"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null; then
+            git fetch origin "refs/heads/$BRANCH:refs/remotes/origin/$BRANCH"
+            git switch -C "$BRANCH" "origin/$BRANCH"
+          else
+            git switch -c "$BRANCH"
+          fi
+          cp "$PROPOSAL" references/fleet-intelligence/discovery-register.json
+          cp "$RUNNER_TEMP/a26-documents/document-register-proposal.json" references/fleet-intelligence/document-register.json
+          cp "$RUNNER_TEMP/a26-fleet-scout/review-queue.md" docs/research/A26_FLEET_DISCOVERY_QUEUE.md
+          cp "$RUNNER_TEMP/a26-documents/document-review-queue.md" docs/research/A26_DOCUMENT_DISCOVERY_QUEUE.md
+          mkdir -p references/a26-public-review docs/vault/usv-fleet/candidate-notes
           cp "$RUNNER_TEMP/a26-snapshots/evidence-index.json" references/a26-public-review/source-index.json
           cp "$RUNNER_TEMP/a26-unified/unified-a26-evidence.json" references/a26-public-review/unified-evidence.json
-          node -e 'const fs=require("fs");const path="references/a26-public-review/manifest.json";fs.writeFileSync(path,JSON.stringify({schemaVersion:1,agentId:"INTEL-USV-26",classification:"PUBLIC_SOURCE_SAFE_ONLY",reviewStatus:"UNVERIFIED_REVIEW_REQUIRED",runId:process.env.GITHUB_RUN_ID,headSha:process.env.GITHUB_SHA,createdAt:new Date().toISOString(),engineeringReleaseApproved:false},null,2)+"\n")'
-          mkdir -p docs/vault/usv-fleet/candidate-notes
+          node -e 'const fs=require("node:fs");fs.writeFileSync("references/a26-public-review/manifest.json",JSON.stringify({schemaVersion:1,agentId:"INTEL-USV-26",classification:"PUBLIC_SOURCE_SAFE_ONLY",reviewStatus:"UNVERIFIED_REVIEW_REQUIRED",runId:process.env.GITHUB_RUN_ID,headSha:process.env.GITHUB_SHA,createdAt:new Date().toISOString(),engineeringReleaseApproved:false},null,2)+"\n")'
           cp "$RUNNER_TEMP/a26-fleet-scout/candidate-notes/"*.md docs/vault/usv-fleet/candidate-notes/ 2>/dev/null || true
           node scripts/a26-fleet-campaign.mjs --validate-only
           node scripts/a26-document-register.mjs --validate-only
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git switch -c "$BRANCH"
           git add references/fleet-intelligence/discovery-register.json \
-            docs/research/A26_FLEET_DISCOVERY_QUEUE.md \
-            docs/research/A26_DOCUMENT_DISCOVERY_QUEUE.md \
             references/fleet-intelligence/document-register.json \
             references/a26-public-review/ \
-            docs/vault/usv-fleet/candidate-notes
-          git commit -m 'docs(a26): propose source-linked naval USV research leads for independent review'
+            docs/research/A26_FLEET_DISCOVERY_QUEUE.md \
+            docs/research/A26_DOCUMENT_DISCOVERY_QUEUE.md \
+            docs/vault/usv-fleet/candidate-notes/
+          git commit -m "data(a26): update unverified public research from run $GITHUB_RUN_ID"
           gh auth setup-git
-          git push -u origin "$BRANCH"
-          OPEN="$(gh pr list --state open --limit 100 --json title --jq '[.[] | select(.title == "A26 public naval USV fleet research leads (review required)")] | length')"
-          if [[ "$OPEN" != 0 ]]; then
-            echo 'Existing research review PR remains open; published source branch is available for Lab.'
-            exit 0
-          fi
-          if ! gh pr create --base main --head "$BRANCH" \
-            --title "A26 public naval USV fleet research leads (review required)" \
-            --body "A26 public-source DISCOVERY ONLY. Leads are RSS/Atom metadata, not verified model identity, operational status or engineering particulars. No fleet baseline is approved. Source run: https://github.com/${{ github.repository }}/actions/runs/$GITHUB_RUN_ID"; then
-            echo '::warning::GitHub token could not open review PR. Branch and run evidence remain available.'
-            echo "Review branch: https://github.com/${{ github.repository }}/tree/$BRANCH" >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          # GITHUB_TOKEN-created PRs do not automatically trigger normal PR checks.
-          gh workflow run a26-public-fleet-discovery.yml --ref "$BRANCH" -f validate_only=true
-          gh workflow run safety-governance-gate.yml --ref "$BRANCH" -f run_openfoam=false
+          git push origin "HEAD:refs/heads/$BRANCH"
+          echo "Unverified research published without PR: https://github.com/ravisinghrathode/usv-01-digital-lab/tree/$BRANCH" >> "$GITHUB_STEP_SUMMARY"
+          echo "No engineering baseline, software approval, or runtime code modified." >> "$GITHUB_STEP_SUMMARY"

@@ -1,3 +1,36 @@
+## Visual-fidelity V2 acceptance (2026-11-15)
+
+The programme selected **Engineering Sessions** as its future UX baseline.
+The original initial V1 render did **not** meet that baseline and is superseded
+by the source-controlled V2 implementation:
+
+- `FidelityWorktable.tsx`: full vessel visual, conceptual assembly focus,
+  contextual source inspector and connected visual investigation relationships;
+- `FidelityPhysicsReview.tsx`: task-specific scientific theatre, decision
+  argument map and large-format notebook (no synthetic numerical plots);
+- `VesselVisual.tsx`: four original Blender-rendered, transparent cinematic
+  USV concept images with a labelled fallback (two variants × actual
+  isometric/plan camera projections);
+- `scripts/ui/render_sessions_vessels.py`: reproducible Blender modelling
+  and physically-based rendering source; explicitly **not** certifiable CAD;
+- `fidelity.css`: dedicated visual system for the five task-specific modes,
+  with viewport corrections to show the product and investigation graph
+  together;
+- `sourceSearch.ts`: read-only search of existing loaded requirements,
+  simulation records, risks and notes via the same snapshot used by the
+  standard lab. Entries are labelled authenticated or illustrative and open
+  the governed *register*; none is silently linked as evidence to the demo.
+
+**The investigation itself remains a synthetic demonstration.** Search
+of real server registers is not the same as a source-backed investigation
+entity or a validated design comparison. All original engineering authority,
+agents, solvers, approvals and data mutations remain unchanged.
+
+Real-browser acceptance includes mode navigation and top-of-page focus,
+product-stage prominence, source-visible missing-result states, responsive
+mobile hierarchy and screenshot comparisons; passing tests alone is
+insufficient for visual release. No promotion to `/` is implicit.
+
 # Engineering Sessions — Connected Prototype
 
 **Implementation:** Standalone **interactive UX demonstration** at `/sessions.html`, based on the Project Lead's selected `NAL-UX-BL-001` direction (design spec in PR #134, not yet the deployed standard). This PR exists to evaluate the operating model before a governed redesign. This is not a read/write integration into the source project.

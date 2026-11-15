@@ -39,6 +39,13 @@ async function getJson(url:string,fetcher:typeof fetch):Promise<any>{
   }finally{await reader.cancel().catch(()=>{});}
   return JSON.parse(Buffer.concat(parts).toString('utf8'));
 }
+async function stableResearchBranch(fetcher:typeof fetch){
+  const ref=await getJson(API+'/git/ref/heads/research/live-a26',fetcher);
+  if(ref?.ref!=='refs/heads/research/live-a26' ||
+    !/^[a-f0-9]{40}$/.test(String(ref.object?.sha||'')))
+    throw Error('A26_LIVE_REF_INVALID');
+  return {branch:'research/live-a26',revision:ref.object.sha as string};
+}
 async function latestBranch(fetcher: typeof fetch){
   // GitHub matching-refs resolves ALL automation refs by prefix, avoiding the
   // silent omission caused by first-page branch listings in large repos.
@@ -130,7 +137,7 @@ export async function loadA26ResearchFeed({fetcher=fetch,force=false}:{fetcher?:
   if(!force&&cache.value&&Date.now()<cache.expires)return cache.value;
   // Fail closed on errors. Do not substitute an empty baseline and report 0
   // records when fresh research exists but GitHub is temporarily inaccessible.
-  const source=await latestBranch(fetcher);
+  const source=await stableResearchBranch(fetcher).catch(()=>latestBranch(fetcher));
   const [fleet,docs,snapshots,manifest]=await Promise.all([
     fileFromCommit('references/fleet-intelligence/discovery-register.json',source.revision,fetcher),
     fileFromCommit('references/fleet-intelligence/document-register.json',source.revision,fetcher),
