@@ -21,7 +21,7 @@ describe('Public repo zero-model and private-local live commissioning',()=>{
    expect(workflow).toContain('USV_PUBLIC_RUNNER_BLOCKED');
    expect(workflow).not.toContain('runs-on: [self-hosted');
    expect(workflow).not.toContain('mission-control:attest-host');
-   expect(workflow).not.toContain('--execute');
+   expect(workflow).not.toContain('Run all 26 specialists as dependency-aware Codex campaign');
    expect(workflow).not.toContain('USV_HOST_ATTESTATION_PRIVATE_KEY_FILE');
  });
  it('retains the exact reviewed A04 source and owner-controlled private session',()=>{

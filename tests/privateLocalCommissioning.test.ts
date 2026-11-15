@@ -1,7 +1,10 @@
 import {describe,it,expect} from 'vitest';
+import {mkdtempSync,mkdirSync,writeFileSync,symlinkSync,rmSync} from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import fs from 'node:fs';
 import path from 'node:path';
-import {inspectPrivateCommissionGate}
+import {inspectPrivateCommissionGate,resolveControlledCatalog}
   from '../scripts/mission-control/private-live-commission.ts';
 
 const yaml=fs.readFileSync(path.resolve('.github/workflows/usv01-26-agent-commissioning.yml'),'utf8');
@@ -23,6 +26,21 @@ describe('No subscription secrets on public GitHub Actions runner',()=>{
     expect(yaml).not.toContain('USV_HOST_ATTESTATION_PRIVATE_KEY_FILE: ${{ vars.');
     expect(yaml).toContain('runs-on: ubuntu-latest');
     expect(yaml).toContain('acceptance:codex-agents -- --catalog "$CATALOG_PATH" --require-ready');
+  });
+  it('denies a catalog symlink escaping the approved source tree',()=>{
+    const dir=mkdtempSync(path.join(os.tmpdir(),'usv-private-catalog-'));
+    const other=mkdtempSync(path.join(os.tmpdir(),'usv-outside-catalog-'));
+    try{
+      mkdirSync(path.join(dir,'evidence'));
+      writeFileSync(path.join(dir,'evidence','valid.json'),'{"dataClassification":"PUBLIC_NON_SENSITIVE"}');
+      writeFileSync(path.join(other,'secret.json'),'{"sensitive":true}');
+      symlinkSync(path.join(other,'secret.json'),path.join(dir,'evidence','escape.json'));
+      expect(resolveControlledCatalog(dir,'evidence/valid.json')).toBe('evidence/valid.json');
+      expect(()=>resolveControlledCatalog(dir,'evidence/escape.json')).toThrow(/UNCONTROLLED_CATALOG/);
+      expect(()=>resolveControlledCatalog(dir,'../outside.json')).toThrow();
+    }finally{
+      rmSync(dir,{recursive:true,force:true});rmSync(other,{recursive:true,force:true});
+    }
   });
   it('allows only explicit local, source-reviewed and research-only opt-in',()=>{
     const env=approved();

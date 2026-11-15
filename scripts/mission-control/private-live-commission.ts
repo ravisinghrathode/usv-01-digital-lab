@@ -10,7 +10,7 @@
  * qualification, authorize physical operations, or promote a vessel baseline.
  */
 import { spawnSync, execFileSync } from 'node:child_process';
-import { statSync } from 'node:fs';
+import { statSync, lstatSync, realpathSync } from 'node:fs';
 import path from 'node:path';
 import { sanitizedSubscriptionEnvironment, assertUsvRepositoryWorkingDirectory }
   from '../../src/core/mission-control/SubscriptionCliAdapter.ts';
@@ -53,6 +53,24 @@ export function inspectPrivateCommissionGate(
 }
 function requireLabDecision(env:NodeJS.ProcessEnv):boolean{
   try {requireLabCommissioningPolicy(env);return true;}catch{return false;}
+}
+/** Resolve symlinks before enforcing the approved research catalog roots. */
+export function resolveControlledCatalog(cwd:string,catalogArg:string):string{
+  if(path.isAbsolute(catalogArg))
+    throw new Error('USV_PRIVATE_COMMISSION_CATALOG_MUST_BE_REPO_RELATIVE');
+  const requested=path.resolve(cwd,catalogArg);
+  const root=realpathSync(cwd);
+  const catalog=realpathSync(requested);
+  const allowed=[path.join(root,'evidence'),path.join(root,'references')]
+    .some(dir=>catalog.startsWith(dir+path.sep));
+  if(!allowed || !catalog.endsWith('.json'))
+    throw new Error('USV_PRIVATE_COMMISSION_UNCONTROLLED_CATALOG_PATH');
+  if(lstatSync(requested).isSymbolicLink())
+    throw new Error('USV_PRIVATE_COMMISSION_CATALOG_SYMLINK_DENIED');
+  const info=statSync(catalog);
+  if(!info.isFile() || info.size>2*1024*1024)
+    throw new Error('USV_PRIVATE_COMMISSION_CATALOG_INVALID_OR_TOO_LARGE');
+  return path.relative(root,catalog);
 }
 function flag(args:string[],key:string):string{
   const at=args.indexOf(key);
@@ -103,16 +121,7 @@ async function main():Promise<void>{
     throw new Error('USV_PRIVATE_COMMISSION_UNAPPROVED_GIT_REMOTE');
   await assertUsvRepositoryWorkingDirectory(cwd);
   await assertPinnedCleanGitRevision(cwd,sourceSha);
-  if(path.isAbsolute(catalogArg))
-    throw new Error('USV_PRIVATE_COMMISSION_CATALOG_MUST_BE_REPO_RELATIVE');
-  const catalogPath=path.resolve(cwd,catalogArg);
-  const controlRoot=path.resolve(cwd,'evidence');
-  const referenceRoot=path.resolve(cwd,'references');
-  if(![controlRoot,referenceRoot].some(root=>catalogPath.startsWith(root+path.sep)) ||
-     !catalogPath.endsWith('.json'))
-    throw new Error('USV_PRIVATE_COMMISSION_UNCONTROLLED_CATALOG_PATH');
-  const size=statSync(catalogPath).size;
-  if(size>2*1024*1024)throw new Error('USV_PRIVATE_COMMISSION_CATALOG_TOO_LARGE');
+  const catalog=resolveControlledCatalog(cwd,catalogArg);
 
   // Preserve only the approved subscription and research flags. Billing/API
   // tokens never enter child processes through environment variables.
@@ -122,7 +131,6 @@ async function main():Promise<void>{
   env.USV_LAB_SCOPE='RESEARCH_ONLY';
   env.USV_ALLOW_PAID_AI_API='false';
   env.USV_DUAL_PROVIDER_ROUTING='enabled';
-  const catalog=path.relative(cwd,catalogPath);
 
   runStep(cwd,env,'Independent A04 host probe (unattested only)',
     ['mission-control:a04-check','--','--source-sha',sourceSha]);
