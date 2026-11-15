@@ -89,6 +89,9 @@ try{
   const dim=await page.evaluate(()=>({viewport:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth}));
   assert(dim.scroll<=dim.viewport+2,'Horizontal overflow at '+width+'px '+JSON.stringify(dim));
   assert(await page.locator('.es-vessel-display').isVisible(),'Missing vessel worktable at '+width);
+  const vesselBox=await page.locator('.es-vessel-display').boundingBox();
+  assert(vesselBox&&vesselBox.y+Math.min(130,vesselBox.height*.55)<height,
+    'Most of the vessel hero must enter the first viewport at '+width);
   assert(await page.locator('.es-session-spine').isVisible(),'Session context hidden at '+width);
   assert.equal(await page.getByRole('navigation',{name:'Engineering session modes'}).getByRole('button').count(),5);
   await page.screenshot({path:path.join(output,'sessions-worktable-'+width+'-viewport.png'),fullPage:false,animations:'disabled'});
