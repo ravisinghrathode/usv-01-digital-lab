@@ -1,6 +1,7 @@
 import React,{useEffect,useState} from 'react';
 import {ArrowRight,ArrowUpRight,BookOpen,Box,FileCheck2,FlaskConical,FolderOpen,LockKeyhole,RefreshCw,ShieldAlert,ShieldCheck} from 'lucide-react';
-import type {Snapshot,SnapshotStatus} from '../dockyard2/useSnapshot';
+import type {Snapshot} from '../dockyard2/domain';
+import type {SnapshotStatus} from '../dockyard2/useSnapshot';
 import type {CadRevision,Requirement,SimulationJob} from '../types/engineering';
 import type {ApproverIdentity} from '../core/types/safety';
 import {authenticatedFetch,login} from '../core/auth/authClient';
