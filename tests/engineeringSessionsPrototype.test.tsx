@@ -69,7 +69,9 @@ describe('Engineering Sessions — connected high fidelity investigation prototy
   expect(decide).toContain('No authorized recommendation');
   expect(notebook).toContain('es-notebook-paper');
   expect(notebook).toContain('local observation');
-  expect(notebook).toContain('Session only');
+  const withDraft=renderToStaticMarkup(<Notebook {...props} session={{...DEFAULT_SESSION,notes:[{id:1,content:'Example note',created:'11:00',kind:'local'}]}}/>);
+  expect(withDraft).toContain('Session only');
+  expect(withDraft).toContain('Example note');
  });
  it('never invents performance, source CAD, plot data or human approval',()=>{
   expect(ENTITIES.length).toBeGreaterThan(8);
