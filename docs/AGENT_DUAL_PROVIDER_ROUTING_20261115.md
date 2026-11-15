@@ -37,7 +37,7 @@ The three `USV_GEMINI_*` approvals MUST NOT be set for controlled/unknown Navy/c
 ## Failure handling and privacy
 - All model outputs are unverified advisory analysis and must satisfy each registered specialist's JSON schema and existing deterministic-tool permissions.
 - Fallback is **off by default**. On a retryable failure without an approved campaign-level public-data transfer, stop with an explicit `USV_GEMINI_TRANSFER_BLOCKED` result.
-- Any quota pause remains bounded; Gemini fallback is not an unlimited retry loop.
+- Any quota pause remains bounded. A local Codex request-budget HOLD is a hard stop, not a reason to switch vendors. Gemini calls use a separate persistent, bounded local budget at `~/.usv01/runtime/gemini-quota.json`; never reset the ledger to evade allowances. Gemini fallback is not an unlimited retry loop.
 - If either provider's credentials, stored settings or data handling cannot be checked by the operator, stop; do not place any secret in GitHub, Google AI Studio app source, public CI logs, or Obsidian.
 - Full autonomy, release signatures and deployment on vessel hardware stay blocked until independently qualified human authority explicitly approves them.
 

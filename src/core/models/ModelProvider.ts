@@ -317,8 +317,11 @@ export class GeminiCliProvider implements IModelProvider {
       let parsedJson:Record<string,any>|undefined;
       try{parsedJson=JSON.parse(content)}catch{}
       const modelStats=envelope?.stats?.models;
-      const actualModel=modelStats&&typeof modelStats==='object'&&!Array.isArray(modelStats)
-        ? Object.keys(modelStats)[0]||requestedModel : requestedModel;
+      // The request flag is not a receipt: do not claim model identity
+      // without model usage metadata from Gemini CLI.
+      const reportedModels=modelStats&&typeof modelStats==='object'&&!Array.isArray(modelStats)
+        ? Object.keys(modelStats) : [];
+      const actualModel=reportedModels[0]||requestedModel+'-requested-unverified';
       return {
         content,parsedJson,providerUsed:'gemini_cli',modelUsed:actualModel,
         executionMode:'LIVE_AI_GENERATION',isAiReview:true,isMock:false,evidenceValid:false,
@@ -816,9 +819,36 @@ export class ModelProviderRouter {
           if (!gemini || !(await Promise.resolve(gemini.isAvailable()))) {
             throw new Error('USV_GEMINI_FALLBACK_UNAVAILABLE: Gemini subscription CLI not installed or reachable.');
           }
-          const secondary = await gemini.generateText(request, {
-            ...config, preferredProvider: 'gemini_cli', modelName: GEMINI_PRO_MODEL
-          });
+          // A separate persistent Gemini quota ledger prevents a Sol quota
+          // outage from turning into unlimited unbudgeted secondary calls.
+          // Do not instantiate filesystem budgets in deterministic CI mocks.
+          let secondary: ModelPromptResponse;
+          if (!isTestMode) {
+            const quotaModule = '../mission-control/' + 'QuotaResilience.ts';
+            const { QuotaResilience, isQuotaFailure } =
+              await import(/* @vite-ignore */ quotaModule);
+            const [{ homedir }, { join }] = await Promise.all([
+              import('node:os'), import('node:path')
+            ]);
+            const budget = new QuotaResilience(join(homedir(), '.usv01', 'runtime', 'gemini-quota.json'));
+            await budget.reserve();
+            try {
+              secondary = await gemini.generateText(request, {
+                ...config, preferredProvider: 'gemini_cli', modelName: GEMINI_PRO_MODEL
+              });
+              await budget.recordSuccess();
+            } catch (secondaryError) {
+              if (isQuotaFailure(secondaryError instanceof Error
+                  ? secondaryError.message : String(secondaryError))) {
+                await budget.recordQuotaFailure();
+              }
+              throw secondaryError;
+            }
+          } else {
+            secondary = await gemini.generateText(request, {
+              ...config, preferredProvider: 'gemini_cli', modelName: GEMINI_PRO_MODEL
+            });
+          }
           if (secondary.providerUsed !== 'gemini_cli' &&
               secondary.providerUsed !== 'gemini') {
             throw new Error('USV_GEMINI_PROVIDER_MISMATCH: claimed Gemini CLI transport does not match.');

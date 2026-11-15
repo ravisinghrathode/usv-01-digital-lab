@@ -33,6 +33,10 @@ export function geminiTransferAuthorized(env: NodeJS.ProcessEnv = process.env): 
 /** Only a small, explicit transport-failure vocabulary is retryable. */
 export function codexFallbackReason(error: unknown): SafeFallbackReason | null {
   const message = error instanceof Error ? error.message : String(error);
+  // The operator's own maximum call budget is a HARD STOP; never use a
+  // different vendor to evade a local research budget or broken ledger.
+  if (/LOCAL_REQUEST_BUDGET_EXHAUSTED|QUOTA_LEDGER_UNAVAILABLE|QUOTA_LEDGER_CORRUPT/.test(message))
+    return null;
   if (/\bUSV_QUOTA_WAIT\b|\bQUOTA_EXHAUSTED\b/.test(message))
     return 'CODEX_QUOTA';
   if (/\bUSV_CODEX_AUTH_UNAVAILABLE\b|Codex must be signed in with a ChatGPT subscription/.test(message))

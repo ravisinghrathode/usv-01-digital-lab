@@ -67,6 +67,8 @@ describe('26 specialist dual subscription transport policy',()=>{
   });
   it('permits transport/quota errors but not safety, invalid schema or engineering failures',()=>{
     expect(codexFallbackReason(new Error('USV_QUOTA_WAIT: quota exhausted'))).toBe('CODEX_QUOTA');
+    expect(codexFallbackReason(new Error('USV_QUOTA_WAIT: LOCAL_REQUEST_BUDGET_EXHAUSTED'))).toBeNull();
+    expect(codexFallbackReason(new Error('QUOTA_LEDGER_CORRUPT'))).toBeNull();
     expect(codexFallbackReason(new Error('USV_CODEX_MODEL_UNAVAILABLE: no entitlement'))).toBe('CODEX_MODEL_UNAVAILABLE');
     expect(codexFallbackReason(new Error('USV_CODEX_TRANSPORT_UNAVAILABLE: missing cli'))).toBe('CODEX_TRANSPORT_UNAVAILABLE');
     expect(codexFallbackReason(new Error('mandatory calculation failed'))).toBeNull();
