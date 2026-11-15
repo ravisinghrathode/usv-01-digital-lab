@@ -16,7 +16,7 @@ test('canonical deduplication and aliases preserve independent URLs',()=>{
 test('claims are rejected without exact quotation in fetched source',()=>{
  const source={id:'s',url:'https://example.org/test',sha256:'sha256:abc',retrievedAt:'2026-11-15T00:00:00Z'};
  assert.equal(verifyClaim('Speed 12 knots',{field:'speed',value:'90 knots',quote:'Speed 90 knots'},source),null);
- assert.equal(verifyClaim('Speed 12 knots',{field:'speed',value:'12 knots',quote:'Speed 12 knots'},source),null); // quote too short
+ assert.equal(verifyClaim('Speed 12 knots',{field:'speed',value:'12 knots',quote:'12 knots'},source),null); // quote too short
  assert.equal(verifyClaim('Length of the vessel is 7.4 metres',{field:'length',value:'7.4 metres',quote:'Length of the vessel is 7.4 metres'},source).field,'length');
 });
 test('discovery stays inside source hostname and excludes insecure links',()=>{
