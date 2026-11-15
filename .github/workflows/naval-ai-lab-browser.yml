@@ -1,0 +1,62 @@
+name: Naval AI Lab — Isolated Browser Acceptance
+
+on:
+  pull_request:
+    paths:
+      - 'src/lab3/**'
+      - 'src/dockyard2/**'
+      - 'naval-lab.html'
+      - 'vite.config.ts'
+      - 'scripts/ui/naval-lab-browser-smoke.mjs'
+      - '.github/workflows/naval-ai-lab-browser.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser-qa:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    timeout-minutes: 18
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Configure Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install project lockfile
+        run: npm ci
+      - name: Install isolated Playwright test runner
+        run: |
+          npm install --no-save --package-lock=false --ignore-scripts playwright@1.56.1
+          # Chromium and its OS dependencies are already bundled in the
+          # pinned Ubuntu 24.04 Playwright container; the host Ubuntu 26.04
+          # GitHub runner is unsupported by this pinned Playwright version.
+      - name: Launch isolated Naval AI Lab preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx vite --host 127.0.0.1 --port 3000 > /tmp/naval-ai-lab-vite.log 2>&1 &
+          for i in {1..40}; do
+            if curl -fsS http://127.0.0.1:3000/naval-lab.html >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/naval-ai-lab-vite.log
+          exit 1
+      - name: Test product hero, simulations, navigation and responsive viewports
+        run: node scripts/ui/naval-lab-browser-smoke.mjs
+        env:
+          LAB_BASE_URL: http://127.0.0.1:3000
+          LAB_SCREENSHOTS: artifacts/naval-ai-lab
+      - name: Upload unauthenticated visual evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: naval-ai-lab-browser-screenshots
+          path: artifacts/naval-ai-lab
+          retention-days: 14
+          if-no-files-found: ignore
