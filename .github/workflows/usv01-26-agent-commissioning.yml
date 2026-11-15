@@ -72,6 +72,13 @@ jobs:
       USV_SUBSCRIPTION_PILOT: enabled
       USV_ALLOW_PAID_AI_API: 'false'
       USV_LAB_SCOPE: RESEARCH_ONLY
+      # Enable primary GPT-6.1 Sol for all 26 registered specialists.
+      # All Gemini transfer switches default to disabled and require reviewed
+      # PUBLIC_NON_SENSITIVE input before any cross-provider fallback.
+      USV_DUAL_PROVIDER_ROUTING: enabled
+      USV_GEMINI_FALLBACK_APPROVED: ${{ vars.USV_GEMINI_FALLBACK_APPROVED }}
+      USV_GEMINI_OAUTH_REVIEWED: ${{ vars.USV_GEMINI_OAUTH_REVIEWED }}
+      USV_GEMINI_DATA_CLASSIFICATION: ${{ vars.USV_GEMINI_DATA_CLASSIFICATION }}
       USV01_HOST_ID: ${{ vars.USV01_HOST_ID }}
       USV_HOST_ATTESTATION_PRIVATE_KEY_FILE: ${{ vars.USV_HOST_ATTESTATION_PRIVATE_KEY_FILE }}
       USV_HOST_ATTESTATION_PUBLIC_KEY: ${{ vars.USV_HOST_ATTESTATION_PUBLIC_KEY }}
@@ -102,6 +109,12 @@ jobs:
             echo "BLOCKED: reviewed A04 host approval for this exact main revision is absent."
             exit 1
           fi
+      - name: Gate Gemini transfer on reviewed, publicly transferable catalog
+        env:
+          CATALOG_PATH: ${{ inputs.catalog_path }}
+        run: npm run mission-control:gemini-catalog -- --catalog "$CATALOG_PATH"
+      - name: Record dual-provider zero-model host availability
+        run: npm run mission-control:model-health
       - name: Verify signed-in ChatGPT OAuth CLI without paid API calls
         run: npm run mission-control:preflight
       - name: Run all 26 specialists as dependency-aware Codex campaign

@@ -50,6 +50,7 @@
     "mission-control:test": "vitest run tests/subscriptionCliAdapter.test.ts tests/gitRevisionGuard.test.ts tests/missionControlCoordinator.test.ts tests/aiBillingPolicy.test.ts tests/quotaResilience.test.ts",
     "mission-control:preflight": "tsx scripts/mission-control/preflight.ts",
     "mission-control:model-health": "tsx scripts/mission-control/dual-model-health.ts",
+    "mission-control:gemini-catalog": "tsx scripts/mission-control/verify-gemini-catalog.ts",
     "mission-control:a04-check": "tsx scripts/mission-control/a04-trusted-host-check.ts",
     "mission-control:pilot": "tsx scripts/mission-control/run-pilot.ts",
     "mission-control:docker:validate": "docker compose config --quiet",

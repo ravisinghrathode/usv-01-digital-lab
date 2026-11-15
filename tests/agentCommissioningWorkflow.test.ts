@@ -23,6 +23,19 @@ describe('26-agent commissioning workflow boundaries', () => {
     expect(liveExecution).toBeGreaterThan(authorization);
     expect(workflow).toContain('"$USV_A04_AUTHORIZED_SHA" != "$GITHUB_SHA"');
   });
+  it('activates Sol as the primary live model and blocks unreviewed Gemini transfers', () => {
+    expect(workflow).toContain('USV_DUAL_PROVIDER_ROUTING: enabled');
+    expect(workflow).toContain('USV_GEMINI_FALLBACK_APPROVED: ${{ vars.USV_GEMINI_FALLBACK_APPROVED }}');
+    expect(workflow).toContain('USV_GEMINI_OAUTH_REVIEWED: ${{ vars.USV_GEMINI_OAUTH_REVIEWED }}');
+    expect(workflow).toContain('USV_GEMINI_DATA_CLASSIFICATION: ${{ vars.USV_GEMINI_DATA_CLASSIFICATION }}');
+    const catalogCheck = workflow.indexOf('mission-control:gemini-catalog -- --catalog "$CATALOG_PATH"');
+    const health = workflow.indexOf('mission-control:model-health');
+    const invoke = workflow.indexOf('--catalog "$CATALOG_PATH" --execute');
+    expect(catalogCheck).toBeGreaterThan(0);
+    expect(health).toBeGreaterThan(catalogCheck);
+    expect(invoke).toBeGreaterThan(health);
+    expect(workflow).toContain('runs-on: [self-hosted, usv01-codex]');
+  });
   it('requires signed operational readiness without treating external engineering acceptance as an execution failure', () => {
     expect(workflow).toContain('mission-control:attest-host');
     expect(workflow).toContain('--require-operational');
