@@ -1,6 +1,10 @@
 import { isPaidAiApiAllowed } from './AiBillingPolicy.ts';
 import { evaluateLabCommissioningPolicy } from '../mission-control/LabCommissioningPolicy.ts';
 import { selectA26SubscriptionModel } from '../mission-control/A26SubscriptionModelAccess.ts';
+import {
+  CHATGPT_SOL_MODEL, GEMINI_PRO_MODEL, dualProviderEnabled,
+  geminiTransferAuthorized, codexFallbackReason
+} from './DualSubscriptionRoutingPolicy.ts';
 
 
 export type ExecutionMode =
@@ -252,14 +256,19 @@ export class GeminiCliProvider implements IModelProvider {
     this.binary=options.binary||((typeof process!=='undefined'&&process.env?.GEMINI_CLI_BINARY)||'gemini');
   }
   private async run(args:string[],cwd:string,timeout=120000){
+    // Only operator-managed Google OAuth may be used in the zero-paid-API
+    // route. Never let a parent shell API key change authentication methods.
+    const adapterPath = '../mission-control/' + 'SubscriptionCliAdapter.ts';
+    const {sanitizedSubscriptionEnvironment} = await import(/* @vite-ignore */ adapterPath);
+    const cleanEnv = sanitizedSubscriptionEnvironment();
     if(this.runner)return this.runner(this.binary,args,{
-      cwd,timeout,maxBuffer:8*1024*1024,env:process.env});
+      cwd,timeout,maxBuffer:8*1024*1024,env:cleanEnv});
     const [{execFile},{promisify}]=await Promise.all([
       import('node:child_process'),import('node:util')
     ]);
     const exec=promisify(execFile);
     const result=await exec(this.binary,args,{
-      cwd,timeout,maxBuffer:8*1024*1024,env:process.env
+      cwd,timeout,maxBuffer:8*1024*1024,env:cleanEnv
     });
     return {stdout:String(result.stdout||''),stderr:String(result.stderr||'')};
   }
@@ -276,7 +285,7 @@ export class GeminiCliProvider implements IModelProvider {
       import('node:fs/promises'),import('node:os'),import('node:path')
     ]);
     const cwd=await mkdtemp(join(tmpdir(),'usv-gemini-cli-'));
-    const requestedModel=(process.env.GEMINI_MODEL||config?.modelName||'auto').replace(/^models\//,'');
+    const requestedModel=(config?.modelName||process.env.GEMINI_MODEL||'auto').replace(/^models\//,'');
     const prompt=[
       request.systemInstructions,
       '',
@@ -367,7 +376,10 @@ export class CodexCliProvider implements IModelProvider {
     const { runSubscriptionCli } = await import(/* @vite-ignore */ serverOnlyAdapter);
     // A26 uses standard GPT-6 Sol by default in an authorized ChatGPT-signed-in Codex research session.
     // This selection is not proof of the model the service actually used.
-    const requestedModel = selectA26SubscriptionModel(request.context?.agentId);
+    // One reviewed Sol preference applies to all 26 agents; A26's legacy
+    // single-role selection remains available when dual routing is disabled.
+    const requestedModel = dualProviderEnabled()
+      ? CHATGPT_SOL_MODEL : selectA26SubscriptionModel(request.context?.agentId);
     const result = await runSubscriptionCli({
       role: 'worker',
       taskId: (request.correlationId || 'AGENT-CODEX').replace(/[^A-Za-z0-9_.-]/g, '-').slice(0, 80),
@@ -381,8 +393,16 @@ export class CodexCliProvider implements IModelProvider {
     if (result.status === 'QUOTA_EXHAUSTED') {
       throw new Error('USV_QUOTA_WAIT: Codex subscription usage allowance exhausted. No AI synthesis completed.');
     }
+    if (result.status === 'UNAVAILABLE') {
+      throw new Error('USV_CODEX_TRANSPORT_UNAVAILABLE: Codex executable unavailable.');
+    }
     if (result.status !== 'COMPLETED') {
-      throw new Error('Codex subscription CLI failed or is unavailable. No AI synthesis completed. ' +
+      // Never retry a policy denial, safety refusal, invalid result or
+      // ambiguous failure on a different provider.
+      if (/model.{0,90}(not found|not available|unsupported|not accessible)|unknown model/i.test(result.stderr)) {
+        throw new Error('USV_CODEX_MODEL_UNAVAILABLE: Requested Sol model not available for this account.');
+      }
+      throw new Error('Codex subscription CLI failed without a safe automatic fallback classification. ' +
         result.stderr.slice(0, 500));
     }
     const content = result.stdout.trim();
@@ -399,14 +419,14 @@ export class CodexCliProvider implements IModelProvider {
     return {
       content, parsedJson, providerUsed: 'codex_cli',
       modelUsed: requestedModel
-        ? 'gpt-6-sol-requested-via-subscription-model-unverified'
+        ? requestedModel + '-requested-via-subscription-unverified'
         : 'codex-signed-in-session-model-unverified',
       executionMode: 'LIVE_AI_GENERATION',
       isMock: false, isAiReview: true, evidenceValid: false,
       correlationId: request.correlationId,
       timestamp: new Date().toISOString(),
       statusMessage: requestedModel
-        ? 'A26 requested standard GPT-6 Sol using a ChatGPT-signed-in CLI; actual model identity and engineering evidence not independently attested.'
+        ? 'Requested ' + requestedModel + ' via signed-in ChatGPT/Codex CLI; actual model identity and engineering evidence are unverified.'
         : 'Local signed-in Codex CLI output; model identity and engineering evidence not independently attested.'
     };
   }
@@ -785,6 +805,35 @@ export class ModelProviderRouter {
       try {
         return await provider.generateText(request, config);
       } catch (err) {
+        // Explicit and bounded cross-provider failover for all 26 Codex-pinned
+        // specialists; never when a calculation, safety, policy or schema
+        // decision failed. No API-key provider or mock is used as failover.
+        const reason = providerName === 'codex_cli' && dualProviderEnabled()
+          ? codexFallbackReason(err) : null;
+        if (reason && geminiTransferAuthorized()) {
+          const gemini = this.providers.get('gemini_cli');
+          if (!gemini || !(await Promise.resolve(gemini.isAvailable()))) {
+            throw new Error('USV_GEMINI_FALLBACK_UNAVAILABLE: Gemini subscription CLI not installed or reachable.');
+          }
+          const secondary = await gemini.generateText(request, {
+            ...config, preferredProvider: 'gemini_cli', modelName: GEMINI_PRO_MODEL
+          });
+          if (secondary.providerUsed !== 'gemini_cli' &&
+              secondary.providerUsed !== 'gemini') {
+            throw new Error('USV_GEMINI_PROVIDER_MISMATCH: claimed Gemini CLI transport does not match.');
+          }
+          // A completed Gemini reply is advisory, never human-independent
+          // engineering validation. Preserve actual selected model provenance.
+          return {
+            ...secondary, evidenceValid: false,
+            statusMessage: 'Research-only Gemini CLI fallback after ' + reason +
+              '; requested ' + GEMINI_PRO_MODEL +
+              '; provider execution is NOT engineering approval or independent review.'
+          };
+        }
+        if (reason && !geminiTransferAuthorized() && !isTestMode) {
+          throw new Error('USV_GEMINI_TRANSFER_BLOCKED: Codex unavailable; cross-provider public-data/OAuth authorization missing.');
+        }
         if (!isTestMode) {
           throw new Error(
             `Production Engineering Safety Invariant: Preferred model provider '${providerName}' failed during execution: ${err}. Mock fallback is strictly prohibited in production baseline execution.`
