@@ -71,6 +71,18 @@ test('catalogues public imagery and document attachment links without downloadin
   assert.ok(result[0].linkedFiles.every(x=>x.license==='UNKNOWN_REVIEW_REQUIRED'));
 });
 
+test('Japanese prototype headlines survive multilingual filtering and deduplication',async()=>{
+  const local='<rss><item><title>無人水上艇 海軍 試作機 の 海上試験</title>'+
+    '<link>https://news.usni.org/example/jp</link>'+
+    '<description>無人水面艇 原型 試験</description></item></rss>';
+  const result=await runScout({config,sourceOffset:63,maxSources:1,
+    fixture:{'google-local-japanese':local},now:at});
+  assert.equal(result.sourcesSucceeded,1);
+  assert.equal(result.newResearchLeads,1);
+  assert.match(result.register.records[0].title,/無人水上艇/);
+  assert.equal(result.register.records[0].operationalStatus,'UNKNOWN_NOT_VERIFIED');
+});
+
 test('fixture scan discovers mentions, not verified vessels or numeric properties',async()=>{
   const result=await runScout({config,maxSources:1,fixture:{'naval-news':sample},now:at});
   assert.equal(result.sourcesSucceeded,1);
