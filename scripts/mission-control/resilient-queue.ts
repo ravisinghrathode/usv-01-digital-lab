@@ -40,6 +40,8 @@ async function main(): Promise<void> {
     const dataClassification = arg('--classification', 'PUBLIC_SOURCE_SAFE_ONLY');
     // A26-only evidence handoff. Source hashes are review inputs, not design approval.
     const evidencePath = arg('--evidence-index');
+    const unifiedPath = arg('--unified-index');
+    if (evidencePath && unifiedPath) throw new Error('Specify one A26 evidence index, not both');
     let researchSources: unknown[] = [];
     if (evidencePath) {
       if (agentId !== 'INTEL-USV-26' && agentId !== 'A26') {
@@ -68,6 +70,32 @@ async function main(): Promise<void> {
         }))
       );
       if (!researchSources.length) throw new Error('A26 evidence index contains no corroborated sources');
+    }
+    if (unifiedPath) {
+      if (agentId !== 'INTEL-USV-26' && agentId !== 'A26') throw new Error('Unified evidence input is A26-only');
+      const absolute = path.resolve(unifiedPath);
+      if (statSync(absolute).size > 5 * 1024 * 1024) throw new Error('A26 unified evidence index exceeds 5 MiB');
+      const registry = JSON.parse(readFileSync(absolute, 'utf8'));
+      if (registry.schemaVersion !== 1 || registry.agentId !== 'INTEL-USV-26' ||
+          registry.classification !== 'PUBLIC_SOURCE_SAFE_ONLY' ||
+          registry.evidenceContract !== 'A26_UNIFIED_PUBLIC_RESEARCH_V1' ||
+          registry.engineeringReleaseApproved !== false || !Array.isArray(registry.records)) {
+        throw new Error('Invalid A26 unified evidence contract');
+      }
+      researchSources = registry.records.slice(0, 150).map((record: any) => ({
+        evidenceId: String(record.id || '').slice(0, 180),
+        evidenceType: String(record.kind || '').slice(0, 60),
+        title: String(record.title || '').slice(0, 180),
+        url: String(record.url || '').slice(0, 400),
+        sha256: /^sha256:[a-f0-9]{64}$/.test(String(record.sourceHash || '')) ? record.sourceHash : null,
+        status: 'UNVERIFIED_REVIEW_REQUIRED',
+        claims: (record.claims || []).slice(0, 8).map((claim: any) => ({
+          field: String(claim.field || '').slice(0, 60),
+          value: String(claim.value || '').slice(0, 120),
+          quote: String(claim.quotation || '').slice(0, 240)
+        }))
+      }));
+      if (!researchSources.length) throw new Error('A26 unified evidence contract has no research records');
     }
     const request: QueueRequest = {
       taskId, agentId, commitSha: revision(), priority, lane,
