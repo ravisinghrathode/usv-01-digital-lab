@@ -11,3 +11,27 @@ This module is an **isolated software implementation** of the first M03/B03 digi
 - To run: `npm run digital-thread:test`; a successful test verifies software behavior only, not physics or vessel safety.
 
 Acceptance for M03 remains open until source/host review, external immutable anchoring, controlled candidate inputs, 26-agent DAG linkage, real independent numerical tests, and safely approved promotion mechanisms are demonstrated.
+
+## Bridge into an actual design-loop report (requires trusted live host)
+
+The existing authenticated `design:iterate` runner has a new **opt-in** invocation:
+
+```sh
+npm run design:iterate -- --mission-file /path/to/approved/private-mission.json \
+  --source-sha "$(git rev-parse HEAD)" --seed 1 --revisions 3 \
+  --ledger-candidate CAND-MONOHULL-01 \
+  --ledger-configuration CFG-RESEARCH-01 \
+  --ledger-mission MISSION-RESEARCH-01
+```
+
+It writes **only unverified proposal/critique hashes** into an ignored private
+`.local-concept-research/design-loops/candidate-ledger.json` journal. It refuses
+a stale source SHA, unsupported topology changes across revisions, unacknowledged
+critic-feedback revisions, non-finite model proposals or a report claiming vessel
+approval. Missing mass/CG evidence remains NOT_RUN; downstream calculations are
+BLOCKED. A repeated run is idempotent when every source/proposal digest matches.
+
+**Not yet demonstrated:** two actual distinct input-controlled concepts,
+two *genuine* critique-driven revisions each, independent numerical truth,
+controlled requirement linkage or engineering authority signatures.
+Synthetic unit fixtures only test the bridge logic.

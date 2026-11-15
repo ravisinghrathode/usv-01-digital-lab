@@ -9,6 +9,8 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { commissionLiveModel } from '../src/core/verification/LiveProviderCommissioning.ts';
 import { runAgentDesignLoop } from '../src/core/optimizer/AgentDesignLoop.ts';
+import { CandidateLedger } from '../src/core/digital-thread/CandidateLedger.ts';
+import { recordUnverifiedDesignLoop } from '../src/core/digital-thread/DesignLoopLedgerBridge.ts';
 import { runApprovedTemplateSolverJob } from '../src/core/verification/ApprovedTemplateSolver.ts';
 
 const args = process.argv.slice(2);
@@ -73,6 +75,19 @@ async function main() {
     disciplinePackages: (mission.disciplinePackages || []) as import('../src/core/optimizer/AgentDesignLoop.ts').DisciplineInputPackage[],
     solverCampaign
   },undefined,undefined,solverEvaluator);
+  // Explicit operator opt-in only: record proposal/critique hashes, never
+  // certify a vessel configuration or copy controlled inputs to Git.
+  let ledgerReceipt: Awaited<ReturnType<typeof recordUnverifiedDesignLoop>>|undefined;
+  if (args.includes('--ledger-candidate')) {
+    const candidateId=value('--ledger-candidate');
+    const configurationId=value('--ledger-configuration');
+    const missionId=value('--ledger-mission');
+    const ledger=new CandidateLedger(path.join(outDir,'candidate-ledger.json'));
+    ledgerReceipt=await recordUnverifiedDesignLoop(report,ledger,{
+      candidateId,configurationId,missionId,expectedSourceSha:sourceCommit,
+      classification:'RESTRICTED_METADATA_ONLY'
+    });
+  }
   const filename = path.join(outDir, runId + '-UNVERIFIED.json');
   fs.writeFileSync(filename, JSON.stringify({missionDigest,preflight,report}, null, 2) + '\n', { mode: 0o600 });
   console.log(JSON.stringify({
@@ -86,7 +101,10 @@ async function main() {
     stopReason: report.stopReason,
     independentEngineeringValidated: report.independentEngineeringValidated,
     engineeringReleaseAuthorized: report.engineeringReleaseAuthorized,
-    localReportPath: filename
+    localReportPath: filename,
+    ledgerEventHash: ledgerReceipt?.lastEventHash || null,
+    ledgerCandidate: ledgerReceipt?.candidateId || null,
+    ledgerResearchOnly: true
   }, null, 2));
   if (report.revisions.length === 0) process.exitCode = 1;
 }
