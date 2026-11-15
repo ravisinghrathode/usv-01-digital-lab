@@ -344,6 +344,24 @@
  .v2-journal-head>span{display:none}
  .v2-journal-sequence{padding:18px 4px}
 }
+/* At tablet dimensions and 200% CSS zoom the five primary modes must remain
+ * explicitly visible; the prior horizontally clipped nav was not acceptable. */
+@media(max-width:900px){
+ .es-commandbar{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:7px;padding:8px 12px 5px;height:auto}
+ .es-brand{grid-column:1;grid-row:1;min-width:0;max-width:100%}
+ .es-global-actions{grid-column:2;grid-row:1;justify-self:end;min-width:0;gap:5px}
+ .es-modes{grid-column:1/-1;grid-row:2;order:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));width:100%;max-width:none!important;min-width:0;height:auto;flex-basis:auto;justify-content:stretch;overflow:visible;padding:3px}
+ .es-modes button{min-width:0;width:100%;min-height:48px;padding:6px 2px;display:flex;flex-direction:column;gap:3px;align-items:center;justify-content:center;font-size:12px;line-height:1.18;white-space:normal}
+ .es-modes button svg{width:16px;height:16px;flex:none}
+ .es-global-actions .es-search-trigger{min-width:39px;width:39px;padding:4px}
+ .es-global-actions .es-search-trigger span,.es-global-actions .es-search-trigger kbd{display:none}
+}
+@media(max-width:400px){
+ .es-commandbar{padding:6px 7px 5px}
+ .es-modes button{font-size:11px;padding:5px 1px;min-height:46px}
+ .es-modes button svg{width:15px;height:15px}
+ .es-global-actions{gap:3px}
+}
 @media(prefers-reduced-motion:reduce){
  .v2-scene *, .v2-scene *::before,.v2-scene *::after{animation:none!important;transition:none!important}
 }
