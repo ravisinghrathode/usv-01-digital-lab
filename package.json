@@ -57,6 +57,7 @@
     "mission-control:attest-host": "tsx scripts/mission-control/attest-codex-host.ts",
     "acceptance:sign-independent": "tsx scripts/engineering/sign-external-review.ts",
     "mission-control:quota": "tsx scripts/mission-control/resilient-queue.ts",
+    "digital-thread:test": "vitest run tests/candidateLedger.test.ts",
     "mission-control:quota:install-mac": "bash scripts/mission-control/install-quota-worker.sh",
     "a26:collect": "node scripts/a26/global-research.mjs collect",
     "a26:report": "node scripts/a26/global-research.mjs report",

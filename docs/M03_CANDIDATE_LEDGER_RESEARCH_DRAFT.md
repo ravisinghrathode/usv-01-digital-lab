@@ -1,0 +1,13 @@
+# M03 — Tamper-evident candidate revision journal (research-only draft)
+
+This module is an **isolated software implementation** of the first M03/B03 digital-thread capability. It is not a released vessel baseline, a claim of independently verified engineering results, or the complete 26-agent coupled design controller.
+
+- `CandidateLedger` stores named candidate-specific mission/configuration identity, topology, exact source commit, input digest references, revisions, analysis statuses and evidence digests.
+- Each event is logically **append-only**, chained to the immediately preceding global event plus its candidate-specific head and verified on every read/write. Content is stored in one atomic JSON state file under a cross-process lock. **This is not physical immutable or WORM storage.** An actor able to rewrite the entire file and recompute hashes could forge history; externally anchored signed checkpoints and protected backups are still required.
+- An exact `expectedHeadHash` compares-and-swaps each revision/evidence write. Duplicate transactions with the same payload are idempotent; changed replays, stale parents and cross-candidate parents are rejected. A revision alters one or both declared upstream input digests rather than copying unrestricted client/defence geometry into the journal.
+- The dependency DAG invalidates all downstream hydrostatics, resistance, structures, propulsion, power, thermal, safety and independent V&V status when GEOMETRY or MASS_CG changes. Tool evidence can only be marked `UNVERIFIED`, never `VERIFIED` or `APPROVED`; an upstream failure blocks downstream previously observed results.
+- Open TBDs are `UNKNOWN_REQUIRES_CONTROLLED_INPUTS`. Signed qualifications, actual tool traces, numerical reference verification, objective/constraint histories, geometry and CG authority, operator identities, provenance from Google Drive/Obsidian, promotion/ECR and host attestation are **not** supplied by this prototype. Do not store private drawings or controlled numbers in public GitHub.
+- The ledger is not yet integrated into the live design controller or accepted as a secure multi-tenant database. CI uses only synthetic digests, two separate candidate histories, several revisions, replay/failure/tamper/concurrency cases.
+- To run: `npm run digital-thread:test`; a successful test verifies software behavior only, not physics or vessel safety.
+
+Acceptance for M03 remains open until source/host review, external immutable anchoring, controlled candidate inputs, 26-agent DAG linkage, real independent numerical tests, and safely approved promotion mechanisms are demonstrated.
