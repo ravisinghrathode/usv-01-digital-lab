@@ -346,7 +346,7 @@
 }
 /* At tablet dimensions and 200% CSS zoom the five primary modes must remain
  * explicitly visible; the prior horizontally clipped nav was not acceptable. */
-@media(max-width:900px){
+@media(max-width:1300px){
  .es-commandbar{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:7px;padding:8px 12px 5px;height:auto}
  .es-brand{grid-column:1;grid-row:1;min-width:0;max-width:100%}
  .es-global-actions{grid-column:2;grid-row:1;justify-self:end;min-width:0;gap:5px}
