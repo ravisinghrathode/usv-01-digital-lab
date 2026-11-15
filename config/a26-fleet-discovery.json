@@ -261,6 +261,96 @@
     {
       "id": "archive-historical",
       "query": "early experimental autonomous surface vessel navy prototype 1990 2000 2010"
+    },
+    {
+      "id": "local-japanese",
+      "query": "無人水上艇 自律 船 海上自衛隊 試作",
+      "locale": {
+        "hl": "ja",
+        "gl": "JP",
+        "ceid": "JP:ja"
+      }
+    },
+    {
+      "id": "local-korean",
+      "query": "무인 수상정 해군 자율 시제품 시험",
+      "locale": {
+        "hl": "ko",
+        "gl": "KR",
+        "ceid": "KR:ko"
+      }
+    },
+    {
+      "id": "local-turkish",
+      "query": "insansız deniz aracı prototip deneme deniz kuvvetleri",
+      "locale": {
+        "hl": "tr",
+        "gl": "TR",
+        "ceid": "TR:tr"
+      }
+    },
+    {
+      "id": "local-french",
+      "query": "drone naval de surface prototype essais marine nationale",
+      "locale": {
+        "hl": "fr",
+        "gl": "FR",
+        "ceid": "FR:fr"
+      }
+    },
+    {
+      "id": "local-german",
+      "query": "unbemanntes Überwasserfahrzeug Prototyp Marine Erprobung",
+      "locale": {
+        "hl": "de",
+        "gl": "DE",
+        "ceid": "DE:de"
+      }
+    },
+    {
+      "id": "local-spanish",
+      "query": "vehículo de superficie no tripulado prototipo marina",
+      "locale": {
+        "hl": "es",
+        "gl": "ES",
+        "ceid": "ES:es"
+      }
+    },
+    {
+      "id": "local-russian",
+      "query": "безэкипажный катер военно морской флот испытания",
+      "locale": {
+        "hl": "ru",
+        "gl": "RU",
+        "ceid": "RU:ru"
+      }
+    },
+    {
+      "id": "local-arabic",
+      "query": "سفينة سطحية غير مأهولة البحرية نموذج أولي",
+      "locale": {
+        "hl": "ar",
+        "gl": "AE",
+        "ceid": "AE:ar"
+      }
+    },
+    {
+      "id": "local-chinese",
+      "query": "無人水面艇 海軍 原型 試驗",
+      "locale": {
+        "hl": "zh-TW",
+        "gl": "TW",
+        "ceid": "TW:zh-Hant"
+      }
+    },
+    {
+      "id": "local-hindi",
+      "query": "मानवरहित सतह पोत नौसेना परीक्षण",
+      "locale": {
+        "hl": "hi",
+        "gl": "IN",
+        "ceid": "IN:hi"
+      }
     }
   ],
   "knownModels": [
