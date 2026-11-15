@@ -17,7 +17,8 @@ export default defineConfig({
       input: {
         navalDesignStudio: path.resolve(import.meta.dirname, 'index.html'),
         legacyEngineering: path.resolve(import.meta.dirname, 'legacy.html'),
-        dockyard2: path.resolve(import.meta.dirname, 'dockyard2.html')
+        dockyard2: path.resolve(import.meta.dirname, 'dockyard2.html'),
+        navalAtlas: path.resolve(import.meta.dirname, 'atlas.html')
       },
       output: {
         manualChunks(id) {
