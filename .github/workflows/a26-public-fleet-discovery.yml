@@ -109,6 +109,22 @@ jobs:
           else
             echo "Research handoff held: one or more source reports are unavailable."
           fi
+      - name: Consolidate actual fleet, literature and USV source evidence (R3)
+        run: |
+          set -euo pipefail
+          FLEET="$RUNNER_TEMP/a26-fleet-scout/latest.json"
+          DOCS="$RUNNER_TEMP/a26-documents/document-register-proposal.json"
+          if [[ ! -s "$FLEET" || ! -s "$DOCS" ]]; then
+            echo 'R3 consolidation HOLD: fleet or knowledge evidence missing' >&2
+            exit 1
+          fi
+          node scripts/a26/global-research.mjs collect --out "$RUNNER_TEMP/a26-snapshots"
+          node scripts/a26/unified-evidence.mjs \
+            --fleet "$FLEET" \
+            --documents "$DOCS" \
+            --snapshots "$RUNNER_TEMP/a26-snapshots/evidence-index.json" \
+            --out "$RUNNER_TEMP/a26-unified"
+          node scripts/a26/acceptance.mjs --index "$RUNNER_TEMP/a26-snapshots/evidence-index.json"
       - name: Upload unverified run evidence and Obsidian research drafts
         if: always()
         uses: actions/upload-artifact@v4
@@ -117,6 +133,8 @@ jobs:
           path: |
             ${{ runner.temp }}/a26-fleet-scout/
             ${{ runner.temp }}/a26-documents/
+            ${{ runner.temp }}/a26-snapshots/
+            ${{ runner.temp }}/a26-unified/
           if-no-files-found: warn
           retention-days: 60
       - name: Propose protected review PR only if new source evidence exists
