@@ -7,6 +7,7 @@ import type {ApproverIdentity} from '../core/types/safety';
 import {authenticatedFetch,login} from '../core/auth/authClient';
 import {linkedEvidence,legacyModuleUrl} from '../dockyard2/domain';
 import type {Mode} from './model';
+import {CadSourceInspector} from './CadSourceInspector';
 
 // The authenticated server owns all record state. The existing demonstration
 // remains separately selectable; no sample is substituted for missing data.
@@ -156,6 +157,7 @@ export default function LiveWorkspace({mode,snapshot,status,error,user,onRefresh
      {chosen?<dl className="lv-details"><Row label="Record ID" value={chosen.id}/><Row label="Revision" value={chosen.revision}/><Row label="File" value={chosen.fileLabel}/><Row label="SHA-256" value={chosen.sourceSha256}/><Row label="Registration state" value={chosen.recordStatus}/><Row label="Author user" value={chosen.createdBy}/>
       <Row label="Engineering notes" value={chosen.notes}/></dl>:<p className="lv-muted">No source revision selected. An illustration is not used as a geometry substitute.</p>}
      {chosen&&safeHttps(chosen.sourceUrl)&&<a className="v2-source-link" href={safeHttps(chosen.sourceUrl)!} target="_blank" rel="noreferrer">Open controlled CAD source <ArrowUpRight size={14}/></a>}
+     {chosen&&<CadSourceInspector revision={chosen}/>}
     </article>
    })}</div>}
    <div className="lv-attention"><ShieldAlert size={18}/>{selectedA&&selectedB&&selectedA.id!==selectedB.id?'Two revision references selected. Geometric comparison still requires verified files, common coordinates, mass properties and operating conditions.':'No verified geometry comparison available. Select two distinct source revisions; numerical claims remain blocked.'}</div>
