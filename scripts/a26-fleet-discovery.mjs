@@ -14,7 +14,7 @@ const CONFIG_PATH = fileURLToPath(new URL('../config/a26-fleet-discovery.json', 
 const REGISTER_PATH = fileURLToPath(new URL('../references/fleet-intelligence/discovery-register.json', import.meta.url));
 const FEED_HOSTS = new Set(['www.navalnews.com','news.usni.org',
   'www.naval-technology.com','news.google.com']);
-const SIGNAL = /\b(?:USV|ASV|unmanned surface (?:vessel|vehicle|craft)|uncrewed surface (?:vessel|vehicle|craft)|autonomous surface (?:vessel|vehicle|craft)|maritime (?:surface )?drone|drone boat|surface drone|robotic surface vessel)\b/i;
+const SIGNAL = /(?:\b(?:USV|ASV|unmanned surface (?:vessel|vehicle|craft)|uncrewed surface (?:vessel|vehicle|craft)|autonomous surface (?:vessel|vehicle|craft)|maritime (?:surface )?drone|drone boat|surface drone|robotic surface vessel)\b|無人水上艇|無人水面艇|自律航行|무인\s*수상정|무인수상정|безэкипажн\p{L}*\s+катер|беспилотн\p{L}*\s+катер|insansız\s+deniz\s+aracı|drone\s+naval\s+de\s+surface|véhicule\s+de\s+surface\s+non\s+habité|unbemanntes?\s+überwasserfahrzeug|vehículo\s+de\s+superficie\s+no\s+tripulado|سفينة\s+سطحية\s+غير\s+مأهولة|मानवरहित\s+सतह\s+पोत)/iu;
 const MAX_BYTES = 650000, MAX_SOURCES = 24, MAX_RECORDS = 2000, MAX_EVIDENCE = 24;
 const sha = value => createHash('sha256').update(value).digest('hex');
 
@@ -34,7 +34,7 @@ export function cleanText(value, max = 280) {
   return txt.slice(0,max);
 }
 const normal = str => cleanText(str,900).normalize('NFKD')
-  .replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+  .replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
 
 export function validateFeedUrl(input) {
   const u = new URL(input);
