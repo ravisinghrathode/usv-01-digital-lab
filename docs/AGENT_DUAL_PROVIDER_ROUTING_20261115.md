@@ -4,7 +4,7 @@
 
 ## Model preference
 1. **Primary:** ChatGPT / Codex CLI, request `gpt-6.1-sol` for each canonical specialist A01–A26. This is an explicit model request, not proof that the account has entitlement or that service reports exactly that model.
-2. **Secondary on explicit transport errors:** Google Gemini CLI, request `gemini-3.1-pro-preview` through its existing operator Google sign-in. The model must be supported by that account, CLI and current rollout; capture the model ID returned by the tool. No API-key or Vertex fallback.
+2. **Secondary on explicit transport errors:** Google Gemini CLI, request `gemini-4-hydrogen` through its existing operator Google sign-in. The model must be supported by that account, CLI and current rollout; capture the model ID returned by the tool. No API-key or Vertex fallback.
 3. **No fallback:** safety refusal, content denial, schema/JSON failure, deterministic calculation failure, engineering/TBD gate, missing transfer approval, ambiguous CLI error, or both providers unavailable.
 
 ## Required controlled host values
@@ -32,7 +32,7 @@ The three `USV_GEMINI_*` approvals MUST NOT be set for controlled/unknown Navy/c
 - Run `npm run mission-control:model-health` (offline/no model calls), `npm run mission-control:test` and `npx vitest run tests/dualSubscriptionRouting.test.ts` at exact reviewed commit SHA, and perform one explicitly authorized *public test-only* primary call and one supervised fallback call to verify actual provider and model identities.
 - The existing `acceptance:full-26` and signed host-health contract still require authentic **Codex** execution for all 26 roles. A Gemini fallback response is explicitly **NOT** promoted to the 26/26 Codex-only operational acceptance until a separately reviewed multi-provider cryptographic attestation/evidence standard is adopted. This keeps old source-and-host gates intact.
 - Direct `gemini` CLI selection remains a separate legacy path; this controlled two-provider fallback applies only to codex-pinned canonical agent requests. The 26 registered agent definitions remain unchanged.
-- The Gemini CLI can route internal sub-models; never report the requested Pro model as verified unless the response metadata establishes the actually selected model. Do not use model labels as engineering reliability grades.
+- The Gemini CLI can route internal sub-models; never report the requested Hydrogen model as verified unless the response metadata establishes the actually selected model. Do not use model labels as engineering reliability grades.
 
 ## Failure handling and privacy
 - All model outputs are unverified advisory analysis and must satisfy each registered specialist's JSON schema and existing deterministic-tool permissions.

@@ -4,7 +4,7 @@
  */
 import { spawnSync } from 'node:child_process';
 import { sanitizedSubscriptionEnvironment } from '../../src/core/mission-control/SubscriptionCliAdapter.ts';
-import { CHATGPT_SOL_MODEL, GEMINI_PRO_MODEL, dualProviderEnabled,
+import { CHATGPT_SOL_MODEL, GEMINI_HYDROGEN_MODEL, dualProviderEnabled,
   geminiTransferAuthorized } from '../../src/core/models/DualSubscriptionRoutingPolicy.ts';
 
 const env=sanitizedSubscriptionEnvironment();
@@ -20,7 +20,7 @@ const report={
   preferredProvider:'codex_cli',
   preferredModelRequested:CHATGPT_SOL_MODEL,
   secondaryProvider:'gemini_cli',
-  secondaryModelRequested:GEMINI_PRO_MODEL,
+  secondaryModelRequested:GEMINI_HYDROGEN_MODEL,
   codexOAuthObserved:codexOAuth,
   geminiCliPresent,
   geminiOAuthVerifiedByThisCheck:false,

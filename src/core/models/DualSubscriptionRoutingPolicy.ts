@@ -5,7 +5,7 @@
  * No automatic fallback on model refusal, bad math, invalid JSON, or approvals.
  */
 export const CHATGPT_SOL_MODEL = 'gpt-6.1-sol' as const;
-export const GEMINI_PRO_MODEL = 'gemini-3.1-pro-preview' as const;
+export const GEMINI_HYDROGEN_MODEL = 'gemini-4-hydrogen' as const;
 export type SafeFallbackReason = 'CODEX_QUOTA' | 'CODEX_AUTH_UNAVAILABLE' |
   'CODEX_TRANSPORT_UNAVAILABLE' | 'CODEX_MODEL_UNAVAILABLE';
 

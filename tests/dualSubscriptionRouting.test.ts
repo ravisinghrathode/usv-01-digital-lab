@@ -4,7 +4,7 @@ import {ModelProviderRouter, type IModelProvider, type ModelPromptResponse}
 import {MASTER_AGENTS} from '../src/core/agents/definitions.ts';
 import {validatePilotRequest,sanitizedSubscriptionEnvironment,SAFE_ROLES}
   from '../src/core/mission-control/SubscriptionCliAdapter.ts';
-import {CHATGPT_SOL_MODEL,GEMINI_PRO_MODEL,dualProviderEnabled,
+import {CHATGPT_SOL_MODEL,GEMINI_HYDROGEN_MODEL,dualProviderEnabled,
   geminiTransferAuthorized,codexFallbackReason}
   from '../src/core/models/DualSubscriptionRoutingPolicy.ts';
 
@@ -31,7 +31,7 @@ const prompt={systemInstructions:'Non-operational research only',
 const stub=(provider:'codex_cli'|'gemini_cli',message='done'):ModelPromptResponse=>({
   content:message,parsedJson:{disciplineSummary:message,keyMetrics:{},designDecisions:[],
     assumptions:[],openTbdItems:[],requiresDirectorApproval:true},
-  providerUsed:provider,modelUsed:provider==='gemini_cli'?GEMINI_PRO_MODEL:CHATGPT_SOL_MODEL,
+  providerUsed:provider,modelUsed:provider==='gemini_cli'?GEMINI_HYDROGEN_MODEL:CHATGPT_SOL_MODEL,
   executionMode:'LIVE_AI_GENERATION',isMock:false,isAiReview:true,evidenceValid:false,
   timestamp:new Date().toISOString(),correlationId:'ROUTER-TEST'
 });
@@ -77,7 +77,7 @@ describe('26 specialist dual subscription transport policy',()=>{
     expect(codexFallbackReason(new Error('approval denied'))).toBeNull();
     expect(codexFallbackReason(new Error('model output contains USV_QUOTA_WAIT but cannot be accepted'))).toBeNull();
   });
-  it('uses the best requested Gemini Pro when unavailable Sol transport is safely classified',async()=>{
+  it('uses the best requested Gemini 4 Hydrogen when unavailable Sol transport is safely classified',async()=>{
     optInGemini();
     const router=ModelProviderRouter.getInstance();
     const oldCodex=router.getProvider('codex_cli')!;
@@ -94,13 +94,13 @@ describe('26 specialist dual subscription transport policy',()=>{
       });
       const result=await router.generate(prompt,{preferredProvider:'codex_cli'});
       expect(geminiCalls).toBe(1);
-      expect(selectedModel).toBe(GEMINI_PRO_MODEL);
+      expect(selectedModel).toBe(GEMINI_HYDROGEN_MODEL);
       expect(result.providerUsed).toBe('gemini_cli');
       expect(result.evidenceValid).toBe(false);
       expect(result.statusMessage).toContain('NOT engineering approval');
     }finally{router.registerProvider(oldCodex);router.registerProvider(oldGemini)}
   });
-  it('refuses a Gemini lower-model downgrade without falsely reporting a Pro execution',async()=>{
+  it('refuses a Gemini model downgrade without falsely reporting a Hydrogen execution',async()=>{
     optInGemini();
     const router=ModelProviderRouter.getInstance();
     const oldCodex=router.getProvider('codex_cli')!;

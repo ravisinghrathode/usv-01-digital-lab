@@ -2,7 +2,7 @@ import { isPaidAiApiAllowed } from './AiBillingPolicy.ts';
 import { evaluateLabCommissioningPolicy } from '../mission-control/LabCommissioningPolicy.ts';
 import { selectA26SubscriptionModel } from '../mission-control/A26SubscriptionModelAccess.ts';
 import {
-  CHATGPT_SOL_MODEL, GEMINI_PRO_MODEL, dualProviderEnabled,
+  CHATGPT_SOL_MODEL, GEMINI_HYDROGEN_MODEL, dualProviderEnabled,
   geminiTransferAuthorized, codexFallbackReason
 } from './DualSubscriptionRoutingPolicy.ts';
 
@@ -111,9 +111,9 @@ export class DeterministicProvider implements IModelProvider {
 }
 
 // -----------------------------------------------------------------------------------------
-// Provider A — Google Gemini Provider (Optional, configurable, handles quota & auth failures)
+// Provider A — Google Gemini 4 Hydrogenvider (Optional, configurable, handles quota & auth failures)
 // -----------------------------------------------------------------------------------------
-// Provider A — Google Gemini Provider (Server-Side Proxy in Browser, @google/genai on Server)
+// Provider A — Google Gemini 4 Hydrogenvider (Server-Side Proxy in Browser, @google/genai on Server)
 // -----------------------------------------------------------------------------------------
 export class GeminiProvider implements IModelProvider {
   name = 'gemini';
@@ -837,7 +837,7 @@ export class ModelProviderRouter {
             await budget.reserve();
             try {
               secondary = await gemini.generateText(request, {
-                ...config, preferredProvider: 'gemini_cli', modelName: GEMINI_PRO_MODEL
+                ...config, preferredProvider: 'gemini_cli', modelName: GEMINI_HYDROGEN_MODEL
               });
               await budget.recordSuccess();
             } catch (secondaryError) {
@@ -849,7 +849,7 @@ export class ModelProviderRouter {
             }
           } else {
             secondary = await gemini.generateText(request, {
-              ...config, preferredProvider: 'gemini_cli', modelName: GEMINI_PRO_MODEL
+              ...config, preferredProvider: 'gemini_cli', modelName: GEMINI_HYDROGEN_MODEL
             });
           }
           if (secondary.providerUsed !== 'gemini_cli') {
@@ -859,15 +859,15 @@ export class ModelProviderRouter {
           // A multi-model Gemini run counts only when Pro is explicitly
           // present in documented per-model usage statistics.
           const observedModels = secondary.modelUsed.replace(/-multi-model-observed$/, '').split(',');
-          if (!observedModels.includes(GEMINI_PRO_MODEL)) {
-            throw new Error('USV_GEMINI_MODEL_NOT_VERIFIED: required Gemini Pro was not observed in CLI model usage metadata.');
+          if (!observedModels.includes(GEMINI_HYDROGEN_MODEL)) {
+            throw new Error('USV_GEMINI_MODEL_NOT_VERIFIED: required Gemini 4 Hydrogen was not observed in CLI model usage metadata.');
           }
           // A completed Gemini reply is advisory, never human-independent
           // engineering validation. Preserve actual selected model provenance.
           return {
             ...secondary, evidenceValid: false,
             statusMessage: 'Research-only Gemini CLI fallback after ' + reason +
-              '; requested ' + GEMINI_PRO_MODEL +
+              '; requested ' + GEMINI_HYDROGEN_MODEL +
               '; provider execution is NOT engineering approval or independent review.'
           };
         }
