@@ -67,6 +67,10 @@ try {
     report: output,
     engineeringReleaseApproved: false
   }, null, 2));
+  // Deployment commissioning and engineering acceptance are separate gates.
+  // The operational gate still requires a signed, current-source host report.
+  if (args.includes('--require-operational') &&
+      !result.operationalOnCurrentInfrastructure) process.exitCode = 1;
   if (args.includes('--require-all') &&
       (!result.operationalOnCurrentInfrastructure ||
        !result.fullyAutomatedEngineeringCampaign ||
