@@ -98,6 +98,11 @@ export function buildAgentAcademyCurricula(): AgentCurriculum[] {
 
 export interface StudyAttempt {
   canonicalId: string;
+  /** Actual runtime ID passed to provider, never a curriculum alias. */
+  runtimeAgentId?: string;
+  /** Requested CLI model is not proof that the service actually used it. */
+  requestedModel?: string;
+  modelIdentityVerified?: false;
   curriculumVersion: string;
   sourceSha: string;
   stage: 'OPEN_BOOK_STUDY' | 'WORKED_EXERCISE' | 'BLIND_ASSESSMENT';

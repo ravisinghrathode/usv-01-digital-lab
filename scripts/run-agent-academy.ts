@@ -14,7 +14,8 @@ import { createHash } from 'node:crypto';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { buildAgentAcademyCurricula, ACADEMY_VERSION, type StudyAttempt } from '../src/core/academy/AgentAcademy.ts';
 import { verifyAcademyQualification } from '../src/core/academy/QualificationVerifier.ts';
-import { runSubscriptionCli } from '../src/core/mission-control/SubscriptionCliAdapter.ts';
+import { runSubscriptionCli, sanitizedSubscriptionEnvironment } from '../src/core/mission-control/SubscriptionCliAdapter.ts';
+import { selectAcademyStudyTransport } from '../src/core/academy/StudyTransportPolicy.ts';
 import { assertPinnedCleanGitRevision } from '../src/core/mission-control/GitRevisionGuard.ts';
 import { requireLabCommissioningPolicy } from '../src/core/mission-control/LabCommissioningPolicy.ts';
 
@@ -98,7 +99,10 @@ async function study() {
   requireLabCommissioningPolicy(process.env);
   await assertPinnedCleanGitRevision(root, sourceSha);
   // Verify once before spending tokens. runSubscriptionCli also checks each call.
-  const auth = spawnSync('codex', ['login', 'status'], { cwd: root, encoding: 'utf8', timeout: 8000 });
+  const auth = spawnSync('codex', ['login', 'status'], {
+    cwd: root, encoding: 'utf8', timeout: 8000,
+    env: sanitizedSubscriptionEnvironment()
+  });
   const login = ((auth.stdout || '') + ' ' + (auth.stderr || '')).toLowerCase();
   if (auth.error || auth.status !== 0 || !login.includes('chatgpt') ||
       /api[- ]?key|access token/.test(login)) {
@@ -110,6 +114,9 @@ async function study() {
   if (selected.length < 1) throw new Error('Unknown --agents selection');
   const summary: Array<{agent:string;status:string;outputSha256?:string}> = [];
   for (const c of selected) {
+    // Agent IDs sent to CLI must be canonical runtime IDs, not curriculum
+    // aliases. A separate source-pinned route may request Sol when enabled.
+    const transport = selectAcademyStudyTransport(c);
     const prompt = [
       'USV-01 AGENT ACADEMY OPEN-BOOK LEARNING SESSION — NOT DESIGN APPROVAL',
       'Role: ' + c.canonicalId + ' / ' + c.name + ' / ' + c.specialism,
@@ -134,19 +141,24 @@ async function study() {
     let output = '';
     try {
       const result = await runSubscriptionCli({
-        role: 'worker', agentId: c.canonicalId, taskId: 'ACADEMY-STUDY-' + c.canonicalId,
-        prompt, workingDirectory: root, timeoutMs: 360000
+        role: 'worker', agentId: transport.agentId, taskId: 'ACADEMY-STUDY-' + c.canonicalId,
+        prompt, workingDirectory: root, timeoutMs: 360000,
+        modelOverride: transport.modelOverride
       });
       output = result.stdout;
       attempt = {
-        canonicalId: c.canonicalId, curriculumVersion: ACADEMY_VERSION,
+        canonicalId: c.canonicalId, runtimeAgentId: transport.agentId,
+        requestedModel: transport.modelOverride || 'codex-cli-session-default-unverified',
+        modelIdentityVerified: false, curriculumVersion: ACADEMY_VERSION,
         sourceSha, stage:'OPEN_BOOK_STUDY', provider:'codex_cli',
         status: result.status === 'COMPLETED' ? 'COMPLETED_UNGRADED' : result.status,
         ...(output ? { outputSha256: createHash('sha256').update(output).digest('hex') } : {}),
         timestamp: new Date().toISOString(), reviewedByHuman:false
       };
     } catch (error) {
-      attempt = { canonicalId:c.canonicalId, curriculumVersion:ACADEMY_VERSION,
+      attempt = { canonicalId:c.canonicalId, runtimeAgentId: transport.agentId,
+        requestedModel: transport.modelOverride || 'codex-cli-session-default-unverified',
+        modelIdentityVerified:false, curriculumVersion:ACADEMY_VERSION,
         sourceSha, stage:'OPEN_BOOK_STUDY', provider:'codex_cli', status:'UNAVAILABLE',
         timestamp:new Date().toISOString(), reviewedByHuman:false };
       output = 'Execution unavailable: ' + (error instanceof Error ? error.message : 'unknown');
