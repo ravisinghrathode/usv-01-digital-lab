@@ -159,15 +159,9 @@ jobs:
           if [[ -f "$RUNNER_TEMP/a26-documents/document-register-proposal.json" ]] &&             ! cmp -s "$RUNNER_TEMP/a26-documents/document-register-proposal.json" references/fleet-intelligence/document-register.json; then
             HAS_DOCS=1
           fi
-          if [[ "$HAS_FLEET" -eq 0 && "$HAS_DOCS" -eq 0 ]]; then
-            echo 'No new source evidence; committed research registers unchanged.'
-            exit 0
-          fi
-          OPEN="$(gh pr list --state open --limit 100 --json title --jq '[.[] | select(.title == "A26 public naval USV fleet research leads (review required)")] | length')"
-          if [[ "$OPEN" != 0 ]]; then
-            echo 'An A26 fleet review PR is already pending; new evidence stays in run artifacts.'
-            exit 0
-          fi
+          # Always publish the latest successful acquisition to a review-only
+          # source branch, even if an earlier review PR remains open or no new
+          # identity was discovered. Never promote this into an approved baseline.
           BRANCH="automation/a26-fleet-discovery-$GITHUB_RUN_ID"
           if [[ "$HAS_FLEET" -eq 1 ]]; then
             cp "$PROPOSAL" references/fleet-intelligence/discovery-register.json
@@ -177,6 +171,14 @@ jobs:
             cp "$RUNNER_TEMP/a26-documents/document-register-proposal.json" references/fleet-intelligence/document-register.json
             cp "$RUNNER_TEMP/a26-documents/document-review-queue.md" docs/research/A26_DOCUMENT_DISCOVERY_QUEUE.md
           fi
+          # Review-only JSON is safe to display without engineering approval.
+          # Keep this data out of the controlled project store and main baseline.
+          test -s "$RUNNER_TEMP/a26-snapshots/evidence-index.json"
+          test -s "$RUNNER_TEMP/a26-unified/unified-a26-evidence.json"
+          mkdir -p references/a26-public-review
+          cp "$RUNNER_TEMP/a26-snapshots/evidence-index.json" references/a26-public-review/source-index.json
+          cp "$RUNNER_TEMP/a26-unified/unified-a26-evidence.json" references/a26-public-review/unified-evidence.json
+          node -e 'const fs=require("fs");const path="references/a26-public-review/manifest.json";fs.writeFileSync(path,JSON.stringify({schemaVersion:1,agentId:"INTEL-USV-26",classification:"PUBLIC_SOURCE_SAFE_ONLY",reviewStatus:"UNVERIFIED_REVIEW_REQUIRED",runId:process.env.GITHUB_RUN_ID,headSha:process.env.GITHUB_SHA,createdAt:new Date().toISOString(),engineeringReleaseApproved:false},null,2)+"\n")'
           mkdir -p docs/vault/usv-fleet/candidate-notes
           cp "$RUNNER_TEMP/a26-fleet-scout/candidate-notes/"*.md docs/vault/usv-fleet/candidate-notes/ 2>/dev/null || true
           node scripts/a26-fleet-campaign.mjs --validate-only
@@ -188,10 +190,16 @@ jobs:
             docs/research/A26_FLEET_DISCOVERY_QUEUE.md \
             docs/research/A26_DOCUMENT_DISCOVERY_QUEUE.md \
             references/fleet-intelligence/document-register.json \
+            references/a26-public-review/ \
             docs/vault/usv-fleet/candidate-notes
           git commit -m 'docs(a26): propose source-linked naval USV research leads for independent review'
           gh auth setup-git
           git push -u origin "$BRANCH"
+          OPEN="$(gh pr list --state open --limit 100 --json title --jq '[.[] | select(.title == "A26 public naval USV fleet research leads (review required)")] | length')"
+          if [[ "$OPEN" != 0 ]]; then
+            echo 'Existing research review PR remains open; published source branch is available for Lab.'
+            exit 0
+          fi
           if ! gh pr create --base main --head "$BRANCH" \
             --title "A26 public naval USV fleet research leads (review required)" \
             --body "A26 public-source DISCOVERY ONLY. Leads are RSS/Atom metadata, not verified model identity, operational status or engineering particulars. No fleet baseline is approved. Source run: https://github.com/${{ github.repository }}/actions/runs/$GITHUB_RUN_ID"; then
