@@ -61,9 +61,9 @@ describe('M03 design-loop bridge is research-only and source-pinned',()=>{
    const rpt=example('RUN-C');
    await expect(recordUnverifiedDesignLoop(rpt,store,{...options('CAND-C'),
      expectedSourceSha:'b'.repeat(40)})).rejects.toThrow(/SOURCE_MISMATCH/);
-   await expect(recordUnverifiedDesignLoop({
-     ...rpt,engineeringReleaseAuthorized:true
-   },store,options('CAND-C'))).rejects.toThrow(/RELEASE_REFUSED/);
+   const forgedRelease={...rpt,engineeringReleaseAuthorized:true} as unknown as DesignLoopReport;
+   await expect(recordUnverifiedDesignLoop(forgedRelease,store,options('CAND-C')))
+     .rejects.toThrow(/RELEASE_REFUSED/);
    const unchanged=example('RUN-D');
    unchanged.revisions[1].screened.parameters.lwlMeters=10;
    unchanged.revisions[1].screened.inputDigest='input-10';
@@ -74,6 +74,9 @@ describe('M03 design-loop bridge is research-only and source-pinned',()=>{
    noCritique.revisions[0].critique.openTbdItems=[];
    await expect(recordUnverifiedDesignLoop(noCritique,store,options('CAND-E')))
      .rejects.toThrow(/PREVIOUS_AGENT_CRITIQUE_MISSING/);
+   // Invalid later proposals cannot create even a partial candidate history.
+   const snapshots=await store.readAll();
+   expect(snapshots).toHaveLength(0);
  });
  it('rejects concept topology switch and non-finite model numbers',async()=>{
    const store=await ledger();

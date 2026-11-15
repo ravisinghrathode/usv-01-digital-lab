@@ -61,16 +61,27 @@ export async function recordUnverifiedDesignLoop(
     throw new Error('M03_NO_BOUNDED_RESEARCH_REVISIONS');
   const first=report.revisions[0];
   const concept=topology(first.screened.conceptTopology);
-  let previousDigest:Sha256|undefined;
-  let event:CandidateEvent|undefined;
+  // Validate *all* proposed revisions first so a malformed later revision
+  // cannot leave a misleading successful prefix in the journal.
+  const digests:Sha256[]=[];
   for(let index=0;index<report.revisions.length;index++){
     const rev=report.revisions[index];
     if(rev.index!==index || topology(rev.screened.conceptTopology)!==concept)
       throw new Error('M03_CANDIDATE_TOPOLOGY_OR_SEQUENCE_CHANGED');
-    const geometryDigest=screenedDigest(rev,report.sourceCommit);
-    if(previousDigest===geometryDigest)
+    const digest=screenedDigest(rev,report.sourceCommit);
+    if(index>0 && digests[index-1]===digest)
       throw new Error('M03_NO_ACTUAL_PROPOSAL_CHANGE');
+    if(index>0){
+      const previous=report.revisions[index-1].critique;
+      if(!previous || (!previous.findings?.length && !previous.openTbdItems?.length))
+        throw new Error('M03_PREVIOUS_AGENT_CRITIQUE_MISSING');
+    }
+    digests.push(digest);
+  }
+  let event:CandidateEvent|undefined;
+  for(let index=0;index<report.revisions.length;index++){
     const revisionId='REV-'+String(index+1).padStart(3,'0');
+    const geometryDigest=digests[index];
     if(index===0){
       event=await ledger.append({
         kind:'CANDIDATE_CREATED',txId:transaction(report.runId,options.candidateId,'create'),
@@ -82,8 +93,6 @@ export async function recordUnverifiedDesignLoop(
       });
     }else{
       const previous=report.revisions[index-1].critique;
-      if(!previous || (!previous.findings?.length && !previous.openTbdItems?.length))
-        throw new Error('M03_PREVIOUS_AGENT_CRITIQUE_MISSING');
       const critiqueDigest=sha256({kind:'UNVERIFIED_A15_MODEL_CRITIQUE',
         sourceSha:report.sourceCommit,critique:previous});
       event=await ledger.append({
@@ -95,7 +104,6 @@ export async function recordUnverifiedDesignLoop(
         inputDigests:[{domain:'GEOMETRY',digest:geometryDigest}]
       });
     }
-    previousDigest=geometryDigest;
   }
   return {
     candidateId:options.candidateId,lastEventHash:event!.eventHash,
