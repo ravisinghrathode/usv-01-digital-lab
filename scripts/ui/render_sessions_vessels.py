@@ -180,25 +180,25 @@ def build(variant):
     # Photo studio lighting with physical shadows, transparent background.
     world=bpy.context.scene.world;world.use_nodes=True
     world.node_tree.nodes.get("Background").inputs["Color"].default_value=(.77,.85,.92,1)
-    world.node_tree.nodes.get("Background").inputs["Strength"].default_value=.55
+    world.node_tree.nodes.get("Background").inputs["Strength"].default_value=.4
     def area(name,location,power,size,color):
       datab=bpy.data.lights.new(name,"AREA");datab.energy=power;datab.shape="DISK";datab.size=size;datab.color=color
       ob=bpy.data.objects.new(name,datab);bpy.context.collection.objects.link(ob);ob.location=location
       direction=Vector((0,0,1.2))-ob.location
       ob.rotation_euler=direction.to_track_quat('-Z','Y').to_euler()
-    area("Large cool studio softbox",(-1.0,-7.5,11.5),2300,10,(.89,.94,1))
-    area("Studio fill opposite",(0,8,8),1300,8,(.91,.96,1))
-    area("Rim light stern",(8,1,10),1800,7,(1,.98,.93))
+    area("Large cool studio softbox",(-3.0,-7.5,10.5),1120,10,(.91,.95,1))
+    area("Studio fill opposite",(0,8,8),720,8,(.91,.96,1))
+    area("Rim light stern",(8,1,10),850,7,(1,.98,.93))
     # Orthographic product photography with credible perspective and zero fake scale
-    bpy.ops.object.camera_add(location=(11.0,-14.5,10.8))
+    bpy.ops.object.camera_add(location=(-11.5,-13.7,9.2))
     cam=bpy.context.object;cam.name="Cinema product camera"
     target=Vector((0,0,1.22));cam.rotation_euler=(target-cam.location).to_track_quat('-Z','Y').to_euler()
-    cam.data.type="ORTHO";cam.data.ortho_scale=15.8
+    cam.data.type="ORTHO";cam.data.ortho_scale=15.3
     scene=bpy.context.scene;scene.camera=cam
-    scene.render.engine="CYCLES";scene.cycles.samples=30
+    scene.render.engine="CYCLES";scene.cycles.samples=64
     # Ubuntu runner's Blender 4.0 build does not include Intel OpenImageDenoiser.
     scene.cycles.use_denoising=False
-    scene.render.resolution_x=1720;scene.render.resolution_y=970
+    scene.render.resolution_x=1600;scene.render.resolution_y=900
     scene.render.resolution_percentage=100
     scene.render.image_settings.file_format="PNG"
     scene.render.image_settings.color_mode="RGBA"
