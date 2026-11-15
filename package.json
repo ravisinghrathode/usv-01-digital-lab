@@ -62,7 +62,8 @@
     "a26:accept": "node scripts/a26/acceptance.mjs",
     "a26:test": "node --test tests/a26/*.test.mjs",
     "a26:unify": "node scripts/a26/unified-evidence.mjs",
-    "a26:rules": "node scripts/a26/r3-policy-check.mjs"
+    "a26:rules": "node scripts/a26/r3-policy-check.mjs",
+    "test:aistudio-startup": "node scripts/aistudio/smoke.mjs"
   },
   "dependencies": {
     "@google/genai": "^3.1.0",
@@ -91,5 +92,10 @@
     "typescript": "^5.8.2",
     "vite": "^6.2.0",
     "vitest": "^5.1.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ravisinghrathode/usv-01-digital-lab.git"
+  },
+  "homepage": "https://github.com/ravisinghrathode/usv-01-digital-lab"
 }
