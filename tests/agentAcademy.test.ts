@@ -98,6 +98,14 @@ describe('USV-01 Agent Academy source-linked curricula', () => {
     forged.evidence.foundation.scorePercent = 100;
     expect(verifyAcademyQualification(c,forged,sha40,reviewerPem,directorPem).status)
       .toBe('HOLD_UNQUALIFIED');
+    const relabel=structuredClone(record);
+    relabel.reviewer.qualification='Unverified replacement qualification';
+    expect(verifyAcademyQualification(c,relabel,sha40,reviewerPem,directorPem).status)
+      .toBe('HOLD_UNQUALIFIED');
+    const directorRelabel=structuredClone(record);
+    directorRelabel.director.identity='A different named approver';
+    expect(verifyAcademyQualification(c,directorRelabel,sha40,reviewerPem,directorPem).status)
+      .toBe('HOLD_UNQUALIFIED');
     const selfReviewed=structuredClone(record);
     selfReviewed.director.identity=selfReviewed.reviewer.identity;
     expect(verifyAcademyQualification(c,selfReviewed,sha40,reviewerPem,directorPem).status)
