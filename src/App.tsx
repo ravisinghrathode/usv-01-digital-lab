@@ -106,12 +106,7 @@ import {
 export default function App() {
   // Navigation & UI state
   // One supported application shell: Naval Studio X, opening in the hero-product CAD workspace.
-  const [currentModule, setActiveModule] = useState<NavigationModule>(() => {
-    // Safe read-only deep link from independent Dockyard 2.0; never bypasses auth.
-    if (typeof window === 'undefined') return 'cad-studio';
-    const target = new URLSearchParams(window.location.search).get('module');
-    return MODULE_REGISTRY.find(m => m.id === target)?.id ?? 'cad-studio';
-  });
+  const [currentModule, setActiveModule] = useState<NavigationModule>('cad-studio');
   const [openTabs, setOpenTabs] = useState<NavigationModule[]>(['cad-studio']);
   const [commandOpen, setCommandOpen] = useState(false);
   const [detailedOverview, setDetailedOverview] = useState(false);
@@ -131,6 +126,16 @@ export default function App() {
     setActiveModule(module);
     setOpenTabs(tabs => tabs.includes(module) ? tabs : [...tabs, module]);
   };
+  // Dockyard 2.0 can navigate to an original module, but baseline startup and
+  // every existing authorization path remain unchanged. Ignore invalid IDs.
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get('module');
+    const module = MODULE_REGISTRY.find(m => m.id === requested);
+    if (module) {
+      setActiveModule(module.id);
+      setOpenTabs(tabs => tabs.includes(module.id) ? tabs : [...tabs, module.id]);
+    }
+  }, []);
   const closeModuleTab = (module: NavigationModule) => {
     if (!window.confirm('Close this work tab? Unsaved changes inside it may be discarded.')) return;
     const remaining = openTabs.filter(tab => tab !== module);
