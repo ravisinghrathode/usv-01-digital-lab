@@ -30,7 +30,7 @@ describe('Naval Design Studio standard interface',()=>{
     const app=source('src/dockyard2/App.tsx');
     expect(app).not.toContain("from '../components/StudioNavigation'");
     expect(app).not.toContain("from '../components/CadStudioView'");
-    expect(app).toContain('DockyardApp');
+    expect(app).toContain('NavalDesignStudioApp');
     expect(app).toContain('<DesignScreen');
     expect(app).toContain('<AgentsScreen');
     expect(app).toContain('<EvidenceScreen');
