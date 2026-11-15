@@ -44,6 +44,8 @@ jobs:
         uses: oven-sh/setup-bun@v2
       - name: Install immutable dependencies
         run: bun install --frozen-lockfile
+      - name: Validate private commissioning plan without model calls
+        run: npm run mission-control:private-commission -- --plan
       - name: Source-level 26-agent preflight with zero model calls
         env:
           CATALOG_PATH: ${{ inputs.catalog_path }}

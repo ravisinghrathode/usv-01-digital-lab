@@ -16,6 +16,7 @@ describe('Public repo zero-model and private-local live commissioning',()=>{
    expect(workflow).toContain('runs-on: ubuntu-latest');
    expect(workflow).toContain('acceptance:codex-agents -- --catalog "$CATALOG_PATH" --require-ready');
    expect(workflow).toContain('persist-credentials: false');
+   expect(workflow).toContain('mission-control:private-commission -- --plan');
  });
  it('does not schedule a secret-bearing self-hosted runner from a public repository',()=>{
    expect(workflow).toContain('USV_PUBLIC_RUNNER_BLOCKED');
