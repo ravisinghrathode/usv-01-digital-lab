@@ -61,3 +61,16 @@
 @media(max-width:1050px){.lv-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.lv-details-wide{grid-template-columns:1fr}}
 @media(max-width:720px){.lv-auth,.lv-columns{grid-template-columns:1fr}.lv-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.lv-draft-form{grid-template-columns:1fr}.lv-linked{grid-template-columns:1fr}.lv-auth{padding:19px;margin:16px 0}.lv-provenance button{margin-left:0}.lv-row{grid-template-columns:1fr;gap:4px}}
 @media(max-width:380px){.lv-metrics{grid-template-columns:1fr}}
+
+/* Source-matched local CAD inspection. Never auto-load private file URLs. */
+.lv-cad-inspector{margin-top:17px;padding:15px;background:#f4f8fb;border:1px solid #cfdee7;border-radius:9px}
+.lv-cad-inspector h4{margin:0 0 9px;font-size:14px}
+.lv-cad-inspector p{font-size:12px}
+.lv-cad-inspector label{font-size:12px;display:flex;flex-direction:column;gap:8px;overflow-wrap:anywhere}
+.lv-cad-inspector input[type=file]{max-width:100%;font-size:12px;padding:10px;border:1px dashed #b4cfdf;background:white;border-radius:7px}
+.lv-cad-inspector .at-local-mesh{width:100%;overflow:hidden;margin-top:10px}
+.lv-cad-inspector .at-mesh-toolbar{display:flex;justify-content:space-between;align-items:center;gap:9px;flex-wrap:wrap;font-size:12px;color:#315c77}
+.lv-cad-inspector .at-mesh-toolbar [role=group]{display:flex;gap:4px}
+.lv-cad-inspector .at-mesh-toolbar button{min-width:33px;min-height:33px;border:1px solid #b6cddd;background:white;border-radius:6px}
+.lv-cad-inspector .at-local-mesh svg{display:block;width:100%;height:auto;max-height:350px;border:1px solid #c3d7e2;border-radius:7px;margin:8px 0;background:white}
+.lv-cad-inspector .at-mesh-disclaimer{display:block;font-size:11px;color:#567489}
