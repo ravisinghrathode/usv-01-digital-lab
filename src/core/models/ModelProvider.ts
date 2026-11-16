@@ -386,7 +386,13 @@ export class CodexCliProvider implements IModelProvider {
       'CONTEXT JSON:', JSON.stringify(request.context)
     ].join('\n\n');
     if (prompt.length > 24_000) {
-      throw new Error('Codex CLI prompt exceeds bounded 24,000-character input; refuse truncated evidence.');
+      // Never log prompt text: only component lengths so the operator can
+      // identify redundant context without disclosing client/naval details.
+      throw new Error('Codex CLI prompt exceeds bounded 24,000-character input; refuse truncated evidence. ' +
+        'promptChars=' + prompt.length +
+        ' systemChars=' + request.systemInstructions.length +
+        ' taskChars=' + request.userPrompt.length +
+        ' contextChars=' + JSON.stringify(request.context).length);
     }
     // This provider is shared with browser-side agent types: NEVER bundle Node CLI modules.
     // Vite leaves the guarded runtime-only import unresolved, whereas Node resolves it.
