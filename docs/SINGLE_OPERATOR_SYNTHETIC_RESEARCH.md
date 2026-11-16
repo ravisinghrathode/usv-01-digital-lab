@@ -332,3 +332,44 @@ retry/backoff loop, not an immediate campaign termination. The original error
 code is preserved when the transfer policy is not authorized. A nontransient
 safety, data integrity or model-provenance failure remains fail closed. No
 paid API keys or output fabrication are used; recorded research is uncertified.
+
+## Gemini CLI headless failure visibility and private prompt transport
+
+The owner's 2026-11-17 Mac A23 run under source
+`13c69a9d5a5a1bc6e527f010b719bac5cc8fcfb6` correctly selected automatic
+Gemini fallback, but Gemini CLI exited nonzero. Node's default
+`Command failed: gemini ... --prompt <entire specialist input>` exception then
+printed nearly the complete A23 six-dependency advisory context to the Terminal,
+obscuring the actual subprocess failure. This was NOT evidence of a successful
+Gemini Hydrogen model execution, provider quota exhaustion, engineering approval
+or a malformed physics result.
+
+The Gemini CLI adapter now uses its documented **stdin-piped headless input**:
+the full source-pinned synthetic review appears only in the private child
+process stdin, not `--prompt` argv or Node subprocess exception text.
+Only a short nonsensitive instruction remains in `--prompt`. The provider
+still requires personal Google OAuth, isolated temporary settings,
+the exact `gemini-4-hydrogen` selection, model-usage evidence and strict JSON
+safety checks.
+
+A nonzero CLI exit is classified into explicit, redacted categories:
+
+- `USV_QUOTA_WAIT: GEMINI_PROVIDER_QUOTA_EXHAUSTED`: provider quota holds
+  are recorded in the independent Gemini ledger, with automatic retry;
+- `GEMINI_CLI_AUTH_REQUIRED` or `GEMINI_CLI_TRANSPORT_UNAVAILABLE`:
+  temporary/missing OAuth or network/transport requires the owner-session
+  bounded retry loop, without switching to a paid API. Personal Google OAuth
+  still needs one-time real local login if not already configured;
+- `GEMINI_CLI_MODEL_UNAVAILABLE`, `GEMINI_CLI_ARGUMENT_REJECTED`, or
+  `GEMINI_CLI_INVALID_OUTPUT`: do not mislabel a model entitlement,
+  incompatible CLI flag or bad response as success or a transient quota;
+- `GEMINI_CLI_EXIT_FAILED: diagnostic_category=UNKNOWN`: fail closed and
+  investigate the local CLI; **never paste entire specialist prompt or
+  credential-bearing stderr into a public GitHub issue**.
+
+These classifications never claim the user's true subscription balance,
+auto-grant model entitlements, reset rate-limit records, relax source-verified
+data-transfer boundaries or certify the vessel. Previously recorded A01–A22
+research traces remain original-source historical evidence. After protected
+merge, update the idle Mac checkout, run fresh same-source A04 and explicitly
+resume from A23, without overwriting the old checkpoint.
