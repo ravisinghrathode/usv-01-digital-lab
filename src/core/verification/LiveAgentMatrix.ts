@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { AgentRegistry } from '../registry/AgentRegistry.ts';
 import { ExecutionEngine } from '../engine/ExecutionEngine.ts';
+import { geminiTransferAuthorized } from '../models/DualSubscriptionRoutingPolicy.ts';
 import {
   topologicalAgentOrder, advisoryReceiptFromOutput,
   advisoryHandoffFromReceipts, type AgentAdvisoryReceipt
@@ -176,7 +177,8 @@ export async function runLiveAgentMatrix(
       const live = output.providerExecutionMode === 'LIVE_AI_GENERATION' &&
         (output.provider === 'codex_cli' ||
          (output.provider === 'gemini_cli' &&
-          output.modelIdentifier === 'gemini-4-hydrogen')) &&
+          output.modelIdentifier === 'gemini-4-hydrogen' &&
+          geminiTransferAuthorized())) &&
         finding.requiredToolsVerified &&
         output.agentId === spec.id &&
         output.taskId === input.taskId &&
