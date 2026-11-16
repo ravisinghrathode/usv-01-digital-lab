@@ -9,7 +9,7 @@ import {
 } from '../src/core/verification/TopologicalAgentCampaign.ts';
 import {
   emptyCheckpoint, verifyCheckpoint, importLegacyProgress,
-  acknowledgeUncertainAttempt, type ResumeBinding
+  rebaseCheckpointProvenance, acknowledgeUncertainAttempt, type ResumeBinding
 } from '../src/core/verification/CodexCampaignCheckpoint.ts';
 import { runLiveAgentMatrix } from '../src/core/verification/LiveAgentMatrix.ts';
 import type { AgentExecutionInput, AgentExecutionOutput, AgentSpec } from '../src/core/types/agent.ts';
@@ -172,5 +172,106 @@ describe('26 Codex agent interrupted-campaign checkpoint recovery', () => {
     expect(r.liveProviderRuns).toBe(26);
     expect(r.historicalProviderRuns).toBe(0);
     expect(r.providerOperationalMatrixComplete).toBe(true);
+  });
+
+  it('migrates all nine prior-SHA successes without replay or loss of original evidence', () => {
+    const old: ResumeBinding = { ...binding, implementationSha: previousSha };
+    const parent = emptyCheckpoint(old);
+    const originalLegacySha = 'c'.repeat(40);
+    const historical = specs.slice(0, 2).map(spec => ({
+      ...legacyResult(spec),
+      status: 'HISTORICAL_LIVE_PROVIDER_EXECUTED_UNCERTIFIED' as const,
+      originSourceSha: originalLegacySha
+    }));
+    const oldSuccesses = specs.slice(2, 9).map(spec => ({
+      ...legacyResult(spec),
+      status: 'LIVE_PROVIDER_EXECUTED_UNCERTIFIED' as const,
+      originSourceSha: previousSha
+    }));
+    parent.completed = [...historical, ...oldSuccesses];
+    parent.completedCount = 9;
+    parent.legacySourceSha = originalLegacySha;
+    parent.historicalSourceShas = [originalLegacySha];
+    parent.advisories = Object.fromEntries(parent.completed.map(f =>
+      [f.runtimeId, legacyDigestOnlyAdvisory(f.outputDigestSha256!)]
+    ));
+    parent.pending = {
+      canonicalId: specs[9].canonicalId, runtimeId: specs[9].id,
+      startedAtUtc: '2026-11-17T03:00:00.000Z', possibleDuplicate: true
+    };
+    expect(verifyCheckpoint(parent, old).completedCount).toBe(9);
+    const bytes = Buffer.from(JSON.stringify(parent));
+    const migrated = rebaseCheckpointProvenance(parent, old, binding, bytes);
+    expect(migrated.completedCount).toBe(9);
+    expect(migrated.completed.every(f => f.status ===
+      'HISTORICAL_LIVE_PROVIDER_EXECUTED_UNCERTIFIED')).toBe(true);
+    expect(migrated.completed.slice(0, 2).every(f =>
+      f.originSourceSha === originalLegacySha)).toBe(true);
+    expect(migrated.completed.slice(2, 9).every(f =>
+      f.originSourceSha === previousSha)).toBe(true);
+    expect(migrated.historicalSourceShas).toEqual([originalLegacySha, previousSha]);
+    expect(migrated.pending?.canonicalId).toBe(specs[9].canonicalId);
+    expect(migrated.parentCheckpointSha256)
+      .toBe(createHash('sha256').update(bytes).digest('hex'));
+    expect(verifyCheckpoint(migrated, binding).completedCount).toBe(9);
+    expect(() => rebaseCheckpointProvenance(parent, old,
+      { ...binding, catalogSha256: 'f'.repeat(64) }, bytes)).toThrow();
+  });
+
+  it('rejects fake Hydrogen data in a checkpoint; genuine Gemini transport remains uncertified', () => {
+    const cp = emptyCheckpoint(binding);
+    const fake = { ...legacyResult(specs[0]),
+      status: 'LIVE_PROVIDER_EXECUTED_UNCERTIFIED' as const,
+      originSourceSha: currentSha, provider: 'gemini_cli',
+      modelIdentifier: 'gemini-3-flash' };
+    cp.completed = [fake];
+    cp.completedCount = 1;
+    cp.advisories[fake.runtimeId] = {
+      ...legacyDigestOnlyAdvisory(fake.outputDigestSha256),
+      provider: 'gemini_cli'
+    };
+    expect(() => verifyCheckpoint(cp, binding)).toThrow();
+    cp.completed[0].modelIdentifier = 'gemini-4-hydrogen';
+    expect(verifyCheckpoint(cp, binding).completedCount).toBe(1);
+  });
+
+  it('records all 26 verified Hydrogen transport receipts when operator authorizes synthetic Gemini transfer', async () => {
+    const keys = [
+      'AI_REVIEW_PROVIDER', 'USV_SUBSCRIPTION_PILOT', 'USV_ALLOW_PAID_AI_API',
+      'USV_LAB_SCOPE', 'USV_DUAL_PROVIDER_ROUTING', 'USV_GEMINI_FALLBACK_APPROVED',
+      'USV_GEMINI_OAUTH_REVIEWED', 'USV_GEMINI_DATA_CLASSIFICATION'
+    ];
+    const prior = Object.fromEntries(keys.map(key => [key, process.env[key]]));
+    try {
+      Object.assign(process.env, {
+        AI_REVIEW_PROVIDER: 'codex_cli',
+        USV_SUBSCRIPTION_PILOT: 'enabled',
+        USV_ALLOW_PAID_AI_API: 'false',
+        USV_LAB_SCOPE: 'RESEARCH_ONLY',
+        USV_DUAL_PROVIDER_ROUTING: 'enabled',
+        USV_GEMINI_FALLBACK_APPROVED: 'true',
+        USV_GEMINI_OAUTH_REVIEWED: 'true',
+        USV_GEMINI_DATA_CLASSIFICATION: 'PUBLIC_NON_SENSITIVE'
+      });
+      const run = async (id: string, input: AgentExecutionInput) => ({
+        ...sourceBoundOutput(specs.find(x => x.id === id)!, input),
+        provider: 'gemini_cli', modelIdentifier: 'gemini-4-hydrogen'
+      });
+      const allowed = await runLiveAgentMatrix(cases, run, { dependencyAware: true });
+      expect(allowed.liveProviderRuns).toBe(26);
+      expect(allowed.providerOperationalMatrixComplete).toBe(true);
+      expect(allowed.findings.every(x => x.provider === 'gemini_cli')).toBe(true);
+      expect(allowed.independentlyEngineeringValidated).toBe(false);
+      expect(allowed.engineeringReleaseApproved).toBe(false);
+      delete process.env.USV_GEMINI_FALLBACK_APPROVED;
+      const denied = await runLiveAgentMatrix(cases, run, { dependencyAware: true });
+      expect(denied.liveProviderRuns).toBe(0);
+      expect(denied.providerOperationalMatrixComplete).toBe(false);
+    } finally {
+      for (const [key,value] of Object.entries(prior)) {
+        if (value === undefined) delete process.env[key];
+        else process.env[key] = value;
+      }
+    }
   });
 });
