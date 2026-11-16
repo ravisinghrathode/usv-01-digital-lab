@@ -12,7 +12,7 @@
     {
       "id": "PR-02",
       "state": "partial-implementation-awaiting-review",
-      "pullRequest": "pending",
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/182",
       "verification": "Regression tests added; CI not yet confirmed; external audit anchoring remains outstanding"
     },
     {
