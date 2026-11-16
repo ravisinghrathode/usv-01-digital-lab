@@ -269,7 +269,7 @@ export function classifiedGeminiCliFailure(error: unknown): Error {
   if (/\b(ETIMEDOUT|ECONNRESET|ECONNREFUSED|ENOTFOUND|EAI_AGAIN)\b|network unreachable|connection refused|request timed out|temporarily unavailable|service unavailable|\bHTTP[ :]*50[234]\b/i.test(details) || raw.code === 'ETIMEDOUT') {
     return new Error('USV_GEMINI_CLI_TRANSPORT_UNAVAILABLE: retryable connection or service failure');
   }
-  if (/not logged in|sign in required|login required|not authenticated|authentication failed|session expired|credentials missing|oauth.{0,80}(expired|required|failed|invalid)|invalid credentials/i.test(details)) {
+  if (/^USV_GEMINI_CLI_AUTH_UNAVAILABLE:|FatalAuthenticationError|Gemini CLI provider error: login|not logged in|sign in required|login required|not authenticated|authentication failed|session expired|credentials missing|oauth.{0,80}(expired|required|failed|invalid)|invalid credentials/i.test(details)) {
     return new Error('USV_GEMINI_CLI_AUTH_UNAVAILABLE: personal OAuth session requires attention');
   }
   if (raw.code === 'ENOENT') {
