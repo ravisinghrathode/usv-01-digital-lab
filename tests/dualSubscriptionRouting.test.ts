@@ -83,6 +83,60 @@ describe('26 specialist dual subscription transport policy',()=>{
     expect(codexFallbackReason(new Error('approval denied'))).toBeNull();
     expect(codexFallbackReason(new Error('model output contains USV_QUOTA_WAIT but cannot be accepted'))).toBeNull();
   });
+  it('keeps Codex quota retryable when owner declines Gemini synthetic transfer',async()=>{
+    optIn();
+    delete process.env.USV_GEMINI_FALLBACK_APPROVED;
+    delete process.env.USV_GEMINI_OAUTH_REVIEWED;
+    delete process.env.USV_GEMINI_DATA_CLASSIFICATION;
+    // Exercise the non-test, fail-closed router branch with fake providers;
+    // no real login, model invocation, quota ledger or billing occurs.
+    process.env.NODE_ENV='production';
+    const router=ModelProviderRouter.getInstance();
+    const oldCodex=router.getProvider('codex_cli')!;
+    const oldGemini=router.getProvider('gemini_cli')!;
+    let codexCalls=0,geminiCalls=0;
+    try{
+      router.registerProvider({name:'codex_cli',isAvailable:()=>true,
+        generateText:async()=>{codexCalls++;
+          throw new Error('USV_QUOTA_WAIT: PROVIDER_QUOTA_EXHAUSTED; retry after 2026-11-17T08:00:00Z')}})
+      router.registerProvider({name:'gemini_cli',isAvailable:()=>true,
+        generateText:async()=>{geminiCalls++;return stub('gemini_cli')}});
+      await expect(router.generate(prompt,{preferredProvider:'codex_cli'}))
+        .rejects.toThrow(/USV_QUOTA_WAIT: PROVIDER_QUOTA_EXHAUSTED; retry after/);
+      expect(codexCalls).toBe(1);
+      expect(geminiCalls).toBe(0);
+    }finally{
+      router.registerProvider(oldCodex);
+      router.registerProvider(oldGemini);
+    }
+  });
+
+  it('preserves Codex model/transport failure reasons when Gemini is unapproved',async()=>{
+    optIn();
+    delete process.env.USV_GEMINI_FALLBACK_APPROVED;
+    delete process.env.USV_GEMINI_OAUTH_REVIEWED;
+    delete process.env.USV_GEMINI_DATA_CLASSIFICATION;
+    process.env.NODE_ENV='production';
+    const router=ModelProviderRouter.getInstance();
+    const oldCodex=router.getProvider('codex_cli')!;
+    const oldGemini=router.getProvider('gemini_cli')!;
+    let geminiCalls=0;
+    try{
+      router.registerProvider({name:'gemini_cli',isAvailable:()=>true,
+        generateText:async()=>{geminiCalls++;return stub('gemini_cli')}});
+      for (const code of ['USV_CODEX_MODEL_UNAVAILABLE','USV_CODEX_TRANSPORT_UNAVAILABLE',
+        'USV_CODEX_AUTH_UNAVAILABLE']) {
+        router.registerProvider({name:'codex_cli',isAvailable:()=>true,
+          generateText:async()=>{throw new Error(code+': source preserved')}});
+        await expect(router.generate(prompt,{preferredProvider:'codex_cli'}))
+          .rejects.toThrow(code+': source preserved');
+      }
+      expect(geminiCalls).toBe(0);
+    }finally{
+      router.registerProvider(oldCodex);
+      router.registerProvider(oldGemini);
+    }
+  });
   it('uses the best requested Gemini 4 Hydrogen when unavailable Sol transport is safely classified',async()=>{
     optInGemini();
     const router=ModelProviderRouter.getInstance();
