@@ -4,6 +4,13 @@
  * authorization to transfer restricted naval/client information to Gemini.
  * No automatic fallback on model refusal, bad math, invalid JSON, or approvals.
  */
+/**
+ * Bounded single Codex CLI argument for owner-authorized, source-pinned
+ * research. Earlier 24k cap rejected A23's complete 25,836-character
+ * synthetic review even after lossless prompt compaction. The Mac CLI argument
+ * and model input are still capped; no truncation or paid API bypass.
+ */
+export const CODEX_CLI_MAX_PROMPT_CHARS = 48_000 as const;
 export const CHATGPT_SOL_MODEL = 'gpt-6.1-sol' as const;
 export const GEMINI_HYDROGEN_MODEL = 'gemini-4-hydrogen' as const;
 export type SafeFallbackReason = 'CODEX_QUOTA' | 'CODEX_AUTH_UNAVAILABLE' |
