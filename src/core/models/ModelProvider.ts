@@ -906,7 +906,12 @@ export class ModelProviderRouter {
           };
         }
         if (reason && !geminiTransferAuthorized() && !isTestMode) {
-          throw new Error('USV_GEMINI_TRANSFER_BLOCKED: Codex unavailable; cross-provider public-data/OAuth authorization missing.');
+          // No Gemini transfer was approved. Preserve the original Codex
+          // failure classification: USV_QUOTA_WAIT must reach the campaign's
+          // bounded cooldown/retry loop rather than being masked as an
+          // authorization failure. Auth/model/transport failures must retain
+          // their own codes and fail closed; never use a mock or paid API.
+          throw err;
         }
         if (!isTestMode) {
           throw new Error(
