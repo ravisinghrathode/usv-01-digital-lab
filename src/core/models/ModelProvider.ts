@@ -250,7 +250,10 @@ export function classifiedGeminiCliFailure(error: unknown): Error {
     : {message: String(error)};
   const msg = typeof raw.message === 'string' ? raw.message : '';
   const stderr = typeof raw.stderr === 'string' ? raw.stderr : '';
-  const details = (stderr + '\n' + msg).slice(0, 32768);
+  // Historical execFile errors can embed the complete CLI prompt into their
+  // message. Never interpret that untrusted prompt as a diagnostic category.
+  const diagnosticMessage = /^Command failed:/i.test(msg) ? '' : msg;
+  const details = (stderr + '\n' + diagnosticMessage).slice(0, 32768);
   if (/Gemini CLI did not emit the documented JSON envelope|Gemini CLI returned no response text|GEMINI_CLI_OUTPUT_TOO_LARGE/i.test(details)) {
     return new Error('USV_GEMINI_CLI_INVALID_OUTPUT: invalid or oversized headless response; fail closed');
   }
