@@ -314,3 +314,31 @@ A24–A26. No previous successful model call needs to be repeated.
 If any input truly exceeds 48,000 characters, the model still **fails closed**
 and reports only component lengths, never raw sensitive text. This is
 not permission to truncate evidence or invoke a paid API.
+
+## Codex-only quota continuity when Gemini consent is absent
+
+If the owner presses Enter at the optional Gemini fallback authorization
+prompt, that is a deliberate **decline**, not a failure of the primary Codex
+provider. Gemini receives no prompt and consumes no tokens.
+
+Previously, an eligible Codex quota, authentication, transport or requested
+model failure was incorrectly replaced by the generic
+`USV_GEMINI_TRANSFER_BLOCKED` exception. This masked the original provider
+reason, and the campaign's bounded `USV_QUOTA_WAIT` retry loop therefore
+terminated at A23 instead of waiting for Codex capacity.
+
+The router now returns the **original Codex exception unchanged** when no
+Gemini transfer is authorized. Genuine `USV_QUOTA_WAIT` and
+`QUOTA_EXHAUSTED` signals reach the existing bounded owner-session
+retry mechanism, without switching vendor or resetting the durable quota
+ledger. Genuine authentication, CLI transport, model entitlement,
+calculation, validation, schema or policy failures retain their own codes,
+remain fail closed and do not masquerade as quota holds. The original
+producer code/underlying provider error is retained for diagnosis.
+
+This is not an unattended daemon. It does not automatically consent to
+third-party transfer, bypass a real subscription rate limit, access a paid
+API, fabricate a result, change the physical engineering baseline, or
+self-qualify the agent. The 22 preexisting synthetic research successes
+remain in their source-bound private checkpoint until the owner explicitly
+authorizes recovery on the reviewed new source SHA.
