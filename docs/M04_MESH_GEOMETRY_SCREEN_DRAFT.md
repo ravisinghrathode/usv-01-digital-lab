@@ -1,0 +1,9 @@
+# M04 draft mesh geometry screening — mathematical tool only
+
+M04 issue #104 requires independently assessable geometry and geometry-to-physics provenance. This incremental tool checks supplied triangle arrays using an explicit **right-handed body frame X forward, Y starboard, Z down** (not Z up), SI metres, exact Git source commit, named candidate/revision, and a local SHA256 manifest of the entire supplied mesh.
+
+It deterministically checks finite vertices, valid/nondegenerate triangle indices, oriented two-face edge adjacency, positive signed enclosed volume, triangulated surface area and enclosed *mathematical* centroid. Synthetic unit cube, translated cube, two separated cubes, open-edge, degenerate, inverted, wrong-unit and stale-source cases are regression tested.
+
+**Limits (mandatory):** a closed oriented manifold is not proof of a self-intersection-free solid; offset stations, hydrodynamic wetted hull below waterline, free surface, displacement, center of buoyancy, CG, stability, manufacture tolerances and maritime approvals are **not** computed. The value labelled `signedEnclosedVolumeM3` is geometric enclosed volume, never automatically vessel displacement. A preview mesh has no dimensional/engineering authority. All outputs explicitly retain `measuredOffsetsAuthenticated:false`, `selfIntersectionsChecked:false`, `independentGeometryApproved:false`, `engineeringReleaseApproved:false` and no center-of-buoyancy estimate.
+
+This does **not** close M04. Next gates require independent offset/measured or approved CAD geometry authority, a source-validated mesh/offset export, true self-intersection checks, waterline clipping, hydrostatics with load cases and separate mass/CG evidence, then independent reviewer approval. The tool is deliberately not coupled to vessel release or an unsanctioned solver.
