@@ -4,7 +4,7 @@
  * Computes enclosed mathematical volume and centroid for oriented triangles;
  * NOT immersed displacement, center of buoyancy or intact stability.
  */
-import {createHash} from 'node:crypto';
+import {sha256 as canonicalSha256} from '../digital-thread/CandidateLedger.ts';
 
 export type MeshTopology='MONOHULL'|'CATAMARAN'|'TRIMARAN';
 export type Vertex=[number,number,number];
@@ -25,6 +25,8 @@ export interface MeshScreen {
   schema:'usv01-draft-mesh-screen/v1';
   candidateId:string;revisionId:string;sourceCommitSha:string;
   geometrySha256:string|null;
+  /** Candidate/revision/source specific, separate from the geometry bytes. */
+  manifestSha256:string|null;
   status:'CLOSED_ORIENTED_MATH_SCREEN_UNVERIFIED'|'BLOCKED_INVALID_GEOMETRY';
   failureCodes:string[];
   signedEnclosedVolumeM3:number|null;
@@ -58,13 +60,14 @@ const validFrame=(f:DraftHullMesh['frame']):boolean=>
   Boolean(f&&f.handedness==='RIGHT_HANDED'&&f.x==='FORWARD'&&
     f.y==='STARBOARD'&&f.z==='DOWN'&&f.unit==='m'&&
     typeof f.originDescription==='string'&&f.originDescription.trim().length>5);
-function baseScreen(mesh:DraftHullMesh,failures:string[],sha:string|null):MeshScreen {
+function baseScreen(mesh:DraftHullMesh,failures:string[],sha:string|null,
+  manifestSha:string|null=null):MeshScreen {
   return {
     schema:'usv01-draft-mesh-screen/v1',
     candidateId:mesh?.candidateId||'INVALID',
     revisionId:mesh?.revisionId||'INVALID',
     sourceCommitSha:mesh?.sourceCommitSha||'INVALID',
-    geometrySha256:sha,
+    geometrySha256:sha,manifestSha256:manifestSha,
     status:'BLOCKED_INVALID_GEOMETRY',failureCodes:failures,
     signedEnclosedVolumeM3:null,enclosedVolumeCentroidMeters:null,
     triangleSurfaceAreaM2:null,geometricEnclosureMathChecked:false,
@@ -95,10 +98,18 @@ export function screenDraftHullMesh(mesh:DraftHullMesh,expectedSourceSha:string)
     codes.push('INVALID_TRIANGLE_INDEXING');
   if(codes.length)return baseScreen(mesh,codes,null);
 
-  // This is a digest of unverified geometry bytes in canonical array order,
-  // not a proof that the CAD model was measured or approved.
-  const geometrySha256='sha256:'+createHash('sha256')
-    .update(JSON.stringify(mesh)).digest('hex');
+  // Geometry identity is independent of candidate/revision/source metadata.
+  // A distinct manifest hash binds that same geometry to its source owner.
+  // The M03 canonical hasher sorts object keys but retains vertex/face order.
+  const geometrySha256=canonicalSha256({
+    schema:'usv01-mesh-geometry-digest/v1',topology:mesh.topology,
+    frame:mesh.frame,vertices:mesh.vertices,triangles:mesh.triangles
+  });
+  const manifestSha256=canonicalSha256({
+    schema:mesh.schema,candidateId:mesh.candidateId,
+    revisionId:mesh.revisionId,sourceCommitSha:mesh.sourceCommitSha,
+    provenance:mesh.provenance,geometrySha256
+  });
   const edges=new Map<string,{count:number;orientation:number}>();
   let sixVolume=0;
   let twiceArea=0;
@@ -141,16 +152,16 @@ export function screenDraftHullMesh(mesh:DraftHullMesh,expectedSourceSha:string)
   if(!Number.isFinite(volume)||volume<=scale*scale*scale*1e-12)
     codes.push('ZERO_NEGATIVE_OR_NONFINITE_SIGNED_VOLUME');
   if(!Number.isFinite(area)||area<=0)codes.push('INVALID_SURFACE_AREA');
-  if(codes.length)return baseScreen(mesh,[...new Set(codes)],geometrySha256);
+  if(codes.length)return baseScreen(mesh,[...new Set(codes)],geometrySha256,manifestSha256);
   const centroid:Vertex=[
     centroidNumerator[0]/(24*volume),
     centroidNumerator[1]/(24*volume),
     centroidNumerator[2]/(24*volume)
   ];
   if(!centroid.every(Number.isFinite))
-    return baseScreen(mesh,['NONFINITE_VOLUME_CENTROID'],geometrySha256);
+    return baseScreen(mesh,['NONFINITE_VOLUME_CENTROID'],geometrySha256,manifestSha256);
   return{
-    ...baseScreen(mesh,[],geometrySha256),
+    ...baseScreen(mesh,[],geometrySha256,manifestSha256),
     status:'CLOSED_ORIENTED_MATH_SCREEN_UNVERIFIED',
     signedEnclosedVolumeM3:volume,enclosedVolumeCentroidMeters:centroid,
     triangleSurfaceAreaM2:area,geometricEnclosureMathChecked:true

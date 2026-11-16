@@ -28,6 +28,7 @@ describe('M04 geometric math screen does not establish hull authority',()=>{
   expect(r.triangleSurfaceAreaM2).toBeCloseTo(6,10);
   expect(r.enclosedVolumeCentroidMeters).toEqual([.5,.5,.5]);
   expect(r.geometrySha256).toMatch(/^sha256:[a-f0-9]{64}$/);
+  expect(r.manifestSha256).toMatch(/^sha256:[a-f0-9]{64}$/);
   expect(r.hydrostaticDisplacementM3).toBeNull();
   expect(r.centerOfBuoyancyMeters).toBeNull();
   expect(r.measuredOffsetsAuthenticated).toBe(false);
@@ -46,6 +47,25 @@ describe('M04 geometric math screen does not establish hull authority',()=>{
   expect(r.enclosedVolumeCentroidMeters?.[1]).toBeCloseTo(-3.5,10);
   expect(r.enclosedVolumeCentroidMeters?.[2]).toBeCloseTo(2.5,10);
   expect(r.geometrySha256).not.toEqual(original.geometrySha256);
+ });
+ it('preserves geometric identity across metadata-only revisions but changes manifest digest',()=>{
+  const original=cube();
+  const later=cube();
+  later.revisionId='REV-002';
+  const a=screenDraftHullMesh(original,sha);
+  const b=screenDraftHullMesh(later,sha);
+  expect(a.geometrySha256).toBe(b.geometrySha256);
+  expect(a.manifestSha256).not.toBe(b.manifestSha256);
+  const reordered={
+    vertices:original.vertices,triangles:original.triangles,
+    frame:original.frame,topology:original.topology,
+    provenance:original.provenance,sourceCommitSha:original.sourceCommitSha,
+    candidateId:original.candidateId,revisionId:original.revisionId,
+    schema:original.schema
+  } as DraftHullMesh;
+  const c=screenDraftHullMesh(reordered,sha);
+  expect(c.geometrySha256).toBe(a.geometrySha256);
+  expect(c.manifestSha256).toBe(a.manifestSha256);
  });
  it('rejects missing faces, inconsistent winding, inverted volume and degenerate facets',()=>{
   const open=cube();open.triangles.pop();
