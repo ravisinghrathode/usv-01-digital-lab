@@ -1,4 +1,7 @@
 import { generateKeyPairSync, sign } from 'node:crypto';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
   computeCharterDigest,
@@ -67,7 +70,20 @@ describe('M01 — Operating Charter v1.1 (A–E) verification and fail-closed ad
   });
 
   it('validates a synthetic signed adoption record only under a pinned independent trust root', () => {
-    const { charterSha256 } = computeCharterDigest();
+    // Create a scratch *synthetic* approved charter. Source document stays proposed.
+    // A valid signature alone must not override the canonical status.
+    const current = computeCharterDigest();
+    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), 'usv-charter-adoption-'));
+    const governanceDir = path.join(rootDir, 'docs', 'governance');
+    fs.mkdirSync(governanceDir, { recursive: true });
+    const adoptedText = current.charterText.replace(
+      'Status:** PROPOSED — NOT ADOPTED; engineering release remains on HOLD',
+      'Status:** ADOPTED FOR OPERATING SPEC ONLY; engineering release remains on HOLD'
+    );
+    expect(adoptedText).not.toBe(current.charterText);
+    fs.writeFileSync(path.join(governanceDir, 'USV01_26_AGENT_OPERATING_CHARTER_V1.md'), adoptedText);
+    fs.writeFileSync(path.join(governanceDir, 'USV01_OPERATING_CHARTER_V11_AI_SELF_CRITIQUE.md'), current.selfCritiqueText);
+    const { charterSha256 } = computeCharterDigest(rootDir);
     // Ephemeral test keys show cryptographic wiring, never a real Director approval.
     const { privateKey, publicKey } = generateKeyPairSync('ed25519');
     const trustAnchor = publicKey.export({ format: 'pem', type: 'spki' }).toString();
@@ -90,6 +106,7 @@ describe('M01 — Operating Charter v1.1 (A–E) verification and fail-closed ad
     ).toString('base64');
 
     const audit = evaluateCharterAdoptionReadiness({
+      rootDir,
       expectedCommitSha: COMMIT_SHA,
       decisionRecord: record,
       trustedDirectorPublicKeyPem: trustAnchor
@@ -101,12 +118,14 @@ describe('M01 — Operating Charter v1.1 (A–E) verification and fail-closed ad
 
     // Reference strings or self-generated keys are not authorization.
     const missingTrust = evaluateCharterAdoptionReadiness({
+      rootDir,
       expectedCommitSha: COMMIT_SHA, decisionRecord: record
     });
     expect(missingTrust.adopted).toBe(false);
     expect(missingTrust.blockers.some(b => b.includes('trusted Director'))).toBe(true);
 
     const unsigned = evaluateCharterAdoptionReadiness({
+      rootDir,
       expectedCommitSha: COMMIT_SHA,
       decisionRecord: { ...record, signatureBase64: undefined },
       trustedDirectorPublicKeyPem: trustAnchor
@@ -115,6 +134,7 @@ describe('M01 — Operating Charter v1.1 (A–E) verification and fail-closed ad
     expect(unsigned.blockers.some(b => b.includes('reference alone'))).toBe(true);
 
     const tampered = evaluateCharterAdoptionReadiness({
+      rootDir,
       expectedCommitSha: COMMIT_SHA,
       decisionRecord: { ...record, authorizerIdentity: 'Altered Approver' },
       trustedDirectorPublicKeyPem: trustAnchor
@@ -124,11 +144,27 @@ describe('M01 — Operating Charter v1.1 (A–E) verification and fail-closed ad
 
     const attackerKey = generateKeyPairSync('ed25519').publicKey;
     const untrusted = evaluateCharterAdoptionReadiness({
+      rootDir,
       expectedCommitSha: COMMIT_SHA,
       decisionRecord: record,
       trustedDirectorPublicKeyPem: attackerKey.export({ format: 'pem', type: 'spki' }).toString()
     });
     expect(untrusted.adopted).toBe(false);
     expect(untrusted.blockers.some(b => b.includes('signature invalid'))).toBe(true);
+
+    // Even a correctly signed decision must not adopt the still-PROPOSED main charter.
+    const proposedRecord: CharterAdoptionDecisionRecord = {
+      ...record, charterSha256: current.charterSha256
+    };
+    proposedRecord.signatureBase64 = sign(
+      null, Buffer.from(canonicalCharterAdoptionPayload(proposedRecord), 'utf8'), privateKey
+    ).toString('base64');
+    const stillProposed = evaluateCharterAdoptionReadiness({
+      expectedCommitSha: COMMIT_SHA, decisionRecord: proposedRecord,
+      trustedDirectorPublicKeyPem: trustAnchor
+    });
+    expect(stillProposed.adopted).toBe(false);
+    expect(stillProposed.blockers.some(b => b.includes('Canonical charter status'))).toBe(true);
+    fs.rmSync(rootDir, { recursive: true, force: true });
   });
 });
