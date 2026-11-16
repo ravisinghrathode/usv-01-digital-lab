@@ -3,17 +3,120 @@
  * catalog. Subscription-authenticated live Codex runs are explicit opt-in.
  * No output from this script is certified vessel evidence.
  */
-import { createHash } from 'node:crypto';
-import { execFileSync } from 'node:child_process';
+import { createHash, randomBytes } from 'node:crypto';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { assertPinnedCleanGitRevision } from '../src/core/mission-control/GitRevisionGuard.ts';
 import fs from 'node:fs';
 import path from 'node:path';
 import { compileCodexAgentCases } from '../src/core/verification/CodexMatrixInput.ts';
 import { runLiveAgentMatrix } from '../src/core/verification/LiveAgentMatrix.ts';
+import type { AgentRunFinding } from '../src/core/verification/LiveAgentMatrix.ts';
+import { AgentRegistry } from '../src/core/registry/AgentRegistry.ts';
+import { topologicalAgentOrder } from '../src/core/verification/TopologicalAgentCampaign.ts';
+import {
+  emptyCheckpoint, importLegacyProgress, verifyCheckpoint,
+  acknowledgeUncertainAttempt, type CodexCheckpoint,
+  type ResumeBinding
+} from '../src/core/verification/CodexCampaignCheckpoint.ts';
 import { preflightCodexAgentCases } from '../src/core/verification/CodexCampaignPreflight.ts';
 import { requireLabCommissioningPolicy } from '../src/core/mission-control/LabCommissioningPolicy.ts';
 import { assessEngineeringCampaign } from '../src/core/verification/EngineeringCampaignAcceptance.ts';
 
+
+const CHECKPOINT = path.resolve('data/codex-26-agent-checkpoint.json');
+const OLD_PROGRESS = path.resolve('data/codex-26-agent-progress.json');
+const RESUME_PROGRESS = path.resolve('data/codex-26-agent-resume-progress.json');
+const LOCK = path.resolve('data/codex-26-agent-checkpoint.lock');
+const ERROR_REPORT = path.resolve('data/codex-26-agent-interruption.json');
+
+function safeRead(filename: string, enforcePrivate = true): Buffer {
+  const st = fs.lstatSync(filename);
+  if (!st.isFile() || st.isSymbolicLink() || st.size === 0 ||
+      st.size > 2 * 1024 * 1024 ||
+      (st.mode & (enforcePrivate ? 0o077 : 0o022)) !== 0) {
+    throw new Error('CODEX_RESUME_UNSAFE_LOCAL_JOURNAL: ' + path.basename(filename));
+  }
+  return fs.readFileSync(filename);
+}
+/** Unique temp + fd sync + rename; no public commit, no partial JSON reads. */
+function writePrivateAtomic(filename: string, value: unknown): void {
+  const dir = path.dirname(filename);
+  const dst = path.basename(filename);
+  const info = fs.lstatSync(dir);
+  if (!info.isDirectory() || info.isSymbolicLink()) {
+    throw new Error('CODEX_RESUME_UNSAFE_PRIVATE_DIRECTORY');
+  }
+  if (fs.existsSync(filename)) {
+    const old = fs.lstatSync(filename);
+    if (!old.isFile() || old.isSymbolicLink() ||
+        (old.mode & 0o077) !== 0) {
+      throw new Error('CODEX_RESUME_UNSAFE_TARGET_FILE');
+    }
+  }
+  const tmp = path.join(dir, '.' + dst + '.' + randomBytes(8).toString('hex') + '.tmp');
+  const bytes = JSON.stringify(value, null, 2) + '\n';
+  let fd: number | undefined;
+  try {
+    fd = fs.openSync(tmp, 'wx', 0o600);
+    fs.writeFileSync(fd, bytes);
+    fs.fsyncSync(fd);
+    fs.closeSync(fd);
+    fd = undefined;
+    fs.renameSync(tmp, filename);
+  } finally {
+    if (fd !== undefined) fs.closeSync(fd);
+    if (fs.existsSync(tmp)) fs.unlinkSync(tmp);
+  }
+}
+function holdExclusiveLock(): () => void {
+  if (fs.existsSync(LOCK)) {
+    throw new Error('CODEX_RESUME_ACTIVE_OR_STALE_LOCK: another run may be active. ' +
+      'Inspect the process; do not delete a lock until confirmed stopped.');
+  }
+  const fd = fs.openSync(LOCK, 'wx', 0o600);
+  try { fs.writeFileSync(fd, JSON.stringify({ pid: process.pid,
+    startedAtUtc: new Date().toISOString() }) + '\n'); fs.fsyncSync(fd); }
+  finally { fs.closeSync(fd); }
+  return () => { try { fs.unlinkSync(LOCK); } catch { /* unexpected removal */ } };
+}
+function gitIsAncestor(oldSha: string, currentSha: string): boolean {
+  const p = spawnSync('git', ['merge-base', '--is-ancestor', oldSha, currentSha], {
+    encoding: 'utf8', timeout: 8000, shell: false
+  });
+  return !p.error && p.status === 0;
+}
+function prepareResume(binding: ResumeBinding,
+  resume: boolean, allowHistorical: boolean, retryUncertain: boolean): CodexCheckpoint {
+  if (fs.existsSync(CHECKPOINT)) {
+    if (!resume) throw new Error('CODEX_RESUME_EXISTING_CHECKPOINT: use --resume; cannot replay successful work');
+    const cp = verifyCheckpoint(JSON.parse(safeRead(CHECKPOINT).toString('utf8')), binding);
+    if (cp.pending && !retryUncertain) {
+      throw new Error('CODEX_RESUME_UNCERTAIN_MODEL_ATTEMPT: ' + cp.pending.canonicalId +
+        '; inspect prior logs and pass --ack-uncertain to deliberately retry if needed');
+    }
+    return cp.pending ? acknowledgeUncertainAttempt(cp, binding) : cp;
+  }
+  if (resume) {
+    if (!fs.existsSync(OLD_PROGRESS)) {
+      throw new Error('CODEX_RESUME_NO_PREVIOUS_CHECKPOINT_OR_LEGACY_PROGRESS');
+    }
+    const rawBytes = safeRead(OLD_PROGRESS, false);
+    const legacy = JSON.parse(rawBytes.toString('utf8')) as {implementationSha?:string};
+    if (!legacy.implementationSha || !gitIsAncestor(legacy.implementationSha, binding.implementationSha)) {
+      throw new Error('CODEX_RESUME_LEGACY_SOURCE_NOT_IN_PROTECTED_MAIN_ANCESTRY');
+    }
+    const cp = importLegacyProgress(legacy, rawBytes, binding, allowHistorical);
+    if (!retryUncertain) {
+      throw new Error('CODEX_RESUME_LEGACY_LAST_ATTEMPT_UNKNOWN: journal only contains successful' +
+        ' outputs and cannot prove the next agent was never invoked. Review and use --ack-uncertain');
+    }
+    return acknowledgeUncertainAttempt(cp, binding);
+  }
+  if (fs.existsSync(OLD_PROGRESS)) {
+    throw new Error('CODEX_RESUME_PRIOR_PROGRESS_EXISTS: use --resume to preserve previous runs');
+  }
+  return emptyCheckpoint(binding);
+}
 async function main() {
   const sourcePath = path.resolve(
     process.argv.includes('--catalog')
@@ -72,25 +175,90 @@ async function main() {
   // This authorization is to gather research evidence, not to accept a vessel
   // baseline. Source-revision governance is independent of this runtime gate.
   const commissioning = requireLabCommissioningPolicy(process.env);
-  // A single command runs the entire engineering DAG. Every transition is
-  // journaled atomically so a CLI crash cannot erase prior attempted agents.
-  const progressFile = path.resolve('data/codex-26-agent-progress.json');
-  fs.mkdirSync(path.dirname(progressFile), { recursive: true });
-  const report = await runLiveAgentMatrix(cases, undefined, {
-    dependencyAware: true,
-    onFinding: async (_finding, completed) => {
-      const progress = {
-        ...provenance, commissioningScope: commissioning.scope,
-        dataClassification: catalog.dataClassification,
-        dependencyAware: true, completedCount: completed.length,
-        completed, engineeringReleaseApproved: false,
-        independentlyEngineeringValidated: false
-      };
-      const temporary = progressFile + '.tmp';
-      fs.writeFileSync(temporary, JSON.stringify(progress, null, 2) + '\n');
-      fs.renameSync(temporary, progressFile);
-    }
-  });
+  // Checkpoint writes are append-by-prefix, private, and source/catalog bound.
+  // The legacy v1 journal is never overwritten; A01/A02 remain attributable
+  // to their original SHA instead of misreported as newly executed agents.
+  const resume = process.argv.includes('--resume');
+  const allowHistorical = process.argv.includes('--carry-historical');
+  const retryUncertain = process.argv.includes('--ack-uncertain');
+  if ((allowHistorical || retryUncertain) && !resume) {
+    throw new Error('CODEX_RESUME_EXPLICIT_RESUME_FLAG_REQUIRED');
+  }
+  const specs = topologicalAgentOrder(AgentRegistry.getInstance().getAllAgents());
+  const binding: ResumeBinding = {
+    implementationSha, catalogSha256: provenance.catalogSha256,
+    dataClassification: catalog.dataClassification, specs, cases
+  };
+  fs.mkdirSync('data', { recursive: true, mode: 0o700 });
+  const unlock = holdExclusiveLock();
+  let report;
+  let checkpoint: CodexCheckpoint;
+  try {
+    checkpoint = prepareResume(binding, resume, allowHistorical, retryUncertain);
+    writePrivateAtomic(CHECKPOINT, checkpoint);
+    console.log(JSON.stringify({
+      status: 'CODEX_26_CHECKPOINT_ACCEPTED',
+      completedHistorical: checkpoint.completed.filter(f =>
+        f.status === 'HISTORICAL_LIVE_PROVIDER_EXECUTED_UNCERTIFIED').length,
+      completedCurrentSource: checkpoint.completed.filter(f =>
+        f.status === 'LIVE_PROVIDER_EXECUTED_UNCERTIFIED').length,
+      sourceSha: implementationSha,
+      priorSourceSha: checkpoint.legacySourceSha,
+      oldEvidenceUnchanged: true,
+      readyForNextAgent: specs[checkpoint.completed.length]?.canonicalId || null,
+      independentEngineeringValidation: false
+    }));
+    report = await runLiveAgentMatrix(cases, undefined, {
+      dependencyAware: true,
+      resume: { findings: checkpoint.completed, advisories: checkpoint.advisories },
+      beforeAgent: async (finding) => {
+        checkpoint.pending = {
+          canonicalId: finding.canonicalId, runtimeId: finding.runtimeId,
+          startedAtUtc: finding.startedAt || new Date().toISOString(),
+          possibleDuplicate: true
+        };
+        checkpoint.updatedAtUtc = new Date().toISOString();
+        writePrivateAtomic(CHECKPOINT, checkpoint);
+        console.log('CODEX_26_AGENT_ATTEMPT_STARTED: ' + finding.canonicalId);
+      },
+      onFinding: async (finding, completed, advisory) => {
+        if (finding.status !== 'LIVE_PROVIDER_EXECUTED_UNCERTIFIED' || !advisory) {
+          // Fail rather than silently mark a failed role as reusable.
+          // Keep the pending marker for an explicit uncertain-retry decision.
+          writePrivateAtomic(ERROR_REPORT, {
+            sourceSha: implementationSha, catalogSha256: provenance.catalogSha256,
+            agent: finding.canonicalId, status: finding.status,
+            failureReason: finding.failureReason || 'MODEL_EXECUTION_NOT_VERIFIED',
+            completedCount: checkpoint.completedCount,
+            recoveryRequiresExplicitRetryAcknowledgment: true,
+            engineeringReleaseApproved: false
+          });
+          throw new Error('CODEX_RESUME_FIRST_UNSUCCESSFUL_AGENT: ' + finding.canonicalId +
+            ' [' + finding.status + ']; see private interruption report');
+        }
+        finding.originSourceSha = implementationSha;
+        checkpoint.completed = [...completed];
+        checkpoint.completedCount = completed.length;
+        checkpoint.advisories[finding.runtimeId] = advisory;
+        checkpoint.pending = null;
+        checkpoint.updatedAtUtc = new Date().toISOString();
+        writePrivateAtomic(CHECKPOINT, verifyCheckpoint(checkpoint, binding));
+        writePrivateAtomic(RESUME_PROGRESS, {
+          implementationSha, catalogSha256: provenance.catalogSha256,
+          historicalSourceSha: checkpoint.legacySourceSha,
+          completedCount: completed.length,
+          liveProviderRunsCurrentSource: completed.filter(f =>
+            f.status === 'LIVE_PROVIDER_EXECUTED_UNCERTIFIED').length,
+          historicalProviderRuns: completed.filter(f =>
+            f.status === 'HISTORICAL_LIVE_PROVIDER_EXECUTED_UNCERTIFIED').length,
+          completed, engineeringReleaseApproved: false,
+          independentlyEngineeringValidated: false
+        });
+      }
+    });
+  } finally {
+    unlock();
+  }
   await assertPinnedCleanGitRevision(process.cwd(), implementationSha);
   const location = path.resolve('data/codex-26-agent-matrix.json');
   fs.mkdirSync(path.dirname(location), { recursive: true });
@@ -117,9 +285,15 @@ async function main() {
   const complete = report.providerOperationalMatrixComplete && report.findings.every(row => row.provider === 'codex_cli');
   console.log(JSON.stringify({
     status: complete
-      ? 'CODEX_26_PROVIDER_RUNS_OBSERVED_UNCERTIFIED' : 'CODEX_CAMPAIGN_INCOMPLETE',
+      ? 'CODEX_26_PROVIDER_RUNS_OBSERVED_UNCERTIFIED'
+      : report.findings.length === 26 && report.historicalProviderRuns > 0 &&
+        report.liveProviderRuns + report.historicalProviderRuns === 26
+        ? 'CODEX_26_MIXED_SOURCE_RESEARCH_OBSERVED_UNCERTIFIED'
+        : 'CODEX_CAMPAIGN_INCOMPLETE',
     agents: report.totalAgents,
     liveProviderRuns: report.liveProviderRuns,
+    historicalProviderRuns: report.historicalProviderRuns,
+    exactSource26of26: complete,
     commissioningScope: commissioning.scope,
     report: location,
     acceptanceReport: assessmentPath,
@@ -128,7 +302,11 @@ async function main() {
     independentlyValidatedEngineeringOutputs: assessment.independentlyValidatedEngineeringOutputs,
     engineeringReleaseApproved: false
   }, null, 2));
-  if (!complete) process.exitCode = 1;
+  if (!complete && !(report.findings.length === 26 &&
+      report.historicalProviderRuns > 0 &&
+      report.liveProviderRuns + report.historicalProviderRuns === 26)) {
+    process.exitCode = 1;
+  }
 }
 
 main().catch(error => {

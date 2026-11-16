@@ -56,3 +56,54 @@ export function advisoryHandoff(
   }
   return upstream;
 }
+
+
+/** Minimal bounded advisory handoff persisted for crash recovery.
+ * This is not a full response, proof of physical accuracy, or design baseline. */
+export interface AgentAdvisoryReceipt {
+  status: string;
+  provider: string;
+  dataClassification: 'UNVERIFIED_UPSTREAM_ADVISORY';
+  disciplineSummary: string;
+  outputSha256: string;
+  openTbdItems: string[];
+  engineeringReleaseApproved: false;
+  legacyDigestOnly?: true;
+}
+export function advisoryReceiptFromOutput(output: AgentExecutionOutput): AgentAdvisoryReceipt {
+  return {
+    status: output.status,
+    provider: output.provider || 'UNRECORDED',
+    dataClassification: 'UNVERIFIED_UPSTREAM_ADVISORY',
+    disciplineSummary: typeof output.data?.disciplineSummary === 'string'
+      ? output.data.disciplineSummary.slice(0, 700) : '',
+    outputSha256: 'sha256:' + createHash('sha256')
+      .update(JSON.stringify(output.data)).digest('hex'),
+    openTbdItems: output.openTbdItems.slice(0, 8),
+    engineeringReleaseApproved: false
+  };
+}
+/** Legacy progress has only the digest; never invent its missing text. */
+export function legacyDigestOnlyAdvisory(digest: string): AgentAdvisoryReceipt {
+  return {
+    status: 'RECORDED_MODEL_RUN_UNCERTIFIED',
+    provider: 'codex_cli',
+    dataClassification: 'UNVERIFIED_UPSTREAM_ADVISORY',
+    disciplineSummary: '',
+    outputSha256: digest,
+    openTbdItems: ['Legacy execution output text not journaled; historical digest only'],
+    engineeringReleaseApproved: false,
+    legacyDigestOnly: true
+  };
+}
+export function advisoryHandoffFromReceipts(
+  spec: AgentSpec, receipts: ReadonlyMap<string, AgentAdvisoryReceipt>
+): Record<string, AgentAdvisoryReceipt> {
+  const upstream: Record<string, AgentAdvisoryReceipt> = {};
+  for (const dependencyId of spec.dependencies) {
+    const value = receipts.get(dependencyId);
+    if (!value) throw new Error('Missing persisted upstream advisory receipt: ' + dependencyId);
+    upstream[dependencyId] = value;
+  }
+  return upstream;
+}

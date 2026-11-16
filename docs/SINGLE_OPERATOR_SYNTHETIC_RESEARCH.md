@@ -96,3 +96,71 @@ runner prohibition is made.
 
 External auditor procurement issue #163 was closed **not planned** by user
 direction. Its existence and closure do not constitute A04 host approval.
+
+
+## Interrupted campaign recovery — 2026-11-17
+
+The original attempt saved **two successful, uncertified** model entries in the
+private legacy file `data/codex-26-agent-progress.json`, then stopped without
+the final matrix. The old runner recorded completed output hashes but **not**
+full response text and did not write an in-flight marker. The actual reason the
+Mac process stopped has **not yet been established**. Four ChatGPT desktop /
+Codex processes alone do not prove the agent runner was active.
+
+**Never delete, rename or upload the old local journal.** It is retained as
+the original source-bound record. The new checkpoint is a separate
+`data/codex-26-agent-checkpoint.json` file with a private lock at
+`data/codex-26-agent-checkpoint.lock`; both must remain outside public Git.
+
+**After this fix is merged**, the Mac must update its checkout and run a new
+`mission-control:a04-check` against the *new* protected main SHA. The
+old two Codex calls happened on
+`ba4a33a88119cb9f6833b526f16c55fed72cbedc`. Because this repair
+changes the source SHA, they are carried forward only as
+`HISTORICAL_LIVE_PROVIDER_EXECUTED_UNCERTIFIED` (not falsely counted as
+current-source agent executions). Their original output hashes remain in the
+journal and are used in an explicitly **digest-only unverified advisory
+handoff**. The missing old free-text output is **not fabricated**.
+
+Use the operator-local interactive recovery command:
+
+```sh
+cd ~/usv-01-digital-lab
+git status --short                       # inspect untracked items before pull
+git pull --ff-only origin main
+export USV01_HOST_ID=usv01-ravi-macbook-pro
+export USV_SUBSCRIPTION_PILOT=enabled
+export AI_REVIEW_PROVIDER=codex_cli
+export USV_LAB_SCOPE=RESEARCH_ONLY
+export USV_ALLOW_PAID_AI_API=false
+export USV_DUAL_PROVIDER_ROUTING=enabled
+npm run mission-control:a04-check -- --source-sha "$(git rev-parse HEAD)"
+npm run mission-control:owner-research -- --resume --ack-uncertain
+```
+
+The interactive confirmation is still required. `--ack-uncertain`
+acknowledges that the old journal **cannot prove whether A03 was already
+attempted** before the crash. Hence an A03 retry could consume one duplicate
+model call. The known successful A01 and A02 entries will **not** be replayed.
+
+New checkpoints record a `pending` marker *before* each model call, persist
+the bounded advisory after success, validate agent order, task IDs, tool
+receipts, source SHA, catalog SHA and classification, and use exclusive local
+locking. A subsequent interrupted attempt requires another deliberate
+`--resume --ack-uncertain` authorization; automatic retry of ambiguous
+calls is denied. Do not delete a potentially active lock.
+
+Read the newly written local-only
+`data/codex-26-agent-resume-progress.json` and
+`data/codex-26-agent-matrix.json` for new results. The completion report
+separately shows `liveProviderRuns` (current SHA) and
+`historicalProviderRuns` (old SHA). Mixed-source evidence is useful as
+**research continuation**, not a same-SHA **26/26 operational acceptance** or
+an independently certified vessel design. For exact-source 26/26, all 26
+authentic traces must eventually run under one reviewed source.
+
+This recovery path does not establish physical host isolation, authorize
+Gemini transfer, relax the no-paid-API limit, or issue engineering acceptance.
+If the old legacy file is malformed, from a non-ancestor SHA, or uses a
+different catalog hash, the system refuses recovery rather than replaying or
+inventing evidence.

@@ -76,6 +76,9 @@ async function main(): Promise<void> {
     console.log(JSON.stringify({
       status: 'OWNER_SYNTHETIC_RESEARCH_PLAN_ONLY',
       executeCommand: 'npm run mission-control:owner-research -- --execute',
+      recoverCommand: 'npm run mission-control:owner-research -- --resume --ack-uncertain',
+      previousShaTracesRetainedAsHistorical: true,
+      uncertainInFlightRetryNeedsExplicitAcknowledgment: true,
       exactCatalog: OWNER_SYNTHETIC_CATALOG,
       requiresLocalMac: true,
       requiresFreshA04PreflightOnExactMain: true,
@@ -90,8 +93,13 @@ async function main(): Promise<void> {
     }, null, 2));
     return;
   }
-  if (args.length !== 1 || args[0] !== '--execute') {
-    throw new Error('OWNER_RESEARCH_EXPLICIT_EXECUTE_REQUIRED');
+  const resume = args.includes('--resume');
+  const acknowledge = args.includes('--ack-uncertain');
+  if ((args.length === 1 && args[0] === '--execute') ||
+      (args.length === 2 && resume && acknowledge)) {
+    // Explicit interactive research invocation.
+  } else {
+    throw new Error('OWNER_RESEARCH_USE_EXPLICIT_EXECUTE_OR_RESUME_WITH_ACK_UNCERTAIN');
   }
   if (!process.stdin.isTTY || !process.stdout.isTTY ||
       typeof process.getuid !== 'function' || process.getuid() === 0) {
@@ -115,6 +123,11 @@ async function main(): Promise<void> {
   const prompt = createInterface({ input: process.stdin, output: process.stdout });
   let reply = '';
   try {
+    if (resume) console.log('RESUME: old successful runs are preserved under their' +
+      ' ORIGINAL commit, not represented as new-source executions. The next' +
+      ' unjournaled agent may have been attempted before interruption.' +
+      ' This can repeat that one uncertain call, but will not replay A01/A02.' +
+      ' No same-SHA 26/26 operational claim is made from mixed-source runs.');
     console.log('This invokes up to 26 signed-in Codex model attempts on the' +
       ' fixed, synthetic, non-operational research catalog.\n' +
       'NO certified engineering, independent host approval, Gemini transfer,' +
@@ -170,10 +183,12 @@ async function main(): Promise<void> {
       OWNER_SYNTHETIC_CATALOG, '--require-ready'], 30 * 60_000);
   runResearchStep(root, env, '26 real Codex synthetic research attempts',
     ['acceptance:codex-agents', '--', '--catalog',
-      OWNER_SYNTHETIC_CATALOG, '--execute'], 180 * 60_000);
+      OWNER_SYNTHETIC_CATALOG, '--execute',
+      ...(resume ? ['--resume', '--carry-historical', '--ack-uncertain'] : [])], 180 * 60_000);
   await assertPinnedCleanGitRevision(root, sourceSha);
   console.log('OWNER_SYNTHETIC_26_CODEX_RESEARCH_ATTEMPTED_UNCERTIFIED: ' +
-    'read the private data/codex-26-agent-matrix.json results; ' +
+    'read the private data/codex-26-agent-matrix.json and ' +
+    'data/codex-26-agent-resume-progress.json results; ' +
     'independent A04 and engineering release remain unapproved.');
 }
 main().catch(error => {
