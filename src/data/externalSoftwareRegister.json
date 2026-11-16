@@ -3448,7 +3448,7 @@
       "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
     },
     {
-      "id": "EXT-005",
+      "id": "EXT-101",
       "name": "CrewAI",
       "repository": "crewAIInc/crewAI",
       "repositoryUrl": "https://github.com/crewAIInc/crewAI",
@@ -3502,7 +3502,7 @@
       "nextAction": "A04/A23 assess architecture without creating an alternative scheduler; A20 review dependencies and prompt-injection pathways; verify MIT obligations and perform independent security screening."
     },
     {
-      "id": "EXT-006",
+      "id": "EXT-102",
       "name": "Browser Use",
       "repository": "browser-use/browser-use",
       "repositoryUrl": "https://github.com/browser-use/browser-use",
@@ -3558,7 +3558,7 @@
       "nextAction": "A20/A21 review isolation, URL allowlists, credential protection, exfiltration and prompt injection before any browser integration; no autonomous browsing is authorized."
     },
     {
-      "id": "EXT-007",
+      "id": "EXT-103",
       "name": "Dify",
       "repository": "langgenius/dify",
       "repositoryUrl": "https://github.com/langgenius/dify",
@@ -3614,7 +3614,7 @@
       "nextAction": "LEGAL HOLD: assess Dify's modified Apache license and multi-tenant/frontend constraints; A20/A21 review data tenancy, remote services, secret handling and supply chain before any install."
     },
     {
-      "id": "EXT-008",
+      "id": "EXT-104",
       "name": "LangGraph",
       "repository": "langchain-ai/langgraph",
       "repositoryUrl": "https://github.com/langchain-ai/langgraph",
@@ -3668,7 +3668,7 @@
       "nextAction": "Compare state/replay contracts to existing Mission Control, document measured gaps, inspect dependencies and obtain independent security review before any adoption."
     },
     {
-      "id": "EXT-009",
+      "id": "EXT-105",
       "name": "Microsoft Agent Framework",
       "repository": "microsoft/agent-framework",
       "repositoryUrl": "https://github.com/microsoft/agent-framework",
@@ -3724,7 +3724,7 @@
       "nextAction": "Assess Python/.NET dependency and hosting implications, licensing and telemetry defaults; preserve subscription-only and no-paid-API policy."
     },
     {
-      "id": "EXT-010",
+      "id": "EXT-106",
       "name": "OpenHands",
       "repository": "OpenHands/OpenHands",
       "repositoryUrl": "https://github.com/OpenHands/OpenHands",
@@ -3778,7 +3778,7 @@
       "nextAction": "A20 review sandbox escape, shell permissions, network access, repository write boundaries and dependency risk before any execution."
     },
     {
-      "id": "EXT-011",
+      "id": "EXT-107",
       "name": "MCP Python SDK",
       "repository": "modelcontextprotocol/python-sdk",
       "repositoryUrl": "https://github.com/modelcontextprotocol/python-sdk",
