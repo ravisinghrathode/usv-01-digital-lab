@@ -1,6 +1,6 @@
 import type { HumanApprovalGate, ApproverIdentity } from '../types/safety.ts';
 import { AuditLogger } from './AuditLogger.ts';
-import { verifyApproverSignature } from './ApproverSigner.ts';
+import { getRandomHex, gateContentDigest, sha256Evidence, verifyBoundApproverSignature } from './ApproverSigner.ts';
 
 export class ApprovalGateManager {
   private static instance: ApprovalGateManager;
@@ -24,14 +24,31 @@ export class ApprovalGateManager {
     };
   }
 
-  public createGate(gateData: Omit<HumanApprovalGate, 'id' | 'state' | 'requestedAt'>): HumanApprovalGate {
-    const id = `GATE-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+  public createGate(
+    gateData: Omit<HumanApprovalGate, 'id' | 'state' | 'requestedAt' | 'approvalBinding'>,
+    evidence?: { sourceSha: string; input: unknown; output: unknown }
+  ): HumanApprovalGate {
+    // The unpinned path exists ONLY for local research demonstrations and
+    // direct unit tests; orchestrated decisions require a 40-hex source SHA.
+    const id = `GATE-${getRandomHex(16)}`;
+    const sourceSha = evidence?.sourceSha ?? 'UNPINNED_RESEARCH_ONLY';
+    if (sourceSha !== 'UNPINNED_RESEARCH_ONLY' && !/^[a-f0-9]{40}$/i.test(sourceSha)) {
+      throw new Error('Gate requires a full pinned Git SHA or explicit research-only status');
+    }
+    const gateBase = {
+      id, ...gateData, proposedChanges: structuredClone(gateData.proposedChanges),
+      state: 'PENDING' as const, requestedAt: new Date().toISOString()
+    };
+    const bindingBase = {
+      version: 'USV_GATE_CONTENT_V2' as const, sourceSha,
+      inputSha256: sha256Evidence(evidence?.input ?? null),
+      outputSha256: sha256Evidence(evidence?.output ?? gateBase.proposedChanges),
+      nonce: getRandomHex(16)
+    };
     const gate: HumanApprovalGate = {
-      id,
-      ...gateData,
-      proposedChanges: structuredClone(gateData.proposedChanges),
-      state: 'PENDING',
-      requestedAt: new Date().toISOString()
+      ...gateBase, approvalBinding: {
+        ...bindingBase, contentSha256: gateContentDigest(gateBase, bindingBase)
+      }
     };
 
     this.gates.set(id, gate);
@@ -110,7 +127,7 @@ export class ApprovalGateManager {
     }
 
     // Cryptographic signature verification: binds gateId, decision, and identity
-    const isValidSignature = verifyApproverSignature(gateId, decision, identity);
+    const isValidSignature = verifyBoundApproverSignature(gate, decision, identity);
     if (!isValidSignature) {
       this.auditLogger.log({
         severity: 'SAFETY_CRITICAL',
@@ -145,6 +162,8 @@ export class ApprovalGateManager {
         decidedBy: identity.role,
         userId: identity.userId,
         verifiedSignature: true,
+        contentSha256: gate.approvalBinding.contentSha256,
+        sourceSha: gate.approvalBinding.sourceSha,
         notes: directorNotes
       }
     });

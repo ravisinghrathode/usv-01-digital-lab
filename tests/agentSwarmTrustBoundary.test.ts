@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { verifyApproverSignature, generateApproverSignature } from '../src/core/safety/ApproverSigner.ts';
+import { verifyApproverSignature, generateBoundApproverSignature } from '../src/core/safety/ApproverSigner.ts';
 import { ApprovalGateManager } from '../src/core/safety/HumanApprovalGate.ts';
 import { CentralOrchestrator } from '../src/core/orchestrator/CentralOrchestrator.ts';
 import { ExecutionEngine } from '../src/core/engine/ExecutionEngine.ts';
@@ -8,7 +8,8 @@ import type { AgentExecutionOutput } from '../src/core/types/agent.ts';
 
 const gates = ApprovalGateManager.getInstance();
 const orchestrator = CentralOrchestrator.getInstance();
-const timestamp = '2026-11-17T00:00:00.000Z';
+const timestamp = new Date().toISOString();
+const SYNTHETIC_SHA = 'a'.repeat(40);
 
 function createGate() {
   return gates.createGate({
@@ -80,7 +81,7 @@ describe('26-agent control-plane adversarial trust-boundary tests', () => {
       }
     });
     try {
-      const signed = generateApproverSignature(gate.id, 'APPROVED', 'test-director', 'ENGINEERING_DIRECTOR', timestamp);
+      const signed = generateBoundApproverSignature(gates.getGate(gate.id)!, 'APPROVED', 'test-director', 'ENGINEERING_DIRECTOR', timestamp);
       const supplied = {
         userId: 'test-director', userName: 'Synthetic director', role: 'ENGINEERING_DIRECTOR',
         authenticatedAt: timestamp, tokenSignature: signed
@@ -104,7 +105,7 @@ describe('26-agent control-plane adversarial trust-boundary tests', () => {
     upstream.input.parameters.inputRevision = 'MUTATED_AFTER_REGISTRATION';
     orchestrator.registerTask(task('SWARM-DOWN', ['SWARM-UP']));
 
-    const first = await orchestrator.executeWorkflow();
+    const first = await orchestrator.executeWorkflow(SYNTHETIC_SHA);
     expect(first.waitingApproval).toBe(1);
     expect(orchestrator.getTask('SWARM-UP')?.input.parameters.inputRevision).toBe('UNVERIFIED');
     const viewed = orchestrator.getTask('SWARM-UP')!;
@@ -119,16 +120,16 @@ describe('26-agent control-plane adversarial trust-boundary tests', () => {
       authenticatedAt: timestamp, tokenSignature: 'f'.repeat(64), serverVerifiedSignature: 'f'.repeat(64)
     };
     expect(orchestrator.getTask('SWARM-UP')?.status).toBe('WAITING_HUMAN_APPROVAL');
-    await orchestrator.executeWorkflow();
+    await orchestrator.executeWorkflow(SYNTHETIC_SHA);
     expect(orchestrator.getTask('SWARM-DOWN')?.status).toBe('BLOCKED');
     expect(execute).toHaveBeenCalledTimes(1);
 
-    const signature = generateApproverSignature(gateId, 'APPROVED', 'test-director', 'ENGINEERING_DIRECTOR', timestamp);
+    const signature = generateBoundApproverSignature(gates.getGate(gateId)!, 'APPROVED', 'test-director', 'ENGINEERING_DIRECTOR', timestamp);
     gates.evaluateDecision(gateId, 'APPROVED', 'Synthetic approval only', {
       userId: 'test-director', userName: 'Synthetic director',
       role: 'ENGINEERING_DIRECTOR', authenticatedAt: timestamp, tokenSignature: signature
     });
-    await orchestrator.executeWorkflow();
+    await orchestrator.executeWorkflow(SYNTHETIC_SHA);
     expect(orchestrator.getTask('SWARM-DOWN')?.status).toBe('COMPLETED');
     expect(execute).toHaveBeenCalledTimes(2);
   });
