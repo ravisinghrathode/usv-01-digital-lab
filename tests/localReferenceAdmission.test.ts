@@ -68,6 +68,8 @@ describe('M05 exact-byte local reference admission does not authenticate publish
     for(const change of [
       {sourceUri:'http://example.org/not-https'},
       {sourceUri:'https://127.0.0.1/private'},
+      {sourceUri:'https://8.8.8.8/test'},
+      {sourceUri:'https://localhost/test'},
       {sourceUri:'https://user:pass@example.org'},
       {edition:''},
       {declaredRights:'AUTHORIZED_BY_AI'}

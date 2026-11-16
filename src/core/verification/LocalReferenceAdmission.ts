@@ -44,9 +44,12 @@ function safeSourceUri(uri:unknown):boolean {
   if(typeof uri!=='string')return false;
   try{
     const u=new URL(uri);
-    return u.protocol==='https:' && !!u.hostname && !u.username && !u.password &&
-      !/^(localhost|127\\.|0\\.|10\\.|192\\.168\\.|172\\.(1[6-9]|2\\d|3[01])\\.|\\[?::1\\]?)/i.test(u.hostname) &&
-      !u.hostname.endsWith('.local');
+    const host=u.hostname.toLowerCase();
+    // No network request is made; a literal IP/local hostname is not a
+    // suitable externally issued reference citation in this manifest.
+    const ipLiteral=/^[0-9.]+$/.test(host) || host.startsWith('[');
+    return u.protocol==='https:' && !!host && !u.username && !u.password &&
+      host!=='localhost' && !host.endsWith('.local') && !ipLiteral;
   }catch{return false;}
 }
 function safeRelativePath(raw:unknown):raw is string{
