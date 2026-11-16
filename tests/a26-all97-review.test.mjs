@@ -8,7 +8,7 @@ const queue=JSON.parse(await readFile(QUEUE_FILE,'utf8'));
 const clone=x=>structuredClone(x);
 test('all 97 registered sources have individual evidence holds and no authority',()=>{
  const s=validateQueue(queue,db);
- assert.deepEqual(s,{records:97,hold:97,pinsMissing:3,metadataUnknown:46,priorDetailedAudits:8});
+ assert.deepEqual(s,{records:97,hold:97,pinsMissing:0,metadataUnknown:44,priorDetailedAudits:8});
  assert.deepEqual(queue,makeQueue(db));
  for(const r of queue.entries){
   assert.equal(r.disposition,'HOLD_NOT_QUALIFIED');
@@ -32,6 +32,13 @@ test('reject omitted, substituted, duplicated and falsely approved audit records
   const altered=clone(queue);mutate(altered);
   assert.throws(()=>validateQueue(altered,db),/queue differs|Repeated repository/);
  }
+});
+test('all 97 entries are source pinned, while missing root license remains legal HOLD',()=>{
+ assert.equal(queue.entries.filter(x=>!x.sourceCommit||!x.sourceTree).length,0);
+ assert.equal(queue.entries.find(x=>x.id==='EXT-002').sourceCommit,'47106de10b73e6a6c764c23d6b3919779b40721a');
+ assert.equal(queue.entries.find(x=>x.id==='EXT-003').licenseMetadata,'UNKNOWN');
+ assert.equal(queue.entries.find(x=>x.id==='EXT-003').disposition,'HOLD_NOT_QUALIFIED');
+ assert.equal(queue.entries.find(x=>x.id==='EXT-004').sourceTree,'37ecc9bb23fc22c72006227ec808ac76338d5211');
 });
 test('verified source and root license blob are static evidence, not qualification',async()=>{
  const entry=queue.entries[0];const sha=entry.sourceCommit,tree=entry.sourceTree;
@@ -64,7 +71,7 @@ test('tree mismatch, missing pins and missing upstream leave permanent holds',as
  const wrong=async()=>Response.json({sha:entry.sourceCommit,tree:{sha:'f'.repeat(40)}});
  const b=(await scanSources([entry],{fetchImpl:wrong}))[0];
  assert.equal(b.source.status,'HOLD_COMMIT_OR_TREE_MISMATCH');
- const unpinned=queue.entries.find(x=>!x.sourceCommit);
+ const unpinned={...queue.entries[2],sourceCommit:null,sourceTree:null};
  assert.ok(unpinned);
  const mock=async url=>{
   if(url.endsWith('/git/trees/'+'c'.repeat(40)))return Response.json({sha:'c'.repeat(40),tree:[]});
