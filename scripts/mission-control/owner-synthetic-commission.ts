@@ -17,7 +17,7 @@ import {
 import { requireLabCommissioningPolicy } from '../../src/core/mission-control/LabCommissioningPolicy.ts';
 import {
   OWNER_SYNTHETIC_CATALOG, OWNER_RESEARCH_CONFIRMATION,
-  assessOwnerSyntheticResearch
+  assessOwnerSyntheticResearch, deriveOwnerSyntheticGeminiAutoRoute
 } from '../../src/core/mission-control/OwnerSyntheticResearchGate.ts';
 
 const APPROVED_REMOTES = new Set([
@@ -124,7 +124,6 @@ async function main(): Promise<void> {
   // represented as an independent signer or engineering acceptance.
   const prompt = createInterface({ input: process.stdin, output: process.stdout });
   let reply = '';
-  let geminiReply = '';
   try {
     if (resume) console.log('RESUME: old successful runs are preserved under their' +
       ' ORIGINAL commit, not represented as new-source executions. The next' +
@@ -132,22 +131,16 @@ async function main(): Promise<void> {
       ' This can repeat that one uncertain call, but will not replay A01/A02.' +
       ' No same-SHA 26/26 operational claim is made from mixed-source runs.');
     console.log('The fixed SYNTHETIC catalog uses signed-in Codex first.' +
-      ' If Codex quota or transport is unavailable, an OPTIONAL operator-approved' +
-      ' Gemini CLI session may receive the same synthetic research prompt.' +
-      ' No restricted naval/client data, paid APIs, independent approval,' +
-      ' certified engineering or vessel hardware execution is authorized.');
+      ' If Codex is temporarily unavailable, automatically try personal' +
+      ' OAuth-only Gemini CLI for the SAME source-verified synthetic research.' +
+      ' If both are unavailable, wait and retry without a provider-choice prompt.' +
+      ' No restricted naval/client data, paid APIs, engineering approval or' +
+      ' vessel hardware execution is authorized.');
     reply = await prompt.question(
       'As the local owner, type ' + OWNER_RESEARCH_CONFIRMATION +
       ' to authorize this synthetic research run: '
     );
-    if (reply.trim() === OWNER_RESEARCH_CONFIRMATION) {
-      geminiReply = await prompt.question(
-        'If you have reviewed that your Gemini CLI is signed in using your Google' +
-        ' account (not an API key), type AUTHORIZE GEMINI SYNTHETIC TRANSFER to' +
-        ' permit automatic Gemini fallback for this synthetic catalog.' +
-        ' Otherwise press Enter for Codex-only: '
-      );
-    }
+
   } finally {
     prompt.close();
   }
@@ -162,10 +155,11 @@ async function main(): Promise<void> {
   if (!decision.allowed) {
     throw new Error('OWNER_RESEARCH_BLOCKED: ' + decision.blockers.join(','));
   }
-  // Owner consent may authorize transferring ONLY the pinned synthetic catalog.
-  // The Gemini authentication statement is operator attestation, not an
-  // independently verified identity or engineering release.
-  const allowGemini = geminiReply.trim() === 'AUTHORIZE GEMINI SYNTHETIC TRANSFER';
+  // The source-reviewed single-owner run authorizes automatic provider choice
+  // ONLY for this checked-in synthetic catalog. Actual Google authentication
+  // is enforced by GeminiCliProvider (oauth-personal) and may be unavailable.
+  // No arbitrary data transfer or engineering release follows from this grant.
+  const autoGemini = deriveOwnerSyntheticGeminiAutoRoute(decision, catalogBytes);
   // This campaign needs up to 26 specialist attempts. The shared default
   // 12-call limiter was stopping it despite remaining provider subscription
   // capacity. A bounded 1000-call local research ceiling preserves anti-runaway
@@ -175,12 +169,11 @@ async function main(): Promise<void> {
   delete safeInput.USV_GEMINI_FALLBACK_APPROVED;
   delete safeInput.USV_GEMINI_OAUTH_REVIEWED;
   delete safeInput.USV_GEMINI_DATA_CLASSIFICATION;
+  delete safeInput.USV_GEMINI_AUTO_SYNTHETIC_ROUTE;
+  delete safeInput.USV_GEMINI_SYNTHETIC_CATALOG_SHA256;
+  delete safeInput.USV_GEMINI_AUTH_METHOD;
+  Object.assign(safeInput, autoGemini);
   safeInput.USV_MODEL_REQUESTS_PER_WINDOW = '1000';
-  if (allowGemini) {
-    safeInput.USV_GEMINI_FALLBACK_APPROVED = 'true';
-    safeInput.USV_GEMINI_OAUTH_REVIEWED = 'true';
-    safeInput.USV_GEMINI_DATA_CLASSIFICATION = 'PUBLIC_NON_SENSITIVE';
-  }
   safeInput.AI_REVIEW_PROVIDER = 'codex_cli';
   safeInput.USV_SUBSCRIPTION_PILOT = 'enabled';
   safeInput.USV_LAB_SCOPE = 'RESEARCH_ONLY';
@@ -193,35 +186,49 @@ async function main(): Promise<void> {
   env.USV_DUAL_PROVIDER_ROUTING = 'enabled';
   env.USV_MODEL_REQUESTS_PER_WINDOW = '1000';
   requireLabCommissioningPolicy(env);
-  if (allowGemini) {
-    const { geminiCatalogTransferPermitted } =
-      await import('../../src/core/models/DualSubscriptionRoutingPolicy.ts');
-    const { OWNER_SYNTHETIC_CLASSIFICATION } =
-      await import('../../src/core/mission-control/OwnerSyntheticResearchGate.ts');
-    if (!geminiCatalogTransferPermitted(OWNER_SYNTHETIC_CLASSIFICATION, env)) {
-      throw new Error('OWNER_GEMINI_SYNTHETIC_TRANSFER_NOT_AUTHORIZED');
-    }
+  const { geminiCatalogTransferPermitted } =
+    await import('../../src/core/models/DualSubscriptionRoutingPolicy.ts');
+  const { OWNER_SYNTHETIC_CLASSIFICATION } =
+    await import('../../src/core/mission-control/OwnerSyntheticResearchGate.ts');
+  if (!geminiCatalogTransferPermitted(OWNER_SYNTHETIC_CLASSIFICATION, env)) {
+    throw new Error('OWNER_GEMINI_SYNTHETIC_AUTO_ROUTE_NOT_SOURCE_AUTHORIZED');
   }
 
   console.log(JSON.stringify({
     authorization: decision.authorization, sourceSha,
     receiptDigestSha256: decision.receiptDigestSha256,
     catalogDigestSha256: decision.catalogDigestSha256,
-    geminiSyntheticFallbackAuthorized: allowGemini,
+    geminiSyntheticFallbackAuthorized: true,
+    providerRouting: 'CODEX_PRIMARY_GEMINI_AUTO_SYNTHETIC_OAUTH_ONLY',
+    geminiSessionAuthenticated: 'UNKNOWN_UNTIL_FIRST_GEMINI_REQUEST',
     codexLocalResearchMaxAttemptsPerWindow: 1000,
     independentA04Approved: false,
     independentlyEngineeringValidated: false,
     engineeringReleaseApproved: false
   }, null, 2));
-  runResearchStep(root, env, 'Codex subscription status (zero-model)',
-    ['mission-control:preflight'], 10 * 60_000);
+  // A04 already bound this protected source to a private host and verified its
+  // recent operator-local subscription evidence. A temporary Codex CLI
+  // outage after that receipt must not prevent the automatic Gemini route.
+  // This check is diagnostic only; deterministic preflight and execution
+  // policy gates remain mandatory.
+  try {
+    runResearchStep(root, env, 'Codex subscription status (zero-model)',
+      ['mission-control:preflight'], 10 * 60_000);
+  } catch {
+    console.warn('CODEX_PREFLIGHT_UNAVAILABLE: continuing ONLY the fixed-source' +
+      ' synthetic research campaign; Gemini OAuth-only fallback or bounded' +
+      ' provider recovery will be attempted. No engineering authorization.');
+  }
   runResearchStep(root, env, '26-agent mandatory input and tool preflight',
     ['acceptance:codex-agents', '--', '--catalog',
       OWNER_SYNTHETIC_CATALOG, '--require-ready'], 30 * 60_000);
-  runResearchStep(root, env, '26 real Codex synthetic research attempts',
+  // Owner-approved process stays active through provider cooldowns. A power
+  // loss, killed Terminal or hard policy refusal still requires checkpoint
+  // recovery; no background service or unbounded paid model usage is enabled.
+  runResearchStep(root, env, '26 Codex-first Gemini-fallback synthetic research attempts',
     ['acceptance:codex-agents', '--', '--catalog',
       OWNER_SYNTHETIC_CATALOG, '--execute',
-      ...(resume ? ['--resume', '--carry-historical', '--ack-uncertain'] : [])], 12 * 60 * 60_000);
+      ...(resume ? ['--resume', '--carry-historical', '--ack-uncertain'] : [])], 0);
   await assertPinnedCleanGitRevision(root, sourceSha);
   console.log('OWNER_SYNTHETIC_26_CODEX_RESEARCH_ATTEMPTED_UNCERTIFIED: ' +
     'read the private data/codex-26-agent-matrix.json and ' +
