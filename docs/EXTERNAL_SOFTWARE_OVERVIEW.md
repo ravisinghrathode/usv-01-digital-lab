@@ -4,7 +4,7 @@
 
 Register: USV01-EXT-SOFTWARE-001 | Custodian: A26 | Controlled change via GitHub PR
 
-Overview: 90 tracked | 82 discovered | 8 evaluating | 0 qualified | 0 integrated | 0 retired | 0 rejected | 0 evidenced usage events (0 research sandbox, 0 agent invocations, 0 accepted engineering uses).
+Overview: 97 tracked | 89 discovered | 8 evaluating | 0 qualified | 0 integrated | 0 retired | 0 rejected | 0 evidenced usage events (0 research sandbox, 0 agent invocations, 0 accepted engineering uses).
 
 | ID | Repository | Domain | Lifecycle | Adoption | Installation | Review agents | Planned projects | Evidenced uses | Source evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- | ---: | --- |
@@ -12,6 +12,13 @@ Overview: 90 tracked | 82 discovered | 8 evaluating | 0 qualified | 0 integrated
 | EXT-002 | [MSS-Capytaine](https://github.com/cybergalactic/MSS-Capytaine) | POTENTIAL_FLOW_HYDRODYNAMICS | DISCOVERED | NOT_APPROVED | NOT_INSTALLED | A07, A08, A15, A18, A20, A23, A24 | None | 0 | Pending |
 | EXT-003 | [shipcurve](https://github.com/ARPA-GO/shipcurve) | HYDROSTATICS_CURVES | DISCOVERED | NOT_APPROVED | NOT_INSTALLED | A05, A06, A15, A18, A20, A23, A24 | None | 0 | Pending |
 | EXT-004 | [COLREG encounter identifier](https://github.com/ntnu-itk-autonomous-ship-lab/collision_avoidance_identifier) | AIS_COLREG_ENCOUNTER_ANALYSIS | DISCOVERED | NOT_APPROVED | NOT_INSTALLED | A15, A17, A18, A20, A22, A23, A24 | None | 0 | Pending |
+| EXT-005 | [CrewAI](https://github.com/crewAIInc/crewAI) | AGENT_ORCHESTRATION_RESEARCH | DISCOVERED | NOT_APPROVED | NOT_INSTALLED | A04, A20, A23, A26 | USV-01 | 0 | [Evidence](https://github.com/crewAIInc/crewAI/blob/96c4d85b6423dd06b7f1c38f12dd472399c6ce43/LICENSE) |
+| EXT-006 | [Browser Use](https://github.com/browser-use/browser-use) | BROWSER_AUTOMATION_RESEARCH | DISCOVERED | NOT_APPROVED | NOT_INSTALLED | A04, A20, A21, A23, A26 | USV-01 | 0 | [Evidence](https://github.com/browser-use/browser-use/blob/4b5b1b0aa0ab45a1d6a2a31984d37d3e748c0134/LICENSE) |
+| EXT-007 | [Dify](https://github.com/langgenius/dify) | AGENT_WORKFLOW_PLATFORM_RESEARCH | DISCOVERED | NOT_APPROVED | NOT_INSTALLED | A04, A20, A21, A23, A26 | USV-01 | 0 | [Evidence](https://github.com/langgenius/dify/blob/0ba3c9d76887b6c89c943abaab87f8d86c27d612/LICENSE) |
+| EXT-008 | [LangGraph](https://github.com/langchain-ai/langgraph) | STATEFUL_AGENT_ORCHESTRATION_RESEARCH | DISCOVERED | NOT_APPROVED | NOT_INSTALLED | A04, A20, A23, A26 | USV-01 | 0 | [Evidence](https://github.com/langchain-ai/langgraph/blob/02f2c2e6c992ffccce9e9129781fdd04f015c6fa/LICENSE) |
+| EXT-009 | [Microsoft Agent Framework](https://github.com/microsoft/agent-framework) | MULTI_AGENT_FRAMEWORK_RESEARCH | DISCOVERED | NOT_APPROVED | NOT_INSTALLED | A04, A20, A21, A23, A26 | USV-01 | 0 | [Evidence](https://github.com/microsoft/agent-framework/blob/cf5ea1979562efaf993fb3d37958de0c52d612cc/LICENSE) |
+| EXT-010 | [OpenHands](https://github.com/OpenHands/OpenHands) | CODING_AGENT_SANDBOX_RESEARCH | DISCOVERED | NOT_APPROVED | NOT_INSTALLED | A04, A20, A23, A26 | USV-01 | 0 | [Evidence](https://github.com/OpenHands/OpenHands/blob/5ed4ffa5ac2509e479acc12b83247fbb4c3612c8/LICENSE) |
+| EXT-011 | [MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk) | AGENT_TOOL_INTEROPERABILITY_RESEARCH | DISCOVERED | NOT_APPROVED | NOT_INSTALLED | A04, A20, A21, A23, A26 | USV-01 | 0 | [Evidence](https://github.com/modelcontextprotocol/python-sdk/blob/77001c96f9507be0f4d009b83210a384a5e08bda/LICENSE) |
 | EXT-DISC-009540babdb3 | [cram001/esp32-n2k-touch](https://github.com/cram001/esp32-n2k-touch) | marine-iot | DISCOVERED | NOT_APPROVED | NOT_INSTALLED | A19, A20, A21, A26 | None | 0 | Pending |
 | EXT-DISC-0179167b9d75 | [dureshahwaranna19/marine-hydrodynamics-data-analysis](https://github.com/dureshahwaranna19/marine-hydrodynamics-data-analysis) | cfd-resistance | DISCOVERED | NOT_APPROVED | NOT_INSTALLED | A07, A08, A13, A26 | None | 0 | Pending |
 | EXT-DISC-04e5bb66a58e | [Klins101/CORALL](https://github.com/Klins101/CORALL) | navigation-colregs | DISCOVERED | NOT_APPROVED | NOT_INSTALLED | A17, A22, A24, A26 | None | 0 | Pending |
@@ -119,3 +126,10 @@ Overview: 90 tracked | 82 discovered | 8 evaluating | 0 qualified | 0 integrated
 - EXT-DISC-b3cf81d12742 ktuukkan/marine-api: planned for USV-01; zero evidenced uses.
 - EXT-DISC-cf7cb73fba24 Neumi/open_echo: planned for USV-01; zero evidenced uses.
 - EXT-DISC-d3b0c9330fd7 cybergalactic/MSS: planned for USV-01; zero evidenced uses.
+- EXT-005 CrewAI: planned for USV-01; zero evidenced uses.
+- EXT-006 Browser Use: planned for USV-01; zero evidenced uses.
+- EXT-007 Dify: planned for USV-01; zero evidenced uses.
+- EXT-008 LangGraph: planned for USV-01; zero evidenced uses.
+- EXT-009 Microsoft Agent Framework: planned for USV-01; zero evidenced uses.
+- EXT-010 OpenHands: planned for USV-01; zero evidenced uses.
+- EXT-011 MCP Python SDK: planned for USV-01; zero evidenced uses.

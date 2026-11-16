@@ -3446,6 +3446,392 @@
       "actualUsage": [],
       "evidence": [],
       "nextAction": "Pinned public source metadata; obtain static manifest inspection, license/security assessment and independent domain review before any approval or use."
+    },
+    {
+      "id": "EXT-005",
+      "name": "CrewAI",
+      "repository": "crewAIInc/crewAI",
+      "repositoryUrl": "https://github.com/crewAIInc/crewAI",
+      "domain": "AGENT_ORCHESTRATION_RESEARCH",
+      "description": "Role-based multi-agent orchestration framework; research its task delegation and coordination patterns without runtime adoption.",
+      "firstRecordedOn": "2026-11-17",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A04",
+        "A20",
+        "A23",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "96c4d85b6423dd06b7f1c38f12dd472399c6ce43",
+        "tree": "9c8503b4211110420143306f9beca366a773c9f8",
+        "verifiedEvidence": "https://github.com/crewAIInc/crewAI/commit/96c4d85b6423dd06b7f1c38f12dd472399c6ce43"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [
+        {
+          "project": "USV-01",
+          "agents": [
+            "A04",
+            "A20",
+            "A23",
+            "A26"
+          ],
+          "purpose": "Review role-based agent delegation and bounded orchestration patterns against the existing 26-agent runtime",
+          "sourceEvidence": "https://github.com/crewAIInc/crewAI/commit/96c4d85b6423dd06b7f1c38f12dd472399c6ce43"
+        }
+      ],
+      "actualUsage": [],
+      "evidence": [
+        {
+          "type": "PINNED_PUBLIC_GITHUB_API_SOURCE_AND_ROOT_LICENSE_BLOB",
+          "url": "https://github.com/crewAIInc/crewAI/blob/96c4d85b6423dd06b7f1c38f12dd472399c6ce43/LICENSE",
+          "status": "COMMIT_TREE_LICENSE_BLOB_MATCHED_ONLY_NO_SECURITY_REVIEW"
+        }
+      ],
+      "nextAction": "A04/A23 assess architecture without creating an alternative scheduler; A20 review dependencies and prompt-injection pathways; verify MIT obligations and perform independent security screening."
+    },
+    {
+      "id": "EXT-006",
+      "name": "Browser Use",
+      "repository": "browser-use/browser-use",
+      "repositoryUrl": "https://github.com/browser-use/browser-use",
+      "domain": "BROWSER_AUTOMATION_RESEARCH",
+      "description": "Python browser-agent tooling for bounded web interaction research; untrusted page content and external data access require isolation.",
+      "firstRecordedOn": "2026-11-17",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A04",
+        "A20",
+        "A21",
+        "A23",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "4b5b1b0aa0ab45a1d6a2a31984d37d3e748c0134",
+        "tree": "401428e7ca7d478550c62b3926c30781efe068fc",
+        "verifiedEvidence": "https://github.com/browser-use/browser-use/commit/4b5b1b0aa0ab45a1d6a2a31984d37d3e748c0134"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [
+        {
+          "project": "USV-01",
+          "agents": [
+            "A04",
+            "A20",
+            "A21",
+            "A23",
+            "A26"
+          ],
+          "purpose": "Compare read-only browser automation research patterns with current lab access controls and data-handling rules",
+          "sourceEvidence": "https://github.com/browser-use/browser-use/commit/4b5b1b0aa0ab45a1d6a2a31984d37d3e748c0134"
+        }
+      ],
+      "actualUsage": [],
+      "evidence": [
+        {
+          "type": "PINNED_PUBLIC_GITHUB_API_SOURCE_AND_ROOT_LICENSE_BLOB",
+          "url": "https://github.com/browser-use/browser-use/blob/4b5b1b0aa0ab45a1d6a2a31984d37d3e748c0134/LICENSE",
+          "status": "COMMIT_TREE_LICENSE_BLOB_MATCHED_ONLY_NO_SECURITY_REVIEW"
+        }
+      ],
+      "nextAction": "A20/A21 review isolation, URL allowlists, credential protection, exfiltration and prompt injection before any browser integration; no autonomous browsing is authorized."
+    },
+    {
+      "id": "EXT-007",
+      "name": "Dify",
+      "repository": "langgenius/dify",
+      "repositoryUrl": "https://github.com/langgenius/dify",
+      "domain": "AGENT_WORKFLOW_PLATFORM_RESEARCH",
+      "description": "Workflow and retrieval-augmented application platform; its modified Apache 2.0 license has commercial and frontend conditions requiring legal review.",
+      "firstRecordedOn": "2026-11-17",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A04",
+        "A20",
+        "A21",
+        "A23",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "0ba3c9d76887b6c89c943abaab87f8d86c27d612",
+        "tree": "08515a12769dc1838d56ffa5a1411d97d8d486e7",
+        "verifiedEvidence": "https://github.com/langgenius/dify/commit/0ba3c9d76887b6c89c943abaab87f8d86c27d612"
+      },
+      "license": {
+        "spdxMetadata": "NOASSERTION",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [
+        {
+          "project": "USV-01",
+          "agents": [
+            "A04",
+            "A20",
+            "A21",
+            "A23",
+            "A26"
+          ],
+          "purpose": "Compare workflow and RAG architecture with existing project-controlled data boundaries; no hosting or integration decision",
+          "sourceEvidence": "https://github.com/langgenius/dify/commit/0ba3c9d76887b6c89c943abaab87f8d86c27d612"
+        }
+      ],
+      "actualUsage": [],
+      "evidence": [
+        {
+          "type": "PINNED_PUBLIC_GITHUB_API_SOURCE_AND_ROOT_LICENSE_BLOB",
+          "url": "https://github.com/langgenius/dify/blob/0ba3c9d76887b6c89c943abaab87f8d86c27d612/LICENSE",
+          "status": "COMMIT_TREE_LICENSE_BLOB_MATCHED_ONLY_NO_SECURITY_REVIEW"
+        }
+      ],
+      "nextAction": "LEGAL HOLD: assess Dify's modified Apache license and multi-tenant/frontend constraints; A20/A21 review data tenancy, remote services, secret handling and supply chain before any install."
+    },
+    {
+      "id": "EXT-008",
+      "name": "LangGraph",
+      "repository": "langchain-ai/langgraph",
+      "repositoryUrl": "https://github.com/langchain-ai/langgraph",
+      "domain": "STATEFUL_AGENT_ORCHESTRATION_RESEARCH",
+      "description": "Stateful agent workflow and checkpointing library for architecture comparison only; not an approved replacement for the current agent scheduler.",
+      "firstRecordedOn": "2026-11-17",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A04",
+        "A20",
+        "A23",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "02f2c2e6c992ffccce9e9129781fdd04f015c6fa",
+        "tree": "17836360185df72528d58c50fea086b03dfe2326",
+        "verifiedEvidence": "https://github.com/langchain-ai/langgraph/commit/02f2c2e6c992ffccce9e9129781fdd04f015c6fa"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [
+        {
+          "project": "USV-01",
+          "agents": [
+            "A04",
+            "A20",
+            "A23",
+            "A26"
+          ],
+          "purpose": "Evaluate checkpoint, restart and human-approval design patterns against the existing 26-agent orchestrator",
+          "sourceEvidence": "https://github.com/langchain-ai/langgraph/commit/02f2c2e6c992ffccce9e9129781fdd04f015c6fa"
+        }
+      ],
+      "actualUsage": [],
+      "evidence": [
+        {
+          "type": "PINNED_PUBLIC_GITHUB_API_SOURCE_AND_ROOT_LICENSE_BLOB",
+          "url": "https://github.com/langchain-ai/langgraph/blob/02f2c2e6c992ffccce9e9129781fdd04f015c6fa/LICENSE",
+          "status": "COMMIT_TREE_LICENSE_BLOB_MATCHED_ONLY_NO_SECURITY_REVIEW"
+        }
+      ],
+      "nextAction": "Compare state/replay contracts to existing Mission Control, document measured gaps, inspect dependencies and obtain independent security review before any adoption."
+    },
+    {
+      "id": "EXT-009",
+      "name": "Microsoft Agent Framework",
+      "repository": "microsoft/agent-framework",
+      "repositoryUrl": "https://github.com/microsoft/agent-framework",
+      "domain": "MULTI_AGENT_FRAMEWORK_RESEARCH",
+      "description": "Python and .NET agent and orchestration framework; architecture and interoperability reference only.",
+      "firstRecordedOn": "2026-11-17",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A04",
+        "A20",
+        "A21",
+        "A23",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "cf5ea1979562efaf993fb3d37958de0c52d612cc",
+        "tree": "69bc2a268e8a71929f9e3cd67835c5780e1e6ea0",
+        "verifiedEvidence": "https://github.com/microsoft/agent-framework/commit/cf5ea1979562efaf993fb3d37958de0c52d612cc"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [
+        {
+          "project": "USV-01",
+          "agents": [
+            "A04",
+            "A20",
+            "A21",
+            "A23",
+            "A26"
+          ],
+          "purpose": "Compare agent handoff, tool contracts, and orchestration interfaces without changing project provider or execution policy",
+          "sourceEvidence": "https://github.com/microsoft/agent-framework/commit/cf5ea1979562efaf993fb3d37958de0c52d612cc"
+        }
+      ],
+      "actualUsage": [],
+      "evidence": [
+        {
+          "type": "PINNED_PUBLIC_GITHUB_API_SOURCE_AND_ROOT_LICENSE_BLOB",
+          "url": "https://github.com/microsoft/agent-framework/blob/cf5ea1979562efaf993fb3d37958de0c52d612cc/LICENSE",
+          "status": "COMMIT_TREE_LICENSE_BLOB_MATCHED_ONLY_NO_SECURITY_REVIEW"
+        }
+      ],
+      "nextAction": "Assess Python/.NET dependency and hosting implications, licensing and telemetry defaults; preserve subscription-only and no-paid-API policy."
+    },
+    {
+      "id": "EXT-010",
+      "name": "OpenHands",
+      "repository": "OpenHands/OpenHands",
+      "repositoryUrl": "https://github.com/OpenHands/OpenHands",
+      "domain": "CODING_AGENT_SANDBOX_RESEARCH",
+      "description": "Autonomous coding-agent platform used only as a reference for code-change review, sandboxing and permission boundaries.",
+      "firstRecordedOn": "2026-11-17",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A04",
+        "A20",
+        "A23",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "5ed4ffa5ac2509e479acc12b83247fbb4c3612c8",
+        "tree": "8b5f706d37e2e68258fc7bc062aa6826e7a7102b",
+        "verifiedEvidence": "https://github.com/OpenHands/OpenHands/commit/5ed4ffa5ac2509e479acc12b83247fbb4c3612c8"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [
+        {
+          "project": "USV-01",
+          "agents": [
+            "A04",
+            "A20",
+            "A23",
+            "A26"
+          ],
+          "purpose": "Review isolated coding-agent execution and audit patterns against existing Codex governance; no self-modification or agent installation",
+          "sourceEvidence": "https://github.com/OpenHands/OpenHands/commit/5ed4ffa5ac2509e479acc12b83247fbb4c3612c8"
+        }
+      ],
+      "actualUsage": [],
+      "evidence": [
+        {
+          "type": "PINNED_PUBLIC_GITHUB_API_SOURCE_AND_ROOT_LICENSE_BLOB",
+          "url": "https://github.com/OpenHands/OpenHands/blob/5ed4ffa5ac2509e479acc12b83247fbb4c3612c8/LICENSE",
+          "status": "COMMIT_TREE_LICENSE_BLOB_MATCHED_ONLY_NO_SECURITY_REVIEW"
+        }
+      ],
+      "nextAction": "A20 review sandbox escape, shell permissions, network access, repository write boundaries and dependency risk before any execution."
+    },
+    {
+      "id": "EXT-011",
+      "name": "MCP Python SDK",
+      "repository": "modelcontextprotocol/python-sdk",
+      "repositoryUrl": "https://github.com/modelcontextprotocol/python-sdk",
+      "domain": "AGENT_TOOL_INTEROPERABILITY_RESEARCH",
+      "description": "Official Python SDK for Model Context Protocol clients and servers; reference for typed tools and controlled read-only source access.",
+      "firstRecordedOn": "2026-11-17",
+      "ownerAgent": "A26",
+      "reviewAgents": [
+        "A04",
+        "A20",
+        "A21",
+        "A23",
+        "A26"
+      ],
+      "lifecycle": "DISCOVERED",
+      "source": {
+        "commit": "77001c96f9507be0f4d009b83210a384a5e08bda",
+        "tree": "b10bdc065b26d148271554674303868bb943d495",
+        "verifiedEvidence": "https://github.com/modelcontextprotocol/python-sdk/commit/77001c96f9507be0f4d009b83210a384a5e08bda"
+      },
+      "license": {
+        "spdxMetadata": "MIT",
+        "review": "PENDING"
+      },
+      "securityReview": "NOT_PERFORMED",
+      "engineeringValidation": "NOT_VALIDATED",
+      "adoption": "NOT_APPROVED",
+      "installation": "NOT_INSTALLED",
+      "registeredToolId": null,
+      "proposedToolId": null,
+      "plannedUsage": [
+        {
+          "project": "USV-01",
+          "agents": [
+            "A04",
+            "A20",
+            "A21",
+            "A23",
+            "A26"
+          ],
+          "purpose": "Evaluate typed MCP resource access and read-only excerpt contracts for governed agent research tools",
+          "sourceEvidence": "https://github.com/modelcontextprotocol/python-sdk/commit/77001c96f9507be0f4d009b83210a384a5e08bda"
+        }
+      ],
+      "actualUsage": [],
+      "evidence": [
+        {
+          "type": "PINNED_PUBLIC_GITHUB_API_SOURCE_AND_ROOT_LICENSE_BLOB",
+          "url": "https://github.com/modelcontextprotocol/python-sdk/blob/77001c96f9507be0f4d009b83210a384a5e08bda/LICENSE",
+          "status": "COMMIT_TREE_LICENSE_BLOB_MATCHED_ONLY_NO_SECURITY_REVIEW"
+        }
+      ],
+      "nextAction": "Review transport authentication, resource authorization, injection threats, dependency provenance and exact scope of read-only exposure before connecting."
     }
   ]
 }
