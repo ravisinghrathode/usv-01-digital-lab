@@ -1,4 +1,5 @@
 import { isPaidAiApiAllowed } from './AiBillingPolicy.ts';
+import { classifyGeminiCliFailure } from './GeminiCliFailure.ts';
 import { evaluateLabCommissioningPolicy } from '../mission-control/LabCommissioningPolicy.ts';
 import { selectA26SubscriptionModel } from '../mission-control/A26SubscriptionModelAccess.ts';
 import {
@@ -239,6 +240,7 @@ export class GeminiProvider implements IModelProvider {
 // -----------------------------------------------------------------------------------------
 type GeminiCliRunner = (binary:string,args:string[],options:{
   cwd:string;timeout:number;maxBuffer:number;env:NodeJS.ProcessEnv;
+  stdin?:string;
 })=>Promise<{stdout:string;stderr:string}>;
 
 const stripJsonFence=(text:string)=>{
@@ -256,7 +258,7 @@ export class GeminiCliProvider implements IModelProvider {
     // A fixed executable prevents an environment-injected arbitrary program.
     this.binary=options.binary||'gemini';
   }
-  private async run(args:string[],cwd:string,timeout=120000,requireOAuth=false){
+  private async run(args:string[],cwd:string,timeout=120000,requireOAuth=false,stdin?:string){
     // Only operator-managed Google OAuth may be used in the zero-paid-API
     // route. Never let a parent shell API key change authentication methods.
     const adapterPath = '../mission-control/' + 'SubscriptionCliAdapter.ts';
@@ -277,15 +279,32 @@ export class GeminiCliProvider implements IModelProvider {
       cleanEnv.GEMINI_CLI_SYSTEM_SETTINGS_PATH=policy;
     }
     if(this.runner)return this.runner(this.binary,args,{
-      cwd,timeout,maxBuffer:8*1024*1024,env:cleanEnv});
-    const [{execFile},{promisify}]=await Promise.all([
-      import('node:child_process'),import('node:util')
-    ]);
-    const exec=promisify(execFile);
-    const result=await exec(this.binary,args,{
-      cwd,timeout,maxBuffer:8*1024*1024,env:cleanEnv
+      cwd,timeout,maxBuffer:8*1024*1024,env:cleanEnv,stdin});
+    const {execFile}=await import('node:child_process');
+    return await new Promise<{stdout:string;stderr:string}>((resolve,reject)=>{
+      // Send the engineering payload over stdin, NEVER via argv: execFile's
+      // default Command failed Error.message repeats all CLI arguments.
+      const child=execFile(this.binary,args,{
+        cwd,timeout,maxBuffer:8*1024*1024,env:cleanEnv
+      },(error,stdout,stderr)=>{
+        if(error){
+          // Keep raw stderr private for redacted classification in the outer
+          // catch, but never forward Node's argv-echoing error.message.
+          const safe=Object.assign(new Error('GEMINI_CLI_SUBPROCESS_FAILED'),{
+            code:(error as NodeJS.ErrnoException).code ||
+              ((error as Error & {code?:number}).code ?? 'UNKNOWN'),
+            stdout:String(stdout||''),stderr:String(stderr||''),
+            killed:(error as Error & {killed?:boolean}).killed,
+            signal:(error as Error & {signal?:string}).signal
+          });
+          reject(safe);
+        }else resolve({stdout:String(stdout||''),stderr:String(stderr||'')});
+      });
+      // The prompt is supplied through the documented piped-input interface.
+      // Even a premature CLI failure must not cause an unhandled EPIPE event.
+      child.stdin?.on('error',()=>{});
+      child.stdin?.end(stdin ?? '');
     });
-    return {stdout:String(result.stdout||''),stderr:String(result.stderr||'')};
   }
   async isAvailable():Promise<boolean>{
     if(typeof window!=='undefined')return false;
@@ -315,8 +334,9 @@ export class GeminiCliProvider implements IModelProvider {
     try{
       const {stdout,stderr}=await this.run([
         '-e','none','--approval-mode','plan','--output-format','json',
-        '--model',requestedModel,'--prompt',prompt
-      ],cwd,180000,true);
+        '--model',requestedModel,'--prompt',
+        'Respond to the complete synthetic research task on standard input.'
+      ],cwd,180000,true,prompt);
       let envelope:any;
       try{envelope=JSON.parse(stdout)}catch{
         throw new Error('Gemini CLI did not emit the documented JSON envelope');
@@ -346,8 +366,8 @@ export class GeminiCliProvider implements IModelProvider {
         timestamp:new Date().toISOString(),
         statusMessage:'Gemini CLI headless transport using operator-managed existing authentication; stderr is never engineering evidence'
       };
-    }catch(error:any){
-      throw new Error('Gemini CLI Execution Error: '+(error?.message||String(error)));
+    }catch(error:unknown){
+      throw classifyGeminiCliFailure(error);
     }finally{
       await rm(cwd,{recursive:true,force:true});
     }
