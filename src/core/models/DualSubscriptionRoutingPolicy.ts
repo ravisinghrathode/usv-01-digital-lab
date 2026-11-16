@@ -30,6 +30,19 @@ export function geminiTransferAuthorized(env: NodeJS.ProcessEnv = process.env): 
     env.USV_GEMINI_DATA_CLASSIFICATION === 'PUBLIC_NON_SENSITIVE';
 }
 
+/**
+ * Machine-readable gate for a controlled, reviewed campaign catalog.
+ * A file label alone does not authorize transfer: explicit operator and
+ * independently reviewed external service permissions are also required.
+ */
+export function geminiCatalogTransferPermitted(
+  classification: unknown, env: NodeJS.ProcessEnv = process.env
+): boolean {
+  return geminiTransferAuthorized(env) &&
+    (classification === 'PUBLIC_NON_SENSITIVE' ||
+     classification === 'SYNTHETIC_TEST_ONLY_NON_OPERATIONAL');
+}
+
 /** Only a small, explicit transport-failure vocabulary is retryable. */
 export function codexFallbackReason(error: unknown): SafeFallbackReason | null {
   const message = error instanceof Error ? error.message : String(error);

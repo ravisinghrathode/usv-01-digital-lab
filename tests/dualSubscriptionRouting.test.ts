@@ -5,7 +5,7 @@ import {MASTER_AGENTS} from '../src/core/agents/definitions.ts';
 import {validatePilotRequest,sanitizedSubscriptionEnvironment,SAFE_ROLES}
   from '../src/core/mission-control/SubscriptionCliAdapter.ts';
 import {CHATGPT_SOL_MODEL,GEMINI_HYDROGEN_MODEL,dualProviderEnabled,
-  geminiTransferAuthorized,codexFallbackReason}
+  geminiTransferAuthorized,geminiCatalogTransferPermitted,codexFallbackReason}
   from '../src/core/models/DualSubscriptionRoutingPolicy.ts';
 
 const saved={...process.env};
@@ -62,6 +62,11 @@ describe('26 specialist dual subscription transport policy',()=>{
     expect(geminiTransferAuthorized()).toBe(false);
     process.env.USV_GEMINI_DATA_CLASSIFICATION='PUBLIC_NON_SENSITIVE';
     expect(geminiTransferAuthorized()).toBe(true);
+    expect(geminiCatalogTransferPermitted('SYNTHETIC_TEST_ONLY_NON_OPERATIONAL')).toBe(true);
+    expect(geminiCatalogTransferPermitted('PUBLIC_NON_SENSITIVE')).toBe(true);
+    for (const classification of ['RESTRICTED_NAVAL','CLIENT_CONFIDENTIAL','CONTROLLED',undefined,{},null]) {
+      expect(geminiCatalogTransferPermitted(classification)).toBe(false);
+    }
     process.env.USV_ENGINEERING_RELEASE_AUTHORIZED='true';
     expect(geminiTransferAuthorized()).toBe(false);
   });

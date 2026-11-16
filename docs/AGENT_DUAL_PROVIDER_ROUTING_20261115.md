@@ -7,6 +7,15 @@
 2. **Secondary on explicit transport errors:** Google Gemini CLI, request `gemini-4-hydrogen` through its existing operator Google sign-in. The model must be supported by that account, CLI and current rollout; capture the model ID returned by the tool. No API-key or Vertex fallback.
 3. **No fallback:** safety refusal, content denial, schema/JSON failure, deterministic calculation failure, engineering/TBD gate, missing transfer approval, ambiguous CLI error, or both providers unavailable.
 
+## Secure execution boundary
+
+This GitHub repository is public. **Do not register or use a self-hosted GitHub
+Actions runner containing OAuth subscriptions, private signing keys or
+confidential engineering artifacts.** Use the independently reviewed local
+`npm run mission-control:private-commission` supervisor from an operator
+Mac. Public GitHub Actions run only deterministic zero-model checks.
+A GitHub `live` dispatch fails closed with `USV_PUBLIC_RUNNER_BLOCKED`.
+
 ## Required controlled host values
 On the already independently approved A04 host, under the operator's private environment and after applicable information-security review:
 
@@ -29,6 +38,7 @@ The three `USV_GEMINI_*` approvals MUST NOT be set for controlled/unknown Navy/c
 ## Preflight and evidence
 - Install current official Codex CLI and Gemini CLI on the same isolated host. Keep both session credentials in operator-controlled local storage outside Git and CI artifacts.
 - Run `codex login status` and ensure it says signed in using ChatGPT, not API key. Start `gemini` interactively and sign in with Google; have the operator verify the cached authentication choice is not API key or paid Vertex. Neither `gemini --version` nor any offline unit test proves an active OAuth session.
+- For protected-main live GitHub Actions, the reviewed workflow sets `USV_DUAL_PROVIDER_ROUTING=enabled` automatically, so all roles request Sol. The Gemini approvals are repository variables, **empty by default**, and the workflow invokes a controlled catalog-classification gate before any AI calls. An existing on-disk public test label is not sufficient authority unless the operator independently approved that data transfer.
 - Run `npm run mission-control:model-health` (offline/no model calls), `npm run mission-control:test` and `npx vitest run tests/dualSubscriptionRouting.test.ts` at exact reviewed commit SHA, and perform one explicitly authorized *public test-only* primary call and one supervised fallback call to verify actual provider and model identities.
 - The existing `acceptance:full-26` and signed host-health contract still require authentic **Codex** execution for all 26 roles. A Gemini fallback response is explicitly **NOT** promoted to the 26/26 Codex-only operational acceptance until a separately reviewed multi-provider cryptographic attestation/evidence standard is adopted. This keeps old source-and-host gates intact.
 - Direct `gemini` CLI selection remains a separate legacy path; this controlled two-provider fallback applies only to codex-pinned canonical agent requests. The 26 registered agent definitions remain unchanged.
