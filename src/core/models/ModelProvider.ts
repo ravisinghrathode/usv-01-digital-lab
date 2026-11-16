@@ -2,7 +2,7 @@ import { isPaidAiApiAllowed } from './AiBillingPolicy.ts';
 import { evaluateLabCommissioningPolicy } from '../mission-control/LabCommissioningPolicy.ts';
 import { selectA26SubscriptionModel } from '../mission-control/A26SubscriptionModelAccess.ts';
 import {
-  CHATGPT_SOL_MODEL, GEMINI_HYDROGEN_MODEL, dualProviderEnabled,
+  CHATGPT_SOL_MODEL, GEMINI_HYDROGEN_MODEL, CODEX_CLI_MAX_PROMPT_CHARS, dualProviderEnabled,
   geminiTransferAuthorized, codexFallbackReason
 } from './DualSubscriptionRoutingPolicy.ts';
 
@@ -385,10 +385,11 @@ export class CodexCliProvider implements IModelProvider {
       'USER TASK:', request.userPrompt,
       'CONTEXT JSON:', JSON.stringify(request.context)
     ].join('\n\n');
-    if (prompt.length > 24_000) {
+    if (prompt.length > CODEX_CLI_MAX_PROMPT_CHARS) {
       // Never log prompt text: only component lengths so the operator can
       // identify redundant context without disclosing client/naval details.
-      throw new Error('Codex CLI prompt exceeds bounded 24,000-character input; refuse truncated evidence. ' +
+      throw new Error('Codex CLI prompt exceeds bounded ' + CODEX_CLI_MAX_PROMPT_CHARS +
+        '-character input; refuse truncated evidence. ' +
         'promptChars=' + prompt.length +
         ' systemChars=' + request.systemInstructions.length +
         ' taskChars=' + request.userPrompt.length +
