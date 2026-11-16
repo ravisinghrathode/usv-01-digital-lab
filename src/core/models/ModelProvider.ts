@@ -246,14 +246,38 @@ type GeminiCliRunner = (binary:string,args:string[],options:{
  * Decode known provider diagnostics into bounded, non-sensitive status codes. */
 export function classifiedGeminiCliFailure(error: unknown): Error {
   const raw = error && typeof error === 'object'
-    ? error as {message?:unknown;stderr?:unknown;code?:unknown;killed?:unknown}
+    ? error as {message?:unknown;stderr?:unknown;stdout?:unknown;code?:unknown;killed?:unknown}
     : {message: String(error)};
   const msg = typeof raw.message === 'string' ? raw.message : '';
   const stderr = typeof raw.stderr === 'string' ? raw.stderr : '';
-  // Historical execFile errors can embed the complete CLI prompt into their
-  // message. Never interpret that untrusted prompt as a diagnostic category.
+  // Official Gemini CLI structured exit codes distinguish auth errors,
+  // malformed input and local configuration failures without raw diagnostics.
+  if (raw.code === 41) {
+    return new Error('USV_GEMINI_CLI_AUTH_UNAVAILABLE: personal OAuth sign-in required (exitCode=41)');
+  }
+  if (raw.code === 42) {
+    return new Error('USV_GEMINI_CLI_INVALID_ARGUMENTS: CLI rejected headless input (exitCode=42); fail closed');
+  }
+  if (raw.code === 44 || raw.code === 52 || raw.code === 53) {
+    return new Error('USV_GEMINI_CLI_EXIT_NONZERO: non-retryable CLI sandbox, configuration or turn-limit error; exitCode=' + raw.code);
+  }
+  // Headless JSON may return the error details on stdout even with a
+  // nonzero exit. Read ONLY its structured error fields for classification;
+  // do not propagate stdout, stderr, arbitrary text or user prompts.
+  let structuredError = '';
+  if (typeof raw.stdout === 'string') {
+    try {
+      const envelope = JSON.parse(raw.stdout);
+      const detail = envelope?.error;
+      if (detail && typeof detail === 'object' && !Array.isArray(detail)) {
+        structuredError = [detail.type,detail.code,detail.message]
+          .filter(value => typeof value === 'string' || typeof value === 'number')
+          .map(value => String(value).slice(0,2048)).join(' ');
+      }
+    } catch { /* non-JSON stdout provides no usable structured diagnostic */ }
+  }
   const diagnosticMessage = /^Command failed:/i.test(msg) ? '' : msg;
-  const details = (stderr + '\n' + diagnosticMessage).slice(0, 32768);
+  const details = (stderr + '\n' + structuredError + '\n' + diagnosticMessage).slice(0, 32768);
   if (/Gemini CLI did not emit the documented JSON envelope|Gemini CLI returned no response text|GEMINI_CLI_OUTPUT_TOO_LARGE/i.test(details)) {
     return new Error('USV_GEMINI_CLI_INVALID_OUTPUT: invalid or oversized headless response; fail closed');
   }
@@ -349,7 +373,7 @@ export class GeminiCliProvider implements IModelProvider {
         const stderr=Buffer.concat(stderrParts).toString('utf8');
         if(code!==0){
           reject(Object.assign(new Error('Gemini CLI exited without a valid response'),
-            {code,stderr}));
+            {code,stderr,stdout}));
           return;
         }
         resolve({stdout,stderr});
