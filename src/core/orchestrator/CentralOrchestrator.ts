@@ -50,7 +50,7 @@ export class CentralOrchestrator {
     }
 
     this.tasks.set(task.id, {
-      ...task,
+      ...structuredClone(task),
       status: 'PENDING',
       createdAt: task.createdAt || new Date().toISOString()
     });
@@ -65,11 +65,12 @@ export class CentralOrchestrator {
   }
 
   public getTask(id: string): EngineeringTask | undefined {
-    return this.tasks.get(id);
+    const task = this.tasks.get(id);
+    return task ? structuredClone(task) : undefined;
   }
 
   public getAllTasks(): EngineeringTask[] {
-    return Array.from(this.tasks.values());
+    return Array.from(this.tasks.values(), task => structuredClone(task));
   }
 
   /**
@@ -168,7 +169,20 @@ export class CentralOrchestrator {
               if (depTask && depTask.status === 'WAITING_HUMAN_APPROVAL' && depTask.approvalGateId) {
                 const gate = this.gateManager.getGate(depTask.approvalGateId);
                 if (gate && gate.state === 'APPROVED') {
-                  depTask.status = 'COMPLETED';
+                  // All approval transitions must follow the SAME signed,
+                  // validated path as the decision callback. A state string
+                  // alone must never unlock downstream engineering tasks.
+                  try {
+                    this.resolveGateDecision(depTask.approvalGateId, 'APPROVED');
+                  } catch (err) {
+                    this.auditLogger.log({
+                      severity: 'SAFETY_CRITICAL',
+                      agentId: depTask.assignedAgentId,
+                      taskId: depTask.id,
+                      action: 'UNVERIFIED_DEPENDENCY_APPROVAL_BLOCKED',
+                      details: { gateId: depTask.approvalGateId, error: String(err) }
+                    });
+                  }
                 }
               }
               if (!depTask || depTask.status !== 'COMPLETED') {
@@ -343,7 +357,7 @@ export class CentralOrchestrator {
     const fullMsg: InterAgentMessage = {
       id: `MSG-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
       timestamp: new Date().toISOString(),
-      ...msg
+      ...structuredClone(msg)
     };
 
     this.messageBus.push(fullMsg);
@@ -355,7 +369,7 @@ export class CentralOrchestrator {
       details: { recipient: msg.recipientAgentId, channel: msg.channel }
     });
 
-    return fullMsg;
+    return structuredClone(fullMsg);
   }
 
   public sendAgentOutputMessage(senderAgentId: string, recipientAgentId: string, taskId: string, output: any): InterAgentMessage {
@@ -383,7 +397,7 @@ export class CentralOrchestrator {
     if (filter?.channel) {
       result = result.filter(m => m.channel === filter.channel);
     }
-    return result;
+    return structuredClone(result);
   }
 
   public clearTasks(): void {
