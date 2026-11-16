@@ -11,8 +11,10 @@ describe('Gemini CLI operator-authenticated provider',()=>{
   it('uses headless JSON mode, empty isolated workspace and records actual model from CLI stats',async()=>{
     let argsSeen:string[]=[];
     let cwdSeen='';
+    let stdinSeen='';
     const provider=new GeminiCliProvider({runner:async(_bin,args,opts)=>{
       argsSeen=args;cwdSeen=opts.cwd;
+      stdinSeen=opts.stdin||'';
       if(args[0]==='--version')return{stdout:'0.68.0\n',stderr:''};
       return{stdout:JSON.stringify({
         response:'```json\n{"disciplineSummary":"ok","keyMetrics":{},"designDecisions":[],"assumptions":[],"openTbdItems":[],"requiresDirectorApproval":true,"approvalRationale":"review"}\n```',
@@ -22,9 +24,12 @@ describe('Gemini CLI operator-authenticated provider',()=>{
     expect(await provider.isAvailable()).toBe(true);
     const out=await provider.generateText(request,{modelName:'auto'});
     expect(argsSeen).toEqual(expect.arrayContaining([
-      '-e','none','--approval-mode','plan','--output-format','json','--prompt'
+      '-e','none','--approval-mode','plan','--output-format','json'
     ]));
+    expect(argsSeen).not.toContain('--prompt');
     expect(cwdSeen).toMatch(/usv-gemini-cli-/);
+    expect(stdinSeen).toContain('Return strict JSON only');
+    expect(stdinSeen).toContain('unit test');
     expect(out.providerUsed).toBe('gemini_cli');
     expect(out.modelUsed).toBe('gemini-3.5-pro');
     expect(out.executionMode).toBe('LIVE_AI_GENERATION');
@@ -43,8 +48,8 @@ describe('Gemini CLI operator-authenticated provider',()=>{
     const auth=new GeminiCliProvider({runner:async()=>({
       stdout:JSON.stringify({response:null,error:{type:'FatalAuthenticationError',message:'login',code:41}}),stderr:''
     })});
-    await expect(auth.generateText(request)).rejects.toThrow(/provider error/);
+    await expect(auth.generateText(request)).rejects.toThrow(/USV_GEMINI_CLI_AUTH_UNAVAILABLE/);
     const malformed=new GeminiCliProvider({runner:async()=>({stdout:'not json',stderr:''})});
-    await expect(malformed.generateText(request)).rejects.toThrow(/documented JSON envelope/);
+    await expect(malformed.generateText(request)).rejects.toThrow(/USV_GEMINI_CLI_INVALID_OUTPUT/);
   });
 });
