@@ -236,6 +236,7 @@ async function main() {
           throw new Error('CODEX_RESUME_FIRST_UNSUCCESSFUL_AGENT: ' + finding.canonicalId +
             ' [' + finding.status + ']; see private interruption report');
         }
+        finding.originSourceSha = implementationSha;
         checkpoint.completed = [...completed];
         checkpoint.completedCount = completed.length;
         checkpoint.advisories[finding.runtimeId] = advisory;
