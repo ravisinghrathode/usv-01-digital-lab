@@ -91,6 +91,32 @@ describe('Gemini CLI redacted command and source-bound synthetic fallback diagno
     }
   });
 
+  it('classifies official headless CLI exit codes without exposing stderr or prompt',()=>{
+    const auth=classifiedGeminiCliFailure(failure('private diagnostic',41));
+    expect(auth.message).toContain('USV_GEMINI_CLI_AUTH_UNAVAILABLE');
+    expect(recoverableGeminiCliFailure(auth)).toBe(true);
+    for(const [exitCode,marker] of [[42,'INVALID_ARGUMENTS'],[44,'EXIT_NONZERO'],
+      [52,'EXIT_NONZERO'],[53,'EXIT_NONZERO']] as const){
+      const err=classifiedGeminiCliFailure(failure('DO_NOT_DISCLOSE_PRIVATE',exitCode));
+      expect(err.message).toContain(marker);
+      expect(err.message).not.toContain('DO_NOT_DISCLOSE_PRIVATE');
+      expect(recoverableGeminiCliFailure(err)).toBe(false);
+    }
+  });
+
+  it('reads only structured error fields of nonzero headless JSON, never stdout text',()=>{
+    const error=Object.assign(new Error('Gemini CLI exited without a valid response'),{
+      code:1,stderr:'',stdout:JSON.stringify({
+        response:'PRIVATE_SYNTHETIC_REPORT_MUST_NOT_LEAK',
+        error:{type:'FatalAuthenticationError',message:'sign in required'}
+      })
+    });
+    const result=classifiedGeminiCliFailure(error);
+    expect(result.message).toContain('USV_GEMINI_CLI_AUTH_UNAVAILABLE');
+    expect(result.message).not.toContain('PRIVATE_SYNTHETIC_REPORT_MUST_NOT_LEAK');
+    expect(recoverableGeminiCliFailure(result)).toBe(true);
+  });
+
   it('rejects malformed Gemini JSON as non-retryable; never claims an executed model',async()=>{
     const cli=new GeminiCliProvider({runner:async()=>({
       stdout:'{"response":"","stats":{"models":{}}}',stderr:'PRIVATE_DIAGNOSTIC_SENTINEL'
