@@ -190,7 +190,7 @@ describe('26 specialist dual subscription transport policy',()=>{
       router.registerProvider({name:'gemini_cli',isAvailable:()=>false,
         generateText:async()=>{geminiCalls++;return stub('gemini_cli')}});
       await expect(router.generate(prompt,{preferredProvider:'codex_cli'})).rejects
-        .toThrow(/USV_PROVIDER_RETRY_WAIT: CODEX_CODEX_QUOTA; GEMINI_CLI_NOT_READY/);
+        .toThrow(/USV_PROVIDER_RETRY_WAIT: CODEX_QUOTA; GEMINI_CLI_NOT_READY/);
       expect(geminiCalls).toBe(0);
     }finally{router.registerProvider(codex);router.registerProvider(gemini)}
   });
