@@ -12,10 +12,13 @@ import { compileCodexAgentCases } from '../src/core/verification/CodexMatrixInpu
 import { runLiveAgentMatrix } from '../src/core/verification/LiveAgentMatrix.ts';
 import type { AgentRunFinding } from '../src/core/verification/LiveAgentMatrix.ts';
 import { AgentRegistry } from '../src/core/registry/AgentRegistry.ts';
+import { ExecutionEngine } from '../src/core/engine/ExecutionEngine.ts';
+import { QuotaResilience } from '../src/core/mission-control/QuotaResilience.ts';
+import type { AgentExecutionOutput, AgentExecutionInput } from '../src/core/types/agent.ts';
 import { topologicalAgentOrder } from '../src/core/verification/TopologicalAgentCampaign.ts';
 import {
   emptyCheckpoint, importLegacyProgress, verifyCheckpoint,
-  acknowledgeUncertainAttempt, type CodexCheckpoint,
+  acknowledgeUncertainAttempt, rebaseCheckpointProvenance, type CodexCheckpoint,
   type ResumeBinding
 } from '../src/core/verification/CodexCampaignCheckpoint.ts';
 import { preflightCodexAgentCases } from '../src/core/verification/CodexCampaignPreflight.ts';
@@ -89,7 +92,28 @@ function prepareResume(binding: ResumeBinding,
   resume: boolean, allowHistorical: boolean, retryUncertain: boolean): CodexCheckpoint {
   if (fs.existsSync(CHECKPOINT)) {
     if (!resume) throw new Error('CODEX_RESUME_EXISTING_CHECKPOINT: use --resume; cannot replay successful work');
-    const cp = verifyCheckpoint(JSON.parse(safeRead(CHECKPOINT).toString('utf8')), binding);
+    const oldBytes = safeRead(CHECKPOINT);
+    const raw = JSON.parse(oldBytes.toString('utf8'));
+    let cp: CodexCheckpoint;
+    if (raw.implementationSha === binding.implementationSha) {
+      cp = verifyCheckpoint(raw, binding);
+    } else {
+      if (!allowHistorical || !gitIsAncestor(raw.implementationSha, binding.implementationSha)) {
+        throw new Error('CODEX_RESUME_REBASE_REQUIRES_REVIEWED_ANCESTOR_AND_EXPLICIT_CARRY_HISTORICAL');
+      }
+      cp = rebaseCheckpointProvenance(raw,
+        { ...binding, implementationSha: raw.implementationSha }, binding, oldBytes);
+      // Retain the exact old checkpoint content independently before any overwrite.
+      // Never replace a pre-existing snapshot or weaken private-file permissions.
+      const snapshot = CHECKPOINT.replace(/\.json$/, '-source-' + raw.implementationSha + '.json');
+      if (!fs.existsSync(snapshot)) {
+        const fd = fs.openSync(snapshot, 'wx', 0o600);
+        try { fs.writeFileSync(fd, oldBytes); fs.fsyncSync(fd); }
+        finally { fs.closeSync(fd); }
+      } else if (!safeRead(snapshot).equals(oldBytes)) {
+        throw new Error('CODEX_RESUME_EXISTING_SOURCE_SNAPSHOT_CONFLICT');
+      }
+    }
     if (cp.pending && !retryUncertain) {
       throw new Error('CODEX_RESUME_UNCERTAIN_MODEL_ATTEMPT: ' + cp.pending.canonicalId +
         '; inspect prior logs and pass --ack-uncertain to deliberately retry if needed');
@@ -208,7 +232,48 @@ async function main() {
       readyForNextAgent: specs[checkpoint.completed.length]?.canonicalId || null,
       independentEngineeringValidation: false
     }));
-    report = await runLiveAgentMatrix(cases, undefined, {
+    const codexQuota = new QuotaResilience();
+    const geminiQuota = new QuotaResilience(
+      path.join(process.env.HOME || '', '.usv01', 'runtime', 'gemini-quota.json')
+    );
+    // Wait without consuming model tokens when BOTH authenticated subscription
+    // providers are blocked. The owner campaign itself remains finite (12h);
+    // the checkpoint can still resume after an unexpected process termination.
+    const runWithQuotaHold = async (id: string, input: AgentExecutionInput):
+      Promise<AgentExecutionOutput> => {
+      const started = Date.now();
+      while (true) {
+        const output = await ExecutionEngine.getInstance().executeAgent(id, input, 0);
+        const err = String(output.data?.error || '');
+        const providerHold = output.status === 'FAILED' &&
+          (/USV_QUOTA_WAIT|QUOTA_EXHAUSTED/.test(err) ||
+           /USV_GEMINI_FALLBACK_UNAVAILABLE/.test(err) &&
+           /CODEX_QUOTA|USV_QUOTA_WAIT/.test(err));
+        if (!providerHold) return output;
+        const [codex, gemini] = await Promise.all([
+          codexQuota.status(), geminiQuota.status()
+        ]);
+        const time = Date.now();
+        const next = [codex.retryAfter, gemini.retryAfter]
+          .filter((t): t is string => !!t)
+          .map(t => Date.parse(t))
+          .filter(t => Number.isFinite(t) && t > time);
+        const notBefore = next.length ? Math.min(...next) : time + 60_000;
+        const delay = Math.max(10_000, Math.min(notBefore - time, 15 * 60_000));
+        if (time - started + delay > 10 * 60 * 60_000) {
+          console.error('USV_QUOTA_WAIT_TIMEOUT: checkpoint retained for next explicit session');
+          return output;
+        }
+        console.log(JSON.stringify({
+          status: 'WAITING_FOR_SUBSCRIPTION_CAPACITY',
+          agent: id, codex: codex.reason, gemini: gemini.reason,
+          nextLocalCheck: new Date(time + delay).toISOString(),
+          engineeringReleaseApproved: false
+        }));
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    };
+    report = await runLiveAgentMatrix(cases, runWithQuotaHold, {
       dependencyAware: true,
       resume: { findings: checkpoint.completed, advisories: checkpoint.advisories },
       beforeAgent: async (finding) => {
@@ -273,7 +338,7 @@ async function main() {
     independentlyEngineeringValidated: false as const,
     engineeringReleaseApproved: false as const
   };
-  fs.writeFileSync(location, JSON.stringify(campaignEvidence, null, 2) + '\n');
+  writePrivateAtomic(location, campaignEvidence);
   const assessment = assessEngineeringCampaign(campaignEvidence, {
     expectedCommit: implementationSha,
     campaignReportSha256: 'sha256:' + createHash('sha256').update(fs.readFileSync(location)).digest('hex'),
@@ -282,10 +347,13 @@ async function main() {
   const assessmentPath = path.resolve('governance/reports/26-agent-engineering-campaign-status.json');
   fs.mkdirSync(path.dirname(assessmentPath), { recursive: true });
   fs.writeFileSync(assessmentPath, JSON.stringify(assessment, null, 2) + '\n');
-  const complete = report.providerOperationalMatrixComplete && report.findings.every(row => row.provider === 'codex_cli');
+  const complete = report.providerOperationalMatrixComplete &&
+    report.findings.every(row => row.provider === 'codex_cli' ||
+      (row.provider === 'gemini_cli' &&
+       row.modelIdentifier === 'gemini-4-hydrogen'));
   console.log(JSON.stringify({
     status: complete
-      ? 'CODEX_26_PROVIDER_RUNS_OBSERVED_UNCERTIFIED'
+      ? 'DUAL_SUBSCRIPTION_26_PROVIDER_RUNS_OBSERVED_UNCERTIFIED'
       : report.findings.length === 26 && report.historicalProviderRuns > 0 &&
         report.liveProviderRuns + report.historicalProviderRuns === 26
         ? 'CODEX_26_MIXED_SOURCE_RESEARCH_OBSERVED_UNCERTIFIED'
@@ -293,6 +361,12 @@ async function main() {
     agents: report.totalAgents,
     liveProviderRuns: report.liveProviderRuns,
     historicalProviderRuns: report.historicalProviderRuns,
+    currentSourceCodexRuns: report.findings.filter(row =>
+      row.status === 'LIVE_PROVIDER_EXECUTED_UNCERTIFIED' &&
+      row.provider === 'codex_cli').length,
+    currentSourceGeminiRuns: report.findings.filter(row =>
+      row.status === 'LIVE_PROVIDER_EXECUTED_UNCERTIFIED' &&
+      row.provider === 'gemini_cli').length,
     exactSource26of26: complete,
     commissioningScope: commissioning.scope,
     report: location,
