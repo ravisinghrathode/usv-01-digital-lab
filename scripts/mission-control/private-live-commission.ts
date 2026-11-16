@@ -20,6 +20,7 @@ import { dualProviderEnabled }
   from '../../src/core/models/DualSubscriptionRoutingPolicy.ts';
 import { assertPinnedCleanGitRevision }
   from '../../src/core/mission-control/GitRevisionGuard.ts';
+import { verifyA04IndependentApproval } from '../../src/core/mission-control/A04IndependentApproval.ts';
 
 const FULL_SHA=/^[a-f0-9]{40}$/;
 const HOST_ID=/^[A-Za-z0-9][A-Za-z0-9_.-]{2,79}$/;
@@ -95,11 +96,12 @@ async function main():Promise<void>{
       mode:'ZERO_MODEL_PLAN_ONLY',
       publicRepositoryLiveJobsBlocked:true,privateHostRequired:true,
       sourceBindingRequired:true,a04IndependentOperatorReviewRequired:true,
+      a04SignedApprovalRequired:true,
       primaryRequestedModel:'gpt-6.1-sol',
       secondaryRequestedModel:'gemini-4-hydrogen',
       geminiDataTransferDefault:'DENY',
       engineeringReleaseApproved:false,
-      steps:['verify clean reviewed source','A04 local host probe',
+      steps:['verify clean reviewed source','verify independent signed A04 receipt/host/catalog authorization','A04 local host probe',
         'approved-public-data Gemini catalog gate','dual-provider no-model inventory',
         'Codex ChatGPT subscription preflight','26-agent zero-model input preflight',
         '26 actual agent model attempts','fresh signed host receipt',
@@ -128,6 +130,20 @@ async function main():Promise<void>{
   if(reviewedMain!==sourceSha)
     throw new Error('USV_PRIVATE_COMMISSION_SOURCE_NOT_PINNED_TO_ORIGIN_MAIN');
   const catalog=resolveControlledCatalog(cwd,catalogArg);
+
+  // A self-declared USV_A04_AUTHORIZED_SHA is insufficient: a qualified,
+  // independent reviewer must sign the inspected host receipt, catalog hash,
+  // host alias, and this exact source SHA. The trust anchor is provisioned
+  // separately outside public Git. No model is invoked before this check.
+  const independentApproval = verifyA04IndependentApproval({
+    rootDir: cwd, sourceSha, hostId: process.env.USV01_HOST_ID || '',
+    catalogPath: path.join(cwd,catalog),
+    receiptPath: process.env.USV_A04_REVIEWED_RECEIPT_FILE,
+    approvalPath: process.env.USV_A04_REVIEW_DECISION_FILE,
+    trustedReviewerPublicKeyPath: process.env.USV_A04_TRUSTED_REVIEWER_PUBLIC_KEY_FILE
+  });
+  console.log('USV_A04_REVIEW_SIGNATURE_ACCEPTED: ' + independentApproval.approvalId +
+    ' (cryptographic check only; human trust-anchor authorization remains external)');
 
   // Preserve only the approved subscription and research flags. Billing/API
   // tokens never enter child processes through environment variables.
