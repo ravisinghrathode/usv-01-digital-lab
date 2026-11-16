@@ -7,9 +7,9 @@ import {readFile, writeFile, mkdir, appendFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
-import {validateRegister, REGISTER_FILE} from '../external-software-register.mjs';
+import {validateRegister, REGISTER_FILE} from './external-software-register.mjs';
 
-export const QUEUE_FILE=fileURLToPath(new URL('../../references/third-party-static-audits/A26_ALL_97_REVIEW_QUEUE_2026-11-17.json',import.meta.url));
+export const QUEUE_FILE=fileURLToPath(new URL('../references/third-party-static-audits/A26_ALL_97_REVIEW_QUEUE_2026-11-17.json',import.meta.url));
 const SHA=/^[a-f0-9]{40}$/;
 const REPO=/^[A-Za-z0-9_.-]{1,100}\/[A-Za-z0-9_.-]{1,100}$/;
 const LICENSE=/^(?:LICEN[CS]E(?:[-._].*)?|COPYING(?:[-._].*)?)$/i;
