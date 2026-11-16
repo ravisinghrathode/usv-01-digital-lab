@@ -10,3 +10,22 @@ For a qualified external review, an operator must provide `trustedReviewers` sep
 The tests use **ephemeral synthetic Ed25519 keys**; they are not real professional certifications. No real tank-test/reference/solver work was performed; all vessel engineering releases stay `HOLD`.
 
 Milestone M05/#105 remains open pending source-authenticated numerical benchmarks, solver-side signed/hardware-attested execution receipts, qualified independent inspection and director authorization.
+
+## Private reference artifact byte admission
+
+`src/core/verification/LocalReferenceAdmission.ts` adds a hash-only
+local reference check. It verifies SHA-256 of **actual local file bytes** under
+an operator-approved root; rejects path traversal, absolute paths, symlinks,
+oversized/empty files, duplicate IDs, invalid metadata and changed bytes.
+
+An HTTPS link, declared rights label, hash match and publication edition are
+**not** evidence of publisher authority, professional applicability or legal
+permission to ingest copyrighted/licensed documents. The results deliberately
+retain `sourcePublisherAuthenticated:false`,
+`rightsVerified:false`, and `engineeringReleaseApproved:false`.
+
+Use this before asking a qualified external reviewer to inspect an actual
+source file and bind that review to the exact SHA. No reference document bytes
+or private file paths are included in emitted admission receipts; do not put
+private source files in GitHub or send them to an unapproved model provider.
+This preprocessor does not itself satisfy the M05 source-authentication gate.
