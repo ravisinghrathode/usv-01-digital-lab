@@ -4,6 +4,7 @@ import {ExternalLink,Search,GitBranch,Clock,ShieldAlert} from 'lucide-react';
 import curatedJson from '../../references/repository-scout/2026-11-15-curated.json';
 import allJson from '../../references/repository-scout/2026-11-15-all-search-hits.json';
 import {ExternalSoftwareRegisterView} from './ExternalSoftwareRegisterView';
+import governedRegister from '../data/externalSoftwareRegister.json';
 
 type Curated=typeof curatedJson.records[number];
 type Found=typeof allJson.records[number];
@@ -51,7 +52,7 @@ export const RepositoryResearchView:React.FC=()=>{
     ['live','Latest agent discoveries',live?.candidates.length||0],
     ['curated','Marine candidates',curatedJson.records.length],
     ['all','All discovered repos',allJson.records.length],
-    ['legacy','Legacy register',90]
+    ['legacy','Legacy register',governedRegister.records.length]
    ] as const).map(([id,label,count])=><button key={id} type="button" role="tab"
     aria-selected={lane===id} onClick={()=>select(id)}
     className={'rounded-lg border px-4 py-3 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300 '+
@@ -63,7 +64,7 @@ export const RepositoryResearchView:React.FC=()=>{
   {lane==='live'&&<p className="text-xs text-slate-300">{live?'Agent run '+live.runId+' · collected '+live.generatedAt+' · synced '+synced:'Waiting for the first automatic publication to the research-only GitHub branch.'} <button type="button" className="ml-2 text-sky-300 underline" onClick={()=>void refresh()}>Refresh latest feed</button></p>}
   {lane==='legacy'?<div role="tabpanel" aria-label="Legacy governed software catalogue">
    <p className="rounded border border-slate-700 bg-slate-900 p-3 text-xs text-slate-300">
-    These 90 previously tracked entries are a separate register. They are not the 380 latest search discoveries.
+    These {governedRegister.records.length} governed entries are a separate register. They are not the {allJson.records.length} latest search discoveries.
    </p>
    <ExternalSoftwareRegisterView/>
   </div>:<div role="tabpanel" aria-label="Discovered software repositories" className="space-y-4">
