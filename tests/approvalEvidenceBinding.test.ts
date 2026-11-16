@@ -27,7 +27,7 @@ describe('P0 gate evidence/content/source binding', () => {
   it('canonicalizes key ordering with stable SHA-256 and rejects NaN', () => {
     expect(sha256Evidence({ z: 2, a: 1 })).toBe(sha256Evidence({ a: 1, z: 2 }));
     expect(() => sha256Evidence({ bad: NaN })).toThrow(/Non-finite/);
-    expect(sha256Evidence(null)).toBe('74234e98afe7498fb5daf1f36ac2d78a95a6eabcf17d9d22bcb77eb7a1f4e948');
+    expect(sha256Evidence(null)).toBe('74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b');
   });
   it('rejects changed output, changed source, changed nonce and gate-substitution', () => {
     const g = gate();
