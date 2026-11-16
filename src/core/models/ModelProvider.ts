@@ -3,7 +3,7 @@ import { evaluateLabCommissioningPolicy } from '../mission-control/LabCommission
 import { selectA26SubscriptionModel } from '../mission-control/A26SubscriptionModelAccess.ts';
 import {
   CHATGPT_SOL_MODEL, GEMINI_HYDROGEN_MODEL, CODEX_CLI_MAX_PROMPT_CHARS, dualProviderEnabled,
-  geminiTransferAuthorized, codexFallbackReason
+  geminiTransferAuthorized, codexFallbackReason, recoverableGeminiCliFailure
 } from './DualSubscriptionRoutingPolicy.ts';
 
 
@@ -814,9 +814,9 @@ export class ModelProviderRouter {
 
   public async generate(request: ModelPromptRequest, config: ModelConfig): Promise<ModelPromptResponse> {
     const isTestMode = isTestExecutionEnvironment();
-    // A role explicitly pinned to the signed-in ChatGPT/Codex CLI cannot be
-    // redirected to Gemini (or a billable API) by deployment environment flags.
-    // A missing CLI/login/pilot fails closed; it never falls back to Gemini.
+    // Codex remains primary. Only the source-reviewed fixed synthetic
+    // campaign may automatically transfer to an OAuth-only Gemini CLI; never
+    // to a paid API, arbitrary deployment override or engineering authority.
     const explicitProvider =
       typeof process !== 'undefined' ? process.env?.AI_REVIEW_PROVIDER?.toLowerCase() : undefined;
     let providerName = resolveModelProviderForTask(config, explicitProvider);
@@ -851,8 +851,9 @@ export class ModelProviderRouter {
         if (reason && geminiTransferAuthorized()) {
           const gemini = this.providers.get('gemini_cli');
           if (!gemini || !(await Promise.resolve(gemini.isAvailable()))) {
-            throw new Error('USV_GEMINI_FALLBACK_UNAVAILABLE: CODEX_' + reason +
-              ': Gemini subscription CLI not installed or reachable; recover Codex capacity or install signed-in Gemini CLI.');
+            throw new Error('USV_PROVIDER_RETRY_WAIT: CODEX_' + reason +
+              '; GEMINI_CLI_NOT_READY: preserve the pending agent checkpoint and retry' +
+              ' Codex when subscription capacity or transport recovers.');
           }
           // A separate persistent Gemini quota ledger prevents a Sol quota
           // outage from turning into unlimited unbudgeted secondary calls.
@@ -879,6 +880,13 @@ export class ModelProviderRouter {
                 throw new Error('USV_QUOTA_WAIT: GEMINI_PROVIDER_QUOTA_EXHAUSTED; retry after ' +
                   (hold.retryAfter || 'provider reset unknown'));
               }
+              if (recoverableGeminiCliFailure(secondaryError)) {
+                throw new Error('USV_PROVIDER_RETRY_WAIT: CODEX_' + reason +
+                  '; GEMINI_AUTH_OR_TRANSPORT_NOT_READY: OAuth-only Gemini CLI' +
+                  ' remains unavailable. Preserve checkpoint; retry Codex first.');
+              }
+              // Non-transient failures (policy/safety refusal, malformed output,
+              // schema mismatch) are NOT converted to a provider-capacity hold.
               throw secondaryError;
             }
           } else {
