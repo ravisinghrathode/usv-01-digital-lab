@@ -206,8 +206,19 @@ async function main(): Promise<void> {
     independentlyEngineeringValidated: false,
     engineeringReleaseApproved: false
   }, null, 2));
-  runResearchStep(root, env, 'Codex subscription status (zero-model)',
-    ['mission-control:preflight'], 10 * 60_000);
+  // A04 already bound this protected source to a private host and verified its
+  // recent operator-local subscription evidence. A temporary Codex CLI
+  // outage after that receipt must not prevent the automatic Gemini route.
+  // This check is diagnostic only; deterministic preflight and execution
+  // policy gates remain mandatory.
+  try {
+    runResearchStep(root, env, 'Codex subscription status (zero-model)',
+      ['mission-control:preflight'], 10 * 60_000);
+  } catch {
+    console.warn('CODEX_PREFLIGHT_UNAVAILABLE: continuing ONLY the fixed-source' +
+      ' synthetic research campaign; Gemini OAuth-only fallback or bounded' +
+      ' provider recovery will be attempted. No engineering authorization.');
+  }
   runResearchStep(root, env, '26-agent mandatory input and tool preflight',
     ['acceptance:codex-agents', '--', '--catalog',
       OWNER_SYNTHETIC_CATALOG, '--require-ready'], 30 * 60_000);
