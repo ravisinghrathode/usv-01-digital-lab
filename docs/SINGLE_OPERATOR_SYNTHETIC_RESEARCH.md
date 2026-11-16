@@ -164,3 +164,74 @@ Gemini transfer, relax the no-paid-API limit, or issue engineering acceptance.
 If the old legacy file is malformed, from a non-ancestor SHA, or uses a
 different catalog hash, the system refuses recovery rather than replaying or
 inventing evidence.
+
+
+## Continuous Codex → Gemini execution (2026-11-17)
+
+**Scope: the exact pinned synthetic catalog only**. The owner authorizes Codex
+primary (requested GPT-6 Sol) and optionally permits a Google-account signed-in
+Gemini CLI to receive **only** this fixed synthetic data. It does not authorize
+restricted naval/customer transfers, a paid AI API, an actual vessel action or
+human-independent engineering approval.
+
+The owner launcher now displays a second **optional** authorization prompt:
+
+`AUTHORIZE GEMINI SYNTHETIC TRANSFER`
+
+Type it only if you have reviewed that Gemini CLI uses your intended Google
+account's existing **OAuth session**, not an API key. Press Enter to remain
+Codex-only. This is **operator attestation**, not automated authentication
+proof. The secondary CLI must actually be installed and authenticated for
+Gemini fallback to work; the exact requested model `gemini-4-hydrogen` must
+appear in its model-usage metadata or that attempt fails closed. No silent
+model downgrade is accepted.
+
+The owner synthetic campaign raises the historically overconservative default
+12 requests/6 hours to a **bounded local research ceiling of 1000 attempts
+per 6-hour window**, shared on this host. Actual provider 429/usage errors
+remain independently enforced. It never purges or overwrites the existing
+persistent subscription ledgers. This is NOT a representation of available
+ChatGPT/Gemini tokens. User-managed limits for other/production routes remain
+unchanged.
+
+For quota/transport errors, the model router attempts Gemini only after
+explicit authorization. When both available subscription transports are
+quota-blocked, the local campaign records `WAITING_FOR_SUBSCRIPTION_CAPACITY`
+and periodically retries while the original owner Terminal stays active,
+bounded by a 10-hour wait ceiling and a 12-hour process ceiling. Pending
+agent checkpoints survive even when this session stops; an interrupted or
+unknown in-flight attempt still requires owner acknowledgment before the next
+session. Provider errors unrelated to capacity (safety refusal, invalid
+response, missing mandatory calculation, missing Gemini authentication,
+unknown model or incompatible JSON) are not bypassed with a mock or API key.
+
+**No previous results are lost on the code-update commit.** The existing
+checkpoint is migrated only if the previous exact SHA is a Git ancestor, the
+catalog hash and classification remain identical and old agent evidence
+passes strict validation. Before converting the old checkpoint to the new
+source SHA, a private, mode-0600 original-source snapshot is retained at
+`data/codex-26-agent-checkpoint-source-<oldSHA>.json`. The original
+A01/A02 and new A03–A09 results are marked *historical*, with their
+original SHA provenance preserved; neither is rerun merely because the
+software changed. The old failed A10 pending marker is never claimed as a
+success. In the new source, roles from A10 onward are new model attempts
+whose actual Codex/Gemini provider and model are included in the journal.
+
+Run after merging, updating Mac `main` and generating a fresh local A04
+`PASS_UNATTESTED` preflight:
+
+```sh
+npm run mission-control:owner-research -- --resume --ack-uncertain
+```
+
+Type the original `RUN 26 SYNTHETIC AGENTS` owner phrase and, only after
+confirming Google OAuth login, the new optional Gemini phrase. Only one
+interactive owner launch is required for the resumed session. While running,
+watch `data/codex-26-agent-checkpoint.json` or
+`data/codex-26-agent-resume-progress.json` from another Terminal.
+
+**Limitations:** A Terminal session that is killed, the Mac being off,
+missing/unauthorized Gemini CLI, or both providers exceeding the bounded
+wait can still interrupt progress. No unsafe service/daemon has been
+installed to bypass the owner TTY authorization. Re-entry from its private
+checkpoint remains available and does not replay completed successes.
