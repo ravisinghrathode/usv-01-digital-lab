@@ -49,7 +49,7 @@
     "admin:provision-staff": "tsx scripts/admin/provision-staff-credential.ts",
     "governance:manifest": "tsx scripts/governance/release-manifest.ts",
     "prepare": "node -e \"const fs = require('fs'); try { fs.copyFileSync('scripts/pre-push.sh', '.git/hooks/pre-push'); fs.chmodSync('.git/hooks/pre-push', 0o755); } catch {}\" || true",
-    "mission-control:test": "vitest run tests/subscriptionCliAdapter.test.ts tests/gitRevisionGuard.test.ts tests/missionControlCoordinator.test.ts tests/aiBillingPolicy.test.ts tests/quotaResilience.test.ts",
+    "mission-control:test": "vitest run tests/subscriptionCliAdapter.test.ts tests/gitRevisionGuard.test.ts tests/missionControlCoordinator.test.ts tests/aiBillingPolicy.test.ts tests/quotaResilience.test.ts tests/ownerSyntheticResearchGate.test.ts",
     "mission-control:preflight": "tsx scripts/mission-control/preflight.ts",
     "mission-control:model-health": "tsx scripts/mission-control/dual-model-health.ts",
     "mission-control:gemini-catalog": "tsx scripts/mission-control/verify-gemini-catalog.ts",
@@ -72,7 +72,8 @@
     "test:aistudio-startup": "node scripts/aistudio/smoke.mjs",
     "academy:plan": "tsx scripts/run-agent-academy.ts plan",
     "academy:status": "tsx scripts/run-agent-academy.ts status",
-    "academy:study": "tsx scripts/run-agent-academy.ts --execute"
+    "academy:study": "tsx scripts/run-agent-academy.ts --execute",
+    "mission-control:owner-research": "tsx scripts/mission-control/owner-synthetic-commission.ts"
   },
   "dependencies": {
     "@google/genai": "^3.1.0",
