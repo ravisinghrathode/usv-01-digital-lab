@@ -358,20 +358,13 @@ export class GeminiCliProvider implements IModelProvider {
 // Subscription-authenticated Codex CLI (local, read-only; NO model API credential).
 // Codex is an advisory synthesis provider, never independent engineering acceptance.
 // -----------------------------------------------------------------------------------------
-export class CodexCliProvider implements IModelProvider {
-  name = 'codex_cli';
-
-  isAvailable(): boolean {
-    return typeof process !== 'undefined' &&
-      !isPaidAiApiAllowed() &&
-      evaluateLabCommissioningPolicy(process.env).permitted;
-  }
-
-  async generateText(request: ModelPromptRequest, _config?: ModelConfig): Promise<ModelPromptResponse> {
-    if (!this.isAvailable()) {
-      throw new Error('Codex CLI requires an explicitly enabled subscription pilot with paid API disabled.');
-    }
-    const prompt = [
+/**
+ * Exact Codex CLI input, including every preserved upstream advisory and
+ * preliminary deterministic tool trace. Exported for zero-token regression
+ * tests so they exercise the actual production prompt, not a copied template.
+ */
+export function buildCodexSubscriptionPrompt(request: ModelPromptRequest): string {
+  return [
       'You are executing a bounded USV-01 specialist engineering agent synthesis task.',
       'Your output is advisory, cannot approve a design or claim independent verification.',
       'Never invent tools, test results, physical parameters or evidence. Preserve TBD.',
@@ -385,6 +378,23 @@ export class CodexCliProvider implements IModelProvider {
       'USER TASK:', request.userPrompt,
       'CONTEXT JSON:', JSON.stringify(request.context)
     ].join('\n\n');
+
+}
+
+export class CodexCliProvider implements IModelProvider {
+  name = 'codex_cli';
+
+  isAvailable(): boolean {
+    return typeof process !== 'undefined' &&
+      !isPaidAiApiAllowed() &&
+      evaluateLabCommissioningPolicy(process.env).permitted;
+  }
+
+  async generateText(request: ModelPromptRequest, _config?: ModelConfig): Promise<ModelPromptResponse> {
+    if (!this.isAvailable()) {
+      throw new Error('Codex CLI requires an explicitly enabled subscription pilot with paid API disabled.');
+    }
+    const prompt = buildCodexSubscriptionPrompt(request);
     if (prompt.length > CODEX_CLI_MAX_PROMPT_CHARS) {
       // Never log prompt text: only component lengths so the operator can
       // identify redundant context without disclosing client/naval details.
