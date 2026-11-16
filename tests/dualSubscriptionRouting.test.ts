@@ -1,5 +1,6 @@
 import {afterEach,describe,expect,it} from 'vitest';
-import {ModelProviderRouter, type IModelProvider, type ModelPromptResponse}
+import fs from 'node:fs';
+import {ModelProviderRouter, GeminiCliProvider, type IModelProvider, type ModelPromptResponse}
   from '../src/core/models/ModelProvider.ts';
 import {MASTER_AGENTS} from '../src/core/agents/definitions.ts';
 import {validatePilotRequest,sanitizedSubscriptionEnvironment,SAFE_ROLES}
@@ -146,5 +147,33 @@ describe('26 specialist dual subscription transport policy',()=>{
     expect(sanitized.OPENAI_API_KEY).toBeUndefined();
     expect(sanitized.GOOGLE_GENAI_USE_VERTEXAI).toBeUndefined();
     expect(sanitized.USV_ALLOW_PAID_AI_API).toBe('false');
+  });
+
+  it('enforces OAuth-only Gemini CLI policy with no API credentials in real headless transport arguments',async()=>{
+    optInGemini();
+    process.env.GEMINI_API_KEY='DO_NOT_SEND';
+    process.env.GEMINI_CLI_SYSTEM_SETTINGS_PATH='/tmp/UNTRUSTED-OVERRIDE';
+    let observed=false;
+    const cli=new GeminiCliProvider({runner:async(_binary,args,options)=>{
+      const policy=options.env.GEMINI_CLI_SYSTEM_SETTINGS_PATH!;
+      expect(fs.existsSync(policy)).toBe(true);
+      expect(JSON.parse(fs.readFileSync(policy,'utf8')).security.auth.enforcedType)
+        .toBe('oauth-personal');
+      expect(options.env.GEMINI_API_KEY).toBeUndefined();
+      expect(options.env.GEMINI_CLI_SYSTEM_SETTINGS_PATH)
+        .not.toBe('/tmp/UNTRUSTED-OVERRIDE');
+      expect(args).toContain(GEMINI_HYDROGEN_MODEL);
+      expect(args).toContain('plan');
+      observed=true;
+      return {stdout:JSON.stringify({
+        response:JSON.stringify({disciplineSummary:'synthetic, unverified'}),
+        stats:{models:{[GEMINI_HYDROGEN_MODEL]:{}}}
+      }),stderr:''};
+    }});
+    const response=await cli.generateText(prompt,{modelName:GEMINI_HYDROGEN_MODEL});
+    expect(observed).toBe(true);
+    expect(response.providerUsed).toBe('gemini_cli');
+    expect(response.modelUsed).toBe(GEMINI_HYDROGEN_MODEL);
+    expect(response.evidenceValid).toBe(false);
   });
 });
