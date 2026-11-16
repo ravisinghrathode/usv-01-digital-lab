@@ -234,4 +234,44 @@ describe('26 Codex agent interrupted-campaign checkpoint recovery', () => {
     cp.completed[0].modelIdentifier = 'gemini-4-hydrogen';
     expect(verifyCheckpoint(cp, binding).completedCount).toBe(1);
   });
+
+  it('records all 26 verified Hydrogen transport receipts when operator authorizes synthetic Gemini transfer', async () => {
+    const keys = [
+      'AI_REVIEW_PROVIDER', 'USV_SUBSCRIPTION_PILOT', 'USV_ALLOW_PAID_AI_API',
+      'USV_LAB_SCOPE', 'USV_DUAL_PROVIDER_ROUTING', 'USV_GEMINI_FALLBACK_APPROVED',
+      'USV_GEMINI_OAUTH_REVIEWED', 'USV_GEMINI_DATA_CLASSIFICATION'
+    ];
+    const prior = Object.fromEntries(keys.map(key => [key, process.env[key]]));
+    try {
+      Object.assign(process.env, {
+        AI_REVIEW_PROVIDER: 'codex_cli',
+        USV_SUBSCRIPTION_PILOT: 'enabled',
+        USV_ALLOW_PAID_AI_API: 'false',
+        USV_LAB_SCOPE: 'RESEARCH_ONLY',
+        USV_DUAL_PROVIDER_ROUTING: 'enabled',
+        USV_GEMINI_FALLBACK_APPROVED: 'true',
+        USV_GEMINI_OAUTH_REVIEWED: 'true',
+        USV_GEMINI_DATA_CLASSIFICATION: 'PUBLIC_NON_SENSITIVE'
+      });
+      const run = async (id: string, input: AgentExecutionInput) => ({
+        ...sourceBoundOutput(specs.find(x => x.id === id)!, input),
+        provider: 'gemini_cli', modelIdentifier: 'gemini-4-hydrogen'
+      });
+      const allowed = await runLiveAgentMatrix(cases, run, { dependencyAware: true });
+      expect(allowed.liveProviderRuns).toBe(26);
+      expect(allowed.providerOperationalMatrixComplete).toBe(true);
+      expect(allowed.findings.every(x => x.provider === 'gemini_cli')).toBe(true);
+      expect(allowed.independentlyEngineeringValidated).toBe(false);
+      expect(allowed.engineeringReleaseApproved).toBe(false);
+      delete process.env.USV_GEMINI_FALLBACK_APPROVED;
+      const denied = await runLiveAgentMatrix(cases, run, { dependencyAware: true });
+      expect(denied.liveProviderRuns).toBe(0);
+      expect(denied.providerOperationalMatrixComplete).toBe(false);
+    } finally {
+      for (const [key,value] of Object.entries(prior)) {
+        if (value === undefined) delete process.env[key];
+        else process.env[key] = value;
+      }
+    }
+  });
 });
