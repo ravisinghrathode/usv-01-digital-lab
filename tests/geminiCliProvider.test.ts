@@ -43,7 +43,7 @@ describe('Gemini CLI operator-authenticated provider',()=>{
     const auth=new GeminiCliProvider({runner:async()=>({
       stdout:JSON.stringify({response:null,error:{type:'FatalAuthenticationError',message:'login',code:41}}),stderr:''
     })});
-    await expect(auth.generateText(request)).rejects.toThrow(/provider error/);
+    await expect(auth.generateText(request)).rejects.toThrow(/GEMINI_CLI_AUTH_REQUIRED/);
     const malformed=new GeminiCliProvider({runner:async()=>({stdout:'not json',stderr:''})});
     await expect(malformed.generateText(request)).rejects.toThrow(/documented JSON envelope/);
   });
