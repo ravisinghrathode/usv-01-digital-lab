@@ -23,6 +23,7 @@ function fixture() {
   const trustedReviewerPublicKeyPath = path.join(external, 'reviewer-pub.pem');
   const receipt = {
     schemaVersion: 'USV-A04-HOST-PREFLIGHT-1.0',
+    observedAtUtc: '2026-11-17T01:30:00.000Z',
     type: 'NON_SECRET_LOCAL_OBSERVATION_UNATTESTED',
     sourceSha, expectedSourceSha: sourceSha,
     stableHostAliasSha256: sha256Hex(hostId),
@@ -34,7 +35,9 @@ function fixture() {
     },
     decision: {
       status: 'PASS_UNATTESTED', blockerCodes: [],
-      independentlyAttested: false
+      independentlyAttested: false,
+      authenticatedModelExecution: false, a04Complete: false,
+      a05Authorized: false, vesselEngineeringReleaseAuthorized: false
     }
   };
   const receiptBytes = Buffer.from(JSON.stringify(receipt) + '\n');
