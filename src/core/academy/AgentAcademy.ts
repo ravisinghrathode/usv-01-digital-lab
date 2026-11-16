@@ -98,6 +98,12 @@ export function buildAgentAcademyCurricula(): AgentCurriculum[] {
 
 export interface StudyAttempt {
   canonicalId: string;
+  /** Registered execution identity, distinct from the curriculum alias. */
+  runtimeAgentId?: string;
+  /** Requested Codex model is not proof of actual model entitlement/usage. */
+  requestedModel?: string;
+  /** Vendor usage metadata is not independent model identity attestation. */
+  modelIdentityVerified?: false;
   curriculumVersion: string;
   sourceSha: string;
   stage: 'OPEN_BOOK_STUDY' | 'WORKED_EXERCISE' | 'BLIND_ASSESSMENT';

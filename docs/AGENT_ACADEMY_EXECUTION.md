@@ -36,6 +36,9 @@ All commands from repository root on the exact source revision to be assessed:
 1. Generate curricula and baseline status at zero model cost: npm run academy:plan ; npm run academy:status
 2. Validate implementation: npx vitest run tests/agentAcademy.test.ts ; npm run lint
 3. On isolated trusted host, after source/rights preflight:
+   - Set `USV_DUAL_PROVIDER_ROUTING=enabled` alongside the required research-only Codex subscription policy to explicitly request primary `gpt-6.1-sol` on all 26 study workers. The worker uses its registered runtime ID, not Axx curriculum alias. The study receipt records a **requested** model but cannot independently verify the executed model identity.
+   - Any Gemini 4 Hydrogen quota fallback is controlled by the separate, already documented *public-only* lesson export policy. It never transfers the original Codex prompt, licensed source text, private design records or unseen exams. A requested model string is not proof of account entitlement.
+   - The Academy login check strips API-key and billing environment variables before checking the subscription authentication mode.
    - codex login status (must be ChatGPT subscription mode, not API key)
    - AI_REVIEW_PROVIDER=codex_cli USV_SUBSCRIPTION_PILOT=enabled USV_ALLOW_PAID_AI_API=false USV_LAB_SCOPE=RESEARCH_ONLY npm run academy:study
    - Optional pilot: append -- --agents A05,A12,A13,A14,A17
