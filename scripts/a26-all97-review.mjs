@@ -12,7 +12,7 @@ import {validateRegister, REGISTER_FILE} from '../external-software-register.mjs
 export const QUEUE_FILE=fileURLToPath(new URL('../../references/third-party-static-audits/A26_ALL_97_REVIEW_QUEUE_2026-11-17.json',import.meta.url));
 const SHA=/^[a-f0-9]{40}$/;
 const REPO=/^[A-Za-z0-9_.-]{1,100}\/[A-Za-z0-9_.-]{1,100}$/;
-const LICENSE=/^(?:LICEN[CS]E(?:[-._].*)?|COPYING(?:[-._].*)?|NOTICE(?:[-._].*)?)$/i;
+const LICENSE=/^(?:LICEN[CS]E(?:[-._].*)?|COPYING(?:[-._].*)?)$/i;
 const MANIFEST=/^(?:pyproject\.toml|uv\.lock|poetry\.lock|Pipfile(?:\.lock)?|requirements[^/]*\.txt|package(?:-lock)?\.json|pnpm-lock\.yaml|yarn\.lock|bun\.lock|Cargo\.(?:toml|lock)|go\.(?:mod|sum)|pom\.xml|gradle\.properties|build\.gradle(?:\.kts)?|Gemfile(?:\.lock)?|environment\.ya?ml|setup\.(?:py|cfg)|Dockerfile(?:\..*)?|docker-compose.*|CMakeLists\.txt|Makefile|platformio\.ini|.*\.sln)$/i;
 const P1=new Set(['cybergalactic/MSS','cybergalactic/PythonVehicleSimulator','SINTEF/FEEMS','ntnu-itk-autonomous-ship-lab/colav-simulator','ktuukkan/marine-api','janibert1/ship-hull-generator','CaptanG/striptheory','Neumi/open_echo'].map(x=>x.toLowerCase()));
 
