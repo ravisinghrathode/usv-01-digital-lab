@@ -101,7 +101,7 @@ export function recoverableGeminiCliFailure(error: unknown): boolean {
   if (/UNSAFE|REFUSAL|SAFETY|POLICY_DENIED|MODEL_NOT_VERIFIED|INVALID_JSON|INVALID_SCHEMA|INVALID_OUTPUT|PROVIDER_MISMATCH|MANDATORY_CALCULATION/i.test(message.replace(/\s+/g, ''))) {
     return false;
   }
-  return /\b(?:ENOENT|ENOTFOUND|ECONNRESET|ECONNREFUSED|ETIMEDOUT|EAI_AGAIN)\b|\b(?:login required|not logged in|sign in required|not authenticated|authentication failed|session expired|credentials missing|network unreachable|temporarily unavailable|service unavailable|connection refused|request timed out)\b|\bHTTP[ :]*50[234]\b/i.test(message);
+  return /GEMINI_CLI_AUTH_REQUIRED|GEMINI_CLI_TRANSPORT_UNAVAILABLE|\b(?:ENOENT|ENOTFOUND|ECONNRESET|ECONNREFUSED|ETIMEDOUT|EAI_AGAIN)\b|\b(?:login required|not logged in|sign in required|not authenticated|authentication failed|session expired|credentials missing|network unreachable|temporarily unavailable|service unavailable|connection refused|request timed out)\b|\bHTTP[ :]*50[234]\b/i.test(message);
 }
 
 
