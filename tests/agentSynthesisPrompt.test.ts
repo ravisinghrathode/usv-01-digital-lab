@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { MASTER_AGENTS } from '../src/core/agents/definitions.ts';
 import { buildAgentSynthesisPrompt } from '../src/core/engine/AgentSynthesisPrompt.ts';
+import { buildCodexSubscriptionPrompt, CodexCliProvider } from '../src/core/models/ModelProvider.ts';
+import { CODEX_CLI_MAX_PROMPT_CHARS } from '../src/core/models/DualSubscriptionRoutingPolicy.ts';
 import type { AgentExecutionInput } from '../src/core/types/agent.ts';
 
 const a23 = MASTER_AGENTS.find(a => a.canonicalId === 'A23')!;
@@ -63,32 +65,48 @@ describe('lossless compact prompt for A23 independent reviewer', () => {
     expect(request.context).not.toHaveProperty('userNotesUntrusted');
   });
 
-  it('keeps representative large six-dependency review inside existing 24k guard with no truncation', () => {
+  it('preserves all six upstream receipts and tool evidence in the REAL Codex prompt', () => {
     const request = buildAgentSynthesisPrompt(a23, inputForReviewer(), evidence, 'corr-a23');
-    const codexEnvelope = [
-      'You are executing a bounded USV-01 specialist engineering agent synthesis task.',
-      'Your output is advisory, cannot approve a design or claim independent verification.',
-      'Never invent tools, test results, physical parameters or evidence. Preserve TBD.',
-      'Return ONLY one valid JSON object with every required field in this exact structure:',
-      '{"disciplineSummary":"string","keyMetrics":{},"designDecisions":[],"assumptions":[],"openTbdItems":[],"requiresDirectorApproval":true}',
-      'keyMetrics values may only use supplied inputs or actual deterministic Tool Evidence. Use an empty object when no supported metric exists.',
-      'Every designDecisions item and every openTbdItems item must be a plain string, never an object or array. Every keyMetrics value must be one string, number, or boolean; omit unsupported values instead of returning null, objects, or arrays. In particular, omit unknown stability metrics; never use null as a placeholder.',
-      'Each assumption must contain id, category (ASSUMPTION|FACT|CALCULATION|TBD|PROPOSAL), description, sourceReference, impactIfViolated, and isBaseline. Never report unsupported FACT or CALCULATION claims; use TBD or PROPOSAL.',
-      'Include optional metricProvenance only when every cited source reference is present in the input or Tool Evidence. Never claim that a model ran a tool.',
-      'SYSTEM INSTRUCTIONS:', request.systemInstructions,
-      'USER TASK:', request.userPrompt,
-      'CONTEXT JSON:', JSON.stringify(request.context)
-    ].join('\n\n');
-    expect(codexEnvelope.length).toBeLessThanOrEqual(24_000);
+    const codexEnvelope = buildCodexSubscriptionPrompt(request);
+    expect(codexEnvelope.length).toBeLessThanOrEqual(CODEX_CLI_MAX_PROMPT_CHARS);
     expect(codexEnvelope).toContain('INDEP-REV-23');
     expect(codexEnvelope).toContain('UNVERIFIED_UPSTREAM_ADVISORY');
     expect(codexEnvelope).toContain('preliminaryCalculation35');
     expect(codexEnvelope).toContain('CONTROLLED_REVIEW_CONTEXT_SENTINEL');
     expect(codexEnvelope).toContain('UNTRUSTED_USER_NOTES_SENTINEL');
-    // No content was dropped: repeated handoffs preserve full receipts.
     for (const dependency of a23.dependencies) {
       expect(codexEnvelope).toContain(dependency);
-      expect(codexEnvelope).toContain('Independent critical uncertainty 7');
     }
+    expect(codexEnvelope).toContain('Independent critical uncertainty 7');
   });
+
+  it('accepts a complete 25,836-char A23-size prompt without dropping any evidence', () => {
+    const request = buildAgentSynthesisPrompt(a23, inputForReviewer(), evidence, 'corr-a23');
+    const initial = buildCodexSubscriptionPrompt(request);
+    const supplemental = '\\n\\nAdditional synthetic trace notes: ';
+    // Reproduce the measured 25,836-character operator failure with the real
+    // A23 six-dependency context and tool payload, plus non-secret fixture text.
+    expect(initial.length + supplemental.length).toBeLessThan(25_836);
+    request.userPrompt += supplemental +
+      'X'.repeat(25_836 - initial.length - supplemental.length);
+    const prompt = buildCodexSubscriptionPrompt(request);
+    expect(prompt.length).toBe(25_836);
+    expect(prompt.length).toBeGreaterThan(24_000);
+    expect(prompt.length).toBeLessThan(CODEX_CLI_MAX_PROMPT_CHARS);
+    expect(prompt).toContain('preliminaryCalculation35');
+    for (const d of a23.dependencies) expect(prompt).toContain(d);
+    expect(prompt).toContain('X'.repeat(300));
+  });
+
+  it('continues to reject genuinely oversized Codex evidence without launching a model', async () => {
+    const request = buildAgentSynthesisPrompt(a23, inputForReviewer(), evidence, 'corr-a23');
+    request.userPrompt += 'X'.repeat(CODEX_CLI_MAX_PROMPT_CHARS);
+    const adapter = new CodexCliProvider();
+    // Only bypass availability precheck for the test: bounded rejection MUST
+    // happen before CLI import, quota reservation, or any model invocation.
+    adapter.isAvailable = () => true;
+    await expect(adapter.generateText(request)).rejects
+      .toThrow('bounded ' + CODEX_CLI_MAX_PROMPT_CHARS + '-character input');
+  });
+
 });
