@@ -1,16 +1,22 @@
 import { createHash } from 'node:crypto';
 import { AgentRegistry } from '../registry/AgentRegistry.ts';
 import { ExecutionEngine } from '../engine/ExecutionEngine.ts';
-import { advisoryHandoff, topologicalAgentOrder } from './TopologicalAgentCampaign.ts';
+import {
+  topologicalAgentOrder, advisoryReceiptFromOutput,
+  advisoryHandoffFromReceipts, type AgentAdvisoryReceipt
+} from './TopologicalAgentCampaign.ts';
 import type { AgentExecutionInput, AgentExecutionOutput } from '../types/agent.ts';
 
 export type AgentMatrixCases = Record<string, AgentExecutionInput>;
 export interface AgentRunFinding {
   canonicalId: string;
   runtimeId: string;
+  /** Source of this one trace; historical rows must not count toward current-SHA 26/26. */
+  originSourceSha?: string;
   inputTaskId?: string;
   dependencyIds?: string[];
   status: 'MISSING_CASE' | 'INVALID_INPUT' | 'BLOCKED_UPSTREAM' |
+    'HISTORICAL_LIVE_PROVIDER_EXECUTED_UNCERTIFIED' |
     'EXECUTION_FAILED' | 'NOT_LIVE_PROVIDER' | 'LIVE_PROVIDER_EXECUTED_UNCERTIFIED';
   startedAt?: string;
   completedAt?: string;
@@ -28,6 +34,7 @@ export interface AgentMatrixReport {
   generatedAt: string;
   totalAgents: number;
   liveProviderRuns: number;
+  historicalProviderRuns: number;
   findings: AgentRunFinding[];
   providerOperationalMatrixComplete: boolean;
   independentlyEngineeringValidated: false;
@@ -36,8 +43,16 @@ export interface AgentMatrixReport {
 export interface AgentMatrixOptions {
   /** For real cross-disciplinary runs, require completed live upstream roles. */
   dependencyAware?: boolean;
-  /** Called after each result; caller can journal every attempt before a crash. */
-  onFinding?: (finding: AgentRunFinding, completed: readonly AgentRunFinding[]) => Promise<void> | void;
+  /** Validated, ordered prefix of committed checkpoints; caller validates provenance. */
+  resume?: {
+    findings: AgentRunFinding[];
+    advisories: Record<string, AgentAdvisoryReceipt>;
+  };
+  /** Durable attempt marker must be written BEFORE invoking any model. */
+  beforeAgent?: (finding: AgentRunFinding, completed: readonly AgentRunFinding[]) => Promise<void> | void;
+  /** Journal both the verified finding and its bounded advisory handoff. */
+  onFinding?: (finding: AgentRunFinding, completed: readonly AgentRunFinding[],
+    advisory?: AgentAdvisoryReceipt) => Promise<void> | void;
 }
 
 /**
@@ -56,16 +71,37 @@ export async function runLiveAgentMatrix(
 ): Promise<AgentMatrixReport> {
   const specs = topologicalAgentOrder(AgentRegistry.getInstance().getAllAgents());
   const findings: AgentRunFinding[] = [];
-  const outputById = new Map<string, AgentExecutionOutput>();
+  const receipts = new Map<string, AgentAdvisoryReceipt>();
   const resultById = new Map<string, AgentRunFinding>();
+  const resumed = options.resume?.findings || [];
+  if (resumed.length > specs.length) throw new Error('Invalid resume: excess agents');
+  for (let i = 0; i < resumed.length; i++) {
+    const finding = resumed[i];
+    const spec = specs[i];
+    if (finding.runtimeId !== spec.id || finding.canonicalId !== spec.canonicalId ||
+        !['LIVE_PROVIDER_EXECUTED_UNCERTIFIED',
+          'HISTORICAL_LIVE_PROVIDER_EXECUTED_UNCERTIFIED'].includes(finding.status)) {
+      throw new Error('Invalid resume: non-successful or out-of-order agent result');
+    }
+    const advisory = options.resume?.advisories[spec.id];
+    if (!advisory || advisory.outputSha256 !== finding.outputDigestSha256 ||
+        advisory.dataClassification !== 'UNVERIFIED_UPSTREAM_ADVISORY' ||
+        advisory.engineeringReleaseApproved !== false) {
+      throw new Error('Invalid resume: missing or mismatched advisory receipt');
+    }
+    findings.push(finding);
+    resultById.set(spec.id, finding);
+    receipts.set(spec.id, advisory);
+  }
 
-  const publish = async (finding: AgentRunFinding): Promise<void> => {
+  const publish = async (finding: AgentRunFinding, advisory?: AgentAdvisoryReceipt): Promise<void> => {
     findings.push(finding);
     resultById.set(finding.runtimeId, finding);
-    await options.onFinding?.(finding, findings);
+    if (advisory) receipts.set(finding.runtimeId, advisory);
+    await options.onFinding?.(finding, findings, advisory);
   };
 
-  for (const spec of specs) {
+  for (const spec of specs.slice(resumed.length)) {
     const input = cases[spec.canonicalId];
     const finding: AgentRunFinding = {
       canonicalId: spec.canonicalId,
@@ -89,7 +125,9 @@ export async function runLiveAgentMatrix(
 
     if (options.dependencyAware) {
       const badDependencies = spec.dependencies.filter(dependencyId =>
-        resultById.get(dependencyId)?.status !== 'LIVE_PROVIDER_EXECUTED_UNCERTIFIED'
+        !['LIVE_PROVIDER_EXECUTED_UNCERTIFIED',
+          'HISTORICAL_LIVE_PROVIDER_EXECUTED_UNCERTIFIED']
+          .includes(resultById.get(dependencyId)?.status || '')
       );
       if (badDependencies.length) {
         finding.status = 'BLOCKED_UPSTREAM';
@@ -100,14 +138,17 @@ export async function runLiveAgentMatrix(
     }
 
     finding.startedAt = new Date().toISOString();
+    // On interrupted/ambiguous calls the next model run needs explicit owner consent.
+    await options.beforeAgent?.(finding, findings);
+    let advisory: AgentAdvisoryReceipt | undefined;
     try {
       const runInput: AgentExecutionInput = options.dependencyAware
         ? {
             ...input,
-            // The input's trusted physical parameters remain unchanged.
+            // Trusted physical parameters are never overwritten by model context.
             priorAgentOutputs: {
               ...(input.priorAgentOutputs || {}),
-              ...advisoryHandoff(spec, outputById)
+              ...advisoryHandoffFromReceipts(spec, receipts)
             }
           }
         : input;
@@ -144,13 +185,13 @@ export async function runLiveAgentMatrix(
         finding.failureReason = typeof error === 'string' ? error :
           'Not a complete authenticated Codex role execution with mandatory deterministic evidence';
       } else {
-        outputById.set(spec.id, output);
+        advisory = advisoryReceiptFromOutput(output);
       }
     } catch (error) {
       finding.status = 'EXECUTION_FAILED';
       finding.failureReason = error instanceof Error ? error.message : 'Unknown execution error';
     }
-    await publish(finding);
+    await publish(finding, advisory);
   }
 
   const complete = findings.length === 26 &&
@@ -160,6 +201,8 @@ export async function runLiveAgentMatrix(
     generatedAt: new Date().toISOString(),
     totalAgents: findings.length,
     liveProviderRuns: findings.filter(x => x.status === 'LIVE_PROVIDER_EXECUTED_UNCERTIFIED').length,
+    historicalProviderRuns: findings.filter(x => x.status ===
+      'HISTORICAL_LIVE_PROVIDER_EXECUTED_UNCERTIFIED').length,
     findings,
     providerOperationalMatrixComplete: complete,
     independentlyEngineeringValidated: false,
