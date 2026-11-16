@@ -23,9 +23,8 @@ export function getRandomHex(byteLength = 32): string {
   if (typeof globalThis !== 'undefined' && globalThis.crypto?.getRandomValues) {
     globalThis.crypto.getRandomValues(bytes);
   } else {
-    for (let i = 0; i < byteLength; i++) {
-      bytes[i] = Math.floor(Math.random() * 256);
-    }
+    // Never downgrade security-sensitive identifiers to Math.random().
+    throw new Error('Secure random generation unavailable; refusing to generate an approval identifier or key.');
   }
   return Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
 }
@@ -165,7 +164,7 @@ export function verifyApproverSignature(
   signingKey: string = getDirectorSigningKey()
 ): boolean {
   const signature = identity.tokenSignature || identity.tokenOrSignature;
-  if (!signature || typeof signature !== 'string') {
+  if (!signature || typeof signature !== 'string' || !/^[0-9a-f]{64}$/i.test(signature)) {
     return false;
   }
 
@@ -178,17 +177,8 @@ export function verifyApproverSignature(
     signingKey
   );
 
-  if (timingSafeEqual(signature.toLowerCase(), expectedSignature.toLowerCase())) {
-    return true;
-  }
-
-  if (
-    identity.serverVerifiedSignature &&
-    typeof identity.serverVerifiedSignature === 'string' &&
-    timingSafeEqual(signature.toLowerCase(), identity.serverVerifiedSignature.toLowerCase())
-  ) {
-    return true;
-  }
-
-  return false;
+  // serverVerifiedSignature is supplied alongside the request identity and
+  // is NOT independent evidence. Only a server-keyed MAC authenticates this
+  // gate, decision, role and timestamp tuple.
+  return timingSafeEqual(signature.toLowerCase(), expectedSignature.toLowerCase());
 }

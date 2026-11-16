@@ -29,6 +29,7 @@ export class ApprovalGateManager {
     const gate: HumanApprovalGate = {
       id,
       ...gateData,
+      proposedChanges: structuredClone(gateData.proposedChanges),
       state: 'PENDING',
       requestedAt: new Date().toISOString()
     };
@@ -47,15 +48,18 @@ export class ApprovalGateManager {
       }
     });
 
-    return gate;
+    return structuredClone(gate);
   }
 
+  // Read-only snapshots: callers must not be able to finalize a gate by
+  // mutating the object returned by a query or create call.
   public getGate(id: string): HumanApprovalGate | undefined {
-    return this.gates.get(id);
+    const gate = this.gates.get(id);
+    return gate ? structuredClone(gate) : undefined;
   }
 
   public getAllGates(): HumanApprovalGate[] {
-    return Array.from(this.gates.values());
+    return Array.from(this.gates.values(), gate => structuredClone(gate));
   }
 
   public getPendingGates(): HumanApprovalGate[] {
@@ -127,7 +131,7 @@ export class ApprovalGateManager {
     gate.state = decision;
     gate.decidedAt = new Date().toISOString();
     gate.decidedBy = `${identity.userName} (${identity.userId}) [${identity.role}]`;
-    gate.decidedByIdentity = identity;
+    gate.decidedByIdentity = structuredClone(identity);
     gate.directorNotes = directorNotes;
 
     this.auditLogger.log({
@@ -147,13 +151,13 @@ export class ApprovalGateManager {
 
     for (const listener of this.decisionListeners) {
       try {
-        listener(gate);
+        listener(structuredClone(gate));
       } catch (err) {
         console.error('ApprovalGateManager listener error:', err);
       }
     }
 
-    return gate;
+    return structuredClone(gate);
   }
 }
 
