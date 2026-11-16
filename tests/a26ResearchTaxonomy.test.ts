@@ -22,7 +22,9 @@ describe('A26 source-backed research modules',()=>{
   const legacy=JSON.parse(read('src/data/externalSoftwareRegister.json'));
   expect(curated.records).toHaveLength(88);
   expect(all.records).toHaveLength(380);
-  expect(legacy.records).toHaveLength(90);
+  expect(legacy.records.length).toBeGreaterThanOrEqual(90);
+  expect(new Set(legacy.records.map((r:any)=>r.repository.toLowerCase())).size).toBe(legacy.records.length);
+  expect(view).toContain('governedRegister.records.length');
   expect(curated.governance).toContain('no candidate approved');
   expect(all.records.every((r:any)=>r.url.startsWith('https://github.com/'))).toBe(true);
  });

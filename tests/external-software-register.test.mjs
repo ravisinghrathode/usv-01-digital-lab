@@ -1,4 +1,6 @@
 import test from 'node:test';
+// Exercise the replacement seven-repository intake in the existing offline Scout CI gate.
+import './external-research-intake.test.mjs';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
