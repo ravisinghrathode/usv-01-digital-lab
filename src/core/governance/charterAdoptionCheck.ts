@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHash, verify } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { AgentRegistry } from '../registry/AgentRegistry.ts';
@@ -17,6 +17,9 @@ export interface CharterAdoptionDecisionRecord {
   authorizerIdentity: string;
   delegationReference?: string;
   authenticatedSignatureReference: string;
+  // A non-secret reference is not proof of approval: signature must bind
+  // the full decision record to an independently configured trust root.
+  signatureBase64?: string;
   effectiveDateUtc: string;
   dissentResolved: boolean;
   disposition: 'ADOPTED_FOR_OPERATING_SPEC_ONLY' | 'HOLD' | 'REVIEW_REQUIRED';
@@ -41,6 +44,25 @@ export interface CharterAdoptionAudit {
 const SHA256_RE = /^sha256:[0-9a-f]{64}$/;
 const GIT_SHA_RE = /^[a-f0-9]{40}$/;
 
+/** Deterministic, explicit-order signed payload; excludes only the signature itself. */
+export function canonicalCharterAdoptionPayload(rec: CharterAdoptionDecisionRecord): string {
+  return JSON.stringify({
+    decisionId: rec.decisionId,
+    charterVersion: rec.charterVersion,
+    charterSha256: rec.charterSha256,
+    gitCommitSha: rec.gitCommitSha,
+    independentGovernanceReviewer: rec.independentGovernanceReviewer,
+    reviewerOrganization: rec.reviewerOrganization,
+    authorizerRole: rec.authorizerRole,
+    authorizerIdentity: rec.authorizerIdentity,
+    delegationReference: rec.delegationReference ?? null,
+    authenticatedSignatureReference: rec.authenticatedSignatureReference,
+    effectiveDateUtc: rec.effectiveDateUtc,
+    dissentResolved: rec.dissentResolved,
+    disposition: rec.disposition
+  });
+}
+
 export function computeCharterDigest(rootDir = process.cwd()): {
   charterText: string;
   selfCritiqueText: string;
@@ -56,6 +78,9 @@ export function evaluateCharterAdoptionReadiness(options?: {
   rootDir?: string;
   expectedCommitSha?: string;
   decisionRecord?: CharterAdoptionDecisionRecord;
+  // Must come from the qualified operator's independent trust registry,
+  // never from the submitted decision record or an AI-generated fixture.
+  trustedDirectorPublicKeyPem?: string;
 }): CharterAdoptionAudit {
   const rootDir = options?.rootDir ?? process.cwd();
   const { charterText, selfCritiqueText, charterSha256 } = computeCharterDigest(rootDir);
@@ -173,6 +198,29 @@ export function evaluateCharterAdoptionReadiness(options?: {
     }
     if (rec.authorizerRole === 'DELEGATED_GOVERNANCE_AUTHORITY' && !rec.delegationReference?.trim()) {
       recordIssues.push('Delegated authority requires explicit delegationReference');
+    }
+
+    // Merely naming a signature or a reviewer is not authentication. A
+    // configured, independent Ed25519 trust root must verify this exact
+    // decision, exact charter digest and exact source revision.
+    const trustedKey = options?.trustedDirectorPublicKeyPem;
+    const signature = rec.signatureBase64;
+    if (!trustedKey?.trim()) {
+      recordIssues.push('Missing independently trusted Director Ed25519 public key');
+    }
+    if (!signature?.trim()) {
+      recordIssues.push('Missing actual Ed25519 signature (reference alone is insufficient)');
+    }
+    if (trustedKey?.trim() && signature?.trim()) {
+      let validSignature = false;
+      try {
+        const raw = Buffer.from(signature, 'base64');
+        validSignature = raw.length === 64 &&
+          verify(null, Buffer.from(canonicalCharterAdoptionPayload(rec), 'utf8'), trustedKey, raw);
+      } catch { /* malformed key or signature is a hard reject */ }
+      if (!validSignature) {
+        recordIssues.push('Director signature invalid for exact adoption decision and trusted key');
+      }
     }
     if (!Number.isFinite(Date.parse(rec.effectiveDateUtc))) {
       recordIssues.push('Invalid effectiveDateUtc');
