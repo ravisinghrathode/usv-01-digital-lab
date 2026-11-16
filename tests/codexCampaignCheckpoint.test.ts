@@ -221,6 +221,7 @@ describe('26 Codex agent interrupted-campaign checkpoint recovery', () => {
   it('rejects fake Hydrogen data in a checkpoint; genuine Gemini transport remains uncertified', () => {
     const cp = emptyCheckpoint(binding);
     const fake = { ...legacyResult(specs[0]),
+      status: 'LIVE_PROVIDER_EXECUTED_UNCERTIFIED' as const,
       originSourceSha: currentSha, provider: 'gemini_cli',
       modelIdentifier: 'gemini-3-flash' };
     cp.completed = [fake];
