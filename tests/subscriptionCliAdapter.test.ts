@@ -3,6 +3,7 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { assertUsvRepositoryWorkingDirectory, sanitizedSubscriptionEnvironment, validatePilotRequest, SubscriptionCliUnavailable } from '../src/core/mission-control/SubscriptionCliAdapter.ts';
+import { CODEX_CLI_MAX_PROMPT_CHARS } from '../src/core/models/DualSubscriptionRoutingPolicy.ts';
 
 const input = {
   role: 'reviewer' as const,
@@ -63,6 +64,35 @@ describe('Subscription CLI pilot guards', () => {
         ['USV_LAB_SCOPE', saved.scope],
         ['USV_ENGINEERING_RELEASE_AUTHORIZED', saved.release]
       ] as Array<[string, string | undefined]>) {
+        if (value === undefined) delete process.env[key];
+        else process.env[key] = value;
+      }
+    }
+  });
+
+  it('allows complete A23-size research prompts and rejects requests beyond the shared hard cap', () => {
+    const keys = ['USV_SUBSCRIPTION_PILOT','AI_REVIEW_PROVIDER',
+      'USV_ALLOW_PAID_AI_API','USV_LAB_SCOPE',
+      'USV_ENGINEERING_RELEASE_AUTHORIZED'];
+    const old = Object.fromEntries(keys.map(key => [key, process.env[key]]));
+    try {
+      process.env.USV_SUBSCRIPTION_PILOT = 'enabled';
+      process.env.AI_REVIEW_PROVIDER = 'codex_cli';
+      process.env.USV_ALLOW_PAID_AI_API = 'false';
+      process.env.USV_LAB_SCOPE = 'RESEARCH_ONLY';
+      delete process.env.USV_ENGINEERING_RELEASE_AUTHORIZED;
+      expect(CODEX_CLI_MAX_PROMPT_CHARS).toBe(48_000);
+      expect(() => validatePilotRequest({ ...input,
+        prompt: 'p'.repeat(25_836) })).not.toThrow();
+      expect(() => validatePilotRequest({ ...input,
+        prompt: 'p'.repeat(CODEX_CLI_MAX_PROMPT_CHARS) })).not.toThrow();
+      expect(() => validatePilotRequest({ ...input,
+        prompt: 'p'.repeat(CODEX_CLI_MAX_PROMPT_CHARS + 1) }))
+        .toThrow('Invalid prompt');
+      expect(() => validatePilotRequest({ ...input,
+        prompt: '  ' })).toThrow('Invalid prompt');
+    } finally {
+      for (const [key, value] of Object.entries(old)) {
         if (value === undefined) delete process.env[key];
         else process.env[key] = value;
       }
