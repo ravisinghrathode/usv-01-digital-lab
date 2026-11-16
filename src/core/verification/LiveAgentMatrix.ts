@@ -62,6 +62,9 @@ export interface AgentMatrixOptions {
  *
  * Offline preflights and simulated Vitest calls are NOT operational evidence.
  * A live provider response alone is NOT engineering reference validation.
+ * Gemini is permitted only with separately authorized transport, a real
+ * live response and verified exact Hydrogen model metadata; never on tests,
+ * mock calculations, policy refusal or unverified model provenance.
  */
 export async function runLiveAgentMatrix(
   cases: AgentMatrixCases,
@@ -171,7 +174,9 @@ export async function runLiveAgentMatrix(
         finding.toolTraces!.some(tool => tool.toolId === toolId && tool.verified));
 
       const live = output.providerExecutionMode === 'LIVE_AI_GENERATION' &&
-        output.provider === 'codex_cli' &&
+        (output.provider === 'codex_cli' ||
+         (output.provider === 'gemini_cli' &&
+          output.modelIdentifier === 'gemini-4-hydrogen')) &&
         finding.requiredToolsVerified &&
         output.agentId === spec.id &&
         output.taskId === input.taskId &&
