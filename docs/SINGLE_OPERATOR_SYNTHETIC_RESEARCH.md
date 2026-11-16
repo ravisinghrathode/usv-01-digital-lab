@@ -235,3 +235,54 @@ missing/unauthorized Gemini CLI, or both providers exceeding the bounded
 wait can still interrupt progress. No unsafe service/daemon has been
 installed to bypass the owner TTY authorization. Re-entry from its private
 checkpoint remains available and does not replay completed successes.
+
+## Phase 2: read-only reconciliation and Agent Academy handoff
+
+The currently running Mac campaign is pinned to its own source SHA. **Do not pull
+a new software commit, switch its branch, kill its Terminal, run another
+`--execute` session, or start an overlapping Academy study while that process
+is executing.** A GitHub PR prepared during the run does not modify the Mac.
+
+After this read-only status change is merged and the running process has
+**finished**, the owner can update a clean checkout and inspect the preserved
+checkpoint with:
+
+```sh
+npm run mission-control:campaign-status
+```
+
+The command consumes **zero** AI model tokens and **does not write to disk**.
+It verifies checkpoint structure and role order against the 26-role registry,
+the exact pinned synthetic catalog SHA-256, source ancestry, mandatory tool
+traces, per-agent output digests, historical SHA attribution, provider identity,
+and the outstanding possibly in-flight attempt. It reports historical, Codex
+and Gemini counts separately.
+
+A result of `RESEARCH_TRACES_RECORDED_UNCERTIFIED` means 26 authentic,
+locally journaled **synthetic research traces** were structurally observed.
+If any are historical from older source commits,
+`exactSource26of26=false` even when all 26 have records. It is not a
+current-SHA commissioning certificate, independent engineering validation or
+Academy study/qualification evidence.
+
+If the runner terminated with a pending attempt, inspect its original Terminal
+and private interruption report before another explicit
+`npm run mission-control:owner-research -- --resume --ack-uncertain` session.
+A `pendingAttempt` marker by itself does NOT prove the process is still live.
+
+The follow-on Academy workflow is separate:
+
+```sh
+npm run academy:plan
+npm run academy:status
+```
+
+These are zero-model curriculum/status commands, and **do not constitute
+training**. Genuine role-specific open-book study uses the separately
+authorized `npm run academy:study -- --agents A05,A06,A07,A14,A17` command;
+it should not compete with the live campaign for account quota. Study
+receipts remain **UNGRADED**. Independent held-out examination, correct
+tool calculations, validated source editions/rights, and two distinct
+trusted human signers are required before `QUALIFIED_SUPERVISED_RESEARCH_ONLY`
+can be claimed. None of this authorizes vessel design release or hardware
+control.

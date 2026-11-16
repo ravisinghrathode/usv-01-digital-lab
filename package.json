@@ -73,7 +73,8 @@
     "academy:plan": "tsx scripts/run-agent-academy.ts plan",
     "academy:status": "tsx scripts/run-agent-academy.ts status",
     "academy:study": "tsx scripts/run-agent-academy.ts --execute",
-    "mission-control:owner-research": "tsx scripts/mission-control/owner-synthetic-commission.ts"
+    "mission-control:owner-research": "tsx scripts/mission-control/owner-synthetic-commission.ts",
+    "mission-control:campaign-status": "tsx scripts/mission-control/owner-campaign-status.ts"
   },
   "dependencies": {
     "@google/genai": "^3.1.0",
