@@ -851,7 +851,7 @@ export class ModelProviderRouter {
         if (reason && geminiTransferAuthorized()) {
           const gemini = this.providers.get('gemini_cli');
           if (!gemini || !(await Promise.resolve(gemini.isAvailable()))) {
-            throw new Error('USV_PROVIDER_RETRY_WAIT: CODEX_' + reason +
+            throw new Error('USV_PROVIDER_RETRY_WAIT: ' + reason +
               '; GEMINI_CLI_NOT_READY: preserve the pending agent checkpoint and retry' +
               ' Codex when subscription capacity or transport recovers.');
           }
@@ -881,7 +881,7 @@ export class ModelProviderRouter {
                   (hold.retryAfter || 'provider reset unknown'));
               }
               if (recoverableGeminiCliFailure(secondaryError)) {
-                throw new Error('USV_PROVIDER_RETRY_WAIT: CODEX_' + reason +
+                throw new Error('USV_PROVIDER_RETRY_WAIT: ' + reason +
                   '; GEMINI_AUTH_OR_TRANSPORT_NOT_READY: OAuth-only Gemini CLI' +
                   ' remains unavailable. Preserve checkpoint; retry Codex first.');
               }
