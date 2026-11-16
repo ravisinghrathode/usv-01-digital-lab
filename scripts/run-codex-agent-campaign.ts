@@ -236,17 +236,19 @@ async function main() {
     const geminiQuota = new QuotaResilience(
       path.join(process.env.HOME || '', '.usv01', 'runtime', 'gemini-quota.json')
     );
-    // Wait without consuming model tokens when BOTH authenticated subscription
-    // providers are blocked. The owner campaign itself remains finite (12h);
-    // the checkpoint can still resume after an unexpected process termination.
+    // If Codex and Gemini are temporarily quota/auth/transport blocked, keep
+    // the already-authorized interactive owner session alive and retry with
+    // bounded exponential backoff. This never resets provider quota ledgers,
+    // creates API credentials or repeats a completed checkpointed agent.
+    // A killed Terminal/Mac still requires explicit checkpoint recovery.
     const runWithQuotaHold = async (id: string, input: AgentExecutionInput):
       Promise<AgentExecutionOutput> => {
-      const started = Date.now();
+      let transientRetries = 0;
       while (true) {
         const output = await ExecutionEngine.getInstance().executeAgent(id, input, 0);
         const err = String(output.data?.error || '');
         const providerHold = output.status === 'FAILED' &&
-          (/USV_QUOTA_WAIT|QUOTA_EXHAUSTED/.test(err) ||
+          (/USV_QUOTA_WAIT|QUOTA_EXHAUSTED|USV_PROVIDER_RETRY_WAIT/.test(err) ||
            /USV_GEMINI_FALLBACK_UNAVAILABLE/.test(err) &&
            /CODEX_QUOTA|USV_QUOTA_WAIT/.test(err));
         if (!providerHold) return output;
@@ -258,16 +260,17 @@ async function main() {
           .filter((t): t is string => !!t)
           .map(t => Date.parse(t))
           .filter(t => Number.isFinite(t) && t > time);
-        const notBefore = next.length ? Math.min(...next) : time + 60_000;
+        transientRetries++;
+        const backoffMs = Math.min(15 * 60_000,
+          60_000 * 2 ** Math.min(transientRetries - 1, 4));
+        const notBefore = next.length ? Math.min(...next) : time + backoffMs;
         const delay = Math.max(10_000, Math.min(notBefore - time, 15 * 60_000));
-        if (time - started + delay > 10 * 60 * 60_000) {
-          console.error('USV_QUOTA_WAIT_TIMEOUT: checkpoint retained for next explicit session');
-          return output;
-        }
         console.log(JSON.stringify({
           status: 'WAITING_FOR_SUBSCRIPTION_CAPACITY',
           agent: id, codex: codex.reason, gemini: gemini.reason,
+          retryNumber: transientRetries,
           nextLocalCheck: new Date(time + delay).toISOString(),
+          stopRequiresExplicitOwnerAction: true,
           engineeringReleaseApproved: false
         }));
         await new Promise(resolve => setTimeout(resolve, delay));
