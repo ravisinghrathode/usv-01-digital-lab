@@ -30,6 +30,7 @@ export interface CharterAdoptionAudit {
   canonicalPath: string;
   charterSha256: string;
   charterMarkedProposed: boolean;
+  charterMarkedAdopted: boolean;
   registeredRoleCount: number;
   checks: { id: string; passed: boolean; detail: string }[];
   allStaticCriteriaPassed: boolean;
@@ -163,6 +164,7 @@ export function evaluateCharterAdoptionReadiness(options?: {
   }
 
   const charterMarkedProposed = /Status:\*\*\s*PROPOSED/i.test(charterText);
+  const charterMarkedAdopted = /Status:\*\*\s*ADOPTED FOR OPERATING SPEC ONLY/i.test(charterText);
   const allStaticCriteriaPassed = checks.every(c => c.passed);
 
   let adopted = false;
@@ -231,6 +233,9 @@ export function evaluateCharterAdoptionReadiness(options?: {
     if (!allStaticCriteriaPassed) {
       recordIssues.push('Static charter criteria C01–C09 incomplete');
     }
+    if (charterMarkedProposed || !charterMarkedAdopted) {
+      recordIssues.push('Canonical charter status is not adopted by an approved protected change');
+    }
 
     blockers.push(...recordIssues);
 
@@ -252,6 +257,7 @@ export function evaluateCharterAdoptionReadiness(options?: {
     canonicalPath: CANONICAL_CHARTER_PATH,
     charterSha256,
     charterMarkedProposed,
+    charterMarkedAdopted,
     registeredRoleCount: roles.length,
     checks,
     allStaticCriteriaPassed,
