@@ -32,6 +32,14 @@ describe('M06 — B07 GitHub–Drive–Obsidian–Gemini governed sync state mac
     });
     expect(indexPub.accepted).toBe(true);
     expect(indexPub.liveRemoteAuthenticatedE2eVerified).toBe(false);
+    // An index is a view, never a replacement for controlled Drive bytes.
+    expect(sync.getArtifact('DOC-HULL-01')?.contentSha256).toBe(initialSha);
+    expect(sync.getArtifact('DOC-HULL-01')?.etag).toBe('etag-1');
+    expect(indexPub.newSha256).toBe(initialSha);
+    expect(indexPub.newEtag).toBe('etag-1');
+    expect(indexPub.publishedIndexSha256).toBe(
+      sha256Text('{"id":"DOC-HULL-01","status":"INDEX_ONLY"}')
+    );
 
     // Tombstone & rollback to initial SHA
     const del = sync.executeMutation({
@@ -146,5 +154,91 @@ describe('M06 — B07 GitHub–Drive–Obsidian–Gemini governed sync state mac
       sourceCommitSha: COMMIT
     });
     expect(badImport.code).toBe('CHECKSUM_MISMATCH');
+  });
+
+  it('rejects public-index exfiltration and restricted Gemini exports without changing the master', () => {
+    const sync = new GovernedSyncCoordinator();
+    const masterSha = sha256Text('Restricted Propeller Drawing');
+    sync.registerArtifact({
+      artifactId: 'PROP-RESTRICTED',
+      canonicalMaster: 'GOOGLE_DRIVE_CONTROLLED',
+      classification: 'CONTROLLED_RESTRICTED',
+      sourceCommitSha: COMMIT,
+      contentSha256: masterSha,
+      etag: 'etag-1',
+      allowedPrincipals: ['lead-engineer']
+    });
+    for (const unsafeIndex of [
+      'Restricted Propeller Drawing',
+      '{"id":"PROP-RESTRICTED","status":"INDEX_ONLY","contents":"Restricted Propeller Drawing"}',
+      '{"id":"PROP-RESTRICTED","status":"FULL_CONTENT"}',
+      '{"id":"OTHER-ARTIFACT","status":"INDEX_ONLY"}'
+    ]) {
+      const response = sync.executeMutation({
+        requestId: 'unsafe-index',
+        actorPrincipal: 'lead-engineer',
+        targetSurface: 'GITHUB_PUBLIC_SOURCE',
+        artifactId: 'PROP-RESTRICTED',
+        operation: 'PUBLISH_INDEX',
+        newPayloadText: unsafeIndex,
+        sourceCommitSha: COMMIT
+      });
+      expect(response.accepted).toBe(false);
+      expect(response.code).toBe('PUBLIC_DISCLOSURE_BLOCKED');
+    }
+
+    const gemini = sync.executeMutation({
+      requestId: 'restricted-gemini',
+      actorPrincipal: 'lead-engineer',
+      targetSurface: 'GEMINI_INDEPENDENT_CRITIC',
+      artifactId: 'PROP-RESTRICTED',
+      operation: 'EXPORT_PACKAGE',
+      newPayloadText: 'Restricted Propeller Drawing',
+      sourceCommitSha: COMMIT
+    });
+    expect(gemini.accepted).toBe(false);
+    expect(gemini.code).toBe('PUBLIC_DISCLOSURE_BLOCKED');
+    expect(sync.getArtifact('PROP-RESTRICTED')?.contentSha256).toBe(masterSha);
+    expect(sync.getArtifact('PROP-RESTRICTED')?.etag).toBe('etag-1');
+  });
+
+  it('keeps exports read-only and forbids cross-surface delete/rollback', () => {
+    const sync = new GovernedSyncCoordinator();
+    const originalSha = sha256Text('Public governance note');
+    sync.registerArtifact({
+      artifactId: 'GOV-001',
+      canonicalMaster: 'GOOGLE_DRIVE_CONTROLLED',
+      classification: 'PUBLIC_SOURCE_ONLY',
+      sourceCommitSha: COMMIT,
+      contentSha256: originalSha,
+      etag: 'etag-1',
+      allowedPrincipals: ['lead-engineer']
+    });
+    const exported = sync.executeMutation({
+      requestId: 'export-public',
+      actorPrincipal: 'lead-engineer',
+      targetSurface: 'OBSIDIAN_KNOWLEDGE_GRAPH',
+      artifactId: 'GOV-001',
+      operation: 'EXPORT_PACKAGE',
+      newPayloadText: 'A formatted, derived link manifest',
+      sourceCommitSha: COMMIT
+    });
+    expect(exported.accepted).toBe(true);
+    expect(exported.newSha256).toBe(originalSha);
+    expect(sync.getArtifact('GOV-001')?.etag).toBe('etag-1');
+
+    for (const operation of ['DELETE', 'ROLLBACK', 'IMPORT_PACKAGE'] as const) {
+      const response = sync.executeMutation({
+        requestId: operation,
+        actorPrincipal: 'lead-engineer',
+        targetSurface: 'OBSIDIAN_KNOWLEDGE_GRAPH',
+        artifactId: 'GOV-001',
+        operation,
+        sourceCommitSha: COMMIT
+      });
+      expect(response.accepted).toBe(false);
+      expect(response.code).toBe('DUAL_MASTER_CONFLICT');
+    }
+    expect(sync.getArtifact('GOV-001')?.contentSha256).toBe(originalSha);
   });
 });

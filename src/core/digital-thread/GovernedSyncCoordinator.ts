@@ -50,6 +50,8 @@ export interface SyncOperationReceipt {
   reason: string;
   newSha256?: string;
   newEtag?: string;
+  // Public/export digest is distinct from the authoritative master artifact digest.
+  publishedIndexSha256?: string;
   // Local/simulated coordinator checks NEVER prove live remote Drive/AI Studio uptime.
   liveRemoteAuthenticatedE2eVerified: false;
 }
@@ -118,11 +120,37 @@ export class GovernedSyncCoordinator {
         `Rejected dual editable master attempt: canonical master is ${existing.canonicalMaster}, declared ${req.declaredMaster}`
       );
     }
-    if (req.operation === 'WRITE_ARTIFACT' && req.targetSurface !== existing.canonicalMaster) {
+    if (['WRITE_ARTIFACT', 'IMPORT_PACKAGE', 'DELETE', 'ROLLBACK'].includes(req.operation) &&
+        req.targetSurface !== existing.canonicalMaster) {
       return fail(
         'DUAL_MASTER_CONFLICT',
-        `Surface ${req.targetSurface} cannot directly mutate artifact owned by ${existing.canonicalMaster}`
+        `Surface ${req.targetSurface} cannot mutate artifact owned by ${existing.canonicalMaster}`
       );
+    }
+
+    // Cross-provider data transfer is denied for restricted artifacts. Authentication
+    // or a configured Gemini button never declassifies client or naval information.
+    if (req.targetSurface === 'GEMINI_INDEPENDENT_CRITIC' &&
+        existing.classification === 'CONTROLLED_RESTRICTED') {
+      return fail('PUBLIC_DISCLOSURE_BLOCKED', 'Restricted content cannot be transferred to Gemini');
+    }
+
+    // A public index is a small, deterministic metadata record, not a copy of
+    // an artifact. Strict allowlisting prevents arbitrary restricted payloads.
+    if (req.operation === 'PUBLISH_INDEX') {
+      if (req.targetSurface !== 'GITHUB_PUBLIC_SOURCE') {
+        return fail('INVALID_PROVENANCE', 'Indexes may only be published on public source surface');
+      }
+      let index: unknown;
+      try { index = JSON.parse(req.newPayloadText ?? ''); }
+      catch { return fail('PUBLIC_DISCLOSURE_BLOCKED', 'Public index must be valid sanitized JSON'); }
+      if (!/^[A-Za-z0-9._-]+$/.test(existing.artifactId) ||
+          !index || typeof index !== 'object' || Array.isArray(index) ||
+          Object.keys(index).sort().join(',') !== 'id,status' ||
+          (index as { id?: unknown }).id !== existing.artifactId ||
+          (index as { status?: unknown }).status !== 'INDEX_ONLY') {
+        return fail('PUBLIC_DISCLOSURE_BLOCKED', 'Public index may contain only artifact ID and INDEX_ONLY status');
+      }
     }
 
     // Public disclosure boundary: GitHub NEVER receives restricted content or credentials/secrets
@@ -150,6 +178,22 @@ export class GovernedSyncCoordinator {
       if (actual !== req.expectedSha256) {
         return fail('CHECKSUM_MISMATCH', `Import checksum mismatch: expected ${req.expectedSha256}, computed ${actual}`);
       }
+    }
+
+    // Publishing or exporting does not mutate the canonical master artifact.
+    // In particular, the public index's hash must never replace Drive's content
+    // digest or ETag; the caller receives a separately identified index digest.
+    if (req.operation === 'PUBLISH_INDEX' || req.operation === 'EXPORT_PACKAGE') {
+      return {
+        accepted: true,
+        code: 'SYNC_OK_OFFLINE_VERIFIED',
+        reason: `Prepared ${req.operation} for ${req.artifactId} on ${req.targetSurface}`,
+        newSha256: existing.contentSha256,
+        newEtag: existing.etag,
+        publishedIndexSha256: req.operation === 'PUBLISH_INDEX'
+          ? sha256Text(req.newPayloadText!) : undefined,
+        liveRemoteAuthenticatedE2eVerified: false
+      };
     }
 
     if (req.operation === 'ROLLBACK') {
