@@ -36,7 +36,7 @@ export function classifyGeminiCliFailure(value: unknown): Error {
   if (/\b(?:quota exhausted|quota exceeded|resource_exhausted|rate limit|429|too many requests|usage limit reached|limit exceeded)\b/i.test(signal)) {
     return new Error('USV_QUOTA_WAIT: GEMINI_PROVIDER_QUOTA_EXHAUSTED');
   }
-  if (/\b(?:oauth|authentication|authenticate|not logged in|login required|sign in|not signed in|auth type|enforced authentication type|no authentication configured|session expired|invalid credentials)\b/i.test(signal)) {
+  if (/\b(?:oauth|authentication|authenticate|FatalAuthenticationError|not logged in|login required|login|sign in|not signed in|auth type|enforced authentication type|no authentication configured|session expired|invalid credentials)\b/i.test(signal)) {
     return new Error('GEMINI_CLI_AUTH_REQUIRED: personal Google OAuth session missing or incompatible; local sign-in required');
   }
   if (/\b(?:model not found|model unavailable|model is not available|model not supported|unsupported model|model access denied|does not have access to model|unknown model|requested model)\b/i.test(signal)) {
