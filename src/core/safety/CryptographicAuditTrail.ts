@@ -106,7 +106,7 @@ export class CryptographicAuditTrail {
       role: data.role,
       action: data.action,
       changeId: data.changeId,
-      details: data.details,
+      details: structuredClone(data.details),
       previousHash
     };
 
