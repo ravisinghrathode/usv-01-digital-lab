@@ -45,6 +45,6 @@ describe('Gemini CLI operator-authenticated provider',()=>{
     })});
     await expect(auth.generateText(request)).rejects.toThrow(/GEMINI_CLI_AUTH_REQUIRED/);
     const malformed=new GeminiCliProvider({runner:async()=>({stdout:'not json',stderr:''})});
-    await expect(malformed.generateText(request)).rejects.toThrow(/documented JSON envelope/);
+    await expect(malformed.generateText(request)).rejects.toThrow(/GEMINI_CLI_INVALID_OUTPUT/);
   });
 });
