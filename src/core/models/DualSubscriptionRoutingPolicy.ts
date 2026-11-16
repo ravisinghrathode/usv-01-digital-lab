@@ -103,3 +103,22 @@ export function recoverableGeminiCliFailure(error: unknown): boolean {
   }
   return /\b(?:ENOENT|ENOTFOUND|ECONNRESET|ECONNREFUSED|ETIMEDOUT|EAI_AGAIN)\b|\b(?:login required|not logged in|sign in required|not authenticated|authentication failed|session expired|credentials missing|network unreachable|temporarily unavailable|service unavailable|connection refused|request timed out)\b|\bHTTP[ :]*50[234]\b/i.test(message);
 }
+
+
+/**
+ * Require that an automatically routed campaign actually executes the same
+ * source-pinned synthetic catalog it authorized. A forged inherited env flag,
+ * a different path/classification, or a modified catalog fails BEFORE any
+ * model invocation. This is not a generic transfer authorization.
+ */
+export function assertSourcePinnedSyntheticGeminiCatalog(
+  catalogPath: string, classification: unknown, actualSha256: string,
+  env: NodeJS.ProcessEnv = process.env
+): void {
+  if (!sourcePinnedSyntheticGeminiAutoRoute(env) ||
+      catalogPath !== 'evidence/live-agents/representative-cases.json' ||
+      classification !== 'SYNTHETIC_TEST_ONLY_NON_OPERATIONAL' ||
+      actualSha256 !== env.USV_GEMINI_SYNTHETIC_CATALOG_SHA256) {
+    throw new Error('USV_GEMINI_AUTO_ROUTE_SOURCE_OR_CLASSIFICATION_MISMATCH');
+  }
+}
