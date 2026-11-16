@@ -14,7 +14,7 @@ import path from 'node:path';
 import os from 'node:os';
 import { requireLabCommissioningPolicy } from './LabCommissioningPolicy.ts';
 import { A26_CODEX_AGENT_ID, A26_GPT6_MODEL, selectA26SubscriptionModel } from './A26SubscriptionModelAccess.ts';
-import { CHATGPT_SOL_MODEL, dualProviderEnabled } from '../models/DualSubscriptionRoutingPolicy.ts';
+import { CHATGPT_SOL_MODEL, CODEX_CLI_MAX_PROMPT_CHARS, dualProviderEnabled } from '../models/DualSubscriptionRoutingPolicy.ts';
 import { AgentRegistry } from '../registry/AgentRegistry.ts';
 import { QuotaResilience, isQuotaFailure } from './QuotaResilience.ts';
 
@@ -84,7 +84,10 @@ export function validatePilotRequest(input: PilotRequest): void {
   if (!SAFE_ROLES[input.role]) throw new Error('Unknown role');
   if (!/^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$/.test(input.taskId)) throw new Error('Invalid taskId');
   if (!/^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$/.test(input.agentId)) throw new Error('Invalid agentId');
-  if (!input.prompt.trim() || input.prompt.length > 24_000) throw new Error('Invalid prompt');
+  if (!input.prompt.trim() || input.prompt.length > CODEX_CLI_MAX_PROMPT_CHARS) {
+    throw new Error('Invalid prompt: bounded Codex subscription argument maximum ' +
+      CODEX_CLI_MAX_PROMPT_CHARS + ' characters');
+  }
   if (!input.workingDirectory.startsWith('/')) throw new Error('Absolute workingDirectory required');
   if (input.modelOverride !== undefined) {
     const isCanonicalSpecialist = AgentRegistry.getInstance().getAllAgents()
