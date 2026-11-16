@@ -6,7 +6,7 @@ import { ExecutionEngine } from '../engine/ExecutionEngine.ts';
 import { AgentRegistry } from '../registry/AgentRegistry.ts';
 import { ApprovalGateManager } from '../safety/HumanApprovalGate.ts';
 import { AuditLogger } from '../safety/AuditLogger.ts';
-import { verifyApproverSignature } from '../safety/ApproverSigner.ts';
+import { sha256Evidence, verifyBoundApproverSignature } from '../safety/ApproverSigner.ts';
 
 export class CentralOrchestrator {
   private static instance: CentralOrchestrator;
@@ -128,7 +128,7 @@ export class CentralOrchestrator {
    * Executes the entire workflow plan in topological stages.
    * Tasks within the same stage run concurrently.
    */
-  public async executeWorkflow(): Promise<{ completed: number; failed: number; waitingApproval: number }> {
+  public async executeWorkflow(sourceSha = 'UNPINNED_RESEARCH_ONLY'): Promise<{ completed: number; failed: number; waitingApproval: number }> {
     if (this.isRunning) {
       throw new Error('Orchestrator workflow is already running.');
     }
@@ -253,7 +253,7 @@ export class CentralOrchestrator {
                 description: `Agent ${task.assignedAgentId} completed analysis with safety implications.`,
                 safetyImplication: output.approvalRationale || 'Baseline modification or safety-critical engineering output.',
                 proposedChanges: output.data
-              });
+              }, { sourceSha, input: task.input, output });
 
               task.approvalGateId = gate.id;
             } else if (output.status === 'SUCCESS') {
@@ -291,7 +291,7 @@ export class CentralOrchestrator {
       identity.role !== 'ENGINEERING_DIRECTOR' ||
       !identity.userId ||
       identity.userId === 'usr-unverified' ||
-      !verifyApproverSignature(gateId, decision, identity)
+      !verifyBoundApproverSignature(gate, decision, identity, undefined, Date.parse(gate.decidedAt))
     ) {
       this.auditLogger.log({
         severity: 'SAFETY_CRITICAL',
@@ -308,6 +308,16 @@ export class CentralOrchestrator {
     }
     if (task.approvalGateId !== gateId || task.status !== 'WAITING_HUMAN_APPROVAL') {
       throw new Error('Approval gate does not match a waiting task; duplicate or stale resolution blocked.');
+    }
+    if (!/^[a-f0-9]{40}$/i.test(gate.approvalBinding.sourceSha) ||
+        gate.approvalBinding.inputSha256 !== sha256Evidence(task.input) ||
+        gate.approvalBinding.outputSha256 !== sha256Evidence(task.output)) {
+      this.auditLogger.log({
+        severity: 'SAFETY_CRITICAL', agentId: gate.agentId, taskId: task.id,
+        action: 'GATE_SOURCE_OR_EVIDENCE_DRIFT_BLOCKED',
+        details: { gateId, sourceSha: gate.approvalBinding.sourceSha }
+      });
+      throw new Error('Engineering authority violation: pinned task/input/output evidence binding required.');
     }
 
     // Engineering invariant: Human approval CANNOT convert an invalid/failed calculation into a verified result!

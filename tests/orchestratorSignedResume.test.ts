@@ -2,12 +2,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { CentralOrchestrator } from '../src/core/orchestrator/CentralOrchestrator.ts';
 import { ExecutionEngine } from '../src/core/engine/ExecutionEngine.ts';
 import { ApprovalGateManager } from '../src/core/safety/HumanApprovalGate.ts';
-import { generateApproverSignature } from '../src/core/safety/ApproverSigner.ts';
+import { generateBoundApproverSignature } from '../src/core/safety/ApproverSigner.ts';
 import type { AgentExecutionOutput } from '../src/core/types/agent.ts';
 import type { EngineeringTask } from '../src/core/types/orchestrator.ts';
 
 const orchestrator = CentralOrchestrator.getInstance();
 const gateManager = ApprovalGateManager.getInstance();
+const SYNTHETIC_SHA = 'a'.repeat(40);
 
 function task(id: string, agentId: string, dependencies: string[] = [], safetyCritical = false): EngineeringTask {
   return {
@@ -31,11 +32,12 @@ function output(agentId: string, taskId: string, needsApproval: boolean): AgentE
 }
 
 function signedDecision(gateId: string, decision: 'APPROVED' | 'REJECTED'): void {
-  const at = '2026-11-15T00:00:00Z';
+  const at = new Date().toISOString();
+  const gate = gateManager.getGate(gateId)!;
   gateManager.evaluateDecision(gateId, decision, 'Synthetic unit-test signature only', {
     userId: 'test-director', userName: 'Synthetic Director',
     role: 'ENGINEERING_DIRECTOR', authenticatedAt: at,
-    tokenSignature: generateApproverSignature(gateId, decision, 'test-director', 'ENGINEERING_DIRECTOR', at)
+    tokenSignature: generateBoundApproverSignature(gate, decision, 'test-director', 'ENGINEERING_DIRECTOR', at)
   });
 }
 
@@ -50,7 +52,7 @@ describe('Governed agent workflow resume and signed approval authority', () => {
     const execute = vi.spyOn(ExecutionEngine.getInstance(), 'executeAgent')
       .mockImplementation(async (agentId, input) => output(agentId, input.taskId, true));
     orchestrator.registerTask(task('RESUME-PENDING', 'REQ-TRC-02', [], true));
-    await orchestrator.executeWorkflow();
+    await orchestrator.executeWorkflow(SYNTHETIC_SHA);
     const before = orchestrator.getTask('RESUME-PENDING')!;
     const gateId = before.approvalGateId!;
     expect(gateManager.getGate(gateId)?.state).toBe('PENDING');
@@ -60,7 +62,7 @@ describe('Governed agent workflow resume and signed approval authority', () => {
     expect(orchestrator.getTask('RESUME-PENDING')?.status).toBe('WAITING_HUMAN_APPROVAL');
 
     // A resumed workflow must not re-run a pending safety analysis or issue duplicate gates.
-    const replay = await orchestrator.executeWorkflow();
+    const replay = await orchestrator.executeWorkflow(SYNTHETIC_SHA);
     expect(replay.waitingApproval).toBe(1);
     expect(execute).toHaveBeenCalledTimes(1);
     expect(orchestrator.getTask('RESUME-PENDING')?.approvalGateId).toBe(gateId);
@@ -73,7 +75,7 @@ describe('Governed agent workflow resume and signed approval authority', () => {
     orchestrator.registerTask(task('RESUME-UP', 'REQ-TRC-02', [], true));
     orchestrator.registerTask(task('RESUME-DOWN', 'CONOPS-03', ['RESUME-UP']));
 
-    const first = await orchestrator.executeWorkflow();
+    const first = await orchestrator.executeWorkflow(SYNTHETIC_SHA);
     expect(first.waitingApproval).toBe(1);
     expect(orchestrator.getTask('RESUME-DOWN')?.status).toBe('BLOCKED');
     expect(execute).toHaveBeenCalledTimes(1);
@@ -82,14 +84,14 @@ describe('Governed agent workflow resume and signed approval authority', () => {
     signedDecision(gateId, 'APPROVED');
     expect(orchestrator.getTask('RESUME-UP')?.status).toBe('COMPLETED');
 
-    const resumed = await orchestrator.executeWorkflow();
+    const resumed = await orchestrator.executeWorkflow(SYNTHETIC_SHA);
     expect(resumed.completed).toBe(1);
     expect(orchestrator.getTask('RESUME-DOWN')?.status).toBe('COMPLETED');
     expect(execute).toHaveBeenCalledTimes(2);
     expect(execute.mock.calls.map(([, input]) => input.taskId)).toEqual(['RESUME-UP', 'RESUME-DOWN']);
     expect(orchestrator.getTask('RESUME-UP')?.approvalGateId).toBe(gateId);
 
-    await orchestrator.executeWorkflow();
+    await orchestrator.executeWorkflow(SYNTHETIC_SHA);
     expect(execute).toHaveBeenCalledTimes(2);
   });
 
@@ -98,10 +100,10 @@ describe('Governed agent workflow resume and signed approval authority', () => {
       .mockImplementation(async (agentId, input) => output(agentId, input.taskId, true));
     orchestrator.registerTask(task('REJECT-UP', 'REQ-TRC-02', [], true));
     orchestrator.registerTask(task('REJECT-DOWN', 'CONOPS-03', ['REJECT-UP']));
-    await orchestrator.executeWorkflow();
+    await orchestrator.executeWorkflow(SYNTHETIC_SHA);
     signedDecision(orchestrator.getTask('REJECT-UP')!.approvalGateId!, 'REJECTED');
     expect(orchestrator.getTask('REJECT-UP')?.status).toBe('FAILED');
-    await orchestrator.executeWorkflow();
+    await orchestrator.executeWorkflow(SYNTHETIC_SHA);
     expect(orchestrator.getTask('REJECT-UP')?.status).toBe('FAILED');
     expect(orchestrator.getTask('REJECT-DOWN')?.status).toBe('BLOCKED');
     expect(execute).toHaveBeenCalledTimes(1);

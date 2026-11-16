@@ -6,7 +6,7 @@ import crypto from 'crypto';
 import { execFileSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
-import { generateApproverSignature, verifyApproverSignature, setDirectorSigningKey } from './src/core/safety/ApproverSigner.ts';
+import { generateBoundApproverSignature, verifyBoundApproverSignature, setDirectorSigningKey } from './src/core/safety/ApproverSigner.ts';
 import { AUTHORIZED_MEMBERS, type StaffMember } from './src/core/auth/staffDirectory.ts';
 import { authorizeLabRoute } from './src/core/auth/routeAuthorization.ts';
 import {
@@ -417,7 +417,7 @@ app.get('/api/auth/session', (req, res) => {
   res.json({ success: true, user });
 });
 
-app.post('/api/auth/sign-gate', (req, res) => {
+app.post('/api/auth/sign-gate', authMiddleware, (req, res) => {
   const user = (req as any).user as AuthenticatedUser;
   if (user.role !== 'ENGINEERING_DIRECTOR') {
     return res.status(403).json({
@@ -434,14 +434,13 @@ app.post('/api/auth/sign-gate', (req, res) => {
     });
   }
 
+  const gate = ApprovalGateManager.getInstance().getGate(gateId);
+  if (!gate || gate.state !== 'PENDING') {
+    return res.status(409).json({ success: false, error: 'Gate is missing or already finalized.' });
+  }
   const timestamp = new Date().toISOString();
-  const signature = generateApproverSignature(
-    gateId,
-    decision,
-    user.userId,
-    user.role,
-    timestamp,
-    SESSION_SECRET
+  const signature = generateBoundApproverSignature(
+    gate, decision, user.userId, user.role, timestamp, SESSION_SECRET
   );
 
   res.json({
@@ -462,7 +461,10 @@ app.post('/api/auth/verify-gate', (req, res) => {
   if (!gateId || !decision || !identity) {
     return res.status(400).json({ success: false, valid: false, error: 'Missing required parameters' });
   }
-  const valid = verifyApproverSignature(gateId, decision, identity, SESSION_SECRET);
+  const gate = ApprovalGateManager.getInstance().getGate(gateId);
+  const valid = !!gate && gate.state === 'PENDING' &&
+    (decision === 'APPROVED' || decision === 'REJECTED') &&
+    verifyBoundApproverSignature(gate, decision, identity, SESSION_SECRET);
   res.json({ success: true, valid });
 });
 
@@ -634,6 +636,14 @@ app.post('/api/agents/execute', async (req, res) => {
   }
 });
 
+function pinnedSourceSha(): string {
+  const sha = execFileSync('git', ['rev-parse', '--verify', 'HEAD'], {
+    cwd: process.cwd(), encoding: 'utf-8', timeout: 4000
+  }).trim();
+  if (!/^[a-f0-9]{40}$/i.test(sha)) throw new Error('Pinned source revision unavailable');
+  return sha;
+}
+
 let workflowInProgress = false;
 
 // The dashboard submits task definitions; execution and safety policy remain on the server.
@@ -696,7 +706,7 @@ app.post('/api/orchestrator/execute-workflow', async (req, res) => {
       orchestrator.clearTasks();
       for (const task of prepared) orchestrator.registerTask(task);
       orchestrator.getExecutionPlan(); // Reject missing or cyclic dependencies before execution.
-      const result = await orchestrator.executeWorkflow();
+      const result = await orchestrator.executeWorkflow(pinnedSourceSha());
       return res.json({
         success: result.failed === 0,
         results: result,
@@ -722,14 +732,22 @@ app.post('/api/orchestrator/decide-gate', authMiddleware, (req, res) => {
     return res.status(400).json({ success: false, error: 'Invalid gate decision.' });
   }
   try {
+    const pending = ApprovalGateManager.getInstance().getGate(gateId);
+    if (!pending || pending.state !== 'PENDING' || pending.approvalBinding.sourceSha !== pinnedSourceSha()) {
+      return res.status(409).json({ success: false, error: 'Gate is stale, unpinned or already decided.' });
+    }
     const timestamp = new Date().toISOString();
-    const signature = generateApproverSignature(gateId, decision, user.userId, user.role, timestamp, SESSION_SECRET);
+    const signature = generateBoundApproverSignature(pending, decision, user.userId, user.role, timestamp, SESSION_SECRET);
     const gate = ApprovalGateManager.getInstance().evaluateDecision(gateId, decision, String(directorNotes || ''), {
       userId: user.userId, userName: user.userName, role: user.role,
-      authenticatedAt: timestamp, tokenSignature: signature, serverVerifiedSignature: signature
+      authenticatedAt: timestamp, tokenSignature: signature
     });
     const orchestrator = CentralOrchestrator.getInstance();
-    const result = orchestrator.resolveGateDecision(gateId, decision);
+    // The gate listener normally resolves the task. Avoid a second transition.
+    const task = orchestrator.getTask(gate.taskId);
+    const result = task?.approvalGateId === gateId && (task.status === 'COMPLETED' || task.status === 'FAILED')
+      ? { taskId: task.id, newStatus: task.status }
+      : orchestrator.resolveGateDecision(gateId, decision);
     return res.json({ success: true, gate, result, tasks: orchestrator.getAllTasks(),
       pendingGates: ApprovalGateManager.getInstance().getPendingGates() });
   } catch (err: any) {
