@@ -1,4 +1,7 @@
 import { describe, it, expect } from 'vitest';
+import { selectAcademyStudyTransport } from '../src/core/academy/StudyTransportPolicy.ts';
+import { CHATGPT_SOL_MODEL } from '../src/core/models/DualSubscriptionRoutingPolicy.ts';
+import { validatePilotRequest, sanitizedSubscriptionEnvironment, SAFE_ROLES } from '../src/core/mission-control/SubscriptionCliAdapter.ts';
 import { generateKeyPairSync, sign } from 'node:crypto';
 import {
   ACADEMY_VERSION, buildAgentAcademyCurricula, evaluateAcademicCriteria,
@@ -48,6 +51,33 @@ function signedRecord(evidence:AssessmentEvidence) {
 }
 
 describe('USV-01 Agent Academy source-linked curricula', () => {
+  it('requests Sol on all 26 research study workers when explicitly enabled, without fabricating qualification', () => {
+    const env:NodeJS.ProcessEnv = {
+      AI_REVIEW_PROVIDER:'codex_cli', USV_SUBSCRIPTION_PILOT:'enabled',
+      USV_ALLOW_PAID_AI_API:'false',USV_LAB_SCOPE:'RESEARCH_ONLY',
+      USV_DUAL_PROVIDER_ROUTING:'enabled'
+    };
+    expect(curricula).toHaveLength(26);
+    for(const c of curricula){
+      const route=selectAcademyStudyTransport(c,env);
+      expect(route.agentId).toBe(c.runtimeId);
+      expect(route.modelOverride).toBe(CHATGPT_SOL_MODEL);
+      expect(route.modelIdentityVerified).toBe(false);
+      const args=SAFE_ROLES.worker.args('Study draft','/tmp/response.json',route.modelOverride);
+      expect(args).toContain('gpt-6.1-sol');
+    }
+    const missingPilot=selectAcademyStudyTransport(curricula[0],{
+      ...env, USV_SUBSCRIPTION_PILOT:'disabled'
+    });
+    expect(missingPilot.modelOverride).toBeUndefined();
+    expect(() => selectAcademyStudyTransport({...curricula[0],runtimeId:'A26'} as any,env))
+      .toThrow(/RUNTIME_AGENT_ID_MISMATCH/);
+    const scrub=sanitizedSubscriptionEnvironment({PATH:'/usr/bin',OPENAI_API_KEY:'secret',
+      GEMINI_API_KEY:'secret',USV_ALLOW_PAID_AI_API:'true'});
+    expect(scrub.OPENAI_API_KEY).toBeUndefined();
+    expect(scrub.GEMINI_API_KEY).toBeUndefined();
+    expect(scrub.USV_ALLOW_PAID_AI_API).toBe('false');
+  });
   it('creates exactly 26 non-duplicate role-specific curricula directly from the live registry', () => {
     expect(curricula.map(c => c.canonicalId)).toEqual(Array.from({length:26}, (_,i)=>
       'A' + String(i+1).padStart(2,'0')));
