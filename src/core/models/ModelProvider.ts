@@ -820,7 +820,8 @@ export class ModelProviderRouter {
         if (reason && geminiTransferAuthorized()) {
           const gemini = this.providers.get('gemini_cli');
           if (!gemini || !(await Promise.resolve(gemini.isAvailable()))) {
-            throw new Error('USV_GEMINI_FALLBACK_UNAVAILABLE: Gemini subscription CLI not installed or reachable.');
+            throw new Error('USV_GEMINI_FALLBACK_UNAVAILABLE: CODEX_' + reason +
+              ': Gemini subscription CLI not installed or reachable; recover Codex capacity or install signed-in Gemini CLI.');
           }
           // A separate persistent Gemini quota ledger prevents a Sol quota
           // outage from turning into unlimited unbudgeted secondary calls.
@@ -843,7 +844,9 @@ export class ModelProviderRouter {
             } catch (secondaryError) {
               if (isQuotaFailure(secondaryError instanceof Error
                   ? secondaryError.message : String(secondaryError))) {
-                await budget.recordQuotaFailure();
+                const hold = await budget.recordQuotaFailure();
+                throw new Error('USV_QUOTA_WAIT: GEMINI_PROVIDER_QUOTA_EXHAUSTED; retry after ' +
+                  (hold.retryAfter || 'provider reset unknown'));
               }
               throw secondaryError;
             }
