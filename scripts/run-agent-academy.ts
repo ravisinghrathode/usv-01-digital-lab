@@ -16,7 +16,8 @@ import { buildAgentAcademyCurricula, ACADEMY_VERSION, type StudyAttempt } from '
 import { verifyAcademyQualification } from '../src/core/academy/QualificationVerifier.ts';
 import { codexFallbackReason } from '../src/core/models/DualSubscriptionRoutingPolicy.ts';
 import { runAcademyGeminiQuotaFallback } from '../src/core/academy/AcademyQuotaFallback.ts';
-import { runSubscriptionCli } from '../src/core/mission-control/SubscriptionCliAdapter.ts';
+import { runSubscriptionCli, sanitizedSubscriptionEnvironment } from '../src/core/mission-control/SubscriptionCliAdapter.ts';
+import { selectAcademyStudyTransport } from '../src/core/academy/StudyTransportPolicy.ts';
 import { assertPinnedCleanGitRevision } from '../src/core/mission-control/GitRevisionGuard.ts';
 import { requireLabCommissioningPolicy } from '../src/core/mission-control/LabCommissioningPolicy.ts';
 
@@ -100,7 +101,10 @@ async function study() {
   requireLabCommissioningPolicy(process.env);
   await assertPinnedCleanGitRevision(root, sourceSha);
   // Verify once before spending tokens. runSubscriptionCli also checks each call.
-  const auth = spawnSync('codex', ['login', 'status'], { cwd: root, encoding: 'utf8', timeout: 8000 });
+  const auth = spawnSync('codex', ['login', 'status'], {
+    cwd: root, encoding: 'utf8', timeout: 8000,
+    env: sanitizedSubscriptionEnvironment()
+  });
   const login = ((auth.stdout || '') + ' ' + (auth.stderr || '')).toLowerCase();
   if (auth.error || auth.status !== 0 || !login.includes('chatgpt') ||
       /api[- ]?key|access token/.test(login)) {
@@ -112,6 +116,10 @@ async function study() {
   if (selected.length < 1) throw new Error('Unknown --agents selection');
   const summary: Array<{agent:string;status:string;provider:string;modelUsed?:string;fallbackReason?:string;outputSha256?:string}> = [];
   for (const c of selected) {
+    // Canonical runtime worker identity is required for the permitted Sol
+    // model override. Gemini quota fallback separately uses the public
+    // canonical lesson identifier and never copies the original Codex prompt.
+    const transport = selectAcademyStudyTransport(c);
     const prompt = [
       'USV-01 AGENT ACADEMY OPEN-BOOK LEARNING SESSION — NOT DESIGN APPROVAL',
       'Role: ' + c.canonicalId + ' / ' + c.name + ' / ' + c.specialism,
@@ -136,8 +144,9 @@ async function study() {
     let output = '';
     try {
       const result = await runSubscriptionCli({
-        role: 'worker', agentId: c.canonicalId, taskId: 'ACADEMY-STUDY-' + c.canonicalId,
-        prompt, workingDirectory: root, timeoutMs: 360000
+        role: 'worker', agentId: transport.agentId, taskId: 'ACADEMY-STUDY-' + c.canonicalId,
+        prompt, workingDirectory: root, timeoutMs: 360000,
+        modelOverride: transport.modelOverride
       });
       // Only provider quota (not policy, budget, schema, or an ambiguous
       // transport failure) may initiate the approved Hydrogen fallback.
@@ -146,7 +155,9 @@ async function study() {
       }
       output = result.stdout;
       attempt = {
-        canonicalId: c.canonicalId, curriculumVersion: ACADEMY_VERSION,
+        canonicalId: c.canonicalId, runtimeAgentId: transport.agentId,
+        requestedModel: transport.modelOverride || 'codex-cli-session-default-unverified',
+        modelIdentityVerified: false, curriculumVersion: ACADEMY_VERSION,
         sourceSha, stage:'OPEN_BOOK_STUDY', provider:'codex_cli',
         status: result.status === 'COMPLETED' ? 'COMPLETED_UNGRADED' : result.status,
         ...(output ? { outputSha256: createHash('sha256').update(output).digest('hex') } : {}),
@@ -162,7 +173,9 @@ async function study() {
           });
           output = fallback.content;
           attempt = {
-            canonicalId:c.canonicalId, curriculumVersion:ACADEMY_VERSION,
+            canonicalId:c.canonicalId, runtimeAgentId: transport.agentId,
+            requestedModel: transport.modelOverride || 'codex-cli-session-default-unverified',
+            modelIdentityVerified:false, curriculumVersion:ACADEMY_VERSION,
             sourceSha, stage:'OPEN_BOOK_STUDY', provider:fallback.provider,
             modelUsed:fallback.modelUsed,
             fallbackReason:fallback.fallbackReason,
@@ -175,7 +188,9 @@ async function study() {
           const message = secondaryError instanceof Error
             ? secondaryError.message : String(secondaryError);
           attempt = {
-            canonicalId:c.canonicalId, curriculumVersion:ACADEMY_VERSION,
+            canonicalId:c.canonicalId, runtimeAgentId: transport.agentId,
+            requestedModel: transport.modelOverride || 'codex-cli-session-default-unverified',
+            modelIdentityVerified:false, curriculumVersion:ACADEMY_VERSION,
             sourceSha, stage:'OPEN_BOOK_STUDY', provider:'codex_cli',
             fallbackReason:'CODEX_QUOTA', status:'QUOTA_EXHAUSTED',
             timestamp:new Date().toISOString(), reviewedByHuman:false
@@ -184,7 +199,9 @@ async function study() {
         }
       } else {
         attempt = {
-          canonicalId:c.canonicalId, curriculumVersion:ACADEMY_VERSION,
+          canonicalId:c.canonicalId, runtimeAgentId: transport.agentId,
+          requestedModel: transport.modelOverride || 'codex-cli-session-default-unverified',
+          modelIdentityVerified:false, curriculumVersion:ACADEMY_VERSION,
           sourceSha, stage:'OPEN_BOOK_STUDY', provider:'codex_cli', status:'UNAVAILABLE',
           timestamp:new Date().toISOString(), reviewedByHuman:false
         };
