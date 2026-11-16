@@ -24,6 +24,8 @@ import {
 import { preflightCodexAgentCases } from '../src/core/verification/CodexCampaignPreflight.ts';
 import { requireLabCommissioningPolicy } from '../src/core/mission-control/LabCommissioningPolicy.ts';
 import { assessEngineeringCampaign } from '../src/core/verification/EngineeringCampaignAcceptance.ts';
+import { assertSourcePinnedSyntheticGeminiCatalog } from
+  '../src/core/models/DualSubscriptionRoutingPolicy.ts';
 
 
 const CHECKPOINT = path.resolve('data/codex-26-agent-checkpoint.json');
@@ -163,6 +165,14 @@ async function main() {
     implementationSha,
     catalogSha256: createHash('sha256').update(source).digest('hex')
   };
+  // Auto transfer is not authorized by an environment label alone:
+  // require the ACTUAL catalog bytes and path to match owner-verified SHA.
+  if (process.env.USV_GEMINI_AUTO_SYNTHETIC_ROUTE !== undefined) {
+    assertSourcePinnedSyntheticGeminiCatalog(
+      path.relative(rootDir, sourcePath),
+      catalog.dataClassification, provenance.catalogSha256, process.env
+    );
+  }
   const cases = compileCodexAgentCases(catalog);
   const preflight = await preflightCodexAgentCases(cases);
   // Local preflight must not dirty the pinned source before --execute.
