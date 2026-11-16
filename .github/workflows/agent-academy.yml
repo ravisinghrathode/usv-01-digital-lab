@@ -5,6 +5,7 @@ on:
     paths:
       - 'src/core/academy/**'
       - 'tests/agentAcademy.test.ts'
+      - 'tests/academyQuotaFallback.test.ts'
       - 'scripts/run-agent-academy.ts'
       - 'docs/AGENT_ACADEMY_EXECUTION.md'
       - '.github/workflows/agent-academy.yml'
@@ -40,8 +41,8 @@ jobs:
         run: bun install --frozen-lockfile
       - name: All 26 curricula and fail-closed status (zero AI calls)
         run: npm run academy:plan
-      - name: Tests for missing grades and forged independent signatures
-        run: npx vitest run tests/agentAcademy.test.ts
+      - name: Tests for academy evidence, quota fallback and independent signature gates
+        run: npx vitest run tests/agentAcademy.test.ts tests/academyQuotaFallback.test.ts
       - name: Compile whole app
         run: npm run lint
       - name: Upload NOT-QUALIFIED status evidence

@@ -14,6 +14,8 @@ import { createHash } from 'node:crypto';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { buildAgentAcademyCurricula, ACADEMY_VERSION, type StudyAttempt } from '../src/core/academy/AgentAcademy.ts';
 import { verifyAcademyQualification } from '../src/core/academy/QualificationVerifier.ts';
+import { codexFallbackReason } from '../src/core/models/DualSubscriptionRoutingPolicy.ts';
+import { runAcademyGeminiQuotaFallback } from '../src/core/academy/AcademyQuotaFallback.ts';
 import { runSubscriptionCli } from '../src/core/mission-control/SubscriptionCliAdapter.ts';
 import { assertPinnedCleanGitRevision } from '../src/core/mission-control/GitRevisionGuard.ts';
 import { requireLabCommissioningPolicy } from '../src/core/mission-control/LabCommissioningPolicy.ts';
@@ -108,7 +110,7 @@ async function study() {
   const selected = roleFlag < 0 ? curricula : curricula.filter(c =>
     (args[roleFlag + 1] || '').split(',').includes(c.canonicalId));
   if (selected.length < 1) throw new Error('Unknown --agents selection');
-  const summary: Array<{agent:string;status:string;outputSha256?:string}> = [];
+  const summary: Array<{agent:string;status:string;provider:string;modelUsed?:string;fallbackReason?:string;outputSha256?:string}> = [];
   for (const c of selected) {
     const prompt = [
       'USV-01 AGENT ACADEMY OPEN-BOOK LEARNING SESSION — NOT DESIGN APPROVAL',
@@ -137,6 +139,11 @@ async function study() {
         role: 'worker', agentId: c.canonicalId, taskId: 'ACADEMY-STUDY-' + c.canonicalId,
         prompt, workingDirectory: root, timeoutMs: 360000
       });
+      // Only provider quota (not policy, budget, schema, or an ambiguous
+      // transport failure) may initiate the approved Hydrogen fallback.
+      if (result.status === 'QUOTA_EXHAUSTED') {
+        throw new Error('USV_QUOTA_WAIT: PROVIDER_QUOTA_EXHAUSTED');
+      }
       output = result.stdout;
       attempt = {
         canonicalId: c.canonicalId, curriculumVersion: ACADEMY_VERSION,
@@ -146,10 +153,43 @@ async function study() {
         timestamp: new Date().toISOString(), reviewedByHuman:false
       };
     } catch (error) {
-      attempt = { canonicalId:c.canonicalId, curriculumVersion:ACADEMY_VERSION,
-        sourceSha, stage:'OPEN_BOOK_STUDY', provider:'codex_cli', status:'UNAVAILABLE',
-        timestamp:new Date().toISOString(), reviewedByHuman:false };
-      output = 'Execution unavailable: ' + (error instanceof Error ? error.message : 'unknown');
+      const primary = error instanceof Error ? error.message : String(error);
+      const quotaReason = codexFallbackReason(error);
+      if (quotaReason === 'CODEX_QUOTA') {
+        try {
+          const fallback = await runAcademyGeminiQuotaFallback({
+            root, canonicalId:c.canonicalId, sourceSha, primaryError:error
+          });
+          output = fallback.content;
+          attempt = {
+            canonicalId:c.canonicalId, curriculumVersion:ACADEMY_VERSION,
+            sourceSha, stage:'OPEN_BOOK_STUDY', provider:fallback.provider,
+            modelUsed:fallback.modelUsed,
+            fallbackReason:fallback.fallbackReason,
+            publicMaterialSha256:fallback.publicMaterialSha256,
+            status:fallback.status,
+            outputSha256:createHash('sha256').update(output).digest('hex'),
+            timestamp:new Date().toISOString(), reviewedByHuman:false
+          };
+        } catch (secondaryError) {
+          const message = secondaryError instanceof Error
+            ? secondaryError.message : String(secondaryError);
+          attempt = {
+            canonicalId:c.canonicalId, curriculumVersion:ACADEMY_VERSION,
+            sourceSha, stage:'OPEN_BOOK_STUDY', provider:'codex_cli',
+            fallbackReason:'CODEX_QUOTA', status:'QUOTA_EXHAUSTED',
+            timestamp:new Date().toISOString(), reviewedByHuman:false
+          };
+          output = 'Codex provider quota exhausted. Gemini Hydrogen fallback did not complete: ' + message;
+        }
+      } else {
+        attempt = {
+          canonicalId:c.canonicalId, curriculumVersion:ACADEMY_VERSION,
+          sourceSha, stage:'OPEN_BOOK_STUDY', provider:'codex_cli', status:'UNAVAILABLE',
+          timestamp:new Date().toISOString(), reviewedByHuman:false
+        };
+        output = 'Execution unavailable, no fallback permitted: ' + primary;
+      }
     }
     const file = path.join(outDir, 'attempts', c.canonicalId + '.json');
     let previous: StudyAttempt[] = [];
@@ -160,7 +200,9 @@ async function study() {
     writeJson(file, [...previous, attempt]);
     writeJson(path.join(outDir, 'study-outputs', c.canonicalId + '.json'),
       { attempt, ungradedAgentResponse: output, engineeringReleaseApproved:false });
-    summary.push({ agent:c.canonicalId, status: attempt.status, outputSha256:attempt.outputSha256 });
+    summary.push({ agent:c.canonicalId, status: attempt.status, provider:attempt.provider,
+      modelUsed:attempt.modelUsed, fallbackReason:attempt.fallbackReason,
+      outputSha256:attempt.outputSha256 });
     writeJson(path.join(outDir, 'study-progress.json'), {
       sourceSha, cohortSize:selected.length,
       completedUngraded:summary.filter(r=>r.status==='COMPLETED_UNGRADED').length,
@@ -168,6 +210,13 @@ async function study() {
       roleResults:summary, certifiedAgents:0, independentReviewPending:true
     });
   }
+  console.log('ACADEMY_STUDY_ATTEMPTS: ' + JSON.stringify({
+    sourceSha, selectedAgents:selected.length,
+    completedUngraded:summary.filter(r => r.status === 'COMPLETED_UNGRADED').length,
+    roleResults:summary,
+    detailDirectory:'data/academy/study-outputs/',
+    independentlyQualifiedByThisExecution:0
+  }, null, 2));
   status();
   if (summary.some(r => r.status !== 'COMPLETED_UNGRADED')) process.exitCode = 1;
 }
