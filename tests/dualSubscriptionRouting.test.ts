@@ -7,7 +7,8 @@ import {validatePilotRequest,sanitizedSubscriptionEnvironment,SAFE_ROLES}
   from '../src/core/mission-control/SubscriptionCliAdapter.ts';
 import {CHATGPT_SOL_MODEL,GEMINI_HYDROGEN_MODEL,dualProviderEnabled,
   geminiTransferAuthorized,geminiCatalogTransferPermitted,codexFallbackReason,
-  sourcePinnedSyntheticGeminiAutoRoute,recoverableGeminiCliFailure}
+  sourcePinnedSyntheticGeminiAutoRoute,recoverableGeminiCliFailure,
+  assertSourcePinnedSyntheticGeminiCatalog}
   from '../src/core/models/DualSubscriptionRoutingPolicy.ts';
 
 const saved={...process.env};
@@ -145,6 +146,19 @@ describe('26 specialist dual subscription transport policy',()=>{
     process.env.USV_GEMINI_SYNTHETIC_CATALOG_SHA256='a'.repeat(64);
     process.env.USV_GEMINI_AUTH_METHOD='oauth-personal';
     expect(sourcePinnedSyntheticGeminiAutoRoute()).toBe(true);
+    expect(() => assertSourcePinnedSyntheticGeminiCatalog(
+      'evidence/live-agents/representative-cases.json',
+      'SYNTHETIC_TEST_ONLY_NON_OPERATIONAL', 'a'.repeat(64)
+    )).not.toThrow();
+    for (const [path, classification, digest] of [
+      ['evidence/live-agents/representative-cases.json', 'CONTROLLED_ENGINEERING_EVIDENCE', 'a'.repeat(64)],
+      ['evidence/live-agents/representative-cases.json', 'SYNTHETIC_TEST_ONLY_NON_OPERATIONAL', 'b'.repeat(64)],
+      ['references/other-catalog.json', 'SYNTHETIC_TEST_ONLY_NON_OPERATIONAL', 'a'.repeat(64)]
+    ]) {
+      expect(() => assertSourcePinnedSyntheticGeminiCatalog(path,classification,digest)).toThrow(
+        'USV_GEMINI_AUTO_ROUTE_SOURCE_OR_CLASSIFICATION_MISMATCH'
+      );
+    }
     expect(geminiTransferAuthorized()).toBe(true);
     expect(geminiCatalogTransferPermitted('SYNTHETIC_TEST_ONLY_NON_OPERATIONAL')).toBe(true);
     for (const c of ['CONTROLLED_ENGINEERING_EVIDENCE','CLIENT_CONFIDENTIAL',
