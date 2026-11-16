@@ -286,3 +286,31 @@ tool calculations, validated source editions/rights, and two distinct
 trusted human signers are required before `QUALIFIED_SUPERVISED_RESEARCH_ONLY`
 can be claimed. None of this authorizes vessel design release or hardware
 control.
+
+## A23 full-evidence Codex prompt bound — local owner recovery
+
+A23 independent Red Team was stopped at a source-pinned checkpoint after
+22 recorded successes: the exact Codex CLI prompt contained **25,836**
+characters after lossless compaction, but the previous in-process and
+subscription-adapter bounds were both **24,000**. This was **not** a quota
+failure, and no attempt to route invalid input to Gemini is authorized.
+
+The shared bounded Codex subscription CLI input maximum is now **48,000
+characters**, enforced both before CLI invocation in `CodexCliProvider`
+and independently in `validatePilotRequest`. This is a **finite safety and
+resource limit**, not a disabled check. The original system instructions,
+synthetic physical inputs, exact mission context, six A23 upstream advisory
+receipts (including original hashes/TBDs), full deterministic tool evidence,
+and output-schema safeguards remain unchanged. Actual model usage, accuracy,
+engineering acceptance and quota are not inferred from prompt length.
+
+After the protected fix merges, and only when **no existing campaign runner
+is active**, the owner should update the exact `main` checkout and rerun a
+fresh current-SHA A04 `PASS_UNATTESTED` preflight, then authorize the
+existing `mission-control:owner-research -- --resume --ack-uncertain`
+launcher. Existing A01–A22 successes are retained as **historical** under
+their original source revisions; the uncompleted A23 may be retried, then
+A24–A26. No previous successful model call needs to be repeated.
+If any input truly exceeds 48,000 characters, the model still **fails closed**
+and reports only component lengths, never raw sensitive text. This is
+not permission to truncate evidence or invoke a paid API.
