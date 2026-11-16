@@ -1,5 +1,10 @@
 import {describe,it,expect} from 'vitest';
-import {screenDraftHullMesh,type DraftHullMesh,type Vertex} from '../src/core/verification/MeshGeometryScreen.ts';
+import {screenDraftHullMesh,draftGeometryLedgerInput,
+  type DraftHullMesh,type Vertex} from '../src/core/verification/MeshGeometryScreen.ts';
+import {CandidateLedger} from '../src/core/digital-thread/CandidateLedger.ts';
+import {mkdtemp,rm} from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
 
 const sha='a'.repeat(40);
 const points:Vertex[]=[
@@ -88,6 +93,34 @@ describe('M04 geometric math screen does not establish hull authority',()=>{
   expect(screenDraftHullMesh(badFace,sha).failureCodes).toContain('INVALID_TRIANGLE_INDEXING');
   const nonfinite=cube();nonfinite.vertices[3]=[NaN,1,1];
   expect(screenDraftHullMesh(nonfinite,sha).failureCodes).toContain('INVALID_MESH_VERTICES');
+ });
+ it('records an unverified geometry SHA in M03 without unblocking marine physics',async()=>{
+  const folder=await mkdtemp(path.join(os.tmpdir(),'usv-m04-m03-'));
+  try{
+    const screen=screenDraftHullMesh(cube(),sha);
+    const input=draftGeometryLedgerInput(screen,sha);
+    const ledger=new CandidateLedger(path.join(folder,'draft.json'));
+    await ledger.append({
+      kind:'CANDIDATE_CREATED',txId:'M04-INTEGRATION-TEST',
+      projectId:'USV-01',candidateId:'CAND-TEST-01',revisionId:'REV-001',
+      missionId:'SYNTHETIC-MISSION',configurationId:'CFG-TEST',
+      topology:'MONOHULL',sourceSha:sha,
+      classification:'RESTRICTED_METADATA_ONLY',
+      inputDigests:[input]
+    });
+    const view=(await ledger.readAll())[0];
+    expect(view.inputDigests.GEOMETRY).toBe(screen.geometrySha256);
+    expect(view.domainStates.GEOMETRY).toBe('NOT_RUN');
+    expect(view.domainStates.HYDROSTATICS).toBe('BLOCKED');
+    expect(view.domainStates.RESISTANCE).toBe('BLOCKED');
+    expect(view.independentEngineeringValidationSatisfied).toBe(false);
+    expect(view.engineeringReleaseApproved).toBe(false);
+    expect(()=>draftGeometryLedgerInput(screen,'b'.repeat(40))).toThrow(/HANDOFF_BLOCKED/);
+    expect(()=>draftGeometryLedgerInput({...screen,status:'BLOCKED_INVALID_GEOMETRY'},sha))
+      .toThrow(/HANDOFF_BLOCKED/);
+    expect(()=>draftGeometryLedgerInput({...screen,engineeringReleaseApproved:true as false},sha))
+      .toThrow(/HANDOFF_BLOCKED/);
+  }finally{await rm(folder,{recursive:true,force:true});}
  });
  it('supports two disjoint mathematical closed bodies without certifying multihull physics',()=>{
   const twin=cube();

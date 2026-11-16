@@ -4,7 +4,11 @@
  * Computes enclosed mathematical volume and centroid for oriented triangles;
  * NOT immersed displacement, center of buoyancy or intact stability.
  */
-import {sha256 as canonicalSha256} from '../digital-thread/CandidateLedger.ts';
+import {
+  sha256 as canonicalSha256,
+  type InputDigestChange,
+  type Sha256
+} from '../digital-thread/CandidateLedger.ts';
 
 export type MeshTopology='MONOHULL'|'CATAMARAN'|'TRIMARAN';
 export type Vertex=[number,number,number];
@@ -166,4 +170,23 @@ export function screenDraftHullMesh(mesh:DraftHullMesh,expectedSourceSha:string)
     signedEnclosedVolumeM3:volume,enclosedVolumeCentroidMeters:centroid,
     triangleSurfaceAreaM2:area,geometricEnclosureMathChecked:true
   };
+}
+
+/**
+ * A mathematical closure pass is sufficient only for an unverified draft
+ * geometry *reference* in M03, not for a measured-geometry acceptance.
+ * The M03 ledger will continue marking hydrostatics/structures/V&V BLOCKED.
+ */
+export function draftGeometryLedgerInput(
+  screen:MeshScreen,expectedSourceSha:string
+):InputDigestChange{
+  if(!screen || screen.status!=='CLOSED_ORIENTED_MATH_SCREEN_UNVERIFIED' ||
+    screen.sourceCommitSha!==expectedSourceSha || !FULL_SHA.test(expectedSourceSha) ||
+    !screen.geometrySha256 || !/^sha256:[a-f0-9]{64}$/.test(screen.geometrySha256) ||
+    !screen.manifestSha256 || !/^sha256:[a-f0-9]{64}$/.test(screen.manifestSha256) ||
+    screen.independentGeometryApproved!==false || screen.engineeringReleaseApproved!==false ||
+    screen.hydrostaticDisplacementM3!==null || screen.centerOfBuoyancyMeters!==null) {
+    throw new Error('M04_UNVERIFIED_GEOMETRY_HANDOFF_BLOCKED');
+  }
+  return {domain:'GEOMETRY',digest:screen.geometrySha256 as Sha256};
 }

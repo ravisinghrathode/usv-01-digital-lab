@@ -17,3 +17,13 @@ to invalidate dependent analyses without treating a metadata-only revision as
 a new physical shape. The separately canonical `manifestSha256` binds that
 geometry hash to candidate, revision, source commit and provenance label.
 Both are local source hashes, not certified CAD-origin receipts.
+
+## Draft M03 candidate handoff
+
+`draftGeometryLedgerInput(screen, expectedSourceSha)` returns an exact
+`GEOMETRY` digest only after the deterministic mathematical screen passes
+against the exact candidate source commit. The M03 ledger accepts this digest
+as **unverified draft input only**. It retains GEOMETRY `NOT_RUN` and dependent
+HYDROSTATICS/RESISTANCE/STRUCTURES `BLOCKED` until independently observed
+tool and source evidence is separately recorded. Integration tests explicitly
+exercise the actual M03 ledger and reject stale/broken geometry handoffs.
