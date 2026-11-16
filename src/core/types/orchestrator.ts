@@ -20,6 +20,7 @@ export interface EngineeringTask {
   dependencies: string[]; // Task IDs that must complete first
   input: AgentExecutionInput;
   output?: AgentExecutionOutput;
+  executionInputSha256?: string; // digest of the full runtime-dispatched input, including upstream receipts
   status: TaskStatus;
   createdAt: string;
   startedAt?: string;

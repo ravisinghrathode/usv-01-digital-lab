@@ -223,6 +223,9 @@ export class CentralOrchestrator {
               safetyCritical: task.safetyCritical
             };
 
+            // Preserve the digest of the COMPLETE dispatched request, including
+            // authentic upstream receipts and the safety context.
+            task.executionInputSha256 = sha256Evidence(input);
             const output = await this.executionEngine.executeAgent(task.assignedAgentId, input);
             task.output = output;
             task.completedAt = new Date().toISOString();
@@ -253,7 +256,7 @@ export class CentralOrchestrator {
                 description: `Agent ${task.assignedAgentId} completed analysis with safety implications.`,
                 safetyImplication: output.approvalRationale || 'Baseline modification or safety-critical engineering output.',
                 proposedChanges: output.data
-              }, { sourceSha, input: task.input, output });
+              }, { sourceSha, input, output });
 
               task.approvalGateId = gate.id;
             } else if (output.status === 'SUCCESS') {
@@ -310,7 +313,7 @@ export class CentralOrchestrator {
       throw new Error('Approval gate does not match a waiting task; duplicate or stale resolution blocked.');
     }
     if (!/^[a-f0-9]{40}$/i.test(gate.approvalBinding.sourceSha) ||
-        gate.approvalBinding.inputSha256 !== sha256Evidence(task.input) ||
+        gate.approvalBinding.inputSha256 !== task.executionInputSha256 ||
         gate.approvalBinding.outputSha256 !== sha256Evidence(task.output)) {
       this.auditLogger.log({
         severity: 'SAFETY_CRITICAL', agentId: gate.agentId, taskId: task.id,

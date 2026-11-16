@@ -76,6 +76,8 @@ describe('P0 gate evidence/content/source binding', () => {
     const gateId = orchestrator.getTask('V2-NO-SHA')!.approvalGateId!;
     const pending = gates.getGate(gateId)!;
     expect(pending.approvalBinding.sourceSha).toBe('UNPINNED_RESEARCH_ONLY');
+    expect(pending.approvalBinding.inputSha256)
+      .toBe(orchestrator.getTask('V2-NO-SHA')!.executionInputSha256);
     gates.evaluateDecision(gateId, 'APPROVED', 'Research only', sign(pending));
     expect(orchestrator.getTask('V2-NO-SHA')!.status).toBe('WAITING_HUMAN_APPROVAL');
     expect(() => orchestrator.resolveGateDecision(gateId, 'APPROVED'))
