@@ -29,12 +29,30 @@ export function dualProviderEnabled(env: NodeJS.ProcessEnv = process.env): boole
     env.USV_VESSEL_BASELINE_APPROVED !== 'true';
 }
 
-/** Operator attests that EVERY input in this campaign is transferable. */
-export function geminiTransferAuthorized(env: NodeJS.ProcessEnv = process.env): boolean {
+/**
+ * Source-reviewed auto routing is limited to the trusted owner's exact,
+ * fixed synthetic catalog and personal OAuth-only Gemini CLI. The owner
+ * research launcher derives these flags AFTER validating the signed source,
+ * private host/A04 receipt and catalog digest. Environment declarations by
+ * themselves do not approve a controlled naval/client transfer.
+ */
+export function sourcePinnedSyntheticGeminiAutoRoute(
+  env: NodeJS.ProcessEnv = process.env
+): boolean {
   return dualProviderEnabled(env) &&
+    env.USV_GEMINI_AUTO_SYNTHETIC_ROUTE === 'SOURCE_PINNED_OWNER_RESEARCH' &&
+    env.USV_GEMINI_DATA_CLASSIFICATION === 'SYNTHETIC_TEST_ONLY_NON_OPERATIONAL' &&
+    env.USV_GEMINI_AUTH_METHOD === 'oauth-personal' &&
+    /^[a-f0-9]{64}$/.test(env.USV_GEMINI_SYNTHETIC_CATALOG_SHA256 || '');
+}
+
+/** The user authorizes automatic routing for the fixed synthetic catalog. */
+export function geminiTransferAuthorized(env: NodeJS.ProcessEnv = process.env): boolean {
+  const explicitLegacy = dualProviderEnabled(env) &&
     env.USV_GEMINI_FALLBACK_APPROVED === 'true' &&
     env.USV_GEMINI_OAUTH_REVIEWED === 'true' &&
     env.USV_GEMINI_DATA_CLASSIFICATION === 'PUBLIC_NON_SENSITIVE';
+  return explicitLegacy || sourcePinnedSyntheticGeminiAutoRoute(env);
 }
 
 /**
@@ -45,6 +63,9 @@ export function geminiTransferAuthorized(env: NodeJS.ProcessEnv = process.env): 
 export function geminiCatalogTransferPermitted(
   classification: unknown, env: NodeJS.ProcessEnv = process.env
 ): boolean {
+  if (sourcePinnedSyntheticGeminiAutoRoute(env)) {
+    return classification === 'SYNTHETIC_TEST_ONLY_NON_OPERATIONAL';
+  }
   return geminiTransferAuthorized(env) &&
     (classification === 'PUBLIC_NON_SENSITIVE' ||
      classification === 'SYNTHETIC_TEST_ONLY_NON_OPERATIONAL');
