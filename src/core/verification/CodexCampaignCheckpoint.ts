@@ -39,6 +39,9 @@ export interface CodexCheckpoint {
   pending: PendingModelAttempt | null;
   legacySourceSha: string | null;
   legacyJournalSha256: string | null;
+  /** Multiple original commits must remain individually attributable after a fix. */
+  historicalSourceShas?: string[];
+  parentCheckpointSha256?: string;
   uncertainRetryAcknowledgments: Array<{
     canonicalId: string; acknowledgedAtUtc: string;
   }>;
@@ -69,6 +72,7 @@ export function emptyCheckpoint(binding: ResumeBinding): CodexCheckpoint {
     dependencyAware: true, createdAtUtc: timestamp, updatedAtUtc: timestamp,
     completedCount: 0, completed: [], advisories: {}, pending: null,
     legacySourceSha: null, legacyJournalSha256: null,
+    historicalSourceShas: [],
     uncertainRetryAcknowledgments: [],
     independentlyEngineeringValidated: false, engineeringReleaseApproved: false
   };
@@ -100,7 +104,9 @@ function validatePrefix(
     const input = binding.cases[spec.canonicalId];
     if (!isPlainObject(f) || !input || f.canonicalId !== spec.canonicalId ||
         f.runtimeId !== spec.id || f.inputTaskId !== input.taskId ||
-        f.provider !== 'codex_cli' ||
+        !(f.provider === 'codex_cli' ||
+          (f.provider === 'gemini_cli' &&
+           f.modelIdentifier === 'gemini-4-hydrogen' && f.status === SUCCESS)) ||
         f.providerExecutionMode !== 'LIVE_AI_GENERATION' ||
         f.requiredToolsVerified !== true ||
         !DIGEST.test(f.outputDigestSha256 || '') ||
@@ -137,15 +143,32 @@ export function verifyCheckpoint(raw: unknown, binding: ResumeBinding): CodexChe
          !SHA.test(raw.legacySourceSha))) ||
       (raw.legacyJournalSha256 !== null &&
         (typeof raw.legacyJournalSha256 !== 'string' ||
-         !HASH.test(raw.legacyJournalSha256)))) {
+         !HASH.test(raw.legacyJournalSha256))) ||
+      (raw.parentCheckpointSha256 !== undefined &&
+        (typeof raw.parentCheckpointSha256 !== 'string' ||
+         !HASH.test(raw.parentCheckpointSha256))) ||
+      (raw.historicalSourceShas !== undefined &&
+        (!Array.isArray(raw.historicalSourceShas) ||
+         raw.historicalSourceShas.some((s: unknown) =>
+           typeof s !== 'string' || !SHA.test(s) ||
+           s === binding.implementationSha) ||
+         new Set(raw.historicalSourceShas).size !==
+           raw.historicalSourceShas.length))) {
     throw new Error('CODEX_RESUME_CHECKPOINT_MISMATCH_OR_MALFORMED');
   }
   const checkpoint = raw as unknown as CodexCheckpoint;
   validatePrefix(checkpoint.completed, checkpoint.advisories, binding);
-  if (checkpoint.legacySourceSha !== null) {
-    const oldRows = checkpoint.completed.filter(f => f.status === HISTORICAL);
-    if (!oldRows.length || oldRows.some(f => f.originSourceSha !== checkpoint.legacySourceSha)) {
-      throw new Error('CODEX_RESUME_LEGACY_SOURCE_INCONSISTENT');
+  const oldRows = checkpoint.completed.filter(f => f.status === HISTORICAL);
+  if (checkpoint.legacySourceSha !== null &&
+      !oldRows.some(f => f.originSourceSha === checkpoint.legacySourceSha)) {
+    throw new Error('CODEX_RESUME_LEGACY_SOURCE_INCONSISTENT');
+  }
+  if (oldRows.length) {
+    const allowed = checkpoint.historicalSourceShas?.length
+      ? checkpoint.historicalSourceShas
+      : checkpoint.legacySourceSha ? [checkpoint.legacySourceSha] : [];
+    if (!oldRows.every(f => allowed.includes(f.originSourceSha || ''))) {
+      throw new Error('CODEX_RESUME_HISTORICAL_SOURCE_INCONSISTENT');
     }
   }
   if (checkpoint.pending !== null) {
@@ -226,4 +249,42 @@ export function acknowledgeUncertainAttempt(
     updatedAtUtc: new Date().toISOString()
   };
   return verifyCheckpoint(state, binding);
+}
+
+
+/**
+ * Explicit operator-controlled migration across a protected source update.
+ * Validate the *old* checkpoint with its exact source first; caller must
+ * additionally prove old SHA is an ancestor of the new protected main SHA.
+ * No agent is replayed and no old results become new-source evidence.
+ */
+export function rebaseCheckpointProvenance(
+  raw: unknown, oldBinding: ResumeBinding, newBinding: ResumeBinding,
+  previousCheckpointBytes: Buffer
+): CodexCheckpoint {
+  if (oldBinding.implementationSha === newBinding.implementationSha ||
+      oldBinding.catalogSha256 !== newBinding.catalogSha256 ||
+      oldBinding.dataClassification !== newBinding.dataClassification ||
+      oldBinding.specs.map(s => s.id).join('|') !==
+      newBinding.specs.map(s => s.id).join('|')) {
+    throw new Error('CODEX_RESUME_REBASE_SOURCE_OR_REGISTRY_MISMATCH');
+  }
+  const old = verifyCheckpoint(raw, oldBinding);
+  const pastShas = new Set<string>(old.historicalSourceShas ||
+    (old.legacySourceSha ? [old.legacySourceSha] : []));
+  if (old.completed.some(f => f.status === SUCCESS)) {
+    pastShas.add(oldBinding.implementationSha);
+  }
+  const currentShas = [...pastShas];
+  const moved: CodexCheckpoint = {
+    ...old,
+    implementationSha: newBinding.implementationSha,
+    historicalSourceShas: currentShas,
+    parentCheckpointSha256: sha256Bytes(previousCheckpointBytes),
+    completed: old.completed.map(f => f.status === SUCCESS
+      ? { ...f, status: HISTORICAL,
+          originSourceSha: oldBinding.implementationSha } : { ...f }),
+    updatedAtUtc: new Date().toISOString()
+  };
+  return verifyCheckpoint(moved, newBinding);
 }
