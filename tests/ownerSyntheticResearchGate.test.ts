@@ -1,7 +1,9 @@
 import { createHash } from 'node:crypto';
+import fs from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
-  assessOwnerSyntheticResearch, OWNER_RESEARCH_CONFIRMATION,
+  assessOwnerSyntheticResearch, deriveOwnerSyntheticGeminiAutoRoute,
+  OWNER_RESEARCH_CONFIRMATION,
   OWNER_SYNTHETIC_CATALOG
 } from '../src/core/mission-control/OwnerSyntheticResearchGate.ts';
 
@@ -102,7 +104,10 @@ describe('Single-operator synthetic research is NOT independent A04 authorizatio
       { USV_VESSEL_BASELINE_APPROVED: 'true' },
       { USV_GEMINI_FALLBACK_APPROVED: 'true' },
       { USV_GEMINI_OAUTH_REVIEWED: 'true' },
-      { USV_GEMINI_DATA_CLASSIFICATION: 'PUBLIC_NON_SENSITIVE' }
+      { USV_GEMINI_DATA_CLASSIFICATION: 'PUBLIC_NON_SENSITIVE' },
+      { USV_GEMINI_AUTO_SYNTHETIC_ROUTE: 'SOURCE_PINNED_OWNER_RESEARCH' },
+      { USV_GEMINI_SYNTHETIC_CATALOG_SHA256: 'a'.repeat(64) },
+      { USV_GEMINI_AUTH_METHOD: 'oauth-personal' }
     ]) {
       const result = assessOwnerSyntheticResearch({
         ...accepted(), env: flags
@@ -110,4 +115,32 @@ describe('Single-operator synthetic research is NOT independent A04 authorizatio
       expect(result.allowed, JSON.stringify(flags)).toBe(false);
     }
   });
+  it('derives an automatic Gemini OAuth-only source/collateral grant, never a user-supplied provider choice', () => {
+    const decision = assessOwnerSyntheticResearch(accepted());
+    const flags = deriveOwnerSyntheticGeminiAutoRoute(decision, synthetic);
+    expect(flags).toMatchObject({
+      USV_GEMINI_AUTO_SYNTHETIC_ROUTE: 'SOURCE_PINNED_OWNER_RESEARCH',
+      USV_GEMINI_SYNTHETIC_CATALOG_SHA256: hash(synthetic.toString('utf8')),
+      USV_GEMINI_DATA_CLASSIFICATION: 'SYNTHETIC_TEST_ONLY_NON_OPERATIONAL',
+      USV_GEMINI_AUTH_METHOD: 'oauth-personal'
+    });
+    const denied = assessOwnerSyntheticResearch({
+      ...accepted(), env: { USV_ENABLE_ACTUATOR_CONTROL: 'true' }
+    });
+    expect(() => deriveOwnerSyntheticGeminiAutoRoute(denied, synthetic)).toThrow();
+    expect(() => deriveOwnerSyntheticGeminiAutoRoute(decision,
+      Buffer.from('{"dataClassification":"RESTRICTED_NAVAL"}'))).toThrow();
+    expect(() => deriveOwnerSyntheticGeminiAutoRoute({
+      ...decision, catalogDigestSha256: 'f'.repeat(64)
+    }, synthetic)).toThrow();
+
+    // The owner authorizes the campaign once; the provider must be selected
+    // by code, never by a second interactive Gemini-choice phrase.
+    const launcher = fs.readFileSync(
+      'scripts/mission-control/owner-synthetic-commission.ts', 'utf8');
+    expect(launcher).toContain('deriveOwnerSyntheticGeminiAutoRoute');
+    expect(launcher).not.toContain('AUTHORIZE GEMINI SYNTHETIC TRANSFER');
+    expect(launcher).not.toContain('Otherwise press Enter for Codex-only');
+  });
+
 });
