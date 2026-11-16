@@ -31,6 +31,7 @@
     "acceptance:accuracy": "tsx scripts/assess-agent-accuracy.ts",
     "acceptance:agt02-audit": "tsx scripts/run-agent-accuracy-audit.ts",
     "acceptance:numerical": "vitest run tests/independentNumericalOracles.test.ts",
+    "acceptance:numerical-evidence": "vitest run tests/numericalVnVHarness.test.ts",
     "acceptance:commission": "tsx scripts/run-commissioning-suite.ts",
     "acceptance:live-agents": "tsx scripts/run-live-agent-matrix.ts",
     "acceptance:codex-agents": "tsx scripts/run-codex-agent-campaign.ts",

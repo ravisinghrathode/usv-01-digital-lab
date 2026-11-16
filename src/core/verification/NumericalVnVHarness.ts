@@ -1,3 +1,10 @@
+/**
+ * Research-only M05 numerical V&V evidence boundary.
+ * Neither model claims nor unanchored reviewer names establish engineering
+ * validation. Cryptographic receipt verification is not human qualification.
+ */
+import {createHash, createPublicKey, verify} from 'node:crypto';
+
 export type DisciplineId =
   | 'HYDROSTATICS_STABILITY'
   | 'RESISTANCE_PROPULSION_ENDURANCE'
@@ -45,6 +52,16 @@ export interface DisciplineReviewDisposition {
   disposition: 'ACCEPTED_WITH_LIMITS' | 'HOLD' | 'REJECTED';
   signedAtUtc: string;
   independentFromProducer: boolean;
+  /** Key ID must resolve to an external, operator-provisioned trust root. */
+  signerKeyId?: string;
+  /** Exactly 64 Ed25519 signature bytes in canonical base64. */
+  signatureBase64?: string;
+}
+
+export interface TrustedNumericalReviewer {
+  reviewerName: string;
+  reviewerQualification: string;
+  publicKeyPem: string;
 }
 
 export interface VnVBenchmarkEvaluation {
@@ -54,7 +71,7 @@ export interface VnVBenchmarkEvaluation {
   combinedUncertainty: number;
   withinTolerance: boolean;
   exceedsValidationNoise: boolean;
-  grade: 'EVIDENCE_GRADED_PRELIMINARY' | 'SOLVER_CONVERGED_UNRELEASED' | 'FAIL_EXCEEDS_TOLERANCE' | 'INVALID_METADATA';
+  grade: 'NUMERIC_SCREEN_PASS_UNCERTIFIED' | 'FAIL_EXCEEDS_TOLERANCE' | 'INVALID_METADATA';
   notes: string[];
 }
 
@@ -62,7 +79,11 @@ export interface NumericalVnVReport {
   schema: 'usv01-numerical-vnv/v1';
   sourceCommitSha: string;
   benchmarkEvaluations: VnVBenchmarkEvaluation[];
-  solverStatus: Record<'OPENFOAM_CFD' | 'CALCULIX_FEA', { status: 'VERIFIED_RECEIPT_ONLY' | 'NOT_RUN'; reason: string }>;
+  solverStatus: Record<'OPENFOAM_CFD' | 'CALCULIX_FEA', {
+    status: 'DECLARED_RECEIPT_UNVERIFIED' | 'NOT_RUN'; reason: string
+  }>;
+  /** Source SHA declared by submitter is NOT a verification of the source document. */
+  referenceArtifactsAuthenticated: false;
   acceptedDisciplines: DisciplineId[];
   rejectedReviewDispositions: string[];
   overallStatus: 'PRELIMINARY_BENCHMARKED_HOLD_FOR_EXTERNAL_AND_DIRECTOR' | 'BLOCKED_FAILED_OR_INVALID_BENCHMARK';
@@ -73,6 +94,80 @@ export interface NumericalVnVReport {
 
 const SHA256_RE = /^sha256:[0-9a-f]{64}$/;
 const GIT_SHA_RE = /^[0-9a-f]{40}$/;
+const STRICT_BASE64 = /^[A-Za-z0-9+/]+={0,2}$/;
+export const NUMERICAL_REVIEW_SIGNATURE_DOMAIN = 'USV01_NUMERICAL_VNV_REVIEW_V1\\n';
+
+function contentDigest(value: unknown): string {
+  return 'sha256:' + createHash('sha256').update(JSON.stringify(value)).digest('hex');
+}
+
+/**
+ * Binds an exact candidate source, geometry and each actual compared value,
+ * tolerance, uncertainty and reference identifier to a discipline review.
+ * Do not mistake a supplied artifact digest for independently authenticated
+ * reference measurements; source inspection remains external.
+ */
+export function numericalDisciplineOutputDigest(
+  sourceCommitSha: string, geometrySha256: string, discipline: DisciplineId,
+  benchmarks: readonly DisciplineBenchmarkInput[]
+): string {
+  const rows=benchmarks.filter(b=>b.discipline===discipline)
+    .map(b=>({
+      benchmarkId:b.benchmarkId,quantity:b.quantity,unit:b.unit,
+      standardOrSourceRef:b.standardOrSourceRef,artifactSha256:b.artifactSha256,
+      computedValue:b.computedValue,referenceValue:b.referenceValue,
+      referenceUncertainty:b.referenceUncertainty,
+      numericalUncertainty:b.numericalUncertainty,
+      approvedTolerance:b.approvedTolerance,
+      topologySpecificChecked:b.topologySpecificChecked,
+      isPartialScreenOnly:b.isPartialScreenOnly===true,
+      installedHardwareMapRef:b.installedHardwareMapRef ?? null
+    })).sort((a,b)=>a.benchmarkId.localeCompare(b.benchmarkId));
+  return contentDigest({
+    schema:'usv01-numerical-reviewed-discipline/v1',
+    sourceCommitSha, geometrySha256,discipline,rows
+  });
+}
+
+/** The source and geometry bind the review even when the same numbers recur. */
+export function numericalReviewSigningPayload(
+  review: DisciplineReviewDisposition, sourceCommitSha: string,
+  geometrySha256: string
+): Buffer {
+  return Buffer.from(NUMERICAL_REVIEW_SIGNATURE_DOMAIN + JSON.stringify({
+    schema:'usv01-numerical-review-signature/v1',
+    sourceCommitSha,geometrySha256,signerKeyId:review.signerKeyId,
+    discipline:review.discipline,outputDigest:review.outputDigest,
+    reviewerName:review.reviewerName,reviewerQualification:review.reviewerQualification,
+    reviewerType:review.reviewerType,disposition:review.disposition,
+    independentFromProducer:review.independentFromProducer,
+    signedAtUtc:review.signedAtUtc
+  }),'utf8');
+}
+
+function independentlySignedReview(
+  review:DisciplineReviewDisposition, sourceSha:string,
+  geometrySha:string, trust:Readonly<Record<string,TrustedNumericalReviewer>>
+):boolean{
+  const anchor=review.signerKeyId ? trust[review.signerKeyId] : undefined;
+  if(!anchor || anchor.reviewerName!==review.reviewerName ||
+    anchor.reviewerQualification!==review.reviewerQualification ||
+    !review.reviewerName.trim() || !review.reviewerQualification.trim() ||
+    !review.independentFromProducer ||
+    review.reviewerType!=='QUALIFIED_EXTERNAL_ENGINEER' ||
+    !Number.isFinite(Date.parse(review.signedAtUtc)) ||
+    typeof review.signatureBase64!=='string' ||
+    !STRICT_BASE64.test(review.signatureBase64)) return false;
+  try{
+    const signature=Buffer.from(review.signatureBase64,'base64');
+    if(signature.length!==64 || signature.toString('base64')!==review.signatureBase64)
+      return false;
+    const pub=createPublicKey(anchor.publicKeyPem);
+    if(pub.asymmetricKeyType!=='ed25519') return false;
+    return verify(null,numericalReviewSigningPayload(review,sourceSha,geometrySha),pub,signature);
+  }catch{return false;}
+}
+
 
 export function evaluateNumericalVnV(input: {
   sourceCommitSha: string;
@@ -80,6 +175,11 @@ export function evaluateNumericalVnV(input: {
   benchmarks: readonly DisciplineBenchmarkInput[];
   solverReceipts?: readonly PinnedSolverRunReceipt[];
   reviewDispositions?: readonly DisciplineReviewDisposition[];
+  /**
+   * Trust anchors provisioned by the operator OUTSIDE the evidence submission.
+   * Never accept a key embedded in a model response, PR artifact or public CI.
+   */
+  trustedReviewers?: Readonly<Record<string,TrustedNumericalReviewer>>;
 }): NumericalVnVReport {
   if (!GIT_SHA_RE.test(input.sourceCommitSha)) {
     throw new Error('Exact 40-hex sourceCommitSha is required for V&V evaluation');
@@ -128,11 +228,11 @@ export function evaluateNumericalVnV(input: {
       notes.push('Propulsive/hardware efficiency remains uncalibrated (no installed hardware map)');
     }
 
+    // Numerical agreement does not establish a solver was run, that a mesh
+    // converged, or that any reference/source was independently authenticated.
     const grade: VnVBenchmarkEvaluation['grade'] = !withinTolerance
       ? 'FAIL_EXCEEDS_TOLERANCE'
-      : b.isPartialScreenOnly
-        ? 'EVIDENCE_GRADED_PRELIMINARY'
-        : 'SOLVER_CONVERGED_UNRELEASED';
+      : 'NUMERIC_SCREEN_PASS_UNCERTIFIED';
 
     return {
       benchmarkId: b.benchmarkId,
@@ -152,7 +252,11 @@ export function evaluateNumericalVnV(input: {
     CALCULIX_FEA: { status: 'NOT_RUN', reason: 'NOT_RUN: no pinned CalculiX convergence/BC/uncertainty receipt for current geometrySha256' }
   };
 
+  const seenSolvers = new Set<PinnedSolverRunReceipt['solverFamily']>();
+  const duplicateSolvers = new Set<PinnedSolverRunReceipt['solverFamily']>();
   for (const r of input.solverReceipts ?? []) {
+    if (seenSolvers.has(r.solverFamily)) duplicateSolvers.add(r.solverFamily);
+    seenSolvers.add(r.solverFamily);
     if (r.executionState !== 'EXECUTED_PINNED_HOST') continue;
     const valid =
       r.pinnedSolverVersion.trim().length > 0 &&
@@ -168,8 +272,8 @@ export function evaluateNumericalVnV(input: {
 
     if (valid) {
       solverStatus[r.solverFamily] = {
-        status: 'VERIFIED_RECEIPT_ONLY',
-        reason: `Pinned solver ${r.pinnedSolverVersion} receipt present (unreleased; subject to physical validation)`
+        status: 'DECLARED_RECEIPT_UNVERIFIED',
+        reason: `Pinned solver ${r.pinnedSolverVersion} metadata passes format checks; signature, binary, mesh/BCs, convergence and physical validity remain unverified`
       };
     } else {
       solverStatus[r.solverFamily] = {
@@ -179,25 +283,45 @@ export function evaluateNumericalVnV(input: {
     }
   }
 
+  // Contradictory/duplicate receipts do not become trusted by ordering them.
+  for (const solverFamily of duplicateSolvers) {
+    solverStatus[solverFamily] = {
+      status:'NOT_RUN',
+      reason:'Conflicting/duplicate solver receipts: no unique authenticated execution evidence'
+    };
+  }
+
   // Filter independent review dispositions: NEVER accept AI model or CI self-attestation.
   const acceptedDisciplines: DisciplineId[] = [];
   const rejectedReviewDispositions: string[] = [];
 
+  const reviewedDisciplines = new Set<DisciplineId>();
   for (const rev of input.reviewDispositions ?? []) {
-    if (rev.reviewerType !== 'QUALIFIED_EXTERNAL_ENGINEER') {
+    if (reviewedDisciplines.has(rev.discipline)) {
+      rejectedReviewDispositions.push(`${rev.discipline}: duplicate or contradictory review, no unique acceptance`);
+      const index=acceptedDisciplines.indexOf(rev.discipline);
+      if(index>=0)acceptedDisciplines.splice(index,1);
+      continue;
+    }
+    reviewedDisciplines.add(rev.discipline);
+    const rows=input.benchmarks.filter(b=>b.discipline===rev.discipline);
+    const validRows=rows.length>0 && rows.every(b=>
+      benchmarkEvaluations.some(e=>e.benchmarkId===b.benchmarkId &&
+        e.discipline===rev.discipline && e.grade==='NUMERIC_SCREEN_PASS_UNCERTIFIED'));
+    const expected=numericalDisciplineOutputDigest(
+      input.sourceCommitSha,input.geometrySha256,rev.discipline,input.benchmarks);
+    if (!validRows || rev.outputDigest!==expected ||
+        !independentlySignedReview(
+          rev,input.sourceCommitSha,input.geometrySha256,input.trustedReviewers??{})) {
       rejectedReviewDispositions.push(
-        `${rev.discipline}: rejected non-independent ${rev.reviewerType} disposition (${rev.reviewerName})`
-      );
+        `${rev.discipline}: missing/invalid external Ed25519 signature, exact input digest, trusted identity, or successful benchmark`);
       continue;
     }
-    if (!rev.independentFromProducer || !rev.reviewerQualification.trim() || !SHA256_RE.test(rev.outputDigest)) {
-      rejectedReviewDispositions.push(`${rev.discipline}: reviewer lacks independence, qualification, or digest binding`);
-      continue;
-    }
-    if (rev.disposition === 'ACCEPTED_WITH_LIMITS') {
+    if (rev.disposition==='ACCEPTED_WITH_LIMITS') {
       acceptedDisciplines.push(rev.discipline);
     } else {
-      rejectedReviewDispositions.push(`${rev.discipline}: external review disposition is ${rev.disposition}`);
+      rejectedReviewDispositions.push(
+        `${rev.discipline}: signed external review disposition is ${rev.disposition}`);
     }
   }
 
@@ -210,6 +334,7 @@ export function evaluateNumericalVnV(input: {
     sourceCommitSha: input.sourceCommitSha,
     benchmarkEvaluations,
     solverStatus,
+    referenceArtifactsAuthenticated:false,
     acceptedDisciplines: Array.from(new Set(acceptedDisciplines)),
     rejectedReviewDispositions,
     overallStatus: anyInvalidOrFailed
