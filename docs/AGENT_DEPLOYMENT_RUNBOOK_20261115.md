@@ -17,15 +17,44 @@ source commit and a stable nonsecret `USV01_HOST_ID`. No key or ChatGPT/Google
 cached session leaves the machine. The runner fails closed if invoked under
 GitHub Actions or CI.
 
-### Safe operator-local entrypoint
+### Safe operator-local entrypoint (never execute from GitHub Actions)
+
+On the approved Mac only, first fetch and check out `main`, install Node 22 and `npm ci`, and verify Codex subscription sign-in. Do **not** set the A04 authorization before the independent A04 review.
 
 ```sh
+cd /path/to/usv-01-digital-lab
+git fetch origin main
+git checkout main
+git pull --ff-only
+npm ci
+codex login status
+
+export USV_SUBSCRIPTION_PILOT=enabled
+export AI_REVIEW_PROVIDER=codex_cli
+export USV_ALLOW_PAID_AI_API=false
+export USV_LAB_SCOPE=RESEARCH_ONLY
+export USV_DUAL_PROVIDER_ROUTING=enabled
+export USV01_HOST_ID='your-reviewed-nonsecret-host-alias'
+
+npm run mission-control:a04-check -- --source-sha "$(git rev-parse HEAD)"
 npm run mission-control:private-commission -- --plan
-# After A04 operator approval and local signed-in Codex/Gemini verification:
+```
+
+Review `data/a04-host-readiness-*.json` **locally**; a `PASS_UNATTESTED` finding is not approval. A qualified independent operator must verify source/host isolation, restricted data boundaries, hardware resource adequacy and the exact commit. Store that review outside public GitHub. **Only after authenticated approval**, in the same private shell, set `USV_A04_AUTHORIZED_SHA` to the approved commit (not an arbitrary current HEAD); provision `USV_HOST_ATTESTATION_PRIVATE_KEY_FILE` outside the repository with mode 0600/0400 and the separately trusted `USV_HOST_ATTESTATION_PUBLIC_KEY`.
+
+```sh
+# These must already have been independently approved/provisioned:
+export USV_A04_AUTHORIZED_SHA='<independently-reviewed-40-character-main-sha>'
+export USV_HOST_ATTESTATION_PRIVATE_KEY_FILE='<outside-repo-private-key-path>'
+export USV_HOST_ATTESTATION_PUBLIC_KEY='<trusted-public-key-PEM>'
+
+test "$(git rev-parse HEAD)" = "$USV_A04_AUTHORIZED_SHA" || exit 1
 npm run mission-control:private-commission -- \
-  --source-sha "$(git rev-parse HEAD)" \
+  --source-sha "$USV_A04_AUTHORIZED_SHA" \
   --catalog evidence/live-agents/representative-cases.json --execute
 ```
+
+The above example demonstrates **synthetic operational commissioning only** if all real authenticated checks pass. A real controlled catalog needs separately approved access, evidence and human review. Gemini transfer defaults to **DENY**; only independently authorized public/non-sensitive inputs may be routed to it. This commissioning gate currently requires all 26 authenticated **Codex** traces for its operational attestation, so a Gemini fallback attempt is **not** by itself a pass of the Codex-only gate.
 
 The illustrative catalog is **synthetic/non-operational**; do not mistake a
 successful provider attempt for a controlled real Navy hull candidate. Gemini
@@ -56,7 +85,7 @@ only for zero-model readiness and deterministic CI.
 1. Use a clean approved `main` checkout matching the GitHub remote, Node 22, `npm ci`, and a dedicated, non-privileged operator account. Never run unreviewed PR code on a runner holding ChatGPT login or signing keys.
 2. Set `AI_REVIEW_PROVIDER=codex_cli`, `USV_SUBSCRIPTION_PILOT=enabled`, `USV_ALLOW_PAID_AI_API=false`, `USV_LAB_SCOPE=RESEARCH_ONLY`, and a stable non-secret `USV01_HOST_ID`.
 3. Verify the actual `codex login status` is operator-authenticated ChatGPT mode. Run `npm run mission-control:a04-check -- --source-sha "$(git rev-parse HEAD)"`. The private `data/a04-host-readiness-*.json` receipt is **PASS_UNATTESTED** at best and never sufficient for A04 closure.
-4. A qualified software operations reviewer checks receipt, login type, clean revision, filesystem permissions, sandbox/network boundaries, resource limits and host identity. After the reviewer approves **this exact source SHA**, a repository owner sets the non-secret GitHub Actions repository variable `USV_A04_AUTHORIZED_SHA` to that complete 40-character SHA. Do not set it on the basis of an AI statement or CI alone.
+4. A qualified software operations reviewer checks receipt, login type, clean revision, filesystem permissions, sandbox/network boundaries, resource limits and host identity. After the reviewer approves **this exact source SHA**, the authorized Mac operator records the approval outside the public repository and exports `USV_A04_AUTHORIZED_SHA` **in the private host environment** for `mission-control:private-commission`. A GitHub Actions repository variable does not authorize this local process and must not be treated as a substitute for signed human review. Do not set it on the basis of an AI statement or CI alone.
 5. **Do not register any subscription or signing-key-bearing self-hosted GitHub runner for this public repository.** Provision an isolated, independently reviewed operator-local Mac with ChatGPT/Codex CLI login and (when explicitly public-data approved) Google/Gemini CLI login outside GitHub. Keep host signing keys in private protected local storage, and validate exact A04 SHA authorization before enabling local live execution.
 6. Re-run `USV-01 26-Agent Authenticated ChatGPT Commissioning` with `mode=preflight`. It must fail closed when the synthetic catalog cannot satisfy mandatory deterministic inputs. Preserve the exact-SHA report as software readiness evidence.
 
@@ -64,7 +93,7 @@ only for zero-model readiness and deterministic CI.
 
 1. For a smoke test, run the research-only A01/A02/A03/A25/A26 pilot with A15 critique. A production task must use an authorized controlled task catalog; synthetic samples are demonstration-only.
 2. Invoke `npm run mission-control:private-commission -- --source-sha "$SOURCE_SHA" --catalog "$CATALOG_PATH" --execute` **on the independently approved local host**, never from public GitHub Actions. The local supervisor checks the reviewed SHA, research-only flags, exact source checkout, controlled catalog, authenticated provider availability, dependency-aware 26-role execution and short-lived host signing.
-3. The workflow enforces `--require-operational`: all 26 must have **actual** current-source Codex traces and a verifiable signed host receipt. It uploads the report including remaining independent review blockers. An operational pass **does not** mean independent engineering validation has passed.
+3. The local process enforces `--require-operational`: all 26 must have **actual** current-source Codex traces and a verifiable signed host receipt. It writes local `data/` and `governance/reports/` evidence; **do not upload** these or their controlled inputs/outputs to the public repository. An operational pass **does not** mean independent engineering validation has passed.
 4. After a successful live campaign, qualified independent reviewers sign actual source-referenced outputs using separate keys. `npm run acceptance:full-26 -- --require-all` is the later, strictly stronger multi-gate engineering campaign assessment and is **not** silently passed by operational commissioning.
 
 ## Phase 2 — UI and digital thread
@@ -91,4 +120,4 @@ only for zero-model readiness and deterministic CI.
 | Independent V&V | signed separate reviewers and source-hashed numeric/qualitative references | role-specific engineering confidence, never automatic vessel release |
 | Deployment | authenticated live application SHA, 24-module smoke, persistence/restore, access controls and monitoring | live lab software verified |
 
-**Rollback:** Stop new task admission. Disable the runner's ability to execute further research until reviewed. Revert deployed app to the previous accepted source SHA through protected-main governance, keep immutable existing traces read-only, rotate compromised credentials, and rerun A04/A05 before restoring service. Never force-push `main`, reuse old signed host health for a new SHA, or mark missing engineering evidence as approved.
+**Rollback:** Stop new task admission. Disable the private local host's ability to execute further research until reviewed. Revert deployed app to the previous accepted source SHA through protected-main governance, keep immutable existing traces read-only, rotate compromised credentials, and rerun A04/A05 before restoring service. Never force-push `main`, reuse old signed host health for a new SHA, or mark missing engineering evidence as approved.
