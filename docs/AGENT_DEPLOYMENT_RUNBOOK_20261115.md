@@ -17,6 +17,71 @@ source commit and a stable nonsecret `USV01_HOST_ID`. No key or ChatGPT/Google
 cached session leaves the machine. The runner fails closed if invoked under
 GitHub Actions or CI.
 
+
+### Independent A04 review signature — required before live model execution
+
+**Do not self-authorize by setting `USV_A04_AUTHORIZED_SHA` from `git rev-parse HEAD`.**
+A `PASS_UNATTESTED` host probe is a genuine zero-model technical observation, not
+the independent software-operations decision. The live supervisor now requires
+a separate reviewer-signed Ed25519 approval over the **exact source SHA, stable
+host alias, reviewed preflight receipt bytes and catalog bytes** before any live
+Codex call. This proposed protected change requires CI and authorized merge;
+after merger, the Mac must re-run A04 against the **new** source SHA.
+
+A qualified **independent human reviewer** must first examine the controlled
+local A04 receipt, host isolation, OAuth subscription sign-in, resource limits,
+source/worktree provenance, classification, transfer boundaries, scope and
+mission permissions. They must independently authenticate the reviewer public
+key from the approved organizational trust registry. A signature from an
+operator-controlled/self-selected key does NOT establish independent approval.
+
+On that exact reviewed clean commit, the operator retains the latest
+`data/a04-host-readiness-*.json` evidence privately. The independent reviewer
+signs a JSON decision with schema `USV-A04-INDEPENDENT-REVIEW-1`, containing
+**exactly**:
+
+- `schema`, `approvalId`, `sourceSha`, `hostAliasSha256`
+- `reviewedReceiptSha256`, `catalogSha256`, `catalogClassification`
+- `authorization` = `NON_ACTUATING_RESEARCH_ONLY`
+- `reviewerIdentity`, `reviewerOrganization`, `issuedAtUtc`, `expiresAtUtc`
+- `decision` = `APPROVED` or `HOLD`; `signatureBase64`
+
+Generate the canonical UTF-8 signature payload with
+`canonicalA04Approval(record)` in
+`src/core/mission-control/A04IndependentApproval.ts`; sign those bytes using
+the reviewer's externally protected Ed25519 private key, never on a public CI
+runner. Digests are lowercase SHA-256 hex without a prefix. The host-alias
+digest is SHA-256 of the stable nonsecret `USV01_HOST_ID`. Receipt/catalog
+digests cover the exact raw file bytes. The approval expires within seven
+days and is valid **only** for the reviewed SHA, host and catalog.
+A blank/forged/expired/HOLD or mismatched approval is rejected.
+
+After that actual independent authorization, in the same private Mac shell:
+
+```sh
+# Supply actual independent-review and trust registry paths, not placeholders:
+export USV_A04_REVIEWED_RECEIPT_FILE='/absolute/repo/data/a04-host-readiness-<reviewed>.json'
+export USV_A04_REVIEW_DECISION_FILE='/private-outside-git/independent-a04-approval.json'
+export USV_A04_TRUSTED_REVIEWER_PUBLIC_KEY_FILE='/private-outside-git/trusted-reviewer-public.pem'
+export USV_A04_AUTHORIZED_SHA='<exact-human-reviewed-protected-main-40-char-sha>'
+```
+
+The signed decision and trust-root files must be regular, non-symlink,
+non-group-writable files **outside the public checkout**; the receipt must
+stay private under `data/`. Trust-anchor authenticity is a separate human/
+organizational check; merely selecting a public-key path does not establish
+reviewer identity. The host's later self-signed runtime health receipt
+cannot substitute for this **pre-run independent review**. This authorizes
+bounded non-actuating research only, never a vessel baseline, hardware,
+production deployment or engineering release.
+
+Gemini Hydrogen High and Argon High visible inside **Antigravity** are
+interactive account/model selections, not proof that this project's separate
+`gemini` adapter can authenticate or automatically wrap the consumer CLI.
+Keep automated Gemini transfer **DENIED** unless provider use, permissions
+and each public/non-sensitive data transfer have been independently cleared.
+The strict operational 26-agent acceptance is presently **Codex-only**.
+
 ### Safe operator-local entrypoint (never execute from GitHub Actions)
 
 On the approved Mac only, first fetch and check out `main`, install Node 22 and `npm ci`, and verify Codex subscription sign-in. Do **not** set the A04 authorization before the independent A04 review.
