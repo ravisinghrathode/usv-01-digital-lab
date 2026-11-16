@@ -3,7 +3,7 @@ import { ApprovalGateManager } from '../src/core/safety/HumanApprovalGate.ts';
 import { SharedMemory } from '../src/core/memory/SharedMemory.ts';
 import { AuditLogger } from '../src/core/safety/AuditLogger.ts';
 import { MockDeterministicProvider } from '../src/core/models/ModelProvider.ts';
-import { generateApproverSignature } from '../src/core/safety/ApproverSigner.ts';
+import { generateBoundApproverSignature } from '../src/core/safety/ApproverSigner.ts';
 
 describe('STAGE F: Human Authority Gates & Safety Governance', () => {
   const gateManager = ApprovalGateManager.getInstance();
@@ -61,8 +61,8 @@ describe('STAGE F: Human Authority Gates & Safety Governance', () => {
     });
 
     const timestamp = new Date().toISOString();
-    const signature = generateApproverSignature(
-      gate.id,
+    const signature = generateBoundApproverSignature(
+      gate,
       'APPROVED',
       'usr-dir-001',
       'ENGINEERING_DIRECTOR',
@@ -160,8 +160,8 @@ describe('STAGE F: Human Authority Gates & Safety Governance', () => {
 
     // Valid cryptographic signature should succeed
     const validTimestamp = new Date().toISOString();
-    const validSignature = generateApproverSignature(
-      gate.id,
+    const validSignature = generateBoundApproverSignature(
+      gate,
       'APPROVED',
       'usr-eng-dir-8841',
       'ENGINEERING_DIRECTOR',

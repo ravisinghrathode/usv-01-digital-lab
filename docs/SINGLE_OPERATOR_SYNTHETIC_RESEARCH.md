@@ -168,23 +168,23 @@ inventing evidence.
 
 ## Continuous Codex → Gemini execution (2026-11-17)
 
-**Scope: the exact pinned synthetic catalog only**. The owner authorizes Codex
-primary (requested GPT-6 Sol) and optionally permits a Google-account signed-in
-Gemini CLI to receive **only** this fixed synthetic data. It does not authorize
-restricted naval/customer transfers, a paid AI API, an actual vessel action or
-human-independent engineering approval.
+**Scope: only the exact source-pinned, non-operational synthetic catalog.**
+The owner authorizes one research session; source-reviewed code then selects
+**signed-in Codex first**, **Google personal-OAuth Gemini CLI automatically**
+after eligible Codex quota/auth/model/transport failures. No provider-selection
+prompt is shown. The initial `RUN 26 SYNTHETIC AGENTS` confirmation still
+authorizes the owner research *run*, not the provider. Existing user consent
+to automatic synthetic-only failover is implemented as source-bound policy,
+not as an unverified claim that Google's CLI is logged in.
 
-The owner launcher now displays a second **optional** authorization prompt:
-
-`AUTHORIZE GEMINI SYNTHETIC TRANSFER`
-
-Type it only if you have reviewed that Gemini CLI uses your intended Google
-account's existing **OAuth session**, not an API key. Press Enter to remain
-Codex-only. This is **operator attestation**, not automated authentication
-proof. The secondary CLI must actually be installed and authenticated for
-Gemini fallback to work; the exact requested model `gemini-4-hydrogen` must
-appear in its model-usage metadata or that attempt fails closed. No silent
-model downgrade is accepted.
+The secondary CLI must actually be installed, signed into the intended Google
+account and able to use the exact required `gemini-4-hydrogen` model; model
+metadata must verify Hydrogen execution. The CLI is forced to
+`oauth-personal` authentication using its isolated system settings, and
+the spawned environment excludes billable API keys. A Gemini sign-in may still
+require one-time setup outside the automated model selection. No restricted
+naval/customer data, engineering approval, signed release or vessel actuator
+control is authorized, regardless of provider availability.
 
 The owner synthetic campaign raises the historically overconservative default
 12 requests/6 hours to a **bounded local research ceiling of 1000 attempts
@@ -194,16 +194,22 @@ persistent subscription ledgers. This is NOT a representation of available
 ChatGPT/Gemini tokens. User-managed limits for other/production routes remain
 unchanged.
 
-For quota/transport errors, the model router attempts Gemini only after
-explicit authorization. When both available subscription transports are
-quota-blocked, the local campaign records `WAITING_FOR_SUBSCRIPTION_CAPACITY`
-and periodically retries while the original owner Terminal stays active,
-bounded by a 10-hour wait ceiling and a 12-hour process ceiling. Pending
-agent checkpoints survive even when this session stops; an interrupted or
-unknown in-flight attempt still requires owner acknowledgment before the next
-session. Provider errors unrelated to capacity (safety refusal, invalid
-response, missing mandatory calculation, missing Gemini authentication,
-unknown model or incompatible JSON) are not bypassed with a mock or API key.
+When Codex reports an eligible transient failure, the router attempts Gemini
+automatically and records the actual provider/model in the source-bound journal.
+If Gemini is missing, temporarily unauthenticated, rate-limited or a known
+transport failure occurs, the campaign records
+`WAITING_FOR_SUBSCRIPTION_CAPACITY` and retries Codex first on its next
+backoff cycle. While the authorized Terminal stays open, there is no preset
+10-hour provider-wait cutoff or 12-hour parent-process timeout. Retry
+intervals remain bounded and persistent provider quota ledgers remain
+enforced. No model tokens are spent while the local quota circuit is blocked.
+
+No automatic recovery may fabricate evidence or bypass a model safety refusal,
+invalid JSON/schema, unverified Gemini model identity, failed deterministic
+calculation or human engineering approval. These remain genuine safety stops.
+If the Mac powers down, Terminal is killed or login credentials need new
+interactive authentication, the campaign cannot guarantee uninterrupted
+execution; it preserves its private checkpoint for an explicit owner restart.
 
 **No previous results are lost on the code-update commit.** The existing
 checkpoint is migrated only if the previous exact SHA is a Git ancestor, the
@@ -224,17 +230,12 @@ Run after merging, updating Mac `main` and generating a fresh local A04
 npm run mission-control:owner-research -- --resume --ack-uncertain
 ```
 
-Type the original `RUN 26 SYNTHETIC AGENTS` owner phrase and, only after
-confirming Google OAuth login, the new optional Gemini phrase. Only one
-interactive owner launch is required for the resumed session. While running,
-watch `data/codex-26-agent-checkpoint.json` or
-`data/codex-26-agent-resume-progress.json` from another Terminal.
-
-**Limitations:** A Terminal session that is killed, the Mac being off,
-missing/unauthorized Gemini CLI, or both providers exceeding the bounded
-wait can still interrupt progress. No unsafe service/daemon has been
-installed to bypass the owner TTY authorization. Re-entry from its private
-checkpoint remains available and does not replay completed successes.
+Type only `RUN 26 SYNTHETIC AGENTS` to authorize the pinned synthetic
+research session. **No Codex/Gemini selection is requested.** The runner
+first uses Codex; upon an eligible failure it attempts the existing OAuth-only
+Gemini CLI automatically. Check progress in a second Terminal with the
+read-only `npm run mission-control:campaign-status` command. Do not start
+an overlapping campaign or pull a new repository commit while it is running.
 
 ## Phase 2: read-only reconciliation and Agent Academy handoff
 
@@ -315,30 +316,19 @@ If any input truly exceeds 48,000 characters, the model still **fails closed**
 and reports only component lengths, never raw sensitive text. This is
 not permission to truncate evidence or invoke a paid API.
 
-## Codex-only quota continuity when Gemini consent is absent
+## Automatic provider continuity, replacing the legacy per-run Gemini prompt
 
-If the owner presses Enter at the optional Gemini fallback authorization
-prompt, that is a deliberate **decline**, not a failure of the primary Codex
-provider. Gemini receives no prompt and consumes no tokens.
+The former optional Gemini prompt and misleading
+`USV_GEMINI_TRANSFER_BLOCKED` error are obsolete for the approved synthetic
+owner campaign. The source-verified launch now derives the automatic
+synthetic-only provider transfer from its exact catalog classification and
+SHA-256. Any inherited shell transfer flags are rejected before derivation.
+Other data classifications are not transferable by this automatic route.
 
-Previously, an eligible Codex quota, authentication, transport or requested
-model failure was incorrectly replaced by the generic
-`USV_GEMINI_TRANSFER_BLOCKED` exception. This masked the original provider
-reason, and the campaign's bounded `USV_QUOTA_WAIT` retry loop therefore
-terminated at A23 instead of waiting for Codex capacity.
-
-The router now returns the **original Codex exception unchanged** when no
-Gemini transfer is authorized. Genuine `USV_QUOTA_WAIT` and
-`QUOTA_EXHAUSTED` signals reach the existing bounded owner-session
-retry mechanism, without switching vendor or resetting the durable quota
-ledger. Genuine authentication, CLI transport, model entitlement,
-calculation, validation, schema or policy failures retain their own codes,
-remain fail closed and do not masquerade as quota holds. The original
-producer code/underlying provider error is retained for diagnosis.
-
-This is not an unattended daemon. It does not automatically consent to
-third-party transfer, bypass a real subscription rate limit, access a paid
-API, fabricate a result, change the physical engineering baseline, or
-self-qualify the agent. The 22 preexisting synthetic research successes
-remain in their source-bound private checkpoint until the owner explicitly
-authorizes recovery on the reviewed new source SHA.
+An actual Codex quota hold or recoverable transport/auth/model failure triggers
+automatic Gemini CLI routing. A missing Gemini CLI or known transient OAuth,
+network or provider quota problem enters the persistent owner-session
+retry/backoff loop, not an immediate campaign termination. The original error
+code is preserved when the transfer policy is not authorized. A nontransient
+safety, data integrity or model-provenance failure remains fail closed. No
+paid API keys or output fabrication are used; recorded research is uncertified.

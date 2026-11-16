@@ -86,6 +86,9 @@ export function assessOwnerSyntheticResearch(e: OwnerResearchEvidence): OwnerRes
   }
   if (env.USV_GEMINI_FALLBACK_APPROVED === 'true' ||
       env.USV_GEMINI_OAUTH_REVIEWED === 'true' ||
+      env.USV_GEMINI_AUTO_SYNTHETIC_ROUTE !== undefined ||
+      env.USV_GEMINI_SYNTHETIC_CATALOG_SHA256 !== undefined ||
+      env.USV_GEMINI_AUTH_METHOD !== undefined ||
       Boolean(env.USV_GEMINI_DATA_CLASSIFICATION)) {
     blockers.push('OWNER_RESEARCH_CROSS_PROVIDER_TRANSFER_DENIED');
   }
@@ -135,5 +138,36 @@ export function assessOwnerSyntheticResearch(e: OwnerResearchEvidence): OwnerRes
     catalogDigestSha256: hash(e.catalogBytes),
     receiptDigestSha256: hash(e.receiptBytes),
     sourceSha: e.sourceSha
+  };
+}
+
+
+/**
+ * Source-derived auto-failover grant: a single owner authorization starts a
+ * fixed research-only campaign. The model provider is then chosen by code,
+ * without any second interactive choice or a claim of preverified login.
+ * GeminiCliProvider forces oauth-personal at CLI execution time.
+ */
+export function deriveOwnerSyntheticGeminiAutoRoute(
+  decision: OwnerResearchDecision,
+  catalogBytes: Buffer
+): Readonly<Record<string, string>> {
+  if (!decision.allowed || !SHA.test(decision.sourceSha) ||
+      decision.catalogDigestSha256 !== hash(catalogBytes)) {
+    throw new Error('OWNER_SYNTHETIC_GEMINI_AUTO_ROUTE_UNVERIFIED_SOURCE');
+  }
+  let catalog: unknown;
+  try { catalog = JSON.parse(catalogBytes.toString('utf8')); }
+  catch { throw new Error('OWNER_SYNTHETIC_GEMINI_AUTO_ROUTE_CATALOG_INVALID'); }
+  if (!catalog || typeof catalog !== 'object' || Array.isArray(catalog) ||
+      (catalog as Record<string,unknown>).dataClassification !==
+        OWNER_SYNTHETIC_CLASSIFICATION) {
+    throw new Error('OWNER_SYNTHETIC_GEMINI_AUTO_ROUTE_RESTRICTED_DATA_DENIED');
+  }
+  return {
+    USV_GEMINI_AUTO_SYNTHETIC_ROUTE: 'SOURCE_PINNED_OWNER_RESEARCH',
+    USV_GEMINI_SYNTHETIC_CATALOG_SHA256: decision.catalogDigestSha256,
+    USV_GEMINI_DATA_CLASSIFICATION: OWNER_SYNTHETIC_CLASSIFICATION,
+    USV_GEMINI_AUTH_METHOD: 'oauth-personal'
   };
 }

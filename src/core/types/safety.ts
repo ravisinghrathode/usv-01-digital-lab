@@ -10,7 +10,18 @@ export interface ApproverIdentity {
   authenticatedAt: string;
 }
 
+/** Binds one approval to an exact analysis payload and a source revision. */
+export interface ApprovalEvidenceBinding {
+  version: 'USV_GATE_CONTENT_V2';
+  sourceSha: string;
+  inputSha256: string;
+  outputSha256: string;
+  nonce: string;
+  contentSha256: string;
+}
+
 export interface HumanApprovalGate {
+  approvalBinding: ApprovalEvidenceBinding;
   id: string; // e.g. 'GATE-001'
   taskId: string;
   agentId: string;
