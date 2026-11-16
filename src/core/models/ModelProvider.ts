@@ -256,12 +256,26 @@ export class GeminiCliProvider implements IModelProvider {
     // A fixed executable prevents an environment-injected arbitrary program.
     this.binary=options.binary||'gemini';
   }
-  private async run(args:string[],cwd:string,timeout=120000){
+  private async run(args:string[],cwd:string,timeout=120000,requireOAuth=false){
     // Only operator-managed Google OAuth may be used in the zero-paid-API
     // route. Never let a parent shell API key change authentication methods.
     const adapterPath = '../mission-control/' + 'SubscriptionCliAdapter.ts';
     const {sanitizedSubscriptionEnvironment} = await import(/* @vite-ignore */ adapterPath);
     const cleanEnv = sanitizedSubscriptionEnvironment();
+    if(requireOAuth){
+      // Official Gemini CLI headless enforcement: if local settings select
+      // API-key/Vertex authentication instead of personal OAuth, fail rather
+      // than creating an unapproved billable provider call. The policy is
+      // generated in an isolated temporary directory and never committed.
+      const [{writeFile},{join}]=await Promise.all([
+        import('node:fs/promises'),import('node:path')
+      ]);
+      const policy=join(cwd,'gemini-cli-oauth-only.json');
+      await writeFile(policy,JSON.stringify({
+        security:{auth:{enforcedType:'oauth-personal'}}
+      }),{flag:'wx',mode:0o600});
+      cleanEnv.GEMINI_CLI_SYSTEM_SETTINGS_PATH=policy;
+    }
     if(this.runner)return this.runner(this.binary,args,{
       cwd,timeout,maxBuffer:8*1024*1024,env:cleanEnv});
     const [{execFile},{promisify}]=await Promise.all([
@@ -302,7 +316,7 @@ export class GeminiCliProvider implements IModelProvider {
       const {stdout,stderr}=await this.run([
         '-e','none','--approval-mode','plan','--output-format','json',
         '--model',requestedModel,'--prompt',prompt
-      ],cwd,180000);
+      ],cwd,180000,true);
       let envelope:any;
       try{envelope=JSON.parse(stdout)}catch{
         throw new Error('Gemini CLI did not emit the documented JSON envelope');
