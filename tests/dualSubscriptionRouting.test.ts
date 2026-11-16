@@ -6,7 +6,9 @@ import {MASTER_AGENTS} from '../src/core/agents/definitions.ts';
 import {validatePilotRequest,sanitizedSubscriptionEnvironment,SAFE_ROLES}
   from '../src/core/mission-control/SubscriptionCliAdapter.ts';
 import {CHATGPT_SOL_MODEL,GEMINI_HYDROGEN_MODEL,dualProviderEnabled,
-  geminiTransferAuthorized,geminiCatalogTransferPermitted,codexFallbackReason}
+  geminiTransferAuthorized,geminiCatalogTransferPermitted,codexFallbackReason,
+  sourcePinnedSyntheticGeminiAutoRoute,recoverableGeminiCliFailure,
+  assertSourcePinnedSyntheticGeminiCatalog}
   from '../src/core/models/DualSubscriptionRoutingPolicy.ts';
 
 const saved={...process.env};
@@ -137,6 +139,92 @@ describe('26 specialist dual subscription transport policy',()=>{
       router.registerProvider(oldGemini);
     }
   });
+  it('auto-routes the protected synthetic catalog without any Gemini choice or external API',async()=>{
+    optIn();
+    process.env.USV_GEMINI_AUTO_SYNTHETIC_ROUTE='SOURCE_PINNED_OWNER_RESEARCH';
+    process.env.USV_GEMINI_DATA_CLASSIFICATION='SYNTHETIC_TEST_ONLY_NON_OPERATIONAL';
+    process.env.USV_GEMINI_SYNTHETIC_CATALOG_SHA256='a'.repeat(64);
+    process.env.USV_GEMINI_AUTH_METHOD='oauth-personal';
+    expect(sourcePinnedSyntheticGeminiAutoRoute()).toBe(true);
+    expect(() => assertSourcePinnedSyntheticGeminiCatalog(
+      'evidence/live-agents/representative-cases.json',
+      'SYNTHETIC_TEST_ONLY_NON_OPERATIONAL', 'a'.repeat(64)
+    )).not.toThrow();
+    for (const [path, classification, digest] of [
+      ['evidence/live-agents/representative-cases.json', 'CONTROLLED_ENGINEERING_EVIDENCE', 'a'.repeat(64)],
+      ['evidence/live-agents/representative-cases.json', 'SYNTHETIC_TEST_ONLY_NON_OPERATIONAL', 'b'.repeat(64)],
+      ['references/other-catalog.json', 'SYNTHETIC_TEST_ONLY_NON_OPERATIONAL', 'a'.repeat(64)]
+    ]) {
+      expect(() => assertSourcePinnedSyntheticGeminiCatalog(path,classification,digest)).toThrow(
+        'USV_GEMINI_AUTO_ROUTE_SOURCE_OR_CLASSIFICATION_MISMATCH'
+      );
+    }
+    expect(geminiTransferAuthorized()).toBe(true);
+    expect(geminiCatalogTransferPermitted('SYNTHETIC_TEST_ONLY_NON_OPERATIONAL')).toBe(true);
+    for (const c of ['CONTROLLED_ENGINEERING_EVIDENCE','CLIENT_CONFIDENTIAL',
+      'RESTRICTED_NAVAL','PUBLIC_NON_SENSITIVE']) {
+      expect(geminiCatalogTransferPermitted(c)).toBe(false);
+    }
+    const router=ModelProviderRouter.getInstance();
+    const codex=router.getProvider('codex_cli')!;
+    const gemini=router.getProvider('gemini_cli')!;
+    let codexCalls=0,geminiCalls=0,model='';
+    try{
+      router.registerProvider({name:'codex_cli',isAvailable:()=>true,
+        generateText:async()=>{codexCalls++;throw new Error('USV_CODEX_TRANSPORT_UNAVAILABLE: CLI exited')}});
+      router.registerProvider({name:'gemini_cli',isAvailable:()=>true,
+        generateText:async(_request,config)=>{geminiCalls++;model=config?.modelName||'';
+          return stub('gemini_cli')}});
+      const result=await router.generate(prompt,{preferredProvider:'codex_cli'});
+      expect(result.providerUsed).toBe('gemini_cli');
+      expect(result.modelUsed).toBe(GEMINI_HYDROGEN_MODEL);
+      expect(result.evidenceValid).toBe(false);
+      expect(codexCalls).toBe(1);
+      expect(geminiCalls).toBe(1);
+      expect(model).toBe(GEMINI_HYDROGEN_MODEL);
+    }finally{router.registerProvider(codex);router.registerProvider(gemini)}
+    delete process.env.USV_GEMINI_AUTH_METHOD;
+    expect(geminiTransferAuthorized()).toBe(false);
+  });
+
+  it('retains Codex recovery status when Gemini binary is absent, with no model calls',async()=>{
+    optIn();
+    process.env.USV_GEMINI_AUTO_SYNTHETIC_ROUTE='SOURCE_PINNED_OWNER_RESEARCH';
+    process.env.USV_GEMINI_DATA_CLASSIFICATION='SYNTHETIC_TEST_ONLY_NON_OPERATIONAL';
+    process.env.USV_GEMINI_SYNTHETIC_CATALOG_SHA256='a'.repeat(64);
+    process.env.USV_GEMINI_AUTH_METHOD='oauth-personal';
+    process.env.NODE_ENV='production';
+    const router=ModelProviderRouter.getInstance();
+    const codex=router.getProvider('codex_cli')!;
+    const gemini=router.getProvider('gemini_cli')!;
+    let geminiCalls=0;
+    try{
+      router.registerProvider({name:'codex_cli',isAvailable:()=>true,
+        generateText:async()=>{throw new Error('USV_QUOTA_WAIT: PROVIDER_QUOTA_EXHAUSTED')}});
+      router.registerProvider({name:'gemini_cli',isAvailable:()=>false,
+        generateText:async()=>{geminiCalls++;return stub('gemini_cli')}});
+      await expect(router.generate(prompt,{preferredProvider:'codex_cli'})).rejects
+        .toThrow(/USV_PROVIDER_RETRY_WAIT: CODEX_QUOTA; GEMINI_CLI_NOT_READY/);
+      expect(geminiCalls).toBe(0);
+    }finally{router.registerProvider(codex);router.registerProvider(gemini)}
+  });
+
+  it('only retries known transient Gemini CLI failures; malformed and unsafe outputs fail closed',()=>{
+    for(const e of ['Gemini CLI Execution Error: ENOTFOUND',
+      'Gemini CLI Execution Error: authentication failed',
+      'Gemini CLI Execution Error: login required',
+      'Gemini CLI Execution Error: HTTP 503']) {
+      expect(recoverableGeminiCliFailure(new Error(e))).toBe(true);
+    }
+    for(const e of ['Gemini CLI returned no response text',
+      'USV_GEMINI_MODEL_NOT_VERIFIED',
+      'Gemini response unsafe request refused',
+      'mandatory calculation failed',
+      'Gemini CLI did not emit the documented JSON envelope']) {
+      expect(recoverableGeminiCliFailure(new Error(e))).toBe(false);
+    }
+  });
+
   it('uses the best requested Gemini 4 Hydrogen when unavailable Sol transport is safely classified',async()=>{
     optInGemini();
     const router=ModelProviderRouter.getInstance();
