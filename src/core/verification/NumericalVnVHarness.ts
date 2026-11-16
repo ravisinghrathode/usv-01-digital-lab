@@ -188,9 +188,13 @@ export function evaluateNumericalVnV(input: {
     throw new Error('Exact geometrySha256 is required');
   }
 
+  const seenBenchmarkIds=new Set<string>();
   const benchmarkEvaluations: VnVBenchmarkEvaluation[] = input.benchmarks.map(b => {
     const notes: string[] = [];
+    const repeatedId=seenBenchmarkIds.has(b.benchmarkId);
+    seenBenchmarkIds.add(b.benchmarkId);
     const metadataOk =
+      !repeatedId &&
       b.benchmarkId.trim().length > 0 &&
       b.standardOrSourceRef.trim().length > 0 &&
       b.unit.trim().length > 0 &&
@@ -304,10 +308,16 @@ export function evaluateNumericalVnV(input: {
       continue;
     }
     reviewedDisciplines.add(rev.discipline);
-    const rows=input.benchmarks.filter(b=>b.discipline===rev.discipline);
-    const validRows=rows.length>0 && rows.every(b=>
-      benchmarkEvaluations.some(e=>e.benchmarkId===b.benchmarkId &&
-        e.discipline===rev.discipline && e.grade==='NUMERIC_SCREEN_PASS_UNCERTIFIED'));
+    if (rev.reviewerType!=='QUALIFIED_EXTERNAL_ENGINEER') {
+      rejectedReviewDispositions.push(
+        `${rev.discipline}: rejected non-independent ${rev.reviewerType} disposition`);
+      continue;
+    }
+    const grades=benchmarkEvaluations.filter(e=>e.discipline===rev.discipline);
+    // Compare rows by cardinality and status, not a duplicated ID lookup.
+    const validRows=grades.length>0 &&
+      grades.length===input.benchmarks.filter(b=>b.discipline===rev.discipline).length &&
+      grades.every(e=>e.grade==='NUMERIC_SCREEN_PASS_UNCERTIFIED');
     const expected=numericalDisciplineOutputDigest(
       input.sourceCommitSha,input.geometrySha256,rev.discipline,input.benchmarks);
     if (!validRows || rev.outputDigest!==expected ||

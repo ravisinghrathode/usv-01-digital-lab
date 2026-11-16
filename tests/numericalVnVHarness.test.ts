@@ -119,6 +119,8 @@ describe('M05 — B06 evidence-graded numerical V&V harness & solver NOT_RUN gat
     expect(evaluate({reviewDispositions:[{...review,reviewerName:'Different Reviewer'}]}).acceptedDisciplines).toEqual([]);
     expect(evaluate({reviewDispositions:[{...review,signatureBase64:'AAA='}]}).acceptedDisciplines).toEqual([]);
     expect(evaluate({reviewDispositions:[{...review,reviewerType:'AI_MODEL'}]}).acceptedDisciplines).toEqual([]);
+    expect(evaluate({benchmarks:[benchmarks[0],{...benchmarks[0]}]}).acceptedDisciplines)
+      .toEqual([]);
     expect(evaluate().engineeringReleaseStatus).toBe('HOLD');
   });
 
