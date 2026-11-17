@@ -15,7 +15,7 @@ const event = {
   role: 'SECURITY_ANALYST',
   action: 'SECURITY_GATE_EVALUATED' as const,
   details: { allowed: false },
-  previousHash: 'GENESIS_BLOCK_0000000000000000000000000000000000000000000000000000'
+  previousHash: 'GENESIS_BLOCK_0000000000000000000000000000000000000000000000000000000000000000'
 };
 const entries: AuditTrailEntry[] = [{ ...event, hash: CryptographicAuditTrail.computeEntryHash(event) }];
 const journalId = 'usv01-production-audit';
