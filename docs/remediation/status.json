@@ -5,21 +5,21 @@
   "items": [
     {
       "id": "PR-01",
-      "state": "partial-implementation-awaiting-review",
+      "state": "partial-merged-needs-acceptance",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/186",
-      "verification": "Server draft-only CRUD, raw import gate and negative API tests added; awaiting latest CI, independent review, content-bound governed approval commands and migration/transaction hardening"
+      "verification": "PR #186 is merged; draft-only CRUD and anti-forgery tests landed. Governed approval endpoint, legacy evidence reconciliation and production transactional guarantees remain unverified."
     },
     {
       "id": "PR-02",
-      "state": "partial-implementation-awaiting-review",
+      "state": "partial-merged-and-follow-up-open",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/182",
-      "verification": "Regression tests added; CI not yet confirmed; external audit anchoring remains outstanding"
+      "verification": "PR #182 merged for fail-closed local audit persistence. Independent witness verification proposed in follow-up branch; external durable witness, outbox, cross-process serialization and operational drills remain pending."
     },
     {
       "id": "PR-03",
-      "state": "partial-implementation-awaiting-review",
+      "state": "partial-merged-needs-runtime-validation",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/188",
-      "verification": "Docker context exclusions, runtime secret volume and tests added; CI latest success, but image-layer leak canary, provisioned cold-start and backup-restore still outstanding"
+      "verification": "PR #188 merged. Verify container layer exclusion with canary, credential cold-start enrollment/restart and encrypted independent backups before closure."
     },
     {
       "id": "PR-04",
@@ -53,9 +53,9 @@
     },
     {
       "id": "PR-09",
-      "state": "not-verified",
-      "pullRequest": "",
-      "verification": null
+      "state": "partial-consolidated-in-pr186",
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/186",
+      "verification": "tsconfig.node.json, lint script and typecheck tests from closed-unmerged PR #189 were consolidated into merged PR #186. Complete remaining script coverage, threat detection and lockfile harmonization."
     },
     {
       "id": "PR-10",
