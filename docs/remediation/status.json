@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 exact-head d1b5c4c failed TypeScript parse TS1127/TS1434 at RemediationStatus.ts:39 (literal escaped newlines); fixed on 1438f52122e73540604bda9bbb97edef2dc3b759. New exact-head CI pending. Independent Stage E review and E2E acceptance outstanding."
+      "verification": "PR #201 open; exact-head technical workflows passed at prior SHA 9eb8a1a; Stage E governance failed pending independent authenticated review. Provenance metadata validator and regression tests added at 00cc2cf; fresh-head CI and independent E2E acceptance pending."
     }
   ],
   "constraints": [
