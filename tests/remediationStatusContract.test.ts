@@ -140,6 +140,20 @@ describe('closed-loop twelve-issue remediation reporting', () => {
     }
   });
 
+  it('rejects invisible Unicode direction marks and zero-width formatting in status text', () => {
+    for (const codePoint of [0x061c, 0x200b, 0x200c, 0x200d, 0x200e, 0x200f, 0x2060, 0xfeff]) {
+      const control = String.fromCodePoint(codePoint);
+      const note = structuredClone(ledger);
+      note.items[0].verification = 'pending' + control + 'approved';
+      expect(() => summarizeUnverifiedRemediationLedger(note))
+        .toThrow('invalid verification note');
+      const constraint = structuredClone(ledger);
+      constraint.constraints[0] = 'review' + control + 'accepted';
+      expect(() => summarizeUnverifiedRemediationLedger(constraint))
+        .toThrow('malformed provenance metadata');
+    }
+  });
+
   it('adds read-only status utility without rewriting authoritative source', () => {
     const manifest = JSON.parse(fs.readFileSync(
       path.join(process.cwd(), 'package.json'), 'utf8'
