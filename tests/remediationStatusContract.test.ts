@@ -20,7 +20,7 @@ describe('closed-loop twelve-issue remediation reporting', () => {
   });
 
   it('refuses unsupported completion claims, even when a PR URL and note are provided', () => {
-    for (const status of ['complete', 'verified-complete', 'accepted', 'merged', 'APPROVED']) {
+    for (const status of ['complete', 'verified-complete', 'accepted', 'merged', 'APPROVED', 'partial-complete', 'partial-accepted', 'partial-verified']) {
       const fraudulent = structuredClone(ledger);
       fraudulent.items[0].state = status;
       fraudulent.items[0].verification = 'All tests passed (not independently verified)';
