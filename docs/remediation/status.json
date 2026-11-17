@@ -13,25 +13,42 @@
       "id": "PR-02",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/182",
-      "verification": "Regression tests added; CI not yet confirmed; external audit anchoring remains outstanding"
+      "verification": "Regression tests added; CI not yet confirmed; external audit anchoring remains outstanding",
+      "followUpPullRequests": [
+        191
+      ],
+      "ci": "governance failure; witness receipt verification pending"
     },
     {
       "id": "PR-03",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/188",
-      "verification": "Docker context exclusions, runtime secret volume and tests added; CI latest success, but image-layer leak canary, provisioned cold-start and backup-restore still outstanding"
+      "verification": "Docker context exclusions, runtime secret volume and tests added; CI latest success, but image-layer leak canary, provisioned cold-start and backup-restore still outstanding",
+      "followUpPullRequests": [
+        193
+      ],
+      "ci": "docker synthetic secret canary success; governance failure"
     },
     {
       "id": "PR-04",
-      "state": "not-verified",
+      "state": "partial-implementation-awaiting-review",
       "pullRequest": "",
-      "verification": null
+      "verification": "Atomic in-memory CRUD follow-up and proposed durable JSON fsync/lock non-stealing regression tests; migrations and fault-injection unverified",
+      "followUpPullRequests": [
+        194
+      ],
+      "proposedBranch": "remediation/pr04-durable-snapshot-fsync",
+      "ci": "PR194 zero-API and browser QA success; governance failure; new durability PR pending CI"
     },
     {
       "id": "PR-05",
-      "state": "not-verified",
+      "state": "partial-implementation-awaiting-review",
       "pullRequest": "",
-      "verification": null
+      "verification": "Persisted state fail-closed validation and forged approval regression tests proposed; full restart acceptance outstanding",
+      "followUpPullRequests": [
+        195
+      ],
+      "ci": "zero-API success; governance failure"
     },
     {
       "id": "PR-06",
@@ -79,6 +96,7 @@
   "constraints": [
     "Never auto-promote naval engineering baselines",
     "No independent approval can be forged or bypassed",
-    "Completion requires CI, review, and full end-to-end acceptance"
+    "Completion requires CI, review, and full end-to-end acceptance",
+    "No PR may be marked complete until merge, green CI and independent acceptance are verified"
   ]
 }
