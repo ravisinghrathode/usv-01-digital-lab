@@ -61,6 +61,27 @@ describe('independent cryptographic audit witness acceptance', () => {
     expect(verifyIndependentAuditAnchor(journalId, entries, signed, attacker).valid).toBe(false);
     expect(verifyIndependentAuditAnchor(journalId, entries, signed, rsa).valid).toBe(false);
   });
+  it('rejects noncanonical and impossible UTC witness timestamps even when signed', () => {
+    const invalid = [
+      '2026-02-30T01:00:00.000Z',
+      '2026-11-17T25:00:00.000Z',
+      '2026-11-17T01:00:00Z',
+      '2026-11-17T01:00:00.000+00:00',
+      '2026-11-17T01:00:00.000Zextra'
+    ];
+    for (const issuedAtUtc of invalid) {
+      expect(() => proposeAuditAnchorStatement(journalId, entries, issuedAtUtc))
+        .toThrow(/Invalid UTC checkpoint timestamp/);
+      const statement = { ...s, issuedAtUtc };
+      const receipt = {
+        statement,
+        signatureBase64: crypto.sign(null, canonicalAuditAnchorBytes(statement), pair.privateKey)
+          .toString('base64')
+      };
+      expect(verifyIndependentAuditAnchor(journalId, entries, receipt, key))
+        .toEqual({ valid: false, reason: 'INVALID_ATTESTATION' });
+    }
+  });
   it('refuses to propose a checkpoint for a tampered chain', () => {
     expect(() => proposeAuditAnchorStatement(journalId, [{ ...entries[0], details: { allowed: true } }]))
       .toThrow(/invalid audit journal/);
