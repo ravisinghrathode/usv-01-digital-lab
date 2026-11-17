@@ -53,6 +53,13 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
           !/^https:\/\/github\.com\/ravisinghrathode\/usv-01-digital-lab\/pull\/[1-9][0-9]*$/.test(link))) {
       throw new Error('REMEDIATION_LEDGER_INVALID: noncanonical PR link');
     }
+    // A partial implementation must identify inspectable work and an explicit
+    // outstanding verification note. Otherwise the dashboard could display
+    // progress based solely on an unsubstantiated state string.
+    if (isPartial && (!link || typeof unknownItem.verification !== 'string' ||
+        !unknownItem.verification.trim())) {
+      throw new Error('REMEDIATION_LEDGER_INVALID: partial item lacks PR or blocker');
+    }
     if (unknownItem.verification !== null &&
         unknownItem.verification !== undefined &&
         (typeof unknownItem.verification !== 'string' ||
