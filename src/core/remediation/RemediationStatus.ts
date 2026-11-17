@@ -18,7 +18,8 @@ export interface RemediationSummary {
   warning: 'A repository status declaration is not a verified GitHub merge, CI run, independent reviewer signature, or naval engineering release';
 }
 
-// Reject bidirectional formatting controls that can visually reverse approval text.\nconst UNSAFE_STATUS_TEXT = /[\x00-\x1f\x7f\u202a-\u202e\u2066-\u2069]/;\n\nfunction isRecord(value: unknown): value is Record<string, unknown> {
+// Reject bidirectional formatting controls that can visually reverse approval text.
+const UNSAFE_STATUS_TEXT = /[\x00-\x1f\x7f\u202a-\u202e\u2066-\u2069]/;\n\nfunction isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
