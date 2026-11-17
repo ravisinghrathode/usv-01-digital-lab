@@ -5,9 +5,9 @@
   "items": [
     {
       "id": "PR-01",
-      "state": "not-verified",
-      "pullRequest": "",
-      "verification": null
+      "state": "partial-implementation-awaiting-review",
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/186",
+      "verification": "Server draft-only CRUD, raw import gate and negative API tests added; awaiting latest CI, independent review, content-bound governed approval commands and migration/transaction hardening"
     },
     {
       "id": "PR-02",
@@ -17,9 +17,9 @@
     },
     {
       "id": "PR-03",
-      "state": "not-verified",
-      "pullRequest": "",
-      "verification": null
+      "state": "partial-implementation-awaiting-review",
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/188",
+      "verification": "Docker context exclusions, runtime secret volume and tests added; CI latest success, but image-layer leak canary, provisioned cold-start and backup-restore still outstanding"
     },
     {
       "id": "PR-04",
