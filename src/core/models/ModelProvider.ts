@@ -238,8 +238,75 @@ export class GeminiProvider implements IModelProvider {
 // Provider A2 — Gemini CLI (operator-authenticated local CLI, no API key harvesting)
 // -----------------------------------------------------------------------------------------
 type GeminiCliRunner = (binary:string,args:string[],options:{
-  cwd:string;timeout:number;maxBuffer:number;env:NodeJS.ProcessEnv;
+  cwd:string;timeout:number;maxBuffer:number;env:NodeJS.ProcessEnv;stdin?:string;
 })=>Promise<{stdout:string;stderr:string}>;
+
+/** Never display an exec/spawn error's original message or stderr in campaign
+ * logs. Node errors may embed the entire child command, including user prompts.
+ * Decode known provider diagnostics into bounded, non-sensitive status codes. */
+export function classifiedGeminiCliFailure(error: unknown): Error {
+  const raw = error && typeof error === 'object'
+    ? error as {message?:unknown;stderr?:unknown;stdout?:unknown;code?:unknown;killed?:unknown}
+    : {message: String(error)};
+  const msg = typeof raw.message === 'string' ? raw.message : '';
+  const stderr = typeof raw.stderr === 'string' ? raw.stderr : '';
+  // Official Gemini CLI structured exit codes distinguish auth errors,
+  // malformed input and local configuration failures without raw diagnostics.
+  if (raw.code === 41) {
+    return new Error('USV_GEMINI_CLI_AUTH_UNAVAILABLE: personal OAuth sign-in required (exitCode=41)');
+  }
+  if (raw.code === 42) {
+    return new Error('USV_GEMINI_CLI_INVALID_ARGUMENTS: CLI rejected headless input (exitCode=42); fail closed');
+  }
+  if (raw.code === 44 || raw.code === 52 || raw.code === 53) {
+    return new Error('USV_GEMINI_CLI_EXIT_NONZERO: non-retryable CLI sandbox, configuration or turn-limit error; exitCode=' + raw.code);
+  }
+  // Headless JSON may return the error details on stdout even with a
+  // nonzero exit. Read ONLY its structured error fields for classification;
+  // do not propagate stdout, stderr, arbitrary text or user prompts.
+  let structuredError = '';
+  if (typeof raw.stdout === 'string') {
+    try {
+      const envelope = JSON.parse(raw.stdout);
+      const detail = envelope?.error;
+      if (detail && typeof detail === 'object' && !Array.isArray(detail)) {
+        structuredError = [detail.type,detail.code,detail.message]
+          .filter(value => typeof value === 'string' || typeof value === 'number')
+          .map(value => String(value).slice(0,2048)).join(' ');
+      }
+    } catch { /* non-JSON stdout provides no usable structured diagnostic */ }
+  }
+  const diagnosticMessage = /^Command failed:/i.test(msg) ? '' : msg;
+  const details = (stderr + '\n' + structuredError + '\n' + diagnosticMessage).slice(0, 32768);
+  if (/Gemini CLI did not emit the documented JSON envelope|Gemini CLI returned no response text|GEMINI_CLI_OUTPUT_TOO_LARGE/i.test(details)) {
+    return new Error('USV_GEMINI_CLI_INVALID_OUTPUT: invalid or oversized headless response; fail closed');
+  }
+  if (/policy.denied|safety.refusal|unsafe request|permission denied by policy|content blocked/i.test(details)) {
+    return new Error('USV_GEMINI_CLI_POLICY_DENIED: provider safety or policy refusal; fail closed');
+  }
+  if (/model.{0,90}(not found|unsupported|not available|not accessible|access denied)|unknown model|model.+404/i.test(details)) {
+    return new Error('USV_GEMINI_CLI_MODEL_UNAVAILABLE: required model not accessible; fail closed');
+  }
+  if (/\b(429|RESOURCE_EXHAUSTED|quota exhausted|rate limit exceeded|too many requests)\b/i.test(details)) {
+    return new Error('USV_QUOTA_WAIT: GEMINI_CLI_PROVIDER_QUOTA_EXHAUSTED');
+  }
+  if (/\b(ETIMEDOUT|ECONNRESET|ECONNREFUSED|ENOTFOUND|EAI_AGAIN)\b|network unreachable|connection refused|request timed out|temporarily unavailable|service unavailable|\bHTTP[ :]*50[234]\b/i.test(details) || raw.code === 'ETIMEDOUT') {
+    return new Error('USV_GEMINI_CLI_TRANSPORT_UNAVAILABLE: retryable connection or service failure');
+  }
+  if (/^USV_GEMINI_CLI_AUTH_UNAVAILABLE:|FatalAuthenticationError|Gemini CLI provider error: login|not logged in|sign in required|login required|not authenticated|authentication failed|session expired|credentials missing|oauth.{0,80}(expired|required|failed|invalid)|invalid credentials/i.test(details)) {
+    return new Error('USV_GEMINI_CLI_AUTH_UNAVAILABLE: personal OAuth session requires attention');
+  }
+  if (raw.code === 'ENOENT') {
+    return new Error('USV_GEMINI_CLI_TRANSPORT_UNAVAILABLE: Gemini CLI executable missing');
+  }
+  if (/unknown argument|unknown option|unrecognized option|invalid option|invalid values:\s*argument/i.test(details)) {
+    return new Error('USV_GEMINI_CLI_INVALID_ARGUMENTS: installed CLI incompatible with reviewed invocation; fail closed');
+  }
+  const code = typeof raw.code === 'number' && Number.isInteger(raw.code) && raw.code >= 0 && raw.code <= 255
+    ? String(raw.code) : 'unknown';
+  return new Error('USV_GEMINI_CLI_EXIT_NONZERO: category unknown; exitCode=' + code +
+    '; inspect provider authentication/version locally, without exposing prompt text');
+}
 
 const stripJsonFence=(text:string)=>{
   const trimmed=text.trim();
@@ -256,17 +323,13 @@ export class GeminiCliProvider implements IModelProvider {
     // A fixed executable prevents an environment-injected arbitrary program.
     this.binary=options.binary||'gemini';
   }
-  private async run(args:string[],cwd:string,timeout=120000,requireOAuth=false){
+  private async run(args:string[],cwd:string,timeout=120000,requireOAuth=false,stdin?:string){
     // Only operator-managed Google OAuth may be used in the zero-paid-API
     // route. Never let a parent shell API key change authentication methods.
     const adapterPath = '../mission-control/' + 'SubscriptionCliAdapter.ts';
     const {sanitizedSubscriptionEnvironment} = await import(/* @vite-ignore */ adapterPath);
     const cleanEnv = sanitizedSubscriptionEnvironment();
     if(requireOAuth){
-      // Official Gemini CLI headless enforcement: if local settings select
-      // API-key/Vertex authentication instead of personal OAuth, fail rather
-      // than creating an unapproved billable provider call. The policy is
-      // generated in an isolated temporary directory and never committed.
       const [{writeFile},{join}]=await Promise.all([
         import('node:fs/promises'),import('node:path')
       ]);
@@ -276,16 +339,51 @@ export class GeminiCliProvider implements IModelProvider {
       }),{flag:'wx',mode:0o600});
       cleanEnv.GEMINI_CLI_SYSTEM_SETTINGS_PATH=policy;
     }
-    if(this.runner)return this.runner(this.binary,args,{
-      cwd,timeout,maxBuffer:8*1024*1024,env:cleanEnv});
-    const [{execFile},{promisify}]=await Promise.all([
-      import('node:child_process'),import('node:util')
-    ]);
-    const exec=promisify(execFile);
-    const result=await exec(this.binary,args,{
-      cwd,timeout,maxBuffer:8*1024*1024,env:cleanEnv
+    const options={cwd,timeout,maxBuffer:8*1024*1024,env:cleanEnv,stdin};
+    if(this.runner)return this.runner(this.binary,args,options);
+
+    // Gemini documents headless execution from piped stdin. Do not put the
+    // 26-agent prompt in argv: Node's default child error embeds the full
+    // command, and OS process listings can expose command-line arguments.
+    const {spawn}=await import('node:child_process');
+    return await new Promise<{stdout:string;stderr:string}>((resolve,reject)=>{
+      const child=spawn(this.binary,args,{
+        cwd,env:cleanEnv,stdio:['pipe','pipe','pipe'],shell:false
+      });
+      const stdoutParts:Buffer[]=[];
+      const stderrParts:Buffer[]=[];
+      let outBytes=0,errBytes=0,timedOut=false,oversized=false;
+      const timer=setTimeout(()=>{timedOut=true;child.kill('SIGKILL');},timeout);
+      child.stdout.on('data',(data:Buffer)=>{
+        outBytes+=data.length;
+        if(outBytes>options.maxBuffer){oversized=true;child.kill('SIGKILL');return;}
+        stdoutParts.push(data);
+      });
+      child.stderr.on('data',(data:Buffer)=>{
+        errBytes+=data.length;
+        if(errBytes>options.maxBuffer){oversized=true;child.kill('SIGKILL');return;}
+        stderrParts.push(data);
+      });
+      child.on('error',reject);
+      child.on('close',(code)=>{
+        clearTimeout(timer);
+        if(oversized){reject(new Error('GEMINI_CLI_OUTPUT_TOO_LARGE'));return;}
+        if(timedOut){reject(Object.assign(new Error('Gemini CLI timed out'),{code:'ETIMEDOUT'}));return;}
+        const stdout=Buffer.concat(stdoutParts).toString('utf8');
+        const stderr=Buffer.concat(stderrParts).toString('utf8');
+        if(code!==0){
+          reject(Object.assign(new Error('Gemini CLI exited without a valid response'),
+            {code,stderr,stdout}));
+          return;
+        }
+        resolve({stdout,stderr});
+      });
+      // End stdin to trigger documented non-interactive headless behavior.
+      // A closed child may raise EPIPE while exiting; the close/error events
+      // above carry the actual outcome without printing the prompt.
+      child.stdin.on('error',()=>{});
+      child.stdin.end(stdin||'');
     });
-    return {stdout:String(result.stdout||''),stderr:String(result.stderr||'')};
   }
   async isAvailable():Promise<boolean>{
     if(typeof window!=='undefined')return false;
@@ -313,10 +411,10 @@ export class GeminiCliProvider implements IModelProvider {
       'Return ONLY the requested JSON object as your response text.'
     ].join('\n');
     try{
-      const {stdout,stderr}=await this.run([
+      const {stdout}=await this.run([
         '-e','none','--approval-mode','plan','--output-format','json',
-        '--model',requestedModel,'--prompt',prompt
-      ],cwd,180000,true);
+        '--model',requestedModel
+      ],cwd,180000,true,prompt);
       let envelope:any;
       try{envelope=JSON.parse(stdout)}catch{
         throw new Error('Gemini CLI did not emit the documented JSON envelope');
@@ -346,8 +444,8 @@ export class GeminiCliProvider implements IModelProvider {
         timestamp:new Date().toISOString(),
         statusMessage:'Gemini CLI headless transport using operator-managed existing authentication; stderr is never engineering evidence'
       };
-    }catch(error:any){
-      throw new Error('Gemini CLI Execution Error: '+(error?.message||String(error)));
+    }catch(error:unknown){
+      throw classifiedGeminiCliFailure(error);
     }finally{
       await rm(cwd,{recursive:true,force:true});
     }

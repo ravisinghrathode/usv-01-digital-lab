@@ -21,6 +21,10 @@ on:
       - 'docs/governance/A26_UNIFIED_AGENT_OPERATING_CHARTER.md'
       - 'src/core/agents/GlobalUsvIntelligenceAgent.ts'
       - 'scripts/a26-static-audit.mjs'
+      - 'scripts/a26-all97-review.mjs'
+      - 'tests/a26-all97-review.test.mjs'
+      - 'references/third-party-static-audits/A26_ALL_97_REVIEW_QUEUE_2026-11-17.json'
+      - '.github/workflows/a26-all97-source-screen.yml'
       - 'scripts/a26-analytical-oracles.mjs'
       - 'tests/a26-analytical-oracles.test.mjs'
       - 'tests/a26-static-audit.test.mjs'
@@ -68,9 +72,11 @@ jobs:
         with:
           node-version: '22'
       - name: Run offline tests
-        run: node --test tests/repository-scout.test.mjs tests/repository-integration.test.mjs tests/repository-integration-planner.test.mjs tests/external-software-register.test.mjs tests/external-software-usage.test.mjs tests/external-integration-agent.test.mjs tests/a26-static-audit.test.mjs tests/a26-analytical-oracles.test.mjs tests/a26-unified-governance.test.mjs
+        run: node --test tests/repository-scout.test.mjs tests/repository-integration.test.mjs tests/repository-integration-planner.test.mjs tests/external-software-register.test.mjs tests/external-software-usage.test.mjs tests/external-integration-agent.test.mjs tests/a26-static-audit.test.mjs tests/a26-analytical-oracles.test.mjs tests/a26-all97-review.test.mjs tests/a26-unified-governance.test.mjs
       - name: Enforce A26 unified naval-intelligence and integration charter (offline only)
         run: node scripts/a26-unified-governance.mjs --check
+      - name: Verify all-97 review queue (offline, no approvals)
+        run: node scripts/a26-all97-review.mjs --check
       - name: Verify current A26 pinned-source audits and license/safety review holds
         run: node scripts/a26-static-audit.mjs --check
       - name: Validate permanent register and generated overview

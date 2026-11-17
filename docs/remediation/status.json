@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "USV-REMEDIATION-1",
+  "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
+  "updatedAt": "2026-11-17",
+  "items": [
+    {
+      "id": "PR-01",
+      "state": "partial-implementation-awaiting-review",
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/186",
+      "verification": "Server draft-only CRUD, raw import gate and negative API tests added; awaiting latest CI, independent review, content-bound governed approval commands and migration/transaction hardening"
+    },
+    {
+      "id": "PR-02",
+      "state": "partial-implementation-awaiting-review",
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/182",
+      "verification": "Regression tests added; CI not yet confirmed; external audit anchoring remains outstanding"
+    },
+    {
+      "id": "PR-03",
+      "state": "partial-implementation-awaiting-review",
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/188",
+      "verification": "Docker context exclusions, runtime secret volume and tests added; CI latest success, but image-layer leak canary, provisioned cold-start and backup-restore still outstanding"
+    },
+    {
+      "id": "PR-04",
+      "state": "not-verified",
+      "pullRequest": "",
+      "verification": null
+    },
+    {
+      "id": "PR-05",
+      "state": "not-verified",
+      "pullRequest": "",
+      "verification": null
+    },
+    {
+      "id": "PR-06",
+      "state": "not-verified",
+      "pullRequest": "",
+      "verification": null
+    },
+    {
+      "id": "PR-07",
+      "state": "not-verified",
+      "pullRequest": "",
+      "verification": null
+    },
+    {
+      "id": "PR-08",
+      "state": "not-verified",
+      "pullRequest": "",
+      "verification": null
+    },
+    {
+      "id": "PR-09",
+      "state": "not-verified",
+      "pullRequest": "",
+      "verification": null
+    },
+    {
+      "id": "PR-10",
+      "state": "not-verified",
+      "pullRequest": "",
+      "verification": null
+    },
+    {
+      "id": "PR-11",
+      "state": "not-verified",
+      "pullRequest": "",
+      "verification": null
+    },
+    {
+      "id": "PR-12",
+      "state": "not-verified",
+      "pullRequest": "",
+      "verification": null
+    }
+  ],
+  "constraints": [
+    "Never auto-promote naval engineering baselines",
+    "No independent approval can be forged or bypassed",
+    "Completion requires CI, review, and full end-to-end acceptance"
+  ]
+}

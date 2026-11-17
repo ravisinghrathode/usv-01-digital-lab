@@ -94,12 +94,12 @@
       "firstRecordedOn": "2026-11-14",
       "lifecycle": "DISCOVERED",
       "source": {
-        "commit": null,
-        "tree": null,
-        "verifiedEvidence": null
+        "commit": "47106de10b73e6a6c764c23d6b3919779b40721a",
+        "tree": "a99000eb0ce834d96af4455d9df2564235a52ef8",
+        "verifiedEvidence": "https://github.com/cybergalactic/MSS-Capytaine/commit/47106de10b73e6a6c764c23d6b3919779b40721a"
       },
       "license": {
-        "spdxMetadata": "UNKNOWN",
+        "spdxMetadata": "MIT",
         "review": "PENDING"
       },
       "securityReview": "NOT_PERFORMED",
@@ -111,7 +111,7 @@
       "plannedUsage": [],
       "actualUsage": [],
       "evidence": [],
-      "nextAction": "A26 shortlist: obtain pinned source revision, license/security assessment, benchmark and independent domain review before any intended use."
+      "nextAction": "Pinned public commit/tree and MIT-format root LICENSE file observed. A20 security/SBOM/CVE, A21 interfaces, human license compatibility and independent marine reference validation remain mandatory before use."
     },
     {
       "id": "EXT-003",
@@ -133,9 +133,9 @@
       "firstRecordedOn": "2026-11-14",
       "lifecycle": "DISCOVERED",
       "source": {
-        "commit": null,
-        "tree": null,
-        "verifiedEvidence": null
+        "commit": "a3040b57e46d6837a21390d1bcdb04773d61e745",
+        "tree": "29296b697711a873b9ef89a91cef7442828dde14",
+        "verifiedEvidence": "https://github.com/ARPA-GO/shipcurve/commit/a3040b57e46d6837a21390d1bcdb04773d61e745"
       },
       "license": {
         "spdxMetadata": "UNKNOWN",
@@ -150,7 +150,7 @@
       "plannedUsage": [],
       "actualUsage": [],
       "evidence": [],
-      "nextAction": "A26 shortlist: obtain pinned source revision, license/security assessment, benchmark and independent domain review before any intended use."
+      "nextAction": "Pinned public commit/tree observed, but no root LICENSE/COPYING file was found. LEGAL HOLD: establish rights before copying, installing or adopting; security and independent numerical review still pending."
     },
     {
       "id": "EXT-004",
@@ -172,12 +172,12 @@
       "firstRecordedOn": "2026-11-14",
       "lifecycle": "DISCOVERED",
       "source": {
-        "commit": null,
-        "tree": null,
-        "verifiedEvidence": null
+        "commit": "6db25234c186ae384c17d629fe552922fdcf7114",
+        "tree": "37ecc9bb23fc22c72006227ec808ac76338d5211",
+        "verifiedEvidence": "https://github.com/ntnu-itk-autonomous-ship-lab/collision_avoidance_identifier/commit/6db25234c186ae384c17d629fe552922fdcf7114"
       },
       "license": {
-        "spdxMetadata": "UNKNOWN",
+        "spdxMetadata": "MIT",
         "review": "PENDING"
       },
       "securityReview": "NOT_PERFORMED",
@@ -189,7 +189,7 @@
       "plannedUsage": [],
       "actualUsage": [],
       "evidence": [],
-      "nextAction": "A26 shortlist: obtain pinned source revision, license/security assessment, benchmark and independent domain review before any intended use."
+      "nextAction": "Pinned public commit/tree and MIT-format root LICENSE file observed. A20 security/SBOM/CVE, A21 interfaces, human license compatibility and independent marine reference validation remain mandatory before use."
     },
     {
       "id": "EXT-DISC-009540babdb3",

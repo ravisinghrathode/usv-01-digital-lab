@@ -1,6 +1,46 @@
 import type { AgentSpec, AgentDivision } from '../types/agent.ts';
 import { MASTER_AGENTS } from '../agents/definitions.ts';
 
+/**
+ * The registry owns role authority. Zod validators are trusted executable
+ * schemas and remain shared references; all mutable role metadata is copied.
+ */
+function snapshotAgentSpec(spec: AgentSpec): AgentSpec {
+  return {
+    ...spec,
+    aliases: spec.aliases ? [...spec.aliases] : undefined,
+    responsibilities: [...spec.responsibilities],
+    requiredKnowledgeSources: [...spec.requiredKnowledgeSources],
+    permittedTools: [...spec.permittedTools],
+    dependencies: [...spec.dependencies],
+    executionPermissions: [...spec.executionPermissions],
+    modelConfig: { ...spec.modelConfig },
+    verificationCriteria: {
+      ...spec.verificationCriteria,
+      requiredChecklist: [...spec.verificationCriteria.requiredChecklist],
+      mandatoryDeterministicTools: [...spec.verificationCriteria.mandatoryDeterministicTools],
+      acceptanceThresholds: { ...spec.verificationCriteria.acceptanceThresholds }
+    },
+    auditRequirement: { ...spec.auditRequirement }
+  };
+}
+
+function freezeRegistryMetadata(spec: AgentSpec): AgentSpec {
+  Object.freeze(spec.aliases);
+  Object.freeze(spec.responsibilities);
+  Object.freeze(spec.requiredKnowledgeSources);
+  Object.freeze(spec.permittedTools);
+  Object.freeze(spec.dependencies);
+  Object.freeze(spec.executionPermissions);
+  Object.freeze(spec.modelConfig);
+  Object.freeze(spec.verificationCriteria.requiredChecklist);
+  Object.freeze(spec.verificationCriteria.mandatoryDeterministicTools);
+  Object.freeze(spec.verificationCriteria.acceptanceThresholds);
+  Object.freeze(spec.verificationCriteria);
+  Object.freeze(spec.auditRequirement);
+  return Object.freeze(spec);
+}
+
 export class AgentRegistry {
   private static instance: AgentRegistry;
   private agents: Map<string, AgentSpec> = new Map();
@@ -31,20 +71,30 @@ export class AgentRegistry {
     if (this.agents.has(spec.id)) {
       throw new Error(`Duplicate agent registration: Agent with ID '${spec.id}' already exists.`);
     }
-    this.agents.set(spec.id, spec);
-    if (spec.canonicalId) {
-      this.aliasMap.set(spec.canonicalId, spec.id);
-    }
-    if (spec.aliases) {
-      for (const alias of spec.aliases) {
-        this.aliasMap.set(alias, spec.id);
+    const snapshot = snapshotAgentSpec(spec);
+    const allAliases = new Set([snapshot.canonicalId, ...(snapshot.aliases ?? [])]);
+    for (const alias of allAliases) {
+      if (!alias || typeof alias !== 'string') {
+        throw new Error(`Invalid alias in agent '${snapshot.id}'`);
+      }
+      const mapped = this.aliasMap.get(alias);
+      if ((mapped && mapped !== snapshot.id) ||
+          (this.agents.has(alias) && alias !== snapshot.id)) {
+        throw new Error(`Agent alias collision: '${alias}' is already owned by another role`);
       }
     }
+    if (this.aliasMap.has(snapshot.id) && this.aliasMap.get(snapshot.id) !== snapshot.id) {
+      throw new Error(`Agent ID collision: '${snapshot.id}' is already assigned as an alias`);
+    }
+
+    this.agents.set(snapshot.id, freezeRegistryMetadata(snapshot));
+    for (const alias of allAliases) this.aliasMap.set(alias, snapshot.id);
   }
 
   public getAgent(id: string): AgentSpec | undefined {
     const resolvedId = this.aliasMap.get(id) || id;
-    return this.agents.get(resolvedId);
+    const spec = this.agents.get(resolvedId);
+    return spec ? snapshotAgentSpec(spec) : undefined;
   }
 
   public requireAgent(id: string): AgentSpec {
@@ -53,11 +103,11 @@ export class AgentRegistry {
     if (!agent) {
       throw new Error(`Agent not found in registry: '${id}'`);
     }
-    return agent;
+    return snapshotAgentSpec(agent);
   }
 
   public getAllAgents(): AgentSpec[] {
-    return Array.from(this.agents.values());
+    return Array.from(this.agents.values(), spec => snapshotAgentSpec(spec));
   }
 
   public getAgentsByDivision(division: AgentDivision): AgentSpec[] {

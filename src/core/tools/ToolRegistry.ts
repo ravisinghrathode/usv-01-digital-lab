@@ -54,7 +54,13 @@ export class ToolRegistry {
     if (this.tools.has(tool.id)) {
       throw new Error(`Tool with ID '${tool.id}' is already registered.`);
     }
-    this.tools.set(tool.id, tool);
+    const permissions = [...tool.requiredPermissions];
+    Object.freeze(permissions);
+    const registered: EngineeringTool = Object.freeze({
+      ...tool,
+      requiredPermissions: permissions
+    });
+    this.tools.set(tool.id, registered);
   }
 
   public getTool(id: string): EngineeringTool | undefined {
@@ -76,7 +82,7 @@ export class ToolRegistry {
   public async executeTool(
     toolId: string,
     input: any,
-    callingAgentPermissions?: string[]
+    callingAgentPermissions: string[]
   ): Promise<ToolExecutionResult> {
     const startTime = performance.now();
     // All direct ToolRegistry results MUST fail closed. No caller may turn
@@ -99,13 +105,15 @@ export class ToolRegistry {
         executionTimeMs: 0,
         error: `Tool '${toolId}' not found in registry.`
       };
-      this.executionHistory.push(result);
-      return result;
+      return this.recordResult(result);
     }
 
     // Permission check
-    if (callingAgentPermissions) {
-      const hasPerm = tool.requiredPermissions.every(p => callingAgentPermissions.includes(p));
+    {
+      // Absent caller permissions must never mean unrestricted execution.
+      // The caller must supply a role-derived permission list from trusted code.
+      const hasPerm = Array.isArray(callingAgentPermissions) &&
+        tool.requiredPermissions.every(p => callingAgentPermissions.includes(p));
       if (!hasPerm) {
         const result: ToolExecutionResult = {
         ...safety,
@@ -117,8 +125,7 @@ export class ToolRegistry {
           executionTimeMs: performance.now() - startTime,
           error: `Permission Denied: Calling agent lacks required permissions [${tool.requiredPermissions.join(', ')}]`
         };
-        this.executionHistory.push(result);
-        return result;
+        return this.recordResult(result);
       }
     }
 
@@ -136,8 +143,7 @@ export class ToolRegistry {
         error: 'Input Schema Validation Failed',
         validationErrors: inputParse.error.issues.map((e: any) => `${e.path.join('.')}: ${e.message}`)
       };
-      this.executionHistory.push(result);
-      return result;
+      return this.recordResult(result);
     }
 
     try {
@@ -157,8 +163,7 @@ export class ToolRegistry {
           error: 'Output Schema Validation Failed on Tool Execution',
           validationErrors: outputParse.error.issues.map((e: any) => `${e.path.join('.')}: ${e.message}`)
         };
-        this.executionHistory.push(result);
-        return result;
+        return this.recordResult(result);
       }
 
       const result: ToolExecutionResult = {
@@ -170,8 +175,7 @@ export class ToolRegistry {
         output: outputParse.data as Record<string, any>,
         executionTimeMs: performance.now() - startTime
       };
-      this.executionHistory.push(result);
-      return result;
+      return this.recordResult(result);
     } catch (err: any) {
       const result: ToolExecutionResult = {
         ...safety,
@@ -183,13 +187,27 @@ export class ToolRegistry {
         executionTimeMs: performance.now() - startTime,
         error: `Tool Execution Exception: ${err.message || String(err)}`
       };
-      this.executionHistory.push(result);
-      return result;
+      return this.recordResult(result);
     }
   }
 
+  /** Preserve a private immutable-by-reference snapshot, even if the caller
+   * later rewrites its original input, result or a history query.
+   */
+  private recordResult(result: ToolExecutionResult): ToolExecutionResult {
+    let record: ToolExecutionResult;
+    try {
+      record = structuredClone(result);
+    } catch {
+      record = { ...result, success: false, input: {}, output: {},
+        error: 'Audit capture failed: non-cloneable tool input/output (redacted)' };
+    }
+    this.executionHistory.push(record);
+    return structuredClone(record);
+  }
+
   public getExecutionHistory(): ToolExecutionResult[] {
-    return [...this.executionHistory];
+    return this.executionHistory.map(entry => structuredClone(entry));
   }
 
   public clearHistory(): void {
