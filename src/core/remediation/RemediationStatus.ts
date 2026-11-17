@@ -85,7 +85,8 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
     if (unknownItem.verification !== null &&
         unknownItem.verification !== undefined &&
         (typeof unknownItem.verification !== 'string' ||
-          unknownItem.verification.length > 4000 ||\n          /[\x00-\x1f\x7f]/.test(unknownItem.verification))) {
+          unknownItem.verification.length > 4000 ||
+          /[\x00-\x1f\x7f]/.test(unknownItem.verification))) {
       throw new Error('REMEDIATION_LEDGER_INVALID: invalid verification note');
     }
     issues.push({
