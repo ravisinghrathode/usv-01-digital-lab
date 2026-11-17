@@ -43,6 +43,7 @@ import { loadProjectStore, saveProjectStore } from './src/core/storage/ProjectSt
 import { AgentRegistry } from './src/core/registry/AgentRegistry.ts';
 import { BaseAgent } from './src/core/engine/BaseAgent.ts';
 import { CentralOrchestrator } from './src/core/orchestrator/CentralOrchestrator.ts';
+import { sanitizeWorkflowInput, validateServerWorkflowReplacement, WorkflowSubmissionError } from './src/core/orchestrator/WorkflowSubmissionGuard.ts';
 import { ApprovalGateManager } from './src/core/safety/HumanApprovalGate.ts';
 import type { EngineeringTask } from './src/core/types/orchestrator.ts';
 import { AuditLogger } from './src/core/safety/AuditLogger.ts';
@@ -663,8 +664,8 @@ app.post('/api/orchestrator/execute-workflow', async (req, res) => {
     }
 
     const submitted = req.body?.tasks;
-    if (!Array.isArray(submitted) || submitted.length < 1 || submitted.length > 25) {
-      return res.status(400).json({ success: false, error: 'Provide between 1 and 25 workflow tasks.' });
+    if (!Array.isArray(submitted) || submitted.length < 1 || submitted.length > 26) {
+      return res.status(400).json({ success: false, error: 'Provide between 1 and 26 workflow tasks.' });
     }
     const registry = AgentRegistry.getInstance();
     const prepared: EngineeringTask[] = [];
@@ -672,14 +673,12 @@ app.post('/api/orchestrator/execute-workflow', async (req, res) => {
       if (!item || typeof item.id !== 'string' || !/^[a-zA-Z0-9_-]{1,100}$/.test(item.id) ||
           typeof item.assignedAgentId !== 'string' || !Array.isArray(item.dependencies) ||
           item.dependencies.length > 25 || item.dependencies.some((d: unknown) => typeof d !== 'string') ||
-          !item.input || typeof item.input.parameters !== 'object' || Array.isArray(item.input.parameters)) {
+          !item.input || !item.input.parameters || typeof item.input.parameters !== 'object' || Array.isArray(item.input.parameters)) {
         return res.status(400).json({ success: false, error: 'Invalid workflow task definition.' });
       }
       const spec = registry.getAgent(item.assignedAgentId);
       if (!spec) return res.status(400).json({ success: false, error: 'Unknown workflow agent.' });
-      const context = item.input.context && typeof item.input.context === 'object' ? item.input.context : {};
-      const { isExploratoryStudy: _flag, safetyCritical: _clientSafety, ...safeContext } = context;
-      const { isExploratoryStudy: _parameterFlag, ...safeParameters } = item.input.parameters;
+      const safeInput = sanitizeWorkflowInput(item.input.context, item.input.parameters, user.userId);
       prepared.push({
         id: item.id,
         title: String(item.title || item.id).slice(0, 150),
@@ -690,8 +689,8 @@ app.post('/api/orchestrator/execute-workflow', async (req, res) => {
         dependencies: item.dependencies,
         input: {
           taskId: item.id,
-          context: { ...safeContext, authenticatedUserId: user.userId },
-          parameters: safeParameters
+          context: safeInput.context,
+          parameters: safeInput.parameters
         },
         status: 'PENDING',
         createdAt: new Date().toISOString(),
@@ -703,7 +702,14 @@ app.post('/api/orchestrator/execute-workflow', async (req, res) => {
     workflowInProgress = true;
     try {
       const orchestrator = CentralOrchestrator.getInstance();
-      // A single workflow owns the in-memory state during execution.
+      // Reject duplicates/cycles and preserve in-flight or awaiting-review
+      // workflows BEFORE mutating the current server-owned task map.
+      validateServerWorkflowReplacement(prepared, orchestrator.getAllTasks());
+      if (ApprovalGateManager.getInstance().getPendingGates().length > 0) {
+        throw new WorkflowSubmissionError(
+          'Unresolved approval gates must be finalized before replacing a workflow', 409
+        );
+      }
       orchestrator.clearTasks();
       for (const task of prepared) orchestrator.registerTask(task);
       orchestrator.getExecutionPlan(); // Reject missing or cyclic dependencies before execution.
@@ -718,7 +724,10 @@ app.post('/api/orchestrator/execute-workflow', async (req, res) => {
       workflowInProgress = false;
     }
   } catch (err: any) {
-    res.status(500).json({ success: false, error: err.message || String(err) });
+    if (err instanceof WorkflowSubmissionError) {
+      return res.status(err.httpStatus).json({ success: false, error: err.message });
+    }
+    res.status(500).json({ success: false, error: 'Server workflow execution failed; refer to controlled audit logs.' });
   }
 });
 
