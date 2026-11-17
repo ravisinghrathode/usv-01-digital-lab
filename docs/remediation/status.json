@@ -13,7 +13,7 @@
       "id": "PR-02",
       "state": "partial-merged-and-follow-up-open",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/182",
-      "verification": "PR #182 merged for fail-closed local audit persistence. Independent witness verification proposed in follow-up branch; external durable witness, outbox, cross-process serialization and operational drills remain pending."
+      "verification": "PR #182 merged for local audit persistence; follow-up PR #191 adds external Ed25519 witness verification and strict canonical UTC timestamp rejection with regression tests (head 70dafb3d). Previous exact-head governance job passed technical Stage B/C/D steps but failed mandatory Stage E; fresh-head CI unverified. Independent witness deployment, external durability, outbox, cross-process serialization and operational acceptance remain pending."
     },
     {
       "id": "PR-03",
