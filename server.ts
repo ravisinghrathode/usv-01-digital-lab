@@ -1277,7 +1277,7 @@ app.post('/api/data/:collection', validateDataCollection, (req, res) => {
       action: 'CREATE',
       recordType: coll.toUpperCase(),
       recordId: newItem.id,
-      details: `Created new ${coll} record: ${newItem.title || newItem.name || newItem.partNumber || newItem.id}`
+      details: `Created new ${coll} record: ${String(draft.title ?? draft.name ?? draft.partNumber ?? newItem.id)}`
     });
   }
 
