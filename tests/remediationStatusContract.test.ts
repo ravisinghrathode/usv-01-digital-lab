@@ -127,6 +127,20 @@ describe('closed-loop twelve-issue remediation reporting', () => {
     }
   });
 
+  it('rejects C1 terminal controls that can manipulate displayed audit evidence', () => {
+    for (const codePoint of [0x80, 0x85, 0x90, 0x9b, 0x9f]) {
+      const control = String.fromCodePoint(codePoint);
+      const note = structuredClone(ledger);
+      note.items[0].verification = 'pending' + control + 'approved';
+      expect(() => summarizeUnverifiedRemediationLedger(note))
+        .toThrow('invalid verification note');
+      const constraint = structuredClone(ledger);
+      constraint.constraints[0] = 'review' + control + 'accepted';
+      expect(() => summarizeUnverifiedRemediationLedger(constraint))
+        .toThrow('malformed provenance metadata');
+    }
+  });
+
   it('rejects Unicode bidirectional spoofing in notes and constraints', () => {
     for (const control of [0x202a, 0x202e, 0x2066, 0x2069].map(codePoint => String.fromCodePoint(codePoint))) {
       const note = structuredClone(ledger);
