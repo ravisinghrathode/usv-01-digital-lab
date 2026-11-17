@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 exact head 0243038 passed Agent Academy, Docker image canary, zero-API and browser QA; governance failed (Stage E review remains mandatory). Fixed bidi regression test to generate actual Unicode controls instead of escaped literal strings on feature branch; fresh-head CI and independent E2E acceptance unverified."
+      "verification": "PR #201 head 463106083 passed zero-API, Docker image canary, browser QA and Agent Academy workflows; governance workflow failed and Stage E independent review remains mandatory. Additional invisible Unicode spoofing controls and negative tests committed on feature branch; latest-head CI, merge and independent end-to-end acceptance remain unverified."
     }
   ],
   "constraints": [
