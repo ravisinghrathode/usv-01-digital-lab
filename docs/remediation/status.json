@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 open; Academy, browser and zero-API checks passed, Stage E failed; no independent end-to-end acceptance"
+      "verification": "PR #201 open; exact-head CI for b089f74 pending; ledger now rejects undeclared shadow approval/acceptance fields with regression tests. Stage E independent human review and end-to-end acceptance outstanding"
     }
   ],
   "constraints": [
