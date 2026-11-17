@@ -36,8 +36,14 @@ proofing. Those would be security regressions.
 
 ## Production verification required
 
-1. Build with a synthetic secret fixture present in the working tree, inspect
-   the resulting Docker image/layers, and prove fixture bytes are absent.
+1. Run the synthetic secret image-layer canary in CI and on the intended build
+   host. It builds **both** the build and runtime stages, scans exported image
+   layers and metadata for a random synthetic marker, and fails closed if Docker
+   cannot run, a real fixture would be overwritten, or an image cannot be scanned.
+   The GitHub workflow runs automatically when Docker-related files change.
+   Run manually with `python3 scripts/security/docker-image-secret-canary.py`.
+   This is only a synthetic canary and cannot establish the absence of unknown
+   credentials, build-cache leaks, logs, or non-Docker distribution artifacts.
 2. Run `docker compose config --quiet` and build the production stage.
 3. Provision a test identity using an ephemeral setup secret, restart the
    container, and confirm the credential survives in the named volume.

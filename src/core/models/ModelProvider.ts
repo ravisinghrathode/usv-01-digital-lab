@@ -255,6 +255,9 @@ export function classifiedGeminiCliFailure(error: unknown): Error {
   if (raw.code === 41) {
     return new Error('USV_GEMINI_CLI_AUTH_UNAVAILABLE: personal OAuth sign-in required (exitCode=41)');
   }
+  if (raw.code === 55) {
+    return new Error('USV_GEMINI_CLI_UNTRUSTED_WORKSPACE: private headless workspace rejected (exitCode=55); fail closed');
+  }
   if (raw.code === 42) {
     return new Error('USV_GEMINI_CLI_INVALID_ARGUMENTS: CLI rejected headless input (exitCode=42); fail closed');
   }
@@ -338,6 +341,11 @@ export class GeminiCliProvider implements IModelProvider {
         security:{auth:{enforcedType:'oauth-personal'}}
       }),{flag:'wx',mode:0o600});
       cleanEnv.GEMINI_CLI_SYSTEM_SETTINGS_PATH=policy;
+      // Gemini CLI refuses headless execution from an untrusted directory
+      // (exit 55). This cwd is a fresh mode-0700 temporary directory created
+      // by generateText, not an untrusted repository or user-supplied path.
+      // Trust ONLY this child process; never accept an inherited trust override.
+      cleanEnv.GEMINI_CLI_TRUST_WORKSPACE='true';
     }
     const options={cwd,timeout,maxBuffer:8*1024*1024,env:cleanEnv,stdin};
     if(this.runner)return this.runner(this.binary,args,options);

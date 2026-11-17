@@ -103,7 +103,7 @@ describe('closed-loop twelve-issue remediation reporting', () => {
   });
 
   it('rejects control characters in untrusted status notes and constraints', () => {
-    for (const control of ['\\u0000', '\\u001b', '\\n', '\\r', '\\u007f']) {
+    for (const control of ['\u0000', '\u001b', '\n', '\r', '\u007f']) {
       const note = structuredClone(ledger);
       note.items[0].verification = 'pending' + control + 'approved';
       expect(() => summarizeUnverifiedRemediationLedger(note))
