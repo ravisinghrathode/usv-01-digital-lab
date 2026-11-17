@@ -124,7 +124,12 @@ export function verifyIndependentAuditAnchor(
     return { valid: false, reason: 'INVALID_ATTESTATION' };
   }
   if (s.journalId !== journalId) return { valid: false, reason: 'JOURNAL_MISMATCH' };
-  if (!Array.isArray(entries) || !CryptographicAuditTrail.verifyChain(entries).valid) {
+  // Persisted journals are untrusted at runtime; a malformed entry must not crash verification.
+  try {
+    if (!Array.isArray(entries) || !CryptographicAuditTrail.verifyChain(entries).valid) {
+      return { valid: false, reason: 'AUDIT_CHAIN_INVALID' };
+    }
+  } catch {
     return { valid: false, reason: 'AUDIT_CHAIN_INVALID' };
   }
   const liveTip = entries.length ? entries[entries.length - 1].hash : AUDIT_ANCHOR_GENESIS;
