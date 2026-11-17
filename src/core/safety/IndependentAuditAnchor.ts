@@ -50,6 +50,13 @@ export function canonicalAuditAnchorBytes(s: AuditAnchorStatement): Buffer {
   ].map(v => String(Buffer.byteLength(v, 'utf8')) + ':' + v).join('|'), 'utf8');
 }
 
+/** Require the canonical millisecond-precision UTC representation, including a real calendar date. */
+function isCanonicalUtcTimestamp(value: unknown): value is string {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value)) return false;
+  const parsed = Date.parse(value);
+  return Number.isFinite(parsed) && new Date(parsed).toISOString() === value;
+}
+
 /** A local proposal for a future external witness; it is NOT an anchor. */
 export function proposeAuditAnchorStatement(
   journalId: string,
@@ -60,7 +67,7 @@ export function proposeAuditAnchorStatement(
     throw new Error('Invalid audit journal identity');
   const checked = CryptographicAuditTrail.verifyChain(entries);
   if (!checked.valid) throw new Error('Cannot propose a checkpoint for an invalid audit journal');
-  if (!Number.isFinite(Date.parse(issuedAtUtc)) || !issuedAtUtc.endsWith('Z'))
+  if (!isCanonicalUtcTimestamp(issuedAtUtc))
     throw new Error('Invalid UTC checkpoint timestamp');
   return {
     schemaVersion: AUDIT_ANCHOR_SCHEMA,
@@ -79,10 +86,7 @@ function isValidStatement(s: AuditAnchorStatement): boolean {
     Number.isSafeInteger(s.entryCount) && s.entryCount >= 0 &&
     typeof s.tipHash === 'string' &&
     (s.tipHash === AUDIT_ANCHOR_GENESIS || /^[a-f0-9]{64}$/.test(s.tipHash)) &&
-    typeof s.issuedAtUtc === 'string' &&
-    s.issuedAtUtc.length < 50 &&
-    !Number.isNaN(Date.parse(s.issuedAtUtc)) &&
-    s.issuedAtUtc.endsWith('Z');
+    isCanonicalUtcTimestamp(s.issuedAtUtc);
 }
 
 /**
