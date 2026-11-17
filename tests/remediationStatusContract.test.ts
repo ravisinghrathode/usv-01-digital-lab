@@ -128,7 +128,7 @@ describe('closed-loop twelve-issue remediation reporting', () => {
   });
 
   it('rejects Unicode bidirectional spoofing in notes and constraints', () => {
-    for (const control of ['\\u202a', '\\u202e', '\\u2066', '\\u2069']) {
+    for (const control of ['\u202a', '\u202e', '\u2066', '\u2069']) {
       const note = structuredClone(ledger);
       note.items[0].verification = 'pending' + control + 'approved';
       expect(() => summarizeUnverifiedRemediationLedger(note))
