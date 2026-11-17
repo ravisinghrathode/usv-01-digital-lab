@@ -36,6 +36,20 @@ describe('independent cryptographic audit witness acceptance', () => {
     expect(verifyIndependentAuditAnchor(journalId, entries, null, key).valid).toBe(false);
     expect(verifyIndependentAuditAnchor(journalId, entries, signed, null).valid).toBe(false);
   });
+  it('fails closed for malformed runtime trust roots and journal identities', () => {
+    for (const malformedKey of [42, {}, [], true]) {
+      expect(() => verifyIndependentAuditAnchor(journalId, entries, signed, malformedKey as never))
+        .not.toThrow();
+      expect(verifyIndependentAuditAnchor(journalId, entries, signed, malformedKey as never))
+        .toEqual({ valid: false, reason: 'UNTRUSTED_WITNESS_KEY' });
+    }
+    for (const malformedId of [42, {}, [], null, 'invalid journal', 'x'.repeat(129)]) {
+      expect(() => verifyIndependentAuditAnchor(malformedId as never, entries, signed, key))
+        .not.toThrow();
+      expect(verifyIndependentAuditAnchor(malformedId as never, entries, signed, key))
+        .toEqual({ valid: false, reason: 'JOURNAL_MISMATCH' });
+    }
+  });
   it('rejects replays, mismatched journals, and forged attestations', () => {
     expect(verifyIndependentAuditAnchor('different-journal', entries, signed, key).valid).toBe(false);
     expect(verifyIndependentAuditAnchor(journalId, [], signed, key).valid).toBe(false);
