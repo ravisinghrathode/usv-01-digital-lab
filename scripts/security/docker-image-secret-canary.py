@@ -8,6 +8,7 @@ or claims that a passing canary proves a production credential inventory.
 from __future__ import annotations
 
 import os
+import json
 from pathlib import Path
 import secrets
 import shutil
@@ -51,15 +52,33 @@ def inspect_image_archive(archive: Path, token: bytes) -> int:
     scanned_layers = 0
     with tarfile.open(archive, "r:*") as outer:
         members = outer.getmembers()
-        if not any(item.name == "manifest.json" for item in members):
+        manifest_member = next((item for item in members if item.name == "manifest.json"), None)
+        if manifest_member is None:
             raise RuntimeError("Docker save archive missing manifest")
+        manifest_file = outer.extractfile(manifest_member)
+        if manifest_file is None:
+            raise RuntimeError("Docker save archive manifest unreadable")
+        manifest = json.load(manifest_file)
+        if not isinstance(manifest, list) or not manifest:
+            raise RuntimeError("Docker save manifest has no image records")
+        layers: set[str] = set()
+        image_tags: set[str] = set()
+        for record in manifest:
+            if not isinstance(record, dict) or not isinstance(record.get("Layers"), list):
+                raise RuntimeError("Malformed Docker save manifest")
+            layers.update(str(name).removeprefix("./") for name in record["Layers"])
+            image_tags.update(record.get("RepoTags") or [])
+        if not set(IMAGES).issubset(image_tags):
+            raise RuntimeError("Docker save archive omitted a required build stage image")
+        if not layers:
+            raise RuntimeError("Docker save archive contains no referenced layers")
         for member in members:
             if not member.isfile():
                 continue
             data = outer.extractfile(member)
             if data is None:
                 raise RuntimeError("Unable to read image member")
-            if member.name.endswith("/layer.tar") or member.name == "layer.tar":
+            if member.name.removeprefix("./") in layers:
                 scanned_layers += 1
                 with tarfile.open(fileobj=data, mode="r|*") as layer:
                     for entry in layer:
@@ -72,8 +91,8 @@ def inspect_image_archive(archive: Path, token: bytes) -> int:
                             raise RuntimeError("Synthetic secret found in Docker layer: " + entry.name)
             elif contains_token(data, token):
                 raise RuntimeError("Synthetic secret found in Docker image metadata")
-    if scanned_layers < 2:
-        raise RuntimeError("Too few image layers inspected; refusing a false pass")
+    if scanned_layers != len(layers):
+        raise RuntimeError("Docker archive omitted referenced layers; refusing a false pass")
     return scanned_layers
 
 
@@ -117,7 +136,7 @@ def main() -> int:
         return 0
     except (OSError, ValueError, RuntimeError, subprocess.CalledProcessError,
             subprocess.TimeoutExpired, tarfile.TarError) as error:
-        print(f"FAIL: Docker synthetic secret image canary did not pass: {type(error).__name__}", file=sys.stderr)
+        print(f"FAIL: Docker synthetic secret image canary did not pass: {type(error).__name__}: {error}", file=sys.stderr)
         return 1
     finally:
         for file in reversed(created_paths):
