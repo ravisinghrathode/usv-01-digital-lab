@@ -83,7 +83,7 @@ function isObject(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 function isUtcTimestamp(value: unknown): value is string {
-  return typeof value === 'string' && /^\\d{4}-\\d{2}-\\d{2}T/.test(value) &&
+  return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(value) &&
     Number.isFinite(Date.parse(value)) && new Date(value).toISOString() === value;
 }
 function invalidState(reason: string): never {
