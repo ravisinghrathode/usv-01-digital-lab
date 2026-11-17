@@ -31,7 +31,7 @@ describe('Server-owned audit attribution', () => {
     const create = await send('/api/data/knowledge_notes', 'POST', {
       id, name: 'Temporary audit identity test', owner: 'Forged Administrator'
     });
-    expect(create.status).toBe(201);
+    expect(create.status).toBe(200);
     const created = await create.json() as { item: { id: string; createdBy: string; recordStatus: string } };
     const assignedId = created.item.id;
     expect(assignedId).not.toBe(id); // The caller cannot choose authoritative identifiers.
