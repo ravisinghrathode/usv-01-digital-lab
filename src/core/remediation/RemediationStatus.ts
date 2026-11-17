@@ -47,7 +47,7 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
       new Date(value.updatedAt + 'T00:00:00Z').toISOString().slice(0, 10) !== value.updatedAt ||
       !Array.isArray(value.constraints) || value.constraints.length === 0 ||
       value.constraints.some(constraint => typeof constraint !== 'string' ||
-        !constraint.trim() || constraint.length > 1000)) {
+        !constraint.trim() || constraint.length > 1000 || /[\x00-\x1f\x7f]/.test(constraint))) {
     throw new Error('REMEDIATION_LEDGER_INVALID: malformed provenance metadata');
   }
   const itemFields = new Set(['id', 'state', 'pullRequest', 'verification']);
@@ -85,7 +85,7 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
     if (unknownItem.verification !== null &&
         unknownItem.verification !== undefined &&
         (typeof unknownItem.verification !== 'string' ||
-          unknownItem.verification.length > 4000)) {
+          unknownItem.verification.length > 4000 ||\n          /[\x00-\x1f\x7f]/.test(unknownItem.verification))) {
       throw new Error('REMEDIATION_LEDGER_INVALID: invalid verification note');
     }
     issues.push({
