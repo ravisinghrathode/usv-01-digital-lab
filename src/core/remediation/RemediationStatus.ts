@@ -42,8 +42,9 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
   // provenance fields can masquerade as a trustworthy remediation ledger.
   if (typeof value.baseline !== 'string' || !/^[0-9a-f]{40}$/.test(value.baseline) ||
       typeof value.updatedAt !== 'string' ||
-      !/^\\d{4}-\\d{2}-\\d{2}$/.test(value.updatedAt) ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(value.updatedAt) ||
       !Number.isFinite(Date.parse(value.updatedAt + 'T00:00:00Z')) ||
+      new Date(value.updatedAt + 'T00:00:00Z').toISOString().slice(0, 10) !== value.updatedAt ||
       !Array.isArray(value.constraints) || value.constraints.length === 0 ||
       value.constraints.some(constraint => typeof constraint !== 'string' ||
         !constraint.trim() || constraint.length > 1000)) {
