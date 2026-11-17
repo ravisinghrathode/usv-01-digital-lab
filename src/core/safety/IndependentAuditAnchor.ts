@@ -116,7 +116,7 @@ export function verifyIndependentAuditAnchor(
   trustedWitnessPublicKeyPem: string | null | undefined
 ): AnchorVerification {
   if (!receipt) return { valid: false, reason: 'MISSING_EXTERNAL_ATTESTATION' };
-  if (!trustedWitnessPublicKeyPem || !trustedWitnessPublicKeyPem.trim()) {
+  if (typeof trustedWitnessPublicKeyPem !== 'string' || !trustedWitnessPublicKeyPem.trim()) {
     return { valid: false, reason: 'UNTRUSTED_WITNESS_KEY' };
   }
   // Receipts cross a trust boundary: reject malformed runtime objects before dereferencing.
@@ -129,6 +129,10 @@ export function verifyIndependentAuditAnchor(
       typeof receipt.signatureBase64 !== 'string' ||
       !/^[A-Za-z0-9+/]{86}==$/.test(receipt.signatureBase64)) {
     return { valid: false, reason: 'INVALID_ATTESTATION' };
+  }
+  if (typeof journalId !== 'string' || !journalId || journalId.length > 128 ||
+      !/^[A-Za-z0-9._:-]+$/.test(journalId)) {
+    return { valid: false, reason: 'JOURNAL_MISMATCH' };
   }
   if (s.journalId !== journalId) return { valid: false, reason: 'JOURNAL_MISMATCH' };
   // Persisted journals are untrusted at runtime; a malformed entry must not crash verification.
