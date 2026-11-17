@@ -42,6 +42,22 @@ describe('closed-loop twelve-issue remediation reporting', () => {
       .toThrow(/noncanonical PR link/);
   });
 
+  it('rejects unsupported partial-progress claims without an inspectable PR and blocker', () => {
+    const noPr = structuredClone(ledger);
+    noPr.items[0].state = 'partial-implementation-awaiting-review';
+    noPr.items[0].pullRequest = '';
+    expect(() => summarizeUnverifiedRemediationLedger(noPr))
+      .toThrow('partial item lacks PR or blocker');
+
+    for (const note of [null, '', '   ']) {
+      const noBlocker = structuredClone(ledger);
+      noBlocker.items[0].state = 'partial-implementation-awaiting-review';
+      noBlocker.items[0].verification = note;
+      expect(() => summarizeUnverifiedRemediationLedger(noBlocker))
+        .toThrow('partial item lacks PR or blocker');
+    }
+  });
+
   it('adds read-only status utility without rewriting authoritative source', () => {
     const manifest = JSON.parse(fs.readFileSync(
       path.join(process.cwd(), 'package.json'), 'utf8'
