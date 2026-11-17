@@ -78,8 +78,14 @@ export function proposeAuditAnchorStatement(
   };
 }
 
+function hasExactKeys(value: object, expected: readonly string[]): boolean {
+  const keys = Object.keys(value);
+  return keys.length === expected.length && keys.every(key => expected.includes(key));
+}
+
 function isValidStatement(s: AuditAnchorStatement): boolean {
-  return s.schemaVersion === AUDIT_ANCHOR_SCHEMA &&
+  return hasExactKeys(s, ['schemaVersion', 'journalId', 'entryCount', 'tipHash', 'issuedAtUtc']) &&
+    s.schemaVersion === AUDIT_ANCHOR_SCHEMA &&
     typeof s.journalId === 'string' &&
     s.journalId.length > 0 && s.journalId.length <= 128 &&
     /^[A-Za-z0-9._:-]+$/.test(s.journalId) &&
@@ -107,7 +113,8 @@ export function verifyIndependentAuditAnchor(
     return { valid: false, reason: 'UNTRUSTED_WITNESS_KEY' };
   }
   // Receipts cross a trust boundary: reject malformed runtime objects before dereferencing.
-  if (typeof receipt !== 'object' || Array.isArray(receipt)) {
+  if (typeof receipt !== 'object' || Array.isArray(receipt) ||
+      !hasExactKeys(receipt, ['statement', 'signatureBase64'])) {
     return { valid: false, reason: 'INVALID_ATTESTATION' };
   }
   const s = receipt.statement;
