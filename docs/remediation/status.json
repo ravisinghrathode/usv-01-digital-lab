@@ -13,7 +13,7 @@
       "id": "PR-02",
       "state": "partial-merged-and-follow-up-open",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/182",
-      "verification": "PR #182 merged for local audit persistence; follow-up PR #191 adds external Ed25519 witness verification and strict canonical UTC timestamp rejection with regression tests (head 70dafb3d). Previous exact-head governance job passed technical Stage B/C/D steps but failed mandatory Stage E; fresh-head CI unverified. Independent witness deployment, external durability, outbox, cross-process serialization and operational acceptance remain pending."
+      "verification": "PR #182 merged for local audit persistence; follow-up PR #191 adds externally signed Ed25519 witness receipt verification, strict UTC timestamps, fail-closed malformed receipt guards and canonical 64-byte signature encoding with negative regression tests (source commit 48c8cc05; tests f31e1c73). Earlier head 01dcd75f governance workflow failed; exact new-head CI pending. Independent witness deployment, durable receipt history, transaction outbox, cross-process serialization, Stage E approval and operational acceptance remain outstanding."
     },
     {
       "id": "PR-03",
