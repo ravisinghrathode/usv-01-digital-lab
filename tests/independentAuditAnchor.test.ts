@@ -82,6 +82,22 @@ describe('independent cryptographic audit witness acceptance', () => {
         .toEqual({ valid: false, reason: 'INVALID_ATTESTATION' });
     }
   });
+  it('rejects malformed runtime receipts and noncanonical signature encodings without throwing', () => {
+    for (const receipt of [42, 'signed', [], { statement: 7, signatureBase64: signed.signatureBase64 }]) {
+      expect(verifyIndependentAuditAnchor(journalId, entries, receipt as never, key))
+        .toEqual({ valid: false, reason: 'INVALID_ATTESTATION' });
+    }
+    const malformed = [
+      signed.signatureBase64.replace(/==$/, ''),
+      signed.signatureBase64 + '==',
+      signed.signatureBase64.slice(0, -2) + 'AA',
+      signed.signatureBase64.slice(0, -3) + 'B=='
+    ];
+    for (const signatureBase64 of malformed) {
+      expect(verifyIndependentAuditAnchor(journalId, entries, { ...signed, signatureBase64 }, key))
+        .toEqual({ valid: false, reason: 'INVALID_ATTESTATION' });
+    }
+  });
   it('refuses to propose a checkpoint for a tampered chain', () => {
     expect(() => proposeAuditAnchorStatement(journalId, [{ ...entries[0], details: { allowed: true } }]))
       .toThrow(/invalid audit journal/);
