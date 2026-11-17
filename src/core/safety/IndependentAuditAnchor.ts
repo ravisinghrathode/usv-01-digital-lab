@@ -65,8 +65,15 @@ export function proposeAuditAnchorStatement(
 ): AuditAnchorStatement {
   if (!journalId || journalId.length > 128 || !/^[A-Za-z0-9._:-]+$/.test(journalId))
     throw new Error('Invalid audit journal identity');
-  const checked = CryptographicAuditTrail.verifyChain(entries);
-  if (!checked.valid) throw new Error('Cannot propose a checkpoint for an invalid audit journal');
+  // Persisted journals are untrusted even when proposing a checkpoint. Reject
+  // malformed entries deterministically rather than leaking runtime exceptions.
+  let validChain = false;
+  try {
+    validChain = Array.isArray(entries) && CryptographicAuditTrail.verifyChain(entries).valid;
+  } catch {
+    validChain = false;
+  }
+  if (!validChain) throw new Error('Cannot propose a checkpoint for an invalid audit journal');
   if (!isCanonicalUtcTimestamp(issuedAtUtc))
     throw new Error('Invalid UTC checkpoint timestamp');
   return {
