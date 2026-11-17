@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 open; exact-head technical workflows passed at prior SHA 9eb8a1a; Stage E governance failed pending independent authenticated review. Provenance metadata validator and regression tests added at 00cc2cf; fresh-head CI and independent E2E acceptance pending."
+      "verification": "PR #201 open at feature-head fa637d42b2e964108f0f21b10e2cdec66cd2c29f. Fixed escaped ISO-date regex that rejected valid ledger dates; added valid/invalid calendar regression tests. Previous exact-head 20846278 technical workflows succeeded (Academy, zero-API, browser QA); governance failed and Stage E independent authenticated review remains required. New exact-head CI not yet returned; tests not claimed passed. Independent end-to-end acceptance outstanding."
     }
   ],
   "constraints": [
