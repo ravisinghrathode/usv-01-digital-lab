@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-17",
+  "updatedAt": "2026-11-18",
   "items": [
     {
       "id": "PR-01",
@@ -13,7 +13,7 @@
       "id": "PR-02",
       "state": "partial-merged-and-follow-up-open",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/182",
-      "verification": "PR #182 merged for local audit persistence; follow-up PR #191 adds externally signed Ed25519 witness receipt verification, strict UTC timestamps, fail-closed malformed receipt guards and canonical 64-byte signature encoding with negative regression tests (source commit 48c8cc05; tests f31e1c73). Earlier head 01dcd75f governance workflow failed; exact new-head CI pending. Independent witness deployment, durable receipt history, transaction outbox, cross-process serialization, Stage E approval and operational acceptance remain outstanding."
+      "verification": "PR #182 merged for local audit persistence; PR #191 remains OPEN. Strict witness UTC and canonical signature checks plus unsigned extension-field rejection added with negative regression tests (source 4bd039cf, tests 881640a8). Exact-head CI at 18a23ee8 failed Stage B dependency security audit: bun audit reported high-severity picomatch <=4.0.7 (GHSA-fc5q-39xc-vjpf); this is a genuine technical blocker, not Stage E. New-head CI pending. Lockfile dependency remediation remains required. Independent witness deployment, durable receipt history, transactional outbox, cross-process serialization, authenticated Stage E and end-to-end acceptance outstanding."
     },
     {
       "id": "PR-03",
