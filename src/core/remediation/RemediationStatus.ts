@@ -19,7 +19,7 @@ export interface RemediationSummary {
 }
 
 // Reject bidirectional formatting controls that can visually reverse approval text.
-const UNSAFE_STATUS_TEXT = /[\x00-\x1f\x7f\u061c\u200b-\u200f\u2028-\u202e\u2060\u2066-\u2069\ufeff]/;
+const UNSAFE_STATUS_TEXT = /[\x00-\x1f\x7f-\x9f\u061c\u200b-\u200f\u2028-\u202e\u2060\u2066-\u2069\ufeff]/;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
