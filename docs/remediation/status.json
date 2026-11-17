@@ -80,5 +80,23 @@
     "Never auto-promote naval engineering baselines",
     "No independent approval can be forged or bypassed",
     "Completion requires CI, review, and full end-to-end acceptance"
-  ]
+  ],
+  "iterationEvidence": {
+    "workstream": "PR-02",
+    "pullRequest": 191,
+    "sourceCommit": "d118c3fe042d2c553b1157975ea8c5a0684f8e86",
+    "regressionCommit": "59738baddfa74ef5ec049697c06a1adaac927b36",
+    "change": "Reject throwing getters on untrusted witness receipt fields with controlled INVALID_ATTESTATION and negative tests",
+    "priorHead": "4cbee76944eb6cf4a7b7b46bd89fe28bb4b68165",
+    "priorCI": {
+      "workflowRun": 44194113317,
+      "stageB": "failed dependency audit; picomatch advisory unresolved"
+    },
+    "verification": "New exact-head CI not yet established",
+    "blockers": [
+      "Resolve vulnerable picomatch transitive dependency with regenerated Bun lockfile and passing audit",
+      "Independent witness deployment, durable outbox, cross-process locking and recovery evidence",
+      "Authenticated independent Stage E approval and end-to-end acceptance"
+    ]
+  }
 }
