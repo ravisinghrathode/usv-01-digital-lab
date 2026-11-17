@@ -106,9 +106,14 @@ export function verifyIndependentAuditAnchor(
   if (!trustedWitnessPublicKeyPem || !trustedWitnessPublicKeyPem.trim()) {
     return { valid: false, reason: 'UNTRUSTED_WITNESS_KEY' };
   }
+  // Receipts cross a trust boundary: reject malformed runtime objects before dereferencing.
+  if (typeof receipt !== 'object' || Array.isArray(receipt)) {
+    return { valid: false, reason: 'INVALID_ATTESTATION' };
+  }
   const s = receipt.statement;
-  if (!s || !isValidStatement(s) || typeof receipt.signatureBase64 !== 'string' ||
-      !/^[A-Za-z0-9+/]+={0,2}$/.test(receipt.signatureBase64)) {
+  if (!s || typeof s !== 'object' || Array.isArray(s) || !isValidStatement(s) ||
+      typeof receipt.signatureBase64 !== 'string' ||
+      !/^[A-Za-z0-9+/]{86}==$/.test(receipt.signatureBase64)) {
     return { valid: false, reason: 'INVALID_ATTESTATION' };
   }
   if (s.journalId !== journalId) return { valid: false, reason: 'JOURNAL_MISMATCH' };
@@ -126,6 +131,7 @@ export function verifyIndependentAuditAnchor(
     }
     const signature = Buffer.from(receipt.signatureBase64, 'base64');
     if (signature.length !== 64 ||
+        signature.toString('base64') !== receipt.signatureBase64 ||
         !crypto.verify(null, canonicalAuditAnchorBytes(s), publicKey, signature)) {
       return { valid: false, reason: 'INVALID_WITNESS_SIGNATURE' };
     }
