@@ -98,6 +98,12 @@ export function codexFallbackReason(error: unknown): SafeFallbackReason | null {
  */
 export function recoverableGeminiCliFailure(error: unknown): boolean {
   const message = error instanceof Error ? error.message : String(error);
+  // Stable, redacted CLI codes replace raw stderr and full command echoes.
+  // Do not retry provider policy refusals, invalid output, wrong model or
+  // unsupported flags; those continue to fail closed.
+  if (/^USV_GEMINI_CLI_(?:AUTH_UNAVAILABLE|TRANSPORT_UNAVAILABLE):/.test(message)) {
+    return true;
+  }
   if (/UNSAFE|REFUSAL|SAFETY|POLICY_DENIED|MODEL_NOT_VERIFIED|INVALID_JSON|INVALID_SCHEMA|INVALID_OUTPUT|PROVIDER_MISMATCH|MANDATORY_CALCULATION/i.test(message.replace(/\s+/g, ''))) {
     return false;
   }
