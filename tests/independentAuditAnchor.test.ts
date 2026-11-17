@@ -98,6 +98,18 @@ describe('independent cryptographic audit witness acceptance', () => {
         .toEqual({ valid: false, reason: 'INVALID_ATTESTATION' });
     }
   });
+  it('rejects unsigned extension fields on receipts and signed statements', () => {
+    // Extension fields are not included in the canonical signed bytes and must
+    // not be allowed to masquerade as witness assertions or approval metadata.
+    expect(verifyIndependentAuditAnchor(journalId, entries, {
+      ...signed,
+      approval: 'STAGE_E_ACCEPTED'
+    } as never, key)).toEqual({ valid: false, reason: 'INVALID_ATTESTATION' });
+    expect(verifyIndependentAuditAnchor(journalId, entries, {
+      ...signed,
+      statement: { ...signed.statement, witnessApproved: true }
+    } as never, key)).toEqual({ valid: false, reason: 'INVALID_ATTESTATION' });
+  });
   it('refuses to propose a checkpoint for a tampered chain', () => {
     expect(() => proposeAuditAnchorStatement(journalId, [{ ...entries[0], details: { allowed: true } }]))
       .toThrow(/invalid audit journal/);
