@@ -7,6 +7,9 @@ import {readFile, writeFile, mkdir, appendFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
+import {execFile} from 'node:child_process';
+import {promisify} from 'node:util';
+const ghExec=promisify(execFile);
 import {validateRegister, REGISTER_FILE} from './external-software-register.mjs';
 
 export const QUEUE_FILE=fileURLToPath(new URL('../references/third-party-static-audits/A26_ALL_97_REVIEW_QUEUE_2026-11-17.json',import.meta.url));
@@ -57,6 +60,22 @@ export function validateQueue(queue,db) {
 }
 async function getPublicGithub(url, fetchImpl, token, timeoutMs) {
  if(!url.startsWith('https://api.github.com/repos/'))throw Error('Non-GitHub host denied');
+ // Ubuntu GitHub Actions runners may require their configured HTTPS proxy.
+ // Use only the trusted preinstalled GitHub CLI there: exact read-only GET,
+ // shell=false, bounded response/time, ephemeral GitHub Actions token.
+ // No third-party repository binary, script, dependency or README is executed.
+ if(process.env.GITHUB_ACTIONS==='true'&&token&&fetchImpl===fetch){
+  try{
+   const endpoint=new URL(url).pathname.replace(/^\/+/,'');
+   const {stdout}=await ghExec('gh',['api','-X','GET',endpoint],{
+    timeout:timeoutMs, maxBuffer:5*1024*1024,
+    env:{...process.env,GH_TOKEN:token},windowsHide:true
+   });
+   return {data:JSON.parse(stdout)};
+  }catch(e){
+   return {error:'GITHUB_CLI_READ_FAILED_'+String(e.code||'UNKNOWN').slice(0,30)};
+  }
+ }
  const ctl=new AbortController(), timer=setTimeout(()=>ctl.abort(),timeoutMs);
  try{
   const headers={'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',
@@ -66,7 +85,7 @@ async function getPublicGithub(url, fetchImpl, token, timeoutMs) {
   if(!response.ok)return {error:'HTTP_'+response.status};
   const data=await response.json();
   return {data};
- }catch{return {error:'TRANSPORT_OR_TIMEOUT'};}
+ }catch(e){return {error:'TRANSPORT_'+String(e?.cause?.code||e?.code||e?.name||'UNKNOWN').slice(0,35)};}
  finally{clearTimeout(timer);}
 }
 export async function inspectPublicSource(entry,{fetchImpl=fetch,token='',timeoutMs=12000}={}) {
@@ -154,6 +173,7 @@ export function summarizeScan(entries) {
   rootLicenseBlobListed:entries.filter(x=>x.root.status==='ROOT_LICENSE_BLOBS_LISTED_NOT_LEGAL_REVIEWED').length,
   noRootLicenseDetected:entries.filter(x=>x.root.status==='HOLD_NO_ROOT_LICENSE_BLOB_DETECTED').length,
   sourceInspectionsWithIssues:entries.filter(x=>x.source.issues.length>0).length,
+  issueCounts:Object.fromEntries([...new Set(entries.flatMap(x=>x.source.issues))].map(k=>[k,entries.filter(x=>x.source.issues.includes(k)).length])),
   qualified:0,installed:0,approved:0,actualExecuted:0};
 }
 export function renderScanMarkdown(report) {
@@ -165,6 +185,7 @@ export function renderScanMarkdown(report) {
  'Root license blob references found: '+s.rootLicenseBlobListed+
  '; no root license detected: '+s.noRootLicenseDetected+
  '. A root file is not a legal determination; nested/component licenses not inspected.','',
+ 'Upstream source API issue categories: '+JSON.stringify(s.issueCounts),'',
  '## Per-repository hold queue','',
  '| ID | Repository | Immutable source check | Root license evidence | Root manifests | Disposition |',
  '| --- | --- | --- | --- | --- | --- |'];
@@ -201,6 +222,7 @@ async function main(args=process.argv.slice(2)) {
   await writeFile(path.join(output,'source-screen.md'),markdown);
   if(process.env.GITHUB_STEP_SUMMARY)await appendFile(process.env.GITHUB_STEP_SUMMARY,markdown);
   console.log(JSON.stringify(report.summary));
+  if(report.summary.pinnedVerified===0)throw Error('LIVE_SOURCE_SCREEN_UNVERIFIED: zero of 97 pinned upstream commits verified; cannot claim a successful source scan');
   return;
  }
  throw Error('Usage: --check | --scan --out-dir <artifacts-directory>');
