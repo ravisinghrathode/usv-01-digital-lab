@@ -110,6 +110,14 @@ describe('independent cryptographic audit witness acceptance', () => {
       statement: { ...signed.statement, witnessApproved: true }
     } as never, key)).toEqual({ valid: false, reason: 'INVALID_ATTESTATION' });
   });
+  it('fails closed for malformed persisted journal entries without propagating exceptions', () => {
+    for (const corrupted of [[null], [undefined], [42], [{ hash: null }]]) {
+      expect(() => verifyIndependentAuditAnchor(journalId, corrupted as never, signed, key))
+        .not.toThrow();
+      expect(verifyIndependentAuditAnchor(journalId, corrupted as never, signed, key))
+        .toEqual({ valid: false, reason: 'AUDIT_CHAIN_INVALID' });
+    }
+  });
   it('refuses to propose a checkpoint for a tampered chain', () => {
     expect(() => proposeAuditAnchorStatement(journalId, [{ ...entries[0], details: { allowed: true } }]))
       .toThrow(/invalid audit journal/);
