@@ -7,73 +7,73 @@
       "id": "PR-01",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/186",
-      "verification": "Server draft-only CRUD, raw import gate and negative API tests added; awaiting latest CI, independent review, content-bound governed approval commands and migration/transaction hardening"
+      "verification": "Server draft-only CRUD merged previously; governed content-bound approval still unverified"
     },
     {
       "id": "PR-02",
       "state": "partial-implementation-awaiting-review",
-      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/182",
-      "verification": "Regression tests added; CI not yet confirmed; external audit anchoring remains outstanding"
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/191",
+      "verification": "PR #191 open, exact-head governance CI failed Stage E only; external witness service, outbox and independent security approval outstanding"
     },
     {
       "id": "PR-03",
       "state": "partial-implementation-awaiting-review",
-      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/188",
-      "verification": "Docker context exclusions, runtime secret volume and tests added; CI latest success, but image-layer leak canary, provisioned cold-start and backup-restore still outstanding"
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/193",
+      "verification": "PR #193 open; Docker image canary workflow passed exact head, governance Stage E failed; runtime bootstrap and restore drills outstanding"
     },
     {
       "id": "PR-04",
-      "state": "not-verified",
-      "pullRequest": "",
-      "verification": null
+      "state": "partial-implementation-awaiting-review",
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/196",
+      "verification": "PRs #194 and #196 open; isolated browser and zero-API checks passed, Stage E failed; migration, cross-process transaction and power-loss recovery outstanding"
     },
     {
       "id": "PR-05",
-      "state": "not-verified",
-      "pullRequest": "",
-      "verification": null
+      "state": "partial-implementation-awaiting-review",
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/195",
+      "verification": "PR #195 open; zero-API check passed, Stage E failed; independent restart/lease acceptance outstanding"
     },
     {
       "id": "PR-06",
-      "state": "not-verified",
-      "pullRequest": "",
-      "verification": null
+      "state": "partial-implementation-awaiting-review",
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/197",
+      "verification": "PR #197 open; browser and zero-API checks passed, Stage E failed; server orchestration acceptance outstanding"
     },
     {
       "id": "PR-07",
       "state": "not-verified",
       "pullRequest": "",
-      "verification": null
+      "verification": "No verified full Codex-first policy-authorized Gemini Hydrogen failover acceptance; implementation and tests remain to be assessed"
     },
     {
       "id": "PR-08",
-      "state": "not-verified",
-      "pullRequest": "",
-      "verification": null
+      "state": "partial-implementation-awaiting-review",
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/198",
+      "verification": "PR #198 open; browser and zero-API checks passed, Stage E failed; independent evidence-admission acceptance outstanding"
     },
     {
       "id": "PR-09",
       "state": "not-verified",
       "pullRequest": "",
-      "verification": null
+      "verification": "Full toolchain/security CI coverage and independent verification not established"
     },
     {
       "id": "PR-10",
-      "state": "not-verified",
-      "pullRequest": "",
-      "verification": null
+      "state": "partial-implementation-awaiting-review",
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/199",
+      "verification": "PR #199 open; browser and zero-API checks passed, Stage E failed; deploy and session security remain outstanding"
     },
     {
       "id": "PR-11",
-      "state": "not-verified",
-      "pullRequest": "",
-      "verification": null
+      "state": "partial-implementation-awaiting-review",
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/200",
+      "verification": "PR #200 open; governance Stage E failed; independent 26-agent evaluation and physical reference verification outstanding"
     },
     {
       "id": "PR-12",
-      "state": "not-verified",
-      "pullRequest": "",
-      "verification": null
+      "state": "partial-implementation-awaiting-review",
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
+      "verification": "PR #201 open; Academy, browser and zero-API checks passed, Stage E failed; no independent end-to-end acceptance"
     }
   ],
   "constraints": [
