@@ -18,7 +18,7 @@ export interface RemediationSummary {
   warning: 'A repository status declaration is not a verified GitHub merge, CI run, independent reviewer signature, or naval engineering release';
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
+// Reject bidirectional formatting controls that can visually reverse approval text.\nconst UNSAFE_STATUS_TEXT = /[\x00-\x1f\x7f\u202a-\u202e\u2066-\u2069]/;\n\nfunction isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
@@ -49,7 +49,7 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
       value.constraints.length > 32 ||
       new Set(value.constraints).size !== value.constraints.length ||
       value.constraints.some(constraint => typeof constraint !== 'string' ||
-        !constraint.trim() || constraint.length > 1000 || /[\x00-\x1f\x7f]/.test(constraint))) {
+        !constraint.trim() || constraint.length > 1000 || UNSAFE_STATUS_TEXT.test(constraint))) {
     throw new Error('REMEDIATION_LEDGER_INVALID: malformed provenance metadata');
   }
   const itemFields = new Set(['id', 'state', 'pullRequest', 'verification']);
@@ -88,7 +88,7 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
         unknownItem.verification !== undefined &&
         (typeof unknownItem.verification !== 'string' ||
           unknownItem.verification.length > 4000 ||
-          /[\x00-\x1f\x7f]/.test(unknownItem.verification))) {
+          UNSAFE_STATUS_TEXT.test(unknownItem.verification))) {
       throw new Error('REMEDIATION_LEDGER_INVALID: invalid verification note');
     }
     issues.push({
