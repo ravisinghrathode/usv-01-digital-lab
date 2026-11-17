@@ -58,6 +58,22 @@ describe('closed-loop twelve-issue remediation reporting', () => {
     }
   });
 
+  it('rejects shadow approval and acceptance assertions in undeclared fields', () => {
+    for (const [field, value] of [
+      ['accepted', true], ['engineeringCertified', true],
+      ['independentReview', { approved: true }], ['completeAndIndependentlyVerified', 12]
+    ] as const) {
+      const shadowRoot = structuredClone(ledger);
+      shadowRoot[field] = value;
+      expect(() => summarizeUnverifiedRemediationLedger(shadowRoot))
+        .toThrow('unsupported root field');
+      const shadowItem = structuredClone(ledger);
+      shadowItem.items[0][field] = value;
+      expect(() => summarizeUnverifiedRemediationLedger(shadowItem))
+        .toThrow('unsupported item field');
+    }
+  });
+
   it('adds read-only status utility without rewriting authoritative source', () => {
     const manifest = JSON.parse(fs.readFileSync(
       path.join(process.cwd(), 'package.json'), 'utf8'
