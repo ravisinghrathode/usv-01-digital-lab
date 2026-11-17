@@ -7,6 +7,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: "3000"
+      STAFF_CREDENTIAL_STORE: /app/.secrets/staff-credentials.json
       AI_REVIEW_PROVIDER: deterministic
       USV_ALLOW_PAID_AI_API: "false"
       USV_SUBSCRIPTION_PILOT: disabled
@@ -14,6 +15,9 @@ services:
       - "127.0.0.1:3000:3000"
     volumes:
       - usv_lab_data:/app/data
+      # Credentials are provisioned at runtime and must persist across restarts,
+      # but never enter the Git working tree or Docker build context.
+      - usv_lab_staff_credentials:/app/.secrets
     read_only: true
     tmpfs:
       - /tmp
@@ -59,3 +63,4 @@ services:
 
 volumes:
   usv_lab_data:
+  usv_lab_staff_credentials:
