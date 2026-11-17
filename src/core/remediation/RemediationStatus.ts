@@ -46,6 +46,8 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
       !Number.isFinite(Date.parse(value.updatedAt + 'T00:00:00Z')) ||
       new Date(value.updatedAt + 'T00:00:00Z').toISOString().slice(0, 10) !== value.updatedAt ||
       !Array.isArray(value.constraints) || value.constraints.length === 0 ||
+      value.constraints.length > 32 ||
+      new Set(value.constraints).size !== value.constraints.length ||
       value.constraints.some(constraint => typeof constraint !== 'string' ||
         !constraint.trim() || constraint.length > 1000 || /[\x00-\x1f\x7f]/.test(constraint))) {
     throw new Error('REMEDIATION_LEDGER_INVALID: malformed provenance metadata');
