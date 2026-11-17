@@ -16,6 +16,7 @@ Operator, operational status, dimensions and performance: UNKNOWN.
 ## Source metadata
 
 - https://news.google.com/rss/articles/CBMic0FVX3lxTFBXYW1ERHhZc0FsVEdITzJSUVNOd2psTDdHVHVNZXNTakR3NWZ3QWxWSVFqSm1fekJHMVNPamRfaGdDdVo0QnZFeFZyVDc4TE91Sjk2aldGQks0NW9jY24yWG13TlpMNnlYc0tmbzlTQk1MYkE?oc=5 (google-local-korean, 2026-07-12T07:00:00.000Z, entry sha256:3e7e36053805402ef895437c737fb7ab6ca40806f27485d081e5924f752eb950)
+- https://news.google.com/rss/articles/CBMic0FVX3lxTFBXYW1ERHhZc0FsVEdITzJSUVNOd2psTDdHVHVNZXNTakR3NWZ3QWxWSVFqSm1fekJHMVNPamRfaGdDdVo0QnZFeFZyVDc4TE91Sjk2aldGQks0NW9jY24yWG13TlpMNnlYc0tmbzlTQk1MYkHSAXdBVV95cUxQVUdXSmlIbVNLN2hqOGpoempJT2ZMN1g5OXIzM1ZQam9pT2M1VS1LamoyVVNNV1BmMVR3MjlYa252Y0puY28ySjJvNzlTZXk0WXNFdEVsd1A2ZVZsNXN4T0pUWE5XVElKMEd1TWhoVUFTTU9UQW9WUQ?oc=5 (google-local-korean, 2026-07-12T07:00:00.000Z, entry sha256:2d42bb80801160b2d1d98f1e4fce28076b62f9f906d0de4129f32b79d3c1b103)
 
 ## Review
 - [ ] Source verified

@@ -37,6 +37,37 @@
       ]
     },
     {
+      "id": "A26-FLEET-015a20bfd2512c5b",
+      "title": "HD HHI and Anduril Launch 600-Ton Autonomous Surface Vessel ‘ASV Alpha’ - Naval News",
+      "summary": "HD HHI and Anduril Launch 600-Ton Autonomous Surface Vessel ‘ASV Alpha’ &nbsp;&nbsp; Naval News",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-17T13:32:49.958Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-worldwide",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=unmanned+surface+vessel+navy+maritime+autonomous&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMijgFBVV95cUxNMldoMWNVVF9sU2hwQkMxMlBYc2Z2TzFHTEs5a2VFRTIxOS16RlM3OWIyQ1NLdTE4SmhNQjBpdlhZXzRvdXljVndHWUtMQVF3aFlGX2hmTWVYSndMdjlnczVjRGt1X003YlViNkRYeE9rTDF2amVfNnE2LXNoRXdINDNxc1FJUHFjLVNuMTh3?oc=5",
+          "publishedAt": "2026-11-16T09:12:24.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:c6119dadb4c617a4dc715164178ebf6bcb7459274bbbe9d613faf1309c08c228",
+          "linkedFiles": [],
+          "entrySha256": "sha256:794ed70d69e4fb015dc1c1feaec7d9b4b896c3796c3f5af5a5c0f78d66bb5f16"
+        }
+      ]
+    },
+    {
       "id": "A26-FLEET-019053fdce54da97",
       "title": "U.S. Navy Announces Launch of Vanguard Unmanned Surface Vessel > Naval Sea Systems Command > Article View - NAVSEA (.mil)",
       "summary": "U.S. Navy Announces Launch of Vanguard Unmanned Surface Vessel > Naval Sea Systems Command > Article View &nbsp;&nbsp; NAVSEA (.mil)",
@@ -331,6 +362,37 @@
       ]
     },
     {
+      "id": "A26-FLEET-0c5af5c506ca4bc9",
+      "title": "EXCLUSIVE: Sea Archer USV prototype begins trials as Leidos Australia advances ambitious manufacturing plan - Defence Connect",
+      "summary": "EXCLUSIVE: Sea Archer USV prototype begins trials as Leidos Australia advances ambitious manufacturing plan &nbsp;&nbsp; Defence Connect",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-17T13:32:49.958Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-prototype-trials",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=naval+unmanned+surface+vessel+prototype+sea+trials+demonstration&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMi8wFBVV95cUxOX01kaUlsaG15Q2lDcENEZnpsOFU1OXBBWmhIMnhrYnZoSk9ielVOZE04b1FlRk1qWVFKWW80Y1dNY3FVSnFFTWVITzVwVnRvNnBZUVY5YXFiZmRWZmlGbldnX0tmbGg1bUlIcTJGeFI1QjZJZFA3bVFzd0VYQ1EwMlpNR1F1amlQd1I5THl4WENFVU9HUFAteXB4d0tYZGt6M2VVMXhKSFFoYTFVa2Q5UzBTaWtOVGMyeGVCbDlVYmQtZDkzVVNsbHNYVnNZSkUwUnBuUEpKLXozV2k1eUpLYVFXV2o5VVRDcXJlSXRKWlFwcTQ?oc=5",
+          "publishedAt": "2026-02-25T08:00:00.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:762fcbc78016662320b2d6bc5cc03090c8b07a834d33ea0c9b256b03b111bd12",
+          "linkedFiles": [],
+          "entrySha256": "sha256:9586592e1e2589d2588d5eae1d814efe4ab2b48210c66096883c1e4c6b7e9fc0"
+        }
+      ]
+    },
+    {
       "id": "A26-FLEET-0dff9fc036641b20",
       "title": "VESSEL REVIEW | ULAQ – Turkey’s first indigenous armed USV boasts multi-role capability - Baird Maritime",
       "summary": "VESSEL REVIEW | ULAQ – Turkey’s first indigenous armed USV boasts multi-role capability &nbsp;&nbsp; Baird Maritime",
@@ -360,6 +422,37 @@
           "feedSha256": "sha256:28a913656d100a92b3561312bf7324ee4ef495373e348e105052732802219d2b",
           "linkedFiles": [],
           "entrySha256": "sha256:88d8a9d5a3e73d8983a027286538f0601a909e2aa404308934753eb83f69a7b2"
+        }
+      ]
+    },
+    {
+      "id": "A26-FLEET-0e005d0a1c2ba15a",
+      "title": "दक्षिण कोरिया ने 600 टन वजनी मानवरहित सतह पोत का प्रक्षेपण किया। - Vietnam.vn",
+      "summary": "दक्षिण कोरिया ने 600 टन वजनी मानवरहित सतह पोत का प्रक्षेपण किया। &nbsp;&nbsp; Vietnam.vn",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-17T13:32:49.958Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-local-hindi",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=%E0%A4%AE%E0%A4%BE%E0%A4%A8%E0%A4%B5%E0%A4%B0%E0%A4%B9%E0%A4%BF%E0%A4%A4+%E0%A4%B8%E0%A4%A4%E0%A4%B9+%E0%A4%AA%E0%A5%8B%E0%A4%A4+%E0%A4%A8%E0%A5%8C%E0%A4%B8%E0%A5%87%E0%A4%A8%E0%A4%BE+%E0%A4%AA%E0%A4%B0%E0%A5%80%E0%A4%95%E0%A5%8D%E0%A4%B7%E0%A4%A3&hl=hi&gl=IN&ceid=IN%3Ahi",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMihgFBVV95cUxOYlNmTHpBNncycm9hcXVveldJcmdOLWRORFRZTTZsNDZTTkJILUdrWGc5dVc0TTFXZkpqa0JNVjg1N3E3OWo2QnAyRk41cjR4UHU4R0Rabm1ON2FIQ0JuY1dkOHVUNE5ZZW9WekgtWkFZRnJjMGFSd0JSQlhqWFY4bnAyVW1MQQ?oc=5",
+          "publishedAt": "2026-11-15T18:18:39.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:f8d633d2bd1b10546c755caf700b08d5902304aebbca9a34de7f656b61cb1d49",
+          "linkedFiles": [],
+          "entrySha256": "sha256:35ab6e8baf6989eb777758598a70779fac9222e519403cf98a7764c068651fdf"
         }
       ]
     },
@@ -524,6 +617,75 @@
           "feedSha256": "sha256:28a913656d100a92b3561312bf7324ee4ef495373e348e105052732802219d2b",
           "linkedFiles": [],
           "entrySha256": "sha256:41675f6f3c88df7f927c405c9eee3475c74e1073b913d20f4d706bb2ba32ce39"
+        }
+      ]
+    },
+    {
+      "id": "A26-FLEET-13bb19518cb75ee7",
+      "title": "‘Realm of the Possible’ Revealed by Multi-Mission Unmanned Surface Vehicle > Naval Sea Systems Command > News - NAVSEA (.mil)",
+      "summary": "‘Realm of the Possible’ Revealed by Multi-Mission Unmanned Surface Vehicle > Naval Sea Systems Command > News &nbsp;&nbsp; NAVSEA (.mil)",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-17T13:32:49.958Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-official-us",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=site%3Anavy.mil+unmanned+surface+vessel+test+program&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMixwFBVV95cUxQNzVvbHg0ZEVHclR4LUpZSzJIcGkwbU1xSm5uSUVvaWlWaVAzZDBMZEpubmF2OHZ1czJQdDZNcmxmZTlRRXQ5REFTS190ZVFDSjFRbWRaLW1PRm53VndUUlV0V2VlYjBKTDlnVWltdzE5bmllNl9CUWhvQmlEeHY1dW1OY0p4cThHVzFGX0JEWnFDblZBUDFOcVVuSDNid1lLd2o5bGxHdmFYOUpKUXJ6VE95MDJHcmlVanNrVTBZTjFybndndFJn?oc=5",
+          "publishedAt": "2018-09-07T12:08:32.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:9c7ee8b8dd0c70c29a79044d40425f645131edee47664a995add3e3fea83cb64",
+          "linkedFiles": [],
+          "entrySha256": "sha256:d5c87eed446f4992ad50636db1890ba5dd98c727e332b871789d8f861fcb312c"
+        }
+      ]
+    },
+    {
+      "id": "A26-FLEET-16125375950fe234",
+      "title": "HD Hyundai and Anduril launch 600t autonomous surface vessel",
+      "summary": "HD Hyundai Heavy Industries (HHI) has launched an autonomous surface vessel (ASV) developed in partnership with US defence contractor Anduril Industries. The post HD Hyundai and Anduril launch 600t autonomous surface vessel appeared first on Naval Technology .",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-17T13:32:49.958Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "naval-technology",
+          "sourceClass": "TRADE_PRESS",
+          "publicFeedUrl": "https://www.naval-technology.com/news/feed/",
+          "publicArticleUrl": "https://www.naval-technology.com/news/hd-hyundai-anduril-asv/",
+          "publishedAt": "2026-11-16T16:52:32.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:2ace11455cde862a37ac33e40fb769ec5265817a92a424727ee14eda995b3bde",
+          "linkedFiles": [
+            {
+              "url": "https://www.naval-technology.com/wp-content/uploads/sites/15/2026/11/Anduril-HD-HHI.jpg",
+              "mimeType": "image/jpeg",
+              "license": "UNKNOWN_REVIEW_REQUIRED",
+              "fileBytesDownloaded": false
+            }
+          ],
+          "entrySha256": "sha256:d845b55b8f76f8ca8ffedfa98501558923f125258e27e1211c5e5516f6e81cf3"
         }
       ]
     },
@@ -877,6 +1039,37 @@
       ]
     },
     {
+      "id": "A26-FLEET-232f75d829e7b3d9",
+      "title": "Brazilian Navy demonstrates MCM USV prototype - Janes Defence Intelligence",
+      "summary": "Brazilian Navy demonstrates MCM USV prototype &nbsp;&nbsp; Janes Defence Intelligence",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-17T13:32:49.958Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-mine-countermeasures",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=naval+mine+countermeasures+unmanned+surface+craft+prototypes&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMiugFBVV95cUxPYzcyUUNWcTNKSHZ3cGtndnVreW93dEx4LV80RDBPajRGNjhCcjBWT2R4R1FTVWtfcHVxYWZRWUY4NGNsTGplaDlZMlA2MHNJM2wtTTEtM3NkNFNoX18xUHFyWkdhNTZVOUxDV1NTMXhBSkxuOHEyQU5CRjRnOHRLcHZVVm9XWXk4aVFaVDFMQl9EUm96SXJTZE5EUng2SVpiUXpnbnhWSzU4OVRhbTZRSWVLT3pTU2g4Znc?oc=5",
+          "publishedAt": "2025-12-10T08:00:00.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:aad6ad04f697d6b98e84c7241c457eeec4f31c8017468970017658e23069bc54",
+          "linkedFiles": [],
+          "entrySha256": "sha256:1a377fc62ac75d9050e475f8d54f54af83bfd84bb042bb035956cc2e88392227"
+        }
+      ]
+    },
+    {
       "id": "A26-FLEET-24b13fb285bd9bdf",
       "title": "Drone Boat Maker Saildrone Wins Protest Over Navy Contract - The New York Times",
       "summary": "Drone Boat Maker Saildrone Wins Protest Over Navy Contract &nbsp;&nbsp; The New York Times",
@@ -904,6 +1097,37 @@
           "feedSha256": "sha256:7e1f6ad578c638cc179d3f2672982f1546de5c22c895afd46f2f4c89863b28c8",
           "linkedFiles": [],
           "entrySha256": "sha256:5f0476b23e448397b93c2d96f5ac228aaa1d568f4ad4d5bbbfa97e16478b2e5e"
+        }
+      ]
+    },
+    {
+      "id": "A26-FLEET-272eb790762a824f",
+      "title": "HD Hyundai and U.S. firm Anduril build unmanned surface vessel in just one year to counter China - 머니투데이",
+      "summary": "HD Hyundai and U.S. firm Anduril build unmanned surface vessel in just one year to counter China &nbsp;&nbsp; 머니투데이",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-17T13:32:49.958Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-worldwide",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=unmanned+surface+vessel+navy+maritime+autonomous&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMicEFVX3lxTFBEZGpfY041RTVneXZRaVd0RE5IRzA0dDB6ZXNLSHprcm1rdGtzWHpzandWQkhGSVcyWGs0bTlyZEY0M2UyVWlBNEQwTXVTTFdzSWFRWEo2NjBiWWRNSTcwcmNIUUJTWFhFMVBIcmdSM0Y?oc=5",
+          "publishedAt": "2026-11-15T03:00:00.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:c6119dadb4c617a4dc715164178ebf6bcb7459274bbbe9d613faf1309c08c228",
+          "linkedFiles": [],
+          "entrySha256": "sha256:4c10d71ec565f891bdded5618da91591a12ad9f6bdf2e9c24b112cb1e8c2d035"
         }
       ]
     },
@@ -997,6 +1221,37 @@
           "feedSha256": "sha256:5a6becf719a48ea52254b05193b235422f390cd05302923c41893c8413b42e50",
           "linkedFiles": [],
           "entrySha256": "sha256:aedcfb26d9ef231ba6802b5a4457efd8119b5b13188e212a194c19bb8f059f88"
+        }
+      ]
+    },
+    {
+      "id": "A26-FLEET-2ef77860be679981",
+      "title": "В РФ разработали первый в мире учебно-тренировочный безэкипажный катер - URA.RU",
+      "summary": "В РФ разработали первый в мире учебно-тренировочный безэкипажный катер &nbsp;&nbsp; URA.RU",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-17T13:32:49.958Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-local-russian",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=%D0%B1%D0%B5%D0%B7%D1%8D%D0%BA%D0%B8%D0%BF%D0%B0%D0%B6%D0%BD%D1%8B%D0%B9+%D0%BA%D0%B0%D1%82%D0%B5%D1%80+%D0%B2%D0%BE%D0%B5%D0%BD%D0%BD%D0%BE+%D0%BC%D0%BE%D1%80%D1%81%D0%BA%D0%BE%D0%B9+%D1%84%D0%BB%D0%BE%D1%82+%D0%B8%D1%81%D0%BF%D1%8B%D1%82%D0%B0%D0%BD%D0%B8%D1%8F&hl=ru&gl=RU&ceid=RU%3Aru",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMiR0FVX3lxTFBPbU13UVJtaFpJRkdIaDh4UUViNldqbWtHZExobmZ4SW5EcmhKYmdaZHpXUHFyMXdKTXRMTHBtQVkxSFNYRVBn?oc=5",
+          "publishedAt": "2025-09-05T07:00:00.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:45f0d2559f248fa4d077fd568f2f4f98d505aebefb9085e3ec8fa2ac87c558d4",
+          "linkedFiles": [],
+          "entrySha256": "sha256:498bba35fec4cadd8cebd04e6651ee33f21d6dc2d9e15b73aa52c6c9c8557312"
         }
       ]
     },
@@ -1526,6 +1781,17 @@
           "feedSha256": "sha256:12de876ab9102bbc8c5d0fa999e9b45dcc708426dc5e4ebfe0840c2b69cdb086",
           "linkedFiles": [],
           "entrySha256": "sha256:4e3df5117e972aea63cc1a8b28b400869091b71ab53d9d2e84857bed20328b0c"
+        },
+        {
+          "sourceId": "google-worldwide",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=unmanned+surface+vessel+navy+maritime+autonomous&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMisgFBVV95cUxOYjc4LThsMlhFbEJ1cjBUR1ZJUzJmR0pvQWVPc2tURTI0R0d6SjhzUVl5dTNJTmRhaW56Tm9SSlB1ZnVtbUwtMDhHdzAyWWNfb3hCVG9SRWdob1hXN2FkY291cS1DZG9RU0MwMnJrY1lGV19RNUQzSGhCcWw4ZV85aExEUlpmS1RsN2JWckxGUHAyS1o1UWxiNXZOWWh1M1JfUFJ4dVlQMW4zWUIxQXRRM2Z3?oc=5",
+          "publishedAt": "2026-10-28T07:00:00.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:c6119dadb4c617a4dc715164178ebf6bcb7459274bbbe9d613faf1309c08c228",
+          "linkedFiles": [],
+          "entrySha256": "sha256:4502db261bf1c4bfc148866cc17325ab006ef8e05d8c9aa05cdf66d09648baf6"
         }
       ]
     },
@@ -1623,6 +1889,37 @@
       ]
     },
     {
+      "id": "A26-FLEET-4df7007048d4ac32",
+      "title": "Video: New Comet and Chaser USV by BlackSea Technologies - Naval News",
+      "summary": "Video: New Comet and Chaser USV by BlackSea Technologies &nbsp;&nbsp; Naval News",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-17T13:32:49.958Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-procurement",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=navy+unmanned+surface+vessel+contract+delivery+demonstration&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMiowFBVV95cUxOMlpkbl9ySGJacHo4YnlQUkw3a2sxcHB0QURGTXU2Q1NFS29XekdWNVkzakZXN0tYRlFUVGFuamNiTGVrdjJKcGxLa2dVa0pPTEwxdXNEOUtSdG05U3RwcWZPa3RXN0hVUUwyZHhVN29QRU9JYldrTmxkekhuMXF5QnBBUHdsYjJjRlVCeEZEX3VyaVdsNVZDc1hCWjdWY0Izdkxj?oc=5",
+          "publishedAt": "2026-05-10T12:33:02.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:6c8cfb67e64e6e5a8a2d413316de0273909386bc2b481cc6009ed4a44ee0f263",
+          "linkedFiles": [],
+          "entrySha256": "sha256:d55c667462ef8c9eb0b2695dbe8bd152ef59dfe68fddaeb6f3ee632b5c5f7f14"
+        }
+      ]
+    },
+    {
       "id": "A26-FLEET-4e87bd2f9e89ab32",
       "title": "News - Unmanned Surface Vessel Squadron 7 Established! - DVIDS",
       "summary": "News - Unmanned Surface Vessel Squadron 7 Established! &nbsp;&nbsp; DVIDS",
@@ -1712,6 +2009,37 @@
           "feedSha256": "sha256:73f6842cd3458bca22ff3fe2d9d745473019101e80a9e877bc7c05cc64fe1941",
           "linkedFiles": [],
           "entrySha256": "sha256:72850e155e9b3c6183014edb451d57602622f9d2a83523a6ee139d3ff5b1d6c4"
+        }
+      ]
+    },
+    {
+      "id": "A26-FLEET-5499c90bd33e905c",
+      "title": "Introducing a portable ASV for extremely shallow waters - www.hydro-international.com",
+      "summary": "Introducing a portable ASV for extremely shallow waters &nbsp;&nbsp; www.hydro-international.com",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-17T13:32:49.958Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-survey-hydrographic",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=autonomous+survey+vessel+hydrographic+research+prototype&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMioAFBVV95cUxNejFiVDlLNVlhZUg5WFRQMERDTVdGWV9fVXlTUDhVdGZoYXJiYkxPSC1ZZ3g2dFBHUXlHbmNucFBQUHZFNkdXakluVjRfR29na1VBNG9zMkFSWXJIWVBMaTlZcUFVRXBPUWRwSE02MEZaV2pOMDl4WkhKZEN5aXloUzJlaVhpMWtRcjdHaWowVldjTVBXRy1ZajIyVUdJRjdC?oc=5",
+          "publishedAt": "2021-05-20T07:00:00.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:4f6eaea0c157dedcc7f69e271037af6ab39d8838eb8e277484dfea91880e7c52",
+          "linkedFiles": [],
+          "entrySha256": "sha256:21b12abae15fedd41c18e56ca60aa3d836ad05a7bea9511b9d799a0e78a723e9"
         }
       ]
     },
@@ -2088,6 +2416,37 @@
       ]
     },
     {
+      "id": "A26-FLEET-6691392b6a5268e3",
+      "title": "Swedish Navy to show Saildrone USV:s agreed via NORDEFCO - Nordic Defence Sector",
+      "summary": "Swedish Navy to show Saildrone USV:s agreed via NORDEFCO &nbsp;&nbsp; Nordic Defence Sector",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-17T13:32:49.958Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-europe-north",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=Norway+Sweden+Finland+Denmark+naval+unmanned+surface+vessel&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOWS1Ga3I1Q1Y0NzBTdzJzUzFSeHp6MDVMM2dseFVSVkVuQWpUdE5EQW5nY2EyUk1CR0s4dVNVLWZldUJfUjJ2Z0pWSUVtMFlqTEg2dkdzNDBWVzdJRW0tYVhHUHo4cklkckN6ai00d3J1WmNYMU5od2wyRzh1aXNuYnR5WW1pRTJVc0dKa2hNMVBFSkFNbUFDbC1uVDhBN1cwSkhzeUctUQ?oc=5",
+          "publishedAt": "2026-10-24T07:00:00.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:15d99d8bd73d41ffc6d59ca3b3715f4ba650ab9bf9accf1342dd85f0a592ca28",
+          "linkedFiles": [],
+          "entrySha256": "sha256:dac90cf3502fc7b93768a973d689cc725d4107eed37783eebe5be9968d8912cb"
+        }
+      ]
+    },
+    {
       "id": "A26-FLEET-670ddcaede0b45c6",
       "title": "Sea Hunter USV Will Operate With Carrier Strike Group, As SURFDEVRON Plans Hefty Testing Schedule - USNI News",
       "summary": "Sea Hunter USV Will Operate With Carrier Strike Group, As SURFDEVRON Plans Hefty Testing Schedule &nbsp;&nbsp; USNI News",
@@ -2214,6 +2573,37 @@
       ]
     },
     {
+      "id": "A26-FLEET-68b9988ca2914d0f",
+      "title": "Netherlands Commences USV Design for New ASW Frigates with Thales FLASH Sonar - Naval News",
+      "summary": "Netherlands Commences USV Design for New ASW Frigates with Thales FLASH Sonar &nbsp;&nbsp; Naval News",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-17T13:32:49.958Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-active-fleet",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=navy+operational+unmanned+surface+vessel+commissioned+deployed&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMimAFBVV95cUxQaWkxdlhQdDdERExuODIxbnBxc2hzSl9QSnBVUmZCcUVWZjF1aGxKT0NsUDc5WlVMVVRUX2lfdGpJNFFGZmVQVzFwa2NkdlROY05KNlBHSW05SXRhay1kbW80OWpiLXVRTW9LVXZvN3ZfZmtoQVMxSHFObnFuSWtockpSRzJMR00zVXdjelZHcXBfNzFqbnZIWQ?oc=5",
+          "publishedAt": "2026-08-03T08:32:35.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:366ef81aded63ead6557e2867abf049dce25b51237e95651af3a38f607cd5682",
+          "linkedFiles": [],
+          "entrySha256": "sha256:3db119d6900cdba621f833f315362803039563c717e7901ad82526aa7dc8a865"
+        }
+      ]
+    },
+    {
       "id": "A26-FLEET-6c01c0125e74d503",
       "title": "Sea Baby",
       "summary": "Морський малюк, romanized: Mors'kyi malyuk) is a multipurpose unmanned surface vehicle (USV) developed for use by the Security Service of Ukraine (SBU)",
@@ -2336,6 +2726,37 @@
           "feedSha256": "sha256:d1866c1bffb6c48022fc1757dafea3b483ec4b15df24c19d454514b3a5fd3954",
           "linkedFiles": [],
           "entrySha256": "sha256:8b658130652c4de2cbb881a43bb0093129ef389e6b9e2ffcc547cdf123fe91fa"
+        }
+      ]
+    },
+    {
+      "id": "A26-FLEET-6e2dff972847a311",
+      "title": "Unmanned surface vessel program completes fueling-at-sea test - WorkBoat",
+      "summary": "Unmanned surface vessel program completes fueling-at-sea test &nbsp;&nbsp; WorkBoat",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-17T13:32:49.958Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-announced-projects",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=navy+experimental+unmanned+surface+vessel+design+programme&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMiigFBVV95cUxQU1FaSlJrMmJXUTdFYzB4M1VDX2pBVDIxckdMXzhTaW5raEpuQUhfR0VlWEdxd0ZSbGZaT1ZhbWxpNllJemxMVmRHSTlmZ01oWFlXMDd3MnNPZWpDZ25Ja2d3SGhsLXRxVGlNVnhLeGVNbDVESnVFZTFndmlzMXBWdmdDR2xGQWZISEE?oc=5",
+          "publishedAt": "2025-01-23T08:00:00.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:e997a5f1e1a59e13434ea88d0c18b42fb16e4767fca89f030d1041c6dd8f1afa",
+          "linkedFiles": [],
+          "entrySha256": "sha256:d5d3473dac66cb3c0ef486f9efad2f07800c804cf3d5867719fe8f4d9d9dd3d4"
         }
       ]
     },
@@ -2619,6 +3040,37 @@
       ]
     },
     {
+      "id": "A26-FLEET-78c8718d6c721dfe",
+      "title": "SURFOR Establishes Unmanned Surface Vessel Squadron (USVRON) Three - www.navy.mil",
+      "summary": "SURFOR Establishes Unmanned Surface Vessel Squadron (USVRON) Three &nbsp;&nbsp; www.navy.mil",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-17T13:32:49.958Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-worldwide",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=unmanned+surface+vessel+navy+maritime+autonomous&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMi2AFBVV95cUxQdjVOQ0NVWUJNajV0ZXpvLXRwazVHcXZlZFUtejZTZnpsMWxDMV9tMER6RVJrQXZyQjBSQ0RyVnJmUlo5X3FrMlkzcm9rTjE2VExUSjlMZ2Zma2M5SkNGdEZrMW81OG5JOTktM1hRdS1YdnQwNVVuTHhKODRQajh6R3VRRVVtZUpyT2Y2VU9KMkt0cWVCOXJIbmFYZldzRnZoOWpqRUNTdFdxVTZOUnM0dkgxTE5aa0MxWE1MdGR0SS1mZDFreDY0LVdXZXFIZVFFMklKRUJwblM?oc=5",
+          "publishedAt": "2024-05-20T07:00:00.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:c6119dadb4c617a4dc715164178ebf6bcb7459274bbbe9d613faf1309c08c228",
+          "linkedFiles": [],
+          "entrySha256": "sha256:2d4a2de18db5f6421a459b7f8bb00bb2da358a434f874def96d09c3e5617bb2e"
+        }
+      ]
+    },
+    {
       "id": "A26-FLEET-79e1da951b47d694",
       "title": "Fleet-class unmanned surface vessel",
       "summary": "Fleet-class unmanned surface vessel, also called the Common Unmanned Surface Vessel (CUSV) and later the Mine Countermeasures Unmanned Surface Vehicle (MCM USV)",
@@ -2772,6 +3224,39 @@
           "feedSha256": "sha256:10b1d8ade3ce48f81344c4a4984189585ceb606b6364fab583a64b80a9599cc9",
           "linkedFiles": [],
           "entrySha256": "sha256:7a921a8e338f2856f13d54aec653f487c24ac1cb384f130961284bada37c8a9a"
+        }
+      ]
+    },
+    {
+      "id": "A26-FLEET-84335b310df0f18a",
+      "title": "Buyan-M-class corvette",
+      "summary": "a Buyan-M- class corvette near Sevastopol on 13 October 2023. The SBU said that the attack was carried out using a Sea Baby unmanned surface vehicle with",
+      "knownModelIds": [
+        "USV-UKR-02"
+      ],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-17T13:32:49.958Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "historical-9",
+          "sourceClass": "ENCYCLOPEDIA_METADATA",
+          "publicFeedUrl": "https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=unmanned+surface+vessel+manufacturer+class&srlimit=25&format=json&formatversion=2",
+          "publicArticleUrl": "https://en.wikipedia.org/?curid=83850480",
+          "publishedAt": null,
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:e14dd0d2cabbf9e60b9f75592d43aeae9746ca90bfea17bf30daf2d124272a0c",
+          "linkedFiles": [],
+          "entrySha256": "sha256:e1f3f6b0dd97118185aaae2633f8e3e020a43d1a2b78e98b8b38fd81eb263e87"
         }
       ]
     },
@@ -3088,6 +3573,37 @@
       ]
     },
     {
+      "id": "A26-FLEET-92cf5a371cf56234",
+      "title": "Польша разворачивает американские безэкипажные катера на Балтике - ForPost",
+      "summary": "Польша разворачивает американские безэкипажные катера на Балтике &nbsp;&nbsp; ForPost",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-17T13:32:49.958Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-local-russian",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=%D0%B1%D0%B5%D0%B7%D1%8D%D0%BA%D0%B8%D0%BF%D0%B0%D0%B6%D0%BD%D1%8B%D0%B9+%D0%BA%D0%B0%D1%82%D0%B5%D1%80+%D0%B2%D0%BE%D0%B5%D0%BD%D0%BD%D0%BE+%D0%BC%D0%BE%D1%80%D1%81%D0%BA%D0%BE%D0%B9+%D1%84%D0%BB%D0%BE%D1%82+%D0%B8%D1%81%D0%BF%D1%8B%D1%82%D0%B0%D0%BD%D0%B8%D1%8F&hl=ru&gl=RU&ceid=RU%3Aru",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMimAFBVV95cUxQc2tsRUR0UVVSNG9hdllKNTQ4dkdteUtJX3YwdWpjUmtWeUxqS2d2LV9fOWxzWXJrSm1UamIyZnVFWmpkR3hxUm9adUkyMDkyZVo0SUpsOG1XMi1tcngtNUVwUUduRFM1bFZCUVh5LUFHemVDSXNyS1JMTnJMYW5pNDJsOGdaTzhKbHN1ak5FaHNDUWl4LVhHcw?oc=5",
+          "publishedAt": "2025-08-01T07:00:00.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:45f0d2559f248fa4d077fd568f2f4f98d505aebefb9085e3ec8fa2ac87c558d4",
+          "linkedFiles": [],
+          "entrySha256": "sha256:0efc927e579e9c3bfd552fde742a29ed0eb37d9309db1357d041006968e17bd5"
+        }
+      ]
+    },
+    {
       "id": "A26-FLEET-954ef85fd7339fad",
       "title": "VESSEL REVIEW | Sea Serpent – Partnership debuts South Africa's first locally designed USV - Baird Maritime",
       "summary": "VESSEL REVIEW | Sea Serpent – Partnership debuts South Africa's first locally designed USV &nbsp;&nbsp; Baird Maritime",
@@ -3398,6 +3914,37 @@
       ]
     },
     {
+      "id": "A26-FLEET-9cd29d7ecdca4f39",
+      "title": "SeaRush project takes 3D printed USV testbed from concept to sea in 5-month timeframe - CompositesWorld",
+      "summary": "SeaRush project takes 3D printed USV testbed from concept to sea in 5-month timeframe &nbsp;&nbsp; CompositesWorld",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-17T13:32:49.958Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-civilian-research",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=university+unmanned+surface+vessel+research+prototype+testbed&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMivwFBVV95cUxPcnl0OGhOLU1yRDlpQmFMNlJiUnIyWEVnaEp3eEMtRFBEUlprTUk3RWh3b2tjZWJVMkxkVG1PVjBNUUFnMEhDVmhyUzUtVXBYem5tSWJXMlY3OUpOeGVIMFVlRGRNNnRSR3d6VXBIZS0tbWl1S2lIZTRBRnRadUhNSXZFaXk5amVKdW5yTHltbktkdTB0dFc3TXpZVmE4d0VEMy10RUlLdF9fRXNyTmxCYU5OT0N0X2d3V3VEXzAwWQ?oc=5",
+          "publishedAt": "2026-05-27T07:00:00.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:bbf2172e20039493cd9faecd20d17a502a265cba85209d16641f8041aed3a573",
+          "linkedFiles": [],
+          "entrySha256": "sha256:a220a3a632a4aa45944919287ad215d4f5b47d76eaeb00483d9a249995ba9a5c"
+        }
+      ]
+    },
+    {
       "id": "A26-FLEET-9d1b3d70ad181710",
       "title": "Черноморский флот в Севастополе начал испытания безэкипажного катера «Катран» - ForPost",
       "summary": "Черноморский флот в Севастополе начал испытания безэкипажного катера «Катран» &nbsp;&nbsp; ForPost",
@@ -3425,6 +3972,68 @@
           "feedSha256": "sha256:a14de774a8182c628d3573bfe7f8759297da72327bbdd2e2287508d253587acf",
           "linkedFiles": [],
           "entrySha256": "sha256:2c9b8cdafad4ef964ad6cf30d2064f40c0bdd8c8dcb57eb2c0a300e546678e75"
+        }
+      ]
+    },
+    {
+      "id": "A26-FLEET-9f69e6ed9544014d",
+      "title": "Midshipmen Visit Unmanned Surface Vessel Squadron One - Pacific Fleet (.mil)",
+      "summary": "Midshipmen Visit Unmanned Surface Vessel Squadron One &nbsp;&nbsp; Pacific Fleet (.mil)",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-17T13:32:49.958Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-worldwide",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=unmanned+surface+vessel+navy+maritime+autonomous&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMirgFBVV95cUxNSDlLazdfRlBjZkpRbkNoaTF3VmpGOVNvQWt2YXZBQVUya2ZhMlVVYUEtbU82U2RkbUhqS05ma25IVzhKQzRpUlNicTNNYjNrM2lNbnVUem5DSWR3RW94Q3ZZUEdOQzZvVFFLMFpLUUUwcVAyVGFESWJHeE1HSXh6emNCZ1B0bXRNcTBmRXVBVG13UjdzS2lZMk55SmZFbWNmZTZINFRfUG53UVpZaXc?oc=5",
+          "publishedAt": "2024-09-16T07:00:00.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:c6119dadb4c617a4dc715164178ebf6bcb7459274bbbe9d613faf1309c08c228",
+          "linkedFiles": [],
+          "entrySha256": "sha256:0c4c83e0f4e3867fbf5fc09488aa9aeae232e3c30bb180ab35acd9a3de4da336"
+        }
+      ]
+    },
+    {
+      "id": "A26-FLEET-9ffe946dc54fe1bd",
+      "title": "Ukrainian Sargan 3000 USV Destroys russian Unmanned Boat in Rare Naval Drone Duel (Video) - Defense Express",
+      "summary": "Ukrainian Sargan 3000 USV Destroys russian Unmanned Boat in Rare Naval Drone Duel (Video) &nbsp;&nbsp; Defense Express",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-17T13:32:49.958Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-black-sea",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=Ukraine+maritime+unmanned+surface+vessel+navy&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxPRE0xU0dHVmotVWptQUJZdGNETGRMUkhvRVQ5NHVtR3VDQjhJbDNzODVGakswVURqelpxOE41UGRFdEZ3cmZZYlo2SEpBRW8yZGgzMEJtYkxMdHdhWjRybFdpN2l0bkpmNkJ1T2ItNGJBWTB3a1doVjhmOVQ4LUdNTzVCMUM0R0IzX1hZa3JCTWNHTXlLelEwaXFFUEh6Y3lxVUtBYkFXeXlUSS0zUEtsbEZvSk82bVdzR1daRXlkUjFEa0RWYW1UYQ?oc=5",
+          "publishedAt": "2026-11-17T01:02:28.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:a90416c8a63374a1161d62cd97ef389512a04854da113f0c16a39f33a8b6e5c8",
+          "linkedFiles": [],
+          "entrySha256": "sha256:237905169a409122e9d25f0795dda4ec325844ba650fe6e5b2cb1c60ae645cdb"
         }
       ]
     },
@@ -4303,6 +4912,48 @@
           "feedSha256": "sha256:d1866c1bffb6c48022fc1757dafea3b483ec4b15df24c19d454514b3a5fd3954",
           "linkedFiles": [],
           "entrySha256": "sha256:748a4c67c30a6d702d2d5f9fe09581fe65a65ab9c8db8ba48c90d4a7047b2109"
+        },
+        {
+          "sourceId": "google-test-results",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=unmanned+surface+vessel+sea+trial+performance+testing+report&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMiTEFVX3lxTE0tUFF6eGJFbElQMjR2aGJzZjAyR2wzNllOakJlMHVYQkwzZXR5TEtibzZ4QV85bWNneTVqTFR2YWtwS0NQU2FTeDZCQ0w?oc=5",
+          "publishedAt": "2022-06-09T07:00:00.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:776849c6fc70d88626292ab8e76328d521f9cd3feba8e19d2c995115c1e51777",
+          "linkedFiles": [],
+          "entrySha256": "sha256:d15bcdedfdb146b58596d982ce318ad25a53d7e32be5ad92cbe23a07eb55127a"
+        }
+      ]
+    },
+    {
+      "id": "A26-FLEET-be83fa08d9b2c08e",
+      "title": "Sargan 3000 Naval Drone Destroys Second Russian USV Using RWS - Мілітарний",
+      "summary": "Sargan 3000 Naval Drone Destroys Second Russian USV Using RWS &nbsp;&nbsp; Мілітарний",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-17T13:32:49.958Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-black-sea",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=Ukraine+maritime+unmanned+surface+vessel+navy&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMimAFBVV95cUxQVl9TMlVleUZhMmVMY0h3OFdseWhkN1BRdGlfLTAxQjB0Y29tOFFYX1hNM2xwMjNSdm5nazE0TkROX09JUm1iZDhycDI4SGJfVkkzRjd4MzdPQ0NPbk5ncndpYThBV2l4d3JmaVhGNjZ0andEVjI5S0hxUHc3LTk2VUw4a21kamp6eGJsMlJIc20zOXdhbDNnYQ?oc=5",
+          "publishedAt": "2026-11-16T12:06:40.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:a90416c8a63374a1161d62cd97ef389512a04854da113f0c16a39f33a8b6e5c8",
+          "linkedFiles": [],
+          "entrySha256": "sha256:6c17bcc6c17b1416bb9a8703175e6f58c2382dd2e61bed884f3488e78ba86168"
         }
       ]
     },
@@ -4396,6 +5047,39 @@
           "feedSha256": "sha256:b864dbfd1231ed381ae62854a74208675753e6527bb3b884db274b70268482a3",
           "linkedFiles": [],
           "entrySha256": "sha256:726fe1f3d61cf368fe12145ed58ce19e9fe973c8e88129d229cb997c567038c7"
+        }
+      ]
+    },
+    {
+      "id": "A26-FLEET-cb2ba03811ecc049",
+      "title": "DriX USV Selected by Polish Navy - Unmanned Systems Technology",
+      "summary": "DriX USV Selected by Polish Navy &nbsp;&nbsp; Unmanned Systems Technology",
+      "knownModelIds": [
+        "USV-FRA-01"
+      ],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-17T13:32:49.958Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-science",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=autonomous+surface+vessel+trials+hydrographic+survey+navy&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxOMTBpZFZGaUdFSUEtQm8xNlBCTm9sVGpMUUFscEJWeXZuRDhqTUpCX0Q1LV8tOW9OSzlpWTF0RF9PV1BTMzQwaEdfUldFMXNqbnN1WFJfS2ZncllaYmNsUDA0a19Ta284Rkh4WGtUb2tqWWx2elRRaEllY2Nrd1NHdTdCWkFBRmd3Y3dJ?oc=5",
+          "publishedAt": "2021-12-09T08:00:00.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:8ce0516d870bb4a7d70f3dd0eb5c11e2cc10e38c7f40d72b5a82292f6dfa8eae",
+          "linkedFiles": [],
+          "entrySha256": "sha256:ac5d940e0d56f2a1534923afee2ec7a6bfbd94dae6653766af33c6bbebb0679a"
         }
       ]
     },
@@ -4681,6 +5365,37 @@
       ]
     },
     {
+      "id": "A26-FLEET-d71ab8e855bee5bf",
+      "title": "Saronic Corsair: Bandar Abbas and Pakistan Navy USV Plans - Quwa",
+      "summary": "Saronic Corsair: Bandar Abbas and Pakistan Navy USV Plans &nbsp;&nbsp; Quwa",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-17T13:32:49.958Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-africa",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=Africa+navy+autonomous+unmanned+surface+vessel&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMirwFBVV95cUxQQmh0ZGs3VHBjeEhsMUFCUEZFV2w2cWlhVVliaVRBOGJJTUtpM3Q5dzQ4bEdyR0xyMUZDc3ZPSjV2Y2Njdm9hV1dCZ0c0MllIdXc3X1BhMU9hZ2lvaEJ6SzdNTlZ3alBfSU5XelNEa0VScXllMTdjSWVMQURLdnRYcVZNWWxBdndSWDhkR0Y1TnpUMllNeVNSNlBra2hZbzBqSHBlamdwc2hDSnBKemE0?oc=5",
+          "publishedAt": "2026-07-14T07:00:00.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:3b4e16d4acd6997506c43b6a6632171d67c37d46ba531b480fad3676928e46a8",
+          "linkedFiles": [],
+          "entrySha256": "sha256:99e4c530dc26186905dc9f67e48c11771d725c88d2bde30ce42ca8db8bc76d4c"
+        }
+      ]
+    },
+    {
       "id": "A26-FLEET-d93e8d9d1ca06b57",
       "title": "무인수상정 경쟁 본격화…한화시스템 VS HD현대·안두릴 - 스트레이트뉴스",
       "summary": "무인수상정 경쟁 본격화…한화시스템 VS HD현대·안두릴 &nbsp;&nbsp; 스트레이트뉴스",
@@ -4708,6 +5423,17 @@
           "feedSha256": "sha256:5a6becf719a48ea52254b05193b235422f390cd05302923c41893c8413b42e50",
           "linkedFiles": [],
           "entrySha256": "sha256:3e7e36053805402ef895437c737fb7ab6ca40806f27485d081e5924f752eb950"
+        },
+        {
+          "sourceId": "google-local-korean",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=%EB%AC%B4%EC%9D%B8+%EC%88%98%EC%83%81%EC%A0%95+%ED%95%B4%EA%B5%B0+%EC%9E%90%EC%9C%A8+%EC%8B%9C%EC%A0%9C%ED%92%88+%EC%8B%9C%ED%97%98&hl=ko&gl=KR&ceid=KR%3Ako",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBXYW1ERHhZc0FsVEdITzJSUVNOd2psTDdHVHVNZXNTakR3NWZ3QWxWSVFqSm1fekJHMVNPamRfaGdDdVo0QnZFeFZyVDc4TE91Sjk2aldGQks0NW9jY24yWG13TlpMNnlYc0tmbzlTQk1MYkHSAXdBVV95cUxQVUdXSmlIbVNLN2hqOGpoempJT2ZMN1g5OXIzM1ZQam9pT2M1VS1LamoyVVNNV1BmMVR3MjlYa252Y0puY28ySjJvNzlTZXk0WXNFdEVsd1A2ZVZsNXN4T0pUWE5XVElKMEd1TWhoVUFTTU9UQW9WUQ?oc=5",
+          "publishedAt": "2026-07-12T07:00:00.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:f722783c0491265afc84ab68591d15b910798dffade66bfbb4a2507c3c291bf0",
+          "linkedFiles": [],
+          "entrySha256": "sha256:2d42bb80801160b2d1d98f1e4fce28076b62f9f906d0de4129f32b79d3c1b103"
         }
       ]
     },
@@ -5580,6 +6306,37 @@
           "feedSha256": "sha256:91de8bb472e7d823d6394452dc3257175ea8cf7579f0c6084d1317c412dbd1ad",
           "linkedFiles": [],
           "entrySha256": "sha256:a61b96f6489198f38e2a4683197308fa34e85178ddc0487b8c7936aff4b14854"
+        }
+      ]
+    },
+    {
+      "id": "A26-FLEET-fd61cfd622bf266c",
+      "title": "HD Hyundai and Anduril launch 600t autonomous surface vessel - Naval Technology",
+      "summary": "HD Hyundai and Anduril launch 600t autonomous surface vessel &nbsp;&nbsp; Naval Technology",
+      "knownModelIds": [],
+      "modelName": "UNKNOWN_UNLESS_EXISTING_CATALOGUE_MATCH",
+      "operatorNavy": "UNKNOWN",
+      "operationalStatus": "UNKNOWN_NOT_VERIFIED",
+      "status": "DISCOVERED_UNVERIFIED",
+      "firstSeenAt": "2026-11-17T13:32:49.958Z",
+      "openChecks": [
+        "SOURCE_AUTHENTICITY",
+        "MODEL_IDENTITY",
+        "NAVY_OPERATOR",
+        "OPERATIONAL_STATUS",
+        "ENGINEERING_PARTICULARS"
+      ],
+      "evidence": [
+        {
+          "sourceId": "google-test-results",
+          "sourceClass": "AGGREGATOR_METADATA",
+          "publicFeedUrl": "https://news.google.com/rss/search?q=unmanned+surface+vessel+sea+trial+performance+testing+report&hl=en-US&gl=US&ceid=US%3Aen",
+          "publicArticleUrl": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9PSm05ZVdkbzVrZUdrelktWEJ6SFdublR0RU5hTE9pbXBmTnFCUnMtNnA2cy1yd2VPejJTa0laTnJMWUdNN29VVEpGakFnNHdTM2NpUFJZU0NmWXR1b3FnRDVSaV9aOFF6czZSNjB3?oc=5",
+          "publishedAt": "2026-11-16T16:57:38.000Z",
+          "retrievedAt": "2026-11-17T13:32:49.958Z",
+          "feedSha256": "sha256:776849c6fc70d88626292ab8e76328d521f9cd3feba8e19d2c995115c1e51777",
+          "linkedFiles": [],
+          "entrySha256": "sha256:001568969d801454ec68a26d6eb9980dda441a944f9c018851a7569a6cdce712"
         }
       ]
     },
