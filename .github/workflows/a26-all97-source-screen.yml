@@ -37,7 +37,7 @@ jobs:
           node scripts/a26-all97-review.mjs --check
       - name: Fetch GitHub public commit and root-tree metadata only
         env:
-          GITHUB_TOKEN: GH_TOKEN_PLACEHOLDER
+          GITHUB_TOKEN: ${{ github.token }}
         run: node scripts/a26-all97-review.mjs --scan --out-dir "$RUNNER_TEMP/a26-all97-source-evidence"
       - name: Preserve all 97 source-screen results for independent review
         if: always()
