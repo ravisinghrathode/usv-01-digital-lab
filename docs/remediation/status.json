@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 head 463106083 passed zero-API, Docker image canary, browser QA and Agent Academy workflows; governance workflow failed and Stage E independent review remains mandatory. Additional invisible Unicode spoofing controls and negative tests committed on feature branch; latest-head CI, merge and independent end-to-end acceptance remain unverified."
+      "verification": "PR #201 exact head 4d8db10d5ffbbf37a96bad508b83f8e7cb1a0398: zero-API, Docker synthetic secret image canary, isolated browser QA and Agent Academy workflows passed; governance workflow failed, with mandatory authenticated Stage E independent review still outstanding. No merge, independent end-to-end acceptance, or vessel approval established. Other open remediation PRs #191 and #193-#200 remain unmerged."
     }
   ],
   "constraints": [
