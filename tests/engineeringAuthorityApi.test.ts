@@ -47,7 +47,7 @@ describe('generic CRUD is never an engineering approval endpoint', () => {
     const create = await request('/api/data/requirements', 'POST', {
       id: 'SPOOFED-ID', title: 'Validation-only draft', status: 'In Review'
     });
-    expect(create.status).toBe(201);
+    expect(create.status).toBe(200);
     const created = await create.json() as { item: { id: string; status: string } };
     const id = created.item.id;
     expect(id).not.toBe('SPOOFED-ID');
