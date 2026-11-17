@@ -32,11 +32,21 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
       !Array.isArray(value.items) || value.items.length !== REMEDIATION_IDS.length) {
     throw new Error('REMEDIATION_LEDGER_INVALID: expected 12 canonical tasks');
   }
-  // Reject undeclared fields rather than silently discarding a forged approval\n  // or acceptance assertion embedded alongside otherwise valid status data.\n  const rootFields = new Set(['schemaVersion', 'baseline', 'updatedAt', 'items', 'constraints']);\n  if (Object.keys(value).some(key => !rootFields.has(key))) {\n    throw new Error('REMEDIATION_LEDGER_INVALID: unsupported root field');\n  }\n  const itemFields = new Set(['id', 'state', 'pullRequest', 'verification']);\n  const issues: RemediationSummary['issues'] = [];
+  // Reject undeclared fields rather than silently discarding a forged approval
+  // or acceptance assertion embedded alongside otherwise valid status data.
+  const rootFields = new Set(['schemaVersion', 'baseline', 'updatedAt', 'items', 'constraints']);
+  if (Object.keys(value).some(key => !rootFields.has(key))) {
+    throw new Error('REMEDIATION_LEDGER_INVALID: unsupported root field');
+  }
+  const itemFields = new Set(['id', 'state', 'pullRequest', 'verification']);
+  const issues: RemediationSummary['issues'] = [];
   const seen = new Set<string>();
   for (const [index, unknownItem] of value.items.entries()) {
     if (!isRecord(unknownItem)) throw new Error('REMEDIATION_LEDGER_INVALID: malformed item');
-    if (Object.keys(unknownItem).some(key => !itemFields.has(key))) {\n      throw new Error('REMEDIATION_LEDGER_INVALID: unsupported item field');\n    }\n    const id = unknownItem.id;
+    if (Object.keys(unknownItem).some(key => !itemFields.has(key))) {
+      throw new Error('REMEDIATION_LEDGER_INVALID: unsupported item field');
+    }
+    const id = unknownItem.id;
     if (id !== REMEDIATION_IDS[index] || seen.has(id as string)) {
       throw new Error('REMEDIATION_LEDGER_INVALID: duplicate or out-of-order item');
     }
