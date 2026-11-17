@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 open. Exact-head dd9dcb4f72e23919c13c072c994f68b3aeb33713 passed Docker canary, Agent Academy, zero-API and isolated browser workflows; governance workflow failed, with Stage E human review not yet satisfied. New branch commits 05b7c2a and 4e806f8 bound and test constraints; their exact-head CI is not yet verified. Independent review, externally evidenced final acceptance and vessel release remain outstanding."
+      "verification": "PR #201 exact-head technical workflows previously green at 98e0ef9; governance Stage E failed. Bidirectional Unicode status spoofing validation and regression tests added on feature branch; fresh-head CI unverified, independent review and end-to-end acceptance outstanding."
     }
   ],
   "constraints": [
