@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 open. Exact-head 4b11523 technical workflows succeeded (zero-API, browser QA, Agent Academy); governance workflow failed, Stage E authenticated independent review outstanding. New commits fb61d7c and bcad352 add control-character rejection and regression tests; fresh-head CI pending/unverified. No independent E2E acceptance or engineering certification."
+      "verification": "PR #201 remains open. Exact-head eb04d187 workflows (governance, zero-API, Agent Academy, browser QA) all failed; source inspection identified a literal escaped newline in RemediationStatus.ts causing TypeScript parsing failure. Corrected in commit 48e7a462; new exact-head CI pending. Stage E authenticated independent review and full E2E acceptance remain outstanding; no engineering certification."
     }
   ],
   "constraints": [
