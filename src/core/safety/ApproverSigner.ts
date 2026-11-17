@@ -1,4 +1,4 @@
-import type { ApproverIdentity } from '../types/safety.ts';
+import type { ApproverIdentity, ApprovalEvidenceBinding, HumanApprovalGate } from '../types/safety.ts';
 
 /**
  * Universal, zero-dependency constant-time byte string comparison.
@@ -181,4 +181,113 @@ export function verifyApproverSignature(
   // is NOT independent evidence. Only a server-keyed MAC authenticates this
   // gate, decision, role and timestamp tuple.
   return timingSafeEqual(signature.toLowerCase(), expectedSignature.toLowerCase());
+}
+
+/** RFC 8785-style stable object-key ordering for JSON-compatible evidence.
+ * This is NOT a full JCS implementation (numeric rendering follows JS JSON);
+ * both signer and verifier share this exact versioned canonicalization.
+ */
+export function canonicalEvidenceJson(value: unknown): string {
+  const seen = new WeakSet<object>();
+  const normalize = (item: unknown): unknown => {
+    if (item === null || typeof item === 'string' || typeof item === 'boolean') return item;
+    if (typeof item === 'number') {
+      if (!Number.isFinite(item)) throw new Error('Non-finite engineering evidence value');
+      return item;
+    }
+    if (typeof item === 'undefined') return null;
+    if (!item || typeof item !== 'object') throw new Error('Unsupported engineering evidence value');
+    if (seen.has(item)) throw new Error('Circular engineering evidence object');
+    seen.add(item);
+    let result: unknown;
+    if (Array.isArray(item)) {
+      result = item.map(normalize);
+    } else {
+      const proto = Object.getPrototypeOf(item);
+      if (proto !== Object.prototype && proto !== null) {
+        throw new Error('Non-plain engineering evidence object');
+      }
+      const entries = Object.keys(item).sort()
+        .filter(key => (item as Record<string, unknown>)[key] !== undefined)
+        .map(key => [key, normalize((item as Record<string, unknown>)[key])] as const);
+      result = Object.fromEntries(entries);
+    }
+    seen.delete(item);
+    return result;
+  };
+  return JSON.stringify(normalize(value));
+}
+
+export function sha256Evidence(value: unknown): string {
+  const bytes = Array.from(new TextEncoder().encode(canonicalEvidenceJson(value)));
+  return sha256Bytes(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+type BoundGateFields = Pick<HumanApprovalGate,
+  'id' | 'taskId' | 'agentId' | 'title' | 'description' |
+  'safetyImplication' | 'proposedChanges' | 'requestedAt'>;
+
+/** Hash the complete gate snapshot, not only the model-written summary. */
+export function gateContentDigest(gate: BoundGateFields,
+  binding: Omit<ApprovalEvidenceBinding, 'contentSha256'>): string {
+  return sha256Evidence({
+    version: binding.version, gateId: gate.id, taskId: gate.taskId,
+    agentId: gate.agentId, title: gate.title, description: gate.description,
+    safetyImplication: gate.safetyImplication, proposedChanges: gate.proposedChanges,
+    requestedAt: gate.requestedAt, sourceSha: binding.sourceSha,
+    inputSha256: binding.inputSha256, outputSha256: binding.outputSha256,
+    nonce: binding.nonce
+  });
+}
+
+export function isGateContentIntact(gate: HumanApprovalGate): boolean {
+  const binding = gate.approvalBinding;
+  if (!binding || binding.version !== 'USV_GATE_CONTENT_V2' ||
+      !/^[a-f0-9]{32}$/i.test(binding.nonce) ||
+      !/^[a-f0-9]{64}$/i.test(binding.inputSha256) ||
+      !/^[a-f0-9]{64}$/i.test(binding.outputSha256) ||
+      !/^[a-f0-9]{64}$/i.test(binding.contentSha256) ||
+      !(binding.sourceSha === 'UNPINNED_RESEARCH_ONLY' || /^[a-f0-9]{40}$/i.test(binding.sourceSha))) {
+    return false;
+  }
+  try {
+    return timingSafeEqual(binding.contentSha256,
+      gateContentDigest(gate, binding));
+  } catch {
+    return false;
+  }
+}
+
+/** Unlike legacy gate-ID-only signatures, this MAC authenticates the versioned
+ * content digest, revision and random nonce and cannot be replayed on another gate.
+ */
+export function generateBoundApproverSignature(
+  gate: HumanApprovalGate, decision: 'APPROVED' | 'REJECTED',
+  userId: string, role: string, timestamp: string,
+  signingKey: string = getDirectorSigningKey()
+): string {
+  if (!isGateContentIntact(gate)) throw new Error('Approval evidence binding invalid');
+  const signedPayload = canonicalEvidenceJson({
+    version: 'USV_GATE_CONTENT_V2', gateId: gate.id, decision,
+    userId, role, timestamp, contentSha256: gate.approvalBinding.contentSha256
+  });
+  return hmacSha256(signingKey, signedPayload);
+}
+
+export function verifyBoundApproverSignature(
+  gate: HumanApprovalGate, decision: 'APPROVED' | 'REJECTED',
+  identity: ApproverIdentity, signingKey: string = getDirectorSigningKey(),
+  verificationTimeMs: number = Date.now()
+): boolean {
+  if (!isGateContentIntact(gate)) return false;
+  const signature = identity?.tokenSignature || identity?.tokenOrSignature;
+  if (typeof signature !== 'string' || !/^[a-f0-9]{64}$/i.test(signature)) return false;
+  const signedAt = Date.parse(identity.authenticatedAt);
+  if (!Number.isFinite(signedAt) || !Number.isFinite(verificationTimeMs) ||
+      Math.abs(verificationTimeMs - signedAt) > 5 * 60_000 ||
+      signedAt < Date.parse(gate.requestedAt) - 60_000) return false;
+  const expected = generateBoundApproverSignature(
+    gate, decision, identity.userId, identity.role, identity.authenticatedAt, signingKey
+  );
+  return timingSafeEqual(signature.toLowerCase(), expected.toLowerCase());
 }
