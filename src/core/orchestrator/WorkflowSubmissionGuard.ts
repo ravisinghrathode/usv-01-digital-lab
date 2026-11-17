@@ -95,7 +95,7 @@ export function validateServerWorkflowReplacement(
   for (const task of next) {
     if (!task || typeof task.id !== 'string' || !/^[A-Za-z0-9_-]{1,100}$/.test(task.id) ||
         !Array.isArray(task.dependencies) || task.dependencies.length > 25 ||
-        task.dependencies.some(dep => typeof dep !== 'string' ||
+        task.dependencies.some((dep: string) => typeof dep !== 'string' ||
           !/^[A-Za-z0-9_-]{1,100}$/.test(dep))) {
       throw new WorkflowSubmissionError('Invalid workflow task identity or dependencies', 400);
     }
@@ -106,7 +106,7 @@ export function validateServerWorkflowReplacement(
   for (const task of next) {
     if (new Set(task.dependencies).size !== task.dependencies.length ||
         task.dependencies.includes(task.id) ||
-        task.dependencies.some(dep => !ids.has(dep))) {
+        task.dependencies.some((dep: string) => !ids.has(dep))) {
       throw new WorkflowSubmissionError('Workflow has duplicate, self or missing dependencies', 400);
     }
     deps.set(task.id, task.dependencies);
