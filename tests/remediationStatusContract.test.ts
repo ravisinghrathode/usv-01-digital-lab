@@ -74,6 +74,21 @@ describe('closed-loop twelve-issue remediation reporting', () => {
     }
   });
 
+  it('rejects malformed provenance metadata instead of trusting a partial status', () => {
+    for (const [field, invalid] of [
+      ['baseline', 'unversioned'],
+      ['updatedAt', 'yesterday'],
+      ['constraints', []],
+      ['constraints', ['valid', '  ']],
+      ['constraints', { approved: true }]
+    ] as const) {
+      const forged = structuredClone(ledger);
+      forged[field] = invalid;
+      expect(() => summarizeUnverifiedRemediationLedger(forged))
+        .toThrow('malformed provenance metadata');
+    }
+  });
+
   it('adds read-only status utility without rewriting authoritative source', () => {
     const manifest = JSON.parse(fs.readFileSync(
       path.join(process.cwd(), 'package.json'), 'utf8'
