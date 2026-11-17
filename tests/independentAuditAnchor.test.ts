@@ -112,6 +112,29 @@ describe('independent cryptographic audit witness acceptance', () => {
         .toEqual({ valid: false, reason: 'INVALID_ATTESTATION' });
     }
   });
+  it('rejects receipts with throwing getters without crashing verification', () => {
+    const throwingStatement = {
+      get statement(): never { throw new Error('untrusted getter'); },
+      signatureBase64: signed.signatureBase64
+    };
+    const throwingSignature = {
+      statement: s,
+      get signatureBase64(): never { throw new Error('untrusted getter'); }
+    };
+    const throwingField = {
+      ...s,
+      get issuedAtUtc(): never { throw new Error('untrusted getter'); }
+    };
+    for (const receipt of [throwingStatement, throwingSignature, {
+      statement: throwingField,
+      signatureBase64: signed.signatureBase64
+    }]) {
+      expect(() => verifyIndependentAuditAnchor(journalId, entries, receipt as never, key))
+        .not.toThrow();
+      expect(verifyIndependentAuditAnchor(journalId, entries, receipt as never, key))
+        .toEqual({ valid: false, reason: 'INVALID_ATTESTATION' });
+    }
+  });
   it('rejects unsigned extension fields on receipts and signed statements', () => {
     // Extension fields are not included in the canonical signed bytes and must
     // not be allowed to masquerade as witness assertions or approval metadata.
