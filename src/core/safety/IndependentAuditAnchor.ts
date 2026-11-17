@@ -124,10 +124,19 @@ export function verifyIndependentAuditAnchor(
       !hasExactKeys(receipt, ['statement', 'signatureBase64'])) {
     return { valid: false, reason: 'INVALID_ATTESTATION' };
   }
-  const s = receipt.statement;
-  if (!s || typeof s !== 'object' || Array.isArray(s) || !isValidStatement(s) ||
-      typeof receipt.signatureBase64 !== 'string' ||
-      !/^[A-Za-z0-9+/]{86}==$/.test(receipt.signatureBase64)) {
+  // Untrusted in-process values may contain throwing getters or proxies. Do not
+  // let property access escape the verifier's fail-closed result contract.
+  let s: AuditAnchorStatement;
+  let signatureBase64: string;
+  try {
+    s = receipt.statement;
+    signatureBase64 = receipt.signatureBase64;
+    if (!s || typeof s !== 'object' || Array.isArray(s) || !isValidStatement(s) ||
+        typeof signatureBase64 !== 'string' ||
+        !/^[A-Za-z0-9+/]{86}==$/.test(signatureBase64)) {
+      return { valid: false, reason: 'INVALID_ATTESTATION' };
+    }
+  } catch {
     return { valid: false, reason: 'INVALID_ATTESTATION' };
   }
   if (typeof journalId !== 'string' || !journalId || journalId.length > 128 ||
@@ -152,9 +161,9 @@ export function verifyIndependentAuditAnchor(
     if (publicKey.asymmetricKeyType !== 'ed25519') {
       return { valid: false, reason: 'UNTRUSTED_WITNESS_KEY' };
     }
-    const signature = Buffer.from(receipt.signatureBase64, 'base64');
+    const signature = Buffer.from(signatureBase64, 'base64');
     if (signature.length !== 64 ||
-        signature.toString('base64') !== receipt.signatureBase64 ||
+        signature.toString('base64') !== signatureBase64 ||
         !crypto.verify(null, canonicalAuditAnchorBytes(s), publicKey, signature)) {
       return { valid: false, reason: 'INVALID_WITNESS_SIGNATURE' };
     }
