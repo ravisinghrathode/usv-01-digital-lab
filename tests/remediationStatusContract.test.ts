@@ -89,6 +89,18 @@ describe('closed-loop twelve-issue remediation reporting', () => {
     }
   });
 
+  it('bounds governance constraints and rejects duplicate declarations', () => {
+    const repeated = structuredClone(ledger);
+    repeated.constraints.push(repeated.constraints[0]);
+    expect(() => summarizeUnverifiedRemediationLedger(repeated))
+      .toThrow('malformed provenance metadata');
+
+    const oversized = structuredClone(ledger);
+    oversized.constraints = Array.from({ length: 33 }, (_, index) => 'Constraint ' + index);
+    expect(() => summarizeUnverifiedRemediationLedger(oversized))
+      .toThrow('malformed provenance metadata');
+  });
+
   it('accepts a real canonical ISO provenance date and rejects calendar rollover', () => {
     const valid = structuredClone(ledger);
     valid.updatedAt = '2026-11-17';
