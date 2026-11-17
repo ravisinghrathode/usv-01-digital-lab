@@ -32,13 +32,18 @@ describe('Server-owned audit attribution', () => {
       id, name: 'Temporary audit identity test', owner: 'Forged Administrator'
     });
     expect(create.status).toBe(200);
+    const created = await create.json() as { item: { id: string; createdBy: string; recordStatus: string } };
+    const assignedId = created.item.id;
+    expect(assignedId).not.toBe(id); // The caller cannot choose authoritative identifiers.
+    expect(created.item.createdBy).toBe('usr-eng-dir-8841');
+    expect(created.item.recordStatus).toBe('DRAFT_UNVERIFIED');
     const log = await send('/api/data/activity_log');
     expect(log.status).toBe(200);
     const body = await log.json() as { data: Array<{ recordId: string, userId: string, userName: string, action: string }> };
-    const event = body.data.find(e => e.recordId === id && e.action === 'CREATE');
+    const event = body.data.find(e => e.recordId === assignedId && e.action === 'CREATE');
     expect(event).toBeDefined();
     expect(event?.userId).toBe('usr-eng-dir-8841');
     expect(event?.userName).not.toBe('Forged Administrator');
-    await send('/api/data/knowledge_notes/' + id, 'DELETE');
+    await send('/api/data/knowledge_notes/' + assignedId, 'DELETE');
   });
 });

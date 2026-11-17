@@ -1,0 +1,49 @@
+name: USV-01 A26 All-97 Public Repository Source Screen
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/a26-all97-review.mjs'
+      - 'tests/a26-all97-review.test.mjs'
+      - 'references/third-party-static-audits/A26_ALL_97_REVIEW_QUEUE_2026-11-17.json'
+      - 'src/data/externalSoftwareRegister.json'
+      - '.github/workflows/a26-all97-source-screen.yml'
+  schedule:
+    - cron: '31 4 * * 2'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: usv01-a26-all97-source-screen-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  source-screen:
+    name: A26 public-source metadata verification (97, no third-party execution)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify immutable governed queue and fail-closed tests
+        run: |
+          node --test tests/a26-all97-review.test.mjs
+          node scripts/a26-all97-review.mjs --check
+      - name: Fetch GitHub public commit and root-tree metadata only
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/a26-all97-review.mjs --scan --out-dir "$RUNNER_TEMP/a26-all97-source-evidence"
+      - name: Preserve all 97 source-screen results for independent review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a26-all97-source-screen
+          path: ${{ runner.temp }}/a26-all97-source-evidence/
+          retention-days: 90
+          if-no-files-found: warn

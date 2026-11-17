@@ -247,6 +247,19 @@ implementation needs its own feature PR, genuine browser/accessibility
 verification, backend data-contract assessment and protected human release.
 Do not silently promote unbuilt design screens into the existing live app.
 
+## A26 all-97 external repository screening — 2026-11-17
+
+The governed **all-97** per-source qualification HOLD queue is
+`references/third-party-static-audits/A26_ALL_97_REVIEW_QUEUE_2026-11-17.json`.
+Validate offline with `node scripts/a26-all97-review.mjs --check`. The read-only
+public GitHub commit/tree/root-file source screen runs in
+`.github/workflows/a26-all97-source-screen.yml` and uploads a run-specific
+`source-screen.json` plus Markdown to GitHub Actions artifacts. Scanning does not execute
+or install upstream source, issue approvals, generate SBOM/CVE clearance, or inject
+external tools into the A01–A26 runtime. All 97 remain HOLD until individually
+reviewed and independently authorized; the existing eight P1 detailed dossiers
+remain authoritative for their original evidence and limitations.
+
 ## Rebuilt external agent-framework research catalog — 2026-11-17
 
 The canonical public-source register is `src/data/externalSoftwareRegister.json`; the generated human-readable snapshot is `docs/EXTERNAL_SOFTWARE_OVERVIEW.md`. See `docs/AGENT_FRAMEWORK_RESEARCH_CATALOG_20261117.md` for the seven freshly verified source pins, immutable root LICENSE blob IDs, and independent review queue. These seven entries are **replacement research discoveries**, not a reconstruction of the lost local seven-repository manifest.

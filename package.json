@@ -15,7 +15,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest run --reporter=default --reporter=json --outputFile=governance/reports/test-results.json",
-    "lint": "tsc --noEmit",
+    "lint": "tsc --noEmit && tsc --noEmit -p tsconfig.node.json",
     "verify": "tsx scripts/verify-usv01.ts",
     "chatgpt:verify": "tsx scripts/chatgpt-verify.ts",
     "acceptance:campaign": "tsx scripts/run-acceptance-campaign.ts",

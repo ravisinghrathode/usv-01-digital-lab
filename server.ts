@@ -9,6 +9,7 @@ import dotenv from 'dotenv';
 import { generateBoundApproverSignature, verifyBoundApproverSignature, setDirectorSigningKey } from './src/core/safety/ApproverSigner.ts';
 import { AUTHORIZED_MEMBERS, type StaffMember } from './src/core/auth/staffDirectory.ts';
 import { authorizeLabRoute } from './src/core/auth/routeAuthorization.ts';
+import { guardEngineeringDraftWrite, EngineeringWritePolicyError } from './src/core/auth/engineeringDraftPolicy.ts';
 import {
   verifyStaffCredential,
   isLockedOut,
@@ -1247,11 +1248,21 @@ app.post('/api/data/:collection', validateDataCollection, (req, res) => {
   if (!dbStore[coll]) {
     dbStore[coll] = [];
   }
+  let draft: Record<string, unknown>;
+  try { draft = guardEngineeringDraftWrite(coll, req.body); }
+  catch (err) {
+    return res.status(err instanceof EngineeringWritePolicyError ? 409 : 400).json({
+      success: false, error: err instanceof Error ? err.message : 'Invalid engineering draft.'
+    });
+  }
+  const now = new Date().toISOString();
   const newItem = {
-    ...req.body,
-    id: req.body.id || `${coll.substring(0, 3).toUpperCase()}-${Date.now().toString().slice(-4)}`,
-    createdAt: req.body.createdAt || new Date().toISOString().split('T')[0],
-    updatedAt: new Date().toISOString().split('T')[0]
+    ...draft,
+    id: coll.substring(0, 3).toUpperCase() + '-' + crypto.randomUUID(),
+    projectId: 'PRJ-USV-01',
+    createdBy: (req as any).user.userId,
+    createdAt: now,
+    updatedAt: now
   };
 
   dbStore[coll].unshift(newItem);
@@ -1266,7 +1277,7 @@ app.post('/api/data/:collection', validateDataCollection, (req, res) => {
       action: 'CREATE',
       recordType: coll.toUpperCase(),
       recordId: newItem.id,
-      details: `Created new ${coll} record: ${newItem.title || newItem.name || newItem.partNumber || newItem.id}`
+      details: `Created new ${coll} record: ${String(draft.title ?? draft.name ?? draft.partNumber ?? newItem.id)}`
     });
   }
 
@@ -1284,10 +1295,17 @@ app.put('/api/data/:collection/:id', validateDataCollection, (req, res) => {
     return res.status(404).json({ success: false, error: 'Record not found' });
   }
 
+  let draftChanges: Record<string, unknown>;
+  try { draftChanges = guardEngineeringDraftWrite(coll, req.body, items[idx]); }
+  catch (err) {
+    return res.status(err instanceof EngineeringWritePolicyError ? 409 : 400).json({
+      success: false, error: err instanceof Error ? err.message : 'Invalid engineering draft.'
+    });
+  }
   items[idx] = {
     ...items[idx],
-    ...req.body,
-    updatedAt: new Date().toISOString().split('T')[0]
+    ...draftChanges,
+    updatedAt: new Date().toISOString()
   };
 
   if (coll !== 'activity_log') {
@@ -1317,6 +1335,10 @@ app.delete('/api/data/:collection/:id', validateDataCollection, (req, res) => {
     return res.status(404).json({ success: false, error: 'Record not found' });
   }
 
+  try { guardEngineeringDraftWrite(coll, {}, items[idx]); }
+  catch {
+    return res.status(409).json({ success: false, error: 'Controlled engineering records require governed supersession.' });
+  }
   const removed = items.splice(idx, 1)[0];
 
   dbStore.activity_log.unshift({
@@ -1341,33 +1363,13 @@ app.get('/api/export', (req, res) => {
   res.send(JSON.stringify(dbStore, null, 2));
 });
 
-app.post('/api/import', (req, res) => {
-  try {
-    const importedData = req.body;
-    if (!importedData || typeof importedData !== 'object') {
-      return res.status(400).json({ success: false, error: 'Invalid JSON payload' });
-    }
-    // Update collections present
-    for (const key of Object.keys(importedData)) {
-      if (APPROVED_DATA_COLLECTIONS.has(key) && key !== 'activity_log' && Array.isArray(importedData[key])) {
-        dbStore[key] = importedData[key];
-      }
-    }
-    dbStore.activity_log.unshift({
-      id: `LOG-${Date.now()}`,
-      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
-      userId: (req as any).user.userId,
-      userName: (req as any).user.userName,
-      action: 'IMPORT',
-      recordType: 'DATABASE',
-      recordId: 'RESTORE',
-      details: 'Restored engineering registers from imported JSON snapshot.'
-    });
-    saveStoreToFile();
-    res.json({ success: true, message: 'Database imported successfully', collections: Object.keys(dbStore) });
-  } catch (err: any) {
-    res.status(500).json({ success: false, error: err.message });
-  }
+// Raw JSON import could fabricate approvals or overwrite controlled baselines.
+// Fail closed until an authenticated, signed and revision-bound restore exists.
+app.post('/api/import', (_req, res) => {
+  return res.status(403).json({
+    success: false,
+    error: 'Ungoverned JSON imports are disabled; use verified restoration.'
+  });
 });
 
 // 5b. Global Naval USV Intelligence & Scraper Endpoints

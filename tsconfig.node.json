@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "server.ts",
+    "scripts/governance/classify-change.ts",
+    "scripts/governance/stage-d-human-approval.ts",
+    "scripts/governance/stage-e-enforce.ts",
+    "scripts/mission-control/preflight.ts"
+  ],
+  "exclude": ["node_modules", "dist", "governance/reports", "data"]
+}

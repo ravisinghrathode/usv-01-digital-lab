@@ -1,5 +1,6 @@
 import type { AgentSpec, AgentExecutionInput, AgentExecutionOutput, TraceableAssumption } from '../types/agent.ts';
 import { ToolRegistry } from '../tools/ToolRegistry.ts';
+import { executeRegisteredMandatoryTool } from '../tools/RegisteredToolAuthority.ts';
 import { ModelProviderRouter } from '../models/ModelProvider.ts';
 import { AuditLogger } from '../safety/AuditLogger.ts';
 import { selectNavalSkillsForAgent, NAVAL_SKILL_REGISTRY_VERSION } from '../skills/NavalSkillRegistry.ts';
@@ -136,7 +137,7 @@ export class BaseAgent {
       }
 
       // Run tool with agent's permission set
-      const toolRes = await this.toolRegistry.executeTool(toolId, input.parameters, this.spec.executionPermissions);
+      const toolRes = await executeRegisteredMandatoryTool(this.spec.id, toolId, taskId, input.parameters);
       deterministicEvidence.push({
         toolName: toolId,
         inputs: toolRes.input,
