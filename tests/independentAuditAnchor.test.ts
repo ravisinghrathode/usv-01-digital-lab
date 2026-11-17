@@ -118,6 +118,12 @@ describe('independent cryptographic audit witness acceptance', () => {
         .toEqual({ valid: false, reason: 'AUDIT_CHAIN_INVALID' });
     }
   });
+  it('fails closed when proposing checkpoints from corrupt persisted journal shapes', () => {
+    for (const malformed of [null, undefined, {}, 'journal', [null], [undefined], [42], [{ hash: null }]]) {
+      expect(() => proposeAuditAnchorStatement(journalId, malformed as never, timestamp))
+        .toThrow('Cannot propose a checkpoint for an invalid audit journal');
+    }
+  });
   it('refuses to propose a checkpoint for a tampered chain', () => {
     expect(() => proposeAuditAnchorStatement(journalId, [{ ...entries[0], details: { allowed: true } }]))
       .toThrow(/invalid audit journal/);
