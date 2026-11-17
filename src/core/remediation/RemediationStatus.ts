@@ -42,7 +42,7 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
     }
     seen.add(id as string);
     const state = unknownItem.state;
-    const isPartial = typeof state === 'string' && state.startsWith('partial-');
+    const isPartial = state === 'partial-implementation-awaiting-review';
     if (!isPartial && state !== 'not-verified') {
       throw new Error('REMEDIATION_LEDGER_UNVERIFIED_COMPLETION_CLAIM: ' + String(id) +
         ' cannot be declared complete using this unsigned status file');
