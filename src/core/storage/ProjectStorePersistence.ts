@@ -63,6 +63,24 @@ export function loadProjectStore(filename: string): Record<string, any[]> | null
   return decoded;
 }
 
+/**
+ * Commit a related record mutation and activity-log mutation as ONE snapshot.
+ * Never publish the speculative in-memory copy before the atomic file write
+ * succeeds. This is a single-process rollback boundary, NOT a multi-process
+ * serializable database and NOT a replacement for a durable audit outbox.
+ */
+export function commitProjectStoreMutation<T>(
+  current: Record<string, any[]>,
+  filename: string,
+  mutate: (draft: Record<string, any[]>) => T
+): { store: Record<string, any[]>; result: T } {
+  validateProjectStore(current);
+  const draft = structuredClone(current);
+  const result = mutate(draft);
+  saveProjectStore(draft, filename);
+  return { store: draft, result };
+}
+
 export function runIsolatedRestoreDrill(store: unknown) {
   validateProjectStore(store);
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'usv01-restore-drill-'));
