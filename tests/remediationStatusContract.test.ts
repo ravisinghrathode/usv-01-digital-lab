@@ -89,6 +89,19 @@ describe('closed-loop twelve-issue remediation reporting', () => {
     }
   });
 
+  it('accepts a real canonical ISO provenance date and rejects calendar rollover', () => {
+    const valid = structuredClone(ledger);
+    valid.updatedAt = '2026-11-17';
+    expect(summarizeUnverifiedRemediationLedger(valid).total).toBe(12);
+
+    for (const date of ['2026-02-30', '2026-13-01', '2026-11-17T00:00:00Z', '2026-1-7', '2026-00-01']) {
+      const invalid = structuredClone(ledger);
+      invalid.updatedAt = date;
+      expect(() => summarizeUnverifiedRemediationLedger(invalid))
+        .toThrow('malformed provenance metadata');
+    }
+  });
+
   it('adds read-only status utility without rewriting authoritative source', () => {
     const manifest = JSON.parse(fs.readFileSync(
       path.join(process.cwd(), 'package.json'), 'utf8'
