@@ -154,6 +154,20 @@ describe('closed-loop twelve-issue remediation reporting', () => {
     }
   });
 
+  it('rejects Unicode line and paragraph separators that can forge displayed evidence lines', () => {
+    for (const codePoint of [0x2028, 0x2029]) {
+      const separator = String.fromCodePoint(codePoint);
+      const note = structuredClone(ledger);
+      note.items[0].verification = 'review pending' + separator + 'approved';
+      expect(() => summarizeUnverifiedRemediationLedger(note))
+        .toThrow('invalid verification note');
+      const constraint = structuredClone(ledger);
+      constraint.constraints[0] = 'review pending' + separator + 'approved';
+      expect(() => summarizeUnverifiedRemediationLedger(constraint))
+        .toThrow('malformed provenance metadata');
+    }
+  });
+
   it('adds read-only status utility without rewriting authoritative source', () => {
     const manifest = JSON.parse(fs.readFileSync(
       path.join(process.cwd(), 'package.json'), 'utf8'
