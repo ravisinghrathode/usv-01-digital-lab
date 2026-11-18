@@ -84,16 +84,16 @@
   "iterationEvidence": {
     "workstream": "PR-02",
     "pullRequest": 191,
-    "sourceCommit": "738ba9fbdf4f4ebc5ad1ee30484662ac4828b04c",
-    "regressionCommit": "b786684588e23369fd8cf287a23e43648ee83690",
-    "change": "Reject non-throwing accessor-backed top-level witness receipt fields; regression covers statement and signature getters and a valid signed receipt control",
-    "verification": "Local tests not executed; new exact-head CI not yet verified",
-    "technicalBlocker": "Stage B picomatch dependency audit failure GHSA-fc5q-39xc-vjpf; Bun-generated patched lockfile and complete technical CI required",
-    "governanceBlocker": "Independent authenticated Stage E approval outstanding",
+    "sourceCommit": "d4153cc3762882fbe0a04b1e685259a360544fa1",
+    "regressionCommit": "b80dedc830bf045e817c2c2a07fe6bada4c11aac",
+    "change": "Separate malformed or wrong-algorithm independently provisioned witness keys from invalid Ed25519 signatures; add malformed PEM, RSA, tampered signature and valid receipt regression controls",
+    "verification": "Source and tests committed; exact-head CI not yet verified",
+    "technicalBlocker": "Stage B dependency security audit previously failed for picomatch GHSA-fc5q-39xc-vjpf; patched Bun-generated lockfile and exact-head technical CI required",
+    "governanceBlocker": "Authenticated independent Stage E approval remains mandatory",
     "nextActions": [
-      "Regenerate patched Bun lockfile using package manager and verify dependency audit",
-      "Run exact-head regression, lint, full test suite and build",
-      "Complete external witness anchoring, durable outbox, independent review and acceptance"
+      "Regenerate patched Bun lockfile and verify Stage B audit without bypass",
+      "Run exact-head lint, regression, complete test suite and build",
+      "Finish independent witness deployment, transactional outbox and end-to-end acceptance"
     ]
   }
 }
