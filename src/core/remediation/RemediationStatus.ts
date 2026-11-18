@@ -25,6 +25,23 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
+// Inspect all own keys before reading any values: Object.keys omits hidden
+// approval assertions, and getters can change claims during validation.
+function assertPlainDataRecord(value: unknown, allowed: ReadonlySet<string>, scope: string): asserts value is Record<string, unknown> {
+  if (!isRecord(value) || (Object.getPrototypeOf(value) !== Object.prototype && Object.getPrototypeOf(value) !== null)) {
+    throw new Error('REMEDIATION_LEDGER_INVALID: malformed ' + scope);
+  }
+  for (const key of Reflect.ownKeys(value)) {
+    if (typeof key !== 'string' || !allowed.has(key)) {
+      throw new Error('REMEDIATION_LEDGER_INVALID: unsupported ' + scope + ' field');
+    }
+    const descriptor = Object.getOwnPropertyDescriptor(value, key);
+    if (!descriptor || !Object.prototype.hasOwnProperty.call(descriptor, 'value')) {
+      throw new Error('REMEDIATION_LEDGER_INVALID: accessor-backed ' + scope + ' field');
+    }
+  }
+}
+
 /**
  * Explicitly rejects any claimed accepted/complete state until a separately
  * authenticated verifier can validate CI, human review, exact SHA and E2E
@@ -38,9 +55,7 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
   // Reject undeclared fields rather than silently discarding a forged approval
   // or acceptance assertion embedded alongside otherwise valid status data.
   const rootFields = new Set(['schemaVersion', 'baseline', 'updatedAt', 'items', 'constraints']);
-  if (Object.keys(value).some(key => !rootFields.has(key))) {
-    throw new Error('REMEDIATION_LEDGER_INVALID: unsupported root field');
-  }
+  assertPlainDataRecord(value, rootFields, 'root');
   // Metadata must be structurally valid; otherwise malformed or injected
   // provenance fields can masquerade as a trustworthy remediation ledger.
   if (typeof value.baseline !== 'string' || !/^[0-9a-f]{40}$/.test(value.baseline) ||
@@ -59,10 +74,7 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
   const issues: RemediationSummary['issues'] = [];
   const seen = new Set<string>();
   for (const [index, unknownItem] of value.items.entries()) {
-    if (!isRecord(unknownItem)) throw new Error('REMEDIATION_LEDGER_INVALID: malformed item');
-    if (Object.keys(unknownItem).some(key => !itemFields.has(key))) {
-      throw new Error('REMEDIATION_LEDGER_INVALID: unsupported item field');
-    }
+    assertPlainDataRecord(unknownItem, itemFields, 'item');
     const id = unknownItem.id;
     if (id !== REMEDIATION_IDS[index] || seen.has(id as string)) {
       throw new Error('REMEDIATION_LEDGER_INVALID: duplicate or out-of-order item');
