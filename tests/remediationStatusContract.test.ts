@@ -85,7 +85,18 @@ describe('closed-loop twelve-issue remediation reporting', () => {
       const forged = structuredClone(ledger);
       forged[field] = invalid;
       expect(() => summarizeUnverifiedRemediationLedger(forged))
-        .toThrow('malformed provenance metadata');
+        .toThrow(field === 'constraints' && !Array.isArray(invalid)
+          ? 'malformed constraints array'
+          : 'malformed provenance metadata');
+    }
+  });
+
+  it('rejects non-array constraints before reading or trusting approval metadata', () => {
+    for (const invalid of [null, { approved: true }, 'reviewed', 42]) {
+      const forged = structuredClone(ledger);
+      forged.constraints = invalid;
+      expect(() => summarizeUnverifiedRemediationLedger(forged))
+        .toThrow('malformed constraints array');
     }
   });
 
