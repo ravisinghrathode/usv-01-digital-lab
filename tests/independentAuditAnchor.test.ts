@@ -112,6 +112,24 @@ describe('independent cryptographic audit witness acceptance', () => {
         .toEqual({ valid: false, reason: 'INVALID_ATTESTATION' });
     }
   });
+  it('rejects non-throwing accessor-backed outer receipt fields', () => {
+    // Even a getter returning valid signed bytes is mutable and not a detached
+    // wire-format receipt. Reject before accessing either property.
+    const getterStatement = {
+      get statement() { return signed.statement; },
+      signatureBase64: signed.signatureBase64
+    };
+    const getterSignature = {
+      statement: signed.statement,
+      get signatureBase64() { return signed.signatureBase64; }
+    };
+    for (const receipt of [getterStatement, getterSignature]) {
+      expect(verifyIndependentAuditAnchor(journalId, entries, receipt, key))
+        .toEqual({ valid: false, reason: 'INVALID_ATTESTATION' });
+    }
+    expect(verifyIndependentAuditAnchor(journalId, entries, signed, key))
+      .toEqual({ valid: true, reason: 'VERIFIED' });
+  });
   it('rejects receipts with throwing getters without crashing verification', () => {
     const throwingStatement = {
       get statement(): never { throw new Error('untrusted getter'); },
