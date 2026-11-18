@@ -42,6 +42,30 @@ function assertPlainDataRecord(value: unknown, allowed: ReadonlySet<string>, sco
   }
 }
 
+// Arrays can carry hidden approval claims or accessor-backed indices even when
+// their visible elements look like ordinary JSON. Reject non-JSON array shapes.
+function assertPlainDataArray(value: unknown, scope: string): asserts value is unknown[] {
+  if (!Array.isArray(value) || Object.getPrototypeOf(value) !== Array.prototype) {
+    throw new Error('REMEDIATION_LEDGER_INVALID: malformed ' + scope + ' array');
+  }
+  for (const key of Reflect.ownKeys(value)) {
+    if (key === 'length') continue;
+    if (typeof key !== 'string' || !/^(0|[1-9][0-9]*)$/.test(key) ||
+        Number(key) >= value.length) {
+      throw new Error('REMEDIATION_LEDGER_INVALID: unsupported ' + scope + ' array field');
+    }
+    const descriptor = Object.getOwnPropertyDescriptor(value, key);
+    if (!descriptor || !Object.prototype.hasOwnProperty.call(descriptor, 'value')) {
+      throw new Error('REMEDIATION_LEDGER_INVALID: accessor-backed ' + scope + ' array field');
+    }
+  }
+  for (let index = 0; index < value.length; index++) {
+    if (!Object.prototype.hasOwnProperty.call(value, index)) {
+      throw new Error('REMEDIATION_LEDGER_INVALID: sparse ' + scope + ' array');
+    }
+  }
+}
+
 /**
  * Explicitly rejects any claimed accepted/complete state until a separately
  * authenticated verifier can validate CI, human review, exact SHA and E2E
@@ -56,6 +80,8 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
   // or acceptance assertion embedded alongside otherwise valid status data.
   const rootFields = new Set(['schemaVersion', 'baseline', 'updatedAt', 'items', 'constraints']);
   assertPlainDataRecord(value, rootFields, 'root');
+  assertPlainDataArray(value.items, 'items');
+  assertPlainDataArray(value.constraints, 'constraints');
   // Metadata must be structurally valid; otherwise malformed or injected
   // provenance fields can masquerade as a trustworthy remediation ledger.
   if (typeof value.baseline !== 'string' || !/^[0-9a-f]{40}$/.test(value.baseline) ||
