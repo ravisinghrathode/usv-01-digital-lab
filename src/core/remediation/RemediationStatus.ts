@@ -36,7 +36,7 @@ function assertPlainDataRecord(value: unknown, allowed: ReadonlySet<string>, sco
       throw new Error('REMEDIATION_LEDGER_INVALID: unsupported ' + scope + ' field');
     }
     const descriptor = Object.getOwnPropertyDescriptor(value, key);
-    if (!descriptor || !Object.prototype.hasOwnProperty.call(descriptor, 'value')) {
+    if (!descriptor || !Object.prototype.hasOwnProperty.call(descriptor, 'value') || !descriptor.enumerable) {
       throw new Error('REMEDIATION_LEDGER_INVALID: accessor-backed ' + scope + ' field');
     }
   }
