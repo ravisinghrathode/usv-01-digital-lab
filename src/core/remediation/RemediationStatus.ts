@@ -81,6 +81,12 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
     throw new Error('REMEDIATION_LEDGER_INVALID: expected 12 canonical tasks');
   }
   assertPlainDataArray(value.items, 'items');
+  // Bound array traversal before enumerating keys or checking for holes. A
+  // hostile sparse array can advertise billions of slots without allocating
+  // them; validation must reject it in constant time.
+  if (!Array.isArray(value.constraints) || value.constraints.length === 0 || value.constraints.length > 32) {
+    throw new Error('REMEDIATION_LEDGER_INVALID: malformed provenance metadata');
+  }
   assertPlainDataArray(value.constraints, 'constraints');
   // Metadata must be structurally valid; otherwise malformed or injected
   // provenance fields can masquerade as a trustworthy remediation ledger.
