@@ -27,8 +27,8 @@
     "remediation": "Regenerate a resolved lockfile with patched compatible picomatch versions using the pinned Bun toolchain; run bun audit, tests, lint and exact-head CI. Do not hand-edit integrity hashes.",
     "alsoConfirmedOn": {
       "pullRequest": 201,
-      "headSha": "1445e295c6c2bffc207bdb491089ab5a4a65f642",
-      "workflowRunId": 44346383482,
+      "headSha": "0902e34f554574651da9a4fddee0010ce9b5f15b",
+      "workflowRunId": 44351838907,
       "failedStep": "Stage B — Dependency Security Audit"
     }
   },
@@ -127,8 +127,8 @@
     },
     {
       "pr": 201,
-      "headSha": "1445e295c6c2bffc207bdb491089ab5a4a65f642",
-      "governanceRunId": 44346383482,
+      "headSha": "0902e34f554574651da9a4fddee0010ce9b5f15b",
+      "governanceRunId": 44351838907,
       "governanceConclusion": "failure",
       "successfulOtherWorkflows": [
         "Agent Academy - 26 Role Curriculum and Evidence Gates",
@@ -136,14 +136,14 @@
         "Engineering Sessions — Isolated Browser QA",
         "USV-01 Docker Synthetic Secret Image Canary"
       ],
-      "verificationScope": "Exact-head governance run 44346383482 failed Stage B dependency security audit; independent approval and acceptance are not established. Subsequent ledger commits require new CI."
+      "verificationScope": "Exact-head governance run 44351838907 failed Stage B dependency security audit; four other workflows passed. No authenticated Stage E review or independent acceptance established."
     }
   ],
   "latestObservation": {
     "pr": 201,
-    "observedHeadSha": "1445e295c6c2bffc207bdb491089ab5a4a65f642",
-    "governanceRunId": 44346383482,
+    "observedHeadSha": "0902e34f554574651da9a4fddee0010ce9b5f15b",
+    "governanceRunId": 44351838907,
     "governanceFailureStage": "Stage B — Dependency Security Audit",
-    "note": "Job 134949784209 failed Stage B. Four other exact-head workflows passed. Documentation commits after this observed SHA require fresh CI."
+    "note": "Exact-head job steps inspected; Stage B failed. Four other workflows passed. Any subsequent commit requires fresh exact-head CI."
   }
 }
