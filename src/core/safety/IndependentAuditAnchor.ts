@@ -76,13 +76,16 @@ export function proposeAuditAnchorStatement(
   if (!validChain) throw new Error('Cannot propose a checkpoint for an invalid audit journal');
   if (!isCanonicalUtcTimestamp(issuedAtUtc))
     throw new Error('Invalid UTC checkpoint timestamp');
-  return {
-    schemaVersion: AUDIT_ANCHOR_SCHEMA,
-    journalId,
-    entryCount: entries.length,
-    tipHash: entries.length ? entries[entries.length - 1].hash : AUDIT_ANCHOR_GENESIS,
-    issuedAtUtc
-  };
+  // A hostile array Proxy can change or throw on length/index/hash access after
+  // chain verification. Keep checkpoint construction inside a controlled boundary.
+  try {
+    const entryCount = entries.length;
+    const tipHash = entryCount ? entries[entryCount - 1].hash : AUDIT_ANCHOR_GENESIS;
+    if (!Number.isSafeInteger(entryCount) || typeof tipHash !== 'string') throw new Error('invalid snapshot');
+    return { schemaVersion: AUDIT_ANCHOR_SCHEMA, journalId, entryCount, tipHash, issuedAtUtc };
+  } catch {
+    throw new Error('Cannot propose a checkpoint for an invalid audit journal');
+  }
 }
 
 function hasExactKeys(value: object, expected: readonly string[]): boolean {
@@ -158,9 +161,16 @@ export function verifyIndependentAuditAnchor(
   } catch {
     return { valid: false, reason: 'AUDIT_CHAIN_INVALID' };
   }
-  const liveTip = entries.length ? entries[entries.length - 1].hash : AUDIT_ANCHOR_GENESIS;
-  if (s.entryCount !== entries.length || s.tipHash !== liveTip) {
-    return { valid: false, reason: 'CHAIN_TIP_MISMATCH' };
+  // Re-reading mutable or Proxy-backed persisted state can throw even after
+  // verifyChain succeeds; never allow that to escape the verification contract.
+  try {
+    const count = entries.length;
+    const liveTip = count ? entries[count - 1].hash : AUDIT_ANCHOR_GENESIS;
+    if (s.entryCount !== count || s.tipHash !== liveTip) {
+      return { valid: false, reason: 'CHAIN_TIP_MISMATCH' };
+    }
+  } catch {
+    return { valid: false, reason: 'AUDIT_CHAIN_INVALID' };
   }
   try {
     const publicKey = crypto.createPublicKey(trustedWitnessPublicKeyPem);
