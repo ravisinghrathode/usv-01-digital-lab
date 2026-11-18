@@ -69,23 +69,23 @@ export function proposeAuditAnchorStatement(
   // malformed entries deterministically rather than leaking runtime exceptions.
   let validChain = false;
   try {
-    validChain = Array.isArray(entries) && CryptographicAuditTrail.verifyChain(entries).valid;
+    if (Array.isArray(entries)) {
+      const snapshot = structuredClone(entries) as AuditTrailEntry[];
+      validChain = CryptographicAuditTrail.verifyChain(snapshot).valid;
+      if (validChain) {
+        const entryCount = snapshot.length;
+        const tipHash = entryCount ? snapshot[entryCount - 1].hash : AUDIT_ANCHOR_GENESIS;
+        if (!Number.isSafeInteger(entryCount) || typeof tipHash !== 'string') validChain = false;
+        else {
+          if (!isCanonicalUtcTimestamp(issuedAtUtc)) throw new Error('Invalid UTC checkpoint timestamp');
+          return { schemaVersion: AUDIT_ANCHOR_SCHEMA, journalId, entryCount, tipHash, issuedAtUtc };
+        }
+      }
+    }
   } catch {
     validChain = false;
   }
   if (!validChain) throw new Error('Cannot propose a checkpoint for an invalid audit journal');
-  if (!isCanonicalUtcTimestamp(issuedAtUtc))
-    throw new Error('Invalid UTC checkpoint timestamp');
-  // A hostile array Proxy can change or throw on length/index/hash access after
-  // chain verification. Keep checkpoint construction inside a controlled boundary.
-  try {
-    const entryCount = entries.length;
-    const tipHash = entryCount ? entries[entryCount - 1].hash : AUDIT_ANCHOR_GENESIS;
-    if (!Number.isSafeInteger(entryCount) || typeof tipHash !== 'string') throw new Error('invalid snapshot');
-    return { schemaVersion: AUDIT_ANCHOR_SCHEMA, journalId, entryCount, tipHash, issuedAtUtc };
-  } catch {
-    throw new Error('Cannot propose a checkpoint for an invalid audit journal');
-  }
 }
 
 function hasExactKeys(value: object, expected: readonly string[]): boolean {
@@ -153,19 +153,16 @@ export function verifyIndependentAuditAnchor(
     return { valid: false, reason: 'JOURNAL_MISMATCH' };
   }
   if (s.journalId !== journalId) return { valid: false, reason: 'JOURNAL_MISMATCH' };
-  // Persisted journals are untrusted at runtime; a malformed entry must not crash verification.
+  // Verify and compare one detached snapshot: do not re-read mutable caller
+  // state after chain validation (a time-of-check/time-of-use vulnerability).
   try {
-    if (!Array.isArray(entries) || !CryptographicAuditTrail.verifyChain(entries).valid) {
+    if (!Array.isArray(entries)) return { valid: false, reason: 'AUDIT_CHAIN_INVALID' };
+    const snapshot = structuredClone(entries) as AuditTrailEntry[];
+    if (!CryptographicAuditTrail.verifyChain(snapshot).valid) {
       return { valid: false, reason: 'AUDIT_CHAIN_INVALID' };
     }
-  } catch {
-    return { valid: false, reason: 'AUDIT_CHAIN_INVALID' };
-  }
-  // Re-reading mutable or Proxy-backed persisted state can throw even after
-  // verifyChain succeeds; never allow that to escape the verification contract.
-  try {
-    const count = entries.length;
-    const liveTip = count ? entries[count - 1].hash : AUDIT_ANCHOR_GENESIS;
+    const count = snapshot.length;
+    const liveTip = count ? snapshot[count - 1].hash : AUDIT_ANCHOR_GENESIS;
     if (s.entryCount !== count || s.tipHash !== liveTip) {
       return { valid: false, reason: 'CHAIN_TIP_MISMATCH' };
     }
