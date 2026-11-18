@@ -104,4 +104,19 @@ describe('unverified remediation ledger security regressions', () => {
     expect(summarizeUnverifiedRemediationLedger(makeLedger()).notVerified).toBe(12);
   });
 
+  it('rejects accessor-backed root fields before executing any getters', () => {
+    for (const field of ['schemaVersion', 'items', 'constraints'] as const) {
+      const ledger = makeLedger();
+      let calls = 0;
+      Object.defineProperty(ledger, field, {
+        configurable: true,
+        enumerable: true,
+        get() { calls += 1; throw new Error('GETTER_EXECUTED'); },
+      });
+      expect(() => summarizeUnverifiedRemediationLedger(ledger)).toThrow('accessor-backed root field');
+      expect(calls).toBe(0);
+    }
+  });
+
+
 });
