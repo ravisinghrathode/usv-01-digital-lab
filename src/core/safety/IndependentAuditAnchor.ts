@@ -150,7 +150,8 @@ export function verifyIndependentAuditAnchor(
     const rawStatement = receipt.statement;
     signatureBase64 = receipt.signatureBase64;
     if (!rawStatement || typeof rawStatement !== 'object' || Array.isArray(rawStatement) ||
-        Object.keys(rawStatement).some(field => {
+        !hasExactKeys(rawStatement, ['schemaVersion', 'journalId', 'entryCount', 'tipHash', 'issuedAtUtc']) ||
+        Reflect.ownKeys(rawStatement).some(field => {
           const descriptor = Object.getOwnPropertyDescriptor(rawStatement, field);
           return !descriptor || !('value' in descriptor);
         })) return { valid: false, reason: 'INVALID_ATTESTATION' };
