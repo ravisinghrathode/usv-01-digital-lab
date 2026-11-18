@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 head 6807ffc179b341a67573396f918a9f4eb38db9d0: Agent Academy, Docker synthetic image canary, zero-API and isolated browser QA passed. Exact-head governance run 44249176956 failed Stage B — Dependency Security Audit; Stage E was not reached on this run. Independent acceptance and authenticated review remain outstanding."
+      "verification": "PR #201 remains open and unaccepted. Commit 5caced0ef7998ad0525e64b35a5fa943cc72763f adds five negative/positive regression cases for unsigned completion, forged approval metadata, Unicode direction overrides and noncanonical PR links. Exact-head workflow query returned no runs for this new commit; tests, dependency audit, protected authenticated review and independent end-to-end acceptance remain unverified. Earlier Stage B picomatch security failure remains outstanding."
     }
   ],
   "constraints": [
