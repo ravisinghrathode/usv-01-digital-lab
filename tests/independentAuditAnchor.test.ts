@@ -163,6 +163,29 @@ describe('independent cryptographic audit witness acceptance', () => {
       statement: { ...signed.statement, witnessApproved: true }
     } as never, key)).toEqual({ valid: false, reason: 'INVALID_ATTESTATION' });
   });
+  it('rejects hidden unsigned metadata on receipts and witness statements', () => {
+    const hiddenReceipt = { ...signed };
+    Object.defineProperty(hiddenReceipt, 'stageEApproval', {
+      value: 'APPROVED', enumerable: false
+    });
+    const symbolReceipt = { ...signed, [Symbol('independentApproval')]: true };
+    const hiddenStatement = { ...s };
+    Object.defineProperty(hiddenStatement, 'stageDApproval', {
+      value: 'APPROVED', enumerable: false
+    });
+    const symbolStatement = { ...s, [Symbol('independentApproval')]: true };
+    for (const receipt of [
+      hiddenReceipt,
+      symbolReceipt,
+      { ...signed, statement: hiddenStatement },
+      { ...signed, statement: symbolStatement }
+    ]) {
+      expect(verifyIndependentAuditAnchor(journalId, entries, receipt, key))
+        .toEqual({ valid: false, reason: 'INVALID_ATTESTATION' });
+    }
+    expect(verifyIndependentAuditAnchor(journalId, entries, signed, key))
+      .toEqual({ valid: true, reason: 'VERIFIED' });
+  });
   it('fails closed for malformed persisted journal entries without propagating exceptions', () => {
     for (const corrupted of [[null], [undefined], [42], [{ hash: null }]]) {
       expect(() => verifyIndependentAuditAnchor(journalId, corrupted as never, signed, key))
