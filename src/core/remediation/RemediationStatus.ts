@@ -55,7 +55,7 @@ function assertPlainDataArray(value: unknown, scope: string): asserts value is u
       throw new Error('REMEDIATION_LEDGER_INVALID: unsupported ' + scope + ' array field');
     }
     const descriptor = Object.getOwnPropertyDescriptor(value, key);
-    if (!descriptor || !Object.prototype.hasOwnProperty.call(descriptor, 'value')) {
+    if (!descriptor || !Object.prototype.hasOwnProperty.call(descriptor, 'value') || !descriptor.enumerable) {
       throw new Error('REMEDIATION_LEDGER_INVALID: accessor-backed ' + scope + ' array field');
     }
   }
