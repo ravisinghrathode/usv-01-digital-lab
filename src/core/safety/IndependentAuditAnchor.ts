@@ -65,6 +65,7 @@ export function proposeAuditAnchorStatement(
 ): AuditAnchorStatement {
   if (!journalId || journalId.length > 128 || !/^[A-Za-z0-9._:-]+$/.test(journalId))
     throw new Error('Invalid audit journal identity');
+  if (!isCanonicalUtcTimestamp(issuedAtUtc)) throw new Error('Invalid UTC checkpoint timestamp');
   // Persisted journals are untrusted even when proposing a checkpoint. Reject
   // malformed entries deterministically rather than leaking runtime exceptions.
   let validChain = false;
@@ -77,7 +78,6 @@ export function proposeAuditAnchorStatement(
         const tipHash = entryCount ? snapshot[entryCount - 1].hash : AUDIT_ANCHOR_GENESIS;
         if (!Number.isSafeInteger(entryCount) || typeof tipHash !== 'string') validChain = false;
         else {
-          if (!isCanonicalUtcTimestamp(issuedAtUtc)) throw new Error('Invalid UTC checkpoint timestamp');
           return { schemaVersion: AUDIT_ANCHOR_SCHEMA, journalId, entryCount, tipHash, issuedAtUtc };
         }
       }
