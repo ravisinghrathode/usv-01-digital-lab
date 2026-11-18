@@ -13,7 +13,7 @@
       "id": "PR-02",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/191",
-      "verification": "PR #191 open at exact head 8aed2b2d4d496fa35482d27ef055f11a656f5ab2. Governance run 44225746869 failed Stage B dependency audit (picomatch 4.0.7 and 2.3.2; GHSA-fc5q-39xc-vjpf), before subsequent governance checks. This is a technical security defect, NOT Stage E-only. Independent witness deployment, durable outbox and Stage E approval remain outstanding."
+      "verification": "PR #191 exact head 2bede41a8a289064932573387caee7367947ac0d; governance run 44314066700 failed Stage B dependency security audit. Independent witness deployment, durable outbox, authenticated human review and acceptance remain outstanding."
     },
     {
       "id": "PR-03",
@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 remains open and unaccepted. Commit 5caced0ef7998ad0525e64b35a5fa943cc72763f adds five negative/positive regression cases for unsigned completion, forged approval metadata, Unicode direction overrides and noncanonical PR links. Exact-head workflow query returned no runs for this new commit; tests, dependency audit, protected authenticated review and independent end-to-end acceptance remain unverified. Earlier Stage B picomatch security failure remains outstanding."
+      "verification": "PR #201 exact head 1445e295c6c2bffc207bdb491089ab5a4a65f642; governance run 44346383482 failed Stage B dependency security audit. Four other exact-head workflows passed (Mission Control Zero-API, isolated browser QA, Agent Academy, Docker synthetic image canary). No independent Stage E approval or end-to-end acceptance established."
     }
   ],
   "constraints": [
