@@ -207,6 +207,27 @@ describe('independent cryptographic audit witness acceptance', () => {
     expect(verifyIndependentAuditAnchor(journalId, entries, signed, key))
       .toEqual({ valid: true, reason: 'VERIFIED' });
   });
+  it('rejects accessor-backed signed statements even if their first read looks valid', () => {
+    let reads = 0;
+    const statement = { ...s };
+    Object.defineProperty(statement, 'tipHash', {
+      enumerable: true,
+      get() {
+        reads += 1;
+        return reads === 1 ? s.tipHash : '0'.repeat(64);
+      }
+    });
+    expect(() => verifyIndependentAuditAnchor(journalId, entries, {
+      statement,
+      signatureBase64: signed.signatureBase64
+    }, key)).not.toThrow();
+    expect(verifyIndependentAuditAnchor(journalId, entries, {
+      statement,
+      signatureBase64: signed.signatureBase64
+    }, key)).toEqual({ valid: false, reason: 'INVALID_ATTESTATION' });
+    expect(verifyIndependentAuditAnchor(journalId, entries, signed, key))
+      .toEqual({ valid: true, reason: 'VERIFIED' });
+  });
   it('refuses to propose a checkpoint for a tampered chain', () => {
     expect(() => proposeAuditAnchorStatement(journalId, [{ ...entries[0], details: { allowed: true } }]))
       .toThrow(/invalid audit journal/);
