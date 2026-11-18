@@ -84,19 +84,20 @@
   "iterationEvidence": {
     "workstream": "PR-02",
     "pullRequest": 191,
-    "sourceCommit": "1db9037d476381d9ebf46fadbcd1bd4b46cd755d",
-    "regressionCommit": "607465ccca17015ac135fd1191b2557d9f25c71a",
-    "change": "Reject hostile Proxy ownKeys/getOwnPropertyDescriptor traps and revoked receipt proxies without propagating exceptions",
-    "priorHead": "b1545950b8ec18a28dd34af6c8c65eb433375ddf",
+    "sourceCommit": "8cd2c6e799e0e5813de1962b557522acdd88d428",
+    "regressionCommit": "aa5296892e40f4723138050ee9b3546b748cbd65",
+    "change": "Fail closed on persisted journal length/tip access after chain validation and reject hostile array proxy traps",
+    "priorHead": "35792a00ad8a051090870f46eca9cc18d78f055a",
     "priorCI": {
-      "workflowRun": 44201263614,
-      "stageB": "failed dependency security audit; later Stage B and Stage E steps skipped"
+      "workflow": "USV-01 Safety & Governance Branch Protection Gate",
+      "conclusion": "failure",
+      "note": "Previously established Stage B picomatch dependency audit blocker; latest exact-head technical CI not yet verified"
     },
-    "verification": "Source and regression committed; new exact-head CI not yet verified",
+    "verification": "Source and regression test committed; no claim of local test execution or fresh-head CI success",
     "blockers": [
-      "Resolve high-severity picomatch dependency with regenerated Bun lockfile and successful Stage B audit",
-      "Deploy independently controlled durable witness, transactional outbox and cross-process recovery",
-      "Authenticated separate Stage E approval and independent end-to-end acceptance"
+      "Fix picomatch advisory with valid Bun lockfile resolution and rerun security audit",
+      "Independent external witness deployment, durable receipts and transaction outbox",
+      "Separate authenticated Stage E review and end-to-end acceptance"
     ]
   }
 }
