@@ -135,6 +135,22 @@ describe('independent cryptographic audit witness acceptance', () => {
         .toEqual({ valid: false, reason: 'INVALID_ATTESTATION' });
     }
   });
+  it('rejects hostile receipt proxies whose shape traps throw without crashing', () => {
+    const throwingOwnKeys = new Proxy(signed, {
+      ownKeys(): never { throw new Error('untrusted ownKeys trap'); }
+    });
+    const throwingDescriptor = new Proxy(signed, {
+      getOwnPropertyDescriptor(): never { throw new Error('untrusted descriptor trap'); }
+    });
+    const revoked = Proxy.revocable(signed, {});
+    revoked.revoke();
+    for (const receipt of [throwingOwnKeys, throwingDescriptor, revoked.proxy]) {
+      expect(() => verifyIndependentAuditAnchor(journalId, entries, receipt, key))
+        .not.toThrow();
+      expect(verifyIndependentAuditAnchor(journalId, entries, receipt, key))
+        .toEqual({ valid: false, reason: 'INVALID_ATTESTATION' });
+    }
+  });
   it('rejects unsigned extension fields on receipts and signed statements', () => {
     // Extension fields are not included in the canonical signed bytes and must
     // not be allowed to masquerade as witness assertions or approval metadata.
