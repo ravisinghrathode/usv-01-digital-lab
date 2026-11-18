@@ -84,20 +84,16 @@
   "iterationEvidence": {
     "workstream": "PR-02",
     "pullRequest": 191,
-    "sourceCommits": [
-      "5128c4df63fecdb918499fed9324e2f964dfac29",
-      "f88c380f1ea5e872a6ba081008b7b86e6e7fd0ea",
-      "2dafaf8d68edfb7cea59111e135fb135ff1ad1de"
-    ],
-    "regressionCommit": "819315231d86c8e1e5e809fa117802192c5116b5",
-    "change": "Verify a detached audit journal snapshot and reject accessor-backed hash fields to prevent time-of-check/time-of-use drift; preserve timestamp validation",
-    "verification": "Source and regression tests committed; no local tests executed; exact source-head GitHub Actions query returned no runs",
-    "technicalBlocker": "Prior Stage B picomatch GHSA-fc5q-39xc-vjpf unresolved; do not interpret as Stage E",
-    "governanceBlocker": "Authenticated separate Stage E review required",
+    "sourceCommit": "3b1c1137ecc760311e13992fbe321c23bbde0bc1",
+    "regressionCommit": "def31a53f3070a7829042b7e9a731c8266a4f77a",
+    "change": "Detach signed witness statement before journal-tip comparison and signature verification; reject accessor-backed statement fields to prevent signed-data TOCTOU",
+    "verification": "GitHub exact-head workflow query returned zero runs for regression commit; no local test execution or CI pass claimed",
+    "technicalBlocker": "Stage B picomatch GHSA-fc5q-39xc-vjpf unresolved; patched Bun lockfile and security audit required",
+    "governanceBlocker": "Independent authenticated Stage E approval not established",
     "nextActions": [
-      "Resolve Bun lockfile picomatch vulnerability and rerun security audit",
-      "Recheck exact-head CI and regression tests",
-      "Implement independent witness, durable outbox, cross-process serialization and end-to-end acceptance"
+      "Regenerate patched Bun lockfile and verify dependency security audit",
+      "Run independentAuditAnchor regression, lint, full tests and build on exact head",
+      "Deploy independently controlled witness and durable outbox; independently validate acceptance"
     ]
   }
 }
