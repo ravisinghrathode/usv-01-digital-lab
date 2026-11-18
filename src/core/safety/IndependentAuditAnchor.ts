@@ -194,11 +194,18 @@ export function verifyIndependentAuditAnchor(
   } catch {
     return { valid: false, reason: 'AUDIT_CHAIN_INVALID' };
   }
+  // A malformed or wrong-algorithm trust root is a provisioning failure,
+  // not evidence that an otherwise trusted witness signed invalid bytes.
+  let publicKey: crypto.KeyObject;
   try {
-    const publicKey = crypto.createPublicKey(trustedWitnessPublicKeyPem);
+    publicKey = crypto.createPublicKey(trustedWitnessPublicKeyPem);
     if (publicKey.asymmetricKeyType !== 'ed25519') {
       return { valid: false, reason: 'UNTRUSTED_WITNESS_KEY' };
     }
+  } catch {
+    return { valid: false, reason: 'UNTRUSTED_WITNESS_KEY' };
+  }
+  try {
     const signature = Buffer.from(signatureBase64, 'base64');
     if (signature.length !== 64 ||
         signature.toString('base64') !== signatureBase64 ||
