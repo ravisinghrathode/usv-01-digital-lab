@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 open at exact head fe1d2d9d62ff61409862a2bb170b5cbc28a7d96b: Agent Academy, Docker synthetic image canary, zero-API and isolated browser QA workflow runs succeeded; Safety & Governance run 44130263389 failed (failure-step classification not independently inspected). All tracked PRs #191 and #193-#201 remain open. This unmerged ledger does not establish independent acceptance, human review or vessel approval."
+      "verification": "PR #201 prior exact head fe1d2d9d62ff61409862a2bb170b5cbc28a7d96b: Agent Academy, Docker synthetic image canary, zero-API and isolated browser QA workflows succeeded; Safety & Governance run 44130263389 failed specifically Stage E authenticated human approval. New ledger head 7a7065fca9fb5e701793731bd7d97847fb60bc54 returned no workflow runs at first query; new exact-head CI is unverified. All tracked PRs #191 and #193-#201 remain open. This unmerged ledger does not establish independent acceptance, human review or vessel approval."
     }
   ],
   "constraints": [
@@ -108,6 +108,6 @@
       ],
       "remediation": "Regenerate a resolved lockfile with patched compatible picomatch versions using the pinned Bun toolchain; run bun audit, tests, lint and exact-head CI. Do not hand-edit integrity hashes."
     },
-    "stageE": "Authenticated independent human approval remains separately required even after technical CI succeeds"
+    "stageE": "PR #201 prior head governance run 44130263389 failed at Stage E — Governance Gate Enforcement. Authenticated independent human approval remains required; PR #191 has a distinct Stage B security blocker."
   }
 }
