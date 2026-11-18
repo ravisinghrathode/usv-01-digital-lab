@@ -127,16 +127,23 @@
     },
     {
       "pr": 201,
-      "headSha": "6807ffc179b341a67573396f918a9f4eb38db9d0",
-      "governanceRunId": 44249176956,
+      "headSha": "235aa963918002ec19af29d7b61c3dac646b9ebc",
+      "governanceRunId": 44263576425,
       "governanceConclusion": "failure",
       "successfulOtherWorkflows": [
         "Agent Academy - 26 Role Curriculum and Evidence Gates",
-        "Mission Control Zero-API Gate",
+        "USV-01 Mission Control Zero-API Gate",
         "Engineering Sessions — Isolated Browser QA",
-        "Docker Synthetic Secret Image Canary"
+        "USV-01 Docker Synthetic Secret Image Canary"
       ],
-      "verificationScope": "Exact-head GitHub Actions workflow inventory; governance job failed Stage B dependency audit, not Stage E"
+      "verificationScope": "GitHub Actions associated with exact head 235aa963; governance failure stage not yet established from job-level logs; success of other workflows does not confer approval"
     }
-  ]
+  ],
+  "latestObservation": {
+    "pr": 201,
+    "observedHeadSha": "235aa963918002ec19af29d7b61c3dac646b9ebc",
+    "governanceRunId": 44263576425,
+    "governanceFailureStage": "unclassified-awaiting-job-level-evidence",
+    "note": "Do not inherit Stage B or Stage E cause from prior commit; exact-head run failed and job-level inspection is required."
+  }
 }
