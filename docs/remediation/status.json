@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 exact head 1445e295c6c2bffc207bdb491089ab5a4a65f642; governance run 44346383482 failed Stage B dependency security audit. Four other exact-head workflows passed (Mission Control Zero-API, isolated browser QA, Agent Academy, Docker synthetic image canary). No independent Stage E approval or end-to-end acceptance established."
+      "verification": "PR #201 prior exact head 0902e34f554574651da9a4fddee0010ce9b5f15b: governance run 44351838907 failed Stage B dependency security audit; four other workflows passed. Subsequent evidence-only commit c80a5114c5107439a80411b48041693f1fed3574 requires fresh exact-head CI. No authenticated Stage E approval or independent end-to-end acceptance established."
     }
   ],
   "constraints": [
