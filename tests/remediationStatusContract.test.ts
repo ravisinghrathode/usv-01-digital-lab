@@ -74,6 +74,31 @@ describe('closed-loop twelve-issue remediation reporting', () => {
     }
   });
 
+  it('rejects non-enumerable canonical fields and array elements without invoking hidden claims', () => {
+    for (const field of ['schemaVersion', 'items', 'constraints'] as const) {
+      const hidden = structuredClone(ledger);
+      Object.defineProperty(hidden, field, { value: hidden[field], enumerable: false, configurable: true });
+      expect(() => summarizeUnverifiedRemediationLedger(hidden))
+        .toThrow('accessor-backed root field');
+    }
+    for (const field of ['id', 'state', 'verification'] as const) {
+      const hidden = structuredClone(ledger);
+      Object.defineProperty(hidden.items[0], field, {
+        value: hidden.items[0][field], enumerable: false, configurable: true
+      });
+      expect(() => summarizeUnverifiedRemediationLedger(hidden))
+        .toThrow('accessor-backed item field');
+    }
+    for (const field of ['items', 'constraints'] as const) {
+      const hidden = structuredClone(ledger);
+      Object.defineProperty(hidden[field], '0', {
+        value: hidden[field][0], enumerable: false, configurable: true
+      });
+      expect(() => summarizeUnverifiedRemediationLedger(hidden))
+        .toThrow('accessor-backed ' + field + ' array field');
+    }
+  });
+
   it('rejects malformed provenance metadata instead of trusting a partial status', () => {
     for (const [field, invalid] of [
       ['baseline', 'unversioned'],
