@@ -84,20 +84,20 @@
   "iterationEvidence": {
     "workstream": "PR-02",
     "pullRequest": 191,
-    "sourceCommit": "8cd2c6e799e0e5813de1962b557522acdd88d428",
-    "regressionCommit": "aa5296892e40f4723138050ee9b3546b748cbd65",
-    "change": "Fail closed on persisted journal length/tip access after chain validation and reject hostile array proxy traps",
-    "priorHead": "35792a00ad8a051090870f46eca9cc18d78f055a",
-    "priorCI": {
-      "workflow": "USV-01 Safety & Governance Branch Protection Gate",
-      "conclusion": "failure",
-      "note": "Previously established Stage B picomatch dependency audit blocker; latest exact-head technical CI not yet verified"
-    },
-    "verification": "Source and regression test committed; no claim of local test execution or fresh-head CI success",
-    "blockers": [
-      "Fix picomatch advisory with valid Bun lockfile resolution and rerun security audit",
-      "Independent external witness deployment, durable receipts and transaction outbox",
-      "Separate authenticated Stage E review and end-to-end acceptance"
+    "sourceCommits": [
+      "5128c4df63fecdb918499fed9324e2f964dfac29",
+      "f88c380f1ea5e872a6ba081008b7b86e6e7fd0ea",
+      "2dafaf8d68edfb7cea59111e135fb135ff1ad1de"
+    ],
+    "regressionCommit": "819315231d86c8e1e5e809fa117802192c5116b5",
+    "change": "Verify a detached audit journal snapshot and reject accessor-backed hash fields to prevent time-of-check/time-of-use drift; preserve timestamp validation",
+    "verification": "Source and regression tests committed; no local tests executed; exact source-head GitHub Actions query returned no runs",
+    "technicalBlocker": "Prior Stage B picomatch GHSA-fc5q-39xc-vjpf unresolved; do not interpret as Stage E",
+    "governanceBlocker": "Authenticated separate Stage E review required",
+    "nextActions": [
+      "Resolve Bun lockfile picomatch vulnerability and rerun security audit",
+      "Recheck exact-head CI and regression tests",
+      "Implement independent witness, durable outbox, cross-process serialization and end-to-end acceptance"
     ]
   }
 }
