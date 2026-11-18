@@ -84,19 +84,16 @@
   "iterationEvidence": {
     "workstream": "PR-02",
     "pullRequest": 191,
-    "sourceCommits": [
-      "373d623ceed1cc63c763aa3730da0f13ce8f17e0",
-      "6c10b945dec3619f4f643f476ce9366be48eacb4"
-    ],
-    "regressionCommit": "e445cf68a96e834e49740b794ded12d61576d252",
-    "change": "Reject non-enumerable and symbol-keyed unsigned witness metadata on receipt and statement before cloning; regression verifies hidden Stage D/E claims cannot be carried in a valid signed receipt",
-    "verification": "Exact-head CI requested; no successful test, dependency audit, or merge claimed",
-    "technicalBlocker": "Stage B picomatch GHSA-fc5q-39xc-vjpf remains unresolved; regenerate Bun lockfile with patched versions and rerun audit",
-    "governanceBlocker": "Independent authenticated Stage E approval not established",
+    "sourceCommit": "738ba9fbdf4f4ebc5ad1ee30484662ac4828b04c",
+    "regressionCommit": "b786684588e23369fd8cf287a23e43648ee83690",
+    "change": "Reject non-throwing accessor-backed top-level witness receipt fields; regression covers statement and signature getters and a valid signed receipt control",
+    "verification": "Local tests not executed; new exact-head CI not yet verified",
+    "technicalBlocker": "Stage B picomatch dependency audit failure GHSA-fc5q-39xc-vjpf; Bun-generated patched lockfile and complete technical CI required",
+    "governanceBlocker": "Independent authenticated Stage E approval outstanding",
     "nextActions": [
-      "Resolve picomatch 2.3.2 and 4.0.7 with package manager-generated lockfile; audit dependency tree",
-      "Run exact-head lint, regression, full test suite and build",
-      "Deploy independent witness, durable outbox and cross-process serialization; obtain genuine independent review"
+      "Regenerate patched Bun lockfile using package manager and verify dependency audit",
+      "Run exact-head regression, lint, full test suite and build",
+      "Complete external witness anchoring, durable outbox, independent review and acceptance"
     ]
   }
 }
