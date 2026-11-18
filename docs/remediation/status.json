@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-17",
+  "updatedAt": "2026-11-18",
   "items": [
     {
       "id": "PR-01",
@@ -13,7 +13,7 @@
       "id": "PR-02",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/191",
-      "verification": "PR #191 open, exact-head governance CI failed Stage E only; external witness service, outbox and independent security approval outstanding"
+      "verification": "PR #191 open at exact head 8aed2b2d4d496fa35482d27ef055f11a656f5ab2. Governance run 44225746869 failed Stage B dependency audit (picomatch 4.0.7 and 2.3.2; GHSA-fc5q-39xc-vjpf), before subsequent governance checks. This is a technical security defect, NOT Stage E-only. Independent witness deployment, durable outbox and Stage E approval remain outstanding."
     },
     {
       "id": "PR-03",
@@ -73,12 +73,41 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 exact head e05f4e90a91144cbd43b35ba8f86bf529e6bd817: zero-API, isolated browser QA, Agent Academy and Docker synthetic secret image canary workflows succeeded; Safety & Governance gate failed at Stage E (authenticated independent human review required). Stage B and Stage C/D steps within governance job succeeded but do not constitute independent approvals. PRs #191 and #193-#200 remain open and unmerged; all tracked heads have failed governance workflows. Independent end-to-end acceptance and vessel approval not established."
+      "verification": "PR #201 open at exact head fe1d2d9d62ff61409862a2bb170b5cbc28a7d96b: Agent Academy, Docker synthetic image canary, zero-API and isolated browser QA workflow runs succeeded; Safety & Governance run 44130263389 failed (failure-step classification not independently inspected). All tracked PRs #191 and #193-#201 remain open. This unmerged ledger does not establish independent acceptance, human review or vessel approval."
     }
   ],
   "constraints": [
     "Never auto-promote naval engineering baselines",
     "No independent approval can be forged or bypassed",
     "Completion requires CI, review, and full end-to-end acceptance"
-  ]
+  ],
+  "observations": {
+    "observedAt": "2026-11-18",
+    "source": "GitHub connected API, exact-head PR workflow runs",
+    "openTrackedPullRequests": [
+      191,
+      193,
+      194,
+      195,
+      196,
+      197,
+      198,
+      199,
+      200,
+      201
+    ],
+    "securityBlocker": {
+      "pullRequest": 191,
+      "headSha": "8aed2b2d4d496fa35482d27ef055f11a656f5ab2",
+      "workflowRunId": 44225746869,
+      "failedStep": "Stage B — Dependency Security Audit",
+      "advisory": "GHSA-fc5q-39xc-vjpf",
+      "affectedInstalledVersions": [
+        "2.3.2",
+        "4.0.7"
+      ],
+      "remediation": "Regenerate a resolved lockfile with patched compatible picomatch versions using the pinned Bun toolchain; run bun audit, tests, lint and exact-head CI. Do not hand-edit integrity hashes."
+    },
+    "stageE": "Authenticated independent human approval remains separately required even after technical CI succeeds"
+  }
 }
