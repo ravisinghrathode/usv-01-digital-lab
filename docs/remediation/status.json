@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 prior exact head fe1d2d9d62ff61409862a2bb170b5cbc28a7d96b: Agent Academy, Docker synthetic image canary, zero-API and isolated browser QA workflows succeeded; Safety & Governance run 44130263389 failed specifically Stage E authenticated human approval. New ledger head 7a7065fca9fb5e701793731bd7d97847fb60bc54 returned no workflow runs at first query; new exact-head CI is unverified. All tracked PRs #191 and #193-#201 remain open. This unmerged ledger does not establish independent acceptance, human review or vessel approval."
+      "verification": "PR #201 exact head 76b9a070b8e23056866cce8fb1821aff7deadbbe: Agent Academy, Docker synthetic image canary, zero-API and isolated browser QA succeeded; governance run 44230877113 failed. Earlier run 44130263389 was identified as Stage E human approval, but latest failure step has not been re-inspected. This ledger update requires new exact-head CI. No independent acceptance."
     }
   ],
   "constraints": [
@@ -108,6 +108,112 @@
       ],
       "remediation": "Regenerate a resolved lockfile with patched compatible picomatch versions using the pinned Bun toolchain; run bun audit, tests, lint and exact-head CI. Do not hand-edit integrity hashes."
     },
-    "stageE": "PR #201 prior head governance run 44130263389 failed at Stage E — Governance Gate Enforcement. Authenticated independent human approval remains required; PR #191 has a distinct Stage B security blocker."
+    "stageE": "Prior PR #201 governance run 44130263389 identified Stage E human approval; latest PR #201 governance run 44230877113 failed but its exact failed step was not independently re-inspected. PR #191 has independently identified Stage B dependency audit blocker. Other governance failures must not be classified as Stage E without job-step evidence.",
+    "exactHeadWorkflowInventory": [
+      {
+        "pr": 191,
+        "headSha": "8aed2b2d4d496fa35482d27ef055f11a656f5ab2",
+        "governanceRunId": 44225746869,
+        "governanceConclusion": "failure",
+        "successfulOtherWorkflows": [],
+        "verificationScope": "GitHub Actions runs associated with this exact SHA; governance failure cause not independently established for this head except PR #191 previously inspected Stage B"
+      },
+      {
+        "pr": 193,
+        "headSha": "6f6a64db100d3d4268d428944eb627c5d883a212",
+        "governanceRunId": 43994593686,
+        "governanceConclusion": "failure",
+        "successfulOtherWorkflows": [
+          "Docker Synthetic Secret Image Canary"
+        ],
+        "verificationScope": "GitHub Actions runs associated with this exact SHA; governance failure cause not independently established for this head except PR #191 previously inspected Stage B"
+      },
+      {
+        "pr": 194,
+        "headSha": "98a2315c8e4bcd5aa3a03efb77792a48e45fa1f2",
+        "governanceRunId": 43994863202,
+        "governanceConclusion": "failure",
+        "successfulOtherWorkflows": [
+          "Mission Control Zero-API Gate",
+          "Engineering Sessions — Isolated Browser QA"
+        ],
+        "verificationScope": "GitHub Actions runs associated with this exact SHA; governance failure cause not independently established for this head except PR #191 previously inspected Stage B"
+      },
+      {
+        "pr": 195,
+        "headSha": "63fb1fe3151f24c7ab9d8b2dacb51f43798b354b",
+        "governanceRunId": 43996715253,
+        "governanceConclusion": "failure",
+        "successfulOtherWorkflows": [
+          "Mission Control Zero-API Gate"
+        ],
+        "verificationScope": "GitHub Actions runs associated with this exact SHA; governance failure cause not independently established for this head except PR #191 previously inspected Stage B"
+      },
+      {
+        "pr": 196,
+        "headSha": "6a261935aae6c045f999f5045699d59dd1eef40e",
+        "governanceRunId": 43996996495,
+        "governanceConclusion": "failure",
+        "successfulOtherWorkflows": [
+          "Mission Control Zero-API Gate",
+          "Engineering Sessions — Isolated Browser QA"
+        ],
+        "verificationScope": "GitHub Actions runs associated with this exact SHA; governance failure cause not independently established for this head except PR #191 previously inspected Stage B"
+      },
+      {
+        "pr": 197,
+        "headSha": "43e917561950f48de102435089ed195bee021ec0",
+        "governanceRunId": 43997514006,
+        "governanceConclusion": "failure",
+        "successfulOtherWorkflows": [
+          "Mission Control Zero-API Gate",
+          "Engineering Sessions — Isolated Browser QA"
+        ],
+        "verificationScope": "GitHub Actions runs associated with this exact SHA; governance failure cause not independently established for this head except PR #191 previously inspected Stage B"
+      },
+      {
+        "pr": 198,
+        "headSha": "0c702fcffc8e23b1737552c617d13e62dd718a23",
+        "governanceRunId": 43997861635,
+        "governanceConclusion": "failure",
+        "successfulOtherWorkflows": [
+          "Mission Control Zero-API Gate",
+          "Engineering Sessions — Isolated Browser QA"
+        ],
+        "verificationScope": "GitHub Actions runs associated with this exact SHA; governance failure cause not independently established for this head except PR #191 previously inspected Stage B"
+      },
+      {
+        "pr": 199,
+        "headSha": "2770ecc3f261ab997b6a1f36a52083a0124e5b69",
+        "governanceRunId": 43998097708,
+        "governanceConclusion": "failure",
+        "successfulOtherWorkflows": [
+          "Mission Control Zero-API Gate",
+          "Engineering Sessions — Isolated Browser QA"
+        ],
+        "verificationScope": "GitHub Actions runs associated with this exact SHA; governance failure cause not independently established for this head except PR #191 previously inspected Stage B"
+      },
+      {
+        "pr": 200,
+        "headSha": "af90e53bd3527f50afcaede2bdbf5da37b97894b",
+        "governanceRunId": 43998351023,
+        "governanceConclusion": "failure",
+        "successfulOtherWorkflows": [],
+        "verificationScope": "GitHub Actions runs associated with this exact SHA; governance failure cause not independently established for this head except PR #191 previously inspected Stage B"
+      },
+      {
+        "pr": 201,
+        "headSha": "76b9a070b8e23056866cce8fb1821aff7deadbbe",
+        "governanceRunId": 44230877113,
+        "governanceConclusion": "failure",
+        "successfulOtherWorkflows": [
+          "Agent Academy - 26 Role Curriculum and Evidence Gates",
+          "Mission Control Zero-API Gate",
+          "Engineering Sessions — Isolated Browser QA",
+          "Docker Synthetic Secret Image Canary"
+        ],
+        "verificationScope": "GitHub Actions runs associated with this exact SHA; governance failure cause not independently established for this head except PR #191 previously inspected Stage B"
+      }
+    ]
   }
 }
