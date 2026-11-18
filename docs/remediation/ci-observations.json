@@ -136,14 +136,14 @@
         "Engineering Sessions — Isolated Browser QA",
         "USV-01 Docker Synthetic Secret Image Canary"
       ],
-      "verificationScope": "GitHub Actions associated with exact head 235aa963; governance failure stage not yet established from job-level logs; success of other workflows does not confer approval"
+      "verificationScope": "Observed head 235aa963: governance job 134662529345 failed Stage B dependency security audit; other four workflows succeeded. This is historical evidence, not CI for later commits."
     }
   ],
   "latestObservation": {
     "pr": 201,
     "observedHeadSha": "235aa963918002ec19af29d7b61c3dac646b9ebc",
     "governanceRunId": 44263576425,
-    "governanceFailureStage": "unclassified-awaiting-job-level-evidence",
-    "note": "Do not inherit Stage B or Stage E cause from prior commit; exact-head run failed and job-level inspection is required."
+    "governanceFailureStage": "Stage B — Dependency Security Audit",
+    "note": "Job 134662529345 reports Stage B failure for workflow run 44263576425 at observed head 235aa963; subsequent commit(s) require new exact-head CI. No Stage E outcome inferred."
   }
 }
