@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 exact head 76b9a070b8e23056866cce8fb1821aff7deadbbe: Agent Academy, Docker synthetic image canary, zero-API and isolated browser QA succeeded; governance run 44230877113 failed. Earlier run 44130263389 was identified as Stage E human approval, but latest failure step has not been re-inspected. This ledger update requires new exact-head CI. No independent acceptance."
+      "verification": "PR #201 head 6807ffc179b341a67573396f918a9f4eb38db9d0: Agent Academy, Docker synthetic image canary, zero-API and isolated browser QA passed. Exact-head governance run 44249176956 failed Stage B — Dependency Security Audit; Stage E was not reached on this run. Independent acceptance and authenticated review remain outstanding."
     }
   ],
   "constraints": [
@@ -106,9 +106,15 @@
         "2.3.2",
         "4.0.7"
       ],
-      "remediation": "Regenerate a resolved lockfile with patched compatible picomatch versions using the pinned Bun toolchain; run bun audit, tests, lint and exact-head CI. Do not hand-edit integrity hashes."
+      "remediation": "Regenerate a resolved lockfile with patched compatible picomatch versions using the pinned Bun toolchain; run bun audit, tests, lint and exact-head CI. Do not hand-edit integrity hashes.",
+      "alsoConfirmedOn": {
+        "pullRequest": 201,
+        "headSha": "6807ffc179b341a67573396f918a9f4eb38db9d0",
+        "workflowRunId": 44249176956,
+        "failedStep": "Stage B — Dependency Security Audit"
+      }
     },
-    "stageE": "Prior PR #201 governance run 44130263389 identified Stage E human approval; latest PR #201 governance run 44230877113 failed but its exact failed step was not independently re-inspected. PR #191 has independently identified Stage B dependency audit blocker. Other governance failures must not be classified as Stage E without job-step evidence.",
+    "stageE": "Job-level inspection confirms PR #193 run 43994593686 failed Stage E authenticated human approval. PR #191 run 44225746869 and PR #201 run 44249176956 failed Stage B dependency security audit before Stage E. Other governance failures remain unclassified until their job steps are inspected.",
     "exactHeadWorkflowInventory": [
       {
         "pr": 191,
@@ -203,8 +209,8 @@
       },
       {
         "pr": 201,
-        "headSha": "76b9a070b8e23056866cce8fb1821aff7deadbbe",
-        "governanceRunId": 44230877113,
+        "headSha": "6807ffc179b341a67573396f918a9f4eb38db9d0",
+        "governanceRunId": 44249176956,
         "governanceConclusion": "failure",
         "successfulOtherWorkflows": [
           "Agent Academy - 26 Role Curriculum and Evidence Gates",
@@ -212,7 +218,7 @@
           "Engineering Sessions — Isolated Browser QA",
           "Docker Synthetic Secret Image Canary"
         ],
-        "verificationScope": "GitHub Actions runs associated with this exact SHA; governance failure cause not independently established for this head except PR #191 previously inspected Stage B"
+        "verificationScope": "Exact-head GitHub Actions workflow inventory; governance job failed Stage B dependency audit, not Stage E"
       }
     ]
   }
