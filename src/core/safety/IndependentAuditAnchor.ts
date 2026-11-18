@@ -71,6 +71,9 @@ export function proposeAuditAnchorStatement(
   let validChain = false;
   try {
     if (Array.isArray(entries)) {
+      if (entries.some(entry => !entry || typeof entry !== 'object' ||
+          !Object.getOwnPropertyDescriptor(entry, 'hash') ||
+          !('value' in Object.getOwnPropertyDescriptor(entry, 'hash')!))) throw new Error('accessor-backed journal');
       const snapshot = structuredClone(entries) as AuditTrailEntry[];
       validChain = CryptographicAuditTrail.verifyChain(snapshot).valid;
       if (validChain) {
@@ -157,6 +160,11 @@ export function verifyIndependentAuditAnchor(
   // state after chain validation (a time-of-check/time-of-use vulnerability).
   try {
     if (!Array.isArray(entries)) return { valid: false, reason: 'AUDIT_CHAIN_INVALID' };
+    if (entries.some(entry => !entry || typeof entry !== 'object' ||
+        !Object.getOwnPropertyDescriptor(entry, 'hash') ||
+        !('value' in Object.getOwnPropertyDescriptor(entry, 'hash')!))) {
+      return { valid: false, reason: 'AUDIT_CHAIN_INVALID' };
+    }
     const snapshot = structuredClone(entries) as AuditTrailEntry[];
     if (!CryptographicAuditTrail.verifyChain(snapshot).valid) {
       return { valid: false, reason: 'AUDIT_CHAIN_INVALID' };
