@@ -190,6 +190,23 @@ describe('independent cryptographic audit witness acceptance', () => {
     expect(() => proposeAuditAnchorStatement(journalId, hostile, timestamp))
       .toThrow('Cannot propose a checkpoint for an invalid audit journal');
   });
+  it('rejects mutable accessor-backed journals rather than validating one state and attesting another', () => {
+    const hostile = [{ ...entries[0] }];
+    let reads = 0;
+    Object.defineProperty(hostile[0], 'hash', {
+      enumerable: true,
+      get() {
+        reads += 1;
+        return reads === 1 ? entries[0].hash : '0'.repeat(64);
+      }
+    });
+    expect(verifyIndependentAuditAnchor(journalId, hostile, signed, key))
+      .toEqual({ valid: false, reason: 'AUDIT_CHAIN_INVALID' });
+    expect(() => proposeAuditAnchorStatement(journalId, hostile, timestamp))
+      .toThrow('Cannot propose a checkpoint for an invalid audit journal');
+    expect(verifyIndependentAuditAnchor(journalId, entries, signed, key))
+      .toEqual({ valid: true, reason: 'VERIFIED' });
+  });
   it('refuses to propose a checkpoint for a tampered chain', () => {
     expect(() => proposeAuditAnchorStatement(journalId, [{ ...entries[0], details: { allowed: true } }]))
       .toThrow(/invalid audit journal/);
