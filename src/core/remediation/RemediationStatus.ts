@@ -72,14 +72,14 @@ function assertPlainDataArray(value: unknown, scope: string): asserts value is u
  * acceptance. This legacy status file CANNOT certify itself.
  */
 export function summarizeUnverifiedRemediationLedger(value: unknown): RemediationSummary {
-  if (!isRecord(value) || value.schemaVersion !== 'USV-REMEDIATION-1' ||
+  // Validate descriptors before accessing any root field. Otherwise an
+  // attacker-controlled schemaVersion/items getter executes before rejection.
+  const rootFields = new Set(['schemaVersion', 'baseline', 'updatedAt', 'items', 'constraints']);
+  assertPlainDataRecord(value, rootFields, 'root');
+  if (value.schemaVersion !== 'USV-REMEDIATION-1' ||
       !Array.isArray(value.items) || value.items.length !== REMEDIATION_IDS.length) {
     throw new Error('REMEDIATION_LEDGER_INVALID: expected 12 canonical tasks');
   }
-  // Reject undeclared fields rather than silently discarding a forged approval
-  // or acceptance assertion embedded alongside otherwise valid status data.
-  const rootFields = new Set(['schemaVersion', 'baseline', 'updatedAt', 'items', 'constraints']);
-  assertPlainDataRecord(value, rootFields, 'root');
   assertPlainDataArray(value.items, 'items');
   assertPlainDataArray(value.constraints, 'constraints');
   // Metadata must be structurally valid; otherwise malformed or injected
