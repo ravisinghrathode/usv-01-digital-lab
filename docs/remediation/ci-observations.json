@@ -16,8 +16,8 @@
   ],
   "securityBlocker": {
     "pullRequest": 191,
-    "headSha": "8aed2b2d4d496fa35482d27ef055f11a656f5ab2",
-    "workflowRunId": 44225746869,
+    "headSha": "2bede41a8a289064932573387caee7367947ac0d",
+    "workflowRunId": 44314066700,
     "failedStep": "Stage B — Dependency Security Audit",
     "advisory": "GHSA-fc5q-39xc-vjpf",
     "affectedInstalledVersions": [
@@ -27,20 +27,20 @@
     "remediation": "Regenerate a resolved lockfile with patched compatible picomatch versions using the pinned Bun toolchain; run bun audit, tests, lint and exact-head CI. Do not hand-edit integrity hashes.",
     "alsoConfirmedOn": {
       "pullRequest": 201,
-      "headSha": "6807ffc179b341a67573396f918a9f4eb38db9d0",
-      "workflowRunId": 44249176956,
+      "headSha": "e6e98badbb226c514b6c0d3766ccbd876cf6892f",
+      "workflowRunId": 44284351186,
       "failedStep": "Stage B — Dependency Security Audit"
     }
   },
-  "stageE": "Job-level inspection confirms PR #193 run 43994593686 failed Stage E authenticated human approval. PR #191 run 44225746869 and PR #201 run 44249176956 failed Stage B dependency security audit before Stage E. Other governance failures remain unclassified until their job steps are inspected.",
+  "stageE": "Exact-head job-step inspection: PRs #193–#200 fail at Stage E — Governance Gate Enforcement; PRs #191 and #201 fail earlier at Stage B — Dependency Security Audit. Stage E failures are retained as authenticated human-governance blockers; Stage B failures require technical dependency remediation.",
   "exactHeadWorkflowInventory": [
     {
       "pr": 191,
-      "headSha": "8aed2b2d4d496fa35482d27ef055f11a656f5ab2",
-      "governanceRunId": 44225746869,
+      "headSha": "2bede41a8a289064932573387caee7367947ac0d",
+      "governanceRunId": 44314066700,
       "governanceConclusion": "failure",
       "successfulOtherWorkflows": [],
-      "verificationScope": "GitHub Actions runs associated with this exact SHA; governance failure cause not independently established for this head except PR #191 previously inspected Stage B"
+      "verificationScope": "Exact-head GitHub Actions governance run 44314066700: failed at Stage B — Dependency Security Audit; this does not establish any independent approval or acceptance."
     },
     {
       "pr": 193,
@@ -50,7 +50,7 @@
       "successfulOtherWorkflows": [
         "Docker Synthetic Secret Image Canary"
       ],
-      "verificationScope": "GitHub Actions runs associated with this exact SHA; governance failure cause not independently established for this head except PR #191 previously inspected Stage B"
+      "verificationScope": "Exact-head GitHub Actions governance run 43994593686: failed at Stage E — Governance Gate Enforcement; this does not establish any independent approval or acceptance."
     },
     {
       "pr": 194,
@@ -61,7 +61,7 @@
         "Mission Control Zero-API Gate",
         "Engineering Sessions — Isolated Browser QA"
       ],
-      "verificationScope": "GitHub Actions runs associated with this exact SHA; governance failure cause not independently established for this head except PR #191 previously inspected Stage B"
+      "verificationScope": "Exact-head GitHub Actions governance run 43994863202: failed at Stage E — Governance Gate Enforcement; this does not establish any independent approval or acceptance."
     },
     {
       "pr": 195,
@@ -71,7 +71,7 @@
       "successfulOtherWorkflows": [
         "Mission Control Zero-API Gate"
       ],
-      "verificationScope": "GitHub Actions runs associated with this exact SHA; governance failure cause not independently established for this head except PR #191 previously inspected Stage B"
+      "verificationScope": "Exact-head GitHub Actions governance run 43996715253: failed at Stage E — Governance Gate Enforcement; this does not establish any independent approval or acceptance."
     },
     {
       "pr": 196,
@@ -82,7 +82,7 @@
         "Mission Control Zero-API Gate",
         "Engineering Sessions — Isolated Browser QA"
       ],
-      "verificationScope": "GitHub Actions runs associated with this exact SHA; governance failure cause not independently established for this head except PR #191 previously inspected Stage B"
+      "verificationScope": "Exact-head GitHub Actions governance run 43996996495: failed at Stage E — Governance Gate Enforcement; this does not establish any independent approval or acceptance."
     },
     {
       "pr": 197,
@@ -93,7 +93,7 @@
         "Mission Control Zero-API Gate",
         "Engineering Sessions — Isolated Browser QA"
       ],
-      "verificationScope": "GitHub Actions runs associated with this exact SHA; governance failure cause not independently established for this head except PR #191 previously inspected Stage B"
+      "verificationScope": "Exact-head GitHub Actions governance run 43997514006: failed at Stage E — Governance Gate Enforcement; this does not establish any independent approval or acceptance."
     },
     {
       "pr": 198,
@@ -104,7 +104,7 @@
         "Mission Control Zero-API Gate",
         "Engineering Sessions — Isolated Browser QA"
       ],
-      "verificationScope": "GitHub Actions runs associated with this exact SHA; governance failure cause not independently established for this head except PR #191 previously inspected Stage B"
+      "verificationScope": "Exact-head GitHub Actions governance run 43997861635: failed at Stage E — Governance Gate Enforcement; this does not establish any independent approval or acceptance."
     },
     {
       "pr": 199,
@@ -115,7 +115,7 @@
         "Mission Control Zero-API Gate",
         "Engineering Sessions — Isolated Browser QA"
       ],
-      "verificationScope": "GitHub Actions runs associated with this exact SHA; governance failure cause not independently established for this head except PR #191 previously inspected Stage B"
+      "verificationScope": "Exact-head GitHub Actions governance run 43998097708: failed at Stage E — Governance Gate Enforcement; this does not establish any independent approval or acceptance."
     },
     {
       "pr": 200,
@@ -123,12 +123,12 @@
       "governanceRunId": 43998351023,
       "governanceConclusion": "failure",
       "successfulOtherWorkflows": [],
-      "verificationScope": "GitHub Actions runs associated with this exact SHA; governance failure cause not independently established for this head except PR #191 previously inspected Stage B"
+      "verificationScope": "Exact-head GitHub Actions governance run 43998351023: failed at Stage E — Governance Gate Enforcement; this does not establish any independent approval or acceptance."
     },
     {
       "pr": 201,
-      "headSha": "235aa963918002ec19af29d7b61c3dac646b9ebc",
-      "governanceRunId": 44263576425,
+      "headSha": "e6e98badbb226c514b6c0d3766ccbd876cf6892f",
+      "governanceRunId": 44284351186,
       "governanceConclusion": "failure",
       "successfulOtherWorkflows": [
         "Agent Academy - 26 Role Curriculum and Evidence Gates",
@@ -136,14 +136,14 @@
         "Engineering Sessions — Isolated Browser QA",
         "USV-01 Docker Synthetic Secret Image Canary"
       ],
-      "verificationScope": "Observed head 235aa963: governance job 134662529345 failed Stage B dependency security audit; other four workflows succeeded. This is historical evidence, not CI for later commits."
+      "verificationScope": "Exact-head GitHub Actions governance run 44284351186: failed at Stage B — Dependency Security Audit; this does not establish any independent approval or acceptance."
     }
   ],
   "latestObservation": {
     "pr": 201,
-    "observedHeadSha": "235aa963918002ec19af29d7b61c3dac646b9ebc",
-    "governanceRunId": 44263576425,
+    "observedHeadSha": "e6e98badbb226c514b6c0d3766ccbd876cf6892f",
+    "governanceRunId": 44284351186,
     "governanceFailureStage": "Stage B — Dependency Security Audit",
-    "note": "Job 134662529345 reports Stage B failure for workflow run 44263576425 at observed head 235aa963; subsequent commit(s) require new exact-head CI. No Stage E outcome inferred."
+    "note": "Job 134733028926 failed Stage B on exact head e6e98bad; other four workflows succeeded. Future commits require fresh exact-head CI."
   }
 }
