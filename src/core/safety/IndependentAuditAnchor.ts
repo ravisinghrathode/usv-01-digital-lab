@@ -92,8 +92,12 @@ export function proposeAuditAnchorStatement(
 }
 
 function hasExactKeys(value: object, expected: readonly string[]): boolean {
-  const keys = Object.keys(value);
-  return keys.length === expected.length && keys.every(key => expected.includes(key));
+  // Object.keys silently ignores non-enumerable and symbol properties. A
+  // signed witness receipt must not carry unsigned side-channel metadata,
+  // including hidden approval claims, alongside its canonical statement.
+  const keys = Reflect.ownKeys(value);
+  return keys.length === expected.length && keys.every(key =>
+    typeof key === 'string' && expected.includes(key));
 }
 
 function isValidStatement(s: AuditAnchorStatement): boolean {
