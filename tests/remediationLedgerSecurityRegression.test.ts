@@ -77,4 +77,31 @@ describe('unverified remediation ledger security regressions', () => {
     expect(summarizeUnverifiedRemediationLedger(parsed).notVerified).toBe(12);
   });
 
+  it('rejects hidden approval claims on array containers', () => {
+    const ledger = makeLedger();
+    Object.defineProperty(ledger.items, 'stageEApproved', { value: true, enumerable: false });
+    expect(() => summarizeUnverifiedRemediationLedger(ledger)).toThrow('unsupported items array field');
+    const constraints = makeLedger();
+    Object.defineProperty(constraints.constraints, Symbol('approval'), { value: true });
+    expect(() => summarizeUnverifiedRemediationLedger(constraints)).toThrow('unsupported constraints array field');
+  });
+
+  it('rejects accessor-backed array indices without executing them', () => {
+    const ledger = makeLedger();
+    let calls = 0;
+    Object.defineProperty(ledger.items, '0', {
+      configurable: true,
+      get() { calls++; return makeLedger().items[0]; },
+    });
+    expect(() => summarizeUnverifiedRemediationLedger(ledger)).toThrow('accessor-backed items array field');
+    expect(calls).toBe(0);
+  });
+
+  it('rejects sparse arrays and still accepts ordinary JSON arrays', () => {
+    const ledger = makeLedger();
+    delete (ledger.items as Array<unknown>)[0];
+    expect(() => summarizeUnverifiedRemediationLedger(ledger)).toThrow('sparse items array');
+    expect(summarizeUnverifiedRemediationLedger(makeLedger()).notVerified).toBe(12);
+  });
+
 });
