@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-18",
+  "updatedAt": "2026-11-19",
   "items": [
     {
       "id": "PR-01",
@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 prior exact head 0902e34f554574651da9a4fddee0010ce9b5f15b: governance run 44351838907 failed Stage B dependency security audit; four other workflows passed. Subsequent evidence-only commit c80a5114c5107439a80411b48041693f1fed3574 requires fresh exact-head CI. No authenticated Stage E approval or independent end-to-end acceptance established."
+      "verification": "PR #201 remains open and unmerged. Source commit de0267d7 and regression commit 0a61cd07 reject non-enumerable, symbol-keyed and accessor-backed approval metadata; no local tests executed and exact-head workflow query for 0a61cd07 returned no runs. Prior governance run 44363300958 failed at mandatory Stage E human approval, not a technical audit failure. Independent end-to-end acceptance remains outstanding."
     }
   ],
   "constraints": [
