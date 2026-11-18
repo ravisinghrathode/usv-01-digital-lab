@@ -177,6 +177,19 @@ describe('independent cryptographic audit witness acceptance', () => {
         .toThrow('Cannot propose a checkpoint for an invalid audit journal');
     }
   });
+  it('fails closed on hostile persisted journal array proxy traps', () => {
+    const hostile = new Proxy(entries, {
+      get(target, property, receiver) {
+        if (property === 'length') throw new Error('corrupt journal length');
+        return Reflect.get(target, property, receiver);
+      }
+    });
+    expect(() => verifyIndependentAuditAnchor(journalId, hostile, signed, key)).not.toThrow();
+    expect(verifyIndependentAuditAnchor(journalId, hostile, signed, key))
+      .toEqual({ valid: false, reason: 'AUDIT_CHAIN_INVALID' });
+    expect(() => proposeAuditAnchorStatement(journalId, hostile, timestamp))
+      .toThrow('Cannot propose a checkpoint for an invalid audit journal');
+  });
   it('refuses to propose a checkpoint for a tampered chain', () => {
     expect(() => proposeAuditAnchorStatement(journalId, [{ ...entries[0], details: { allowed: true } }]))
       .toThrow(/invalid audit journal/);
