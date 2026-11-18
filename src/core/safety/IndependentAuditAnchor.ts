@@ -134,7 +134,11 @@ export function verifyIndependentAuditAnchor(
   // receipt shape inspection within the same fail-closed boundary as field reads.
   try {
     if (typeof receipt !== 'object' || Array.isArray(receipt) ||
-        !hasExactKeys(receipt, ['statement', 'signatureBase64'])) {
+        (!hasExactKeys(receipt, ['statement', 'signatureBase64']) ||
+         Reflect.ownKeys(receipt).some(field => {
+           const descriptor = Object.getOwnPropertyDescriptor(receipt, field);
+           return !descriptor || !('value' in descriptor);
+         }))) {
       return { valid: false, reason: 'INVALID_ATTESTATION' };
     }
   } catch {
