@@ -137,6 +137,16 @@ describe('closed-loop twelve-issue remediation reporting', () => {
       .toThrow('malformed provenance metadata');
   });
 
+  it('rejects enormous sparse constraints arrays without traversing advertised slots', () => {
+    const hostile = structuredClone(ledger);
+    const sparse: string[] = [];
+    sparse.length = 0xffffffff;
+    sparse[0] = 'unverified';
+    hostile.constraints = sparse;
+    expect(() => summarizeUnverifiedRemediationLedger(hostile))
+      .toThrow('malformed provenance metadata');
+  });
+
   it('accepts a real canonical ISO provenance date and rejects calendar rollover', () => {
     const valid = structuredClone(ledger);
     valid.updatedAt = '2026-11-17';
