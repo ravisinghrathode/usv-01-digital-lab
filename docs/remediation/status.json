@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 open, unmerged. Exact-head governance run 44377933964 failed Stage E authenticated human approval; four other workflows passed on prior head 3ade4c6469cbf4001f6910cc7c72568180b8de92. Commits 51e83c2 and 1ecd30f add rejection and regression tests for hidden/symbol/accessor-backed array metadata and sparse arrays; tests not executed locally and new exact-head CI not yet verified. Independent end-to-end acceptance outstanding."
+      "verification": "PR #201 remains open and unmerged. Exact-head 19158a632994d3ccdff5a1f329fec2ce20c46dcb governance run 44407908376 passed dependency audit, secret scanning, lint, deterministic tests and build, but failed Stage E authenticated human governance. Subsequent commits dbcbfbca, 95d7383d and 87e3a869 reject hidden non-enumerable canonical fields and array entries with regression tests; these new changes await exact-head CI. Independent end-to-end acceptance remains outstanding."
     }
   ],
   "constraints": [
