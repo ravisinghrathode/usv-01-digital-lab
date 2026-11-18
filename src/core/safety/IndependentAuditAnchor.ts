@@ -120,8 +120,14 @@ export function verifyIndependentAuditAnchor(
     return { valid: false, reason: 'UNTRUSTED_WITNESS_KEY' };
   }
   // Receipts cross a trust boundary: reject malformed runtime objects before dereferencing.
-  if (typeof receipt !== 'object' || Array.isArray(receipt) ||
-      !hasExactKeys(receipt, ['statement', 'signatureBase64'])) {
+  // Even Object.keys/Array.isArray can trigger hostile Proxy traps. Keep all
+  // receipt shape inspection within the same fail-closed boundary as field reads.
+  try {
+    if (typeof receipt !== 'object' || Array.isArray(receipt) ||
+        !hasExactKeys(receipt, ['statement', 'signatureBase64'])) {
+      return { valid: false, reason: 'INVALID_ATTESTATION' };
+    }
+  } catch {
     return { valid: false, reason: 'INVALID_ATTESTATION' };
   }
   // Untrusted in-process values may contain throwing getters or proxies. Do not
