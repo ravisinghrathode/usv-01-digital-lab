@@ -141,9 +141,17 @@ export function verifyIndependentAuditAnchor(
   let s: AuditAnchorStatement;
   let signatureBase64: string;
   try {
-    s = receipt.statement;
+    // Snapshot signed fields once; accessor-backed statements can mutate between
+    // journal comparison and signature verification, defeating the binding.
+    const rawStatement = receipt.statement;
     signatureBase64 = receipt.signatureBase64;
-    if (!s || typeof s !== 'object' || Array.isArray(s) || !isValidStatement(s) ||
+    if (!rawStatement || typeof rawStatement !== 'object' || Array.isArray(rawStatement) ||
+        Object.keys(rawStatement).some(field => {
+          const descriptor = Object.getOwnPropertyDescriptor(rawStatement, field);
+          return !descriptor || !('value' in descriptor);
+        })) return { valid: false, reason: 'INVALID_ATTESTATION' };
+    s = structuredClone(rawStatement);
+    if (!isValidStatement(s) ||
         typeof signatureBase64 !== 'string' ||
         !/^[A-Za-z0-9+/]{86}==$/.test(signatureBase64)) {
       return { valid: false, reason: 'INVALID_ATTESTATION' };
