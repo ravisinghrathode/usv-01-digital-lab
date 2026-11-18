@@ -75,6 +75,21 @@ describe('independent cryptographic audit witness acceptance', () => {
     expect(verifyIndependentAuditAnchor(journalId, entries, signed, attacker).valid).toBe(false);
     expect(verifyIndependentAuditAnchor(journalId, entries, signed, rsa).valid).toBe(false);
   });
+  it('distinguishes invalid external trust-root provisioning from signature tampering', () => {
+    for (const malformedKey of ['not a PEM key', '-----BEGIN PUBLIC KEY-----\\ninvalid\\n-----END PUBLIC KEY-----']) {
+      expect(verifyIndependentAuditAnchor(journalId, entries, signed, malformedKey))
+        .toEqual({ valid: false, reason: 'UNTRUSTED_WITNESS_KEY' });
+    }
+    const rsa = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 }).publicKey
+      .export({ type: 'spki', format: 'pem' }).toString();
+    expect(verifyIndependentAuditAnchor(journalId, entries, signed, rsa))
+      .toEqual({ valid: false, reason: 'UNTRUSTED_WITNESS_KEY' });
+    const tampered = { ...signed, signatureBase64: Buffer.alloc(64).toString('base64') };
+    expect(verifyIndependentAuditAnchor(journalId, entries, tampered, key))
+      .toEqual({ valid: false, reason: 'INVALID_WITNESS_SIGNATURE' });
+    expect(verifyIndependentAuditAnchor(journalId, entries, signed, key))
+      .toEqual({ valid: true, reason: 'VERIFIED' });
+  });
   it('rejects noncanonical and impossible UTC witness timestamps even when signed', () => {
     const invalid = [
       '2026-02-30T01:00:00.000Z',
