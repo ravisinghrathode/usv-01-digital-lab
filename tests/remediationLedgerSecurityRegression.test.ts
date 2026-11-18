@@ -45,4 +45,36 @@ describe('unverified remediation ledger security regressions', () => {
     ledger.items[0].verification = 'Pending external review';
     expect(() => summarizeUnverifiedRemediationLedger(ledger)).toThrow('noncanonical PR link');
   });
+  it('rejects non-enumerable forged root and item approval metadata', () => {
+    const root = makeLedger();
+    Object.defineProperty(root, 'stageEApproved', { value: true, enumerable: false });
+    expect(() => summarizeUnverifiedRemediationLedger(root)).toThrow('unsupported root field');
+
+    const nested = makeLedger();
+    Object.defineProperty(nested.items[0], 'humanApproved', { value: true, enumerable: false });
+    expect(() => summarizeUnverifiedRemediationLedger(nested)).toThrow('unsupported item field');
+  });
+
+  it('rejects symbol-keyed claims rather than silently discarding them', () => {
+    const ledger = makeLedger();
+    Object.defineProperty(ledger.items[0], Symbol('releaseApproval'), { value: true });
+    expect(() => summarizeUnverifiedRemediationLedger(ledger)).toThrow('unsupported item field');
+  });
+
+  it('rejects accessor-backed ledger fields without invoking the getter', () => {
+    const ledger = makeLedger();
+    let calls = 0;
+    Object.defineProperty(ledger.items[0], 'state', {
+      enumerable: true,
+      get() { calls += 1; return 'not-verified'; },
+    });
+    expect(() => summarizeUnverifiedRemediationLedger(ledger)).toThrow('accessor-backed item field');
+    expect(calls).toBe(0);
+  });
+
+  it('still accepts ordinary JSON data records with no approval claims', () => {
+    const parsed = JSON.parse(JSON.stringify(makeLedger())) as unknown;
+    expect(summarizeUnverifiedRemediationLedger(parsed).notVerified).toBe(12);
+  });
+
 });
