@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-17",
+  "updatedAt": "2026-11-20",
   "items": [
     {
       "id": "PR-01",
@@ -29,9 +29,9 @@
     },
     {
       "id": "PR-05",
-      "state": "not-verified",
-      "pullRequest": "",
-      "verification": null
+      "state": "partial-implementation-awaiting-review",
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/195",
+      "verification": "Queue receipt state consistency hardening and four negative regression cases committed (source 8beb61215a9dd71fdd4d9f3d9a6a6832c58fbaa4; tests f8d9248db9316d1734a63e4c920024b1fd4f5071). Prior exact head 63fb1fe3151f24c7ab9d8b2dacb51f43798b354b had zero-API gate success and governance failure; new head CI pending. Stage E authenticated human approval, crash/restart drills, cross-host leases and independent acceptance outstanding."
     },
     {
       "id": "PR-06",
