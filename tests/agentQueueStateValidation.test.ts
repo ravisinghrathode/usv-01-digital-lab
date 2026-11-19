@@ -94,6 +94,19 @@ describe('fail-closed durable 26-agent queue recovery', () => {
       ...task(), state: 'RUNNING', attempts: 1,
       receipt: receipt()
     })],
+    ['orphaned lease ID on pending task', store({
+      ...task(), leaseId: 'orphan', leaseExpiresAt: NOW
+    })],
+    ['running task without an attempt', store({
+      ...task(), state: 'RUNNING', leaseId: 'lease', leaseExpiresAt: NOW
+    })],
+    ['running task with only a lease ID', store({
+      ...task(), state: 'RUNNING', attempts: 1, leaseId: 'lease'
+    })],
+    ['completed task retaining lease metadata', store({
+      ...task(), state: 'COMPLETED', attempts: 1, receipt: receipt(),
+      leaseId: 'stale', leaseExpiresAt: NOW
+    })],
     ['corrupt retry timestamp', store({ ...task(), nextAttemptAt: 'never' })],
     ['unknown history event owner', {
       ...store(), events: [{ at: NOW, taskId: 'MISSING', state: 'COMPLETED', note: 'FORGED' }]
