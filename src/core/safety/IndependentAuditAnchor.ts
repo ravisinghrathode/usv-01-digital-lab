@@ -88,7 +88,8 @@ export function proposeAuditAnchorStatement(
   } catch {
     validChain = false;
   }
-  if (!validChain) throw new Error('Cannot propose a checkpoint for an invalid audit journal');
+  // Every successful validation path returns above; never fall through with undefined.
+  throw new Error('Cannot propose a checkpoint for an invalid audit journal');
 }
 
 function hasExactKeys(value: object, expected: readonly string[]): boolean {
