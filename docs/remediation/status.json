@@ -31,7 +31,7 @@
       "id": "PR-05",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/195",
-      "verification": "Queue receipt consistency and malformed lease metadata validation committed; source 07116b98a8f471cd2f6e30518011e04a73d4b37c, four negative regression cases 6e4b814471bc77d6ad73729c93d4b38b9367db40. Previous exact head f5ba0f979d15654faff61e3039e8c577f58e8be7 passed Stage B checks and failed Stage E authenticated governance enforcement (workflow 44611202181). New head CI not yet verified. Crash/restart drills, cross-host lease recovery, separate human approval and independent acceptance outstanding."
+      "verification": "Exact-head bb35a2a901ba82fb38fb4bbe9bbc3d1ad4e4d6e2 Mission Control Zero-API workflow 44620639795 failed 1/43 tests: expired-lease fixture marked RUNNING with zero attempts, rejected by newly strengthened fail-closed validator. Corrected fixture to record attempts=1 in commit 647365733ba30790a007b1db3d535992f77cb9eb; regression intent remains expired lease -> BLOCKED_REVIEW without model calls. This correction is not yet exact-head CI verified. Separate governance workflow 44620639870 failed; Stage E versus technical failure must be inspected. Cross-host lease recovery, crash/restart drills, independent human approval and acceptance remain outstanding."
     },
     {
       "id": "PR-06",
