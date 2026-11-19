@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-17",
+  "updatedAt": "2026-11-20",
   "items": [
     {
       "id": "PR-01",
@@ -23,9 +23,9 @@
     },
     {
       "id": "PR-04",
-      "state": "not-verified",
-      "pullRequest": "",
-      "verification": null
+      "state": "partial-implementation-awaiting-review",
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/194",
+      "verification": "Copy-on-write engineering CRUD plus activity log; commit 15fb858ef7007669cf841da87ab7d3f0343a6289 rejects Promise/thenable mutation callbacks before persistence with two regression tests. New exact-head CI pending; separate authenticated Stage C/D/E approvals pending. No multi-process serializability, migration, power-loss recovery, or independent acceptance claimed."
     },
     {
       "id": "PR-05",
