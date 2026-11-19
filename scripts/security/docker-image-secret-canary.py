@@ -52,9 +52,10 @@ def inspect_image_archive(archive: Path, token: bytes) -> int:
     scanned_layers = 0
     with tarfile.open(archive, "r:*") as outer:
         members = outer.getmembers()
-        manifest_member = next((item for item in members if item.name == "manifest.json"), None)
-        if manifest_member is None:
-            raise RuntimeError("Docker save archive missing manifest")
+        manifest_matches = [item for item in members if item.name.removeprefix("./") == "manifest.json"]
+        if len(manifest_matches) != 1 or not manifest_matches[0].isfile():
+            raise RuntimeError("Docker save archive requires exactly one regular manifest")
+        manifest_member = manifest_matches[0]
         manifest_file = outer.extractfile(manifest_member)
         if manifest_file is None:
             raise RuntimeError("Docker save archive manifest unreadable")
@@ -66,8 +67,13 @@ def inspect_image_archive(archive: Path, token: bytes) -> int:
         for record in manifest:
             if not isinstance(record, dict) or not isinstance(record.get("Layers"), list):
                 raise RuntimeError("Malformed Docker save manifest")
-            layers.update(str(name).removeprefix("./") for name in record["Layers"])
-            image_tags.update(record.get("RepoTags") or [])
+            if any(not isinstance(name, str) or not name or name.startswith("/") or ".." in Path(name).parts for name in record["Layers"]):
+                raise RuntimeError("Docker save manifest contains invalid layer paths")
+            tags = record.get("RepoTags")
+            if not isinstance(tags, list) or any(not isinstance(tag, str) for tag in tags):
+                raise RuntimeError("Docker save manifest contains invalid image tags")
+            layers.update(name.removeprefix("./") for name in record["Layers"])
+            image_tags.update(tags)
         if not set(IMAGES).issubset(image_tags):
             raise RuntimeError("Docker save archive omitted a required build stage image")
         if not layers:
