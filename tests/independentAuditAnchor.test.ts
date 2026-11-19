@@ -223,6 +223,25 @@ describe('independent cryptographic audit witness acceptance', () => {
     expect(verifyIndependentAuditAnchor(journalId, entries, signed, key))
       .toEqual({ valid: true, reason: 'VERIFIED' });
   });
+  it('rejects non-enumerable required witness fields even when the signature is valid', () => {
+    const hiddenSignature = { ...signed };
+    Object.defineProperty(hiddenSignature, 'signatureBase64', {
+      value: signed.signatureBase64, enumerable: false
+    });
+    const hiddenJournalId = { ...s };
+    Object.defineProperty(hiddenJournalId, 'journalId', {
+      value: s.journalId, enumerable: false
+    });
+    for (const receipt of [
+      hiddenSignature,
+      { ...signed, statement: hiddenJournalId }
+    ]) {
+      expect(verifyIndependentAuditAnchor(journalId, entries, receipt, key))
+        .toEqual({ valid: false, reason: 'INVALID_ATTESTATION' });
+    }
+    expect(verifyIndependentAuditAnchor(journalId, entries, signed, key))
+      .toEqual({ valid: true, reason: 'VERIFIED' });
+  });
   it('rejects hidden unsigned metadata on receipts and witness statements', () => {
     const hiddenReceipt = { ...signed };
     Object.defineProperty(hiddenReceipt, 'stageEApproval', {
