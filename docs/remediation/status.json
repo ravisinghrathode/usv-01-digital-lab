@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 remains open/unmerged. Exact-head ea70c755b20a0528b92ff335a4120f772403c22f: governance run 44438175684 failed solely at Stage E authenticated human approval; Docker image canary, Mission Control zero-API, isolated browser QA and Agent Academy workflows passed. Subsequent commits c3c078f6dece0430b18f9e0d9cf24efd15daa6dc and 5a6f0fc3cb022ae75c213dcfec64542b5270c062 reject deprecated U+206A-U+206F Unicode directional controls in status claims and add regression tests. These new commits have not yet been independently tested or exact-head CI-verified. Human review, merge and end-to-end acceptance remain outstanding; no engineering certification."
+      "verification": "PR #201 remains unmerged. Exact-head ca348437e7a2f5d5876f64d56c96cdf090342470: GitHub Actions governance run 44450942667 passed Stage B dependency audit, secret scan, typecheck, deterministic tests, build, and Stage C/D verification steps; failed Stage E authenticated governance enforcement. Four other workflows passed. Subsequent source commit 40da3fa27c2ceb8b5f59b91709078380b6487aa0 requires all canonical ledger fields; regression-test commit 406f60c7ffe320d2c316a243a4a83c147cc45240 covers missing root/item fields. No exact-head workflow runs were reported for 406f60c7; new changes remain unverified. Stage E independent human review, merge and end-to-end acceptance remain outstanding; no engineering certification."
     }
   ],
   "constraints": [
