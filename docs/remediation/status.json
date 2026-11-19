@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-19",
+  "updatedAt": "2026-11-20",
   "items": [
     {
       "id": "PR-01",
@@ -19,7 +19,7 @@
       "id": "PR-03",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/193",
-      "verification": "PR #193: Docker image canary passed at exact head ca73b59060 (workflow 44570974439); governance run 44570974570 failed, with human approval still required. Subsequent commit 72a8d7bb corrects a metadata inspection gap: outer tar symlinks/nonregular entries and PAX headers are checked before regular-file filtering. Regression commit f89e59c0 asserts metadata checks precede that filter. These newer commits have not been verified by exact-head CI. Independently provisioned cold start, backup/restore and production credential verification remain outstanding."
+      "verification": "PR #193: exact head dbff0818 passed Docker image canary workflow 44578074427; governance workflow 44578074423 failed (reason requires job-level confirmation). Subsequent commits 62fd99c7, 06927de6, a5e0fb90 reject duplicate/nonregular manifests, invalid layer paths and malformed image tags, add six executable Python regression cases and run them in dedicated Docker CI. New exact-head CI is not yet verified. No production credential, independent cold-start, backup/restore or human approval acceptance is claimed."
     },
     {
       "id": "PR-04",
