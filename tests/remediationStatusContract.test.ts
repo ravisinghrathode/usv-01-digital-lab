@@ -214,6 +214,20 @@ describe('closed-loop twelve-issue remediation reporting', () => {
     }
   });
 
+  it('rejects soft hyphen, combining grapheme joiner and Mongolian vowel separator in status evidence', () => {
+    for (const codePoint of [0x00ad, 0x034f, 0x180e]) {
+      const invisible = String.fromCodePoint(codePoint);
+      const note = structuredClone(ledger);
+      note.items[0].verification = 'pending' + invisible + 'approved';
+      expect(() => summarizeUnverifiedRemediationLedger(note))
+        .toThrow('invalid verification note');
+      const constraint = structuredClone(ledger);
+      constraint.constraints[0] = 'pending' + invisible + 'approved';
+      expect(() => summarizeUnverifiedRemediationLedger(constraint))
+        .toThrow('malformed provenance metadata');
+    }
+  });
+
   it('rejects Unicode line and paragraph separators that can forge displayed evidence lines', () => {
     for (const codePoint of [0x2028, 0x2029]) {
       const separator = String.fromCodePoint(codePoint);
