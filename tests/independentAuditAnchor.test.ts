@@ -196,6 +196,25 @@ describe('independent cryptographic audit witness acceptance', () => {
       statement: { ...signed.statement, witnessApproved: true }
     } as never, key)).toEqual({ valid: false, reason: 'INVALID_ATTESTATION' });
   });
+  it('rejects inherited approval claims and non-JSON receipt prototypes', () => {
+    const inheritedReceipt = Object.assign(
+      Object.create({ stageEApproval: 'APPROVED' }), signed
+    );
+    const inheritedStatement = Object.assign(
+      Object.create({ stageDApproval: 'APPROVED' }), s
+    );
+    for (const receipt of [
+      inheritedReceipt,
+      { ...signed, statement: inheritedStatement },
+      Object.assign(Object.create(null), signed),
+      { ...signed, statement: Object.assign(Object.create(null), s) }
+    ]) {
+      expect(verifyIndependentAuditAnchor(journalId, entries, receipt, key))
+        .toEqual({ valid: false, reason: 'INVALID_ATTESTATION' });
+    }
+    expect(verifyIndependentAuditAnchor(journalId, entries, signed, key))
+      .toEqual({ valid: true, reason: 'VERIFIED' });
+  });
   it('rejects hidden unsigned metadata on receipts and witness statements', () => {
     const hiddenReceipt = { ...signed };
     Object.defineProperty(hiddenReceipt, 'stageEApproval', {
