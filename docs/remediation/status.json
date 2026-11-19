@@ -31,7 +31,7 @@
       "id": "PR-05",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/195",
-      "verification": "Queue receipt state consistency hardening and four negative regression cases committed (source 8beb61215a9dd71fdd4d9f3d9a6a6832c58fbaa4; tests f8d9248db9316d1734a63e4c920024b1fd4f5071). Prior exact head 63fb1fe3151f24c7ab9d8b2dacb51f43798b354b had zero-API gate success and governance failure; new head CI pending. Stage E authenticated human approval, crash/restart drills, cross-host leases and independent acceptance outstanding."
+      "verification": "Queue receipt consistency and malformed lease metadata validation committed; source 07116b98a8f471cd2f6e30518011e04a73d4b37c, four negative regression cases 6e4b814471bc77d6ad73729c93d4b38b9367db40. Previous exact head f5ba0f979d15654faff61e3039e8c577f58e8be7 passed Stage B checks and failed Stage E authenticated governance enforcement (workflow 44611202181). New head CI not yet verified. Crash/restart drills, cross-host lease recovery, separate human approval and independent acceptance outstanding."
     },
     {
       "id": "PR-06",
