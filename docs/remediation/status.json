@@ -84,16 +84,22 @@
   "iterationEvidence": {
     "workstream": "PR-02",
     "pullRequest": 191,
-    "sourceCommit": "e9f7e16d1c71fa45f627c60da6ed8e7451f15d83",
-    "regressionCommit": "f3e4cdadeefca5b330a2aff1d71704ae937b5c80",
-    "change": "Reject non-plain or inherited-prototype witness receipt and signed-statement objects, including inherited governance approval claims and null-prototype objects; add negative tests and retain positive Ed25519 receipt control",
-    "verification": "Source and regression tests committed; exact-head CI not yet verified",
-    "technicalBlocker": "Previously verified Stage B dependency audit failed for transitive picomatch GHSA-fc5q-39xc-vjpf. Bun lockfile remediation and security audit still required; do not suppress audit.",
-    "governanceBlocker": "Separate authenticated human Stage E review required",
+    "sourceCommit": "f55ec351a3d29dc5d4e967ca43fa0785a2fba098",
+    "change": "Fix TS2366 in checkpoint proposal: every non-returning path now throws on invalid audit journal rather than implicitly returning undefined; independent attestation and approval requirements unchanged.",
+    "verifiedFailure": {
+      "head": "5db8807618449db26909a6c53bdb7e688bec3732",
+      "runId": 44512671137,
+      "jobId": 135520612162,
+      "stage": "Stage B TypeScript Static Typecheck & Lint",
+      "diagnostic": "src/core/safety/IndependentAuditAnchor.ts(65,4): TS2366 Function lacks ending return statement"
+    },
+    "verification": "Source committed; exact-head CI and regression tests pending; do not claim success.",
+    "technicalBlocker": "Previous TS2366 corrected but unverified at new head. Prior picomatch GHSA-fc5q-39xc-vjpf advisory requires re-audit; do not suppress.",
+    "governanceBlocker": "Authenticated independent human Stage C/D/E reviews and external audit witness deployment remain outstanding",
     "nextActions": [
-      "Regenerate Bun lockfile with patched picomatch using trusted dependency resolution, verify bun install --frozen-lockfile and audit",
-      "Verify latest exact-head technical CI and new prototype regression tests",
-      "Implement independent external witness and durable outbox; obtain authenticated reviews and independent end-to-end acceptance"
+      "Check exact-head CI for TS2366 and dependency security audit",
+      "Resolve any remaining transitive picomatch vulnerability through trusted lockfile regeneration",
+      "Complete independent witness deployment, transactional outbox and end-to-end acceptance"
     ]
   }
 }
