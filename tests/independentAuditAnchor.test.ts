@@ -123,9 +123,17 @@ describe('independent cryptographic audit witness acceptance', () => {
       signed.signatureBase64.slice(0, -3) + 'B=='
     ];
     for (const signatureBase64 of malformed) {
-      expect(verifyIndependentAuditAnchor(journalId, entries, { ...signed, signatureBase64 }, key))
-        .toEqual({ valid: false, reason: 'INVALID_ATTESTATION' });
+      // Some mutated strings remain syntactically canonical 64-byte signatures.
+      // Those must fail cryptographic verification, not necessarily parsing.
+      const result = verifyIndependentAuditAnchor(journalId, entries, { ...signed, signatureBase64 }, key);
+      expect(result.valid).toBe(false);
+      expect(['INVALID_ATTESTATION', 'INVALID_WITNESS_SIGNATURE']).toContain(result.reason);
     }
+    // Canonically encoded but cryptographically invalid bytes are a signature
+    // failure, distinct from malformed base64 transport encodings.
+    expect(verifyIndependentAuditAnchor(journalId, entries, {
+      ...signed, signatureBase64: Buffer.alloc(64).toString('base64')
+    }, key)).toEqual({ valid: false, reason: 'INVALID_WITNESS_SIGNATURE' });
   });
   it('rejects non-throwing accessor-backed outer receipt fields', () => {
     // Even a getter returning valid signed bytes is mutable and not a detached
