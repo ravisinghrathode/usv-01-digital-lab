@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 open/unmerged. Exact-head d0917fb5316dc9ed7e0892566ae0162ea1040be9 governance run 44434706376 passed technical stages and failed only Stage E authenticated human governance; four other workflows succeeded. Subsequent commits 027ef6375f560e6b71f41fda98791dfee7d58da6 and feacbfa3ebc24d7c1cfac563718169297e57c06c reject additional invisible Unicode approval-text spoofing and add regression tests; latest changes require exact-head CI and independent review. No engineering acceptance established."
+      "verification": "PR #201 remains open/unmerged. Exact-head ea70c755b20a0528b92ff335a4120f772403c22f: governance run 44438175684 failed solely at Stage E authenticated human approval; Docker image canary, Mission Control zero-API, isolated browser QA and Agent Academy workflows passed. Subsequent commits c3c078f6dece0430b18f9e0d9cf24efd15daa6dc and 5a6f0fc3cb022ae75c213dcfec64542b5270c062 reject deprecated U+206A-U+206F Unicode directional controls in status claims and add regression tests. These new commits have not yet been independently tested or exact-head CI-verified. Human review, merge and end-to-end acceptance remain outstanding; no engineering certification."
     }
   ],
   "constraints": [
