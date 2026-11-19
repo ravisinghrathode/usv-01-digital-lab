@@ -126,6 +126,13 @@ function validateStore(state: QueueStateFile): void {
         (typeof row.lastError !== 'string' || row.lastError.length > 1000))) {
       invalidState('malformed lease or retry metadata');
     }
+    // A lease is meaningful only while an attempt is running. Reject orphaned
+    // lease metadata rather than treating a corrupted checkpoint as claimable.
+    if ((row.leaseId === undefined) !== (row.leaseExpiresAt === undefined) ||
+      (row.state === 'RUNNING' && row.attempts === 0) ||
+      (row.state !== 'RUNNING' && row.leaseId !== undefined)) {
+      invalidState('lease metadata inconsistent with running attempt');
+    }
     // A receipt is an execution artifact, never a pending-task authorization.
     // In particular, an unattempted task cannot legitimately have a receipt.
     if (row.receipt !== undefined &&
