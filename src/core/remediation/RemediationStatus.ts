@@ -127,7 +127,9 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
         ' cannot be declared complete using this unsigned status file');
     }
     const link = unknownItem.pullRequest;
-    if (typeof link !== 'string' ||
+    // Bound untrusted URLs before regex validation; GitHub PR identifiers are
+    // decimal integers, not arbitrarily long strings supplied by a ledger.
+    if (typeof link !== 'string' || link.length > 150 ||
         (link.length > 0 &&
           !/^https:\/\/github\.com\/ravisinghrathode\/usv-01-digital-lab\/pull\/[1-9][0-9]*$/.test(link))) {
       throw new Error('REMEDIATION_LEDGER_INVALID: noncanonical PR link');
