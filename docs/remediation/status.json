@@ -19,7 +19,7 @@
       "id": "PR-03",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/193",
-      "verification": "PR #193: Docker synthetic credential image canary previously passed at head 6f6a64db (run 43994593668). New hardening commits b0b55432 and 4b90e48d inspect tar member names, link targets and PAX metadata, with source regression assertions; latest exact-head CI not yet reported. Authenticated Stage E approval, independently provisioned cold start, backup/restore and production credential verification remain outstanding."
+      "verification": "PR #193: Docker image canary passed at exact head ca73b59060 (workflow 44570974439); governance run 44570974570 failed, with human approval still required. Subsequent commit 72a8d7bb corrects a metadata inspection gap: outer tar symlinks/nonregular entries and PAX headers are checked before regular-file filtering. Regression commit f89e59c0 asserts metadata checks precede that filter. These newer commits have not been verified by exact-head CI. Independently provisioned cold start, backup/restore and production credential verification remain outstanding."
     },
     {
       "id": "PR-04",
