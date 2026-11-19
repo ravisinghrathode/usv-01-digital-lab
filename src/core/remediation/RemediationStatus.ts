@@ -140,7 +140,6 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
       throw new Error('REMEDIATION_LEDGER_INVALID: partial item lacks PR or blocker');
     }
     if (unknownItem.verification !== null &&
-        unknownItem.verification !== undefined &&
         (typeof unknownItem.verification !== 'string' ||
           unknownItem.verification.length > 4000 ||
           UNSAFE_STATUS_TEXT.test(unknownItem.verification))) {
