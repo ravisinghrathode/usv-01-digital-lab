@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 remains open and unmerged. Exact head 45eaaf7ffadd347500385856265dd981133c0724: governance run 44473999620 failed Stage B deterministic tests (1/1226; explicit-null fixture still violated partial-progress blocker guard); four companion workflows passed. Corrected the null fixture in commit b10f5d5ebf1f50fcd6375b5cf218176cf5b4dea9; CI for subsequent exact head not yet verified. Stage C/D/E authenticated human approval, merge and independent end-to-end acceptance remain outstanding; no engineering certification claimed."
+      "verification": "PR #201 remains open and unmerged. Exact head ac243ded83522fc7406288c5e657bf223b1d5a94: governance run 44491059323 passed Stage B deterministic quality, audit, lint and build; Stage C deterministic advisory only; Stage D/E blocked on authenticated exact-head human software review. Four companion workflows passed. Additional negative PR-URL regression tests committed at 5d459d6d83e5440612b079c47c4ae140bf048aee; exact-head CI for this newer commit not yet verified. Independent end-to-end acceptance and merge remain outstanding; no engineering certification claimed."
     }
   ],
   "constraints": [
