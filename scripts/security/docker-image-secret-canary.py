@@ -73,13 +73,15 @@ def inspect_image_archive(archive: Path, token: bytes) -> int:
         if not layers:
             raise RuntimeError("Docker save archive contains no referenced layers")
         for member in members:
+            if token in member.name.encode("utf-8", "surrogateescape") or token in member.linkname.encode("utf-8", "surrogateescape"):
+                raise RuntimeError("Synthetic secret found in Docker archive member metadata")
+            if any(token in str(value).encode("utf-8", "surrogateescape") for value in member.pax_headers.values()):
+                raise RuntimeError("Synthetic secret found in Docker archive extended metadata")
             if not member.isfile():
                 continue
             data = outer.extractfile(member)
             if data is None:
                 raise RuntimeError("Unable to read image member")
-            if token in member.name.encode("utf-8", "surrogateescape") or token in member.linkname.encode("utf-8", "surrogateescape"):
-                raise RuntimeError("Synthetic secret found in Docker archive member metadata")
             if member.name.removeprefix("./") in layers:
                 scanned_layers += 1
                 with tarfile.open(fileobj=data, mode="r|*") as layer:
