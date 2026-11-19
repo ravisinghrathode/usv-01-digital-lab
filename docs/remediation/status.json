@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-18",
+  "updatedAt": "2026-11-19",
   "items": [
     {
       "id": "PR-01",
@@ -84,16 +84,16 @@
   "iterationEvidence": {
     "workstream": "PR-02",
     "pullRequest": 191,
-    "sourceCommit": "d4153cc3762882fbe0a04b1e685259a360544fa1",
-    "regressionCommit": "b80dedc830bf045e817c2c2a07fe6bada4c11aac",
-    "change": "Separate malformed or wrong-algorithm independently provisioned witness keys from invalid Ed25519 signatures; add malformed PEM, RSA, tampered signature and valid receipt regression controls",
-    "verification": "Source and tests committed; exact-head CI not yet verified",
-    "technicalBlocker": "Stage B dependency security audit previously failed for picomatch GHSA-fc5q-39xc-vjpf; patched Bun-generated lockfile and exact-head technical CI required",
-    "governanceBlocker": "Authenticated independent Stage E approval remains mandatory",
+    "sourceCommit": "e9f7e16d1c71fa45f627c60da6ed8e7451f15d83",
+    "regressionCommit": "f3e4cdadeefca5b330a2aff1d71704ae937b5c80",
+    "change": "Reject non-plain or inherited-prototype witness receipt and signed-statement objects, including inherited governance approval claims and null-prototype objects; add negative tests and retain positive Ed25519 receipt control",
+    "verification": "Source and regression tests committed; exact-head CI not yet verified",
+    "technicalBlocker": "Previously verified Stage B dependency audit failed for transitive picomatch GHSA-fc5q-39xc-vjpf. Bun lockfile remediation and security audit still required; do not suppress audit.",
+    "governanceBlocker": "Separate authenticated human Stage E review required",
     "nextActions": [
-      "Regenerate patched Bun lockfile and verify Stage B audit without bypass",
-      "Run exact-head lint, regression, complete test suite and build",
-      "Finish independent witness deployment, transactional outbox and end-to-end acceptance"
+      "Regenerate Bun lockfile with patched picomatch using trusted dependency resolution, verify bun install --frozen-lockfile and audit",
+      "Verify latest exact-head technical CI and new prototype regression tests",
+      "Implement independent external witness and durable outbox; obtain authenticated reviews and independent end-to-end acceptance"
     ]
   }
 }
