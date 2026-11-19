@@ -92,6 +92,9 @@ export function proposeAuditAnchorStatement(
 }
 
 function hasExactKeys(value: object, expected: readonly string[]): boolean {
+  // Witness receipts are JSON records, not class instances or inherited claims.
+  // Reject custom prototypes before examining their signed own fields.
+  if (Object.getPrototypeOf(value) !== Object.prototype) return false;
   // Object.keys silently ignores non-enumerable and symbol properties. A
   // signed witness receipt must not carry unsigned side-channel metadata,
   // including hidden approval claims, alongside its canonical statement.
