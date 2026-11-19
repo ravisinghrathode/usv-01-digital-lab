@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 open and unmerged at exact head 97d4e9ee1b9940d36ce9504f7490f3261588a0a6. Exact-head GitHub Actions: Docker Synthetic Secret Image Canary 44458825115 SUCCESS; Mission Control Zero-API 44458825047 SUCCESS; Agent Academy 44458825063 SUCCESS; Engineering Sessions Browser QA 44458825093 SUCCESS; Safety & Governance Branch Protection Gate 44458825235 FAILURE (prior run evidenced Stage E authenticated human approval; this run's failed job reason not independently inspected). This confirms workflow outcomes, not independent acceptance. Stage E review, merge, and external end-to-end acceptance remain outstanding; no vessel certification."
+      "verification": "PR #201 open and unmerged. Exact head 39f8e9076cd5fd2d416151efd0d4df0b36f8c8ac: governance run 44470892261 failed Stage B deterministic tests (1 failure/1226; undefined verification note regression expected wrong guard); Docker Canary 44470892391, Mission Control 44470892223, Agent Academy 44470892203 and Browser QA 44470892324 succeeded. Test fixture corrected in commit 833ba81f349f35176ea94807774fa5eaceec9ddc; new exact-head CI pending verification. No independent Stage C/D/E approval, merge, E2E acceptance or vessel certification claimed."
     }
   ],
   "constraints": [
