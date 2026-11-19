@@ -27,6 +27,14 @@ describe('Docker build and runtime secret-leak regression workflow', () => {
     expect(script).toContain('Synthetic secret found in Docker layer extended metadata');
     expect(script).toContain('entry.pax_headers.values()');
     expect(script).toContain('entry.linkname.encode');
+    expect(script).toContain('Synthetic secret found in Docker archive extended metadata');
+    expect(script).toContain('member.pax_headers.values()');
+    const outerMetadata = script.indexOf('for member in members:');
+    const regularFileFilter = script.indexOf('if not member.isfile():', outerMetadata);
+    expect(outerMetadata).toBeGreaterThan(-1);
+    expect(regularFileFilter).toBeGreaterThan(outerMetadata);
+    expect(script.indexOf('member.linkname.encode', outerMetadata)).toBeLessThan(regularFileFilter);
+    expect(script.indexOf('member.pax_headers.values()', outerMetadata)).toBeLessThan(regularFileFilter);
   });
   it('runs a dedicated GitHub Actions workflow with synthetic fixtures', () => {
     expect(workflow).toContain('pull_request:');
