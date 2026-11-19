@@ -114,6 +114,16 @@ describe('closed-loop twelve-issue remediation reporting', () => {
     }
   });
 
+  it('rejects undefined verification claims that cannot exist in canonical JSON', () => {
+    const forged = structuredClone(ledger);
+    forged.items[3].verification = undefined;
+    expect(() => summarizeUnverifiedRemediationLedger(forged))
+      .toThrow('invalid verification note');
+    const explicitNull = structuredClone(ledger);
+    explicitNull.items[3].verification = null;
+    expect(summarizeUnverifiedRemediationLedger(explicitNull).completeAndIndependentlyVerified).toBe(0);
+  });
+
   it('rejects malformed provenance metadata instead of trusting a partial status', () => {
     for (const [field, invalid] of [
       ['baseline', 'unversioned'],
