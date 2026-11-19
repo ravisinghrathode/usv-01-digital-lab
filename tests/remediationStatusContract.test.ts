@@ -116,6 +116,8 @@ describe('closed-loop twelve-issue remediation reporting', () => {
 
   it('rejects undefined verification claims that cannot exist in canonical JSON', () => {
     const forged = structuredClone(ledger);
+    // Isolate the canonical JSON type check from the earlier partial-progress blocker check.
+    forged.items[3].state = 'not-verified';
     forged.items[3].verification = undefined;
     expect(() => summarizeUnverifiedRemediationLedger(forged))
       .toThrow('invalid verification note');
