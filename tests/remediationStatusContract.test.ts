@@ -58,6 +58,21 @@ describe('closed-loop twelve-issue remediation reporting', () => {
     }
   });
 
+  it('rejects missing canonical fields rather than defaulting absent claims', () => {
+    for (const field of ['schemaVersion', 'baseline', 'updatedAt', 'items', 'constraints']) {
+      const incomplete = structuredClone(ledger);
+      delete incomplete[field];
+      expect(() => summarizeUnverifiedRemediationLedger(incomplete))
+        .toThrow('missing root field');
+    }
+    for (const field of ['id', 'state', 'pullRequest', 'verification']) {
+      const incomplete = structuredClone(ledger);
+      delete incomplete.items[0][field];
+      expect(() => summarizeUnverifiedRemediationLedger(incomplete))
+        .toThrow('missing item field');
+    }
+  });
+
   it('rejects shadow approval and acceptance assertions in undeclared fields', () => {
     for (const [field, value] of [
       ['accepted', true], ['engineeringCertified', true],
