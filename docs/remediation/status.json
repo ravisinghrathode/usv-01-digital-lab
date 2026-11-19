@@ -13,7 +13,7 @@
       "id": "PR-02",
       "state": "partial-merged-and-follow-up-open",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/182",
-      "verification": "PR #182 merged; follow-up PR #191 open. Exact-head 6598203 had Stage B one failing assertion (tests/independentAuditAnchor.test.ts:127, workflow 44528927243): syntactically valid altered Ed25519 signatures returned INVALID_WITNESS_SIGNATURE rather than INVALID_ATTESTATION. Test expectation corrected in commit 45af40e; exact-head CI pending. Independent witness, durable outbox, lockfile security audit, authenticated reviews and acceptance remain outstanding."
+      "verification": "PR #182 merged; follow-up PR #191 remains open at exact head d74f7f7b69770f1d3528846e77340676f9a0926d. GitHub Actions governance run 44541732039: Deterministic Quality & Governance Gate job 135621554203 failed at Stage E — Governance Gate Enforcement; no Stage B failing step reported in this run. This does NOT establish authenticated Stage C/D/E approvals or acceptance. Previous malformed-signature test correction is included in this head. Previously reported picomatch advisory GHSA-fc5q-39xc-vjpf requires a fresh exact-head dependency audit; do not infer it is resolved. Independent witness deployment, externally durable transaction outbox, anti-rollback/recovery drills, authenticated independent reviews and end-to-end acceptance remain outstanding."
     },
     {
       "id": "PR-03",
