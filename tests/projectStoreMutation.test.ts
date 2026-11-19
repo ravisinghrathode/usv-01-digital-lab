@@ -67,6 +67,28 @@ describe('copy-on-write engineering data mutations', () => {
     expect(fs.readdirSync(path.dirname(filename))).toEqual(['project_store.json']);
   });
 
+  it('rejects asynchronous mutation callbacks before writing or publishing state', () => {
+    const { filename, original } = setup();
+    const beforeDisk = fs.readFileSync(filename, 'utf8');
+    expect(() => commitProjectStoreMutation(original, filename, next => {
+      next.requirements.push({ id: 'UNCOMMITTED' });
+      return Promise.resolve('late result');
+    })).toThrow('Asynchronous project store mutations are not supported');
+    expect(fs.readFileSync(filename, 'utf8')).toBe(beforeDisk);
+    expect(original.requirements).toHaveLength(0);
+  });
+
+  it('rejects custom thenables that could mutate the draft after persistence', () => {
+    const { filename, original } = setup();
+    const beforeDisk = fs.readFileSync(filename, 'utf8');
+    expect(() => commitProjectStoreMutation(original, filename, next => {
+      next.activity_log.push({ action: 'UNCOMMITTED' });
+      return { then() { next.requirements.push({ id: 'LATE' }); } };
+    })).toThrow('Asynchronous project store mutations are not supported');
+    expect(fs.readFileSync(filename, 'utf8')).toBe(beforeDisk);
+    expect(original.activity_log).toHaveLength(0);
+  });
+
   it('isolates changes to nested fields in the speculative copy', () => {
     const { filename, original } = setup();
     original.requirements.push({ id: 'REQ-X', nested: { count: 1 } });
