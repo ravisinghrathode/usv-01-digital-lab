@@ -122,6 +122,8 @@ describe('closed-loop twelve-issue remediation reporting', () => {
     expect(() => summarizeUnverifiedRemediationLedger(forged))
       .toThrow('invalid verification note');
     const explicitNull = structuredClone(ledger);
+    // A null note is valid only for a not-verified item; partial progress must retain a blocker.
+    explicitNull.items[3].state = 'not-verified';
     explicitNull.items[3].verification = null;
     expect(summarizeUnverifiedRemediationLedger(explicitNull).completeAndIndependentlyVerified).toBe(0);
   });
