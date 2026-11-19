@@ -84,7 +84,10 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
   // Bound array traversal before enumerating keys or checking for holes. A
   // hostile sparse array can advertise billions of slots without allocating
   // them; validation must reject it in constant time.
-  if (!Array.isArray(value.constraints) || value.constraints.length === 0 || value.constraints.length > 32) {
+  if (!Array.isArray(value.constraints)) {
+    throw new Error('REMEDIATION_LEDGER_INVALID: malformed constraints array');
+  }
+  if (value.constraints.length === 0 || value.constraints.length > 32) {
     throw new Error('REMEDIATION_LEDGER_INVALID: malformed provenance metadata');
   }
   assertPlainDataArray(value.constraints, 'constraints');
