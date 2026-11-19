@@ -21,6 +21,13 @@ describe('Docker build and runtime secret-leak regression workflow', () => {
     expect(script).toContain('finally:');
     expect(script).toContain('file.unlink(missing_ok=True)');
   });
+  it('rejects synthetic secret leakage in archive names, symlink targets and extended tar metadata', () => {
+    expect(script).toContain('Synthetic secret found in Docker archive member metadata');
+    expect(script).toContain('Synthetic secret found in Docker layer entry metadata');
+    expect(script).toContain('Synthetic secret found in Docker layer extended metadata');
+    expect(script).toContain('entry.pax_headers.values()');
+    expect(script).toContain('entry.linkname.encode');
+  });
   it('runs a dedicated GitHub Actions workflow with synthetic fixtures', () => {
     expect(workflow).toContain('pull_request:');
     expect(workflow).toContain('workflow_dispatch:');
