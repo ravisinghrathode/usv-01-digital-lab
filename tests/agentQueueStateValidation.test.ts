@@ -78,6 +78,18 @@ describe('fail-closed durable 26-agent queue recovery', () => {
       ...task(), state: 'COMPLETED', attempts: 1,
       receipt: { ...receipt(), engineeringReleaseApproved: true }
     })],
+    ['unattempted completed receipt', store({
+      ...task(), state: 'COMPLETED', receipt: receipt()
+    })],
+    ['pending task with forged receipt', store({
+      ...task(), receipt: receipt()
+    })],
+    ['quota-waiting task with receipt', store({
+      ...task(), state: 'WAITING_FOR_QUOTA', attempts: 1, receipt: receipt()
+    })],
+    ['failed task with stale receipt', store({
+      ...task(), state: 'FAILED', attempts: 1, receipt: receipt()
+    })],
     ['in-flight completion receipt', store({
       ...task(), state: 'RUNNING', attempts: 1,
       receipt: receipt()
