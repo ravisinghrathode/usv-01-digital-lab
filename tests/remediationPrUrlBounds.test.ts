@@ -27,4 +27,15 @@ describe('remediation ledger PR URL bounds', () => {
     const url = 'https://github.com/ravisinghrathode/usv-01-digital-lab/pull/' + '9'.repeat(100_000);
     expect(() => summarizeUnverifiedRemediationLedger(ledgerWithLink(url))).toThrow('REMEDIATION_LEDGER_INVALID: noncanonical PR link');
   });
+  it.each([
+    'https://github.com/ravisinghrathode/usv-01-digital-lab/pull/0201',
+    'https://github.com/ravisinghrathode/usv-01-digital-lab/pull/0',
+    'https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201?approved=true',
+    'https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201#review',
+    'https://github.com/another-owner/usv-01-digital-lab/pull/201',
+    'http://github.com/ravisinghrathode/usv-01-digital-lab/pull/201'
+  ])('rejects noncanonical PR reference %s', (url) => {
+    expect(() => summarizeUnverifiedRemediationLedger(ledgerWithLink(url))).toThrow('REMEDIATION_LEDGER_INVALID: noncanonical PR link');
+  });
+
 });
