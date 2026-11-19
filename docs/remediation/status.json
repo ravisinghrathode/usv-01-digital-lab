@@ -13,7 +13,7 @@
       "id": "PR-02",
       "state": "partial-merged-and-follow-up-open",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/182",
-      "verification": "PR #182 merged; follow-up PR #191 remains open at exact head d74f7f7b69770f1d3528846e77340676f9a0926d. GitHub Actions governance run 44541732039: Deterministic Quality & Governance Gate job 135621554203 failed at Stage E — Governance Gate Enforcement; no Stage B failing step reported in this run. This does NOT establish authenticated Stage C/D/E approvals or acceptance. Previous malformed-signature test correction is included in this head. Previously reported picomatch advisory GHSA-fc5q-39xc-vjpf requires a fresh exact-head dependency audit; do not infer it is resolved. Independent witness deployment, externally durable transaction outbox, anti-rollback/recovery drills, authenticated independent reviews and end-to-end acceptance remain outstanding."
+      "verification": "PR #182 merged; follow-up PR #191 open. At b272c7cf08bcdf985bfb41ec95e2e05c3a8822ec governance run 44544966987 failed at Stage E authenticated human review, not Stage B. New source change b7b7140b rejects non-enumerable required witness fields; regression test commit ff9ceb7d. Exact-head CI pending; no independent acceptance. External witness deployment, durable outbox, recovery drills and authenticated reviews remain outstanding. Prior picomatch advisory needs fresh audit."
     },
     {
       "id": "PR-03",
@@ -84,22 +84,22 @@
   "iterationEvidence": {
     "workstream": "PR-02",
     "pullRequest": 191,
-    "sourceCommit": "f55ec351a3d29dc5d4e967ca43fa0785a2fba098",
-    "change": "Fix TS2366 in checkpoint proposal: every non-returning path now throws on invalid audit journal rather than implicitly returning undefined; independent attestation and approval requirements unchanged.",
-    "verifiedFailure": {
-      "head": "5db8807618449db26909a6c53bdb7e688bec3732",
-      "runId": 44512671137,
-      "jobId": 135520612162,
-      "stage": "Stage B TypeScript Static Typecheck & Lint",
-      "diagnostic": "src/core/safety/IndependentAuditAnchor.ts(65,4): TS2366 Function lacks ending return statement"
+    "sourceCommit": "b7b7140b3e92e5ed82ac4b07057e8f358e30b570",
+    "testCommit": "ff9ceb7d4e9dc8d7daddd9543e7589087bff795f",
+    "change": "Reject required witness receipt/statement properties hidden as non-enumerable even when cryptographically valid; test both and valid ordinary receipt.",
+    "previousExactHead": "b272c7cf08bcdf985bfb41ec95e2e05c3a8822ec",
+    "previousWorkflow": {
+      "runId": 44544966987,
+      "failedStep": "Stage E — Governance Gate Enforcement",
+      "technicalStageBFailureObserved": false
     },
-    "verification": "Source committed; exact-head CI and regression tests pending; do not claim success.",
-    "technicalBlocker": "Previous TS2366 corrected but unverified at new head. Prior picomatch GHSA-fc5q-39xc-vjpf advisory requires re-audit; do not suppress.",
-    "governanceBlocker": "Authenticated independent human Stage C/D/E reviews and external audit witness deployment remain outstanding",
+    "verification": "New exact-head CI and regression execution not yet confirmed; no independent approval or engineering certification claimed.",
+    "technicalBlocker": "Fresh dependency audit for prior picomatch advisory; exact-head CI pending.",
+    "governanceBlocker": "Authenticated independent Stage C/D/E approvals and external witness deployment not provided.",
     "nextActions": [
-      "Check exact-head CI for TS2366 and dependency security audit",
-      "Resolve any remaining transitive picomatch vulnerability through trusted lockfile regeneration",
-      "Complete independent witness deployment, transactional outbox and end-to-end acceptance"
+      "Verify exact-head CI and new regression tests",
+      "Re-audit dependency lockfile and remediate confirmed vulnerabilities",
+      "Implement externally durable outbox and independent witness recovery acceptance"
     ]
   }
 }
