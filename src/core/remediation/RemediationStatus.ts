@@ -31,6 +31,11 @@ function assertPlainDataRecord(value: unknown, allowed: ReadonlySet<string>, sco
   if (!isRecord(value) || (Object.getPrototypeOf(value) !== Object.prototype && Object.getPrototypeOf(value) !== null)) {
     throw new Error('REMEDIATION_LEDGER_INVALID: malformed ' + scope);
   }
+  for (const required of allowed) {
+    if (!Object.prototype.hasOwnProperty.call(value, required)) {
+      throw new Error('REMEDIATION_LEDGER_INVALID: missing ' + scope + ' field');
+    }
+  }
   for (const key of Reflect.ownKeys(value)) {
     if (typeof key !== 'string' || !allowed.has(key)) {
       throw new Error('REMEDIATION_LEDGER_INVALID: unsupported ' + scope + ' field');
