@@ -126,8 +126,11 @@ function validateStore(state: QueueStateFile): void {
         (typeof row.lastError !== 'string' || row.lastError.length > 1000))) {
       invalidState('malformed lease or retry metadata');
     }
-    if (row.state === 'RUNNING' && row.receipt !== undefined) {
-      invalidState('in-flight task has a completed receipt');
+    // A receipt is an execution artifact, never a pending-task authorization.
+    // In particular, an unattempted task cannot legitimately have a receipt.
+    if (row.receipt !== undefined &&
+      (row.attempts === 0 || !['COMPLETED', 'BLOCKED_REVIEW'].includes(row.state))) {
+      invalidState('receipt is inconsistent with task execution state');
     }
     if (row.state === 'COMPLETED' && row.receipt === undefined) {
       invalidState('completed task lacks an execution receipt');
