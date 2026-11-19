@@ -255,6 +255,7 @@ export class ResilientAgentQueue {
           row.updatedAt = new Date(now).toISOString();
           row.lastError = 'UNCERTAIN_INFLIGHT_RESULT: operator must inspect prior execution';
           delete row.leaseId;
+          delete row.leaseExpiresAt;
           recordEvent(state, row, 'CRASH_RECOVERY_REQUIRES_REVIEW');
         }
       }
