@@ -307,4 +307,19 @@ describe('independent cryptographic audit witness acceptance', () => {
     expect(() => proposeAuditAnchorStatement(journalId, [{ ...entries[0], details: { allowed: true } }]))
       .toThrow(/invalid audit journal/);
   });
+  it('returns canonical proposals for both genesis and populated journals after fail-closed validation', () => {
+    const genesis = proposeAuditAnchorStatement(journalId, [], timestamp);
+    expect(genesis).toEqual({
+      schemaVersion: AUDIT_ANCHOR_SCHEMA,
+      journalId,
+      entryCount: 0,
+      tipHash: 'GENESIS_BLOCK_0000000000000000000000000000000000000000000000000000000000000000',
+      issuedAtUtc: timestamp
+    });
+    expect(proposeAuditAnchorStatement(journalId, entries, timestamp)).toEqual(s);
+    expect(() => proposeAuditAnchorStatement(journalId, [{ ...entries[0], hash: '0'.repeat(64) }], timestamp))
+      .toThrow('Cannot propose a checkpoint for an invalid audit journal');
+    expect(proposeAuditAnchorStatement(journalId, entries, timestamp)).toEqual(s);
+  });
+
 });
