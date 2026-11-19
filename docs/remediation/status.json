@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-17",
+  "updatedAt": "2026-11-19",
   "items": [
     {
       "id": "PR-01",
@@ -18,8 +18,8 @@
     {
       "id": "PR-03",
       "state": "partial-implementation-awaiting-review",
-      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/188",
-      "verification": "Docker context exclusions, runtime secret volume and tests added; CI latest success, but image-layer leak canary, provisioned cold-start and backup-restore still outstanding"
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/193",
+      "verification": "PR #193: Docker synthetic credential image canary previously passed at head 6f6a64db (run 43994593668). New hardening commits b0b55432 and 4b90e48d inspect tar member names, link targets and PAX metadata, with source regression assertions; latest exact-head CI not yet reported. Authenticated Stage E approval, independently provisioned cold start, backup/restore and production credential verification remain outstanding."
     },
     {
       "id": "PR-04",
