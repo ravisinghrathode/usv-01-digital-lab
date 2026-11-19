@@ -200,6 +200,20 @@ describe('closed-loop twelve-issue remediation reporting', () => {
     }
   });
 
+  it('rejects deprecated directional formatting controls that can misrepresent approval text', () => {
+    for (const codePoint of [0x206a, 0x206b, 0x206c, 0x206d, 0x206e, 0x206f]) {
+      const control = String.fromCodePoint(codePoint);
+      const note = structuredClone(ledger);
+      note.items[0].verification = 'pending' + control + 'approved';
+      expect(() => summarizeUnverifiedRemediationLedger(note))
+        .toThrow('invalid verification note');
+      const constraint = structuredClone(ledger);
+      constraint.constraints[0] = 'pending' + control + 'approved';
+      expect(() => summarizeUnverifiedRemediationLedger(constraint))
+        .toThrow('malformed provenance metadata');
+    }
+  });
+
   it('rejects invisible Unicode direction marks and zero-width formatting in status text', () => {
     for (const codePoint of [0x061c, 0x200b, 0x200c, 0x200d, 0x200e, 0x200f, 0x2060, 0xfeff]) {
       const control = String.fromCodePoint(codePoint);
