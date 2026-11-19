@@ -100,8 +100,13 @@ function hasExactKeys(value: object, expected: readonly string[]): boolean {
   // signed witness receipt must not carry unsigned side-channel metadata,
   // including hidden approval claims, alongside its canonical statement.
   const keys = Reflect.ownKeys(value);
-  return keys.length === expected.length && keys.every(key =>
-    typeof key === 'string' && expected.includes(key));
+  return keys.length === expected.length && keys.every(key => {
+    if (typeof key !== 'string' || !expected.includes(key)) return false;
+    // JSON-decoded records expose every signed field as an enumerable own
+    // data property. Hidden fields are not a valid wire-format attestation.
+    const descriptor = Object.getOwnPropertyDescriptor(value, key);
+    return !!descriptor && 'value' in descriptor && descriptor.enumerable;
+  });
 }
 
 function isValidStatement(s: AuditAnchorStatement): boolean {
