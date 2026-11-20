@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-17",
+  "updatedAt": "2026-11-20",
   "items": [
     {
       "id": "PR-01",
@@ -59,9 +59,9 @@
     },
     {
       "id": "PR-10",
-      "state": "not-verified",
-      "pullRequest": "",
-      "verification": null
+      "state": "partial-implementation-awaiting-review",
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/199",
+      "verification": "PR #199 nested input string (16384 UTF-16 code units) and object-key (256) bounds implemented in da6a5131; boundary and rejection regression tests in 3d7cac16. Exact-head CI pending; previous head Mission Control and browser QA passed, governance failed (Stage E classification requires job-level verification). No authenticated Stage E approval or independent acceptance. Session revocation, timeout cancellation and production trust boundary outstanding."
     },
     {
       "id": "PR-11",
