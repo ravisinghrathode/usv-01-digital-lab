@@ -90,6 +90,15 @@
       "change": "Normalize separators in untrusted nested authority-claim keys before stripping; add regression test",
       "verification": "Exact-head CI pending; prior head governance failure requires Stage B/E step classification",
       "remaining": "Persistent orchestration, authenticated Director review, independent acceptance"
+    },
+    {
+      "workstream": "PR-06",
+      "pullRequest": 197,
+      "sourceCommit": "7e6992dd9821d4599feb3ec58a1c7a0db2c70ad1",
+      "testCommit": "7846493994c3a0a547b3d5b6abf425a7853b007d",
+      "change": "Bound untrusted nested workflow strings to 16384 UTF-16 units and object keys to 256 units; add negative and boundary regression tests",
+      "verification": "Previous exact-head governance run 44654044137 failed Stage E only; new exact-head CI pending",
+      "remaining": "Authenticated Stage E review, durable orchestration, independent acceptance"
     }
   ]
 }
