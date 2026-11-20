@@ -89,6 +89,20 @@ describe('copy-on-write engineering data mutations', () => {
     expect(original.activity_log).toHaveLength(0);
   });
 
+  it('rejects schema-invalid speculative mutations without changing the durable snapshot', () => {
+    const { filename, original } = setup();
+    const beforeDisk = fs.readFileSync(filename, 'utf8');
+    expect(() => commitProjectStoreMutation(original, filename, next => {
+      next.requirements.push({ id: 'NOT-COMMITTED' });
+      next.activity_log.push({ recordId: 'NOT-COMMITTED' });
+      (next as Record<string, unknown>).unexpected_collection = [];
+    })).toThrow('Unexpected project store collection');
+    expect(fs.readFileSync(filename, 'utf8')).toBe(beforeDisk);
+    expect(original.requirements).toHaveLength(0);
+    expect(original.activity_log).toHaveLength(0);
+    expect(fs.readdirSync(path.dirname(filename))).toEqual(['project_store.json']);
+  });
+
   it('isolates changes to nested fields in the speculative copy', () => {
     const { filename, original } = setup();
     original.requirements.push({ id: 'REQ-X', nested: { count: 1 } });
