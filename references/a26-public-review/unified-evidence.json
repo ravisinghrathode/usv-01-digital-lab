@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "agentId": "INTEL-USV-26",
   "classification": "PUBLIC_SOURCE_SAFE_ONLY",
-  "generatedAt": "2026-11-17T13:33:34.161Z",
+  "generatedAt": "2026-11-20T13:01:42.762Z",
   "evidenceContract": "A26_UNIFIED_PUBLIC_RESEARCH_V1",
   "records": [
     {
@@ -36,7 +36,7 @@
       "title": "HD HHI and Anduril Launch 600-Ton Autonomous Surface Vessel ‘ASV Alpha’ - Naval News",
       "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxNMldoMWNVVF9sU2hwQkMxMlBYc2Z2TzFHTEs5a2VFRTIxOS16RlM3OWIyQ1NLdTE4SmhNQjBpdlhZXzRvdXljVndHWUtMQVF3aFlGX2hmTWVYSndMdjlnczVjRGt1X003YlViNkRYeE9rTDF2amVfNnE2LXNoRXdINDNxc1FJUHFjLVNuMTh3?oc=5",
       "sourceHash": "sha256:794ed70d69e4fb015dc1c1feaec7d9b4b896c3796c3f5af5a5c0f78d66bb5f16",
-      "observedAt": "2026-11-17T13:32:49.958Z",
+      "observedAt": "2026-11-20T13:00:48.618Z",
       "collectionStatus": "DISCOVERED_UNVERIFIED",
       "country": null,
       "model": null,
@@ -218,6 +218,29 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "FLEET_LEAD:A26-FLEET-0b0d79cd3ce5bbfb",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "Watch: Ukraine Destroys Russian Shahed Drone With A Turret-Fitted Sargan 3000 USV - Marine Insight",
+      "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxNQmtmQm1hRUFJZGxsMTd3ZGgzSGNWYkJlYVRWTnJRUktvWVBfd2VNekNTdU9GdEZlNDZ2NW1YeDI0ZXpvN2FQbkdySWd4NG41VzM3ZExGYVJEa0QzYjBsbklkSVMtQWZzbEhuUkVsaEM4TEd0bktDYlR5bm5HMnpMc0M3RjF3ZElYWjg3ZlN2MVRKUUVueGJVSnIzYk0wT0RwZWlqYURjdXVSYVNrcU1PMA?oc=5",
+      "sourceHash": "sha256:7f3c467601beee331778e50be9a12f8c57c860c7da623fc5f71fb35e597e34bd",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxNQmtmQm1hRUFJZGxsMTd3ZGgzSGNWYkJlYVRWTnJRUktvWVBfd2VNekNTdU9GdEZlNDZ2NW1YeDI0ZXpvN2FQbkdySWd4NG41VzM3ZExGYVJEa0QzYjBsbklkSVMtQWZzbEhuUkVsaEM4TEd0bktDYlR5bm5HMnpMc0M3RjF3ZElYWjg3ZlN2MVRKUUVueGJVSnIzYk0wT0RwZWlqYURjdXVSYVNrcU1PMA?oc=5",
+          "sha256": "sha256:7f3c467601beee331778e50be9a12f8c57c860c7da623fc5f71fb35e597e34bd",
+          "sourceId": "google-black-sea"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "FLEET_LEAD:A26-FLEET-0b3dc0c09c24c4f8",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -264,29 +287,6 @@
       "engineeringReleaseApproved": false
     },
     {
-      "id": "FLEET_LEAD:A26-FLEET-0c5af5c506ca4bc9",
-      "agentId": "INTEL-USV-26",
-      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
-      "kind": "FLEET_LEAD",
-      "title": "EXCLUSIVE: Sea Archer USV prototype begins trials as Leidos Australia advances ambitious manufacturing plan - Defence Connect",
-      "url": "https://news.google.com/rss/articles/CBMi8wFBVV95cUxOX01kaUlsaG15Q2lDcENEZnpsOFU1OXBBWmhIMnhrYnZoSk9ielVOZE04b1FlRk1qWVFKWW80Y1dNY3FVSnFFTWVITzVwVnRvNnBZUVY5YXFiZmRWZmlGbldnX0tmbGg1bUlIcTJGeFI1QjZJZFA3bVFzd0VYQ1EwMlpNR1F1amlQd1I5THl4WENFVU9HUFAteXB4d0tYZGt6M2VVMXhKSFFoYTFVa2Q5UzBTaWtOVGMyeGVCbDlVYmQtZDkzVVNsbHNYVnNZSkUwUnBuUEpKLXozV2k1eUpLYVFXV2o5VVRDcXJlSXRKWlFwcTQ?oc=5",
-      "sourceHash": "sha256:9586592e1e2589d2588d5eae1d814efe4ab2b48210c66096883c1e4c6b7e9fc0",
-      "observedAt": "2026-11-17T13:32:49.958Z",
-      "collectionStatus": "DISCOVERED_UNVERIFIED",
-      "country": null,
-      "model": null,
-      "sourceRecords": [
-        {
-          "url": "https://news.google.com/rss/articles/CBMi8wFBVV95cUxOX01kaUlsaG15Q2lDcENEZnpsOFU1OXBBWmhIMnhrYnZoSk9ielVOZE04b1FlRk1qWVFKWW80Y1dNY3FVSnFFTWVITzVwVnRvNnBZUVY5YXFiZmRWZmlGbldnX0tmbGg1bUlIcTJGeFI1QjZJZFA3bVFzd0VYQ1EwMlpNR1F1amlQd1I5THl4WENFVU9HUFAteXB4d0tYZGt6M2VVMXhKSFFoYTFVa2Q5UzBTaWtOVGMyeGVCbDlVYmQtZDkzVVNsbHNYVnNZSkUwUnBuUEpKLXozV2k1eUpLYVFXV2o5VVRDcXJlSXRKWlFwcTQ?oc=5",
-          "sha256": "sha256:9586592e1e2589d2588d5eae1d814efe4ab2b48210c66096883c1e4c6b7e9fc0",
-          "sourceId": "google-prototype-trials"
-        }
-      ],
-      "claims": [],
-      "status": "UNVERIFIED_REVIEW_REQUIRED",
-      "engineeringReleaseApproved": false
-    },
-    {
       "id": "FLEET_LEAD:A26-FLEET-0dff9fc036641b20",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -303,29 +303,6 @@
           "url": "https://news.google.com/rss/articles/CBMi5AFBVV95cUxQMkVOeXJ3dVVGTk1seDJCMm00MzBWOHFjeG9FUjJVNGM0eWJVSDU0MHd3OVozVEVMUkVNaXlNUjBGUGlILUpDRHZxVDVkaWJBSnBYa0V0SFUxbzdzbWtERTZnOG53bXJjdjgzRjFxMm9VX210NTV3NjhJeFR3cC1BYjhaY1Q2cWRjX1RiTnpOVVotRXFveU8xTF95azAtZG9aQXdRUUs5V0RueVN5RlppNDY0SUI2WHl0VGJ1U2JlRUpPem9VQjVYMl9wZlIzd1RaNzgwaDJjWTFKNUVvTWhCMEUzUjU?oc=5",
           "sha256": "sha256:88d8a9d5a3e73d8983a027286538f0601a909e2aa404308934753eb83f69a7b2",
           "sourceId": "google-turkey"
-        }
-      ],
-      "claims": [],
-      "status": "UNVERIFIED_REVIEW_REQUIRED",
-      "engineeringReleaseApproved": false
-    },
-    {
-      "id": "FLEET_LEAD:A26-FLEET-0e005d0a1c2ba15a",
-      "agentId": "INTEL-USV-26",
-      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
-      "kind": "FLEET_LEAD",
-      "title": "दक्षिण कोरिया ने 600 टन वजनी मानवरहित सतह पोत का प्रक्षेपण किया। - Vietnam.vn",
-      "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxOYlNmTHpBNncycm9hcXVveldJcmdOLWRORFRZTTZsNDZTTkJILUdrWGc5dVc0TTFXZkpqa0JNVjg1N3E3OWo2QnAyRk41cjR4UHU4R0Rabm1ON2FIQ0JuY1dkOHVUNE5ZZW9WekgtWkFZRnJjMGFSd0JSQlhqWFY4bnAyVW1MQQ?oc=5",
-      "sourceHash": "sha256:35ab6e8baf6989eb777758598a70779fac9222e519403cf98a7764c068651fdf",
-      "observedAt": "2026-11-17T13:32:49.958Z",
-      "collectionStatus": "DISCOVERED_UNVERIFIED",
-      "country": null,
-      "model": null,
-      "sourceRecords": [
-        {
-          "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxOYlNmTHpBNncycm9hcXVveldJcmdOLWRORFRZTTZsNDZTTkJILUdrWGc5dVc0TTFXZkpqa0JNVjg1N3E3OWo2QnAyRk41cjR4UHU4R0Rabm1ON2FIQ0JuY1dkOHVUNE5ZZW9WekgtWkFZRnJjMGFSd0JSQlhqWFY4bnAyVW1MQQ?oc=5",
-          "sha256": "sha256:35ab6e8baf6989eb777758598a70779fac9222e519403cf98a7764c068651fdf",
-          "sourceId": "google-local-hindi"
         }
       ],
       "claims": [],
@@ -448,6 +425,29 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "FLEET_LEAD:A26-FLEET-13216cb6bd5096b5",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "Anduril, HD Hyundai expand partnership with first autonomous surface vessel in production - Defense News",
+      "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxPemliTlpDLVVpZG5pQzlCaDdibE1ZZGU0eF9NVk5iVEdVQ0ZZS05weHpKZFBld0FLQjU3ZEN5alVNQXpqOUtBd2I0dGdHOURPMmRQSnpNQVU0cDhpZXBOeFIwSUVCY2NlRHUxd1pTQjFhdVFQaUsyQ01qbUNjYlJyNHJoX2d1QjBSOHN1NnhwZFEzRzhXRXQ5LWFHOGdUZF9vTUZ3N0hOX0VKbnY4Rzhxd2RRZWxPaW9FbzVRLUJlSW55dXBxcmIyQklGWXhsS1djQk0xcXYxWFJJQU4tLVZFU0pn?oc=5",
+      "sourceHash": "sha256:d3bf65c11a1a97ff58a60b8ced10ceb7eaaa589659a76860fdef709627d5e563",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxPemliTlpDLVVpZG5pQzlCaDdibE1ZZGU0eF9NVk5iVEdVQ0ZZS05weHpKZFBld0FLQjU3ZEN5alVNQXpqOUtBd2I0dGdHOURPMmRQSnpNQVU0cDhpZXBOeFIwSUVCY2NlRHUxd1pTQjFhdVFQaUsyQ01qbUNjYlJyNHJoX2d1QjBSOHN1NnhwZFEzRzhXRXQ5LWFHOGdUZF9vTUZ3N0hOX0VKbnY4Rzhxd2RRZWxPaW9FbzVRLUJlSW55dXBxcmIyQklGWXhsS1djQk0xcXYxWFJJQU4tLVZFU0pn?oc=5",
+          "sha256": "sha256:d3bf65c11a1a97ff58a60b8ced10ceb7eaaa589659a76860fdef709627d5e563",
+          "sourceId": "google-africa"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "FLEET_LEAD:A26-FLEET-13bb19518cb75ee7",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -455,7 +455,7 @@
       "title": "‘Realm of the Possible’ Revealed by Multi-Mission Unmanned Surface Vehicle Naval Sea Systems Command News - NAVSEA (.mil)",
       "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxQNzVvbHg0ZEVHclR4LUpZSzJIcGkwbU1xSm5uSUVvaWlWaVAzZDBMZEpubmF2OHZ1czJQdDZNcmxmZTlRRXQ5REFTS190ZVFDSjFRbWRaLW1PRm53VndUUlV0V2VlYjBKTDlnVWltdzE5bmllNl9CUWhvQmlEeHY1dW1OY0p4cThHVzFGX0JEWnFDblZBUDFOcVVuSDNid1lLd2o5bGxHdmFYOUpKUXJ6VE95MDJHcmlVanNrVTBZTjFybndndFJn?oc=5",
       "sourceHash": "sha256:d5c87eed446f4992ad50636db1890ba5dd98c727e332b871789d8f861fcb312c",
-      "observedAt": "2026-11-17T13:32:49.958Z",
+      "observedAt": "2026-11-20T13:00:48.618Z",
       "collectionStatus": "DISCOVERED_UNVERIFIED",
       "country": null,
       "model": null,
@@ -471,21 +471,44 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "FLEET_LEAD:A26-FLEET-14f907a99d94ade5",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "Qatar Became The First Export Customer Of Turkey's ULAQ-Armed Unmanned Surface Vessel - Overt Defense -",
+      "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxPRVJ6bTJqZW9EUXlsNkZNRnRyLUhuTDZhbU5maXpaZTVMcmtleDJyNE8wR25ETjE4QXRZc2NvNHRiTDBSdEE2UVgxMDBzejJIN0pITElibkwtSlFQc0VHZkFQMHhuSU9PRWJDU3JPWlJ0WThtM0lzS1NSdnBhRkNNbTUwSGpwS21ITG9nV2cybjRVbUJWNXg1T3ZHNy1lNTJsV1UxZkMzNm5jNXZycF9DTHhZY1lDTHU0SVlRTVlfYldiVHc?oc=5",
+      "sourceHash": "sha256:617f5eb9f0cb9075cf25473bdfef6f50e1598108a0200e5abae30cfa52252bdc",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxPRVJ6bTJqZW9EUXlsNkZNRnRyLUhuTDZhbU5maXpaZTVMcmtleDJyNE8wR25ETjE4QXRZc2NvNHRiTDBSdEE2UVgxMDBzejJIN0pITElibkwtSlFQc0VHZkFQMHhuSU9PRWJDU3JPWlJ0WThtM0lzS1NSdnBhRkNNbTUwSGpwS21ITG9nV2cybjRVbUJWNXg1T3ZHNy1lNTJsV1UxZkMzNm5jNXZycF9DTHhZY1lDTHU0SVlRTVlfYldiVHc?oc=5",
+          "sha256": "sha256:617f5eb9f0cb9075cf25473bdfef6f50e1598108a0200e5abae30cfa52252bdc",
+          "sourceId": "google-oceania"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "FLEET_LEAD:A26-FLEET-16125375950fe234",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
       "kind": "FLEET_LEAD",
       "title": "HD Hyundai and Anduril launch 600t autonomous surface vessel",
       "url": "https://www.naval-technology.com/news/hd-hyundai-anduril-asv/",
-      "sourceHash": "sha256:d845b55b8f76f8ca8ffedfa98501558923f125258e27e1211c5e5516f6e81cf3",
-      "observedAt": "2026-11-17T13:32:49.958Z",
+      "sourceHash": "sha256:237baf06c29296d4d02ecd6862cc71712a7f2fc4a9858d8aff61eb7b4355bd97",
+      "observedAt": "2026-11-20T13:00:48.618Z",
       "collectionStatus": "DISCOVERED_UNVERIFIED",
       "country": null,
       "model": null,
       "sourceRecords": [
         {
           "url": "https://www.naval-technology.com/news/hd-hyundai-anduril-asv/",
-          "sha256": "sha256:d845b55b8f76f8ca8ffedfa98501558923f125258e27e1211c5e5516f6e81cf3",
+          "sha256": "sha256:237baf06c29296d4d02ecd6862cc71712a7f2fc4a9858d8aff61eb7b4355bd97",
           "sourceId": "naval-technology"
         }
       ],
@@ -602,6 +625,29 @@
           "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTFB1Q0ZXNDdZdEJTaEE5Vi1qc2l3bjdIWXlWVUNQM2VMVGtKdG1tdlprYzlCMzJ4TjZHVnFIR2RCT3JqSm8zd0ZWZFlMaGpSTjZsVVo1NWZ5ZnlQdDlMU2dzMExhV252dTNWeDdFeQ?oc=5",
           "sha256": "sha256:75edf82010fbd6711b3e3216a847ea0b7c7488519abdfaf2773edfbdc42ca2c1",
           "sourceId": "google-local-russian"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "FLEET_LEAD:A26-FLEET-1b4622c35db09a3b",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "DW News. . The Ukrainian Navy released footage on September 12th, purportedly showing a Ukrainian unmanned surface vessel (USV), shooting and sinking a Russian USV. Kyiv is calling it the \"first-ever clash between naval drones.\" #dwnews - F",
+      "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxPVWR4R19na1I3WG1lNnhZQmFaUDBPeFhDVDRFbHB3Ujh2Q3Vobk9paWd3OUg0UVd6cVp4RlpHU1lQNXBEdldyQ21ZSWVnSm9QM3Fsa0dfTXFneEd4VlBuNjV3V1hLa3dNUEVVZkNYWVN3UFZ1YjJMaTZ2VDk1WG1ULUp1SW4ySGFzdTV3ai1VbXZZekJmVnMzQS16Q0RzTWRyTUxZN3JYY3o1NHdXeVRHVmVLVDJBUEtiUTlOU0llb0dTa2VYVG9PczF2UlhKZ0VZUGxORTRLdVl0Q1l5YkViRlFn?oc=5",
+      "sourceHash": "sha256:894f2f938f938468b29743191c3a39dd0b1d9d0502cafb2ce0eceb87140f820a",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxPVWR4R19na1I3WG1lNnhZQmFaUDBPeFhDVDRFbHB3Ujh2Q3Vobk9paWd3OUg0UVd6cVp4RlpHU1lQNXBEdldyQ21ZSWVnSm9QM3Fsa0dfTXFneEd4VlBuNjV3V1hLa3dNUEVVZkNYWVN3UFZ1YjJMaTZ2VDk1WG1ULUp1SW4ySGFzdTV3ai1VbXZZekJmVnMzQS16Q0RzTWRyTUxZN3JYY3o1NHdXeVRHVmVLVDJBUEtiUTlOU0llb0dTa2VYVG9PczF2UlhKZ0VZUGxORTRLdVl0Q1l5YkViRlFn?oc=5",
+          "sha256": "sha256:894f2f938f938468b29743191c3a39dd0b1d9d0502cafb2ce0eceb87140f820a",
+          "sourceId": "google-black-sea"
         }
       ],
       "claims": [],
@@ -754,7 +800,7 @@
       "title": "Brazilian Navy demonstrates MCM USV prototype - Janes Defence Intelligence",
       "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxPYzcyUUNWcTNKSHZ3cGtndnVreW93dEx4LV80RDBPajRGNjhCcjBWT2R4R1FTVWtfcHVxYWZRWUY4NGNsTGplaDlZMlA2MHNJM2wtTTEtM3NkNFNoX18xUHFyWkdhNTZVOUxDV1NTMXhBSkxuOHEyQU5CRjRnOHRLcHZVVm9XWXk4aVFaVDFMQl9EUm96SXJTZE5EUng2SVpiUXpnbnhWSzU4OVRhbTZRSWVLT3pTU2g4Znc?oc=5",
       "sourceHash": "sha256:1a377fc62ac75d9050e475f8d54f54af83bfd84bb042bb035956cc2e88392227",
-      "observedAt": "2026-11-17T13:32:49.958Z",
+      "observedAt": "2026-11-20T13:00:48.618Z",
       "collectionStatus": "DISCOVERED_UNVERIFIED",
       "country": null,
       "model": null,
@@ -800,7 +846,7 @@
       "title": "HD Hyundai and U.S. firm Anduril build unmanned surface vessel in just one year to counter China - 머니투데이",
       "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTFBEZGpfY041RTVneXZRaVd0RE5IRzA0dDB6ZXNLSHprcm1rdGtzWHpzandWQkhGSVcyWGs0bTlyZEY0M2UyVWlBNEQwTXVTTFdzSWFRWEo2NjBiWWRNSTcwcmNIUUJTWFhFMVBIcmdSM0Y?oc=5",
       "sourceHash": "sha256:4c10d71ec565f891bdded5618da91591a12ad9f6bdf2e9c24b112cb1e8c2d035",
-      "observedAt": "2026-11-17T13:32:49.958Z",
+      "observedAt": "2026-11-20T13:00:48.618Z",
       "collectionStatus": "DISCOVERED_UNVERIFIED",
       "country": null,
       "model": null,
@@ -862,6 +908,29 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "FLEET_LEAD:A26-FLEET-2d910d93ee9554ff",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "Video: Turkey’s Armed USV ‘ULAQ’ starts sea trials - Naval News",
+      "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxQem12VVF3M05Mdm0yN3R5a2VkaDBiODVjMGtwa1NoN0VLTWdCd215WTZpc1RQaHUzdEtDcEFmaUtQSVBRVmZQOUdPWXozNjlJY0d4MWJnWUZXcU9lbDNobHVaWmxmU2xzWV91MXR3ZmR4YjQ1TjlhZDdQSjNkYnltcldUTmM1X2VEU25pYUNFTDlFcHdJMDBR?oc=5",
+      "sourceHash": "sha256:1d75df31643ff5964776d095d540899f11c6fe865b75f37133b8a7d7e11c3d34",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxQem12VVF3M05Mdm0yN3R5a2VkaDBiODVjMGtwa1NoN0VLTWdCd215WTZpc1RQaHUzdEtDcEFmaUtQSVBRVmZQOUdPWXozNjlJY0d4MWJnWUZXcU9lbDNobHVaWmxmU2xzWV91MXR3ZmR4YjQ1TjlhZDdQSjNkYnltcldUTmM1X2VEU25pYUNFTDlFcHdJMDBR?oc=5",
+          "sha256": "sha256:1d75df31643ff5964776d095d540899f11c6fe865b75f37133b8a7d7e11c3d34",
+          "sourceId": "google-prototype-trials"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "FLEET_LEAD:A26-FLEET-2df15621dba7479a",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -885,29 +954,6 @@
       "engineeringReleaseApproved": false
     },
     {
-      "id": "FLEET_LEAD:A26-FLEET-2ef77860be679981",
-      "agentId": "INTEL-USV-26",
-      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
-      "kind": "FLEET_LEAD",
-      "title": "В РФ разработали первый в мире учебно-тренировочный безэкипажный катер - URA.RU",
-      "url": "https://news.google.com/rss/articles/CBMiR0FVX3lxTFBPbU13UVJtaFpJRkdIaDh4UUViNldqbWtHZExobmZ4SW5EcmhKYmdaZHpXUHFyMXdKTXRMTHBtQVkxSFNYRVBn?oc=5",
-      "sourceHash": "sha256:498bba35fec4cadd8cebd04e6651ee33f21d6dc2d9e15b73aa52c6c9c8557312",
-      "observedAt": "2026-11-17T13:32:49.958Z",
-      "collectionStatus": "DISCOVERED_UNVERIFIED",
-      "country": null,
-      "model": null,
-      "sourceRecords": [
-        {
-          "url": "https://news.google.com/rss/articles/CBMiR0FVX3lxTFBPbU13UVJtaFpJRkdIaDh4UUViNldqbWtHZExobmZ4SW5EcmhKYmdaZHpXUHFyMXdKTXRMTHBtQVkxSFNYRVBn?oc=5",
-          "sha256": "sha256:498bba35fec4cadd8cebd04e6651ee33f21d6dc2d9e15b73aa52c6c9c8557312",
-          "sourceId": "google-local-russian"
-        }
-      ],
-      "claims": [],
-      "status": "UNVERIFIED_REVIEW_REQUIRED",
-      "engineeringReleaseApproved": false
-    },
-    {
       "id": "FLEET_LEAD:A26-FLEET-2f72724fb72134e9",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -924,6 +970,29 @@
           "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE5mdy1aNW41V0htRWttcU9DUFlxSF9WNDZ6N2lxSFV6N1d0djc3OEYzRHY1cFozaFVLWENkVjc3SjNSeExQZHY4NzFFZ1pBUUZoSFpqTUcxLXR6b3BKa09NLURzaXFvSVhxdFJYVmNR?oc=5",
           "sha256": "sha256:9a71af77dd68653306617923342b4d62b14405c34b93964accffc0bf2ff3a093",
           "sourceId": "google-local-korean"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "FLEET_LEAD:A26-FLEET-311324ac234ecca0",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "Saildrone, Thales collaborating on sub-sensing unmanned surface vessel - C4ISRNet",
+      "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPdzM1Qk93U2VoY0c4eGRpRFlVYWZxRjIxQ3VfOEx1YXFaRHJ2LUlzcnFPWlk0aDNMSU03aDVic3hFRG5pQzZwVkZWcmhtQ2UwQ3pkOG5mSmFmdEh6YTlTZzNSU3FQVldXeDZJemthd3E1bDgyM0dMSEpIVHZrUVFjMEJxZjlpTTlWbURjOEhqZFMtN1d4TVpDYjhjejktTGFweFZrOGpIMWQzcmVjWHhiNDR4S1o4UQ?oc=5",
+      "sourceHash": "sha256:7564daa192c85fe27b23477589c6b3eb02904632b2ecff8229e47486fdc18331",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPdzM1Qk93U2VoY0c4eGRpRFlVYWZxRjIxQ3VfOEx1YXFaRHJ2LUlzcnFPWlk0aDNMSU03aDVic3hFRG5pQzZwVkZWcmhtQ2UwQ3pkOG5mSmFmdEh6YTlTZzNSU3FQVldXeDZJemthd3E1bDgyM0dMSEpIVHZrUVFjMEJxZjlpTTlWbURjOEhqZFMtN1d4TVpDYjhjejktTGFweFZrOGpIMWQzcmVjWHhiNDR4S1o4UQ?oc=5",
+          "sha256": "sha256:7564daa192c85fe27b23477589c6b3eb02904632b2ecff8229e47486fdc18331",
+          "sourceId": "google-oceania"
         }
       ],
       "claims": [],
@@ -1000,6 +1069,29 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "FLEET_LEAD:A26-FLEET-332f71dc293ebfb5",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "Australia preps Bluebottle USV for submarine-hunting role - Defense News",
+      "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPTU9yZ3RQbFZjT3B1S2NzX0t2SElBVENYOHhMWFItMG1jbUJybzVHVEdrQnlXaUpRV0lVbE52ZVhEX09hNEUyZmpGODduZzZYVkoyMmRtN0RKd2J1RXY2azdVN2h6RFY1VWNvVDg4RTZfMXg5NmpvOXdGdm55U185UnRlV1lCR2czZGFrT21KMHlBRzRWemxsbE5WY0NLR3llcnBJdnpKNnFOR2x2TVhUMkFpNWxlaXNp?oc=5",
+      "sourceHash": "sha256:e32a87ba364a65b162df7c28b35c6d1539874a22af72113dbdd8b3ef170ac65e",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPTU9yZ3RQbFZjT3B1S2NzX0t2SElBVENYOHhMWFItMG1jbUJybzVHVEdrQnlXaUpRV0lVbE52ZVhEX09hNEUyZmpGODduZzZYVkoyMmRtN0RKd2J1RXY2azdVN2h6RFY1VWNvVDg4RTZfMXg5NmpvOXdGdm55U185UnRlV1lCR2czZGFrT21KMHlBRzRWemxsbE5WY0NLR3llcnBJdnpKNnFOR2x2TVhUMkFpNWxlaXNp?oc=5",
+          "sha256": "sha256:e32a87ba364a65b162df7c28b35c6d1539874a22af72113dbdd8b3ef170ac65e",
+          "sourceId": "google-oceania"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "FLEET_LEAD:A26-FLEET-34034e9e2e458804",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -1046,6 +1138,29 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "FLEET_LEAD:A26-FLEET-360596b26450e6b4",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "iXblue Announces New Multipurpose Autonomous USV - Unmanned Systems Technology",
+      "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxQc3E0eGRidDFRbmRIekRJUW1oeDR3TXJ5RWFqdlhNMmpkRkU3R1dKOHRza3VobXdobmxxS2U4WW1EMVlBLXEyWjFaRHZFcFVBTno4dDl0a1dFdlpUTmNqVTg5enhqMVR6cHJ3UmkyTVhBZjExRDVDblo2eXpIRk1NZGJhQmk0cGtEc0VQNndERmRZWGNtdlVxSlE3NG8tTE1I?oc=5",
+      "sourceHash": "sha256:049e2f940b1a39b0a45bdd8d8f900bfe573e5c46335ecc82b516ac5d7a5421da",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxQc3E0eGRidDFRbmRIekRJUW1oeDR3TXJ5RWFqdlhNMmpkRkU3R1dKOHRza3VobXdobmxxS2U4WW1EMVlBLXEyWjFaRHZFcFVBTno4dDl0a1dFdlpUTmNqVTg5enhqMVR6cHJ3UmkyTVhBZjExRDVDblo2eXpIRk1NZGJhQmk0cGtEc0VQNndERmRZWGNtdlVxSlE3NG8tTE1I?oc=5",
+          "sha256": "sha256:049e2f940b1a39b0a45bdd8d8f900bfe573e5c46335ecc82b516ac5d7a5421da",
+          "sourceId": "google-india"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "FLEET_LEAD:A26-FLEET-367a1b320c5ca408",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -1085,6 +1200,29 @@
           "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxNdUxzQmJUU3JnclhzWkpndTRoUkFaZXEza3NiLXp4TFVfdTh5dUVHWkVSSGgxdGFMYkhiQ0ZZV2ZqSDZseEdvQWNfcWE5VFliVm5MeTZsejZFaFBuWVNJcUd1RFh0dGpxeUhsMVFTa0M2Skt2Q2tyYTM2TW9saGFWejJQcHZvN3pZTlAtNGJNREtMNXhiRzEtcm1iVTRDaHVhODlZ?oc=5",
           "sha256": "sha256:c83e2fba348ebd277d469af453c201f7f2749f8902fd8ccda1073d5c1bf7d264",
           "sourceId": "google-turkey"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "FLEET_LEAD:A26-FLEET-371ae78cc6ed6cac",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "Kraken, Norwegian Shipbuilder Explore Maritime Drone Collaboration - The Defense Post",
+      "url": "https://news.google.com/rss/articles/CBMifkFVX3lxTE53Wnl5NkNsN1Y4NEI3cFluY0VQTE9qdXI2XzhPdFRJYlFqdVNzUVVGRWpBZ3dRYUR5UGxCZnVZQXZ2dE9zaEd5eHRTUjlucTVpSTJ0TjJSTERRWEJRajdzbVZxVVpZMENJajFBZkxFeEFRTDRJVTBUNnI3Q1VFd9IBgwFBVV95cUxQejFQWC1VT29sa2I0NVdoTUpRU0FkSHNWekZrYTYtNndpRDNRT3pBbXJ0eDdGaWFzY1lyajJRM19GUE1kU19rMV9SVjhPSDY3WlRUYjI2NFRFbFdEX3FkUjBRMzZ2dW1SZEdydTk1RjB6RC02UTJvdW15QURYUnppWlZHRQ?oc=5",
+      "sourceHash": "sha256:81a327818d1537b84541cbf3f4bab7ac621f36472c350918491ca9482767a4d5",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMifkFVX3lxTE53Wnl5NkNsN1Y4NEI3cFluY0VQTE9qdXI2XzhPdFRJYlFqdVNzUVVGRWpBZ3dRYUR5UGxCZnVZQXZ2dE9zaEd5eHRTUjlucTVpSTJ0TjJSTERRWEJRajdzbVZxVVpZMENJajFBZkxFeEFRTDRJVTBUNnI3Q1VFd9IBgwFBVV95cUxQejFQWC1VT29sa2I0NVdoTUpRU0FkSHNWekZrYTYtNndpRDNRT3pBbXJ0eDdGaWFzY1lyajJRM19GUE1kU19rMV9SVjhPSDY3WlRUYjI2NFRFbFdEX3FkUjBRMzZ2dW1SZEdydTk1RjB6RC02UTJvdW15QURYUnppWlZHRQ?oc=5",
+          "sha256": "sha256:81a327818d1537b84541cbf3f4bab7ac621f36472c350918491ca9482767a4d5",
+          "sourceId": "google-black-sea"
         }
       ],
       "claims": [],
@@ -1184,6 +1322,29 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "FLEET_LEAD:A26-FLEET-3b82222494cd45a1",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "Brest : Premières images de l’USV de guerre des mines de Thales - Mer et Marine",
+      "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxOaklxbHc4NEhGekc3U29NMWJrNjIyQXRBbzl3R0Vqd1NHUC16bzdFSDYwWUZNRTZkRDltLXNXeFduTTdhMEJnODh4LVROazVQc2pCYVcxVGFDTTZVaEhSdWQxV0NsY3lBb2lLTGhpTXZueExBX1hOa0Z1QjRSWGFidWpOS0tYcGJlNmZmVXRhN3ViXzNaSGRfV3poLXZBLTVuT0E?oc=5",
+      "sourceHash": "sha256:3e21d089fc9f9843fb4d3d7ee59934ca9ea93c5dbf02f342e8ae9c88c16594d4",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxOaklxbHc4NEhGekc3U29NMWJrNjIyQXRBbzl3R0Vqd1NHUC16bzdFSDYwWUZNRTZkRDltLXNXeFduTTdhMEJnODh4LVROazVQc2pCYVcxVGFDTTZVaEhSdWQxV0NsY3lBb2lLTGhpTXZueExBX1hOa0Z1QjRSWGFidWpOS0tYcGJlNmZmVXRhN3ViXzNaSGRfV3poLXZBLTVuT0E?oc=5",
+          "sha256": "sha256:3e21d089fc9f9843fb4d3d7ee59934ca9ea93c5dbf02f342e8ae9c88c16594d4",
+          "sourceId": "google-local-french"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "FLEET_LEAD:A26-FLEET-3c843fb9649c66bd",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -1223,6 +1384,29 @@
           "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNbXd2TlQtbzhoTHRwa3M1LXc0YnhBd2FVZjVUUlJnUmQ5MTl5UFdURDgxR3hBRkFZX3A2dFhkNXUwY2xpTi1zR1E2ZTVYcWp5YUQzT1FfY0U5TmRieFlzZ283RUpYY1ZrVjU3MVRqWENiTGRSRmtld3R5RDFrZDcyRVpBRUxkM1k?oc=5",
           "sha256": "sha256:069ea1c83404015d2b4836b5c546c23bccf569b47a6f04ce2359c1f96ee161bd",
           "sourceId": "google-china"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "FLEET_LEAD:A26-FLEET-3e268c6d41a89494",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "Wolves Without a Navy: How Ukraine's USV Wolfpacks Are Strangling Russia's Crimean Lifeline - Defense.info",
+      "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxPZWw0T0JScFNpUzBBUncxbFdHZ21ZYUxBaFkyLXo2b1pIeWpCTWRBR1h4bHg2T1Z1ZEIwWUVpcWpxaGwyNHdUUm5xNzRhbHA4UVBQYmV2ZFhyTGRpQk1Pa1hjZnc5T3hHUDQ2SEJON0llb1B1TW1KX0pYa0FnaDQxbEhzWDQyU3k3cFhUNVZ1R2dQbG44dkZNUGJhUjNtdWRPbEVwYW5SMzI2bGdyRFpIRndId1hrbzVBM0djQmlLX2RMbnlseDRtV216ZlVsSTVMNXc?oc=5",
+      "sourceHash": "sha256:f4c6033bf63818a3046b936458dc5ac0b202811cda0b09b8b75103b296a2a8a3",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxPZWw0T0JScFNpUzBBUncxbFdHZ21ZYUxBaFkyLXo2b1pIeWpCTWRBR1h4bHg2T1Z1ZEIwWUVpcWpxaGwyNHdUUm5xNzRhbHA4UVBQYmV2ZFhyTGRpQk1Pa1hjZnc5T3hHUDQ2SEJON0llb1B1TW1KX0pYa0FnaDQxbEhzWDQyU3k3cFhUNVZ1R2dQbG44dkZNUGJhUjNtdWRPbEVwYW5SMzI2bGdyRFpIRndId1hrbzVBM0djQmlLX2RMbnlseDRtV216ZlVsSTVMNXc?oc=5",
+          "sha256": "sha256:f4c6033bf63818a3046b936458dc5ac0b202811cda0b09b8b75103b296a2a8a3",
+          "sourceId": "google-black-sea"
         }
       ],
       "claims": [],
@@ -1276,6 +1460,29 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "FLEET_LEAD:A26-FLEET-483e84c53a19a36f",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "AI Replaces Helmsman and Captain… South Korea’s Big 3 Defense Firms Vie for ‘Sea Drones’ in Unmanned Surface Vessel Race - BigGo Finance",
+      "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE90VWZFMGszcTRoREV4SWF6UV8yVHJ2N2lXVDhrdG5NQmh0ZGFYRnc1X0w5SDFWbTlWNGlqX2diLVNweEpIckV6X3NHZktwa3c2NFlqTWVOMldXQXlidlI5Z3l4aGRPaDBjalE5YjFFVGdLcDlod2c?oc=5",
+      "sourceHash": "sha256:c2c3a454228c71925e0aef86ae9a24854649c41fd04995daacf1e6278529410d",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE90VWZFMGszcTRoREV4SWF6UV8yVHJ2N2lXVDhrdG5NQmh0ZGFYRnc1X0w5SDFWbTlWNGlqX2diLVNweEpIckV6X3NHZktwa3c2NFlqTWVOMldXQXlidlI5Z3l4aGRPaDBjalE5YjFFVGdLcDlod2c?oc=5",
+          "sha256": "sha256:c2c3a454228c71925e0aef86ae9a24854649c41fd04995daacf1e6278529410d",
+          "sourceId": "google-south-korea"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "FLEET_LEAD:A26-FLEET-4ac534d3f173df22",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -1291,11 +1498,6 @@
         {
           "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxNdGhYaUNLY1B5RmkzN1RnbDdTd3dBcmt6My1PU0psUG1zSXdKWGFOVi1yamlYV2hfMmgxbjRTMkVNOTlrLTlCYmlsUm1nMVF3R29WRWd1Zmh3R2Q2QlJOTkgxdWJfRUFZa1NJRXUtbUsybW55TzJCck1TOGtDVjhuNGkwN083bklXMVZOb0E3RHZaWDh1S3RWdElMN1hhUTlnVGoyQ3d6QmlQaG1IcTlpMmIxcWpabXc?oc=5",
           "sha256": "sha256:4e3df5117e972aea63cc1a8b28b400869091b71ab53d9d2e84857bed20328b0c",
-          "sourceId": "google-worldwide"
-        },
-        {
-          "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxOYjc4LThsMlhFbEJ1cjBUR1ZJUzJmR0pvQWVPc2tURTI0R0d6SjhzUVl5dTNJTmRhaW56Tm9SSlB1ZnVtbUwtMDhHdzAyWWNfb3hCVG9SRWdob1hXN2FkY291cS1DZG9RU0MwMnJrY1lGV19RNUQzSGhCcWw4ZV85aExEUlpmS1RsN2JWckxGUHAyS1o1UWxiNXZOWWh1M1JfUFJ4dVlQMW4zWUIxQXRRM2Z3?oc=5",
-          "sha256": "sha256:4502db261bf1c4bfc148866cc17325ab006ef8e05d8c9aa05cdf66d09648baf6",
           "sourceId": "google-worldwide"
         }
       ],
@@ -1373,29 +1575,6 @@
       "engineeringReleaseApproved": false
     },
     {
-      "id": "FLEET_LEAD:A26-FLEET-4df7007048d4ac32",
-      "agentId": "INTEL-USV-26",
-      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
-      "kind": "FLEET_LEAD",
-      "title": "Video: New Comet and Chaser USV by BlackSea Technologies - Naval News",
-      "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxOMlpkbl9ySGJacHo4YnlQUkw3a2sxcHB0QURGTXU2Q1NFS29XekdWNVkzakZXN0tYRlFUVGFuamNiTGVrdjJKcGxLa2dVa0pPTEwxdXNEOUtSdG05U3RwcWZPa3RXN0hVUUwyZHhVN29QRU9JYldrTmxkekhuMXF5QnBBUHdsYjJjRlVCeEZEX3VyaVdsNVZDc1hCWjdWY0Izdkxj?oc=5",
-      "sourceHash": "sha256:d55c667462ef8c9eb0b2695dbe8bd152ef59dfe68fddaeb6f3ee632b5c5f7f14",
-      "observedAt": "2026-11-17T13:32:49.958Z",
-      "collectionStatus": "DISCOVERED_UNVERIFIED",
-      "country": null,
-      "model": null,
-      "sourceRecords": [
-        {
-          "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxOMlpkbl9ySGJacHo4YnlQUkw3a2sxcHB0QURGTXU2Q1NFS29XekdWNVkzakZXN0tYRlFUVGFuamNiTGVrdjJKcGxLa2dVa0pPTEwxdXNEOUtSdG05U3RwcWZPa3RXN0hVUUwyZHhVN29QRU9JYldrTmxkekhuMXF5QnBBUHdsYjJjRlVCeEZEX3VyaVdsNVZDc1hCWjdWY0Izdkxj?oc=5",
-          "sha256": "sha256:d55c667462ef8c9eb0b2695dbe8bd152ef59dfe68fddaeb6f3ee632b5c5f7f14",
-          "sourceId": "google-procurement"
-        }
-      ],
-      "claims": [],
-      "status": "UNVERIFIED_REVIEW_REQUIRED",
-      "engineeringReleaseApproved": false
-    },
-    {
       "id": "FLEET_LEAD:A26-FLEET-4e87bd2f9e89ab32",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -1442,6 +1621,29 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "FLEET_LEAD:A26-FLEET-5334c1d73e13d246",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "HD Hyundai and Anduril launch a co-developed USV - Asian Military Review",
+      "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxOTXF6RDhsdC1jUUxJRUttWUZWQkhzVXhDR3pJazZQM1lycS1RYjZlclpZZEFjSGNmVm9oM2hDSGtRSjc1dUlMVk1MbnZxNm13cjhEZDM5UUxQaElFS3U0S2NLd1ZEd1dTNlBFdUp6dzlIYVNxV0R4VFFlclJrS3dBa05UQjZMTjZMcURNRHRUU1dQWkxJc2NoSDBDZjdLdw?oc=5",
+      "sourceHash": "sha256:e8ccfe07520f88f812403ce21a2dd06d5251f0033a368ee75e2135c02bc07ce1",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxOTXF6RDhsdC1jUUxJRUttWUZWQkhzVXhDR3pJazZQM1lycS1RYjZlclpZZEFjSGNmVm9oM2hDSGtRSjc1dUlMVk1MbnZxNm13cjhEZDM5UUxQaElFS3U0S2NLd1ZEd1dTNlBFdUp6dzlIYVNxV0R4VFFlclJrS3dBa05UQjZMTjZMcURNRHRUU1dQWkxJc2NoSDBDZjdLdw?oc=5",
+          "sha256": "sha256:e8ccfe07520f88f812403ce21a2dd06d5251f0033a368ee75e2135c02bc07ce1",
+          "sourceId": "google-worldwide"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "FLEET_LEAD:A26-FLEET-541331e8038605a0",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -1472,7 +1674,7 @@
       "title": "Introducing a portable ASV for extremely shallow waters - www.hydro-international.com",
       "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxNejFiVDlLNVlhZUg5WFRQMERDTVdGWV9fVXlTUDhVdGZoYXJiYkxPSC1ZZ3g2dFBHUXlHbmNucFBQUHZFNkdXakluVjRfR29na1VBNG9zMkFSWXJIWVBMaTlZcUFVRXBPUWRwSE02MEZaV2pOMDl4WkhKZEN5aXloUzJlaVhpMWtRcjdHaWowVldjTVBXRy1ZajIyVUdJRjdC?oc=5",
       "sourceHash": "sha256:21b12abae15fedd41c18e56ca60aa3d836ad05a7bea9511b9d799a0e78a723e9",
-      "observedAt": "2026-11-17T13:32:49.958Z",
+      "observedAt": "2026-11-20T13:00:48.618Z",
       "collectionStatus": "DISCOVERED_UNVERIFIED",
       "country": null,
       "model": null,
@@ -1695,6 +1897,52 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "FLEET_LEAD:A26-FLEET-601357c87e74b6a4",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "Saildrone unveils Spectre, a new class of high-speed unmanned surface vessel for naval operations - EDR Magazine - European Defence Review",
+      "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxPUks0b3dmdGZNVUtPZzFsc1RFVG5sMjFvV2RJellLbEMxcFNhRFRnUzdiNEZnOXdwb2tQc29CWkZRZkMxTkdDb3lFbHNaeWFsSWlBeEtLcDBIaTVWNW5VV2VuUzhzUnViQkVuSGdfOXJBTlgzdW1wNlVDQmltRVVablE1c3hzZHJ4b2JZZG5SRWVxd1ZXajBlMWU3TlZsd1VPUDdTT0F4NTkzWEhUNTBwYU85SWJOMkVxS0t2dUpfZ1Y?oc=5",
+      "sourceHash": "sha256:9fded18601b084d1edd1d2c564236bb71f6b951821f12d525d532df880cd2cea",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxPUks0b3dmdGZNVUtPZzFsc1RFVG5sMjFvV2RJellLbEMxcFNhRFRnUzdiNEZnOXdwb2tQc29CWkZRZkMxTkdDb3lFbHNaeWFsSWlBeEtLcDBIaTVWNW5VV2VuUzhzUnViQkVuSGdfOXJBTlgzdW1wNlVDQmltRVVablE1c3hzZHJ4b2JZZG5SRWVxd1ZXajBlMWU3TlZsd1VPUDdTT0F4NTkzWEhUNTBwYU85SWJOMkVxS0t2dUpfZ1Y?oc=5",
+          "sha256": "sha256:9fded18601b084d1edd1d2c564236bb71f6b951821f12d525d532df880cd2cea",
+          "sourceId": "google-test-results"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "FLEET_LEAD:A26-FLEET-60b5472d3b5cecb7",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "Navy Issues Draft Request for Proposal for Large Unmanned Surface Vehicle - USNI News",
+      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxQS3Y0X1hWbU9RdFNGQzRucVNDUTdOOUFjcTFCcWdIa0k5MnJEYldJbUptV1pqdlFyYm54Q3E3Z05CR2RxY3NGZ3pDMXZLendQWXFlZkxEcjZ0N3FUdUZuWEU1UnpoNGhFaGdTbFo1WHRQa2lyMmNMZ2NGQzhkWFBCRVdobWhUOXY2VVZjdHRzSmM2VV91dUw1UUNqazllZ2xCT0Nwb083QTFyZw?oc=5",
+      "sourceHash": "sha256:64adb1e890a5eb92f2ae7ca4617b15fb52914121a8ae5b66b7db56c439256e1a",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxQS3Y0X1hWbU9RdFNGQzRucVNDUTdOOUFjcTFCcWdIa0k5MnJEYldJbUptV1pqdlFyYm54Q3E3Z05CR2RxY3NGZ3pDMXZLendQWXFlZkxEcjZ0N3FUdUZuWEU1UnpoNGhFaGdTbFo1WHRQa2lyMmNMZ2NGQzhkWFBCRVdobWhUOXY2VVZjdHRzSmM2VV91dUw1UUNqazllZ2xCT0Nwb083QTFyZw?oc=5",
+          "sha256": "sha256:64adb1e890a5eb92f2ae7ca4617b15fb52914121a8ae5b66b7db56c439256e1a",
+          "sourceId": "google-worldwide"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "FLEET_LEAD:A26-FLEET-616d91172739ede4",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -1711,6 +1959,29 @@
           "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxNcDR0N3c3ZVBCLTd6SlAyek1SdU5mMDM3bWVYZXp4dWh5NE1NV2JwY09ndDBabVVsazNZazhib21pejlna0RLZzZUbXM0Y1M0clRDNFA1c24tWV9xZkFjMDBOeXFCYVRFZjJGcmdMdklIZU8xSTZWd1I1V1JyeVFpRjhpSUFzXzQ3M1ZtOEhBYTR3Ukh3MHJ6b2VubHdQTHJuM2VUYnk1aDI?oc=5",
           "sha256": "sha256:51afff75760fdda2326c0c5cdfeb6008e046b8c7389674b36bfbb8a9e3d24646",
           "sourceId": "google-japan"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "FLEET_LEAD:A26-FLEET-641674c7755a5db1",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "LIG Nex1 Successfully Completed the Trials of Sea Sword-II USV - Naval News",
+      "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxNM05STEQ4VG1WdlQ0Yy1lZncweUdxRmhVSnBNdXRsSDFMYldLbUUweFNrTWNtT3hNQmszaTEzaGRGeGJqUEZKUmFKLTdvaXhGVW1rbExJT1U0N0I5UHc5dFE2UVZNX1N6c2QtRjkxcGFnTERRdW5TN3JyN194OWJsSEZsZFhJQWxzWGJCczB1RDljVVlvRnF1ZnRDX1RTVWhQTWszMzJoU0lxVE51?oc=5",
+      "sourceHash": "sha256:d3ef3c83386ab41554a543ff4b77c4ce99ff350c1c279a0595af25057dbcc957",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxNM05STEQ4VG1WdlQ0Yy1lZncweUdxRmhVSnBNdXRsSDFMYldLbUUweFNrTWNtT3hNQmszaTEzaGRGeGJqUEZKUmFKLTdvaXhGVW1rbExJT1U0N0I5UHc5dFE2UVZNX1N6c2QtRjkxcGFnTERRdW5TN3JyN194OWJsSEZsZFhJQWxzWGJCczB1RDljVVlvRnF1ZnRDX1RTVWhQTWszMzJoU0lxVE51?oc=5",
+          "sha256": "sha256:d3ef3c83386ab41554a543ff4b77c4ce99ff350c1c279a0595af25057dbcc957",
+          "sourceId": "google-test-results"
         }
       ],
       "claims": [],
@@ -1757,29 +2028,6 @@
           "url": "https://en.wikipedia.org/?curid=1109945",
           "sha256": "sha256:9d0abdccd8b68fd9aa7ecd7f0ec7f1968b2a51cc6b9508cda31ba2e6513b22a2",
           "sourceId": "historical-6"
-        }
-      ],
-      "claims": [],
-      "status": "UNVERIFIED_REVIEW_REQUIRED",
-      "engineeringReleaseApproved": false
-    },
-    {
-      "id": "FLEET_LEAD:A26-FLEET-6691392b6a5268e3",
-      "agentId": "INTEL-USV-26",
-      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
-      "kind": "FLEET_LEAD",
-      "title": "Swedish Navy to show Saildrone USV:s agreed via NORDEFCO - Nordic Defence Sector",
-      "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOWS1Ga3I1Q1Y0NzBTdzJzUzFSeHp6MDVMM2dseFVSVkVuQWpUdE5EQW5nY2EyUk1CR0s4dVNVLWZldUJfUjJ2Z0pWSUVtMFlqTEg2dkdzNDBWVzdJRW0tYVhHUHo4cklkckN6ai00d3J1WmNYMU5od2wyRzh1aXNuYnR5WW1pRTJVc0dKa2hNMVBFSkFNbUFDbC1uVDhBN1cwSkhzeUctUQ?oc=5",
-      "sourceHash": "sha256:dac90cf3502fc7b93768a973d689cc725d4107eed37783eebe5be9968d8912cb",
-      "observedAt": "2026-11-17T13:32:49.958Z",
-      "collectionStatus": "DISCOVERED_UNVERIFIED",
-      "country": null,
-      "model": null,
-      "sourceRecords": [
-        {
-          "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOWS1Ga3I1Q1Y0NzBTdzJzUzFSeHp6MDVMM2dseFVSVkVuQWpUdE5EQW5nY2EyUk1CR0s4dVNVLWZldUJfUjJ2Z0pWSUVtMFlqTEg2dkdzNDBWVzdJRW0tYVhHUHo4cklkckN6ai00d3J1WmNYMU5od2wyRzh1aXNuYnR5WW1pRTJVc0dKa2hNMVBFSkFNbUFDbC1uVDhBN1cwSkhzeUctUQ?oc=5",
-          "sha256": "sha256:dac90cf3502fc7b93768a973d689cc725d4107eed37783eebe5be9968d8912cb",
-          "sourceId": "google-europe-north"
         }
       ],
       "claims": [],
@@ -1886,7 +2134,7 @@
       "title": "Netherlands Commences USV Design for New ASW Frigates with Thales FLASH Sonar - Naval News",
       "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxQaWkxdlhQdDdERExuODIxbnBxc2hzSl9QSnBVUmZCcUVWZjF1aGxKT0NsUDc5WlVMVVRUX2lfdGpJNFFGZmVQVzFwa2NkdlROY05KNlBHSW05SXRhay1kbW80OWpiLXVRTW9LVXZvN3ZfZmtoQVMxSHFObnFuSWtockpSRzJMR00zVXdjelZHcXBfNzFqbnZIWQ?oc=5",
       "sourceHash": "sha256:3db119d6900cdba621f833f315362803039563c717e7901ad82526aa7dc8a865",
-      "observedAt": "2026-11-17T13:32:49.958Z",
+      "observedAt": "2026-11-20T13:00:48.618Z",
       "collectionStatus": "DISCOVERED_UNVERIFIED",
       "country": null,
       "model": null,
@@ -1948,6 +2196,29 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "FLEET_LEAD:A26-FLEET-6d1c57f374dc3cf2",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "A 24-foot Australian drone boat that runs on sun, wind and waves just got a diesel generator bolted in for dark winters, and two of them spent a month towing American listening arrays 10 miles off Southern California, a 330-pound winch in e",
+      "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxPTXFkS19mMTU5dXJNdktVTms5bFRYdXhMYnVhejhKSnluZ3FYdXdSSVdFdVlJLW1jOFVaWHEtLVZrWWZORVlHbndzbUdBMUJkNWoxb0RUbFRzazVnUFdlWmhrSnVlbXlmWDZrMExtVVNYM3h4QmpYaWd5N0ljQ0h5YkdaM1l6bjNhRmZ2Z1BtVVdLRlh3OWhCV2FWZFFkVy1LOFplZlJXYUFVcklSWkJaY1ZSUzA?oc=5",
+      "sourceHash": "sha256:f42046331388aeb2f4d2bab49d137257cb997455fa064ae5cfd76373e001e523",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxPTXFkS19mMTU5dXJNdktVTms5bFRYdXhMYnVhejhKSnluZ3FYdXdSSVdFdVlJLW1jOFVaWHEtLVZrWWZORVlHbndzbUdBMUJkNWoxb0RUbFRzazVnUFdlWmhrSnVlbXlmWDZrMExtVVNYM3h4QmpYaWd5N0ljQ0h5YkdaM1l6bjNhRmZ2Z1BtVVdLRlh3OWhCV2FWZFFkVy1LOFplZlJXYUFVcklSWkJaY1ZSUzA?oc=5",
+          "sha256": "sha256:f42046331388aeb2f4d2bab49d137257cb997455fa064ae5cfd76373e001e523",
+          "sourceId": "google-oceania"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "FLEET_LEAD:A26-FLEET-6d529c7eca4b1400",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -2001,7 +2272,7 @@
       "title": "Unmanned surface vessel program completes fueling-at-sea test - WorkBoat",
       "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxQU1FaSlJrMmJXUTdFYzB4M1VDX2pBVDIxckdMXzhTaW5raEpuQUhfR0VlWEdxd0ZSbGZaT1ZhbWxpNllJemxMVmRHSTlmZ01oWFlXMDd3MnNPZWpDZ25Ja2d3SGhsLXRxVGlNVnhLeGVNbDVESnVFZTFndmlzMXBWdmdDR2xGQWZISEE?oc=5",
       "sourceHash": "sha256:d5d3473dac66cb3c0ef486f9efad2f07800c804cf3d5867719fe8f4d9d9dd3d4",
-      "observedAt": "2026-11-17T13:32:49.958Z",
+      "observedAt": "2026-11-20T13:00:48.618Z",
       "collectionStatus": "DISCOVERED_UNVERIFIED",
       "country": null,
       "model": null,
@@ -2056,6 +2327,29 @@
           "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxNMl9VbjNmNDlUZ2lTYlNrTENBSjIwczFUUHJ0UmQ2OGhtSFBxMUFXOU9mZ0lyNVZMclhnQ2V5dEZPUXB6dFYzOUJheGw1NmxlNGFnMlZFbERuajJSaUFiX080aU9ONjRudkJsak1BaFkySkVxT2xKTVF2RFpDNTkzUTJ0b1FVTmEtbmtYR3kyVnczUmFIU3BwcEs0YVJOSDFaQlRHSFIySGNLUy1mX1hrUGJQLVZSRDB5ajJycEd3?oc=5",
           "sha256": "sha256:99eedafad92ed00e3ca3fc0f90b3e7bd94c1dc3dc1ac72b6f848ae31e310843b",
           "sourceId": "google-official-us"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "FLEET_LEAD:A26-FLEET-714729d05fbf1338",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "First-Ever Kill Of A Drone Boat By Another Drone Boat Claimed By Ukraine - TWZ",
+      "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxNOTJKaVFMMk5vU1JFYnEtdjVyZVRQSVNGNEVVT2kwbVQwWXJEM29nWnlNTGIzdzlKQkJVcnZRVjQyMm1CRWw4LTk5eHZGSlFxSjM0Y2tYeGZGMlBUUTMxVEJENEtwR21jM3ppNXVVMVRhWXZWcDg5cXNOMU8yZ0pIS2ZXU3dOZXBLcXVIZkRURjdlaGU1anNR?oc=5",
+      "sourceHash": "sha256:31ff8cf70d2e69d3da3fff5b1a8a33ffd63b1a3bd19b33399562e34ea986a344",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxNOTJKaVFMMk5vU1JFYnEtdjVyZVRQSVNGNEVVT2kwbVQwWXJEM29nWnlNTGIzdzlKQkJVcnZRVjQyMm1CRWw4LTk5eHZGSlFxSjM0Y2tYeGZGMlBUUTMxVEJENEtwR21jM3ppNXVVMVRhWXZWcDg5cXNOMU8yZ0pIS2ZXU3dOZXBLcXVIZkRURjdlaGU1anNR?oc=5",
+          "sha256": "sha256:31ff8cf70d2e69d3da3fff5b1a8a33ffd63b1a3bd19b33399562e34ea986a344",
+          "sourceId": "google-black-sea"
         }
       ],
       "claims": [],
@@ -2125,6 +2419,29 @@
           "url": "https://news.google.com/rss/articles/CBMi5AFBVV95cUxQSHloUmdqNHBIeE1KV2JNM0NXdTNQQ3l6eUtfTFVzTFVNd0VCS1dQNzZVLWJqWkJZcFoxMkg0MFQwaDdRd2NieGp5bWdWbGlFYjZlN3BkWVBDR2dSTGVkMEtzcmNTcmQ0eFNFUEN6UGFHeld3TDFfd1ExTTB0TGphcHZ6WVJfS0R6MHotX3dWUlRJVS1CMWhWUi04Si1OSFZBeFpvckF3M21PWFlGbzVwU3QtYTY3S0dnWlhoZHhjb1hkdkxQOTZDbHd5Vy10V05Dcl9MZkxUUGItMWpVMDI2aTYtbUs?oc=5",
           "sha256": "sha256:10c9cf43bd865825ca6160a91c3719564275c7df865e8e56b2f3675354464027",
           "sourceId": "google-worldwide"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "FLEET_LEAD:A26-FLEET-747a9a56e35303aa",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "Defense Forces destroy Russian unmanned surface vessel near Zmiinyi Island - Ukrinform",
+      "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxOMU5Ja0RRUTVMSGpOY3lBYnBST0FyeFUyenlfWnlTalp0YzNZUDRxT1dqdFZCNXRKaHlSOUFXS0Q4Vk5TNFFfQ0FnSWo3cnZsUE5GN2k1SzdHTy1WVjZpSXRLYkY1S2M5c004MkpjNkFuaUR6al81ZW9kcDlkM3E4VFpsXy1MUmUzNTF2Skt0Z3dVbFl4dk03TWktUVAwQlNpM2xzSkp4WkZRRlFjSW85dUl3MGpsd2liUFJ3MmVoZXk5UdIBxwFBVV95cUxPTXhWcEl5VENMS1lOOHZEdDRWYWJCdVQ2SXpYYUlnRFUyQXpnQ2g3V0hSTmtETU9faENlUEI4dk5raHF2QUFHdE8wNXNKZnBwUFJxNTBJRHJ5TGtxMTI1dmZMNjJjejR5UWpkNmd5OXA2MDBsal9HT2lzUXhieGlkWERsekdIMThOcTR3RmZRaGxialdXYkYyRHJtb0hVQkNYRkNuRXdnZ0FFeXhEQkc4a2VfMU5FcTBXcTMxdzBscXdNZGFfbnRB?oc=5",
+      "sourceHash": "sha256:72b03f31d84a5cd746dc97b1dc260a99b8e06a6c621b817f61eb238baf66139a",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxOMU5Ja0RRUTVMSGpOY3lBYnBST0FyeFUyenlfWnlTalp0YzNZUDRxT1dqdFZCNXRKaHlSOUFXS0Q4Vk5TNFFfQ0FnSWo3cnZsUE5GN2k1SzdHTy1WVjZpSXRLYkY1S2M5c004MkpjNkFuaUR6al81ZW9kcDlkM3E4VFpsXy1MUmUzNTF2Skt0Z3dVbFl4dk03TWktUVAwQlNpM2xzSkp4WkZRRlFjSW85dUl3MGpsd2liUFJ3MmVoZXk5UdIBxwFBVV95cUxPTXhWcEl5VENMS1lOOHZEdDRWYWJCdVQ2SXpYYUlnRFUyQXpnQ2g3V0hSTmtETU9faENlUEI4dk5raHF2QUFHdE8wNXNKZnBwUFJxNTBJRHJ5TGtxMTI1dmZMNjJjejR5UWpkNmd5OXA2MDBsal9HT2lzUXhieGlkWERsekdIMThOcTR3RmZRaGxialdXYkYyRHJtb0hVQkNYRkNuRXdnZ0FFeXhEQkc4a2VfMU5FcTBXcTMxdzBscXdNZGFfbnRB?oc=5",
+          "sha256": "sha256:72b03f31d84a5cd746dc97b1dc260a99b8e06a6c621b817f61eb238baf66139a",
+          "sourceId": "google-black-sea"
         }
       ],
       "claims": [],
@@ -2224,22 +2541,22 @@
       "engineeringReleaseApproved": false
     },
     {
-      "id": "FLEET_LEAD:A26-FLEET-78c8718d6c721dfe",
+      "id": "FLEET_LEAD:A26-FLEET-785d610cdf7b4119",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
       "kind": "FLEET_LEAD",
-      "title": "SURFOR Establishes Unmanned Surface Vessel Squadron (USVRON) Three - www.navy.mil",
-      "url": "https://news.google.com/rss/articles/CBMi2AFBVV95cUxQdjVOQ0NVWUJNajV0ZXpvLXRwazVHcXZlZFUtejZTZnpsMWxDMV9tMER6RVJrQXZyQjBSQ0RyVnJmUlo5X3FrMlkzcm9rTjE2VExUSjlMZ2Zma2M5SkNGdEZrMW81OG5JOTktM1hRdS1YdnQwNVVuTHhKODRQajh6R3VRRVVtZUpyT2Y2VU9KMkt0cWVCOXJIbmFYZldzRnZoOWpqRUNTdFdxVTZOUnM0dkgxTE5aa0MxWE1MdGR0SS1mZDFreDY0LVdXZXFIZVFFMklKRUJwblM?oc=5",
-      "sourceHash": "sha256:2d4a2de18db5f6421a459b7f8bb00bb2da358a434f874def96d09c3e5617bb2e",
-      "observedAt": "2026-11-17T13:32:49.958Z",
+      "title": "New long-endurance USV formally named - Baird Maritime",
+      "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxQS2F1TDVQTVFRRXAwamZiTVFjQ2FIMGNLd1BYb0pkaXBCakFwdmpHUmZRalpBQ3JuVkdyZk9QTDM5OWhFdnNZUXM3MWh4a2cwY0l0OG83bW4wSmVlMUZwajhOMFlhVlk3RWFUYUQzdGh0WUo4NmViZmlYU184YzQyVlZkdWxXbzI4Zmh4NzdlNVowczZtZ3N4OFJDeE5ENEdjeTFWRnJ0LUPSAbYBQVVfeXFMTXFKcjN6RnVKV2hSdTRTb3JRUTVKR3J2cG5KMnJnNEVOQzVQNFNIUk5pTWdsRnBKZWlVLUEzdWJobWpvZFVDNXluT3BTRHRMdTd3eEVSdkswN2tYdGs2N0RFbHo4S3hDUmJXM29fY3hYMFBfRFA4R0xzSUtqYVhEenljS0lYWXlVbG1pNGxUbWJaRGFKQi1XNXd4eU5GdDliMllBMHVqVU1SS1QzTmVEMXdJaXJFeVE?oc=5",
+      "sourceHash": "sha256:06086398402d34f493a2ee9cde6c9019c83b0f5133ceb7c29457d718bee9b521",
+      "observedAt": "2026-11-20T13:00:48.618Z",
       "collectionStatus": "DISCOVERED_UNVERIFIED",
       "country": null,
       "model": null,
       "sourceRecords": [
         {
-          "url": "https://news.google.com/rss/articles/CBMi2AFBVV95cUxQdjVOQ0NVWUJNajV0ZXpvLXRwazVHcXZlZFUtejZTZnpsMWxDMV9tMER6RVJrQXZyQjBSQ0RyVnJmUlo5X3FrMlkzcm9rTjE2VExUSjlMZ2Zma2M5SkNGdEZrMW81OG5JOTktM1hRdS1YdnQwNVVuTHhKODRQajh6R3VRRVVtZUpyT2Y2VU9KMkt0cWVCOXJIbmFYZldzRnZoOWpqRUNTdFdxVTZOUnM0dkgxTE5aa0MxWE1MdGR0SS1mZDFreDY0LVdXZXFIZVFFMklKRUJwblM?oc=5",
-          "sha256": "sha256:2d4a2de18db5f6421a459b7f8bb00bb2da358a434f874def96d09c3e5617bb2e",
-          "sourceId": "google-worldwide"
+          "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxQS2F1TDVQTVFRRXAwamZiTVFjQ2FIMGNLd1BYb0pkaXBCakFwdmpHUmZRalpBQ3JuVkdyZk9QTDM5OWhFdnNZUXM3MWh4a2cwY0l0OG83bW4wSmVlMUZwajhOMFlhVlk3RWFUYUQzdGh0WUo4NmViZmlYU184YzQyVlZkdWxXbzI4Zmh4NzdlNVowczZtZ3N4OFJDeE5ENEdjeTFWRnJ0LUPSAbYBQVVfeXFMTXFKcjN6RnVKV2hSdTRTb3JRUTVKR3J2cG5KMnJnNEVOQzVQNFNIUk5pTWdsRnBKZWlVLUEzdWJobWpvZFVDNXluT3BTRHRMdTd3eEVSdkswN2tYdGs2N0RFbHo4S3hDUmJXM29fY3hYMFBfRFA4R0xzSUtqYVhEenljS0lYWXlVbG1pNGxUbWJaRGFKQi1XNXd4eU5GdDliMllBMHVqVU1SS1QzTmVEMXdJaXJFeVE?oc=5",
+          "sha256": "sha256:06086398402d34f493a2ee9cde6c9019c83b0f5133ceb7c29457d718bee9b521",
+          "sourceId": "google-ocean-science"
         }
       ],
       "claims": [],
@@ -2369,7 +2686,7 @@
       "title": "Buyan-M-class corvette",
       "url": "https://en.wikipedia.org/?curid=83850480",
       "sourceHash": "sha256:e1f3f6b0dd97118185aaae2633f8e3e020a43d1a2b78e98b8b38fd81eb263e87",
-      "observedAt": "2026-11-17T13:32:49.958Z",
+      "observedAt": "2026-11-20T13:00:48.618Z",
       "collectionStatus": "DISCOVERED_UNVERIFIED",
       "country": null,
       "model": null,
@@ -2424,6 +2741,29 @@
           "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxPbFYyOVJrcWtJSnJiZzU5VlZWVXpKWEJIbFQ0dkVFRGZrOXctNGsyOGNIQTdNS3JSWVFYcmQzOXBPbjJYVGxZQnp4UlI4YzBnc2JfQUdBOTY3dkNYdC1iYjRnTk1nU2E2ajBhY053am1YZUx1bzVHb2tJbEtNWUVMYlFSYzhEc3oydWtlTkd2bVo0TlUxa1BaNTRLWDBmc3dTNjl3YWpWdWZRbUdJRXFmU0FlN2RBYWtlcjlZRl9nVTdpeUpYR2ZzQkYxdkg?oc=5",
           "sha256": "sha256:c5ee096eb88b41b8564d799e7667d78a796648a2af4be836f1154c56210fe582",
           "sourceId": "google-local-french"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "FLEET_LEAD:A26-FLEET-8664121ea5e36a81",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "This Unmanned Surface Vehicle Falls From the Sky Like a Maple Seed - Intelligent Living",
+      "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTFBEdnNOc1hjeHp4TWhTYUdDSjRsVXJ2OXgydHptS2FFdXYxcHdXejlQcnZTSHd0bDJwcHFzR2VnaVkwdlpqb1JKSWJ1Xzh4ZlRPNG9fZjl5c09BQnRrVXFiMUhxeUVVajB1bmFMX0tLVEpOLUNUbjdIVg?oc=5",
+      "sourceHash": "sha256:9749e5fed489be04b176e225c3ce925593ba811b233457462e13a77371018a25",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTFBEdnNOc1hjeHp4TWhTYUdDSjRsVXJ2OXgydHptS2FFdXYxcHdXejlQcnZTSHd0bDJwcHFzR2VnaVkwdlpqb1JKSWJ1Xzh4ZlRPNG9fZjl5c09BQnRrVXFiMUhxeUVVajB1bmFMX0tLVEpOLUNUbjdIVg?oc=5",
+          "sha256": "sha256:9749e5fed489be04b176e225c3ce925593ba811b233457462e13a77371018a25",
+          "sourceId": "google-ocean-science"
         }
       ],
       "claims": [],
@@ -2569,6 +2909,75 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "FLEET_LEAD:A26-FLEET-89e569fa6d97cc70",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "The drone boat type that sank Russian patrol ship Izumrud now has two kills of Russian sea drones - Euromaidan Press",
+      "url": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxNNG5ZaHJzT0w5azlIeE9YTkVDa1B1MEdnZXFjb1hCUVVfR21mYzAxQVIwOFFBZGdYTGp2LXljNjFKRHpEYWw1bjlWWDYwdXVIWGZNMHRINTM1YlllRUxDbGhsbVJnbE1GWWRoZWRMY1RTSnVEZVZkRE1hU0lRSy1ycmZZUFVIdnpYU2hIekJaWUI0bjZpaGNDdGNRYllwUDRLNGZvR1IyWUdlOWY0MVMyMWhYdzUtRG1qWWVvYjB4eGhmZXpzZjk4blU0NHhyQVFXMVdR?oc=5",
+      "sourceHash": "sha256:df306eba93d0217749b3cf3c3ee745ee2ffe4976a0d9c2fc105b78764328f42e",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxNNG5ZaHJzT0w5azlIeE9YTkVDa1B1MEdnZXFjb1hCUVVfR21mYzAxQVIwOFFBZGdYTGp2LXljNjFKRHpEYWw1bjlWWDYwdXVIWGZNMHRINTM1YlllRUxDbGhsbVJnbE1GWWRoZWRMY1RTSnVEZVZkRE1hU0lRSy1ycmZZUFVIdnpYU2hIekJaWUI0bjZpaGNDdGNRYllwUDRLNGZvR1IyWUdlOWY0MVMyMWhYdzUtRG1qWWVvYjB4eGhmZXpzZjk4blU0NHhyQVFXMVdR?oc=5",
+          "sha256": "sha256:df306eba93d0217749b3cf3c3ee745ee2ffe4976a0d9c2fc105b78764328f42e",
+          "sourceId": "google-black-sea"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "FLEET_LEAD:A26-FLEET-8a9aeb78a56f9a78",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "An Australasian First: EDGE Defence unveils new all-electric jet powered USV - Defsec",
+      "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTFBUOHdwR21lNVMxV3NtSTM2Y2pCM1R6cjZSWW9FejhFZ3lic2hxTllKaWlqV1l1LUtpMC14cGJva0E1Zkg0dDJteEFYZHNrMEZDNndiMHFIbFptN3ZNZU9fUmwwYVdodElfRWExVnNTU1RmZ2pSRGVHVw?oc=5",
+      "sourceHash": "sha256:7753569e8f5530212c8e78a4e854be49596d1c1f7ee8cc0eec6aa6ec1a496f6c",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTFBUOHdwR21lNVMxV3NtSTM2Y2pCM1R6cjZSWW9FejhFZ3lic2hxTllKaWlqV1l1LUtpMC14cGJva0E1Zkg0dDJteEFYZHNrMEZDNndiMHFIbFptN3ZNZU9fUmwwYVdodElfRWExVnNTU1RmZ2pSRGVHVw?oc=5",
+          "sha256": "sha256:7753569e8f5530212c8e78a4e854be49596d1c1f7ee8cc0eec6aa6ec1a496f6c",
+          "sourceId": "google-oceania"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "FLEET_LEAD:A26-FLEET-8c8591f40a2501c4",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "Ukrainian Drone Bombs Russian USV in Black Sea - The Defense Post",
+      "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE1Uc1JyR19UZkZIRDlfeFFFcVpYbFcxYTN4OHJLVlU1b3U4V3JYT1puNDlyR3hWUHpoeEVxMUx5RWlLY05CMUZmclowMkNRajhrcDBMVVZWZ0hVMVNiay13WUFiQWtkWTNvcjZtZHdHanFadl810gF6QVVfeXFMTzBuSjZEbWF0WjhpeERwN3cyX0N2Qi1STGpiYnV4dHdud1hueHV2bmQwNEFENFZsTlFjX1VlMnJIbkVlbExJUDl3SzhWc2JMVUFXVVBhYWF1cFlLOC1fLV9EMmwzaTFVa1RkUnpXU2lPTmFwT3JPRjBVTUE?oc=5",
+      "sourceHash": "sha256:7970906a0063d77da9c9fee492ae43199f0e18ebddd5b749cc72d87c70cc0149",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE1Uc1JyR19UZkZIRDlfeFFFcVpYbFcxYTN4OHJLVlU1b3U4V3JYT1puNDlyR3hWUHpoeEVxMUx5RWlLY05CMUZmclowMkNRajhrcDBMVVZWZ0hVMVNiay13WUFiQWtkWTNvcjZtZHdHanFadl810gF6QVVfeXFMTzBuSjZEbWF0WjhpeERwN3cyX0N2Qi1STGpiYnV4dHdud1hueHV2bmQwNEFENFZsTlFjX1VlMnJIbkVlbExJUDl3SzhWc2JMVUFXVVBhYWF1cFlLOC1fLV9EMmwzaTFVa1RkUnpXU2lPTmFwT3JPRjBVTUE?oc=5",
+          "sha256": "sha256:7970906a0063d77da9c9fee492ae43199f0e18ebddd5b749cc72d87c70cc0149",
+          "sourceId": "google-black-sea"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "FLEET_LEAD:A26-FLEET-8e45d71dd04efd3c",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -2622,7 +3031,7 @@
       "title": "Польша разворачивает американские безэкипажные катера на Балтике - ForPost",
       "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxQc2tsRUR0UVVSNG9hdllKNTQ4dkdteUtJX3YwdWpjUmtWeUxqS2d2LV9fOWxzWXJrSm1UamIyZnVFWmpkR3hxUm9adUkyMDkyZVo0SUpsOG1XMi1tcngtNUVwUUduRFM1bFZCUVh5LUFHemVDSXNyS1JMTnJMYW5pNDJsOGdaTzhKbHN1ak5FaHNDUWl4LVhHcw?oc=5",
       "sourceHash": "sha256:0efc927e579e9c3bfd552fde742a29ed0eb37d9309db1357d041006968e17bd5",
-      "observedAt": "2026-11-17T13:32:49.958Z",
+      "observedAt": "2026-11-20T13:00:48.618Z",
       "collectionStatus": "DISCOVERED_UNVERIFIED",
       "country": null,
       "model": null,
@@ -2631,6 +3040,29 @@
           "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxQc2tsRUR0UVVSNG9hdllKNTQ4dkdteUtJX3YwdWpjUmtWeUxqS2d2LV9fOWxzWXJrSm1UamIyZnVFWmpkR3hxUm9adUkyMDkyZVo0SUpsOG1XMi1tcngtNUVwUUduRFM1bFZCUVh5LUFHemVDSXNyS1JMTnJMYW5pNDJsOGdaTzhKbHN1ak5FaHNDUWl4LVhHcw?oc=5",
           "sha256": "sha256:0efc927e579e9c3bfd552fde742a29ed0eb37d9309db1357d041006968e17bd5",
           "sourceId": "google-local-russian"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "FLEET_LEAD:A26-FLEET-93816f6e0105f223",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "UK-Made Drone Boat Was Used in Strike on Russian Supply Ship - The Maritime Executive",
+      "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxOekMxX0t4Zm0zR0YxV2dKM01MVnJvV1JlOFZWQXhFMTY1OWViV3BYVVA0OWFGTUQyVDNPX3NUNURQa2NieVEtaWtOX1F4RDI0blB5MVg5QzBEaGs0cmZyWWZFYjloSmpGNFg3VjlpMFhESWgyZWhDaVVQRUh4Znk2SHBDaHZ6T2hRTGctY1o2RVpqSTAtR2VveGNkaVZ0b3JC?oc=5",
+      "sourceHash": "sha256:a7f77a03341c78f15d12b2564495be2c75ab8e5539851f2a47ddec64b234e5f6",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxOekMxX0t4Zm0zR0YxV2dKM01MVnJvV1JlOFZWQXhFMTY1OWViV3BYVVA0OWFGTUQyVDNPX3NUNURQa2NieVEtaWtOX1F4RDI0blB5MVg5QzBEaGs0cmZyWWZFYjloSmpGNFg3VjlpMFhESWgyZWhDaVVQRUh4Znk2SHBDaHZ6T2hRTGctY1o2RVpqSTAtR2VveGNkaVZ0b3JC?oc=5",
+          "sha256": "sha256:a7f77a03341c78f15d12b2564495be2c75ab8e5539851f2a47ddec64b234e5f6",
+          "sourceId": "google-black-sea"
         }
       ],
       "claims": [],
@@ -2875,7 +3307,7 @@
       "title": "SeaRush project takes 3D printed USV testbed from concept to sea in 5-month timeframe - CompositesWorld",
       "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxPcnl0OGhOLU1yRDlpQmFMNlJiUnIyWEVnaEp3eEMtRFBEUlprTUk3RWh3b2tjZWJVMkxkVG1PVjBNUUFnMEhDVmhyUzUtVXBYem5tSWJXMlY3OUpOeGVIMFVlRGRNNnRSR3d6VXBIZS0tbWl1S2lIZTRBRnRadUhNSXZFaXk5amVKdW5yTHltbktkdTB0dFc3TXpZVmE4d0VEMy10RUlLdF9fRXNyTmxCYU5OT0N0X2d3V3VEXzAwWQ?oc=5",
       "sourceHash": "sha256:a220a3a632a4aa45944919287ad215d4f5b47d76eaeb00483d9a249995ba9a5c",
-      "observedAt": "2026-11-17T13:32:49.958Z",
+      "observedAt": "2026-11-20T13:00:48.618Z",
       "collectionStatus": "DISCOVERED_UNVERIFIED",
       "country": null,
       "model": null,
@@ -2921,7 +3353,7 @@
       "title": "Midshipmen Visit Unmanned Surface Vessel Squadron One - Pacific Fleet (.mil)",
       "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxNSDlLazdfRlBjZkpRbkNoaTF3VmpGOVNvQWt2YXZBQVUya2ZhMlVVYUEtbU82U2RkbUhqS05ma25IVzhKQzRpUlNicTNNYjNrM2lNbnVUem5DSWR3RW94Q3ZZUEdOQzZvVFFLMFpLUUUwcVAyVGFESWJHeE1HSXh6emNCZ1B0bXRNcTBmRXVBVG13UjdzS2lZMk55SmZFbWNmZTZINFRfUG53UVpZaXc?oc=5",
       "sourceHash": "sha256:0c4c83e0f4e3867fbf5fc09488aa9aeae232e3c30bb180ab35acd9a3de4da336",
-      "observedAt": "2026-11-17T13:32:49.958Z",
+      "observedAt": "2026-11-20T13:00:48.618Z",
       "collectionStatus": "DISCOVERED_UNVERIFIED",
       "country": null,
       "model": null,
@@ -2930,29 +3362,6 @@
           "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxNSDlLazdfRlBjZkpRbkNoaTF3VmpGOVNvQWt2YXZBQVUya2ZhMlVVYUEtbU82U2RkbUhqS05ma25IVzhKQzRpUlNicTNNYjNrM2lNbnVUem5DSWR3RW94Q3ZZUEdOQzZvVFFLMFpLUUUwcVAyVGFESWJHeE1HSXh6emNCZ1B0bXRNcTBmRXVBVG13UjdzS2lZMk55SmZFbWNmZTZINFRfUG53UVpZaXc?oc=5",
           "sha256": "sha256:0c4c83e0f4e3867fbf5fc09488aa9aeae232e3c30bb180ab35acd9a3de4da336",
           "sourceId": "google-worldwide"
-        }
-      ],
-      "claims": [],
-      "status": "UNVERIFIED_REVIEW_REQUIRED",
-      "engineeringReleaseApproved": false
-    },
-    {
-      "id": "FLEET_LEAD:A26-FLEET-9ffe946dc54fe1bd",
-      "agentId": "INTEL-USV-26",
-      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
-      "kind": "FLEET_LEAD",
-      "title": "Ukrainian Sargan 3000 USV Destroys russian Unmanned Boat in Rare Naval Drone Duel (Video) - Defense Express",
-      "url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxPRE0xU0dHVmotVWptQUJZdGNETGRMUkhvRVQ5NHVtR3VDQjhJbDNzODVGakswVURqelpxOE41UGRFdEZ3cmZZYlo2SEpBRW8yZGgzMEJtYkxMdHdhWjRybFdpN2l0bkpmNkJ1T2ItNGJBWTB3a1doVjhmOVQ4LUdNTzVCMUM0R0IzX1hZa3JCTWNHTXlLelEwaXFFUEh6Y3lxVUtBYkFXeXlUSS0zUEtsbEZvSk82bVdzR1daRXlkUjFEa0RWYW1UYQ?oc=5",
-      "sourceHash": "sha256:237905169a409122e9d25f0795dda4ec325844ba650fe6e5b2cb1c60ae645cdb",
-      "observedAt": "2026-11-17T13:32:49.958Z",
-      "collectionStatus": "DISCOVERED_UNVERIFIED",
-      "country": null,
-      "model": null,
-      "sourceRecords": [
-        {
-          "url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxPRE0xU0dHVmotVWptQUJZdGNETGRMUkhvRVQ5NHVtR3VDQjhJbDNzODVGakswVURqelpxOE41UGRFdEZ3cmZZYlo2SEpBRW8yZGgzMEJtYkxMdHdhWjRybFdpN2l0bkpmNkJ1T2ItNGJBWTB3a1doVjhmOVQ4LUdNTzVCMUM0R0IzX1hZa3JCTWNHTXlLelEwaXFFUEh6Y3lxVUtBYkFXeXlUSS0zUEtsbEZvSk82bVdzR1daRXlkUjFEa0RWYW1UYQ?oc=5",
-          "sha256": "sha256:237905169a409122e9d25f0795dda4ec325844ba650fe6e5b2cb1c60ae645cdb",
-          "sourceId": "google-black-sea"
         }
       ],
       "claims": [],
@@ -3252,6 +3661,29 @@
           "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxQWHZaRXpqLXJMMGhaVDlNTEN4VWR2VXExX2haNjZwR0FOVDBqeWpsSFp5dWpUX1hHVUhKbS1nYVZRZzNCbkNkY0h4Vk1ncnMxekRDazlCMWF5c0h2ZG5UTXpLLXRfdkhZSFFKWjlwamhVRDM3NVJYdmMwUGg2dVFPcFV0dlI1ZUhGbng2aHRkV25ZdGtwMFdaSjlYZTVRYk5EVTlEaUVNcmI4a0lqb0Zpd245NW9RMEVCSjFXdkhmWjk0cGJ6YTlqUm83QQ?oc=5",
           "sha256": "sha256:d48777817bc316fb3426be8b9f5d50ee5c8963e95021dff8b155bd478314057c",
           "sourceId": "google-oceania"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "FLEET_LEAD:A26-FLEET-af7fe62611cc4482",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "HII's ROMULUS USV Advances To Navy Medium Unmanned Surface Vessel At-Sea Testing - Ocean News & Technology",
+      "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxQSmhJZ1FvM3Q4eDJmcDZWQ1BTT2dMNzdRck5rdTJtZXRhZWdHRDRFYXpiR0JUMEZQU1Q0aU1XdVhGM2VwZ3F1enJWUUR2bHYwSkF0aHBOOVl2dWF2S19NNmM2VWVQcFdRbmVqTkFISVF2aGx2MDEtMVRSenF1X2lYR2kyY1ZtdmJETmYzd0cxbmN0akZZTkNpQkhScUprVlU1Smc0OEgtLWJZcjZ2Y0p6ZFVYMlhzUQ?oc=5",
+      "sourceHash": "sha256:df93735e53d351265a5e23397e5840d0866899c5ecd72e5a213d555969dbedc0",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxQSmhJZ1FvM3Q4eDJmcDZWQ1BTT2dMNzdRck5rdTJtZXRhZWdHRDRFYXpiR0JUMEZQU1Q0aU1XdVhGM2VwZ3F1enJWUUR2bHYwSkF0aHBOOVl2dWF2S19NNmM2VWVQcFdRbmVqTkFISVF2aGx2MDEtMVRSenF1X2lYR2kyY1ZtdmJETmYzd0cxbmN0akZZTkNpQkhScUprVlU1Smc0OEgtLWJZcjZ2Y0p6ZFVYMlhzUQ?oc=5",
+          "sha256": "sha256:df93735e53d351265a5e23397e5840d0866899c5ecd72e5a213d555969dbedc0",
+          "sourceId": "google-worldwide"
         }
       ],
       "claims": [],
@@ -3597,11 +4029,6 @@
           "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxQRUxSTEQyU3BhRERNWFJTN0RmWEZtX042NXE0WDlvQ2VkekNRYzA3SHdwdlB2WVFNZDhnQ0VwYWEtS3EwdUpUTkRza0NTbDZRS2dWU1pTRmF0OXBWWnp4SGQ1a2ZiNVUxME1nb2IxbG5PeWR1eXFmX0tYTmxLTmxjLU02UXhyUGEtdDc3MHpHXzBvZHA5Z1pMald6ZkQzNmVnUjB2Ug?oc=5",
           "sha256": "sha256:748a4c67c30a6d702d2d5f9fe09581fe65a65ab9c8db8ba48c90d4a7047b2109",
           "sourceId": "google-test-results"
-        },
-        {
-          "url": "https://news.google.com/rss/articles/CBMiTEFVX3lxTE0tUFF6eGJFbElQMjR2aGJzZjAyR2wzNllOakJlMHVYQkwzZXR5TEtibzZ4QV85bWNneTVqTFR2YWtwS0NQU2FTeDZCQ0w?oc=5",
-          "sha256": "sha256:d15bcdedfdb146b58596d982ce318ad25a53d7e32be5ad92cbe23a07eb55127a",
-          "sourceId": "google-test-results"
         }
       ],
       "claims": [],
@@ -3615,16 +4042,39 @@
       "kind": "FLEET_LEAD",
       "title": "Sargan 3000 Naval Drone Destroys Second Russian USV Using RWS - Мілітарний",
       "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxQVl9TMlVleUZhMmVMY0h3OFdseWhkN1BRdGlfLTAxQjB0Y29tOFFYX1hNM2xwMjNSdm5nazE0TkROX09JUm1iZDhycDI4SGJfVkkzRjd4MzdPQ0NPbk5ncndpYThBV2l4d3JmaVhGNjZ0andEVjI5S0hxUHc3LTk2VUw4a21kamp6eGJsMlJIc20zOXdhbDNnYQ?oc=5",
-      "sourceHash": "sha256:6c17bcc6c17b1416bb9a8703175e6f58c2382dd2e61bed884f3488e78ba86168",
-      "observedAt": "2026-11-17T13:32:49.958Z",
+      "sourceHash": "sha256:2e84ad784cc756657d059a25994bd3503e365f42dceefcf0f71cf7997a4d0425",
+      "observedAt": "2026-11-20T13:00:48.618Z",
       "collectionStatus": "DISCOVERED_UNVERIFIED",
       "country": null,
       "model": null,
       "sourceRecords": [
         {
           "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxQVl9TMlVleUZhMmVMY0h3OFdseWhkN1BRdGlfLTAxQjB0Y29tOFFYX1hNM2xwMjNSdm5nazE0TkROX09JUm1iZDhycDI4SGJfVkkzRjd4MzdPQ0NPbk5ncndpYThBV2l4d3JmaVhGNjZ0andEVjI5S0hxUHc3LTk2VUw4a21kamp6eGJsMlJIc20zOXdhbDNnYQ?oc=5",
-          "sha256": "sha256:6c17bcc6c17b1416bb9a8703175e6f58c2382dd2e61bed884f3488e78ba86168",
+          "sha256": "sha256:2e84ad784cc756657d059a25994bd3503e365f42dceefcf0f71cf7997a4d0425",
           "sourceId": "google-black-sea"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "FLEET_LEAD:A26-FLEET-c1768d85350839be",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "Leidos proceeds with Sea Archer USV trials in Australia - Naval News",
+      "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxPVjNydG1zYk9Od3lCenBfd21BMmJrREd6amoxMXRPS09YekFZNU8xbFI1MjF6U2hnV3NEYjRVZDBtRDRTd1QxMHBtQVZ0a0JNYUtWR1NJbFFvV1o0ZHlqY0tVMW5GSXJzaG8tX1BjT196eDZYUUhGaXZZc3QtczhEUkMtVDAxYWstOUpxZFpmeXNhZWFIQUxndGRWNUdJYTJaUkt3?oc=5",
+      "sourceHash": "sha256:8c4a6cf3a2f88f6273dd81af80843fc6c06f5da62d62b5ff54d04b36df4172ac",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxPVjNydG1zYk9Od3lCenBfd21BMmJrREd6amoxMXRPS09YekFZNU8xbFI1MjF6U2hnV3NEYjRVZDBtRDRTd1QxMHBtQVZ0a0JNYUtWR1NJbFFvV1o0ZHlqY0tVMW5GSXJzaG8tX1BjT196eDZYUUhGaXZZc3QtczhEUkMtVDAxYWstOUpxZFpmeXNhZWFIQUxndGRWNUdJYTJaUkt3?oc=5",
+          "sha256": "sha256:8c4a6cf3a2f88f6273dd81af80843fc6c06f5da62d62b5ff54d04b36df4172ac",
+          "sourceId": "google-oceania"
         }
       ],
       "claims": [],
@@ -3701,22 +4151,22 @@
       "engineeringReleaseApproved": false
     },
     {
-      "id": "FLEET_LEAD:A26-FLEET-cb2ba03811ecc049",
+      "id": "FLEET_LEAD:A26-FLEET-c717d6ad19227447",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
       "kind": "FLEET_LEAD",
-      "title": "DriX USV Selected by Polish Navy - Unmanned Systems Technology",
-      "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxOMTBpZFZGaUdFSUEtQm8xNlBCTm9sVGpMUUFscEJWeXZuRDhqTUpCX0Q1LV8tOW9OSzlpWTF0RF9PV1BTMzQwaEdfUldFMXNqbnN1WFJfS2ZncllaYmNsUDA0a19Ta284Rkh4WGtUb2tqWWx2elRRaEllY2Nrd1NHdTdCWkFBRmd3Y3dJ?oc=5",
-      "sourceHash": "sha256:ac5d940e0d56f2a1534923afee2ec7a6bfbd94dae6653766af33c6bbebb0679a",
-      "observedAt": "2026-11-17T13:32:49.958Z",
+      "title": "HD Hyundai, Palantir unveil AI-based unmanned surface vessel - The Korea Times",
+      "url": "https://news.google.com/rss/articles/CBMi4AFBVV95cUxPdDI5UVAyeHY2czQ3UXlCSDRTV3JaU0VUZEk0ZlNQVndjZU1HNDJlWWNFcVFrdHFPaGlQTnV5WElhM2ZXWlRoOVFpbGIyaS1ISVNEejJueUk0VXUwRlZmRHI0SHlIVFJMckI2eVJnSGwtdXFyTl9pYW5yS2dCaFdIM0l4RXNQNUw0LWNTRjhUY2RiTEJ6ai1fc0NkblRWeHdpQWxseTg3aDZmLWRVRXFsRzVyZGYwZkx5dHZLVVJVckNYU0VNVWdCTmRzTktEZzM5N2E5dHo2STdPRXp2MXg5V9IB5gFBVV95cUxQSHVOakFEM3RWNnFBQW1EQkhLLVVGMEF3QlNQLXpQQ1VoMXBYSHNCaWE2WXd3RnM1ZjBqNldON3RBWGZwYnFNQ1MtQ1lPVGlpaWI0RzFnU1hLXzBJNlhSN0VtU0xyc08zYmNfMGJiUEFWQTJMYktia2tzdU1lci1sZDVXdDdNUEc5U2ZfTHNzZ0xHYkU3dFZKYlRsdENmTzZKdU9HMmpfai1lT0xCZ056XzJDaHcySXFyMmd5bUZjVTJXZjJlb1BYNlFjeW44eW1Za3RxUHdiWk9NR2pKcXBYSG85cVN4Zw?oc=5",
+      "sourceHash": "sha256:a0e33c887a649b9e78238885fcf6ba9195c5ff0a5b7b72d16771e0215921e7e4",
+      "observedAt": "2026-11-20T13:00:48.618Z",
       "collectionStatus": "DISCOVERED_UNVERIFIED",
       "country": null,
       "model": null,
       "sourceRecords": [
         {
-          "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxOMTBpZFZGaUdFSUEtQm8xNlBCTm9sVGpMUUFscEJWeXZuRDhqTUpCX0Q1LV8tOW9OSzlpWTF0RF9PV1BTMzQwaEdfUldFMXNqbnN1WFJfS2ZncllaYmNsUDA0a19Ta284Rkh4WGtUb2tqWWx2elRRaEllY2Nrd1NHdTdCWkFBRmd3Y3dJ?oc=5",
-          "sha256": "sha256:ac5d940e0d56f2a1534923afee2ec7a6bfbd94dae6653766af33c6bbebb0679a",
-          "sourceId": "google-science"
+          "url": "https://news.google.com/rss/articles/CBMi4AFBVV95cUxPdDI5UVAyeHY2czQ3UXlCSDRTV3JaU0VUZEk0ZlNQVndjZU1HNDJlWWNFcVFrdHFPaGlQTnV5WElhM2ZXWlRoOVFpbGIyaS1ISVNEejJueUk0VXUwRlZmRHI0SHlIVFJMckI2eVJnSGwtdXFyTl9pYW5yS2dCaFdIM0l4RXNQNUw0LWNTRjhUY2RiTEJ6ai1fc0NkblRWeHdpQWxseTg3aDZmLWRVRXFsRzVyZGYwZkx5dHZLVVJVckNYU0VNVWdCTmRzTktEZzM5N2E5dHo2STdPRXp2MXg5V9IB5gFBVV95cUxQSHVOakFEM3RWNnFBQW1EQkhLLVVGMEF3QlNQLXpQQ1VoMXBYSHNCaWE2WXd3RnM1ZjBqNldON3RBWGZwYnFNQ1MtQ1lPVGlpaWI0RzFnU1hLXzBJNlhSN0VtU0xyc08zYmNfMGJiUEFWQTJMYktia2tzdU1lci1sZDVXdDdNUEc5U2ZfTHNzZ0xHYkU3dFZKYlRsdENmTzZKdU9HMmpfai1lT0xCZ056XzJDaHcySXFyMmd5bUZjVTJXZjJlb1BYNlFjeW44eW1Za3RxUHdiWk9NR2pKcXBYSG85cVN4Zw?oc=5",
+          "sha256": "sha256:a0e33c887a649b9e78238885fcf6ba9195c5ff0a5b7b72d16771e0215921e7e4",
+          "sourceId": "google-oceania"
         }
       ],
       "claims": [],
@@ -3793,6 +4243,29 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "FLEET_LEAD:A26-FLEET-cf3bd4fe814f5cd7",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "Ukraine’s Newest USV Is A Super Sized Mothership Packed With Anti-Drone Interceptors - TWZ",
+      "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxQdXpVR09KZEtIZWx0WEl5dUxZNmMtWEhZNVVrLVEyQWpOS0E0ellvbUdpZFIxNGUxUE5oUDRkUjV6VE9QLW5CN21PVzFraTlaeC11OHV3MHRsdXVRWkhydUt1VzZMUjFJN2dkd0g2ZndtSFRGcUs2X0pNVnlsa0sxUEhIbm0xREx0TGxZUWZOeGljdFprNm0wM21BX1d4SXBwUjNMUjdCMXMydkk?oc=5",
+      "sourceHash": "sha256:10117a0968d691bdeb254ad8a4d69c2f6471660d095db6ac595e0a999d0c0825",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxQdXpVR09KZEtIZWx0WEl5dUxZNmMtWEhZNVVrLVEyQWpOS0E0ellvbUdpZFIxNGUxUE5oUDRkUjV6VE9QLW5CN21PVzFraTlaeC11OHV3MHRsdXVRWkhydUt1VzZMUjFJN2dkd0g2ZndtSFRGcUs2X0pNVnlsa0sxUEhIbm0xREx0TGxZUWZOeGljdFprNm0wM21BX1d4SXBwUjNMUjdCMXMydkk?oc=5",
+          "sha256": "sha256:10117a0968d691bdeb254ad8a4d69c2f6471660d095db6ac595e0a999d0c0825",
+          "sourceId": "google-black-sea"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "FLEET_LEAD:A26-FLEET-cfdec54c88b78ea6",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -3832,6 +4305,52 @@
           "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxOcURMZkhSaGw0TTJXR0hUOHdOcTB1SWFmVk9lNjJVTU41Ml9aMDE5QXFveHZLNy1EaWJYY2thZDUyVUNRa3BKa3FxLXBlbVQ0czFSYmVwV3Y0NFN1SHB2WW5VbUNwQTc5TFMySXJ0dV9PQWxZclcyaW1KblVwZGZjRjFzVzQxX3J1U3ZCOGt4QVVsdS1pM1o1Vg?oc=5",
           "sha256": "sha256:2f30e4a7f17000e9641846ce16b57d5593a4056e17a829036df3192691c5803c",
           "sourceId": "google-small-usv"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "FLEET_LEAD:A26-FLEET-d3dfe57c24c59449",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "DriX, a hydrographic ASV - Mer et Marine",
+      "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPWjlCVjlFbjlZZGZ6cjVodGFuNjVKMzcwOGhVekx5dEg1X2EtTnJ5bEVzZkVLRGxwN3ljcjQ1WWo0RlFsQldmd3Z4SjI5N05xY045N2FWU2dYem5ONkpTRXAzXzc3SG01SWlPZ0pFdVBkaHg4ME9IQ3l1WFFiUXlOWk05UnAwdw?oc=5",
+      "sourceHash": "sha256:684ef90ea4b42ef1b7d78596530e3911347ddef3f62124e77f72188d1d14385d",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPWjlCVjlFbjlZZGZ6cjVodGFuNjVKMzcwOGhVekx5dEg1X2EtTnJ5bEVzZkVLRGxwN3ljcjQ1WWo0RlFsQldmd3Z4SjI5N05xY045N2FWU2dYem5ONkpTRXAzXzc3SG01SWlPZ0pFdVBkaHg4ME9IQ3l1WFFiUXlOWk05UnAwdw?oc=5",
+          "sha256": "sha256:684ef90ea4b42ef1b7d78596530e3911347ddef3f62124e77f72188d1d14385d",
+          "sourceId": "google-survey-hydrographic"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "FLEET_LEAD:A26-FLEET-d46e02dc2b469cd7",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "HD Hyundai Displays Prototype USV Combining AI and Autonomous Navigation - The Maritime Executive",
+      "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxNV0dSZHFQU2gySy1Eb0hTQmkzc2otT0dMZkpzZU9EN3F0WndRank4alZWQkhSNkxZYmExT0liOExuMUhuenhwenpsc190d05vX3RmUld6TERSalpubWN3NGlCejJxWmFkcHRLUXJkMlhsYU44cnAwUUFBY2Y5Q0Q1U0ZsS3ZDV1d5ZkRmWFlEbVU1WnJ0UThEY1R5ckNsdVg5V3VXamR2NS1xY1dPblE?oc=5",
+      "sourceHash": "sha256:9a5b56ef48f0826b3b44c661bda3a63ecb204caca0610da18e3a2b3ee5a15e0d",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxNV0dSZHFQU2gySy1Eb0hTQmkzc2otT0dMZkpzZU9EN3F0WndRank4alZWQkhSNkxZYmExT0liOExuMUhuenhwenpsc190d05vX3RmUld6TERSalpubWN3NGlCejJxWmFkcHRLUXJkMlhsYU44cnAwUUFBY2Y5Q0Q1U0ZsS3ZDV1d5ZkRmWFlEbVU1WnJ0UThEY1R5ckNsdVg5V3VXamR2NS1xY1dPblE?oc=5",
+          "sha256": "sha256:9a5b56ef48f0826b3b44c661bda3a63ecb204caca0610da18e3a2b3ee5a15e0d",
+          "sourceId": "google-north-america"
         }
       ],
       "claims": [],
@@ -3908,6 +4427,29 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "FLEET_LEAD:A26-FLEET-d6aaaa2f12a7de8c",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "Unmanned Craft News Roundup | May 29 – Australian 3D-printed USV concept, new UK autonomous naval boat and more - Baird Maritime",
+      "url": "https://news.google.com/rss/articles/CBMi3gFBVV95cUxPaUlwQzY5SnZkNE5XTEJHNElocHlPTjRvX3pQVmpKSDlzVEhKMVBZQkY2WDcwNmdlZllUekRJUzRoODNfUklwVG5Kc0VKOTFZRXYtSENsZGY2akdrbkVmTEdqa0NPdk5mOUVJQXFYNEhrYWJ3eWQwMkFlNkREaFAzblRSRnVnUlJENV8wdWY4RkZPdEhOb2djNDhNNHNad1ZtdHFXU1lTSC1kSVBjYm85RXUxamxFeTNxWFN1NExPT1U1WHpTRzlRTkVja29EV1gzR2pnOHlJcFhxOUhzUHfSAesBQVVfeXFMTU52cVhRaXF1dFdXenB6b01hdjBNQkNLUEYzSWxxSWgxRDF3R1JPb1E0dGQ5QktHUkRadmhlWDV6SUFzNG9WOW1LRV9PUHpMclZ3Qm9CY0dTRWxxZTFpZWU4ZlllV1cwdDBpckV4OWdFaVJMZ2U5aXFLYWpQQTZDdGduNDRERXVkZV9YMnhFamVOMGlGRGczdldGMHY3eVd0bzVKOEVzX3daZUxJRDZGX0hIbURnYXpzUFowaXIzNFNtcXhzOU9TN20zOGtQcW1YTnFFc21lWnVTdlQ0RVlwYU1yX3IzVXJ5XzJiWQ?oc=5",
+      "sourceHash": "sha256:8fd4ae102702b37d8851d9ddd2f7ba8ef21f8dd46d17eb98b21a99b91c68cbf0",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMi3gFBVV95cUxPaUlwQzY5SnZkNE5XTEJHNElocHlPTjRvX3pQVmpKSDlzVEhKMVBZQkY2WDcwNmdlZllUekRJUzRoODNfUklwVG5Kc0VKOTFZRXYtSENsZGY2akdrbkVmTEdqa0NPdk5mOUVJQXFYNEhrYWJ3eWQwMkFlNkREaFAzblRSRnVnUlJENV8wdWY4RkZPdEhOb2djNDhNNHNad1ZtdHFXU1lTSC1kSVBjYm85RXUxamxFeTNxWFN1NExPT1U1WHpTRzlRTkVja29EV1gzR2pnOHlJcFhxOUhzUHfSAesBQVVfeXFMTU52cVhRaXF1dFdXenB6b01hdjBNQkNLUEYzSWxxSWgxRDF3R1JPb1E0dGQ5QktHUkRadmhlWDV6SUFzNG9WOW1LRV9PUHpMclZ3Qm9CY0dTRWxxZTFpZWU4ZlllV1cwdDBpckV4OWdFaVJMZ2U5aXFLYWpQQTZDdGduNDRERXVkZV9YMnhFamVOMGlGRGczdldGMHY3eVd0bzVKOEVzX3daZUxJRDZGX0hIbURnYXpzUFowaXIzNFNtcXhzOU9TN20zOGtQcW1YTnFFc21lWnVTdlQ0RVlwYU1yX3IzVXJ5XzJiWQ?oc=5",
+          "sha256": "sha256:8fd4ae102702b37d8851d9ddd2f7ba8ef21f8dd46d17eb98b21a99b91c68cbf0",
+          "sourceId": "google-oceania"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "FLEET_LEAD:A26-FLEET-d6ee44cff66724c4",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -3931,22 +4473,22 @@
       "engineeringReleaseApproved": false
     },
     {
-      "id": "FLEET_LEAD:A26-FLEET-d71ab8e855bee5bf",
+      "id": "FLEET_LEAD:A26-FLEET-d8cadb6a8455e6eb",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
       "kind": "FLEET_LEAD",
-      "title": "Saronic Corsair: Bandar Abbas and Pakistan Navy USV Plans - Quwa",
-      "url": "https://news.google.com/rss/articles/CBMirwFBVV95cUxQQmh0ZGs3VHBjeEhsMUFCUEZFV2w2cWlhVVliaVRBOGJJTUtpM3Q5dzQ4bEdyR0xyMUZDc3ZPSjV2Y2Njdm9hV1dCZ0c0MllIdXc3X1BhMU9hZ2lvaEJ6SzdNTlZ3alBfSU5XelNEa0VScXllMTdjSWVMQURLdnRYcVZNWWxBdndSWDhkR0Y1TnpUMllNeVNSNlBra2hZbzBqSHBlamdwc2hDSnBKemE0?oc=5",
-      "sourceHash": "sha256:99e4c530dc26186905dc9f67e48c11771d725c88d2bde30ce42ca8db8bc76d4c",
-      "observedAt": "2026-11-17T13:32:49.958Z",
+      "title": "Military milestone: Ukrainian naval drone sinks Russian kamikaze drone boat - Ars Technica",
+      "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOcGpZZXhGeWpFSXB4dTN4UjExTTVZOXU4dkJXbXFtZmtyaWhVWXNvMGFvcnJ0aHNyem4wNXZQOC1xSWVaM0ZDUG1FMjhfd05Ecl9RQV9kZ3ducnJLc3JsRU53c3k4TUJJZWplUGozYXBqSjhWOEVHMHBVX0lZUGdPRUxlaHV4RTMxaEx1bG1jS3N2T2JDQ0dhUWw0WURkSkNsZWtZZVJtWkRlOVFndXRzVllqUHpkZw?oc=5",
+      "sourceHash": "sha256:8f93c71059753a2dd463473143d6b598b8c3133473d08c74cdde93ff7fb1b751",
+      "observedAt": "2026-11-20T13:00:48.618Z",
       "collectionStatus": "DISCOVERED_UNVERIFIED",
       "country": null,
       "model": null,
       "sourceRecords": [
         {
-          "url": "https://news.google.com/rss/articles/CBMirwFBVV95cUxQQmh0ZGs3VHBjeEhsMUFCUEZFV2w2cWlhVVliaVRBOGJJTUtpM3Q5dzQ4bEdyR0xyMUZDc3ZPSjV2Y2Njdm9hV1dCZ0c0MllIdXc3X1BhMU9hZ2lvaEJ6SzdNTlZ3alBfSU5XelNEa0VScXllMTdjSWVMQURLdnRYcVZNWWxBdndSWDhkR0Y1TnpUMllNeVNSNlBra2hZbzBqSHBlamdwc2hDSnBKemE0?oc=5",
-          "sha256": "sha256:99e4c530dc26186905dc9f67e48c11771d725c88d2bde30ce42ca8db8bc76d4c",
-          "sourceId": "google-africa"
+          "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOcGpZZXhGeWpFSXB4dTN4UjExTTVZOXU4dkJXbXFtZmtyaWhVWXNvMGFvcnJ0aHNyem4wNXZQOC1xSWVaM0ZDUG1FMjhfd05Ecl9RQV9kZ3ducnJLc3JsRU53c3k4TUJJZWplUGozYXBqSjhWOEVHMHBVX0lZUGdPRUxlaHV4RTMxaEx1bG1jS3N2T2JDQ0dhUWw0WURkSkNsZWtZZVJtWkRlOVFndXRzVllqUHpkZw?oc=5",
+          "sha256": "sha256:8f93c71059753a2dd463473143d6b598b8c3133473d08c74cdde93ff7fb1b751",
+          "sourceId": "google-black-sea"
         }
       ],
       "claims": [],
@@ -3970,11 +4512,29 @@
           "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBXYW1ERHhZc0FsVEdITzJSUVNOd2psTDdHVHVNZXNTakR3NWZ3QWxWSVFqSm1fekJHMVNPamRfaGdDdVo0QnZFeFZyVDc4TE91Sjk2aldGQks0NW9jY24yWG13TlpMNnlYc0tmbzlTQk1MYkE?oc=5",
           "sha256": "sha256:3e7e36053805402ef895437c737fb7ab6ca40806f27485d081e5924f752eb950",
           "sourceId": "google-local-korean"
-        },
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "FLEET_LEAD:A26-FLEET-d95721d466352670",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "Navy boosting USV presence, network capability in Middle East - Defense News",
+      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxPMjNjdkZ6cVFfcTl1b29Vd3E1UndUNGlCZm5qd0djZnNvLWlmbEs1TG1vMXYwRlNLYmtkT1hza1RqYm94QXB4SGtkRHBHQl8xSnFhUFVvcFFPTWhhTmlYaGRaak1HeEZkVFRQN1E3bHA0MVhIc3JNbDB0b0JoVUpZaFJIOEVYaEZUZjlQbC14b3RhT1o0UDE1M1lJQlNZTWNRdnRlLVJlT0VhZw?oc=5",
+      "sourceHash": "sha256:3d3e7ca452efe99b036205d647954da6981d27e090596a180a9bc2a2bcdf99f9",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
         {
-          "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBXYW1ERHhZc0FsVEdITzJSUVNOd2psTDdHVHVNZXNTakR3NWZ3QWxWSVFqSm1fekJHMVNPamRfaGdDdVo0QnZFeFZyVDc4TE91Sjk2aldGQks0NW9jY24yWG13TlpMNnlYc0tmbzlTQk1MYkHSAXdBVV95cUxQVUdXSmlIbVNLN2hqOGpoempJT2ZMN1g5OXIzM1ZQam9pT2M1VS1LamoyVVNNV1BmMVR3MjlYa252Y0puY28ySjJvNzlTZXk0WXNFdEVsd1A2ZVZsNXN4T0pUWE5XVElKMEd1TWhoVUFTTU9UQW9WUQ?oc=5",
-          "sha256": "sha256:2d42bb80801160b2d1d98f1e4fce28076b62f9f906d0de4129f32b79d3c1b103",
-          "sourceId": "google-local-korean"
+          "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxPMjNjdkZ6cVFfcTl1b29Vd3E1UndUNGlCZm5qd0djZnNvLWlmbEs1TG1vMXYwRlNLYmtkT1hza1RqYm94QXB4SGtkRHBHQl8xSnFhUFVvcFFPTWhhTmlYaGRaak1HeEZkVFRQN1E3bHA0MVhIc3JNbDB0b0JoVUpZaFJIOEVYaEZUZjlQbC14b3RhT1o0UDE1M1lJQlNZTWNRdnRlLVJlT0VhZw?oc=5",
+          "sha256": "sha256:3d3e7ca452efe99b036205d647954da6981d27e090596a180a9bc2a2bcdf99f9",
+          "sourceId": "google-middle-east"
         }
       ],
       "claims": [],
@@ -4067,6 +4627,29 @@
           "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxPSEN6MnFFbUQ2eURvaGJBcHdBNmo1dlo4d01KVFdvLXVmbjdGbVdjWUtySlVSaTBwajBzZ21LOVBpcmNSSGtDZlQ0X3pvUDM5ck5keUhpbkJqeUdObFRGdnVCUFVyWVZDMmhGUzZob0lxOWxmWlA3Qm9xOElLOHowelRzdFd1UlpkWVYwaEpZblRMZXQteHVvNnU4dXVvWXIwVUlZMw?oc=5",
           "sha256": "sha256:ec173a6f930762667b4fc4a4a3e32b7ef34066f122546c1a0276355ea593a43a",
           "sourceId": "google-central-asia"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "FLEET_LEAD:A26-FLEET-dd2e2a9eafbf81a2",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "Ukrainian Navy claims first USV-on-USV kill - Janes Defence Intelligence",
+      "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPUEhHX2lPa0hPY3lZdGxhRG5FNk5VXzZqbTNydVVUYUp1WDZscmZ2ZDBzX0tzTy1relZLaHhhMlNLaUZZcnJzWktHNTZ1a2lPZWY2SlpXRTMxQjBaZ05zX0lUNThFb1FOZlM4ZUh1RW12a3U3enF0bU5aTGNOQ1VnX0ZfUVBrZ1pkMk9yQ1ZXZ0pPQld3b1djTFNNUU5vY2NDNklFdmVLNy1xRDZaNE5lWWN3?oc=5",
+      "sourceHash": "sha256:63cb9cd02d9f3d4777394b12cd7ded26e57a6a290f44580b02b1933badb9671b",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPUEhHX2lPa0hPY3lZdGxhRG5FNk5VXzZqbTNydVVUYUp1WDZscmZ2ZDBzX0tzTy1relZLaHhhMlNLaUZZcnJzWktHNTZ1a2lPZWY2SlpXRTMxQjBaZ05zX0lUNThFb1FOZlM4ZUh1RW12a3U3enF0bU5aTGNOQ1VnX0ZfUVBrZ1pkMk9yQ1ZXZ0pPQld3b1djTFNNUU5vY2NDNklFdmVLNy1xRDZaNE5lWWN3?oc=5",
+          "sha256": "sha256:63cb9cd02d9f3d4777394b12cd7ded26e57a6a290f44580b02b1933badb9671b",
+          "sourceId": "google-black-sea"
         }
       ],
       "claims": [],
@@ -4442,6 +5025,52 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "FLEET_LEAD:A26-FLEET-f3ee96aba54c5d31",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "Ukrainian Drone Boat Sinks Second Russian Sea Drone - The SOFX Report",
+      "url": "https://news.google.com/rss/articles/CBMifkFVX3lxTE1vNTM4RlFrUUhiQXVrWi14SU4zZGtISks4SDkwQnBBbEhtODNZVXJtc3F3bjRFTFhpT2o1QWVIMmZBOGowRXR6enI5NVNQamV6ZGc5OGxXOElJdUtPOVFwdUZJMXZ4Z09rYTVjYjdESDBqcUR4RTdsUi15Wmlrdw?oc=5",
+      "sourceHash": "sha256:7421aac0915b21d2af4567e63182bee3aabd3542c40b78aaa05167a5c7ed8db6",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMifkFVX3lxTE1vNTM4RlFrUUhiQXVrWi14SU4zZGtISks4SDkwQnBBbEhtODNZVXJtc3F3bjRFTFhpT2o1QWVIMmZBOGowRXR6enI5NVNQamV6ZGc5OGxXOElJdUtPOVFwdUZJMXZ4Z09rYTVjYjdESDBqcUR4RTdsUi15Wmlrdw?oc=5",
+          "sha256": "sha256:7421aac0915b21d2af4567e63182bee3aabd3542c40b78aaa05167a5c7ed8db6",
+          "sourceId": "google-black-sea"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "FLEET_LEAD:A26-FLEET-f6b6c2bc36021a0a",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "FLEET_LEAD",
+      "title": "JUST IN: Taiwan Can Learn from Ukraine’s Maritime Drone Strategy, Report Finds - National Defense Magazine",
+      "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxPbm5HOUp1a1VSZ3R5c0FtR0pNSTNjWC1wZXo1emFJUDhlTmpuQnNoOVhYSWJrbHpON1lkRTgySGZ5bDZWT2VuN0RpbW9Ld1k0Q0N3a3pCN0xoZGx0VGRPV2M3TlZLMElPc2JOUG5DWS1iay1VcENxcEYzUlcwSXk5ZUF1VFZhcjdxX1Q2cE1WTXBjYkVzenNZcUdFU1NwTjI0bk84U3JucFN6anVsX2dRVGk1YW1vZ0Jod0FjcjhqZw?oc=5",
+      "sourceHash": "sha256:1b2818b0306ef44d36c13e1d01af6bc26aa810dd447e79adcbd376a30e4d1479",
+      "observedAt": "2026-11-20T13:00:48.618Z",
+      "collectionStatus": "DISCOVERED_UNVERIFIED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxPbm5HOUp1a1VSZ3R5c0FtR0pNSTNjWC1wZXo1emFJUDhlTmpuQnNoOVhYSWJrbHpON1lkRTgySGZ5bDZWT2VuN0RpbW9Ld1k0Q0N3a3pCN0xoZGx0VGRPV2M3TlZLMElPc2JOUG5DWS1iay1VcENxcEYzUlcwSXk5ZUF1VFZhcjdxX1Q2cE1WTXBjYkVzenNZcUdFU1NwTjI0bk84U3JucFN6anVsX2dRVGk1YW1vZ0Jod0FjcjhqZw?oc=5",
+          "sha256": "sha256:1b2818b0306ef44d36c13e1d01af6bc26aa810dd447e79adcbd376a30e4d1479",
+          "sourceId": "google-black-sea"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "FLEET_LEAD:A26-FLEET-f6c10feea2a767cf",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -4626,29 +5255,6 @@
       "engineeringReleaseApproved": false
     },
     {
-      "id": "FLEET_LEAD:A26-FLEET-fd61cfd622bf266c",
-      "agentId": "INTEL-USV-26",
-      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
-      "kind": "FLEET_LEAD",
-      "title": "HD Hyundai and Anduril launch 600t autonomous surface vessel - Naval Technology",
-      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9PSm05ZVdkbzVrZUdrelktWEJ6SFdublR0RU5hTE9pbXBmTnFCUnMtNnA2cy1yd2VPejJTa0laTnJMWUdNN29VVEpGakFnNHdTM2NpUFJZU0NmWXR1b3FnRDVSaV9aOFF6czZSNjB3?oc=5",
-      "sourceHash": "sha256:001568969d801454ec68a26d6eb9980dda441a944f9c018851a7569a6cdce712",
-      "observedAt": "2026-11-17T13:32:49.958Z",
-      "collectionStatus": "DISCOVERED_UNVERIFIED",
-      "country": null,
-      "model": null,
-      "sourceRecords": [
-        {
-          "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9PSm05ZVdkbzVrZUdrelktWEJ6SFdublR0RU5hTE9pbXBmTnFCUnMtNnA2cy1yd2VPejJTa0laTnJMWUdNN29VVEpGakFnNHdTM2NpUFJZU0NmWXR1b3FnRDVSaV9aOFF6czZSNjB3?oc=5",
-          "sha256": "sha256:001568969d801454ec68a26d6eb9980dda441a944f9c018851a7569a6cdce712",
-          "sourceId": "google-test-results"
-        }
-      ],
-      "claims": [],
-      "status": "UNVERIFIED_REVIEW_REQUIRED",
-      "engineeringReleaseApproved": false
-    },
-    {
       "id": "FLEET_LEAD:A26-FLEET-fe1569659ccdf823",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -4702,7 +5308,7 @@
       "title": "SIMULATION AND CONTROL OF A QUADROTOR UNMANNED AERIAL VEHICLE",
       "url": "https://uknowledge.uky.edu/gradschool_theses/93",
       "sourceHash": "sha256:60eade1c9b1f79db70dc0c98613d4db62e2e563374b80171945aa579d702b4fe",
-      "observedAt": "2026-11-17T13:33:13.105Z",
+      "observedAt": "2026-11-20T13:01:12.169Z",
       "collectionStatus": "REVIEW_REQUIRED",
       "country": null,
       "model": null,
@@ -4757,6 +5363,11 @@
           "url": "https://openalex.org/W1533628301",
           "sha256": "sha256:a56500173e0a115f8b6992dcd7d1cd4dbfb9a72ff497cf818fb1fe1027588ca2",
           "sourceId": "A26-PAPER-W1533628301"
+        },
+        {
+          "url": "https://openalex.org/W1533628301",
+          "sha256": "sha256:869423db0125b3fc17880f16bcd60cc2b74d8692f3a681aa49c25a657ccc220c",
+          "sourceId": "A26-PAPER-W1533628301"
         }
       ],
       "claims": [],
@@ -4802,6 +5413,11 @@
         {
           "url": "https://openalex.org/W1577844889",
           "sha256": "sha256:16c8db2ce735680779db6ddd5a10f07c3f7c736377719501ff1840fe5f25ca68",
+          "sourceId": "A26-PAPER-W1577844889"
+        },
+        {
+          "url": "https://openalex.org/W1577844889",
+          "sha256": "sha256:2672447777fe503d317c61e95558a9454abc13b9db8e09fc7a801d7a0799e481",
           "sourceId": "A26-PAPER-W1577844889"
         }
       ],
@@ -4872,6 +5488,29 @@
           "url": "https://doi.org/10.23919/oceans.2011.6107217",
           "sha256": "sha256:9eaf485607282884cc428f7d59e4817bf9243dd382bb3b346b743198628d998d",
           "sourceId": "A26-PAPER-W1760137457"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W176211386",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "KNOWLEDGE_DOCUMENT",
+      "title": "On Structural Design of High-Speed Craft",
+      "url": "https://openalex.org/W176211386",
+      "sourceHash": "sha256:c7d757406069c1a53f91c6be8a8a3f23ac6146a25b48f3b894702a86ea99c547",
+      "observedAt": "2026-11-20T13:01:12.169Z",
+      "collectionStatus": "REVIEW_REQUIRED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://openalex.org/W176211386",
+          "sha256": "sha256:c7d757406069c1a53f91c6be8a8a3f23ac6146a25b48f3b894702a86ea99c547",
+          "sourceId": "A26-PAPER-W176211386"
         }
       ],
       "claims": [],
@@ -5270,6 +5909,29 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W2031404716",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "KNOWLEDGE_DOCUMENT",
+      "title": "Path planning algorithm for unmanned surface vehicle formations in a practical maritime environment",
+      "url": "https://doi.org/10.1016/j.oceaneng.2015.01.008",
+      "sourceHash": "sha256:1693758ad0fa7c42fd947ee751ea5821fac8186ad18eff074e168055832e3b34",
+      "observedAt": "2026-11-20T13:01:12.169Z",
+      "collectionStatus": "REVIEW_REQUIRED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://doi.org/10.1016/j.oceaneng.2015.01.008",
+          "sha256": "sha256:1693758ad0fa7c42fd947ee751ea5821fac8186ad18eff074e168055832e3b34",
+          "sourceId": "A26-PAPER-W2031404716"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W2040921824",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -5659,6 +6321,11 @@
           "url": "https://doi.org/10.1016/j.actaastro.2016.06.007",
           "sha256": "sha256:dbc742642106e6aaef7c6351aefe0d9123ab8fd0043ef845a94e82ccc63bb326",
           "sourceId": "A26-PAPER-W2218694104"
+        },
+        {
+          "url": "https://doi.org/10.1016/j.actaastro.2016.06.007",
+          "sha256": "sha256:b8b42fbd196ec01dc6065bf791ba4003a4e9e7672923e1c71bdabcf72bdb4912",
+          "sourceId": "A26-PAPER-W2218694104"
         }
       ],
       "claims": [],
@@ -5682,29 +6349,6 @@
           "url": "https://openalex.org/W2247882266",
           "sha256": "sha256:5201b1bde807d46aa2e505993d5d5d032ec22abc497d72b4467eaa5624bc67f3",
           "sourceId": "A26-PAPER-W2247882266"
-        }
-      ],
-      "claims": [],
-      "status": "UNVERIFIED_REVIEW_REQUIRED",
-      "engineeringReleaseApproved": false
-    },
-    {
-      "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W226033124",
-      "agentId": "INTEL-USV-26",
-      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
-      "kind": "KNOWLEDGE_DOCUMENT",
-      "title": "Collision Avoidance for Unmanned Surface Vehicles",
-      "url": "https://openalex.org/W226033124",
-      "sourceHash": "sha256:34c8762f0533b28cf4da6c87776b1317df29d5a8f1faf74e4a910cbbd452753c",
-      "observedAt": "2026-11-17T13:33:13.105Z",
-      "collectionStatus": "REVIEW_REQUIRED",
-      "country": null,
-      "model": null,
-      "sourceRecords": [
-        {
-          "url": "https://openalex.org/W226033124",
-          "sha256": "sha256:34c8762f0533b28cf4da6c87776b1317df29d5a8f1faf74e4a910cbbd452753c",
-          "sourceId": "A26-PAPER-W226033124"
         }
       ],
       "claims": [],
@@ -5750,6 +6394,11 @@
         {
           "url": "https://escholarship.org/uc/item/3f1079b5",
           "sha256": "sha256:74a6d1b7220008ec363e86d74f83e1b8edf65f8e2689009e71693b1e8ef5d6aa",
+          "sourceId": "A26-PAPER-W22831488"
+        },
+        {
+          "url": "https://escholarship.org/uc/item/3f1079b5",
+          "sha256": "sha256:166925028d7054d311487c30194641d8e0cd4e77e6cab30abfa43560efc2d2a1",
           "sourceId": "A26-PAPER-W22831488"
         }
       ],
@@ -6149,6 +6798,29 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W2587344361",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "KNOWLEDGE_DOCUMENT",
+      "title": "Guidance and Control of Robot Manipulators and Autonomous Marine Robots",
+      "url": "https://openalex.org/W2587344361",
+      "sourceHash": "sha256:09da214fe97bd6e2fc9a61c9edd0d5b04dd002d6dc4f79a1dc7221b91a5e87bd",
+      "observedAt": "2026-11-20T13:01:12.169Z",
+      "collectionStatus": "REVIEW_REQUIRED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://openalex.org/W2587344361",
+          "sha256": "sha256:09da214fe97bd6e2fc9a61c9edd0d5b04dd002d6dc4f79a1dc7221b91a5e87bd",
+          "sourceId": "A26-PAPER-W2587344361"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W2588422468",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -6280,6 +6952,11 @@
           "url": "https://openalex.org/W268369090",
           "sha256": "sha256:b66bb3215aa48c7ba8e5e06a1169275a2de0e9edbfbf72c5697a037dcf34c88d",
           "sourceId": "A26-PAPER-W268369090"
+        },
+        {
+          "url": "https://openalex.org/W268369090",
+          "sha256": "sha256:99e8d78648c197a408da52bdfc9f0d48875c9f920a2a6970ef411d72d259a2cc",
+          "sourceId": "A26-PAPER-W268369090"
         }
       ],
       "claims": [],
@@ -6302,6 +6979,11 @@
         {
           "url": "https://doaj.org/article/e3202ef21ac041e8b9b018a72ef63f25",
           "sha256": "sha256:e7e80b2f96046ed610569c0ab5afecc9bb9da01b56fec5f9adf53d2a2955b5e6",
+          "sourceId": "A26-PAPER-W2732733425"
+        },
+        {
+          "url": "https://doaj.org/article/e3202ef21ac041e8b9b018a72ef63f25",
+          "sha256": "sha256:03ab5171d3ab94e387cd2b7953b0adf0e2565617332fa39bd1ec6d0cc78ca10d",
           "sourceId": "A26-PAPER-W2732733425"
         }
       ],
@@ -6602,6 +7284,11 @@
           "url": "https://doi.org/10.3390/app8020193",
           "sha256": "sha256:12fb895e92d9b42984ff235d2d8edf11572251dd0dcc29b6625cfb222b7c36e9",
           "sourceId": "A26-PAPER-W2790771472"
+        },
+        {
+          "url": "https://doi.org/10.3390/app8020193",
+          "sha256": "sha256:ea387d6cf5a3806ea95f22bcbad641b51c69a4c23df4a521262988af1d3ee5fa",
+          "sourceId": "A26-PAPER-W2790771472"
         }
       ],
       "claims": [],
@@ -6740,6 +7427,11 @@
           "url": "https://doi.org/10.1109/lra.2018.2860628",
           "sha256": "sha256:3e762999f1caceb9b0cb921bc9f2c529065c65bc92f8151470e10da9407f5086",
           "sourceId": "A26-PAPER-W2884628842"
+        },
+        {
+          "url": "https://doi.org/10.1109/lra.2018.2860628",
+          "sha256": "sha256:e5c57311bb0d7ecbbe414e351c40ad0f40bffc5b9d66ee326ddc83b80709c613",
+          "sourceId": "A26-PAPER-W2884628842"
         }
       ],
       "claims": [],
@@ -6793,6 +7485,29 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W2899133847",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "KNOWLEDGE_DOCUMENT",
+      "title": "COLREGS Compatible Motion Planning for Autonomous Surface Vessels",
+      "url": "https://openalex.org/W2899133847",
+      "sourceHash": "sha256:31501b6c386103bd1f62a5fb9693cae168e51a144eef995c299a0111d4b9e959",
+      "observedAt": "2026-11-20T13:01:12.169Z",
+      "collectionStatus": "REVIEW_REQUIRED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://openalex.org/W2899133847",
+          "sha256": "sha256:31501b6c386103bd1f62a5fb9693cae168e51a144eef995c299a0111d4b9e959",
+          "sourceId": "A26-PAPER-W2899133847"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W2899525663",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -6839,6 +7554,29 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W2906432547",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "KNOWLEDGE_DOCUMENT",
+      "title": "Improving Seaglider Efficiency: An Analysis of Wing Shapes, Hull Morphologies, and Propulsion Methods",
+      "url": "https://commons.erau.edu/edt/418",
+      "sourceHash": "sha256:517d20a0157f9f90b3b046c48f321d1ec3b0b2daa7fb9ea2aa9b838a4435225c",
+      "observedAt": "2026-11-20T13:01:12.169Z",
+      "collectionStatus": "REVIEW_REQUIRED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://commons.erau.edu/edt/418",
+          "sha256": "sha256:517d20a0157f9f90b3b046c48f321d1ec3b0b2daa7fb9ea2aa9b838a4435225c",
+          "sourceId": "A26-PAPER-W2906432547"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W2906888451",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -6855,6 +7593,29 @@
           "url": "https://research.library.mun.ca/13042/",
           "sha256": "sha256:d866fe8472f978d354c2c39b096b0b0fe033a735b45217b03251eb4f84b95748",
           "sourceId": "A26-PAPER-W2906888451"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W2908188234",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "KNOWLEDGE_DOCUMENT",
+      "title": "Autonomous landing on a moving vehicle with an unmanned aerial vehicle",
+      "url": "https://doi.org/10.1002/rob.21858",
+      "sourceHash": "sha256:46ea756dbb0e58d27f4bbdd30c720c4b570d836b4bf914dd6f254cfc146adf94",
+      "observedAt": "2026-11-20T13:01:12.169Z",
+      "collectionStatus": "REVIEW_REQUIRED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://doi.org/10.1002/rob.21858",
+          "sha256": "sha256:46ea756dbb0e58d27f4bbdd30c720c4b570d836b4bf914dd6f254cfc146adf94",
+          "sourceId": "A26-PAPER-W2908188234"
         }
       ],
       "claims": [],
@@ -7327,6 +8088,29 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W2973163281",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "KNOWLEDGE_DOCUMENT",
+      "title": "A critical review on unmanned aerial vehicles power supply and energy management: Solutions, strategies, and prospects",
+      "url": "https://doi.org/10.1016/j.apenergy.2019.113823",
+      "sourceHash": "sha256:c67f680bd73693f2005c4b4322c396f01f1fae027fa432a047655c6cefcaca60",
+      "observedAt": "2026-11-20T13:01:12.169Z",
+      "collectionStatus": "REVIEW_REQUIRED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://doi.org/10.1016/j.apenergy.2019.113823",
+          "sha256": "sha256:c67f680bd73693f2005c4b4322c396f01f1fae027fa432a047655c6cefcaca60",
+          "sourceId": "A26-PAPER-W2973163281"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W2979367241",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -7764,6 +8548,29 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W3029203949",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "KNOWLEDGE_DOCUMENT",
+      "title": "Autonomy for Unmanned Surface Vehicle",
+      "url": "https://openalex.org/W3029203949",
+      "sourceHash": "sha256:0722b847d5b6fef5b0bb1e6f639e536429f414a22188e4c17f0f3a21997a675c",
+      "observedAt": "2026-11-20T13:01:12.169Z",
+      "collectionStatus": "REVIEW_REQUIRED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://openalex.org/W3029203949",
+          "sha256": "sha256:0722b847d5b6fef5b0bb1e6f639e536429f414a22188e4c17f0f3a21997a675c",
+          "sourceId": "A26-PAPER-W3029203949"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W3043276110",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -7895,29 +8702,6 @@
           "url": "https://doi.org/10.1109/access.2020.3022600",
           "sha256": "sha256:abfd7bad15f5c0d44428d285d69f3eb05b15c7011bb97da865920d311d5d052a",
           "sourceId": "A26-PAPER-W3083914918"
-        }
-      ],
-      "claims": [],
-      "status": "UNVERIFIED_REVIEW_REQUIRED",
-      "engineeringReleaseApproved": false
-    },
-    {
-      "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W3088207453",
-      "agentId": "INTEL-USV-26",
-      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
-      "kind": "KNOWLEDGE_DOCUMENT",
-      "title": "UNMANNED VEHICLE SYSTEMS & OPERATIONS ON AIR, SEA, LAND",
-      "url": "https://newprairiepress.org/ebooks/35",
-      "sourceHash": "sha256:721c6c83080273b1e43929b6ff450f5c2d726ee267e9799d2530dc689e23ad32",
-      "observedAt": "2026-11-17T13:33:13.105Z",
-      "collectionStatus": "REVIEW_REQUIRED",
-      "country": null,
-      "model": null,
-      "sourceRecords": [
-        {
-          "url": "https://newprairiepress.org/ebooks/35",
-          "sha256": "sha256:721c6c83080273b1e43929b6ff450f5c2d726ee267e9799d2530dc689e23ad32",
-          "sourceId": "A26-PAPER-W3088207453"
         }
       ],
       "claims": [],
@@ -8507,7 +9291,7 @@
       "title": "Tonal Noise Prediction of a Distributed Propulsion Unmanned Aerial Vehicle",
       "url": "https://openalex.org/W3174012290",
       "sourceHash": "sha256:330493b11cb757b66fb0bc5377ce00193e7a7438ad44eb0181c8100de57bf0ed",
-      "observedAt": "2026-11-17T13:33:13.105Z",
+      "observedAt": "2026-11-20T13:01:12.169Z",
       "collectionStatus": "REVIEW_REQUIRED",
       "country": null,
       "model": null,
@@ -8700,6 +9484,29 @@
           "url": "https://doi.org/10.1016/j.ifacol.2021.10.097",
           "sha256": "sha256:8f48e48cbe5f5421a3e0f0290481f8350d26cd0ae4b34ffed45fbd2aae54a883",
           "sourceId": "A26-PAPER-W3204505605"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W3208629165",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "KNOWLEDGE_DOCUMENT",
+      "title": "Study of Principles in COLREGs and Interpretations and Amendments COLREGs for Maritime Autonomous Surface Ships (MASS)",
+      "url": "https://doi.org/10.18949/jintransnavi.6.1_11",
+      "sourceHash": "sha256:23b3e77265ec2bec4ccfb5bb3ba1bd1acde8ec7ed0a28cd0e1614c5a5c275a56",
+      "observedAt": "2026-11-20T13:01:12.169Z",
+      "collectionStatus": "REVIEW_REQUIRED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://doi.org/10.18949/jintransnavi.6.1_11",
+          "sha256": "sha256:23b3e77265ec2bec4ccfb5bb3ba1bd1acde8ec7ed0a28cd0e1614c5a5c275a56",
+          "sourceId": "A26-PAPER-W3208629165"
         }
       ],
       "claims": [],
@@ -9972,6 +10779,29 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W4366385182",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "KNOWLEDGE_DOCUMENT",
+      "title": "A framework for the economic-environmental feasibility assessment of short-sea shipping autonomous vessels",
+      "url": "https://doi.org/10.1016/j.oceaneng.2023.114420",
+      "sourceHash": "sha256:9c666939388329d74efef76bb2194cd16ab586f47dc8cf68cd4edf239e9417b9",
+      "observedAt": "2026-11-20T13:01:12.169Z",
+      "collectionStatus": "REVIEW_REQUIRED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://doi.org/10.1016/j.oceaneng.2023.114420",
+          "sha256": "sha256:9c666939388329d74efef76bb2194cd16ab586f47dc8cf68cd4edf239e9417b9",
+          "sourceId": "A26-PAPER-W4366385182"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W4366422890",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -10149,6 +10979,11 @@
           "url": "https://doi.org/10.1109/icra48891.2023.10160858",
           "sha256": "sha256:f097aca321e8fdfc1deda15f2431d013370aeb1c796d6d9196284e1f65b4b197",
           "sourceId": "A26-PAPER-W4383108227"
+        },
+        {
+          "url": "https://doi.org/10.1109/icra48891.2023.10160858",
+          "sha256": "sha256:beb6da435ede14995cf99992817e3bcf731f5c7f5dbcbfd6ea1048e9507d96f9",
+          "sourceId": "A26-PAPER-W4383108227"
         }
       ],
       "claims": [],
@@ -10263,6 +11098,11 @@
         {
           "url": "https://doi.org/10.1109/metroaerospace57412.2023.10189956",
           "sha256": "sha256:ac09ca9b1926a61e342e444ab52dd9c862591b0a5f21fc995573f19650a2c371",
+          "sourceId": "A26-PAPER-W4385301186"
+        },
+        {
+          "url": "https://doi.org/10.1109/metroaerospace57412.2023.10189956",
+          "sha256": "sha256:c45b914c11b4ed672e1a4d135c4c99f107e49b01c769088d2a3697e1b3887a1b",
           "sourceId": "A26-PAPER-W4385301186"
         }
       ],
@@ -10715,7 +11555,7 @@
       "title": "Bayesian learning for the robust verification of autonomous robots",
       "url": "https://doi.org/10.1038/s44172-024-00162-y",
       "sourceHash": "sha256:aacfc93d274d7c4a12e9f8cf6592c9f2ff9b692ccaa8ca70a6242ef9cb2b313c",
-      "observedAt": "2026-11-17T13:33:13.105Z",
+      "observedAt": "2026-11-20T13:01:12.169Z",
       "collectionStatus": "REVIEW_REQUIRED",
       "country": null,
       "model": null,
@@ -10746,6 +11586,11 @@
         {
           "url": "https://doi.org/10.25043/19098642.247",
           "sha256": "sha256:ef4ba8a5c6d030cc113ff5d39c2a2d360bd379099a30f1e36777e9a700c2e340",
+          "sourceId": "A26-PAPER-W4391386902"
+        },
+        {
+          "url": "https://doi.org/10.25043/19098642.247",
+          "sha256": "sha256:371c38c97841f58317e457374742f7deb263994a908f0465c383ea983301c264",
           "sourceId": "A26-PAPER-W4391386902"
         }
       ],
@@ -11030,6 +11875,29 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W4396691019",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "KNOWLEDGE_DOCUMENT",
+      "title": "Data-driven method for hydrodynamic model estimation applied to an unmanned surface vehicle",
+      "url": "https://doi.org/10.1016/j.measurement.2024.114724",
+      "sourceHash": "sha256:aee40a55cb55493671ff003205e25ab5f006b7c5cb4a0ac5c362ca20ae5c89c6",
+      "observedAt": "2026-11-20T13:01:12.169Z",
+      "collectionStatus": "REVIEW_REQUIRED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://doi.org/10.1016/j.measurement.2024.114724",
+          "sha256": "sha256:aee40a55cb55493671ff003205e25ab5f006b7c5cb4a0ac5c362ca20ae5c89c6",
+          "sourceId": "A26-PAPER-W4396691019"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W4396700485",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -11099,6 +11967,29 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W4396941348",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "KNOWLEDGE_DOCUMENT",
+      "title": "Unmanned Aerial Vehicle for Precision Agriculture: A Review",
+      "url": "https://doi.org/10.1109/access.2024.3401018",
+      "sourceHash": "sha256:2b8972f4395efa906ad60b9ecad8cf98c909aeab2d2139abe170ead282340098",
+      "observedAt": "2026-11-20T13:01:12.169Z",
+      "collectionStatus": "REVIEW_REQUIRED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://doi.org/10.1109/access.2024.3401018",
+          "sha256": "sha256:2b8972f4395efa906ad60b9ecad8cf98c909aeab2d2139abe170ead282340098",
+          "sourceId": "A26-PAPER-W4396941348"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W4398141862",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -11138,6 +12029,52 @@
           "url": "https://doi.org/10.18260/1-2-1139-46329",
           "sha256": "sha256:b490a8e1784bbd1d2ee8369279d2f8bc215b6e80cb745f4952cb93072beaac2d",
           "sourceId": "A26-PAPER-W4399491059"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W4400056042",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "KNOWLEDGE_DOCUMENT",
+      "title": "Challenge for multifaceted data acquisition around active volcanoes using uncrewed surface vessel",
+      "url": "https://doi.org/10.3389/fmars.2024.1406381",
+      "sourceHash": "sha256:394f044947c84571088f789e0ffcd43377923f5cb1e9a8b6948e872f9760a9b2",
+      "observedAt": "2026-11-20T13:01:12.169Z",
+      "collectionStatus": "REVIEW_REQUIRED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://doi.org/10.3389/fmars.2024.1406381",
+          "sha256": "sha256:394f044947c84571088f789e0ffcd43377923f5cb1e9a8b6948e872f9760a9b2",
+          "sourceId": "A26-PAPER-W4400056042"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W4400884558",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "KNOWLEDGE_DOCUMENT",
+      "title": "An Improved NSGA-II Algorithm for MASS Autonomous Collision Avoidance under COLREGs",
+      "url": "https://doi.org/10.3390/jmse12071224",
+      "sourceHash": "sha256:9201136332186241345731aaad4c7a9ff0a7c517c4698e891692ef4a113a2977",
+      "observedAt": "2026-11-20T13:01:12.169Z",
+      "collectionStatus": "REVIEW_REQUIRED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://doi.org/10.3390/jmse12071224",
+          "sha256": "sha256:9201136332186241345731aaad4c7a9ff0a7c517c4698e891692ef4a113a2977",
+          "sourceId": "A26-PAPER-W4400884558"
         }
       ],
       "claims": [],
@@ -11221,7 +12158,7 @@
       "title": "Research on Intelligent Navigation Technology: Intelligent Guidance and Path-Following Control of USVs",
       "url": "https://doi.org/10.3390/jmse12091548",
       "sourceHash": "sha256:7a83e513adb49b299410263f95f32c536639512c45a944177a64cb4ced83e55c",
-      "observedAt": "2026-11-17T13:33:13.105Z",
+      "observedAt": "2026-11-20T13:01:12.169Z",
       "collectionStatus": "REVIEW_REQUIRED",
       "country": null,
       "model": null,
@@ -11298,6 +12235,11 @@
         {
           "url": "https://doi.org/10.1093/icesjms/fsae130",
           "sha256": "sha256:8426b0a9411d08acf7013decaf21bd3b077b1fcdaa0c2d73f407b4da4340c4bd",
+          "sourceId": "A26-PAPER-W4402575011"
+        },
+        {
+          "url": "https://doi.org/10.1093/icesjms/fsae130",
+          "sha256": "sha256:7f5d2a69edba342939dd6f9f21cd26aa41951ffd5822c8bf97b47af9ddbdafd3",
           "sourceId": "A26-PAPER-W4402575011"
         }
       ],
@@ -11460,6 +12402,29 @@
           "url": "https://doi.org/10.24868/11139",
           "sha256": "sha256:170779f7006e17d257644e67188972a72d7a5c9184c2d1736c973bbffb51e6cd",
           "sourceId": "A26-PAPER-W4403610485"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W4403679879",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "KNOWLEDGE_DOCUMENT",
+      "title": "Evolution of Algorithms and Applications for Unmanned Surface Vehicles in the Context of Small Craft: A Systematic Review",
+      "url": "https://doi.org/10.3390/app14219693",
+      "sourceHash": "sha256:37c06d15170d02591e4a12cdf2f6aff9e7d03a6cc991a9cabebd698903265ece",
+      "observedAt": "2026-11-20T13:01:12.169Z",
+      "collectionStatus": "REVIEW_REQUIRED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://doi.org/10.3390/app14219693",
+          "sha256": "sha256:37c06d15170d02591e4a12cdf2f6aff9e7d03a6cc991a9cabebd698903265ece",
+          "sourceId": "A26-PAPER-W4403679879"
         }
       ],
       "claims": [],
@@ -11674,6 +12639,52 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W4407954258",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "KNOWLEDGE_DOCUMENT",
+      "title": "Development of a High-Reliability Hybrid Data Transmission System for Unmanned Surface Vehicles Under Interference Conditions",
+      "url": "https://doi.org/10.3390/drones9030174",
+      "sourceHash": "sha256:ad964c2fa229e4501c42d0b9b6ef4517dfc22e933f63c9a679888d3fc7abfb00",
+      "observedAt": "2026-11-20T13:01:12.169Z",
+      "collectionStatus": "REVIEW_REQUIRED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://doi.org/10.3390/drones9030174",
+          "sha256": "sha256:ad964c2fa229e4501c42d0b9b6ef4517dfc22e933f63c9a679888d3fc7abfb00",
+          "sourceId": "A26-PAPER-W4407954258"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W4407995428",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "KNOWLEDGE_DOCUMENT",
+      "title": "An Overview of Recent Advances in Pursuit–Evasion Games with Unmanned Surface Vehicles",
+      "url": "https://doi.org/10.3390/jmse13030458",
+      "sourceHash": "sha256:045c0635386714be86071e91a2e2d03dbc4e8907d9d571c6eca89fa32fe6f32c",
+      "observedAt": "2026-11-20T13:01:12.169Z",
+      "collectionStatus": "REVIEW_REQUIRED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://doi.org/10.3390/jmse13030458",
+          "sha256": "sha256:045c0635386714be86071e91a2e2d03dbc4e8907d9d571c6eca89fa32fe6f32c",
+          "sourceId": "A26-PAPER-W4407995428"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W4408571362",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -11690,6 +12701,29 @@
           "url": "https://doi.org/10.1038/s41598-025-93635-9",
           "sha256": "sha256:60b069da8af28c072ae16949bdc4783860f8110ca1807b90e49746bf929371ff",
           "sourceId": "A26-PAPER-W4408571362"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
+      "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W4408694080",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "KNOWLEDGE_DOCUMENT",
+      "title": "Electric Machine Design and Integration for an Electric Propulsion System in Medium-Altitude Long-Endurance Unmanned Aerial Vehicles",
+      "url": "https://doi.org/10.3390/app15073438",
+      "sourceHash": "sha256:567ad5cca09bc2a2f2eabaf578367fd110a9535b6fcf781bcdda2613964d0e01",
+      "observedAt": "2026-11-20T13:01:12.169Z",
+      "collectionStatus": "REVIEW_REQUIRED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://doi.org/10.3390/app15073438",
+          "sha256": "sha256:567ad5cca09bc2a2f2eabaf578367fd110a9535b6fcf781bcdda2613964d0e01",
+          "sourceId": "A26-PAPER-W4408694080"
         }
       ],
       "claims": [],
@@ -11750,7 +12784,7 @@
       "title": "Solgenia—A test vessel toward energy-efficient autonomous water taxi applications",
       "url": "https://doi.org/10.1016/j.oceaneng.2025.121011",
       "sourceHash": "sha256:65d01fec760bd951b5b1fd371199a7267e044c288b6fe4c159d8418f85e9ecd2",
-      "observedAt": "2026-11-17T13:33:13.105Z",
+      "observedAt": "2026-11-20T13:01:12.169Z",
       "collectionStatus": "REVIEW_REQUIRED",
       "country": null,
       "model": null,
@@ -12272,6 +13306,29 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W4414512247",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "KNOWLEDGE_DOCUMENT",
+      "title": "I-VoxICP: A Fast Point Cloud Registration Method for Unmanned Surface Vessels",
+      "url": "https://doi.org/10.3390/jmse13101854",
+      "sourceHash": "sha256:0ee817996332222477a70cc8ff5d51a3382d2eb18bc981e6bb7f33a1049cfe80",
+      "observedAt": "2026-11-20T13:01:12.169Z",
+      "collectionStatus": "REVIEW_REQUIRED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://doi.org/10.3390/jmse13101854",
+          "sha256": "sha256:0ee817996332222477a70cc8ff5d51a3382d2eb18bc981e6bb7f33a1049cfe80",
+          "sourceId": "A26-PAPER-W4414512247"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W4414742232",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -12448,6 +13505,11 @@
         {
           "url": "https://doi.org/10.1109/iros60139.2025.11247574",
           "sha256": "sha256:8ba474e0b3369e2d5d1b298d298de3f53061a8190ad3b18b05a4e8afc496d75b",
+          "sourceId": "A26-PAPER-W4416750690"
+        },
+        {
+          "url": "https://doi.org/10.1109/iros60139.2025.11247574",
+          "sha256": "sha256:d0bc431b5b6e8ba75373eadf593a9554c8c182b9add1645e391c82dc4e190fb0",
           "sourceId": "A26-PAPER-W4416750690"
         }
       ],
@@ -13174,6 +14236,29 @@
       "engineeringReleaseApproved": false
     },
     {
+      "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W7162049430",
+      "agentId": "INTEL-USV-26",
+      "classification": "PUBLIC_SOURCE_SAFE_ONLY",
+      "kind": "KNOWLEDGE_DOCUMENT",
+      "title": "Technical aspects of small autonomous surface vessel design",
+      "url": "https://hrcak.srce.hr/347262",
+      "sourceHash": "sha256:6009ac00f3a1fa237c6f39219fa008bf99347505e78d794d2baa050a6ad32dde",
+      "observedAt": "2026-11-20T13:01:12.169Z",
+      "collectionStatus": "REVIEW_REQUIRED",
+      "country": null,
+      "model": null,
+      "sourceRecords": [
+        {
+          "url": "https://hrcak.srce.hr/347262",
+          "sha256": "sha256:6009ac00f3a1fa237c6f39219fa008bf99347505e78d794d2baa050a6ad32dde",
+          "sourceId": "A26-PAPER-W7162049430"
+        }
+      ],
+      "claims": [],
+      "status": "UNVERIFIED_REVIEW_REQUIRED",
+      "engineeringReleaseApproved": false
+    },
+    {
       "id": "KNOWLEDGE_DOCUMENT:A26-PAPER-W7162329355",
       "agentId": "INTEL-USV-26",
       "classification": "PUBLIC_SOURCE_SAFE_ONLY",
@@ -13715,7 +14800,7 @@
       "title": "Development of Unmanned Surface Vehicle, including hull, energy, propulsion, and intelligence: A review",
       "url": "https://doi.org/10.65218/jius.2026.155",
       "sourceHash": "sha256:4a682c225797112ef77b1ce7743e73bdc8f757b76dbabc48eb1c14ac701bfdd7",
-      "observedAt": "2026-11-17T13:33:13.105Z",
+      "observedAt": "2026-11-20T13:01:12.169Z",
       "collectionStatus": "REVIEW_REQUIRED",
       "country": null,
       "model": null,
@@ -13737,15 +14822,15 @@
       "kind": "USV_SOURCE_SNAPSHOT",
       "title": "DriX H-8",
       "url": "https://www.exail.com/product/drix-h8-medium-range-usv",
-      "sourceHash": "sha256:6da2a9d9829eace7268de17d3718c36fc6d3cb80645f81485eb72645c0e52f7f",
-      "observedAt": "2026-11-17T13:33:28.323Z",
+      "sourceHash": "sha256:ee1e3ce5ae9e41909524bdf4f539512b24374def8c7d6476a35b2b69b7a0ad28",
+      "observedAt": "2026-11-20T13:01:37.579Z",
       "collectionStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED",
       "country": "France",
       "model": "DriX H-8",
       "sourceRecords": [
         {
           "url": "https://www.exail.com/product/drix-h8-medium-range-usv",
-          "sha256": "sha256:6da2a9d9829eace7268de17d3718c36fc6d3cb80645f81485eb72645c0e52f7f",
+          "sha256": "sha256:ee1e3ce5ae9e41909524bdf4f539512b24374def8c7d6476a35b2b69b7a0ad28",
           "sourceId": "exail-h8"
         }
       ],
@@ -13760,15 +14845,15 @@
       "kind": "USV_SOURCE_SNAPSHOT",
       "title": "DriX H-9",
       "url": "https://www.exail.com/product-range/drix-series-uncrewed-surface-vessels",
-      "sourceHash": "sha256:808acb09dcd63b5ecefab0ccb2d1972aa6da1653e80603bd43d9ba289dd45db3",
-      "observedAt": "2026-11-17T13:33:29.322Z",
+      "sourceHash": "sha256:975422613e761c692d9580853f1570cd1006fa6be0779a025160ca03563b3083",
+      "observedAt": "2026-11-20T13:01:38.595Z",
       "collectionStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED",
       "country": "France",
       "model": "DriX H-9",
       "sourceRecords": [
         {
           "url": "https://www.exail.com/product-range/drix-series-uncrewed-surface-vessels",
-          "sha256": "sha256:808acb09dcd63b5ecefab0ccb2d1972aa6da1653e80603bd43d9ba289dd45db3",
+          "sha256": "sha256:975422613e761c692d9580853f1570cd1006fa6be0779a025160ca03563b3083",
           "sourceId": "exail-series-h9"
         }
       ],
@@ -13783,15 +14868,15 @@
       "kind": "USV_SOURCE_SNAPSHOT",
       "title": "DriX O-16",
       "url": "https://www.exail.com/product/drix-o-16",
-      "sourceHash": "sha256:7b913eb51dff1771f0458aee2af4510372bdc98a3ab8225b63451f3127fea5f9",
-      "observedAt": "2026-11-17T13:33:30.457Z",
+      "sourceHash": "sha256:ded01368aa5476775db1f4460c3da82d7ff8039edf3bd6ef035a310254e46018",
+      "observedAt": "2026-11-20T13:01:39.706Z",
       "collectionStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED",
       "country": "France",
       "model": "DriX O-16",
       "sourceRecords": [
         {
           "url": "https://www.exail.com/product/drix-o-16",
-          "sha256": "sha256:7b913eb51dff1771f0458aee2af4510372bdc98a3ab8225b63451f3127fea5f9",
+          "sha256": "sha256:ded01368aa5476775db1f4460c3da82d7ff8039edf3bd6ef035a310254e46018",
           "sourceId": "exail-o16"
         }
       ],
@@ -13807,7 +14892,7 @@
       "title": "Otter",
       "url": "https://www.maritimerobotics.com/otter",
       "sourceHash": "sha256:996e49f011799169dc7ffe596b529ddf7c2468e865128acd55536a1ebd3df9c1",
-      "observedAt": "2026-11-17T13:33:33.817Z",
+      "observedAt": "2026-11-20T13:01:42.510Z",
       "collectionStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED",
       "country": "Norway",
       "model": "Otter",
@@ -13829,15 +14914,15 @@
       "kind": "USV_SOURCE_SNAPSHOT",
       "title": "Devil Ray T24",
       "url": "https://martacsystems.com/proven-products/devil-ray-t24/",
-      "sourceHash": "sha256:633534c74c6db36c512a82a5ccbd7946c28104511c7dc2950e3617357249e9ab",
-      "observedAt": "2026-11-17T13:33:24.854Z",
+      "sourceHash": "sha256:f1cfd0304662aecba9148c1691edd734158d5d151c421fa1bd9ced5c5abae3d9",
+      "observedAt": "2026-11-20T13:01:32.758Z",
       "collectionStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED",
       "country": "United States",
       "model": "Devil Ray T24",
       "sourceRecords": [
         {
           "url": "https://martacsystems.com/proven-products/devil-ray-t24/",
-          "sha256": "sha256:633534c74c6db36c512a82a5ccbd7946c28104511c7dc2950e3617357249e9ab",
+          "sha256": "sha256:f1cfd0304662aecba9148c1691edd734158d5d151c421fa1bd9ced5c5abae3d9",
           "sourceId": "martac-t24"
         }
       ],
@@ -13852,15 +14937,15 @@
       "kind": "USV_SOURCE_SNAPSHOT",
       "title": "MANTAS T12",
       "url": "https://martacsystems.com/proven-products/mantas-t12/",
-      "sourceHash": "sha256:df82247d7c2dbffb7a12f4b497de2eb53568785a47ab410f02177e357306b711",
-      "observedAt": "2026-11-17T13:33:24.009Z",
+      "sourceHash": "sha256:659bcd6d815edc7eb1b101e317e383cd6f97e927a1f5aaa2c89ae48855d5e86c",
+      "observedAt": "2026-11-20T13:01:31.797Z",
       "collectionStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED",
       "country": "United States",
       "model": "MANTAS T12",
       "sourceRecords": [
         {
           "url": "https://martacsystems.com/proven-products/mantas-t12/",
-          "sha256": "sha256:df82247d7c2dbffb7a12f4b497de2eb53568785a47ab410f02177e357306b711",
+          "sha256": "sha256:659bcd6d815edc7eb1b101e317e383cd6f97e927a1f5aaa2c89ae48855d5e86c",
           "sourceId": "martac-t12"
         }
       ],
@@ -13883,15 +14968,15 @@
       "kind": "USV_SOURCE_SNAPSHOT",
       "title": "Triton",
       "url": "https://www.navalnews.com/naval-news/2026/06/u-s-transfers-ocean-aero-tritons-to-philippine-navy-usv-unit/",
-      "sourceHash": "sha256:8bf83572a60adcd573717039bf8806a918b1d20d5269d82edb7fac8ff29953cf",
-      "observedAt": "2026-11-17T13:33:26.350Z",
+      "sourceHash": "sha256:e2191849adc075eb05c1d625c54cfc75b53884ecfdbba28fe423d1955f3cfc19",
+      "observedAt": "2026-11-20T13:01:35.581Z",
       "collectionStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED",
       "country": "United States",
       "model": "Triton",
       "sourceRecords": [
         {
           "url": "https://www.navalnews.com/naval-news/2026/06/u-s-transfers-ocean-aero-tritons-to-philippine-navy-usv-unit/",
-          "sha256": "sha256:8bf83572a60adcd573717039bf8806a918b1d20d5269d82edb7fac8ff29953cf",
+          "sha256": "sha256:e2191849adc075eb05c1d625c54cfc75b53884ecfdbba28fe423d1955f3cfc19",
           "sourceId": "navalnews-2026-triton"
         }
       ],
@@ -13906,15 +14991,15 @@
       "kind": "USV_SOURCE_SNAPSHOT",
       "title": "Bluebottle",
       "url": "https://ocius.com.au/products/bluebottle/",
-      "sourceHash": "sha256:342314babaa6d4dd96b949bde6b21d1e4be11503fc2ae2baf54cdaca7aec065a",
-      "observedAt": "2026-11-17T13:33:31.115Z",
+      "sourceHash": "sha256:4048758c773f046aec36dccfe6945ea84aab1ea91daf718ce553e498669f8325",
+      "observedAt": "2026-11-20T13:01:40.444Z",
       "collectionStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED",
       "country": "Australia",
       "model": "Bluebottle",
       "sourceRecords": [
         {
           "url": "https://ocius.com.au/products/bluebottle/",
-          "sha256": "sha256:342314babaa6d4dd96b949bde6b21d1e4be11503fc2ae2baf54cdaca7aec065a",
+          "sha256": "sha256:4048758c773f046aec36dccfe6945ea84aab1ea91daf718ce553e498669f8325",
           "sourceId": "ocius-bluebottle"
         }
       ],
@@ -13929,15 +15014,15 @@
       "kind": "USV_SOURCE_SNAPSHOT",
       "title": "Data Xplorer",
       "url": "https://www.openoceanrobotics.com/government-operations",
-      "sourceHash": "sha256:f326594d23f8a21ad12a010f18f6dfde071797081994b9433363b114e8fe6164",
-      "observedAt": "2026-11-17T13:33:34.091Z",
+      "sourceHash": "sha256:59308e44ba01cc46d6d9f08c256f64944342b2426cf12687082e3c9ac340405d",
+      "observedAt": "2026-11-20T13:01:42.673Z",
       "collectionStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED",
       "country": "Canada",
       "model": "Data Xplorer",
       "sourceRecords": [
         {
           "url": "https://www.openoceanrobotics.com/government-operations",
-          "sha256": "sha256:f326594d23f8a21ad12a010f18f6dfde071797081994b9433363b114e8fe6164",
+          "sha256": "sha256:59308e44ba01cc46d6d9f08c256f64944342b2426cf12687082e3c9ac340405d",
           "sourceId": "oor-dataxplorer"
         }
       ],
@@ -13953,7 +15038,7 @@
       "title": "Autonomous Surface Vehicle",
       "url": "https://www.jamstec.go.jp/team-kuroshio/en/technology/",
       "sourceHash": "sha256:7fea645add1162fcf276d5b3f2aadc4e704f13faf5d03390d90d53a22e7d9b00",
-      "observedAt": "2026-11-17T13:33:32.867Z",
+      "observedAt": "2026-11-20T13:01:42.079Z",
       "collectionStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED",
       "country": "Japan",
       "model": "Autonomous Surface Vehicle",
@@ -13989,6 +15074,12 @@
       "reviewStatus": "PENDING"
     },
     {
+      "from": "FLEET_LEAD:A26-FLEET-332f71dc293ebfb5",
+      "to": "USV_SOURCE_SNAPSHOT:ocius:bluebottle@ocius-bluebottle",
+      "type": "MENTIONS_MODEL_UNVERIFIED",
+      "reviewStatus": "PENDING"
+    },
+    {
       "from": "FLEET_LEAD:A26-FLEET-aedd56cceab8feb4",
       "to": "USV_SOURCE_SNAPSHOT:ocius:bluebottle@ocius-bluebottle",
       "type": "MENTIONS_MODEL_UNVERIFIED",
@@ -14009,8 +15100,8 @@
   ],
   "conflicts": [],
   "statistics": {
-    "fleetLeads": 202,
-    "knowledgeDocuments": 393,
+    "fleetLeads": 229,
+    "knowledgeDocuments": 411,
     "usvSourceSnapshots": 10,
     "evidenceVersionConflicts": 0
   },

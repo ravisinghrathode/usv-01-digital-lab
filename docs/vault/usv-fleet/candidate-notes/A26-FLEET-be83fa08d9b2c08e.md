@@ -15,7 +15,7 @@ Operator, operational status, dimensions and performance: UNKNOWN.
 
 ## Source metadata
 
-- https://news.google.com/rss/articles/CBMimAFBVV95cUxQVl9TMlVleUZhMmVMY0h3OFdseWhkN1BRdGlfLTAxQjB0Y29tOFFYX1hNM2xwMjNSdm5nazE0TkROX09JUm1iZDhycDI4SGJfVkkzRjd4MzdPQ0NPbk5ncndpYThBV2l4d3JmaVhGNjZ0andEVjI5S0hxUHc3LTk2VUw4a21kamp6eGJsMlJIc20zOXdhbDNnYQ?oc=5 (google-black-sea, 2026-11-16T12:06:40.000Z, entry sha256:6c17bcc6c17b1416bb9a8703175e6f58c2382dd2e61bed884f3488e78ba86168)
+- https://news.google.com/rss/articles/CBMimAFBVV95cUxQVl9TMlVleUZhMmVMY0h3OFdseWhkN1BRdGlfLTAxQjB0Y29tOFFYX1hNM2xwMjNSdm5nazE0TkROX09JUm1iZDhycDI4SGJfVkkzRjd4MzdPQ0NPbk5ncndpYThBV2l4d3JmaVhGNjZ0andEVjI5S0hxUHc3LTk2VUw4a21kamp6eGJsMlJIc20zOXdhbDNnYQ?oc=5 (google-black-sea, 2026-11-16T12:01:52.000Z, entry sha256:2e84ad784cc756657d059a25994bd3503e365f42dceefcf0f71cf7997a4d0425)
 
 ## Review
 - [ ] Source verified

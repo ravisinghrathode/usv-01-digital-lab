@@ -53,14 +53,14 @@
       "researchTerms": [
         "unmanned surface vehicle mechanical design drawing"
       ],
-      "retrievedAt": "2026-11-17T13:33:13.105Z",
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
       "evidenceHash": "sha256:60eade1c9b1f79db70dc0c98613d4db62e2e563374b80171945aa579d702b4fe",
       "reviewStatus": "REVIEW_REQUIRED",
-      "firstDiscoveredAt": "2026-11-17T13:33:13.105Z",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
       "sourceVersions": [
         {
           "hash": "sha256:60eade1c9b1f79db70dc0c98613d4db62e2e563374b80171945aa579d702b4fe",
-          "observedAt": "2026-11-17T13:33:13.105Z"
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
       ]
     },
@@ -128,8 +128,20 @@
         {
           "hash": "sha256:a56500173e0a115f8b6992dcd7d1cd4dbfb9a72ff497cf818fb1fe1027588ca2",
           "observedAt": "2026-11-15T02:06:31.130Z"
+        },
+        {
+          "hash": "sha256:869423db0125b3fc17880f16bcd60cc2b74d8692f3a681aa49c25a657ccc220c",
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
-      ]
+      ],
+      "pendingMetadataChange": {
+        "title": "Unmanned surface combatant considerations for concept exploration",
+        "doi": null,
+        "fullTextPdfLink": "https://calhoun.nps.edu/server/api/core/bitstreams/95b3753a-2ab1-4f7d-ad28-715b1acd71e9/content",
+        "openLicenseMetadata": "UNKNOWN",
+        "evidenceHash": "sha256:869423db0125b3fc17880f16bcd60cc2b74d8692f3a681aa49c25a657ccc220c",
+        "reviewStatus": "CONFLICT_REVIEW_REQUIRED"
+      }
     },
     {
       "id": "A26-PAPER-W1550740504",
@@ -188,8 +200,20 @@
         {
           "hash": "sha256:16c8db2ce735680779db6ddd5a10f07c3f7c736377719501ff1840fe5f25ca68",
           "observedAt": "2026-11-15T02:06:31.130Z"
+        },
+        {
+          "hash": "sha256:2672447777fe503d317c61e95558a9454abc13b9db8e09fc7a801d7a0799e481",
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
-      ]
+      ],
+      "pendingMetadataChange": {
+        "title": "Stability analysis of a towed body for shipboard unmanned surface vehicle recovery",
+        "doi": null,
+        "fullTextPdfLink": "https://calhoun.nps.edu/server/api/core/bitstreams/9a9596b2-1ae7-435b-8460-c27dafb75555/content",
+        "openLicenseMetadata": "UNKNOWN",
+        "evidenceHash": "sha256:2672447777fe503d317c61e95558a9454abc13b9db8e09fc7a801d7a0799e481",
+        "reviewStatus": "CONFLICT_REVIEW_REQUIRED"
+      }
     },
     {
       "id": "A26-PAPER-W1587923959",
@@ -290,6 +314,36 @@
         {
           "hash": "sha256:9eaf485607282884cc428f7d59e4817bf9243dd382bb3b346b743198628d998d",
           "observedAt": "2026-11-15T02:06:31.130Z"
+        }
+      ]
+    },
+    {
+      "id": "A26-PAPER-W176211386",
+      "openAlexId": "https://openalex.org/W176211386",
+      "title": "On Structural Design of High-Speed Craft",
+      "publishedAt": "2013-01-01",
+      "type": "dissertation",
+      "doi": null,
+      "authors": [
+        "Mikael Razola"
+      ],
+      "sourceUrl": "https://openalex.org/W176211386",
+      "openAccessStatus": "INDEXED_OPEN_ACCESS",
+      "openLicenseMetadata": "other-oa",
+      "fullTextPdfLink": null,
+      "archiveEligible": false,
+      "documentStatus": "PUBLIC_METADATA_UNVERIFIED",
+      "researchTerms": [
+        "unmanned surface craft composite hull structural analysis"
+      ],
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
+      "evidenceHash": "sha256:c7d757406069c1a53f91c6be8a8a3f23ac6146a25b48f3b894702a86ea99c547",
+      "reviewStatus": "REVIEW_REQUIRED",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
+      "sourceVersions": [
+        {
+          "hash": "sha256:c7d757406069c1a53f91c6be8a8a3f23ac6146a25b48f3b894702a86ea99c547",
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
       ]
     },
@@ -864,6 +918,37 @@
       ]
     },
     {
+      "id": "A26-PAPER-W2031404716",
+      "openAlexId": "https://openalex.org/W2031404716",
+      "title": "Path planning algorithm for unmanned surface vehicle formations in a practical maritime environment",
+      "publishedAt": "2015-02-13",
+      "type": "article",
+      "doi": "https://doi.org/10.1016/j.oceaneng.2015.01.008",
+      "authors": [
+        "Yuanchang Liu",
+        "Richard W. G. Bucknall"
+      ],
+      "sourceUrl": "https://discovery.ucl.ac.uk/id/eprint/1464469/",
+      "openAccessStatus": "INDEXED_OPEN_ACCESS",
+      "openLicenseMetadata": "cc-by-nc-nd",
+      "fullTextPdfLink": "https://discovery.ucl.ac.uk/id/eprint/1464469/1/Unmanned%20surface%20vehicles%20formation%20path%20planning%20by%20fast%20marching%20method.pdf",
+      "archiveEligible": false,
+      "documentStatus": "PUBLIC_METADATA_UNVERIFIED",
+      "researchTerms": [
+        "unmanned surface vehicle propulsion energy endurance"
+      ],
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
+      "evidenceHash": "sha256:1693758ad0fa7c42fd947ee751ea5821fac8186ad18eff074e168055832e3b34",
+      "reviewStatus": "REVIEW_REQUIRED",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
+      "sourceVersions": [
+        {
+          "hash": "sha256:1693758ad0fa7c42fd947ee751ea5821fac8186ad18eff074e168055832e3b34",
+          "observedAt": "2026-11-20T13:01:12.169Z"
+        }
+      ]
+    },
+    {
       "id": "A26-PAPER-W2040921824",
       "openAlexId": "https://openalex.org/W2040921824",
       "title": "Control-Oriented Planar Motion Modeling of Unmanned Surface Vehicles",
@@ -1048,7 +1133,8 @@
       "archiveEligible": false,
       "documentStatus": "PUBLIC_METADATA_UNVERIFIED",
       "researchTerms": [
-        "autonomous survey vessel oceanographic robotics"
+        "autonomous survey vessel oceanographic robotics",
+        "robotic boat autonomous surface vessel design research"
       ],
       "retrievedAt": "2026-11-15T02:06:31.130Z",
       "evidenceHash": "sha256:c2977d990f4b85f84897b34b149ee19fcf3df51aaf83a649bf3e1362e8f97ff4",
@@ -1160,7 +1246,7 @@
         },
         {
           "hash": "sha256:80621ebe1306677df00a0128433a2814fd40315507a3bb162da5129315f46d86",
-          "observedAt": "2026-11-17T13:33:13.105Z"
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
       ],
       "pendingMetadataChange": {
@@ -1425,8 +1511,20 @@
         {
           "hash": "sha256:dbc742642106e6aaef7c6351aefe0d9123ab8fd0043ef845a94e82ccc63bb326",
           "observedAt": "2026-11-15T02:06:31.130Z"
+        },
+        {
+          "hash": "sha256:b8b42fbd196ec01dc6065bf791ba4003a4e9e7672923e1c71bdabcf72bdb4912",
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
-      ]
+      ],
+      "pendingMetadataChange": {
+        "title": "On small satellites for oceanography: A survey",
+        "doi": "https://doi.org/10.1016/j.actaastro.2016.06.007",
+        "fullTextPdfLink": "https://arxiv.org/pdf/1512.07442",
+        "openLicenseMetadata": "UNKNOWN",
+        "evidenceHash": "sha256:b8b42fbd196ec01dc6065bf791ba4003a4e9e7672923e1c71bdabcf72bdb4912",
+        "reviewStatus": "CONFLICT_REVIEW_REQUIRED"
+      }
     },
     {
       "id": "A26-PAPER-W2247882266",
@@ -1455,36 +1553,6 @@
         {
           "hash": "sha256:5201b1bde807d46aa2e505993d5d5d032ec22abc497d72b4467eaa5624bc67f3",
           "observedAt": "2026-11-15T02:06:31.130Z"
-        }
-      ]
-    },
-    {
-      "id": "A26-PAPER-W226033124",
-      "openAlexId": "https://openalex.org/W226033124",
-      "title": "Collision Avoidance for Unmanned Surface Vehicles",
-      "publishedAt": "2008-01-01",
-      "type": "dissertation",
-      "doi": null,
-      "authors": [
-        "Øivind Aleksander G. Loe"
-      ],
-      "sourceUrl": "https://openalex.org/W226033124",
-      "openAccessStatus": "INDEXED_OPEN_ACCESS",
-      "openLicenseMetadata": "other-oa",
-      "fullTextPdfLink": null,
-      "archiveEligible": false,
-      "documentStatus": "PUBLIC_METADATA_UNVERIFIED",
-      "researchTerms": [
-        "autonomous surface craft collision avoidance COLREGs"
-      ],
-      "retrievedAt": "2026-11-17T13:33:13.105Z",
-      "evidenceHash": "sha256:34c8762f0533b28cf4da6c87776b1317df29d5a8f1faf74e4a910cbbd452753c",
-      "reviewStatus": "REVIEW_REQUIRED",
-      "firstDiscoveredAt": "2026-11-17T13:33:13.105Z",
-      "sourceVersions": [
-        {
-          "hash": "sha256:34c8762f0533b28cf4da6c87776b1317df29d5a8f1faf74e4a910cbbd452753c",
-          "observedAt": "2026-11-17T13:33:13.105Z"
         }
       ]
     },
@@ -1547,8 +1615,20 @@
         {
           "hash": "sha256:74a6d1b7220008ec363e86d74f83e1b8edf65f8e2689009e71693b1e8ef5d6aa",
           "observedAt": "2026-11-15T02:06:31.130Z"
+        },
+        {
+          "hash": "sha256:166925028d7054d311487c30194641d8e0cd4e77e6cab30abfa43560efc2d2a1",
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
-      ]
+      ],
+      "pendingMetadataChange": {
+        "title": "Vertical Payload Profiling from a Wave Propelled Unmanned Surface Vehicle",
+        "doi": null,
+        "fullTextPdfLink": "https://escholarship.org/content/qt3f1079b5/qt3f1079b5.pdf?t=nqpfg8",
+        "openLicenseMetadata": "UNKNOWN",
+        "evidenceHash": "sha256:166925028d7054d311487c30194641d8e0cd4e77e6cab30abfa43560efc2d2a1",
+        "reviewStatus": "CONFLICT_REVIEW_REQUIRED"
+      }
     },
     {
       "id": "A26-PAPER-W2303431639",
@@ -2097,6 +2177,36 @@
       ]
     },
     {
+      "id": "A26-PAPER-W2587344361",
+      "openAlexId": "https://openalex.org/W2587344361",
+      "title": "Guidance and Control of Robot Manipulators and Autonomous Marine Robots",
+      "publishedAt": "2016-01-01",
+      "type": "dissertation",
+      "doi": null,
+      "authors": [
+        "Signe Moe"
+      ],
+      "sourceUrl": "https://openalex.org/W2587344361",
+      "openAccessStatus": "INDEXED_OPEN_ACCESS",
+      "openLicenseMetadata": "other-oa",
+      "fullTextPdfLink": null,
+      "archiveEligible": false,
+      "documentStatus": "PUBLIC_METADATA_UNVERIFIED",
+      "researchTerms": [
+        "autonomous survey vessel oceanographic robotics"
+      ],
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
+      "evidenceHash": "sha256:09da214fe97bd6e2fc9a61c9edd0d5b04dd002d6dc4f79a1dc7221b91a5e87bd",
+      "reviewStatus": "REVIEW_REQUIRED",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
+      "sourceVersions": [
+        {
+          "hash": "sha256:09da214fe97bd6e2fc9a61c9edd0d5b04dd002d6dc4f79a1dc7221b91a5e87bd",
+          "observedAt": "2026-11-20T13:01:12.169Z"
+        }
+      ]
+    },
+    {
       "id": "A26-PAPER-W2588422468",
       "openAlexId": "https://openalex.org/W2588422468",
       "title": "MARV: Marine Autonomous Research Vessel",
@@ -2283,8 +2393,20 @@
         {
           "hash": "sha256:b66bb3215aa48c7ba8e5e06a1169275a2de0e9edbfbf72c5697a037dcf34c88d",
           "observedAt": "2026-11-15T02:06:31.130Z"
+        },
+        {
+          "hash": "sha256:99e8d78648c197a408da52bdfc9f0d48875c9f920a2a6970ef411d72d259a2cc",
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
-      ]
+      ],
+      "pendingMetadataChange": {
+        "title": "Uniform system for the rapid prototyping and testing of controllers for unmanned aerial vehicles",
+        "doi": null,
+        "fullTextPdfLink": "https://calhoun.nps.edu/server/api/core/bitstreams/02a22037-b0ec-4413-8fd4-8088d9ccec70/content",
+        "openLicenseMetadata": "UNKNOWN",
+        "evidenceHash": "sha256:99e8d78648c197a408da52bdfc9f0d48875c9f920a2a6970ef411d72d259a2cc",
+        "reviewStatus": "CONFLICT_REVIEW_REQUIRED"
+      }
     },
     {
       "id": "A26-PAPER-W2732733425",
@@ -2315,8 +2437,20 @@
         {
           "hash": "sha256:e7e80b2f96046ed610569c0ab5afecc9bb9da01b56fec5f9adf53d2a2955b5e6",
           "observedAt": "2026-11-15T02:06:31.130Z"
+        },
+        {
+          "hash": "sha256:03ab5171d3ab94e387cd2b7953b0adf0e2565617332fa39bd1ec6d0cc78ca10d",
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
-      ]
+      ],
+      "pendingMetadataChange": {
+        "title": "HYDRODYNAMIC PERFORMANCES OF SMALL SIZE SWATH CRAFT",
+        "doi": null,
+        "fullTextPdfLink": "https://hrcak.srce.hr/file/220442",
+        "openLicenseMetadata": "other-oa",
+        "evidenceHash": "sha256:03ab5171d3ab94e387cd2b7953b0adf0e2565617332fa39bd1ec6d0cc78ca10d",
+        "reviewStatus": "CONFLICT_REVIEW_REQUIRED"
+      }
     },
     {
       "id": "A26-PAPER-W2733160965",
@@ -2744,8 +2878,20 @@
         {
           "hash": "sha256:12fb895e92d9b42984ff235d2d8edf11572251dd0dcc29b6625cfb222b7c36e9",
           "observedAt": "2026-11-15T02:06:31.130Z"
+        },
+        {
+          "hash": "sha256:ea387d6cf5a3806ea95f22bcbad641b51c69a4c23df4a521262988af1d3ee5fa",
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
-      ]
+      ],
+      "pendingMetadataChange": {
+        "title": "An Automatic Navigation System for Unmanned Surface Vehicles in Realistic Sea Environments",
+        "doi": "https://doi.org/10.3390/app8020193",
+        "fullTextPdfLink": "https://www.mdpi.com/2076-3417/8/2/193/pdf?version=1517138969",
+        "openLicenseMetadata": "cc-by",
+        "evidenceHash": "sha256:ea387d6cf5a3806ea95f22bcbad641b51c69a4c23df4a521262988af1d3ee5fa",
+        "reviewStatus": "CONFLICT_REVIEW_REQUIRED"
+      }
     },
     {
       "id": "A26-PAPER-W2797011692",
@@ -2947,8 +3093,20 @@
         {
           "hash": "sha256:3e762999f1caceb9b0cb921bc9f2c529065c65bc92f8151470e10da9407f5086",
           "observedAt": "2026-11-15T02:06:31.130Z"
+        },
+        {
+          "hash": "sha256:e5c57311bb0d7ecbbe414e351c40ad0f40bffc5b9d66ee326ddc83b80709c613",
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
-      ]
+      ],
+      "pendingMetadataChange": {
+        "title": "Artificial Intelligence for Long-Term Robot Autonomy: A Survey",
+        "doi": "https://doi.org/10.1109/lra.2018.2860628",
+        "fullTextPdfLink": "https://ora.ox.ac.uk/objects/uuid:0eeffdf2-ca47-476c-81ed-c77dd7b55e04/files/m6753fb7065a346c3de93f08cf076d1ca",
+        "openLicenseMetadata": "UNKNOWN",
+        "evidenceHash": "sha256:e5c57311bb0d7ecbbe414e351c40ad0f40bffc5b9d66ee326ddc83b80709c613",
+        "reviewStatus": "CONFLICT_REVIEW_REQUIRED"
+      }
     },
     {
       "id": "A26-PAPER-W2891370793",
@@ -3008,6 +3166,36 @@
         {
           "hash": "sha256:0b3e1f8908aa86c4fddbc30493c430edc26895d3ed4bc821ada1d17408dd7188",
           "observedAt": "2026-11-15T02:06:31.130Z"
+        }
+      ]
+    },
+    {
+      "id": "A26-PAPER-W2899133847",
+      "openAlexId": "https://openalex.org/W2899133847",
+      "title": "COLREGS Compatible Motion Planning for Autonomous Surface Vessels",
+      "publishedAt": "2018-01-01",
+      "type": "dissertation",
+      "doi": null,
+      "authors": [
+        "Maren Kristine Eidal"
+      ],
+      "sourceUrl": "https://openalex.org/W2899133847",
+      "openAccessStatus": "INDEXED_OPEN_ACCESS",
+      "openLicenseMetadata": "other-oa",
+      "fullTextPdfLink": null,
+      "archiveEligible": false,
+      "documentStatus": "PUBLIC_METADATA_UNVERIFIED",
+      "researchTerms": [
+        "autonomous surface craft collision avoidance COLREGs"
+      ],
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
+      "evidenceHash": "sha256:31501b6c386103bd1f62a5fb9693cae168e51a144eef995c299a0111d4b9e959",
+      "reviewStatus": "REVIEW_REQUIRED",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
+      "sourceVersions": [
+        {
+          "hash": "sha256:31501b6c386103bd1f62a5fb9693cae168e51a144eef995c299a0111d4b9e959",
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
       ]
     },
@@ -3072,6 +3260,36 @@
       ]
     },
     {
+      "id": "A26-PAPER-W2906432547",
+      "openAlexId": "https://openalex.org/W2906432547",
+      "title": "Improving Seaglider Efficiency: An Analysis of Wing Shapes, Hull Morphologies, and Propulsion Methods",
+      "publishedAt": "2018-01-01",
+      "type": "article",
+      "doi": null,
+      "authors": [
+        "Christopher J. Hockley"
+      ],
+      "sourceUrl": "https://commons.erau.edu/edt/418",
+      "openAccessStatus": "INDEXED_OPEN_ACCESS",
+      "openLicenseMetadata": "cc-by-nc-nd",
+      "fullTextPdfLink": null,
+      "archiveEligible": false,
+      "documentStatus": "PUBLIC_METADATA_UNVERIFIED",
+      "researchTerms": [
+        "unmanned surface craft composite hull structural analysis"
+      ],
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
+      "evidenceHash": "sha256:517d20a0157f9f90b3b046c48f321d1ec3b0b2daa7fb9ea2aa9b838a4435225c",
+      "reviewStatus": "REVIEW_REQUIRED",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
+      "sourceVersions": [
+        {
+          "hash": "sha256:517d20a0157f9f90b3b046c48f321d1ec3b0b2daa7fb9ea2aa9b838a4435225c",
+          "observedAt": "2026-11-20T13:01:12.169Z"
+        }
+      ]
+    },
+    {
       "id": "A26-PAPER-W2906888451",
       "openAlexId": "https://openalex.org/W2906888451",
       "title": "Survival strategies for unmanned surface vehicles in harsh ocean environments",
@@ -3098,6 +3316,44 @@
         {
           "hash": "sha256:d866fe8472f978d354c2c39b096b0b0fe033a735b45217b03251eb4f84b95748",
           "observedAt": "2026-11-15T02:06:31.130Z"
+        }
+      ]
+    },
+    {
+      "id": "A26-PAPER-W2908188234",
+      "openAlexId": "https://openalex.org/W2908188234",
+      "title": "Autonomous landing on a moving vehicle with an unmanned aerial vehicle",
+      "publishedAt": "2019-01-04",
+      "type": "article",
+      "doi": "https://doi.org/10.1002/rob.21858",
+      "authors": [
+        "Tomáš Báča",
+        "Petr Štěpán",
+        "Vojtěch Spurný",
+        "Daniel Heřt",
+        "Robert Pěnička",
+        "Martin Saska",
+        "Justin R. Thomas",
+        "Giuseppe Loianno",
+        "Vijay Kumar"
+      ],
+      "sourceUrl": "https://hdl.handle.net/10467/185631",
+      "openAccessStatus": "INDEXED_OPEN_ACCESS",
+      "openLicenseMetadata": "cc-by-nc-nd",
+      "fullTextPdfLink": "https://dspace.cvut.cz/bitstreams/dc56a1a7-1a23-46f8-a1d6-5a4d84a7e05f/download",
+      "archiveEligible": false,
+      "documentStatus": "PUBLIC_METADATA_UNVERIFIED",
+      "researchTerms": [
+        "unmanned surface vehicle prototype naval architecture"
+      ],
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
+      "evidenceHash": "sha256:46ea756dbb0e58d27f4bbdd30c720c4b570d836b4bf914dd6f254cfc146adf94",
+      "reviewStatus": "REVIEW_REQUIRED",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
+      "sourceVersions": [
+        {
+          "hash": "sha256:46ea756dbb0e58d27f4bbdd30c720c4b570d836b4bf914dd6f254cfc146adf94",
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
       ]
     },
@@ -3314,7 +3570,7 @@
         },
         {
           "hash": "sha256:7727b7d503f7fc559b8017ccf383e6c4b9a86b696877f6e57b4235dcd62541d2",
-          "observedAt": "2026-11-17T13:33:13.105Z"
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
       ],
       "pendingMetadataChange": {
@@ -3768,6 +4024,39 @@
         {
           "hash": "sha256:377cf4f90dbd607799737074755ca55c86bf6ba0c39ff43e4f6effcdc597017d",
           "observedAt": "2026-11-15T02:06:31.130Z"
+        }
+      ]
+    },
+    {
+      "id": "A26-PAPER-W2973163281",
+      "openAlexId": "https://openalex.org/W2973163281",
+      "title": "A critical review on unmanned aerial vehicles power supply and energy management: Solutions, strategies, and prospects",
+      "publishedAt": "2019-09-11",
+      "type": "article",
+      "doi": "https://doi.org/10.1016/j.apenergy.2019.113823",
+      "authors": [
+        "Mohamed Nadir Boukoberine",
+        "Zhibin Zhou",
+        "Mohamed Benbouzid"
+      ],
+      "sourceUrl": "https://doi.org/10.1016/j.apenergy.2019.113823",
+      "openAccessStatus": "INDEXED_OPEN_ACCESS",
+      "openLicenseMetadata": "UNKNOWN",
+      "fullTextPdfLink": "https://www.sciencedirect.com/science/article/am/pii/S0306261919315107?via%3Dihub",
+      "archiveEligible": false,
+      "documentStatus": "PUBLIC_METADATA_UNVERIFIED",
+      "researchTerms": [
+        "unmanned surface vehicle propulsion energy endurance",
+        "unmanned surface vehicle prototype naval architecture"
+      ],
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
+      "evidenceHash": "sha256:c67f680bd73693f2005c4b4322c396f01f1fae027fa432a047655c6cefcaca60",
+      "reviewStatus": "REVIEW_REQUIRED",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
+      "sourceVersions": [
+        {
+          "hash": "sha256:c67f680bd73693f2005c4b4322c396f01f1fae027fa432a047655c6cefcaca60",
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
       ]
     },
@@ -4429,6 +4718,36 @@
       ]
     },
     {
+      "id": "A26-PAPER-W3029203949",
+      "openAlexId": "https://openalex.org/W3029203949",
+      "title": "Autonomy for Unmanned Surface Vehicle",
+      "publishedAt": "2019-03-26",
+      "type": "dissertation",
+      "doi": null,
+      "authors": [
+        "André Filipe Almeida Santos"
+      ],
+      "sourceUrl": "https://openalex.org/W3029203949",
+      "openAccessStatus": "INDEXED_OPEN_ACCESS",
+      "openLicenseMetadata": "cc-by",
+      "fullTextPdfLink": null,
+      "archiveEligible": false,
+      "documentStatus": "PUBLIC_METADATA_UNVERIFIED",
+      "researchTerms": [
+        "unmanned surface vehicle prototype naval architecture"
+      ],
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
+      "evidenceHash": "sha256:0722b847d5b6fef5b0bb1e6f639e536429f414a22188e4c17f0f3a21997a675c",
+      "reviewStatus": "REVIEW_REQUIRED",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
+      "sourceVersions": [
+        {
+          "hash": "sha256:0722b847d5b6fef5b0bb1e6f639e536429f414a22188e4c17f0f3a21997a675c",
+          "observedAt": "2026-11-20T13:01:12.169Z"
+        }
+      ]
+    },
+    {
       "id": "A26-PAPER-W3043276110",
       "openAlexId": "https://openalex.org/W3043276110",
       "title": "A Pioneer of Naval Ship Design",
@@ -4625,44 +4944,6 @@
         {
           "hash": "sha256:abfd7bad15f5c0d44428d285d69f3eb05b15c7011bb97da865920d311d5d052a",
           "observedAt": "2026-11-15T02:06:31.130Z"
-        }
-      ]
-    },
-    {
-      "id": "A26-PAPER-W3088207453",
-      "openAlexId": "https://openalex.org/W3088207453",
-      "title": "UNMANNED VEHICLE SYSTEMS & OPERATIONS ON AIR, SEA, LAND",
-      "publishedAt": "2020-09-23",
-      "type": "article",
-      "doi": null,
-      "authors": [
-        "Randall K. Nichols",
-        "Hans C Mumm",
-        "W.D. Lonstein",
-        "Julie J.C.H. Ryan",
-        "Candice M Carter",
-        "John-Paul Hood",
-        "Jeremy Shay",
-        "W Culp Randall",
-        "Mark James Jackson"
-      ],
-      "sourceUrl": "https://newprairiepress.org/ebooks/35",
-      "openAccessStatus": "INDEXED_OPEN_ACCESS",
-      "openLicenseMetadata": "cc-by-nc-sa",
-      "fullTextPdfLink": "https://newprairiepress.org/cgi/viewcontent.cgi?article=1035&context=ebooks",
-      "archiveEligible": false,
-      "documentStatus": "PUBLIC_METADATA_UNVERIFIED",
-      "researchTerms": [
-        "unmanned surface vehicle prototype naval architecture"
-      ],
-      "retrievedAt": "2026-11-17T13:33:13.105Z",
-      "evidenceHash": "sha256:721c6c83080273b1e43929b6ff450f5c2d726ee267e9799d2530dc689e23ad32",
-      "reviewStatus": "REVIEW_REQUIRED",
-      "firstDiscoveredAt": "2026-11-17T13:33:13.105Z",
-      "sourceVersions": [
-        {
-          "hash": "sha256:721c6c83080273b1e43929b6ff450f5c2d726ee267e9799d2530dc689e23ad32",
-          "observedAt": "2026-11-17T13:33:13.105Z"
         }
       ]
     },
@@ -5540,14 +5821,14 @@
       "researchTerms": [
         "unmanned surface vehicle propulsion energy endurance"
       ],
-      "retrievedAt": "2026-11-17T13:33:13.105Z",
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
       "evidenceHash": "sha256:330493b11cb757b66fb0bc5377ce00193e7a7438ad44eb0181c8100de57bf0ed",
       "reviewStatus": "REVIEW_REQUIRED",
-      "firstDiscoveredAt": "2026-11-17T13:33:13.105Z",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
       "sourceVersions": [
         {
           "hash": "sha256:330493b11cb757b66fb0bc5377ce00193e7a7438ad44eb0181c8100de57bf0ed",
-          "observedAt": "2026-11-17T13:33:13.105Z"
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
       ]
     },
@@ -5824,6 +6105,38 @@
         {
           "hash": "sha256:8f48e48cbe5f5421a3e0f0290481f8350d26cd0ae4b34ffed45fbd2aae54a883",
           "observedAt": "2026-11-15T02:06:31.130Z"
+        }
+      ]
+    },
+    {
+      "id": "A26-PAPER-W3208629165",
+      "openAlexId": "https://openalex.org/W3208629165",
+      "title": "Study of Principles in COLREGs and Interpretations and Amendments COLREGs for Maritime Autonomous Surface Ships (MASS)",
+      "publishedAt": "2021-01-01",
+      "type": "article",
+      "doi": "https://doi.org/10.18949/jintransnavi.6.1_11",
+      "authors": [
+        "Toshiyuki Miyoshi",
+        "Shoji FUJIMOTO",
+        "Matthew Rooks"
+      ],
+      "sourceUrl": "https://doi.org/10.18949/jintransnavi.6.1_11",
+      "openAccessStatus": "UNKNOWN_OR_NOT_OA",
+      "openLicenseMetadata": "UNKNOWN",
+      "fullTextPdfLink": null,
+      "archiveEligible": false,
+      "documentStatus": "PUBLIC_METADATA_UNVERIFIED",
+      "researchTerms": [
+        "autonomous surface craft collision avoidance COLREGs"
+      ],
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
+      "evidenceHash": "sha256:23b3e77265ec2bec4ccfb5bb3ba1bd1acde8ec7ed0a28cd0e1614c5a5c275a56",
+      "reviewStatus": "REVIEW_REQUIRED",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
+      "sourceVersions": [
+        {
+          "hash": "sha256:23b3e77265ec2bec4ccfb5bb3ba1bd1acde8ec7ed0a28cd0e1614c5a5c275a56",
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
       ]
     },
@@ -7695,6 +8008,37 @@
       ]
     },
     {
+      "id": "A26-PAPER-W4366385182",
+      "openAlexId": "https://openalex.org/W4366385182",
+      "title": "A framework for the economic-environmental feasibility assessment of short-sea shipping autonomous vessels",
+      "publishedAt": "2023-04-19",
+      "type": "article",
+      "doi": "https://doi.org/10.1016/j.oceaneng.2023.114420",
+      "authors": [
+        "João Lucas Dozzi Dantas",
+        "Γεράσιμος Θεοτοκάτος"
+      ],
+      "sourceUrl": "https://doi.org/10.1016/j.oceaneng.2023.114420",
+      "openAccessStatus": "INDEXED_OPEN_ACCESS",
+      "openLicenseMetadata": "cc-by",
+      "fullTextPdfLink": "https://doi.org/10.1016/j.oceaneng.2023.114420",
+      "archiveEligible": false,
+      "documentStatus": "PUBLIC_METADATA_UNVERIFIED",
+      "researchTerms": [
+        "autonomous surface vessel sea trials engineering"
+      ],
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
+      "evidenceHash": "sha256:9c666939388329d74efef76bb2194cd16ab586f47dc8cf68cd4edf239e9417b9",
+      "reviewStatus": "REVIEW_REQUIRED",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
+      "sourceVersions": [
+        {
+          "hash": "sha256:9c666939388329d74efef76bb2194cd16ab586f47dc8cf68cd4edf239e9417b9",
+          "observedAt": "2026-11-20T13:01:12.169Z"
+        }
+      ]
+    },
+    {
       "id": "A26-PAPER-W4366422890",
       "openAlexId": "https://openalex.org/W4366422890",
       "title": "Deployment of biologging tags on free swimming large whales using uncrewed aerial systems",
@@ -7969,8 +8313,20 @@
         {
           "hash": "sha256:f097aca321e8fdfc1deda15f2431d013370aeb1c796d6d9196284e1f65b4b197",
           "observedAt": "2026-11-15T02:06:31.130Z"
+        },
+        {
+          "hash": "sha256:beb6da435ede14995cf99992817e3bcf731f5c7f5dbcbfd6ea1048e9507d96f9",
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
-      ]
+      ],
+      "pendingMetadataChange": {
+        "title": "Deep Reinforcement Learning Based Tracking Control of an Autonomous Surface Vessel in Natural Waters",
+        "doi": "https://doi.org/10.1109/icra48891.2023.10160858",
+        "fullTextPdfLink": "https://lirias.kuleuven.be/retrieve/fdd11df8-c491-43c8-88ff-a8433c83514f",
+        "openLicenseMetadata": "other-oa",
+        "evidenceHash": "sha256:beb6da435ede14995cf99992817e3bcf731f5c7f5dbcbfd6ea1048e9507d96f9",
+        "reviewStatus": "CONFLICT_REVIEW_REQUIRED"
+      }
     },
     {
       "id": "A26-PAPER-W4383108490",
@@ -8140,8 +8496,20 @@
         {
           "hash": "sha256:ac09ca9b1926a61e342e444ab52dd9c862591b0a5f21fc995573f19650a2c371",
           "observedAt": "2026-11-15T02:06:31.130Z"
+        },
+        {
+          "hash": "sha256:c45b914c11b4ed672e1a4d135c4c99f107e49b01c769088d2a3697e1b3887a1b",
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
-      ]
+      ],
+      "pendingMetadataChange": {
+        "title": "Building an autonomous boat: a multidisciplinary design engineering approach",
+        "doi": "https://doi.org/10.1109/metroaerospace57412.2023.10189956",
+        "fullTextPdfLink": null,
+        "openLicenseMetadata": "other-oa",
+        "evidenceHash": "sha256:c45b914c11b4ed672e1a4d135c4c99f107e49b01c769088d2a3697e1b3887a1b",
+        "reviewStatus": "CONFLICT_REVIEW_REQUIRED"
+      }
     },
     {
       "id": "A26-PAPER-W4385461182",
@@ -8837,14 +9205,14 @@
       "researchTerms": [
         "autonomous survey vessel oceanographic robotics"
       ],
-      "retrievedAt": "2026-11-17T13:33:13.105Z",
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
       "evidenceHash": "sha256:aacfc93d274d7c4a12e9f8cf6592c9f2ff9b692ccaa8ca70a6242ef9cb2b313c",
       "reviewStatus": "REVIEW_REQUIRED",
-      "firstDiscoveredAt": "2026-11-17T13:33:13.105Z",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
       "sourceVersions": [
         {
           "hash": "sha256:aacfc93d274d7c4a12e9f8cf6592c9f2ff9b692ccaa8ca70a6242ef9cb2b313c",
-          "observedAt": "2026-11-17T13:33:13.105Z"
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
       ]
     },
@@ -8877,8 +9245,20 @@
         {
           "hash": "sha256:ef4ba8a5c6d030cc113ff5d39c2a2d360bd379099a30f1e36777e9a700c2e340",
           "observedAt": "2026-11-15T02:06:31.130Z"
+        },
+        {
+          "hash": "sha256:371c38c97841f58317e457374742f7deb263994a908f0465c383ea983301c264",
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
-      ]
+      ],
+      "pendingMetadataChange": {
+        "title": "Perspectives for the development of unmanned surface vehicles in Colombia: Cotecmar case",
+        "doi": "https://doi.org/10.25043/19098642.247",
+        "fullTextPdfLink": "https://shipjournal.co/index.php/sst/article/download/247/643",
+        "openLicenseMetadata": "cc-by",
+        "evidenceHash": "sha256:371c38c97841f58317e457374742f7deb263994a908f0465c383ea983301c264",
+        "reviewStatus": "CONFLICT_REVIEW_REQUIRED"
+      }
     },
     {
       "id": "A26-PAPER-W4391422742",
@@ -9277,6 +9657,43 @@
       ]
     },
     {
+      "id": "A26-PAPER-W4396691019",
+      "openAlexId": "https://openalex.org/W4396691019",
+      "title": "Data-driven method for hydrodynamic model estimation applied to an unmanned surface vehicle",
+      "publishedAt": "2024-05-07",
+      "type": "article",
+      "doi": "https://doi.org/10.1016/j.measurement.2024.114724",
+      "authors": [
+        "Raphaël E.G. Mounet",
+        "Ulrik Dam Nielsen",
+        "Astrid H. Brodtkorb",
+        "Henning Øveraas",
+        "Alberto Dallolio",
+        "Tor Arne Johansen"
+      ],
+      "sourceUrl": "https://doi.org/10.1016/j.measurement.2024.114724",
+      "openAccessStatus": "INDEXED_OPEN_ACCESS",
+      "openLicenseMetadata": "cc-by",
+      "fullTextPdfLink": "https://doi.org/10.1016/j.measurement.2024.114724",
+      "archiveEligible": false,
+      "documentStatus": "PUBLIC_METADATA_UNVERIFIED",
+      "researchTerms": [
+        "unmanned surface craft composite hull structural analysis",
+        "unmanned surface vehicle mechanical design drawing",
+        "wave propelled unmanned surface vehicle long endurance"
+      ],
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
+      "evidenceHash": "sha256:aee40a55cb55493671ff003205e25ab5f006b7c5cb4a0ac5c362ca20ae5c89c6",
+      "reviewStatus": "REVIEW_REQUIRED",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
+      "sourceVersions": [
+        {
+          "hash": "sha256:aee40a55cb55493671ff003205e25ab5f006b7c5cb4a0ac5c362ca20ae5c89c6",
+          "observedAt": "2026-11-20T13:01:12.169Z"
+        }
+      ]
+    },
+    {
       "id": "A26-PAPER-W4396700485",
       "openAlexId": "https://openalex.org/W4396700485",
       "title": "The Importance of an Unmanned Surface Vehicle: A Point of View",
@@ -9379,6 +9796,43 @@
       ]
     },
     {
+      "id": "A26-PAPER-W4396941348",
+      "openAlexId": "https://openalex.org/W4396941348",
+      "title": "Unmanned Aerial Vehicle for Precision Agriculture: A Review",
+      "publishedAt": "2024-01-01",
+      "type": "article",
+      "doi": "https://doi.org/10.1109/access.2024.3401018",
+      "authors": [
+        "Francesco Toscano",
+        "Costanza Fiorentino",
+        "Nicola Capece",
+        "Ugo Erra",
+        "Danilo Travascia",
+        "Antonio Scopa",
+        "Μάριος Δρόσος",
+        "Paola D’Antonio"
+      ],
+      "sourceUrl": "https://doi.org/10.1109/access.2024.3401018",
+      "openAccessStatus": "INDEXED_OPEN_ACCESS",
+      "openLicenseMetadata": "cc-by-nc-nd",
+      "fullTextPdfLink": "https://ieeexplore.ieee.org/ielx7/6287639/6514899/10531194.pdf",
+      "archiveEligible": false,
+      "documentStatus": "PUBLIC_METADATA_UNVERIFIED",
+      "researchTerms": [
+        "unmanned surface vehicle mechanical design drawing"
+      ],
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
+      "evidenceHash": "sha256:2b8972f4395efa906ad60b9ecad8cf98c909aeab2d2139abe170ead282340098",
+      "reviewStatus": "REVIEW_REQUIRED",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
+      "sourceVersions": [
+        {
+          "hash": "sha256:2b8972f4395efa906ad60b9ecad8cf98c909aeab2d2139abe170ead282340098",
+          "observedAt": "2026-11-20T13:01:12.169Z"
+        }
+      ]
+    },
+    {
       "id": "A26-PAPER-W4398141862",
       "openAlexId": "https://openalex.org/W4398141862",
       "title": "Design and Implementation of a Low-Cost Intelligent Unmanned Surface Vehicle",
@@ -9440,6 +9894,76 @@
         {
           "hash": "sha256:b490a8e1784bbd1d2ee8369279d2f8bc215b6e80cb745f4952cb93072beaac2d",
           "observedAt": "2026-11-15T02:06:31.130Z"
+        }
+      ]
+    },
+    {
+      "id": "A26-PAPER-W4400056042",
+      "openAlexId": "https://openalex.org/W4400056042",
+      "title": "Challenge for multifaceted data acquisition around active volcanoes using uncrewed surface vessel",
+      "publishedAt": "2024-06-26",
+      "type": "article",
+      "doi": "https://doi.org/10.3389/fmars.2024.1406381",
+      "authors": [
+        "Noriko Tada",
+        "Akira Nagano",
+        "Satoru Tanaka",
+        "Hiroshi Ichihara",
+        "Daisuke Suetsugu",
+        "Daisuke Matsuoka",
+        "Makoto Ito",
+        "Tatsu Kuwatani",
+        "Makio C. Honda"
+      ],
+      "sourceUrl": "https://doi.org/10.3389/fmars.2024.1406381",
+      "openAccessStatus": "INDEXED_OPEN_ACCESS",
+      "openLicenseMetadata": "cc-by",
+      "fullTextPdfLink": "https://www.frontiersin.org/journals/marine-science/articles/10.3389/fmars.2024.1406381/pdf",
+      "archiveEligible": false,
+      "documentStatus": "PUBLIC_METADATA_UNVERIFIED",
+      "researchTerms": [
+        "uncrewed surface vessel system design and verification"
+      ],
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
+      "evidenceHash": "sha256:394f044947c84571088f789e0ffcd43377923f5cb1e9a8b6948e872f9760a9b2",
+      "reviewStatus": "REVIEW_REQUIRED",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
+      "sourceVersions": [
+        {
+          "hash": "sha256:394f044947c84571088f789e0ffcd43377923f5cb1e9a8b6948e872f9760a9b2",
+          "observedAt": "2026-11-20T13:01:12.169Z"
+        }
+      ]
+    },
+    {
+      "id": "A26-PAPER-W4400884558",
+      "openAlexId": "https://openalex.org/W4400884558",
+      "title": "An Improved NSGA-II Algorithm for MASS Autonomous Collision Avoidance under COLREGs",
+      "publishedAt": "2024-07-20",
+      "type": "article",
+      "doi": "https://doi.org/10.3390/jmse12071224",
+      "authors": [
+        "Zuopeng Liang",
+        "Fusheng Li",
+        "Shibo Zhou"
+      ],
+      "sourceUrl": "https://doi.org/10.3390/jmse12071224",
+      "openAccessStatus": "INDEXED_OPEN_ACCESS",
+      "openLicenseMetadata": "cc-by",
+      "fullTextPdfLink": "https://www.mdpi.com/2077-1312/12/7/1224/pdf?version=1721728936",
+      "archiveEligible": false,
+      "documentStatus": "PUBLIC_METADATA_UNVERIFIED",
+      "researchTerms": [
+        "autonomous surface craft collision avoidance COLREGs"
+      ],
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
+      "evidenceHash": "sha256:9201136332186241345731aaad4c7a9ff0a7c517c4698e891692ef4a113a2977",
+      "reviewStatus": "REVIEW_REQUIRED",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
+      "sourceVersions": [
+        {
+          "hash": "sha256:9201136332186241345731aaad4c7a9ff0a7c517c4698e891692ef4a113a2977",
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
       ]
     },
@@ -9567,14 +10091,14 @@
       "researchTerms": [
         "unmanned surface vessel control guidance navigation"
       ],
-      "retrievedAt": "2026-11-17T13:33:13.105Z",
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
       "evidenceHash": "sha256:7a83e513adb49b299410263f95f32c536639512c45a944177a64cb4ced83e55c",
       "reviewStatus": "REVIEW_REQUIRED",
-      "firstDiscoveredAt": "2026-11-17T13:33:13.105Z",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
       "sourceVersions": [
         {
           "hash": "sha256:7a83e513adb49b299410263f95f32c536639512c45a944177a64cb4ced83e55c",
-          "observedAt": "2026-11-17T13:33:13.105Z"
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
       ]
     },
@@ -9681,8 +10205,20 @@
         {
           "hash": "sha256:8426b0a9411d08acf7013decaf21bd3b077b1fcdaa0c2d73f407b4da4340c4bd",
           "observedAt": "2026-11-15T02:06:31.130Z"
+        },
+        {
+          "hash": "sha256:7f5d2a69edba342939dd6f9f21cd26aa41951ffd5822c8bf97b47af9ddbdafd3",
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
-      ]
+      ],
+      "pendingMetadataChange": {
+        "title": "Uncrewed surface vehicles (USVs) as platforms for fisheries and plankton acoustics",
+        "doi": "https://doi.org/10.1093/icesjms/fsae130",
+        "fullTextPdfLink": null,
+        "openLicenseMetadata": "cc-by",
+        "evidenceHash": "sha256:7f5d2a69edba342939dd6f9f21cd26aa41951ffd5822c8bf97b47af9ddbdafd3",
+        "reviewStatus": "CONFLICT_REVIEW_REQUIRED"
+      }
     },
     {
       "id": "A26-PAPER-W4402658861",
@@ -9905,6 +10441,41 @@
         {
           "hash": "sha256:170779f7006e17d257644e67188972a72d7a5c9184c2d1736c973bbffb51e6cd",
           "observedAt": "2026-11-15T02:06:31.130Z"
+        }
+      ]
+    },
+    {
+      "id": "A26-PAPER-W4403679879",
+      "openAlexId": "https://openalex.org/W4403679879",
+      "title": "Evolution of Algorithms and Applications for Unmanned Surface Vehicles in the Context of Small Craft: A Systematic Review",
+      "publishedAt": "2024-10-23",
+      "type": "review",
+      "doi": "https://doi.org/10.3390/app14219693",
+      "authors": [
+        "Luis Castaño-Londoño",
+        "Stefany Marrugo Llorente",
+        "Edwin Giovanny Paipa Sanabria",
+        "María Belén Orozco-Lopez",
+        "David Ignacio Fuentes Montaña",
+        "Daniel González Montoya"
+      ],
+      "sourceUrl": "https://doi.org/10.3390/app14219693",
+      "openAccessStatus": "INDEXED_OPEN_ACCESS",
+      "openLicenseMetadata": "cc-by",
+      "fullTextPdfLink": "https://www.mdpi.com/2076-3417/14/21/9693/pdf?version=1729693397",
+      "archiveEligible": false,
+      "documentStatus": "PUBLIC_METADATA_UNVERIFIED",
+      "researchTerms": [
+        "unmanned surface vehicle prototype naval architecture"
+      ],
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
+      "evidenceHash": "sha256:37c06d15170d02591e4a12cdf2f6aff9e7d03a6cc991a9cabebd698903265ece",
+      "reviewStatus": "REVIEW_REQUIRED",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
+      "sourceVersions": [
+        {
+          "hash": "sha256:37c06d15170d02591e4a12cdf2f6aff9e7d03a6cc991a9cabebd698903265ece",
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
       ]
     },
@@ -10202,6 +10773,76 @@
       ]
     },
     {
+      "id": "A26-PAPER-W4407954258",
+      "openAlexId": "https://openalex.org/W4407954258",
+      "title": "Development of a High-Reliability Hybrid Data Transmission System for Unmanned Surface Vehicles Under Interference Conditions",
+      "publishedAt": "2025-02-26",
+      "type": "article",
+      "doi": "https://doi.org/10.3390/drones9030174",
+      "authors": [
+        "Serhii Viktorovych Kurdiuk",
+        "Vadym Dremliuk",
+        "Oleksiy Mykolayovych Melnyk",
+        "Олег Анатолійович Онищенко",
+        "Oleksij V. Fomin",
+        "Václav Píštěk",
+        "Pavel Kučera"
+      ],
+      "sourceUrl": "https://doi.org/10.3390/drones9030174",
+      "openAccessStatus": "INDEXED_OPEN_ACCESS",
+      "openLicenseMetadata": "cc-by",
+      "fullTextPdfLink": "https://www.mdpi.com/2504-446X/9/3/174/pdf?version=1740579477",
+      "archiveEligible": false,
+      "documentStatus": "PUBLIC_METADATA_UNVERIFIED",
+      "researchTerms": [
+        "unmanned surface vessel thermal management power system"
+      ],
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
+      "evidenceHash": "sha256:ad964c2fa229e4501c42d0b9b6ef4517dfc22e933f63c9a679888d3fc7abfb00",
+      "reviewStatus": "REVIEW_REQUIRED",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
+      "sourceVersions": [
+        {
+          "hash": "sha256:ad964c2fa229e4501c42d0b9b6ef4517dfc22e933f63c9a679888d3fc7abfb00",
+          "observedAt": "2026-11-20T13:01:12.169Z"
+        }
+      ]
+    },
+    {
+      "id": "A26-PAPER-W4407995428",
+      "openAlexId": "https://openalex.org/W4407995428",
+      "title": "An Overview of Recent Advances in Pursuit–Evasion Games with Unmanned Surface Vehicles",
+      "publishedAt": "2025-02-27",
+      "type": "article",
+      "doi": "https://doi.org/10.3390/jmse13030458",
+      "authors": [
+        "Xingru Qu",
+        "Linghui Zeng",
+        "Shihang Qu",
+        "Feifei Long",
+        "Rubo Zhang"
+      ],
+      "sourceUrl": "https://doi.org/10.3390/jmse13030458",
+      "openAccessStatus": "INDEXED_OPEN_ACCESS",
+      "openLicenseMetadata": "cc-by",
+      "fullTextPdfLink": "https://www.mdpi.com/2077-1312/13/3/458/pdf?version=1740648007",
+      "archiveEligible": false,
+      "documentStatus": "PUBLIC_METADATA_UNVERIFIED",
+      "researchTerms": [
+        "unmanned surface vehicle mechanical design drawing"
+      ],
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
+      "evidenceHash": "sha256:045c0635386714be86071e91a2e2d03dbc4e8907d9d571c6eca89fa32fe6f32c",
+      "reviewStatus": "REVIEW_REQUIRED",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
+      "sourceVersions": [
+        {
+          "hash": "sha256:045c0635386714be86071e91a2e2d03dbc4e8907d9d571c6eca89fa32fe6f32c",
+          "observedAt": "2026-11-20T13:01:12.169Z"
+        }
+      ]
+    },
+    {
       "id": "A26-PAPER-W4408571362",
       "openAlexId": "https://openalex.org/W4408571362",
       "title": "Digital twin syncing for autonomous surface vessels using reinforcement learning and nonlinear model predictive control",
@@ -10231,6 +10872,39 @@
         {
           "hash": "sha256:60b069da8af28c072ae16949bdc4783860f8110ca1807b90e49746bf929371ff",
           "observedAt": "2026-11-15T02:06:31.130Z"
+        }
+      ]
+    },
+    {
+      "id": "A26-PAPER-W4408694080",
+      "openAlexId": "https://openalex.org/W4408694080",
+      "title": "Electric Machine Design and Integration for an Electric Propulsion System in Medium-Altitude Long-Endurance Unmanned Aerial Vehicles",
+      "publishedAt": "2025-03-21",
+      "type": "article",
+      "doi": "https://doi.org/10.3390/app15073438",
+      "authors": [
+        "Emre Kurt",
+        "Ahmet Yiğit Arabul",
+        "Fatma Keskin Arabul",
+        "İbrahim Şenol"
+      ],
+      "sourceUrl": "https://doi.org/10.3390/app15073438",
+      "openAccessStatus": "INDEXED_OPEN_ACCESS",
+      "openLicenseMetadata": "cc-by",
+      "fullTextPdfLink": "https://www.mdpi.com/2076-3417/15/7/3438/pdf?version=1742555888",
+      "archiveEligible": false,
+      "documentStatus": "PUBLIC_METADATA_UNVERIFIED",
+      "researchTerms": [
+        "unmanned surface vehicle propulsion energy endurance"
+      ],
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
+      "evidenceHash": "sha256:567ad5cca09bc2a2f2eabaf578367fd110a9535b6fcf781bcdda2613964d0e01",
+      "reviewStatus": "REVIEW_REQUIRED",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
+      "sourceVersions": [
+        {
+          "hash": "sha256:567ad5cca09bc2a2f2eabaf578367fd110a9535b6fcf781bcdda2613964d0e01",
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
       ]
     },
@@ -10324,14 +10998,14 @@
       "researchTerms": [
         "autonomous surface vessel prototype field experiment"
       ],
-      "retrievedAt": "2026-11-17T13:33:13.105Z",
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
       "evidenceHash": "sha256:65d01fec760bd951b5b1fd371199a7267e044c288b6fe4c159d8418f85e9ecd2",
       "reviewStatus": "REVIEW_REQUIRED",
-      "firstDiscoveredAt": "2026-11-17T13:33:13.105Z",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
       "sourceVersions": [
         {
           "hash": "sha256:65d01fec760bd951b5b1fd371199a7267e044c288b6fe4c159d8418f85e9ecd2",
-          "observedAt": "2026-11-17T13:33:13.105Z"
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
       ]
     },
@@ -11083,6 +11757,39 @@
       ]
     },
     {
+      "id": "A26-PAPER-W4414512247",
+      "openAlexId": "https://openalex.org/W4414512247",
+      "title": "I-VoxICP: A Fast Point Cloud Registration Method for Unmanned Surface Vessels",
+      "publishedAt": "2025-09-25",
+      "type": "article",
+      "doi": "https://doi.org/10.3390/jmse13101854",
+      "authors": [
+        "Qianfeng Jing",
+        "Mingwang Bai",
+        "Yong Yin",
+        "Dongdong Guo"
+      ],
+      "sourceUrl": "https://doi.org/10.3390/jmse13101854",
+      "openAccessStatus": "INDEXED_OPEN_ACCESS",
+      "openLicenseMetadata": "cc-by",
+      "fullTextPdfLink": "https://www.mdpi.com/2077-1312/13/10/1854/pdf?version=1758795206",
+      "archiveEligible": false,
+      "documentStatus": "PUBLIC_METADATA_UNVERIFIED",
+      "researchTerms": [
+        "unmanned surface vessel thermal management power system"
+      ],
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
+      "evidenceHash": "sha256:0ee817996332222477a70cc8ff5d51a3382d2eb18bc981e6bb7f33a1049cfe80",
+      "reviewStatus": "REVIEW_REQUIRED",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
+      "sourceVersions": [
+        {
+          "hash": "sha256:0ee817996332222477a70cc8ff5d51a3382d2eb18bc981e6bb7f33a1049cfe80",
+          "observedAt": "2026-11-20T13:01:12.169Z"
+        }
+      ]
+    },
+    {
       "id": "A26-PAPER-W4414742232",
       "openAlexId": "https://openalex.org/W4414742232",
       "title": "Review of Explainable Decision Support and Adaptive Human–Machine Interfaces for Automation Transparency in Maritime Autonomous Surface Ships",
@@ -11352,8 +12059,20 @@
         {
           "hash": "sha256:8ba474e0b3369e2d5d1b298d298de3f53061a8190ad3b18b05a4e8afc496d75b",
           "observedAt": "2026-11-15T02:06:31.130Z"
+        },
+        {
+          "hash": "sha256:d0bc431b5b6e8ba75373eadf593a9554c8c182b9add1645e391c82dc4e190fb0",
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
-      ]
+      ],
+      "pendingMetadataChange": {
+        "title": "Safe Motion Planning and Control Using Predictive and Adaptive Barrier Methods for Autonomous Surface Vessels",
+        "doi": "https://doi.org/10.1109/iros60139.2025.11247574",
+        "fullTextPdfLink": "https://lirias.kuleuven.be/retrieve/feef7229-d3af-4404-8c8a-a0fad42f5dfe",
+        "openLicenseMetadata": "other-oa",
+        "evidenceHash": "sha256:d0bc431b5b6e8ba75373eadf593a9554c8c182b9add1645e391c82dc4e190fb0",
+        "reviewStatus": "CONFLICT_REVIEW_REQUIRED"
+      }
     },
     {
       "id": "A26-PAPER-W4417046790",
@@ -11965,7 +12684,6 @@
         "unmanned surface vehicle hydrodynamic resistance seakeeping",
         "unmanned surface vehicle mechanical design drawing",
         "unmanned surface vehicle prototype naval architecture",
-        "unmanned surface vessel thermal management power system",
         "wave propelled unmanned surface vehicle long endurance"
       ],
       "retrievedAt": "2026-11-15T02:06:31.130Z",
@@ -12151,7 +12869,7 @@
         },
         {
           "hash": "sha256:9ef4ae4168963ad47ef15e48e911381da18a6eeaed61bb817b8a65fa29a2303a",
-          "observedAt": "2026-11-17T13:33:13.105Z"
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
       ],
       "pendingMetadataChange": {
@@ -12395,6 +13113,40 @@
       ]
     },
     {
+      "id": "A26-PAPER-W7162049430",
+      "openAlexId": "https://openalex.org/W7162049430",
+      "title": "Technical aspects of small autonomous surface vessel design",
+      "publishedAt": "2026-01-01",
+      "type": "article",
+      "doi": null,
+      "authors": [
+        "Smiljko Rudan",
+        "Ivan Munić",
+        "Ivan Oreč",
+        "Pero Prebeg"
+      ],
+      "sourceUrl": "https://hrcak.srce.hr/347262",
+      "openAccessStatus": "INDEXED_OPEN_ACCESS",
+      "openLicenseMetadata": "other-oa",
+      "fullTextPdfLink": "https://hrcak.srce.hr/file/501164",
+      "archiveEligible": false,
+      "documentStatus": "PUBLIC_METADATA_UNVERIFIED",
+      "researchTerms": [
+        "autonomous surface vessel sea trials engineering",
+        "robotic boat autonomous surface vessel design research"
+      ],
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
+      "evidenceHash": "sha256:6009ac00f3a1fa237c6f39219fa008bf99347505e78d794d2baa050a6ad32dde",
+      "reviewStatus": "REVIEW_REQUIRED",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
+      "sourceVersions": [
+        {
+          "hash": "sha256:6009ac00f3a1fa237c6f39219fa008bf99347505e78d794d2baa050a6ad32dde",
+          "observedAt": "2026-11-20T13:01:12.169Z"
+        }
+      ]
+    },
+    {
       "id": "A26-PAPER-W7162329355",
       "openAlexId": "https://openalex.org/W7162329355",
       "title": "Sea Trial Validation of the ROS-DESERT Middleware with Autonomous Underwater Vehicles",
@@ -12554,7 +13306,7 @@
         },
         {
           "hash": "sha256:f16c942eed9d51aa645d8e9916901dfca82965ff4dbf256ee3e23b167e94c12b",
-          "observedAt": "2026-11-17T13:33:13.105Z"
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
       ],
       "pendingMetadataChange": {
@@ -13178,14 +13930,14 @@
         "unmanned surface vehicle prototype naval architecture",
         "wave propelled unmanned surface vehicle long endurance"
       ],
-      "retrievedAt": "2026-11-17T13:33:13.105Z",
+      "retrievedAt": "2026-11-20T13:01:12.169Z",
       "evidenceHash": "sha256:4a682c225797112ef77b1ce7743e73bdc8f757b76dbabc48eb1c14ac701bfdd7",
       "reviewStatus": "REVIEW_REQUIRED",
-      "firstDiscoveredAt": "2026-11-17T13:33:13.105Z",
+      "firstDiscoveredAt": "2026-11-20T13:01:12.169Z",
       "sourceVersions": [
         {
           "hash": "sha256:4a682c225797112ef77b1ce7743e73bdc8f757b76dbabc48eb1c14ac701bfdd7",
-          "observedAt": "2026-11-17T13:33:13.105Z"
+          "observedAt": "2026-11-20T13:01:12.169Z"
         }
       ]
     }
