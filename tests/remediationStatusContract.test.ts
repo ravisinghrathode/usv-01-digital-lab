@@ -285,6 +285,23 @@ describe('closed-loop twelve-issue remediation reporting', () => {
     }
   });
 
+  it('rejects unpaired UTF-16 surrogate escapes without rejecting valid Unicode pairs', () => {
+    for (const invalid of ['\\ud800', '\\udbff', '\\udc00', '\\udfff', 'pending\\ud800approved']) {
+      const note = structuredClone(ledger);
+      note.items[0].verification = invalid;
+      expect(() => summarizeUnverifiedRemediationLedger(note))
+        .toThrow('invalid verification note');
+      const constraint = structuredClone(ledger);
+      constraint.constraints[0] = invalid;
+      expect(() => summarizeUnverifiedRemediationLedger(constraint))
+        .toThrow('malformed provenance metadata');
+    }
+    const valid = structuredClone(ledger);
+    valid.items[0].verification = 'Review pending \\ud83d\\udea2';
+    valid.constraints[0] = 'No vessel release \\ud83d\\udea2';
+    expect(summarizeUnverifiedRemediationLedger(valid).completeAndIndependentlyVerified).toBe(0);
+  });
+
   it('adds read-only status utility without rewriting authoritative source', () => {
     const manifest = JSON.parse(fs.readFileSync(
       path.join(process.cwd(), 'package.json'), 'utf8'
