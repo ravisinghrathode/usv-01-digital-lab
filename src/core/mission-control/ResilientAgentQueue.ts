@@ -107,6 +107,9 @@ function validateStore(state: QueueStateFile): void {
     if (!/^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$/.test(id) ||
       row.taskId !== id ||
       !isObject(row.input) || row.input.taskId !== id ||
+      !isObject(row.input.context) ||
+      !['PUBLIC_SOURCE_SAFE_ONLY', 'SYNTHETIC_TEST_ONLY_NON_OPERATIONAL'].includes(
+        String(row.input.context.dataClassification || '')) ||
       typeof row.agentId !== 'string' || !row.agentId ||
       typeof row.commitSha !== 'string' || !/^[a-f0-9]{40}$/i.test(row.commitSha) ||
       (row.lane !== 'MODEL_AGENT' && row.lane !== 'OFFLINE_SCHEMA_CHECK') ||
