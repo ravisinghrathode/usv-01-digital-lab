@@ -30,14 +30,16 @@ export function readIndependentReferenceBytes(
     // evidence directory outside the checkout through a symbolic link.
     // The checkout root itself must not be a symlink: otherwise a caller
     // can redirect the entire trust root before evidence validation.
-    if (fs.lstatSync(root).isSymbolicLink()) return null;
+    if (!fs.lstatSync(root).isDirectory()) return null;
     const realRoot = fs.realpathSync(root);
     const realBase = fs.realpathSync(acceptedBase);
     if (realBase !== path.join(realRoot, 'evidence', 'independent')) return null;
     let entry = root;
     for (const component of components) {
       entry = path.join(entry, component);
-      if (fs.lstatSync(entry).isSymbolicLink()) return null;
+      const componentStat = fs.lstatSync(entry);
+      if (componentStat.isSymbolicLink()) return null;
+      if (entry !== candidate && !componentStat.isDirectory()) return null;
     }
     const realFile = fs.realpathSync(candidate);
     if (!realFile.startsWith(realBase + path.sep)) return null;
@@ -58,6 +60,11 @@ export function readIndependentReferenceBytes(
         read += consumed;
       }
       const after = fs.fstatSync(fd);
+      // Revalidate the pathname after reading to catch parent replacement
+      // during the read. This narrows, but cannot eliminate, TOCTOU races.
+      if (fs.realpathSync(candidate) !== realFile) return null;
+      const namedAfter = fs.lstatSync(candidate);
+      if (namedAfter.isSymbolicLink() || namedAfter.dev !== st.dev || namedAfter.ino !== st.ino) return null;
       if (after.dev !== st.dev || after.ino !== st.ino ||
           after.size !== st.size || after.mtimeMs !== st.mtimeMs ||
           after.ctimeMs !== st.ctimeMs) return null;
