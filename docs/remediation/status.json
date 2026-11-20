@@ -49,7 +49,7 @@
       "id": "PR-08",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/198",
-      "verification": "Cross-task execution receipts now fail closed (source e4d1f839, regression e559e17e); exact-head CI pending. Independent authenticated reference admission, reviewer verification, downstream propagation, and end-to-end acceptance remain outstanding. No engineering release approved."
+      "verification": "Runtime execution receipt enums now fail closed rather than echoing invalid provider/persisted status or certification claims (implementation 0c57ce26; negative tests 9f5e7172). Earlier exact-head governance run 44663381751 failed only Stage E authenticated approval; new exact-head CI pending. Independent authenticated reference admission, reviewer verification, downstream propagation, and end-to-end acceptance remain outstanding; no engineering release approved."
     },
     {
       "id": "PR-09",
