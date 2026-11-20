@@ -25,7 +25,7 @@
       "id": "PR-04",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/194",
-      "verification": "Copy-on-write engineering CRUD plus activity log; commit 15fb858ef7007669cf841da87ab7d3f0343a6289 rejects Promise/thenable mutation callbacks before persistence with two regression tests. New exact-head CI pending; separate authenticated Stage C/D/E approvals pending. No multi-process serializability, migration, power-loss recovery, or independent acceptance claimed."
+      "verification": "PR #194 copy-on-write engineering CRUD/activity log; regression commit 5d553e1c6f64575d47c6792572c89a4d8e64719a tests rejection of schema-invalid speculative changes with unchanged disk, memory and no temporary files. Prior exact-head governance run 44598913696 failed only at Stage E authenticated approval; new exact-head CI pending. No cross-process serializability, durable migration, power-loss recovery, authenticated approval or independent acceptance claimed. Separate PR #196 handles additional durability hardening."
     },
     {
       "id": "PR-05",
