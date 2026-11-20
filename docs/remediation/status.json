@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-19",
+  "updatedAt": "2026-11-20",
   "items": [
     {
       "id": "PR-01",
@@ -13,7 +13,7 @@
       "id": "PR-02",
       "state": "partial-merged-and-follow-up-open",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/182",
-      "verification": "PR #182 merged; follow-up PR #191 open. At b272c7cf08bcdf985bfb41ec95e2e05c3a8822ec governance run 44544966987 failed at Stage E authenticated human review, not Stage B. New source change b7b7140b rejects non-enumerable required witness fields; regression test commit ff9ceb7d. Exact-head CI pending; no independent acceptance. External witness deployment, durable outbox, recovery drills and authenticated reviews remain outstanding. Prior picomatch advisory needs fresh audit."
+      "verification": "PR #182 merged; follow-up PR #191 open. At b272c7cf08bcdf985bfb41ec95e2e05c3a8822ec governance run 44544966987 failed at Stage E authenticated human review, not Stage B. New source change b7b7140b rejects non-enumerable required witness fields; regression test commit ff9ceb7d. Exact-head CI pending; no independent acceptance. External witness deployment, durable outbox, recovery drills and authenticated reviews remain outstanding. Prior picomatch advisory needs fresh audit.; 2026-11-20: reject multi-block/trailing PEM witness trust roots, regression added (commits 1619c8e, 73c51f3); exact-head CI pending, external witness/outbox and human review remain unverified"
     },
     {
       "id": "PR-03",
