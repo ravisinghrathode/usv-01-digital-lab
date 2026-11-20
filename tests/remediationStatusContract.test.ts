@@ -297,7 +297,7 @@ describe('closed-loop twelve-issue remediation reporting', () => {
   });
 
   it('rejects unpaired UTF-16 surrogate escapes without rejecting valid Unicode pairs', () => {
-    for (const invalid of ['\\ud800', '\\udbff', '\\udc00', '\\udfff', 'pending\\ud800approved']) {
+    for (const invalid of [0xd800, 0xdbff, 0xdc00, 0xdfff].map(unit => String.fromCharCode(unit)).concat('pending' + String.fromCharCode(0xd800) + 'approved')) {
       const note = structuredClone(ledger);
       note.items[0].verification = invalid;
       expect(() => summarizeUnverifiedRemediationLedger(note))
@@ -308,8 +308,8 @@ describe('closed-loop twelve-issue remediation reporting', () => {
         .toThrow('malformed provenance metadata');
     }
     const valid = structuredClone(ledger);
-    valid.items[0].verification = 'Review pending \\ud83d\\udea2';
-    valid.constraints[0] = 'No vessel release \\ud83d\\udea2';
+    valid.items[0].verification = 'Review pending ' + String.fromCodePoint(0x1f6a2);
+    valid.constraints[0] = 'No vessel release ' + String.fromCodePoint(0x1f6a2);
     expect(summarizeUnverifiedRemediationLedger(valid).completeAndIndependentlyVerified).toBe(0);
   });
 
