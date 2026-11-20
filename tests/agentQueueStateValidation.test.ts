@@ -68,6 +68,12 @@ describe('fail-closed durable 26-agent queue recovery', () => {
     ['unknown persisted task state', store({ ...task(), state: 'APPROVED_ENGINEERING_RELEASE' })],
     ['mismatched record ID', store({ ...task(), taskId: 'DIFFERENT' })],
     ['invalid source digest', store({ ...task(), digest: 'MALFORMED' })],
+    ['recovered restricted input classification', store({
+      ...task(), input: { ...task().input, context: { dataClassification: 'RESTRICTED_NAVAL' } }
+    })],
+    ['recovered missing input classification', store({
+      ...task(), input: { ...task().input, context: {} }
+    })],
     ['out-of-bounds attempts', store({ ...task(), attempts: 999 })],
     ['completed without receipt', store({ ...task(), state: 'COMPLETED', attempts: 1 })],
     ['forged human approval in receipt', store({
