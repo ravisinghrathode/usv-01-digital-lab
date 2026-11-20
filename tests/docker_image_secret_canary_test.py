@@ -55,5 +55,33 @@ class DockerCanaryManifestTests(unittest.TestCase):
         self.assert_rejected([{"Layers": ["layer.tar"], "RepoTags": [42]}])
 
 
+class DockerCanaryFixtureSafetyTests(unittest.TestCase):
+    def test_symlinked_parent_is_rejected_without_writing_outside_checkout(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "checkout"
+            outside = Path(directory) / "outside"
+            root.mkdir()
+            outside.mkdir()
+            (root / ".secrets").symlink_to(outside, target_is_directory=True)
+            target = root / ".secrets" / "ci-test" / "credential.txt"
+            with self.assertRaisesRegex(RuntimeError, "symlink"):
+                canary.assert_safe_fixture_parents(root, [target])
+            self.assertFalse((outside / "ci-test").exists())
+
+    def test_regular_nested_fixture_parent_is_allowed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "checkout"
+            (root / ".secrets").mkdir(parents=True)
+            canary.assert_safe_fixture_parents(root, [root / ".secrets" / "ci-test" / "credential.txt"])
+
+    def test_file_as_parent_is_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "checkout"
+            root.mkdir()
+            (root / ".secrets").write_text("existing")
+            with self.assertRaisesRegex(RuntimeError, "not a directory"):
+                canary.assert_safe_fixture_parents(root, [root / ".secrets" / "ci-test" / "credential.txt"])
+
+
 if __name__ == "__main__":
     unittest.main()
