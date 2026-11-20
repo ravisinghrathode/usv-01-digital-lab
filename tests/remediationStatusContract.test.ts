@@ -8,6 +8,17 @@ const ledger = JSON.parse(fs.readFileSync(
 )) as Record<string, any>;
 
 describe('closed-loop twelve-issue remediation reporting', () => {
+  it('does not convert successful technical workflows or Stage E holds into independent acceptance', () => {
+    const observed = structuredClone(ledger);
+    observed.items[11].state = 'partial-implementation-awaiting-review';
+    observed.items[11].pullRequest = 'https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201';
+    observed.items[11].verification = 'Exact-head technical CI passed; Stage E authenticated approval failed';
+    const report = summarizeUnverifiedRemediationLedger(observed);
+    expect(report.completeAndIndependentlyVerified).toBe(0);
+    expect(report.issues[11].status).toBe('PARTIAL_IMPLEMENTATION');
+    expect(report.conclusion).toBe('NO_INDEPENDENT_COMPLETION_EVIDENCE');
+  });
+
   it('reports exactly 12 issues and never treats an unsigned ledger as verified closure', () => {
     const status = summarizeUnverifiedRemediationLedger(ledger);
     expect(status.total).toBe(12);
