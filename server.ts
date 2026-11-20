@@ -39,7 +39,7 @@ import { loadA26ResearchFeed } from './src/server/a26ResearchFeed.ts';
 import http from 'http';
 import { VerifyUsv01Engine } from './src/core/verification/VerifyUsv01Engine.ts';
 import { getLabReadinessSnapshot } from './src/core/verification/LabReadiness.ts';
-import { loadProjectStore, saveProjectStore } from './src/core/storage/ProjectStorePersistence.ts';
+import { loadProjectStore, saveProjectStore, commitProjectStoreMutation } from './src/core/storage/ProjectStorePersistence.ts';
 import { AgentRegistry } from './src/core/registry/AgentRegistry.ts';
 import { BaseAgent } from './src/core/engine/BaseAgent.ts';
 import { CentralOrchestrator } from './src/core/orchestrator/CentralOrchestrator.ts';
@@ -117,6 +117,12 @@ const validateDataCollection = (req: express.Request, res: express.Response, nex
 const saveStoreToFile = () => {
   // Never acknowledge a persisted change if atomic writing failed.
   saveProjectStore(dbStore, STORE_PATH);
+};
+
+/** Only publish speculative engineering CRUD state after disk persistence succeeds. */
+const commitEngineeringStoreMutation = (mutate: (nextStore: Record<string, any[]>) => void) => {
+  const committed = commitProjectStoreMutation(dbStore, STORE_PATH, mutate);
+  dbStore = committed.store;
 };
 
 const loadStoreFromFile = (): boolean => {
@@ -1245,9 +1251,6 @@ app.get('/api/data/:collection', validateDataCollection, (req, res) => {
 
 app.post('/api/data/:collection', validateDataCollection, (req, res) => {
   const coll = req.params.collection;
-  if (!dbStore[coll]) {
-    dbStore[coll] = [];
-  }
   let draft: Record<string, unknown>;
   try { draft = guardEngineeringDraftWrite(coll, req.body); }
   catch (err) {
@@ -1265,24 +1268,24 @@ app.post('/api/data/:collection', validateDataCollection, (req, res) => {
     updatedAt: now
   };
 
-  dbStore[coll].unshift(newItem);
-
-  // Auto-log activity
-  if (coll !== 'activity_log') {
-    dbStore.activity_log.unshift({
-      id: `LOG-${Date.now()}`,
-      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
-      userId: (req as any).user.userId,
-      userName: (req as any).user.userName,
-      action: 'CREATE',
-      recordType: coll.toUpperCase(),
-      recordId: newItem.id,
-      details: `Created new ${coll} record: ${String(draft.title ?? draft.name ?? draft.partNumber ?? newItem.id)}`
+  try {
+    commitEngineeringStoreMutation(nextStore => {
+      nextStore[coll].unshift(newItem);
+      nextStore.activity_log.unshift({
+        id: 'LOG-' + crypto.randomUUID(),
+        timestamp: now,
+        userId: (req as any).user.userId,
+        userName: (req as any).user.userName,
+        action: 'CREATE',
+        recordType: coll.toUpperCase(),
+        recordId: newItem.id,
+        details: `Created new ${coll} record: ${String(draft.title ?? draft.name ?? draft.partNumber ?? newItem.id)}`
+      });
     });
+  } catch {
+    return res.status(503).json({ success: false, error: 'Engineering record was not committed; persistent storage unavailable.' });
   }
-
-  saveStoreToFile();
-  res.json({ success: true, item: newItem });
+  return res.json({ success: true, item: newItem });
 });
 
 app.put('/api/data/:collection/:id', validateDataCollection, (req, res) => {
@@ -1290,7 +1293,6 @@ app.put('/api/data/:collection/:id', validateDataCollection, (req, res) => {
   const id = req.params.id;
   const items = dbStore[coll] || [];
   const idx = items.findIndex((i: any) => i.id === id);
-
   if (idx === -1) {
     return res.status(404).json({ success: false, error: 'Record not found' });
   }
@@ -1302,27 +1304,25 @@ app.put('/api/data/:collection/:id', validateDataCollection, (req, res) => {
       success: false, error: err instanceof Error ? err.message : 'Invalid engineering draft.'
     });
   }
-  items[idx] = {
-    ...items[idx],
-    ...draftChanges,
-    updatedAt: new Date().toISOString()
-  };
-
-  if (coll !== 'activity_log') {
-    dbStore.activity_log.unshift({
-      id: `LOG-${Date.now()}`,
-      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
-      userId: (req as any).user.userId,
-      userName: (req as any).user.userName,
-      action: req.body.status === 'Archived' ? 'ARCHIVE' : 'UPDATE',
-      recordType: coll.toUpperCase(),
-      recordId: id,
-      details: `Updated ${coll} record ${id}: status=${items[idx].status || 'nominal'}`
+  const updatedItem = { ...items[idx], ...draftChanges, updatedAt: new Date().toISOString() };
+  try {
+    commitEngineeringStoreMutation(nextStore => {
+      nextStore[coll][idx] = updatedItem;
+      nextStore.activity_log.unshift({
+        id: 'LOG-' + crypto.randomUUID(),
+        timestamp: new Date().toISOString(),
+        userId: (req as any).user.userId,
+        userName: (req as any).user.userName,
+        action: req.body.status === 'Archived' ? 'ARCHIVE' : 'UPDATE',
+        recordType: coll.toUpperCase(),
+        recordId: id,
+        details: `Updated ${coll} record ${id}: status=${updatedItem.status || 'nominal'}`
+      });
     });
+  } catch {
+    return res.status(503).json({ success: false, error: 'Engineering record was not committed; persistent storage unavailable.' });
   }
-
-  saveStoreToFile();
-  res.json({ success: true, item: items[idx] });
+  return res.json({ success: true, item: updatedItem });
 });
 
 app.delete('/api/data/:collection/:id', validateDataCollection, (req, res) => {
@@ -1330,30 +1330,33 @@ app.delete('/api/data/:collection/:id', validateDataCollection, (req, res) => {
   const id = req.params.id;
   const items = dbStore[coll] || [];
   const idx = items.findIndex((i: any) => i.id === id);
-
   if (idx === -1) {
     return res.status(404).json({ success: false, error: 'Record not found' });
   }
-
   try { guardEngineeringDraftWrite(coll, {}, items[idx]); }
   catch {
     return res.status(409).json({ success: false, error: 'Controlled engineering records require governed supersession.' });
   }
-  const removed = items.splice(idx, 1)[0];
 
-  dbStore.activity_log.unshift({
-    id: `LOG-${Date.now()}`,
-    timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
-    userId: (req as any).user.userId,
-    userName: (req as any).user.userName,
-    action: 'ARCHIVE',
-    recordType: coll.toUpperCase(),
-    recordId: id,
-    details: `Archived ${coll} record ${id}`
-  });
-
-  saveStoreToFile();
-  res.json({ success: true, removed });
+  const removed = items[idx];
+  try {
+    commitEngineeringStoreMutation(nextStore => {
+      nextStore[coll].splice(idx, 1);
+      nextStore.activity_log.unshift({
+        id: 'LOG-' + crypto.randomUUID(),
+        timestamp: new Date().toISOString(),
+        userId: (req as any).user.userId,
+        userName: (req as any).user.userName,
+        action: 'ARCHIVE',
+        recordType: coll.toUpperCase(),
+        recordId: id,
+        details: `Archived ${coll} record ${id}`
+      });
+    });
+  } catch {
+    return res.status(503).json({ success: false, error: 'Engineering record was not committed; persistent storage unavailable.' });
+  }
+  return res.json({ success: true, removed });
 });
 
 // 5. Export and Import

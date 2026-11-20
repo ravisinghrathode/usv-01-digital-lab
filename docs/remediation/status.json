@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-17",
+  "updatedAt": "2026-11-20",
   "items": [
     {
       "id": "PR-01",
@@ -23,9 +23,9 @@
     },
     {
       "id": "PR-04",
-      "state": "not-verified",
-      "pullRequest": "",
-      "verification": null
+      "state": "partial-implementation-awaiting-review",
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/194",
+      "verification": "PR #194 copy-on-write engineering CRUD/activity log; regression commit 5d553e1c6f64575d47c6792572c89a4d8e64719a tests rejection of schema-invalid speculative changes with unchanged disk, memory and no temporary files. Prior exact-head governance run 44598913696 failed only at Stage E authenticated approval; new exact-head CI pending. No cross-process serializability, durable migration, power-loss recovery, authenticated approval or independent acceptance claimed. Separate PR #196 handles additional durability hardening."
     },
     {
       "id": "PR-05",
