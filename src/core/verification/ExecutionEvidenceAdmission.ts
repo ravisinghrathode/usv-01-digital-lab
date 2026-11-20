@@ -15,7 +15,9 @@ export interface UnadmittedEvidenceStatus {
   independentTechnicalReviewAccepted: false;
   admittedAsEngineeringEvidence: false;
   engineeringReleaseApproved: false;
-  reason: 'INDEPENDENT_REFERENCE_AND_SOURCE_REVIEW_REQUIRED' | 'OUTPUT_TASK_ID_MISMATCH';
+  reason: taskBoundOutput && !trustedReceipt
+        ? 'INVALID_EXECUTION_RECEIPT'
+        : 'INDEPENDENT_REFERENCE_AND_SOURCE_REVIEW_REQUIRED' | 'OUTPUT_TASK_ID_MISMATCH' | 'INVALID_EXECUTION_RECEIPT';
 }
 
 export function evidenceAdmissionForOutput(
@@ -24,12 +26,18 @@ export function evidenceAdmissionForOutput(
 ): UnadmittedEvidenceStatus {
   // A receipt for another task cannot establish this task's execution state.
   const taskBoundOutput = output?.taskId === taskId ? output : undefined;
+  // Runtime receipts can arrive from persistence or external providers despite
+  // compile-time types. Never echo unknown status/verification claims as facts.
+  const validStatus = taskBoundOutput && ['SUCCESS', 'PARTIAL', 'FAILED', 'NEEDS_HUMAN_APPROVAL'].includes(taskBoundOutput.status);
+  const validVerification = taskBoundOutput && (taskBoundOutput.verificationStatus === undefined ||
+    ['UNVERIFIED', 'CALCULATED_VERIFIED', 'HUMAN_APPROVED', 'SYNTHETIC_MOCK', 'EXECUTION_FAILED'].includes(taskBoundOutput.verificationStatus));
+  const trustedReceipt = validStatus && validVerification ? taskBoundOutput : undefined;
   return {
     taskId,
-    executionStatus: taskBoundOutput?.status ?? 'NOT_EXECUTED',
-    executionSucceeded: taskBoundOutput?.status === 'SUCCESS',
-    modelReportedEvidenceValid: taskBoundOutput?.evidenceValid === true,
-    modelReportedVerificationStatus: taskBoundOutput?.verificationStatus ?? 'UNVERIFIED',
+    executionStatus: trustedReceipt?.status ?? 'NOT_EXECUTED',
+    executionSucceeded: trustedReceipt?.status === 'SUCCESS',
+    modelReportedEvidenceValid: trustedReceipt?.evidenceValid === true,
+    modelReportedVerificationStatus: trustedReceipt?.verificationStatus ?? 'UNVERIFIED',
     independentTechnicalReviewAccepted: false,
     admittedAsEngineeringEvidence: false,
     engineeringReleaseApproved: false,
