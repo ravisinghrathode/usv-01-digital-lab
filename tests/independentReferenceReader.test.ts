@@ -58,6 +58,18 @@ describe('independent engineering reference evidence path isolation', () => {
     expect(readIndependentReferenceBytes(root, 'evidence/independent/empty.txt')).toBe(null);
   });
 
+
+  it('refuses oversized files and directory references', () => {
+    const { root, base } = setup();
+    const large = path.join(base, 'oversized.bin');
+    fs.writeFileSync(large, 'x');
+    fs.truncateSync(large, 5 * 1024 * 1024 + 1);
+    expect(readIndependentReferenceBytes(root, 'evidence/independent/oversized.bin')).toBe(null);
+    expect(readIndependentReferenceBytes(root, 'evidence/independent')).toBe(null);
+    fs.mkdirSync(path.join(base, 'directory'));
+    expect(readIndependentReferenceBytes(root, 'evidence/independent/directory')).toBe(null);
+  });
+
   it('routes signed engineering review artifact lookups through the safe reader', () => {
     const source = fs.readFileSync(path.join(process.cwd(),
       'src/core/verification/EngineeringCampaignAcceptance.ts'), 'utf8');
