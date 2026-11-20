@@ -15,9 +15,7 @@ export interface UnadmittedEvidenceStatus {
   independentTechnicalReviewAccepted: false;
   admittedAsEngineeringEvidence: false;
   engineeringReleaseApproved: false;
-  reason: taskBoundOutput && !trustedReceipt
-        ? 'INVALID_EXECUTION_RECEIPT'
-        : 'INDEPENDENT_REFERENCE_AND_SOURCE_REVIEW_REQUIRED' | 'OUTPUT_TASK_ID_MISMATCH' | 'INVALID_EXECUTION_RECEIPT';
+  reason: 'INDEPENDENT_REFERENCE_AND_SOURCE_REVIEW_REQUIRED' | 'OUTPUT_TASK_ID_MISMATCH' | 'INVALID_EXECUTION_RECEIPT';
 }
 
 export function evidenceAdmissionForOutput(
@@ -43,7 +41,9 @@ export function evidenceAdmissionForOutput(
     engineeringReleaseApproved: false,
     reason: output && !taskBoundOutput
       ? 'OUTPUT_TASK_ID_MISMATCH'
-      : 'INDEPENDENT_REFERENCE_AND_SOURCE_REVIEW_REQUIRED'
+      : taskBoundOutput && !trustedReceipt
+        ? 'INVALID_EXECUTION_RECEIPT'
+        : 'INDEPENDENT_REFERENCE_AND_SOURCE_REVIEW_REQUIRED'
   };
 }
 
