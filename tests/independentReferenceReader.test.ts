@@ -48,6 +48,19 @@ describe('independent engineering reference evidence path isolation', () => {
       .toBe(null);
   });
 
+  it('rejects a symlinked checkout trust root even when its target has valid evidence', () => {
+    const { root } = setup();
+    const aliasParent = fs.mkdtempSync(path.join(os.tmpdir(), 'usv01-root-alias-'));
+    folders.push(aliasParent);
+    const alias = path.join(aliasParent, 'checkout');
+    fs.symlinkSync(root, alias, 'dir');
+    expect(readIndependentReferenceBytes(alias, 'evidence/independent/reference.txt'))
+      .toBe(null);
+    // A direct, non-symlink checkout continues to work.
+    expect(readIndependentReferenceBytes(root, 'evidence/independent/reference.txt')?.toString())
+      .toBe('Verified reference fixture only\\n');
+  });
+
   it('rejects hardlinked or zero-byte apparent reference evidence', () => {
     const { root, base, file } = setup();
     const alias = path.join(base, 'alias.txt');
