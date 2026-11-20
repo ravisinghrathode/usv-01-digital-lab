@@ -91,6 +91,18 @@ describe('direct agent request authority and provenance boundary', () => {
     expect(request.priorAgentOutputs?.a.finding).toBe('unverified');
     expect(request.context.authenticatedUserRole).toBe(actor.role);
   });
+  it('bounds nested text and property keys without rejecting boundary-safe research data', () => {
+    expect(() => bindAgentExecutionRequest({
+      parameters: { nested: { note: 'x'.repeat(16_385) } }
+    }, actor, id)).toThrow(/string exceeds limit/);
+    expect(() => bindAgentExecutionRequest({
+      priorAgentOutputs: { upstream: { ['k'.repeat(257)]: 'value' } }
+    }, actor, id)).toThrow(/object key exceeds limit/);
+    const accepted = bindAgentExecutionRequest({
+      parameters: { ['k'.repeat(256)]: 'x'.repeat(16_384) }
+    }, actor, id);
+    expect(accepted.parameters['k'.repeat(256)]).toHaveLength(16_384);
+  });
   it('wires the direct server agent endpoint to the authenticated binding', () => {
     const source = fs.readFileSync(path.join(process.cwd(), 'server.ts'), 'utf8');
     const start = source.indexOf("app.post('/api/agents/execute'");
