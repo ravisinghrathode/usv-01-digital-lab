@@ -20,6 +20,8 @@ const FORBIDDEN_AUTHORITY_KEYS = new Set([
   'isexploratorystudy', 'safetycritical', 'requiresdirectorapproval'
 ]);
 const MAX_NESTING = 8;
+const MAX_INPUT_STRING_LENGTH = 16_384;
+const MAX_INPUT_KEY_LENGTH = 256;
 function stripAuthorityClaims(value: unknown, depth = 0): unknown {
   if (depth > MAX_NESTING) {
     throw new WorkflowSubmissionError('Workflow input nesting exceeds security limits', 400);
@@ -33,10 +35,16 @@ function stripAuthorityClaims(value: unknown, depth = 0): unknown {
     if (fields.length > 250) throw new WorkflowSubmissionError('Oversized workflow input object', 400);
     const cleaned: Record<string, unknown> = Object.create(null);
     for (const [key, entry] of fields) {
+      if (key.length > MAX_INPUT_KEY_LENGTH) {
+        throw new WorkflowSubmissionError('Oversized workflow input key', 400);
+      }
       if (FORBIDDEN_AUTHORITY_KEYS.has(key.toLowerCase().replace(/[^a-z0-9]/g, ''))) continue;
       cleaned[key] = stripAuthorityClaims(entry, depth + 1);
     }
     return cleaned;
+  }
+  if (typeof value === 'string' && value.length > MAX_INPUT_STRING_LENGTH) {
+    throw new WorkflowSubmissionError('Oversized workflow input string', 400);
   }
   if (typeof value === 'number' && !Number.isFinite(value)) {
     throw new WorkflowSubmissionError('Non-finite workflow numerical input', 400);
