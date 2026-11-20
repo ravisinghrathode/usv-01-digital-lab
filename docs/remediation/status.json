@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-17",
+  "updatedAt": "2026-11-20",
   "items": [
     {
       "id": "PR-01",
@@ -47,9 +47,9 @@
     },
     {
       "id": "PR-08",
-      "state": "not-verified",
-      "pullRequest": "",
-      "verification": null
+      "state": "partial-implementation-awaiting-review",
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/198",
+      "verification": "Cross-task execution receipts now fail closed (source e4d1f839, regression e559e17e); exact-head CI pending. Independent authenticated reference admission, reviewer verification, downstream propagation, and end-to-end acceptance remain outstanding. No engineering release approved."
     },
     {
       "id": "PR-09",
