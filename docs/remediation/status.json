@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-17",
+  "updatedAt": "2026-11-20",
   "items": [
     {
       "id": "PR-01",
@@ -80,5 +80,16 @@
     "Never auto-promote naval engineering baselines",
     "No independent approval can be forged or bypassed",
     "Completion requires CI, review, and full end-to-end acceptance"
+  ],
+  "iterationEvidence": [
+    {
+      "workstream": "PR-06",
+      "pullRequest": 197,
+      "sourceCommit": "36d9506b2bdd3804eacd1f5c1760fdd694cad7c9",
+      "testCommit": "6341d36c4845ff70d3ec8fce76c1e2f2d5c23781",
+      "change": "Normalize separators in untrusted nested authority-claim keys before stripping; add regression test",
+      "verification": "Exact-head CI pending; prior head governance failure requires Stage B/E step classification",
+      "remaining": "Persistent orchestration, authenticated Director review, independent acceptance"
+    }
   ]
 }
