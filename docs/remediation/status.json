@@ -67,7 +67,7 @@
       "id": "PR-11",
       "state": "partial-implementation-awaiting-independent-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/200",
-      "verification": "2026-11-21: exact-head 713e89e governance run 44800417945 passed technical Stage B and failed protected Stage E authenticated human approval. Subsequent commits 514c3c8 and 55c7391 add post-read pathname/inode revalidation and negative directory-boundary regression; new exact-head CI pending. This reduces but does not eliminate parent-component TOCTOU. Physical reference accuracy, qualified reviewers, race-free directory resolution, live 26-agent commissioning and independent acceptance remain outstanding."
+      "verification": "2026-11-21: PR #200 exact-head 75a1bbbd governance run 44802727757 failed technical Stage B: 1/1145 tests failed (independentReferenceReader.test.ts non-directory regression), caused by expected literal backslash-n instead of newline. Corrected assertion in commit 5b6ccc29; new exact-head CI pending, no technical pass claimed. Prior Stage E authenticated human approval remains mandatory. Physical reference accuracy, qualified reviewers, race-free parent directory handling, live 26-agent commissioning and independent end-to-end acceptance remain outstanding."
     },
     {
       "id": "PR-12",
