@@ -64,6 +64,24 @@ describe('agent execution versus independent engineering evidence acceptance', (
     expect(actual.engineeringReleaseApproved).toBe(false);
   });
 
+  it('fails closed on malformed persisted provider status and verification enums', () => {
+    const badStatus = evidenceAdmissionForOutput('TASK-REPORT-ONLY', {
+      ...reportedSuccess, status: 'CERTIFIED' as AgentExecutionOutput['status']
+    });
+    expect(badStatus.executionStatus).toBe('NOT_EXECUTED');
+    expect(badStatus.executionSucceeded).toBe(false);
+    expect(badStatus.modelReportedEvidenceValid).toBe(false);
+    expect(badStatus.reason).toBe('INVALID_EXECUTION_RECEIPT');
+    const badVerification = evidenceAdmissionForOutput('TASK-REPORT-ONLY', {
+      ...reportedSuccess,
+      verificationStatus: 'VESSEL_RELEASED' as AgentExecutionOutput['verificationStatus']
+    });
+    expect(badVerification.executionSucceeded).toBe(false);
+    expect(badVerification.modelReportedVerificationStatus).toBe('UNVERIFIED');
+    expect(badVerification.admittedAsEngineeringEvidence).toBe(false);
+    expect(badVerification.reason).toBe('INVALID_EXECUTION_RECEIPT');
+  });
+
   it('returns a separate factual status for every workflow task', () => {
     const rows = evidenceAdmissionForTasks([
       { id: 'TASK-REPORT-ONLY', output: reportedSuccess },
