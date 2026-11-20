@@ -67,7 +67,7 @@
       "id": "PR-11",
       "state": "partial-implementation-awaiting-independent-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/200",
-      "verification": "2026-11-21: exact-head f2c70ca governance run 44781531582 failed Stage B TypeScript static typecheck/lint (not Stage E). Corrected literal escaped newlines embedded in IndependentReferenceReader.ts (a52a502a) and invalid newline expectation in positive symlink-root control (1bbf3ba). New exact-head CI pending. Independent physical reference accuracy, qualified reviewers, race-free parent-component resolution, live 26-agent commissioning, protected Stage E and end-to-end acceptance remain outstanding."
+      "verification": "2026-11-21: exact-head 713e89e governance run 44800417945 passed technical Stage B and failed protected Stage E authenticated human approval. Subsequent commits 514c3c8 and 55c7391 add post-read pathname/inode revalidation and negative directory-boundary regression; new exact-head CI pending. This reduces but does not eliminate parent-component TOCTOU. Physical reference accuracy, qualified reviewers, race-free directory resolution, live 26-agent commissioning and independent acceptance remain outstanding."
     },
     {
       "id": "PR-12",
