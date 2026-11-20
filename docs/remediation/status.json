@@ -61,7 +61,7 @@
       "id": "PR-10",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/199",
-      "verification": "Direct-agent authority key canonicalization and regression test committed on PR #199. Prior exact-head governance run 43998097708 failed at Stage E authenticated approval; Stage B passed. New exact-head CI and independent review pending. Session revocation, timeout cancellation, production trust boundary and end-to-end acceptance remain outstanding."
+      "verification": "PR #199 nested input string (16384 UTF-16 code units) and object-key (256) bounds implemented in da6a5131; boundary and rejection regression tests in 3d7cac16. Exact-head CI pending; previous head Mission Control and browser QA passed, governance failed (Stage E classification requires job-level verification). No authenticated Stage E approval or independent acceptance. Session revocation, timeout cancellation and production trust boundary outstanding."
     },
     {
       "id": "PR-11",
