@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-17",
+  "updatedAt": "2026-11-20",
   "items": [
     {
       "id": "PR-01",
@@ -65,9 +65,9 @@
     },
     {
       "id": "PR-11",
-      "state": "not-verified",
-      "pullRequest": "",
-      "verification": null
+      "state": "partial-implementation-awaiting-independent-review",
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/200",
+      "verification": "2026-11-20: independent evidence reader hardened with opened-file/path inode binding and post-read timestamp checks; oversized/directory regression cases added. Prior exact head af90e53: Stage B passed, Stage E authenticated approval failed (workflow 43998351023). New head CI pending. Does not establish race-free parent-directory resolution, independently qualified reviewers, physical reference accuracy, live 26-agent commissioning or acceptance."
     },
     {
       "id": "PR-12",
