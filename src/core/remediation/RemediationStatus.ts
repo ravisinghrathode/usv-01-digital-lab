@@ -21,6 +21,21 @@ export interface RemediationSummary {
 // Reject bidirectional formatting controls that can visually reverse approval text.
 const UNSAFE_STATUS_TEXT = /[\x00-\x1f\x7f-\x9f\u00ad\u034f\u061c\u180e\u200b-\u200f\u2028-\u202e\u2060\u2066-\u206f\ufeff]/;
 
+// JSON permits escaped lone UTF-16 surrogates, but their replacement glyphs can
+// obscure provenance or review wording in downstream terminals and dashboards.
+function hasUnpairedSurrogate(text: string): boolean {
+  for (let i = 0; i < text.length; i++) {
+    const unit = text.charCodeAt(i);
+    if (unit >= 0xd800 && unit <= 0xdbff) {
+      const next = text.charCodeAt(++i);
+      if (!(next >= 0xdc00 && next <= 0xdfff)) return true;
+    } else if (unit >= 0xdc00 && unit <= 0xdfff) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
@@ -107,7 +122,7 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
       value.constraints.length > 32 ||
       new Set(value.constraints).size !== value.constraints.length ||
       value.constraints.some(constraint => typeof constraint !== 'string' ||
-        !constraint.trim() || constraint.length > 1000 || UNSAFE_STATUS_TEXT.test(constraint))) {
+        !constraint.trim() || constraint.length > 1000 || (UNSAFE_STATUS_TEXT.test(constraint) || hasUnpairedSurrogate(constraint)))) {
     throw new Error('REMEDIATION_LEDGER_INVALID: malformed provenance metadata');
   }
   const itemFields = new Set(['id', 'state', 'pullRequest', 'verification']);
@@ -144,7 +159,7 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
     if (unknownItem.verification !== null &&
         (typeof unknownItem.verification !== 'string' ||
           unknownItem.verification.length > 4000 ||
-          UNSAFE_STATUS_TEXT.test(unknownItem.verification))) {
+          (UNSAFE_STATUS_TEXT.test(unknownItem.verification) || hasUnpairedSurrogate(unknownItem.verification)))) {
       throw new Error('REMEDIATION_LEDGER_INVALID: invalid verification note');
     }
     issues.push({
