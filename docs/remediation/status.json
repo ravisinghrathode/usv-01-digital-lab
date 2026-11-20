@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-20",
+  "updatedAt": "2026-11-21",
   "items": [
     {
       "id": "PR-01",
@@ -67,7 +67,7 @@
       "id": "PR-11",
       "state": "partial-implementation-awaiting-independent-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/200",
-      "verification": "2026-11-20: evidence reader now rejects symlinked checkout roots (4fa72349) with direct-root positive and symlink-root negative regression (b6bae2b5). Exact-head eac6cb8 governance run 44676839919: all executed Stage B checks passed, Stage E authenticated human approval failed; new head CI not yet verified. Still lacks race-free parent-component resolution, qualified independent reviewers, controlled physical reference accuracy, live 26-agent commissioning and acceptance."
+      "verification": "2026-11-21: exact-head f2c70ca governance run 44781531582 failed Stage B TypeScript static typecheck/lint (not Stage E). Corrected literal escaped newlines embedded in IndependentReferenceReader.ts (a52a502a) and invalid newline expectation in positive symlink-root control (1bbf3ba). New exact-head CI pending. Independent physical reference accuracy, qualified reviewers, race-free parent-component resolution, live 26-agent commissioning, protected Stage E and end-to-end acceptance remain outstanding."
     },
     {
       "id": "PR-12",
