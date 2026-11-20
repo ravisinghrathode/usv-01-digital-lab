@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-19",
+  "updatedAt": "2026-11-20",
   "items": [
     {
       "id": "PR-01",
@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 remains open and unmerged. Exact head ac243ded83522fc7406288c5e657bf223b1d5a94: governance run 44491059323 passed Stage B deterministic quality, audit, lint and build; Stage C deterministic advisory only; Stage D/E blocked on authenticated exact-head human software review. Four companion workflows passed. Additional negative PR-URL regression tests committed at 5d459d6d83e5440612b079c47c4ae140bf048aee; exact-head CI for this newer commit not yet verified. Independent end-to-end acceptance and merge remain outstanding; no engineering certification claimed."
+      "verification": "PR #201 open and unmerged. Added fail-closed malformed UTF-16 provenance/blocker validation and regression tests on branch commits deb9fe1e and 54e912e9. Exact-head CI not yet verified for these commits; authenticated Stage D/E human review, independent end-to-end acceptance, and merge remain outstanding. No engineering certification claimed."
     }
   ],
   "constraints": [
