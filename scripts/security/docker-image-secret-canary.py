@@ -110,6 +110,20 @@ def inspect_image_archive(archive: Path, token: bytes) -> int:
     return scanned_layers
 
 
+def assert_safe_fixture_parents(root: Path, paths: list[Path]) -> None:
+    """Reject symlinked or non-directory parents before writing synthetic credentials."""
+    for file in paths:
+        if not file.is_relative_to(root):
+            raise RuntimeError("Synthetic fixture path escapes checkout")
+        parent = file.parent
+        while parent != root:
+            if parent.is_symlink():
+                raise RuntimeError("Synthetic fixture parent is a symlink: " + str(parent))
+            if parent.exists() and not parent.is_dir():
+                raise RuntimeError("Synthetic fixture parent is not a directory: " + str(parent))
+            parent = parent.parent
+
+
 def main() -> int:
     if not shutil.which("docker"):
         print("FAIL: Docker must be installed to verify image layers", file=sys.stderr)
@@ -119,6 +133,11 @@ def main() -> int:
         return 2
     token = ("USV01_SYNTHETIC_SECRET_CANARY_" + secrets.token_hex(48)).encode("ascii")
     paths = [ROOT / relative for relative in FIXTURES]
+    try:
+        assert_safe_fixture_parents(ROOT, paths)
+    except RuntimeError as error:
+        print(f"FAIL: {error}", file=sys.stderr)
+        return 2
     preexisting = [p for p in paths if p.exists() or p.is_symlink()]
     if preexisting:
         print("FAIL: Synthetic fixtures collide with local files; refusing to overwrite anything", file=sys.stderr)
