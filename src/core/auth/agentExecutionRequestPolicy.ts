@@ -8,7 +8,7 @@ export class AgentExecutionRequestError extends Error {
   }
 }
 const AUTHORITY_KEYS = new Set([
-  '__proto__', 'prototype', 'constructor', 'role', 'userid',
+  'proto', 'prototype', 'constructor', 'role', 'userid',
   'authenticateduserid', 'authenticateduserrole', 'approvalgateid',
   'approvalbinding', 'approvedby', 'approvedat', 'humanapprovalsatisfied',
   'evidencevalid', 'verificationstatus', 'certified', 'isbaseline',
