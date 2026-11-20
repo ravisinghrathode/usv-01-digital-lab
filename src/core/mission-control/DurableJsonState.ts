@@ -4,12 +4,22 @@
  * Corrupt state fails closed; it is never silently reset or overwritten.
  */
 import { randomUUID } from 'node:crypto';
-import { mkdir, open, readFile, rename, rm } from 'node:fs/promises';
+import { constants } from 'node:fs';
+import { mkdir, open, rename, rm } from 'node:fs/promises';
 import path from 'node:path';
 
 export async function readDurableState<T>(file: string, empty: () => T): Promise<T> {
   try {
-    return JSON.parse(await readFile(file, 'utf8')) as T;
+    // O_NOFOLLOW prevents a symlinked state file from redirecting reads to
+    // unrelated secrets or attacker-controlled JSON. Check the opened inode.
+    const handle = await open(file, constants.O_RDONLY | constants.O_NOFOLLOW);
+    try {
+      const metadata = await handle.stat();
+      if (!metadata.isFile() || metadata.nlink !== 1) throw new Error('DURABLE_STATE_UNSAFE_FILE');
+      return JSON.parse(await handle.readFile('utf8')) as T;
+    } finally {
+      await handle.close();
+    }
   } catch (error: any) {
     if (error?.code === 'ENOENT') return empty();
     throw new Error('Durable state unreadable at ' + file + ': ' + (error?.message || String(error)));
