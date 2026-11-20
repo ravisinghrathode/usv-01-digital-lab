@@ -28,7 +28,10 @@ export function readIndependentReferenceBytes(
   try {
     // A separately trusted checkout root must not redirect its accepted
     // evidence directory outside the checkout through a symbolic link.
-    // The checkout root itself must not be a symlink: otherwise a caller\n    // can redirect the entire trust root before evidence validation.\n    if (fs.lstatSync(root).isSymbolicLink()) return null;\n    const realRoot = fs.realpathSync(root);
+    // The checkout root itself must not be a symlink: otherwise a caller
+    // can redirect the entire trust root before evidence validation.
+    if (fs.lstatSync(root).isSymbolicLink()) return null;
+    const realRoot = fs.realpathSync(root);
     const realBase = fs.realpathSync(acceptedBase);
     if (realBase !== path.join(realRoot, 'evidence', 'independent')) return null;
     let entry = root;
