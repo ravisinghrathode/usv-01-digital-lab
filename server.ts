@@ -39,6 +39,7 @@ import { loadA26ResearchFeed } from './src/server/a26ResearchFeed.ts';
 import http from 'http';
 import { VerifyUsv01Engine } from './src/core/verification/VerifyUsv01Engine.ts';
 import { getLabReadinessSnapshot } from './src/core/verification/LabReadiness.ts';
+import { evidenceAdmissionForOutput, evidenceAdmissionForTasks } from './src/core/verification/ExecutionEvidenceAdmission.ts';
 import { loadProjectStore, saveProjectStore } from './src/core/storage/ProjectStorePersistence.ts';
 import { AgentRegistry } from './src/core/registry/AgentRegistry.ts';
 import { BaseAgent } from './src/core/engine/BaseAgent.ts';
@@ -624,7 +625,10 @@ app.post('/api/agents/execute', async (req, res) => {
     res.json({
       success: output.status !== 'FAILED',
       correlationId,
-      output
+      output,
+      // A live provider response (even SUCCESS or HUMAN_APPROVED) is not
+      // an independently verified engineering or vessel-release artifact.
+      evidenceAdmission: evidenceAdmissionForOutput(executionInput.taskId, output)
     });
   } catch (err: any) {
     AuditLogger.getInstance().log({
@@ -708,10 +712,12 @@ app.post('/api/orchestrator/execute-workflow', async (req, res) => {
       for (const task of prepared) orchestrator.registerTask(task);
       orchestrator.getExecutionPlan(); // Reject missing or cyclic dependencies before execution.
       const result = await orchestrator.executeWorkflow(pinnedSourceSha());
+      const tasks = orchestrator.getAllTasks();
       return res.json({
         success: result.failed === 0,
         results: result,
-        tasks: orchestrator.getAllTasks(),
+        tasks,
+        evidenceAdmission: evidenceAdmissionForTasks(tasks),
         pendingGates: ApprovalGateManager.getInstance().getPendingGates()
       });
     } finally {
@@ -749,7 +755,9 @@ app.post('/api/orchestrator/decide-gate', authMiddleware, (req, res) => {
     const result = task?.approvalGateId === gateId && (task.status === 'COMPLETED' || task.status === 'FAILED')
       ? { taskId: task.id, newStatus: task.status }
       : orchestrator.resolveGateDecision(gateId, decision);
-    return res.json({ success: true, gate, result, tasks: orchestrator.getAllTasks(),
+    const tasks = orchestrator.getAllTasks();
+    return res.json({ success: true, gate, result, tasks,
+      evidenceAdmission: evidenceAdmissionForTasks(tasks),
       pendingGates: ApprovalGateManager.getInstance().getPendingGates() });
   } catch (err: any) {
     return res.status(400).json({ success: false, error: err.message || String(err) });
