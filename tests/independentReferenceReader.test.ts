@@ -72,6 +72,19 @@ describe('independent engineering reference evidence path isolation', () => {
   });
 
 
+  it('rejects a non-directory checkout root and non-directory evidence parent', () => {
+    const { root, base } = setup();
+    const ordinary = path.join(root, 'ordinary.txt');
+    fs.writeFileSync(ordinary, 'not a checkout');
+    expect(readIndependentReferenceBytes(ordinary, 'evidence/independent/reference.txt'))
+      .toBe(null);
+    fs.writeFileSync(path.join(base, 'not-a-directory'), 'file');
+    expect(readIndependentReferenceBytes(root, 'evidence/independent/not-a-directory/child.txt'))
+      .toBe(null);
+    expect(readIndependentReferenceBytes(root, 'evidence/independent/reference.txt')?.toString())
+      .toBe('Verified reference fixture only\\n');
+  });
+
   it('refuses oversized files and directory references', () => {
     const { root, base } = setup();
     const large = path.join(base, 'oversized.bin');
