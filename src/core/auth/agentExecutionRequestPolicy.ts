@@ -16,6 +16,10 @@ const AUTHORITY_KEYS = new Set([
   'requiresdirectorapproval', 'privatekey', 'token', 'signature',
   'isexploratorystudy', 'safetycritical'
 ]);
+// Normalize separators so punctuation cannot disguise a privileged claim.
+function authorityKey(key: string): string {
+  return key.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
 function isRecord(x: unknown): x is Record<string, unknown> {
   return !!x && typeof x === 'object' && !Array.isArray(x);
 }
@@ -30,7 +34,7 @@ function scrub(value: unknown, depth = 0): unknown {
     if (fields.length > 250) throw new AgentExecutionRequestError('Agent input object exceeds limit');
     const clean: Record<string, unknown> = Object.create(null);
     for (const [key, child] of fields) {
-      if (AUTHORITY_KEYS.has(key.toLowerCase())) continue;
+      if (AUTHORITY_KEYS.has(authorityKey(key))) continue;
       clean[key] = scrub(child, depth + 1);
     }
     return clean;
