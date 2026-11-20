@@ -29,6 +29,17 @@ describe('closed-loop twelve-issue remediation reporting', () => {
     }
   });
 
+  it('rejects hostile item identities without invoking attacker-defined string coercion', () => {
+    const forged = structuredClone(ledger);
+    let coercions = 0;
+    forged.items[0].id = {
+      toString() { coercions++; throw new Error('ATTACKER_CODE_EXECUTED'); }
+    };
+    expect(() => summarizeUnverifiedRemediationLedger(forged))
+      .toThrow('duplicate or out-of-order item');
+    expect(coercions).toBe(0);
+  });
+
   it('rejects duplicates, missing issues and arbitrary external PR links', () => {
     const duplicate = structuredClone(ledger);
     duplicate.items[1].id = 'PR-01';
