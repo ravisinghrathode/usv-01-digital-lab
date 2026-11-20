@@ -211,7 +211,7 @@ export function verifyIndependentAuditAnchor(
     // parser may accept a valid first block while ignoring trailing material;
     // ambiguous bundles must never silently select a witness identity.
     const pem = trustedWitnessPublicKeyPem.trim();
-    if (!/^-----BEGIN PUBLIC KEY-----\\r?\\n(?:[A-Za-z0-9+/=]+\\r?\\n)+-----END PUBLIC KEY-----$/.test(pem)) {
+    if (!/^-----BEGIN PUBLIC KEY-----\r?\n(?:[A-Za-z0-9+/=]+\r?\n)+-----END PUBLIC KEY-----$/.test(pem)) {
       return { valid: false, reason: 'UNTRUSTED_WITNESS_KEY' };
     }
     publicKey = crypto.createPublicKey(pem);
