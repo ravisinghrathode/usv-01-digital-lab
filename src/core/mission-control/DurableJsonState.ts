@@ -43,6 +43,11 @@ export async function mutateDurableState<T, R>(
   try {
     const current = await readDurableState(file, empty);
     const outcome = apply(current);
+    // A transaction callback must finish synchronously while this lock is held.
+    // Otherwise late asynchronous writes could mutate state after persistence.
+    if (outcome !== null && (typeof outcome === 'object' || typeof outcome === 'function') && typeof (outcome as { then?: unknown }).then === 'function') {
+      throw new Error('DURABLE_STATE_ASYNC_MUTATION_UNSUPPORTED');
+    }
     const tmp = file + '.tmp-' + randomUUID();
     try {
       const handle = await open(tmp, 'wx', 0o600);
