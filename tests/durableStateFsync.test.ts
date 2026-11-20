@@ -49,6 +49,28 @@ describe('durable state transaction boundary', () => {
     await expect(stat(file)).rejects.toMatchObject({ code: 'ENOENT' });
   }, 15000);
 
+  it('rejects Promise-returning callbacks without persisting speculative state', async () => {
+    const { file } = await fixture();
+    await writeFile(file, JSON.stringify({ count: 5 }));
+    const original = await readFile(file, 'utf8');
+    await expect(mutateDurableState(file, () => ({ count: 0 }), async state => {
+      state.count = 99;
+      return state.count;
+    })).rejects.toThrow('DURABLE_STATE_ASYNC_MUTATION_UNSUPPORTED');
+    expect(await readFile(file, 'utf8')).toBe(original);
+    await expect(stat(file + '.lock')).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
+  it('rejects custom thenables before writing a new snapshot', async () => {
+    const { file } = await fixture();
+    await expect(mutateDurableState(file, () => ({ count: 0 }), state => {
+      state.count = 7;
+      return { then: (_resolve: unknown) => undefined };
+    })).rejects.toThrow('DURABLE_STATE_ASYNC_MUTATION_UNSUPPORTED');
+    await expect(stat(file)).rejects.toMatchObject({ code: 'ENOENT' });
+    await expect(stat(file + '.lock')).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
   it('serializes overlapping transactions without dropping an update', async () => {
     const { file } = await fixture();
     await Promise.all(Array.from({ length: 8 }, () =>
