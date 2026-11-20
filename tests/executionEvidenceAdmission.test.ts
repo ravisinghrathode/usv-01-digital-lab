@@ -52,6 +52,18 @@ describe('agent execution versus independent engineering evidence acceptance', (
     expect(failed.engineeringReleaseApproved).toBe(false);
   });
 
+  it('does not attribute a successful receipt to a different task', () => {
+    const actual = evidenceAdmissionForOutput('TASK-OTHER', reportedSuccess);
+    expect(actual.taskId).toBe('TASK-OTHER');
+    expect(actual.executionStatus).toBe('NOT_EXECUTED');
+    expect(actual.executionSucceeded).toBe(false);
+    expect(actual.modelReportedEvidenceValid).toBe(false);
+    expect(actual.modelReportedVerificationStatus).toBe('UNVERIFIED');
+    expect(actual.reason).toBe('OUTPUT_TASK_ID_MISMATCH');
+    expect(actual.admittedAsEngineeringEvidence).toBe(false);
+    expect(actual.engineeringReleaseApproved).toBe(false);
+  });
+
   it('returns a separate factual status for every workflow task', () => {
     const rows = evidenceAdmissionForTasks([
       { id: 'TASK-REPORT-ONLY', output: reportedSuccess },
