@@ -33,7 +33,7 @@ function stripAuthorityClaims(value: unknown, depth = 0): unknown {
     if (fields.length > 250) throw new WorkflowSubmissionError('Oversized workflow input object', 400);
     const cleaned: Record<string, unknown> = Object.create(null);
     for (const [key, entry] of fields) {
-      if (FORBIDDEN_AUTHORITY_KEYS.has(key.toLowerCase())) continue;
+      if (FORBIDDEN_AUTHORITY_KEYS.has(key.toLowerCase().replace(/[^a-z0-9]/g, ''))) continue;
       cleaned[key] = stripAuthorityClaims(entry, depth + 1);
     }
     return cleaned;
