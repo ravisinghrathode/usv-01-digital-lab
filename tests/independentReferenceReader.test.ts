@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { readIndependentReferenceBytes } from '../src/core/verification/IndependentReferenceReader.ts';
 
 const folders: string[] = [];
@@ -94,6 +95,19 @@ describe('independent engineering reference evidence path isolation', () => {
     expect(readIndependentReferenceBytes(root, 'evidence/independent')).toBe(null);
     fs.mkdirSync(path.join(base, 'directory'));
     expect(readIndependentReferenceBytes(root, 'evidence/independent/directory')).toBe(null);
+  });
+
+  it('rejects a named pipe without opening it as blocking evidence', () => {
+    if (process.platform === 'win32') return;
+    const { root, base } = setup();
+    const fifo = path.join(base, 'pipe');
+    try {
+      execFileSync('mkfifo', [fifo], { timeout: 2000 });
+    } catch {
+      // Some restricted CI hosts do not provide mkfifo.
+      return;
+    }
+    expect(readIndependentReferenceBytes(root, 'evidence/independent/pipe')).toBe(null);
   });
 
   it('routes signed engineering review artifact lookups through the safe reader', () => {
