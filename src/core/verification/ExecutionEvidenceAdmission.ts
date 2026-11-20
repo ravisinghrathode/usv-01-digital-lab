@@ -15,23 +15,27 @@ export interface UnadmittedEvidenceStatus {
   independentTechnicalReviewAccepted: false;
   admittedAsEngineeringEvidence: false;
   engineeringReleaseApproved: false;
-  reason: 'INDEPENDENT_REFERENCE_AND_SOURCE_REVIEW_REQUIRED';
+  reason: 'INDEPENDENT_REFERENCE_AND_SOURCE_REVIEW_REQUIRED' | 'OUTPUT_TASK_ID_MISMATCH';
 }
 
 export function evidenceAdmissionForOutput(
   taskId: string,
   output: AgentExecutionOutput | undefined
 ): UnadmittedEvidenceStatus {
+  // A receipt for another task cannot establish this task's execution state.
+  const taskBoundOutput = output?.taskId === taskId ? output : undefined;
   return {
     taskId,
-    executionStatus: output?.status ?? 'NOT_EXECUTED',
-    executionSucceeded: output?.status === 'SUCCESS',
-    modelReportedEvidenceValid: output?.evidenceValid === true,
-    modelReportedVerificationStatus: output?.verificationStatus ?? 'UNVERIFIED',
+    executionStatus: taskBoundOutput?.status ?? 'NOT_EXECUTED',
+    executionSucceeded: taskBoundOutput?.status === 'SUCCESS',
+    modelReportedEvidenceValid: taskBoundOutput?.evidenceValid === true,
+    modelReportedVerificationStatus: taskBoundOutput?.verificationStatus ?? 'UNVERIFIED',
     independentTechnicalReviewAccepted: false,
     admittedAsEngineeringEvidence: false,
     engineeringReleaseApproved: false,
-    reason: 'INDEPENDENT_REFERENCE_AND_SOURCE_REVIEW_REQUIRED'
+    reason: output && !taskBoundOutput
+      ? 'OUTPUT_TASK_ID_MISMATCH'
+      : 'INDEPENDENT_REFERENCE_AND_SOURCE_REVIEW_REQUIRED'
   };
 }
 
