@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-17",
+  "updatedAt": "2026-11-20",
   "items": [
     {
       "id": "PR-01",
@@ -33,9 +33,10 @@
       "id": "PR-04",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "",
-      "verification": "Atomic in-memory CRUD follow-up and proposed durable JSON fsync/lock non-stealing regression tests; migrations and fault-injection unverified",
+      "verification": "Atomic in-memory CRUD follow-up and proposed durable JSON fsync/lock non-stealing regression tests; migrations and fault-injection unverified; PR #196 commits f15905d and 058fbf4 reject async/thenable durable-state callbacks and add negative regression tests; exact-head CI pending, no power-loss certification",
       "followUpPullRequests": [
-        194
+        194,
+        196
       ],
       "proposedBranch": "remediation/pr04-durable-snapshot-fsync",
       "ci": "PR194 zero-API and browser QA success; governance failure; new durability PR pending CI"
