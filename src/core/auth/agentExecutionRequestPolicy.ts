@@ -34,10 +34,14 @@ function scrub(value: unknown, depth = 0): unknown {
     if (fields.length > 250) throw new AgentExecutionRequestError('Agent input object exceeds limit');
     const clean: Record<string, unknown> = Object.create(null);
     for (const [key, child] of fields) {
+      if (key.length > 256) throw new AgentExecutionRequestError('Agent input object key exceeds limit');
       if (AUTHORITY_KEYS.has(authorityKey(key))) continue;
       clean[key] = scrub(child, depth + 1);
     }
     return clean;
+  }
+  if (typeof value === 'string' && value.length > 16_384) {
+    throw new AgentExecutionRequestError('Agent input string exceeds limit');
   }
   if (typeof value === 'number' && !Number.isFinite(value)) {
     throw new AgentExecutionRequestError('Non-finite numerical parameter');
