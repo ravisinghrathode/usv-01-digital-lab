@@ -207,7 +207,14 @@ export function verifyIndependentAuditAnchor(
   // not evidence that an otherwise trusted witness signed invalid bytes.
   let publicKey: crypto.KeyObject;
   try {
-    publicKey = crypto.createPublicKey(trustedWitnessPublicKeyPem);
+    // A trust-root file must contain exactly one PEM public key. Node's PEM
+    // parser may accept a valid first block while ignoring trailing material;
+    // ambiguous bundles must never silently select a witness identity.
+    const pem = trustedWitnessPublicKeyPem.trim();
+    if (!/^-----BEGIN PUBLIC KEY-----\\r?\\n(?:[A-Za-z0-9+/=]+\\r?\\n)+-----END PUBLIC KEY-----$/.test(pem)) {
+      return { valid: false, reason: 'UNTRUSTED_WITNESS_KEY' };
+    }
+    publicKey = crypto.createPublicKey(pem);
     if (publicKey.asymmetricKeyType !== 'ed25519') {
       return { valid: false, reason: 'UNTRUSTED_WITNESS_KEY' };
     }
