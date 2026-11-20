@@ -97,6 +97,18 @@ describe('server-owned 26-agent workflow boundary', () => {
     expect(() => sanitizeWorkflowInput({}, null, 'verified-user')).toThrow(/parameters/);
   });
 
+  it('rejects oversized nested strings and object keys while retaining bounded research data', () => {
+    expect(() => sanitizeWorkflowInput({}, { note: 'x'.repeat(16_385) }, 'verified-user'))
+      .toThrow(/Oversized workflow input string/);
+    expect(() => sanitizeWorkflowInput({ nested: [{ note: 'x'.repeat(16_385) }] }, {}, 'verified-user'))
+      .toThrow(/Oversized workflow input string/);
+    expect(() => sanitizeWorkflowInput({}, { ['x'.repeat(257)]: 1 }, 'verified-user'))
+      .toThrow(/Oversized workflow input key/);
+    const safe = sanitizeWorkflowInput({}, { note: 'x'.repeat(16_384), massKg: 42 }, 'verified-user');
+    expect(safe.parameters.massKg).toBe(42);
+    expect(safe.parameters.note).toHaveLength(16_384);
+  });
+
   it('guards the live workflow endpoint before destructive orchestrator.clearTasks', () => {
     const source = fs.readFileSync(path.join(process.cwd(), 'server.ts'), 'utf8');
     const start = source.indexOf("app.post('/api/orchestrator/execute-workflow'");
