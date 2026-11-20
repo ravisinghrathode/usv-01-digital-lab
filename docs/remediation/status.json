@@ -19,7 +19,7 @@
       "id": "PR-03",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/193",
-      "verification": "PR #193: exact head dbff0818 passed Docker image canary workflow 44578074427; governance workflow 44578074423 failed (reason requires job-level confirmation). Subsequent commits 62fd99c7, 06927de6, a5e0fb90 reject duplicate/nonregular manifests, invalid layer paths and malformed image tags, add six executable Python regression cases and run them in dedicated Docker CI. New exact-head CI is not yet verified. No production credential, independent cold-start, backup/restore or human approval acceptance is claimed."
+      "verification": "PR #193: exact-head Docker image canary workflow 44591766898 passed at prior head 55bd5cab; governance 44591766567 failed and Stage E classification remains to be confirmed at job-step level. Security fix 4246c8e rejects symlinked/non-directory synthetic credential fixture parents before writing; regression commit 7c9f190 adds three negative/positive tests. Latest head after ledger update requires fresh exact-head CI. Production credentials, cold-start, backup/restore, independent human approval and acceptance remain outstanding."
     },
     {
       "id": "PR-04",
