@@ -75,6 +75,21 @@ describe('independent cryptographic audit witness acceptance', () => {
     expect(verifyIndependentAuditAnchor(journalId, entries, signed, attacker).valid).toBe(false);
     expect(verifyIndependentAuditAnchor(journalId, entries, signed, rsa).valid).toBe(false);
   });
+  it('rejects ambiguous PEM bundles and trailing trust-root content', () => {
+    const other = crypto.generateKeyPairSync('ed25519').publicKey
+      .export({ type: 'spki', format: 'pem' }).toString();
+    for (const ambiguous of [
+      key + other,
+      key + 'UNSIGNED-APPROVAL',
+      'UNSIGNED-HEADER\\n' + key,
+      key.replace('-----END PUBLIC KEY-----', '-----END PUBLIC KEY-----\\n-----BEGIN PUBLIC KEY-----')
+    ]) {
+      expect(verifyIndependentAuditAnchor(journalId, entries, signed, ambiguous))
+        .toEqual({ valid: false, reason: 'UNTRUSTED_WITNESS_KEY' });
+    }
+    expect(verifyIndependentAuditAnchor(journalId, entries, signed, key))
+      .toEqual({ valid: true, reason: 'VERIFIED' });
+  });
   it('distinguishes invalid external trust-root provisioning from signature tampering', () => {
     for (const malformedKey of ['not a PEM key', '-----BEGIN PUBLIC KEY-----\\ninvalid\\n-----END PUBLIC KEY-----']) {
       expect(verifyIndependentAuditAnchor(journalId, entries, signed, malformedKey))
