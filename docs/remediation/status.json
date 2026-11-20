@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-17",
+  "updatedAt": "2026-11-20",
   "items": [
     {
       "id": "PR-01",
@@ -59,9 +59,9 @@
     },
     {
       "id": "PR-10",
-      "state": "not-verified",
-      "pullRequest": "",
-      "verification": null
+      "state": "partial-implementation-awaiting-review",
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/199",
+      "verification": "Direct-agent authority key canonicalization and regression test committed on PR #199. Prior exact-head governance run 43998097708 failed at Stage E authenticated approval; Stage B passed. New exact-head CI and independent review pending. Session revocation, timeout cancellation, production trust boundary and end-to-end acceptance remain outstanding."
     },
     {
       "id": "PR-11",
