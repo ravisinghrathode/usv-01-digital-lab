@@ -138,8 +138,7 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
     const state = unknownItem.state;
     const isPartial = state === 'partial-implementation-awaiting-review';
     if (!isPartial && state !== 'not-verified') {
-      throw new Error('REMEDIATION_LEDGER_UNVERIFIED_COMPLETION_CLAIM: ' + String(id) +
-        ' cannot be declared complete using this unsigned status file');
+      throw new Error('REMEDIATION_LEDGER_UNVERIFIED_COMPLETION_CLAIM: unsupported unsigned item state');
     }
     const link = unknownItem.pullRequest;
     // Bound untrusted URLs before regex validation; GitHub PR identifiers are
