@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 open and unmerged. Added fail-closed malformed UTF-16 provenance/blocker validation and regression tests on branch commits deb9fe1e and 54e912e9. Exact-head CI not yet verified for these commits; authenticated Stage D/E human review, independent end-to-end acceptance, and merge remain outstanding. No engineering certification claimed."
+      "verification": "PR #201 partial ledger guard; exact-head governance run 44682786026 failed Stage B: 1/1235 deterministic tests failed because surrogate regression used literal backslash-u text, not malformed UTF-16. Test fixture corrected at commit 4fe315c5; exact-head CI recheck pending. Stage D/E authenticated human review and independent end-to-end acceptance remain outstanding."
     }
   ],
   "constraints": [
