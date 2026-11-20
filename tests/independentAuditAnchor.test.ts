@@ -75,6 +75,12 @@ describe('independent cryptographic audit witness acceptance', () => {
     expect(verifyIndependentAuditAnchor(journalId, entries, signed, attacker).valid).toBe(false);
     expect(verifyIndependentAuditAnchor(journalId, entries, signed, rsa).valid).toBe(false);
   });
+  it('accepts a single valid PEM with LF or CRLF line endings but rejects literal backslash escapes', () => {
+    expect(verifyIndependentAuditAnchor(journalId, entries, signed, key.replace(/\n/g, '\r\n')))
+      .toEqual({ valid: true, reason: 'VERIFIED' });
+    expect(verifyIndependentAuditAnchor(journalId, entries, signed, key.replace(/\n/g, '\\n')))
+      .toEqual({ valid: false, reason: 'UNTRUSTED_WITNESS_KEY' });
+  });
   it('rejects ambiguous PEM bundles and trailing trust-root content', () => {
     const other = crypto.generateKeyPairSync('ed25519').publicKey
       .export({ type: 'spki', format: 'pem' }).toString();
