@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 partial ledger guard; exact-head governance run 44682786026 failed Stage B: 1/1235 deterministic tests failed because surrogate regression used literal backslash-u text, not malformed UTF-16. Test fixture corrected at commit 4fe315c5; exact-head CI recheck pending. Stage D/E authenticated human review and independent end-to-end acceptance remain outstanding."
+      "verification": "PR #201 exact head 592bdc1694cfb69c7a1f4395adc2b16a5bc869b0: governance run 44688567181 failed solely at Stage E authenticated governance enforcement; Agent Academy, browser QA, Docker canary and zero-API workflows passed. New Stage E hold regression committed 64e9d15c9c6497d2be301ba4cd954c935b6bad8b; its new exact-head CI is pending. Independent human review, end-to-end acceptance and merge remain outstanding."
     }
   ],
   "constraints": [
