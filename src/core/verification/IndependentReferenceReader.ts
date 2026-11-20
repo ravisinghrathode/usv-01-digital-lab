@@ -41,6 +41,10 @@ export function readIndependentReferenceBytes(
     const fd = fs.openSync(candidate, fs.constants.O_RDONLY | (fs.constants.O_NOFOLLOW ?? 0));
     try {
       const st = fs.fstatSync(fd);
+      // Bind the opened descriptor to the validated pathname: O_NOFOLLOW
+      // protects only the final component, not swapped parent directories.
+      const named = fs.lstatSync(candidate);
+      if (named.isSymbolicLink() || named.dev !== st.dev || named.ino !== st.ino) return null;
       if (!st.isFile() || st.nlink !== 1 ||
           st.size < 1 || st.size > MAX_REFERENCE_BYTES) return null;
       const bytes = Buffer.alloc(st.size);
@@ -52,7 +56,8 @@ export function readIndependentReferenceBytes(
       }
       const after = fs.fstatSync(fd);
       if (after.dev !== st.dev || after.ino !== st.ino ||
-          after.size !== st.size) return null;
+          after.size !== st.size || after.mtimeMs !== st.mtimeMs ||
+          after.ctimeMs !== st.ctimeMs) return null;
       return bytes;
     } finally {
       fs.closeSync(fd);
