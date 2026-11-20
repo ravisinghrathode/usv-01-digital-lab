@@ -82,7 +82,7 @@ describe('independent engineering reference evidence path isolation', () => {
     expect(readIndependentReferenceBytes(root, 'evidence/independent/not-a-directory/child.txt'))
       .toBe(null);
     expect(readIndependentReferenceBytes(root, 'evidence/independent/reference.txt')?.toString())
-      .toBe('Verified reference fixture only\\n');
+      .toBe('Verified reference fixture only\n');
   });
 
   it('refuses oversized files and directory references', () => {
