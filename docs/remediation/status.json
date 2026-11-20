@@ -31,7 +31,7 @@
       "id": "PR-05",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/195",
-      "verification": "Exact-head a9e09ea80e02f2ee3a1586200d18952692f0a999 Mission Control Zero-API run 44636092546 failed 1/43 tests (42 passed): crash recovery deleted leaseId but retained leaseExpiresAt, leaving BLOCKED_REVIEW queue corrupt under fail-closed validator. Corrected both lease fields on recovery transition in a8b0012940c33e448394d42a005cc0bba0decb2e; added regression assertions for complete lease cleanup, no replay and retained manual review in 166e6b81992ab0a3ac2522650972798fa6b328ef. New exact-head CI pending. Governance run 44636092539 failed; classify individual steps before treating as Stage E-only. Cross-host recovery, power-loss drill, authenticated review and independent acceptance remain outstanding."
+      "verification": "Exact-head 9917ee5d90662bfe11018d1bee250c42f6d8a71e Mission Control Zero-API succeeded; governance workflow failed (Stage E vs technical failure requires job-level confirmation). Recovered queue checkpoints previously accepted restricted or missing data classifications although enqueue rejects them. Added fail-closed recovered classification validation in 6220a8e49824225b58ba1420de91f56eebbfb778 and negative tests in 77d0a7e35b4da33e71366a6db972799c01177193. Latest exact-head CI pending; cross-host recovery, power-loss drill, authenticated review and independent acceptance remain outstanding."
     },
     {
       "id": "PR-06",
