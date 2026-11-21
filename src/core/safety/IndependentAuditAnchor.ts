@@ -71,9 +71,7 @@ export function proposeAuditAnchorStatement(
   let validChain = false;
   try {
     if (Array.isArray(entries) && isPlainDenseJournal(entries)) {
-      if (entries.some(entry => !entry || typeof entry !== 'object' ||
-          !Object.getOwnPropertyDescriptor(entry, 'hash') ||
-          !('value' in Object.getOwnPropertyDescriptor(entry, 'hash')!))) throw new Error('accessor-backed journal');
+      if (entries.some(entry => !hasOnlyOwnDataFields(entry))) throw new Error('accessor-backed journal');
       const snapshot = structuredClone(entries) as AuditTrailEntry[];
       validChain = CryptographicAuditTrail.verifyChain(snapshot).valid;
       if (validChain) {
@@ -90,6 +88,17 @@ export function proposeAuditAnchorStatement(
   }
   // Every successful validation path returns above; never fall through with undefined.
   throw new Error('Cannot propose a checkpoint for an invalid audit journal');
+}
+
+/** Never invoke accessor-backed audit fields while cloning untrusted journal records. */
+function hasOnlyOwnDataFields(entry: unknown): boolean {
+  if (!entry || typeof entry !== 'object' || Array.isArray(entry) ||
+      Object.getPrototypeOf(entry) !== Object.prototype) return false;
+  return Reflect.ownKeys(entry).every(key => {
+    if (typeof key !== 'string') return false;
+    const descriptor = Object.getOwnPropertyDescriptor(entry, key);
+    return !!descriptor && 'value' in descriptor && descriptor.enumerable;
+  });
 }
 
 /** Persisted journal arrays must have only dense own data indices and the native Array prototype. */
@@ -204,9 +213,7 @@ export function verifyIndependentAuditAnchor(
   // state after chain validation (a time-of-check/time-of-use vulnerability).
   try {
     if (!Array.isArray(entries) || !isPlainDenseJournal(entries)) return { valid: false, reason: 'AUDIT_CHAIN_INVALID' };
-    if (entries.some(entry => !entry || typeof entry !== 'object' ||
-        !Object.getOwnPropertyDescriptor(entry, 'hash') ||
-        !('value' in Object.getOwnPropertyDescriptor(entry, 'hash')!))) {
+    if (entries.some(entry => !hasOnlyOwnDataFields(entry))) {
       return { valid: false, reason: 'AUDIT_CHAIN_INVALID' };
     }
     const snapshot = structuredClone(entries) as AuditTrailEntry[];
