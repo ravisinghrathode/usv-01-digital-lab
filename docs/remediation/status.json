@@ -84,21 +84,20 @@
   "iterationEvidence": {
     "workstream": "PR-02",
     "pullRequest": 191,
-    "sourceCommit": "3c543e98c415c9f7592ccada443ad8109357e73b",
-    "testCommit": "10746e20362117a002f2bb4291af8c39925d4544",
-    "previousExactHead": "714d4b115b05925d764f2bc2ee92ba5bf4ccb801",
+    "previousExactHead": "f80bd1d38b1322fbe9ec87d28a11e95db45af884",
     "previousWorkflow": {
-      "runId": 44859431085,
+      "runId": 44861807465,
       "conclusion": "failure",
-      "failureClassification": "Stage E mandatory governance enforcement only; executed Stage B static typecheck, deterministic tests, security checks, and Stage C/D checks passed, but those checks are not human approvals"
+      "failureClassification": "Stage E authenticated governance enforcement; no executed Stage B technical failure"
     },
-    "change": "Reject runtime non-string journal identifiers in audit checkpoint proposals before regex coercion can admit numeric IDs; add regression cases for numbers, booleans, objects, arrays, null and undefined.",
-    "verification": "Source and regression committed; new exact-head CI pending, not independently accepted.",
-    "governanceBlocker": "Authenticated separate Stage E human approval, externally operated witness, durable transaction outbox and end-to-end acceptance outstanding.",
+    "testCommit": "1258316933d8a83ce26909e545eebf7fb41bd413",
+    "change": "Added regression for sparse and accessor-indexed persisted journal arrays, requiring fail-closed verification and checkpoint proposal rather than partial evidence admission.",
+    "verification": "New regression commit created; exact-head CI not yet verified. Test is not a claim of successful execution.",
+    "governanceBlocker": "Separate authenticated Stage E human approval, externally operated durable witness, transaction outbox, recovery drills and end-to-end acceptance remain outstanding.",
     "nextActions": [
-      "Check exact-head CI and remediate technical failures",
-      "Implement independently durable outbox and recovery evidence",
-      "Obtain separate authenticated approval before merge"
+      "Check new exact-head CI; repair any real Stage B failures",
+      "Continue independently durable outbox and witness integration on scoped workstreams",
+      "Do not merge without separate authorized human approvals"
     ]
   }
 }
