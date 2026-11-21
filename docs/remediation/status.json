@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 open and unmerged at exact head 21aaeb7db4c459142a519e3220d8a59905768594. Exact-head governance workflow 44914989599: Stage B security, lint/typecheck, tests, build, and Stage C/D steps succeeded; Stage E authenticated governance enforcement failed. Four other exact-head workflows succeeded (academy, browser QA, Docker image canary, zero-API gate). Independent authenticated human review, external E2E acceptance, and merge remain outstanding."
+      "verification": "PR #201 remains partial and unmerged. On this branch, commits e8dae6b5 and f70ff54f add whitespace-normalized duplicate governance-constraint rejection and a regression test. No exact-head GitHub Actions runs were returned for f70ff54f at inspection; technical CI for these changes is unverified. Earlier workflow 44914989599 passed executed Stage B and C/D steps but failed mandatory authenticated Stage E. Independent review, external E2E acceptance and merge remain outstanding."
     }
   ],
   "constraints": [
