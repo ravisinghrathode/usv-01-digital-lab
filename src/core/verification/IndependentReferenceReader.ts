@@ -22,7 +22,8 @@ export function readIndependentReferenceBytes(
   const components = relativePath.split('/');
   // Bound untrusted path complexity before synchronous filesystem traversal.
   if (components.length > 128 ||
-      components.some(segment => !segment || segment === '.' || segment === '..')) return null;
+      components.some(segment => !segment || segment === '.' || segment === '..' ||
+        segment !== segment.normalize('NFC') || /[. ]$/u.test(segment))) return null;
   const root = path.resolve(referenceRootDir);
   const acceptedBase = path.resolve(root, 'evidence', 'independent');
   const candidate = path.resolve(root, relativePath);
