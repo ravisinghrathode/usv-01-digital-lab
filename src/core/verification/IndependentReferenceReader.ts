@@ -38,6 +38,8 @@ export function readIndependentReferenceBytes(
     if (!rootBefore.isDirectory()) return null;
     const realRoot = fs.realpathSync(root);
     const realBase = fs.realpathSync(acceptedBase);
+    const baseBefore = fs.lstatSync(acceptedBase);
+    if (!baseBefore.isDirectory()) return null;
     if (realBase !== path.join(realRoot, 'evidence', 'independent')) return null;
     let entry = root;
     for (const component of components) {
@@ -78,6 +80,9 @@ export function readIndependentReferenceBytes(
       if (!rootAfter.isDirectory() || rootAfter.dev !== rootBefore.dev ||
           rootAfter.ino !== rootBefore.ino || fs.realpathSync(root) !== realRoot ||
           fs.realpathSync(acceptedBase) !== realBase) return null;
+      const baseAfter = fs.lstatSync(acceptedBase);
+      if (!baseAfter.isDirectory() || baseAfter.dev !== baseBefore.dev ||
+          baseAfter.ino !== baseBefore.ino) return null;
       if (fs.realpathSync(candidate) !== realFile) return null;
       const namedAfter = fs.lstatSync(candidate);
       if (namedAfter.isSymbolicLink() || namedAfter.dev !== st.dev || namedAfter.ino !== st.ino) return null;
