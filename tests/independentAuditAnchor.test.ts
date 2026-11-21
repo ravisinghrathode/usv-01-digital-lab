@@ -68,6 +68,20 @@ describe('independent cryptographic audit witness acceptance', () => {
       signatureBase64: Buffer.alloc(64).toString('base64')
     }, key).valid).toBe(false);
   });
+  it('rejects nested journal getters before cloning or invoking them', () => {
+    let reads = 0;
+    const nested = { ...entries[0], details: { get allowed() {
+      reads += 1;
+      throw new Error('untrusted nested getter');
+    } } };
+    expect(verifyIndependentAuditAnchor(journalId, [nested] as never, signed, key))
+      .toEqual({ valid: false, reason: 'AUDIT_CHAIN_INVALID' });
+    expect(() => proposeAuditAnchorStatement(journalId, [nested] as never, timestamp))
+      .toThrow('Cannot propose a checkpoint for an invalid audit journal');
+    expect(reads).toBe(0);
+    expect(verifyIndependentAuditAnchor(journalId, entries, signed, key))
+      .toEqual({ valid: true, reason: 'VERIFIED' });
+  });
   it('rejects a tampered on-disk chain even if an old signed receipt exists', () => {
     const corrupted = [{ ...entries[0], details: { allowed: true } }];
     expect(verifyIndependentAuditAnchor(journalId, corrupted, signed, key))
