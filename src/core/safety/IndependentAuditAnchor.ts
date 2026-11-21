@@ -160,8 +160,14 @@ export function verifyIndependentAuditAnchor(
   try {
     // Snapshot signed fields once; accessor-backed statements can mutate between
     // journal comparison and signature verification, defeating the binding.
-    const rawStatement = receipt.statement;
-    signatureBase64 = receipt.signatureBase64;
+    const statementDescriptor = Object.getOwnPropertyDescriptor(receipt, 'statement');
+    const signatureDescriptor = Object.getOwnPropertyDescriptor(receipt, 'signatureBase64');
+    if (!statementDescriptor || !('value' in statementDescriptor) ||
+        !signatureDescriptor || !('value' in signatureDescriptor)) {
+      return { valid: false, reason: 'INVALID_ATTESTATION' };
+    }
+    const rawStatement = statementDescriptor.value as AuditAnchorStatement;
+    signatureBase64 = signatureDescriptor.value as string;
     if (!rawStatement || typeof rawStatement !== 'object' || Array.isArray(rawStatement) ||
         !hasExactKeys(rawStatement, ['schemaVersion', 'journalId', 'entryCount', 'tipHash', 'issuedAtUtc']) ||
         Reflect.ownKeys(rawStatement).some(field => {
