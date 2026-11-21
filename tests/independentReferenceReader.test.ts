@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -75,6 +75,25 @@ describe('independent engineering reference evidence path isolation', () => {
     // A direct, non-symlink checkout continues to work.
     expect(readIndependentReferenceBytes(root, 'evidence/independent/reference.txt')?.toString())
       .toBe('Verified reference fixture only\n');
+  });
+
+  it('rejects evidence when the trusted checkout is replaced during a read', () => {
+    const { root } = setup();
+    const moved = root + '-moved';
+    folders.push(moved);
+    const originalRead = fs.readSync;
+    const spy = vi.spyOn(fs, 'readSync').mockImplementation((...args) => {
+      const count = originalRead(...args);
+      fs.renameSync(root, moved);
+      fs.mkdirSync(root);
+      return count;
+    });
+    try {
+      expect(readIndependentReferenceBytes(root, 'evidence/independent/reference.txt'))
+        .toBe(null);
+    } finally {
+      spy.mockRestore();
+    }
   });
 
   it('rejects hardlinked or zero-byte apparent reference evidence', () => {
