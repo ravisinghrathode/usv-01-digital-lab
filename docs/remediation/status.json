@@ -84,21 +84,21 @@
   "iterationEvidence": {
     "workstream": "PR-02",
     "pullRequest": 191,
-    "previousExactHead": "fc8dc6c31fc8afe8a182eabb74bd3dc0c2fa23d1",
+    "previousExactHead": "b91500177f458b040e050c9fc770a847561578d5",
     "previousWorkflow": {
-      "runId": 44870846575,
+      "runId": 44884289481,
       "conclusion": "failure",
-      "failureClassification": "Stage E authenticated governance enforcement; no Stage B failing step reported"
+      "failureClassification": "All executed Stage B technical checks, Stage C and Stage D succeeded; Stage E authenticated governance enforcement failed"
     },
-    "implementationCommit": "c21ad9807b0970470b01a23cd50a78d61fa199d5",
-    "regressionCommit": "ebd8dcc50aa5353efe4650492e312752c0737d70",
-    "change": "Reject accessor-backed, non-enumerable, symbol-bearing or non-plain persisted audit entry fields before structuredClone can invoke attacker-controlled getters; negative regression verifies zero getter calls and positive valid receipt.",
-    "verification": "New exact-head CI pending; code and regression not independently confirmed passing.",
-    "governanceBlocker": "Authenticated Stage E approval, externally durable witness, transactional outbox, recovery drill and independent end-to-end acceptance remain outstanding.",
+    "implementationCommit": "8341a87f6c8c4ef72a235302ddc236527629d9f5",
+    "regressionCommit": "2cc208945d93b62fe5878b183bf6857ed21f6a46",
+    "change": "Bound recursive validation of untrusted persisted audit records to depth 64 and 10000 visited values per entry, before structuredClone; added deep and wide adversarial regression with valid signed receipt control.",
+    "verification": "New exact-head CI pending; not independently verified. Limits are per audit entry, not a global journal-size limit.",
+    "governanceBlocker": "Stage E authenticated human review, externally durable witness, transaction outbox, recovery drills and independent end-to-end acceptance remain outstanding.",
     "nextActions": [
-      "Inspect CI for exact head and fix any technical defects",
-      "Implement external witness/outbox on independently reviewable branch",
-      "Preserve authenticated human approval requirements; do not merge without required reviews"
+      "Inspect exact-head CI and repair any technical failures",
+      "Evaluate journal-wide size limits and external witness/outbox implementation",
+      "Preserve authenticated review and do not merge without required approvals"
     ]
   }
 }
