@@ -82,8 +82,8 @@ describe('independent engineering reference evidence path isolation', () => {
     const moved = root + '-moved';
     folders.push(moved);
     const originalRead = fs.readSync;
-    const spy = vi.spyOn(fs, 'readSync').mockImplementation((...args) => {
-      const count = originalRead(...args);
+    const spy = vi.spyOn(fs, 'readSync').mockImplementation((fd, buffer, offset, length, position) => {
+      const count = originalRead(fd, buffer, offset, length, position);
       fs.renameSync(root, moved);
       fs.mkdirSync(root);
       return count;
