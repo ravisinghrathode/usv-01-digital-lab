@@ -372,6 +372,22 @@ describe('independent cryptographic audit witness acceptance', () => {
     expect(verifyIndependentAuditAnchor(journalId, entries, signed, key))
       .toEqual({ valid: true, reason: 'VERIFIED' });
   });
+  it('rejects sparse and accessor-indexed persisted journals without attesting partial evidence', () => {
+    const sparse = new Array<AuditTrailEntry>(1);
+    const accessor = [entries[0]];
+    Object.defineProperty(accessor, '0', {
+      enumerable: true,
+      configurable: true,
+      get(): AuditTrailEntry { throw new Error('untrusted journal index'); }
+    });
+    for (const journal of [sparse, accessor]) {
+      expect(() => verifyIndependentAuditAnchor(journalId, journal, signed, key)).not.toThrow();
+      expect(verifyIndependentAuditAnchor(journalId, journal, signed, key))
+        .toEqual({ valid: false, reason: 'AUDIT_CHAIN_INVALID' });
+      expect(() => proposeAuditAnchorStatement(journalId, journal, timestamp))
+        .toThrow('Cannot propose a checkpoint for an invalid audit journal');
+    }
+  });
   it('refuses to propose a checkpoint for a tampered chain', () => {
     expect(() => proposeAuditAnchorStatement(journalId, [{ ...entries[0], details: { allowed: true } }]))
       .toThrow(/invalid audit journal/);
