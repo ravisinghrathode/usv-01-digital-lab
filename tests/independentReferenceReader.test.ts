@@ -81,13 +81,21 @@ describe('independent engineering reference evidence path isolation', () => {
     const { root } = setup();
     const moved = root + '-moved';
     folders.push(moved);
-    const originalRead = fs.readSync;
-    const spy = vi.spyOn(fs, 'readSync').mockImplementation((fd, buffer, offset, length, position) => {
+    // Node's readSync overloads expose the options form to Vitest's mock typing,
+    // while the verifier intentionally uses the five-argument positional form.
+    // Preserve that runtime signature explicitly for the fault-injection test.
+    const originalRead = fs.readSync.bind(fs) as (
+      fd: number, buffer: Buffer, offset: number, length: number, position: number | null
+    ) => number;
+    const injectedRead = (
+      fd: number, buffer: Buffer, offset: number, length: number, position: number | null
+    ): number => {
       const count = originalRead(fd, buffer, offset, length, position);
       fs.renameSync(root, moved);
       fs.mkdirSync(root);
       return count;
-    });
+    };
+    const spy = vi.spyOn(fs, 'readSync').mockImplementation(injectedRead as typeof fs.readSync);
     try {
       expect(readIndependentReferenceBytes(root, 'evidence/independent/reference.txt'))
         .toBe(null);
