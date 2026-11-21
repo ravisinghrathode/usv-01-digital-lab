@@ -12,6 +12,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { AgentRegistry } from '../registry/AgentRegistry.ts';
 import { ROLE_ACCURACY_OBLIGATIONS } from './RoleAccuracyObligations.ts';
+import { readIndependentReferenceBytes } from './IndependentReferenceReader.ts';
 import type { AgentMatrixReport, AgentRunFinding } from './LiveAgentMatrix.ts';
 import type { CodexCampaignPreflight } from './CodexCampaignPreflight.ts';
 
@@ -255,15 +256,13 @@ export function assessEngineeringCampaign(
     let independentReviewAttested = false;
     if (liveExecuted && matches.length === 1 && review) {
       const relativePath = typeof review.referencePath === 'string' ? review.referencePath : '';
-      const root = options.referenceRootDir ? path.resolve(options.referenceRootDir) : '';
-      const artifactPath = root ? path.resolve(root, relativePath) : '';
-      const localEvidence = !!root &&
-        relativePath.startsWith('evidence/independent/') &&
-        artifactPath.startsWith(root + path.sep) &&
-        fs.existsSync(artifactPath) && fs.statSync(artifactPath).isFile() &&
-        fs.statSync(artifactPath).size <= 5 * 1024 * 1024;
-      const artifactMatches = localEvidence &&
-        hashBytes(fs.readFileSync(artifactPath)) === review.referenceSha256;
+      const artifactBytes = readIndependentReferenceBytes(
+        options.referenceRootDir, relativePath
+      );
+      // A signed hash for a symlink, path traversal or externally redirected
+      // file is not an independently controlled source-tree reference.
+      const artifactMatches = artifactBytes !== null &&
+        hashBytes(artifactBytes) === review.referenceSha256;
       independentReviewAttested = review.schema === EXTERNAL_REVIEW_SCHEMA &&
         ROLE.test(review.canonicalId) &&
         review.implementationSha === options.expectedCommit &&
