@@ -388,6 +388,22 @@ describe('independent cryptographic audit witness acceptance', () => {
         .toThrow('Cannot propose a checkpoint for an invalid audit journal');
     }
   });
+  it('rejects journal arrays carrying unsigned extra properties or altered prototypes', () => {
+    const extra = [...entries] as AuditTrailEntry[] & { stageEApproval?: string };
+    extra.stageEApproval = 'APPROVED';
+    const symbol = [...entries];
+    Object.defineProperty(symbol, Symbol('approval'), { value: true });
+    const alteredPrototype = [...entries];
+    Object.setPrototypeOf(alteredPrototype, Object.create(Array.prototype));
+    for (const journal of [extra, symbol, alteredPrototype]) {
+      expect(verifyIndependentAuditAnchor(journalId, journal, signed, key))
+        .toEqual({ valid: false, reason: 'AUDIT_CHAIN_INVALID' });
+      expect(() => proposeAuditAnchorStatement(journalId, journal, timestamp))
+        .toThrow('Cannot propose a checkpoint for an invalid audit journal');
+    }
+    expect(verifyIndependentAuditAnchor(journalId, entries, signed, key))
+      .toEqual({ valid: true, reason: 'VERIFIED' });
+  });
   it('refuses to propose a checkpoint for a tampered chain', () => {
     expect(() => proposeAuditAnchorStatement(journalId, [{ ...entries[0], details: { allowed: true } }]))
       .toThrow(/invalid audit journal/);
