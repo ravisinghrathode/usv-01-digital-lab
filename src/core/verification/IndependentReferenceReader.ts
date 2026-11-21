@@ -14,12 +14,15 @@ export function readIndependentReferenceBytes(
   referenceRootDir: string | undefined, relativePath: string
 ): Buffer | null {
   if (!referenceRootDir || typeof relativePath !== 'string' ||
+      relativePath.length > 4096 ||
       !relativePath.startsWith('evidence/independent/') ||
       relativePath.includes('\\') || relativePath.includes('\0') || /[\x00-\x1f\x7f\u202a-\u202e\u2066-\u2069]/u.test(relativePath)) {
     return null;
   }
   const components = relativePath.split('/');
-  if (components.some(segment => !segment || segment === '.' || segment === '..')) return null;
+  // Bound untrusted path complexity before synchronous filesystem traversal.
+  if (components.length > 128 ||
+      components.some(segment => !segment || segment === '.' || segment === '..')) return null;
   const root = path.resolve(referenceRootDir);
   const acceptedBase = path.resolve(root, 'evidence', 'independent');
   const candidate = path.resolve(root, relativePath);
