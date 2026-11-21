@@ -38,6 +38,17 @@ describe('unverified remediation ledger security regressions', () => {
     expect(() => summarizeUnverifiedRemediationLedger(ledger)).toThrow('invalid verification note');
   });
 
+  it('rejects semantically duplicate governance constraints hidden by whitespace', () => {
+    const ledger = makeLedger();
+    ledger.constraints.push('  Independent human approval remains required  ');
+    expect(() => summarizeUnverifiedRemediationLedger(ledger))
+      .toThrow('malformed provenance metadata');
+
+    const distinct = makeLedger();
+    distinct.constraints.push('Independent external witness remains required');
+    expect(summarizeUnverifiedRemediationLedger(distinct).notVerified).toBe(12);
+  });
+
   it('rejects fabricated noncanonical PR URLs for partial claims', () => {
     const ledger = makeLedger();
     ledger.items[0].state = 'partial-implementation-awaiting-review';
