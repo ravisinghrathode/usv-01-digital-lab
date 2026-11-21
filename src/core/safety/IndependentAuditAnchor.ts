@@ -63,7 +63,7 @@ export function proposeAuditAnchorStatement(
   entries: AuditTrailEntry[],
   issuedAtUtc = new Date().toISOString()
 ): AuditAnchorStatement {
-  if (!journalId || journalId.length > 128 || !/^[A-Za-z0-9._:-]+$/.test(journalId))
+  if (typeof journalId !== 'string' || !journalId || journalId.length > 128 || !/^[A-Za-z0-9._:-]+$/.test(journalId))
     throw new Error('Invalid audit journal identity');
   if (!isCanonicalUtcTimestamp(issuedAtUtc)) throw new Error('Invalid UTC checkpoint timestamp');
   // Persisted journals are untrusted even when proposing a checkpoint. Reject
