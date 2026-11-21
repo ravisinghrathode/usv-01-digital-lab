@@ -56,6 +56,21 @@ describe('unverified remediation ledger security regressions', () => {
     ledger.items[0].verification = 'Pending external review';
     expect(() => summarizeUnverifiedRemediationLedger(ledger)).toThrow('noncanonical PR link');
   });
+  it('rejects unsafe-integer PR identifiers that cannot be resolved exactly', () => {
+    for (const identifier of ['9007199254740992', '999999999999999999999999999999']) {
+      const ledger = makeLedger();
+      ledger.items[0].state = 'partial-implementation-awaiting-review';
+      ledger.items[0].pullRequest = 'https://github.com/ravisinghrathode/usv-01-digital-lab/pull/' + identifier;
+      ledger.items[0].verification = 'External review pending';
+      expect(() => summarizeUnverifiedRemediationLedger(ledger)).toThrow('noncanonical PR link');
+    }
+    const valid = makeLedger();
+    valid.items[0].state = 'partial-implementation-awaiting-review';
+    valid.items[0].pullRequest = 'https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201';
+    valid.items[0].verification = 'External review pending';
+    expect(summarizeUnverifiedRemediationLedger(valid).partiallyImplemented).toBe(1);
+  });
+
   it('rejects non-enumerable forged root and item approval metadata', () => {
     const root = makeLedger();
     Object.defineProperty(root, 'stageEApproved', { value: true, enumerable: false });
