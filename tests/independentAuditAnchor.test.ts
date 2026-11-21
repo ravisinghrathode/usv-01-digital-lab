@@ -423,4 +423,24 @@ describe('independent cryptographic audit witness acceptance', () => {
     expect(proposeAuditAnchorStatement(journalId, entries, timestamp)).toEqual(s);
   });
 
+  it('rejects accessor-backed journal fields before cloning or invoking getters', () => {
+    let invoked = 0;
+    const accessorEntry = { ...entries[0] };
+    Object.defineProperty(accessorEntry, 'actor', {
+      enumerable: true,
+      get() {
+        invoked++;
+        return entries[0].actor;
+      }
+    });
+    const suspect = [accessorEntry] as AuditTrailEntry[];
+    expect(() => proposeAuditAnchorStatement(journalId, suspect, timestamp))
+      .toThrow('Cannot propose a checkpoint for an invalid audit journal');
+    expect(verifyIndependentAuditAnchor(journalId, suspect, signed, key))
+      .toEqual({ valid: false, reason: 'AUDIT_CHAIN_INVALID' });
+    expect(invoked).toBe(0);
+    expect(verifyIndependentAuditAnchor(journalId, entries, signed, key))
+      .toEqual({ valid: true, reason: 'VERIFIED' });
+  });
+
 });
