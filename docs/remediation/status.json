@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-20",
+  "updatedAt": "2026-11-21",
   "items": [
     {
       "id": "PR-01",
@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 exact head 592bdc1694cfb69c7a1f4395adc2b16a5bc869b0: governance run 44688567181 failed solely at Stage E authenticated governance enforcement; Agent Academy, browser QA, Docker canary and zero-API workflows passed. New Stage E hold regression committed 64e9d15c9c6497d2be301ba4cd954c935b6bad8b; its new exact-head CI is pending. Independent human review, end-to-end acceptance and merge remain outstanding."
+      "verification": "PR #201 open and unmerged. Previous exact-head governance run 44787375242 failed Stage E authenticated governance enforcement; other observed workflows passed on that previous head. Normalized duplicate-constraint validation commit 0da59b2a and regression commit b38a6b98 are proposed, with new exact-head CI not yet verified. Independent human review, complete end-to-end acceptance and merge remain outstanding."
     }
   ],
   "constraints": [
