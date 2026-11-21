@@ -102,7 +102,15 @@ function hasOnlyOwnDataFields(entry: unknown): boolean {
 }
 
 /** Reject nested accessors and non-JSON structures before structuredClone can execute getters. */
-function hasOnlyPlainDataTree(value: unknown, seen = new WeakSet<object>()): boolean {
+function hasOnlyPlainDataTree(
+  value: unknown,
+  seen = new WeakSet<object>(),
+  budget = { remaining: 10000 },
+  depth = 0
+): boolean {
+  // Bound hostile persisted input before cloning or hashing. The shared budget
+  // covers the whole tree, not merely each recursive branch.
+  if (depth > 64 || --budget.remaining < 0) return false;
   if (value === null || typeof value === 'string' || typeof value === 'boolean') return true;
   if (typeof value === 'number') return Number.isFinite(value);
   if (typeof value !== 'object') return false;
@@ -119,7 +127,7 @@ function hasOnlyPlainDataTree(value: unknown, seen = new WeakSet<object>()): boo
       if (array && (!/^(0|[1-9]\\d*)$/.test(key) || Number(key) >= value.length)) return false;
       const descriptor = Object.getOwnPropertyDescriptor(value, key);
       if (!descriptor || !('value' in descriptor) || !descriptor.enumerable ||
-          !hasOnlyPlainDataTree(descriptor.value, seen)) return false;
+          !hasOnlyPlainDataTree(descriptor.value, seen, budget, depth + 1)) return false;
     }
     return true;
   } catch {
