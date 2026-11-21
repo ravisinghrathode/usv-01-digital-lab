@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "USV-REMEDIATION-TECHNICAL-REPAIR-1",
+  "observedAt": "2026-11-21",
+  "workstream": "PR-12",
+  "pullRequest": 201,
+  "failedHead": "a08c22e4b41d1e3deda4cd3db396124dffe15977",
+  "failedRuns": [
+    {
+      "runId": 44911570080,
+      "job": "zero-api-mission-control",
+      "failure": "TypeScript TS1127/TS1005/TS1128 at src/core/remediation/RemediationStatus.ts:148"
+    },
+    {
+      "runId": 44911570096,
+      "job": "Deterministic Quality & Governance Gate",
+      "failure": "Stage B TypeScript static typecheck"
+    },
+    {
+      "runId": 44911570065,
+      "job": "verify-both-image-stages",
+      "failure": "Docker build failed on same TypeScript syntax error"
+    },
+    {
+      "runId": 44911570073,
+      "job": "academy-deterministic",
+      "failure": "Compile whole app"
+    }
+  ],
+  "repairCommit": "301a0d6e21381642fc2938fb1dca35e0fe16edfc",
+  "repair": "Replaced literal escaped backslash-n sequence in boolean PR URL validation with actual source newline; did not change validation conditions.",
+  "exactHeadCi": "not-observed-at-check",
+  "remaining": [
+    "Run exact-head CI including TypeScript, Docker canary, academy, and governance",
+    "Keep Stage E authenticated human approval mandatory",
+    "Independent end-to-end acceptance and protected merge outstanding"
+  ],
+  "certified": false,
+  "accepted": false
+}
