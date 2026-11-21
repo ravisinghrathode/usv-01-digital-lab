@@ -49,7 +49,7 @@ describe('independent engineering reference evidence path isolation', () => {
     expect(readIndependentReferenceBytes(root, prefix + 'a/'.repeat(129) + 'reference.txt'))
       .toBe(null);
     expect(readIndependentReferenceBytes(root, prefix + 'reference.txt')?.toString())
-      .toBe('Verified reference fixture only\\n');
+      .toBe('Verified reference fixture only\n');
   });
 
   it('refuses final symlinks and redirected evidence subfolders', () => {
