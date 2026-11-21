@@ -33,7 +33,8 @@ export function readIndependentReferenceBytes(
     // evidence directory outside the checkout through a symbolic link.
     // The checkout root itself must not be a symlink: otherwise a caller
     // can redirect the entire trust root before evidence validation.
-    if (!fs.lstatSync(root).isDirectory()) return null;
+    const rootBefore = fs.lstatSync(root);
+    if (!rootBefore.isDirectory()) return null;
     const realRoot = fs.realpathSync(root);
     const realBase = fs.realpathSync(acceptedBase);
     if (realBase !== path.join(realRoot, 'evidence', 'independent')) return null;
@@ -70,6 +71,12 @@ export function readIndependentReferenceBytes(
       const after = fs.fstatSync(fd);
       // Revalidate the pathname after reading to catch parent replacement
       // during the read. This narrows, but cannot eliminate, TOCTOU races.
+      // A renamed checkout or swapped evidence parent must not be accepted
+      // merely because the final file descriptor still names the old inode.
+      const rootAfter = fs.lstatSync(root);
+      if (!rootAfter.isDirectory() || rootAfter.dev !== rootBefore.dev ||
+          rootAfter.ino !== rootBefore.ino || fs.realpathSync(root) !== realRoot ||
+          fs.realpathSync(acceptedBase) !== realBase) return null;
       if (fs.realpathSync(candidate) !== realFile) return null;
       const namedAfter = fs.lstatSync(candidate);
       if (namedAfter.isSymbolicLink() || namedAfter.dev !== st.dev || namedAfter.ino !== st.ino) return null;
