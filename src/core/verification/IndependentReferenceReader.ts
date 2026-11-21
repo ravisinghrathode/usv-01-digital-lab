@@ -43,7 +43,12 @@ export function readIndependentReferenceBytes(
     }
     const realFile = fs.realpathSync(candidate);
     if (!realFile.startsWith(realBase + path.sep)) return null;
-    // Refuse special files before opening; O_NONBLOCK also prevents a FIFO\n    // swapped into place after lstat from hanging the verifier on open.\n    const beforeOpen = fs.lstatSync(candidate);\n    if (!beforeOpen.isFile() || beforeOpen.nlink !== 1) return null;\n    const fd = fs.openSync(candidate, fs.constants.O_RDONLY |\n      (fs.constants.O_NOFOLLOW ?? 0) | (fs.constants.O_NONBLOCK ?? 0));
+    // Refuse special files before opening; O_NONBLOCK also prevents a FIFO
+    // swapped into place after lstat from hanging the verifier on open.
+    const beforeOpen = fs.lstatSync(candidate);
+    if (!beforeOpen.isFile() || beforeOpen.nlink !== 1) return null;
+    const fd = fs.openSync(candidate, fs.constants.O_RDONLY |
+      (fs.constants.O_NOFOLLOW ?? 0) | (fs.constants.O_NONBLOCK ?? 0));
     try {
       const st = fs.fstatSync(fd);
       // Bind the opened descriptor to the validated pathname: O_NOFOLLOW
