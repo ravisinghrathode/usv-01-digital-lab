@@ -145,7 +145,7 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
     // decimal integers, not arbitrarily long strings supplied by a ledger.
     if (typeof link !== 'string' || link.length > 150 ||
         (link.length > 0 &&
-          !/^https:\/\/github\.com\/ravisinghrathode\/usv-01-digital-lab\/pull\/[1-9][0-9]*$/.test(link))) {
+          !/^https:\/\/github\.com\/ravisinghrathode\/usv-01-digital-lab\/pull\/[1-9][0-9]*$/.test(link) ||\n          !Number.isSafeInteger(Number(link.slice(link.lastIndexOf('/') + 1))))) {
       throw new Error('REMEDIATION_LEDGER_INVALID: noncanonical PR link');
     }
     // A partial implementation must identify inspectable work and an explicit
