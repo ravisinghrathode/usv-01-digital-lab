@@ -13,7 +13,7 @@
       "id": "PR-02",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/191",
-      "verification": "PR #191 exact head 2bede41a8a289064932573387caee7367947ac0d; governance run 44314066700 failed Stage B dependency security audit. Independent witness deployment, durable outbox, authenticated human review and acceptance remain outstanding."
+      "verification": "PR #191 open and unmerged at exact head 8f0aee4980be7347dad141a699a6cf7f9dbae1e8. Exact-head workflow 44895894586 failed (failing job not independently classified). Independent external witness, transactional outbox, authenticated review and acceptance remain outstanding."
     },
     {
       "id": "PR-03",
@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 open and unmerged. Previous exact-head governance run 44787375242 failed Stage E authenticated governance enforcement; other observed workflows passed on that previous head. Normalized duplicate-constraint validation commit 0da59b2a and regression commit b38a6b98 are proposed, with new exact-head CI not yet verified. Independent human review, complete end-to-end acceptance and merge remain outstanding."
+      "verification": "PR #201 open and unmerged at exact head 34f196ecbee0669d8015b612d7667170a73535fa. Exact-head runs 44902584900, 44902585061, 44902584988 and 44902584914 succeeded; governance run 44902584999 failed (specific failing job not independently classified). Independent authenticated review, end-to-end acceptance and merge remain outstanding."
     }
   ],
   "constraints": [
