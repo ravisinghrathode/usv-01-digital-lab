@@ -42,6 +42,16 @@ describe('independent engineering reference evidence path isolation', () => {
     ]) expect(readIndependentReferenceBytes(root, name)).toBe(null);
   });
 
+  it('bounds untrusted evidence path length and component count before filesystem traversal', () => {
+    const { root } = setup();
+    const prefix = 'evidence/independent/';
+    expect(readIndependentReferenceBytes(root, prefix + 'x'.repeat(4096))).toBe(null);
+    expect(readIndependentReferenceBytes(root, prefix + 'a/'.repeat(129) + 'reference.txt'))
+      .toBe(null);
+    expect(readIndependentReferenceBytes(root, prefix + 'reference.txt')?.toString())
+      .toBe('Verified reference fixture only\\n');
+  });
+
   it('refuses final symlinks and redirected evidence subfolders', () => {
     const { root, base, file } = setup();
     fs.symlinkSync(file, path.join(base, 'link.txt'));
