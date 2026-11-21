@@ -70,7 +70,7 @@ export function proposeAuditAnchorStatement(
   // malformed entries deterministically rather than leaking runtime exceptions.
   let validChain = false;
   try {
-    if (Array.isArray(entries)) {
+    if (Array.isArray(entries) && isPlainDenseJournal(entries)) {
       if (entries.some(entry => !entry || typeof entry !== 'object' ||
           !Object.getOwnPropertyDescriptor(entry, 'hash') ||
           !('value' in Object.getOwnPropertyDescriptor(entry, 'hash')!))) throw new Error('accessor-backed journal');
@@ -90,6 +90,18 @@ export function proposeAuditAnchorStatement(
   }
   // Every successful validation path returns above; never fall through with undefined.
   throw new Error('Cannot propose a checkpoint for an invalid audit journal');
+}
+
+/** Persisted journal arrays must have only dense own data indices and the native Array prototype. */
+function isPlainDenseJournal(entries: AuditTrailEntry[]): boolean {
+  if (Object.getPrototypeOf(entries) !== Array.prototype) return false;
+  const keys = Reflect.ownKeys(entries);
+  if (keys.length !== entries.length + 1 || !keys.includes('length')) return false;
+  for (let i = 0; i < entries.length; i++) {
+    const descriptor = Object.getOwnPropertyDescriptor(entries, String(i));
+    if (!descriptor || !('value' in descriptor) || !descriptor.enumerable) return false;
+  }
+  return true;
 }
 
 function hasExactKeys(value: object, expected: readonly string[]): boolean {
@@ -191,7 +203,7 @@ export function verifyIndependentAuditAnchor(
   // Verify and compare one detached snapshot: do not re-read mutable caller
   // state after chain validation (a time-of-check/time-of-use vulnerability).
   try {
-    if (!Array.isArray(entries)) return { valid: false, reason: 'AUDIT_CHAIN_INVALID' };
+    if (!Array.isArray(entries) || !isPlainDenseJournal(entries)) return { valid: false, reason: 'AUDIT_CHAIN_INVALID' };
     if (entries.some(entry => !entry || typeof entry !== 'object' ||
         !Object.getOwnPropertyDescriptor(entry, 'hash') ||
         !('value' in Object.getOwnPropertyDescriptor(entry, 'hash')!))) {
