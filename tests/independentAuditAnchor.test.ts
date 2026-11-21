@@ -29,6 +29,21 @@ const signed = {
 };
 
 describe('independent cryptographic audit witness acceptance', () => {
+  it('rejects cyclic and symbol-keyed nested journal evidence without accepting a witness', () => {
+    const cyclic: Record<string, unknown> = {};
+    cyclic.self = cyclic;
+    const symbolKeyed: Record<string | symbol, unknown> = { allowed: false };
+    symbolKeyed[Symbol('unsigned-approval')] = true;
+    for (const details of [cyclic, symbolKeyed]) {
+      const suspect = [{ ...entries[0], details }] as AuditTrailEntry[];
+      expect(verifyIndependentAuditAnchor(journalId, suspect, signed, key))
+        .toEqual({ valid: false, reason: 'AUDIT_CHAIN_INVALID' });
+      expect(() => proposeAuditAnchorStatement(journalId, suspect, timestamp))
+        .toThrow('Cannot propose a checkpoint for an invalid audit journal');
+    }
+    expect(verifyIndependentAuditAnchor(journalId, entries, signed, key))
+      .toEqual({ valid: true, reason: 'VERIFIED' });
+  });
   it('rejects non-string journal identifiers before proposing a signed checkpoint', () => {
     for (const invalid of [42, true, {}, [], null, undefined]) {
       expect(() => proposeAuditAnchorStatement(invalid as never, entries, timestamp))
