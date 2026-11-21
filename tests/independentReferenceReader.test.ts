@@ -107,6 +107,30 @@ describe('independent engineering reference evidence path isolation', () => {
     }
   });
 
+  it('rejects evidence when the independent base directory is replaced during a read', () => {
+    const { root, base } = setup();
+    const moved = base + '-moved';
+    const originalRead = fs.readSync.bind(fs) as (
+      fd: number, buffer: Buffer, offset: number, length: number, position: number | null
+    ) => number;
+    const injectedRead = (
+      fd: number, buffer: Buffer, offset: number, length: number, position: number | null
+    ): number => {
+      const count = originalRead(fd, buffer, offset, length, position);
+      fs.renameSync(base, moved);
+      fs.mkdirSync(base);
+      fs.writeFileSync(path.join(base, 'reference.txt'), 'Replacement evidence fixture');
+      return count;
+    };
+    const spy = vi.spyOn(fs, 'readSync').mockImplementation(injectedRead as typeof fs.readSync);
+    try {
+      expect(readIndependentReferenceBytes(root, 'evidence/independent/reference.txt'))
+        .toBe(null);
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
   it('rejects hardlinked or zero-byte apparent reference evidence', () => {
     const { root, base, file } = setup();
     const alias = path.join(base, 'alias.txt');
