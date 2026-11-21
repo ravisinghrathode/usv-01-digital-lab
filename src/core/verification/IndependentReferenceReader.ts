@@ -15,7 +15,7 @@ export function readIndependentReferenceBytes(
 ): Buffer | null {
   if (!referenceRootDir || typeof relativePath !== 'string' ||
       !relativePath.startsWith('evidence/independent/') ||
-      relativePath.includes('\\') || relativePath.includes('\0')) {
+      relativePath.includes('\\') || relativePath.includes('\0') || /[\x00-\x1f\x7f]/.test(relativePath)) {
     return null;
   }
   const components = relativePath.split('/');
