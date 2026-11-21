@@ -71,7 +71,7 @@ export function proposeAuditAnchorStatement(
   let validChain = false;
   try {
     if (Array.isArray(entries) && isPlainDenseJournal(entries)) {
-      if (entries.some(entry => !hasOnlyOwnDataFields(entry))) throw new Error('accessor-backed journal');
+      if (entries.some(entry => !hasOnlyOwnDataFields(entry) || !hasOnlyPlainDataTree(entry))) throw new Error('accessor-backed journal');
       const snapshot = structuredClone(entries) as AuditTrailEntry[];
       validChain = CryptographicAuditTrail.verifyChain(snapshot).valid;
       if (validChain) {
@@ -99,6 +99,34 @@ function hasOnlyOwnDataFields(entry: unknown): boolean {
     const descriptor = Object.getOwnPropertyDescriptor(entry, key);
     return !!descriptor && 'value' in descriptor && descriptor.enumerable;
   });
+}
+
+/** Reject nested accessors and non-JSON structures before structuredClone can execute getters. */
+function hasOnlyPlainDataTree(value: unknown, seen = new WeakSet<object>()): boolean {
+  if (value === null || typeof value === 'string' || typeof value === 'boolean') return true;
+  if (typeof value === 'number') return Number.isFinite(value);
+  if (typeof value !== 'object') return false;
+  if (seen.has(value)) return false;
+  seen.add(value);
+  try {
+    const array = Array.isArray(value);
+    if (Object.getPrototypeOf(value) !== (array ? Array.prototype : Object.prototype)) return false;
+    const keys = Reflect.ownKeys(value);
+    if (array && (keys.length !== value.length + 1 || !keys.includes('length'))) return false;
+    for (const key of keys) {
+      if (array && key === 'length') continue;
+      if (typeof key !== 'string') return false;
+      if (array && (!/^(0|[1-9]\\d*)$/.test(key) || Number(key) >= value.length)) return false;
+      const descriptor = Object.getOwnPropertyDescriptor(value, key);
+      if (!descriptor || !('value' in descriptor) || !descriptor.enumerable ||
+          !hasOnlyPlainDataTree(descriptor.value, seen)) return false;
+    }
+    return true;
+  } catch {
+    return false;
+  } finally {
+    seen.delete(value);
+  }
 }
 
 /** Persisted journal arrays must have only dense own data indices and the native Array prototype. */
@@ -213,7 +241,7 @@ export function verifyIndependentAuditAnchor(
   // state after chain validation (a time-of-check/time-of-use vulnerability).
   try {
     if (!Array.isArray(entries) || !isPlainDenseJournal(entries)) return { valid: false, reason: 'AUDIT_CHAIN_INVALID' };
-    if (entries.some(entry => !hasOnlyOwnDataFields(entry))) {
+    if (entries.some(entry => !hasOnlyOwnDataFields(entry) || !hasOnlyPlainDataTree(entry))) {
       return { valid: false, reason: 'AUDIT_CHAIN_INVALID' };
     }
     const snapshot = structuredClone(entries) as AuditTrailEntry[];
