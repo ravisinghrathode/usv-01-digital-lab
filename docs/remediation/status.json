@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-20",
+  "updatedAt": "2026-11-21",
   "items": [
     {
       "id": "PR-01",
@@ -84,22 +84,21 @@
   "iterationEvidence": {
     "workstream": "PR-02",
     "pullRequest": 191,
-    "sourceCommit": "b7b7140b3e92e5ed82ac4b07057e8f358e30b570",
-    "testCommit": "ff9ceb7d4e9dc8d7daddd9543e7589087bff795f",
-    "change": "Reject required witness receipt/statement properties hidden as non-enumerable even when cryptographically valid; test both and valid ordinary receipt.",
-    "previousExactHead": "b272c7cf08bcdf985bfb41ec95e2e05c3a8822ec",
+    "sourceCommit": "08343c7f646f40f8c8cac64d2e22e8add1d04533",
+    "testCommit": "47395df2d67896f2060b2998f8710871d5e92ae1",
+    "previousExactHead": "94405c46b1e7cc6dce8a76e0c089f447e44f98ab",
     "previousWorkflow": {
-      "runId": 44544966987,
-      "failedStep": "Stage E — Governance Gate Enforcement",
-      "technicalStageBFailureObserved": false
+      "runId": 44706498836,
+      "conclusion": "failure",
+      "failureClassification": "Stage E governance enforcement pending detailed step confirmation"
     },
-    "verification": "New exact-head CI and regression execution not yet confirmed; no independent approval or engineering certification claimed.",
-    "technicalBlocker": "Fresh dependency audit for prior picomatch advisory; exact-head CI pending.",
-    "governanceBlocker": "Authenticated independent Stage C/D/E approvals and external witness deployment not provided.",
+    "change": "Read signed outer receipt fields from validated own data-property descriptors, avoiding untrusted Proxy get traps; added regression exercising throwing get traps while retaining a valid descriptor-backed signed receipt.",
+    "verification": "New exact-head GitHub Actions and regression execution pending; no human approval, external witness deployment, or engineering certification claimed.",
+    "governanceBlocker": "Authenticated independent Stage C/D/E approvals and separately provisioned external witness remain outstanding.",
     "nextActions": [
-      "Verify exact-head CI and new regression tests",
-      "Re-audit dependency lockfile and remediate confirmed vulnerabilities",
-      "Implement externally durable outbox and independent witness recovery acceptance"
+      "Inspect exact-head CI and fix any Stage B failures",
+      "Complete durable externally anchored witness/outbox recovery tests",
+      "Obtain separate authenticated review before any merge"
     ]
   }
 }
