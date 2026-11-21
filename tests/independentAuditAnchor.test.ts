@@ -68,6 +68,26 @@ describe('independent cryptographic audit witness acceptance', () => {
       signatureBase64: Buffer.alloc(64).toString('base64')
     }, key).valid).toBe(false);
   });
+  it('bounds adversarial audit record depth and property traversal before cloning', () => {
+    const deep: Record<string, unknown> = {};
+    let cursor = deep;
+    for (let i = 0; i < 80; i++) {
+      const child: Record<string, unknown> = {};
+      cursor.next = child;
+      cursor = child;
+    }
+    const wide: Record<string, number> = {};
+    for (let i = 0; i < 10050; i++) wide['item' + i] = i;
+    for (const details of [deep, wide]) {
+      const suspect = [{ ...entries[0], details }] as AuditTrailEntry[];
+      expect(verifyIndependentAuditAnchor(journalId, suspect, signed, key))
+        .toEqual({ valid: false, reason: 'AUDIT_CHAIN_INVALID' });
+      expect(() => proposeAuditAnchorStatement(journalId, suspect, timestamp))
+        .toThrow('Cannot propose a checkpoint for an invalid audit journal');
+    }
+    expect(verifyIndependentAuditAnchor(journalId, entries, signed, key))
+      .toEqual({ valid: true, reason: 'VERIFIED' });
+  });
   it('rejects nested journal getters before cloning or invoking them', () => {
     let reads = 0;
     const nested = { ...entries[0], details: { get allowed() {
