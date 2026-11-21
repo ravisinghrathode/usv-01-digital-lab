@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 open and unmerged at exact head 34f196ecbee0669d8015b612d7667170a73535fa. Exact-head runs 44902584900, 44902585061, 44902584988 and 44902584914 succeeded; governance run 44902584999 failed (specific failing job not independently classified). Independent authenticated review, end-to-end acceptance and merge remain outstanding."
+      "verification": "PR #201 remains open and unmerged. Previous exact head ef38dc447210dfbbc0ffed3bd0e1434880dbf235: governance run 44904456987 passed Stage B technical steps and failed mandatory Stage E authenticated governance enforcement; four other workflows succeeded. Added safe-integer PR identifier validation and regression test in commits 9aecae99 and b2ef63a1; new exact-head CI not yet established. Independent authenticated review, full E2E acceptance and merge outstanding."
     }
   ],
   "constraints": [
