@@ -13,7 +13,7 @@
       "id": "PR-02",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/191",
-      "verification": "PR #191 open and unmerged at exact head 8f0aee4980be7347dad141a699a6cf7f9dbae1e8. Exact-head workflow 44895894586 failed (failing job not independently classified). Independent external witness, transactional outbox, authenticated review and acceptance remain outstanding."
+      "verification": "PR #191 open and unmerged at exact head 8f0aee4980be7347dad141a699a6cf7f9dbae1e8. Exact-head governance workflow 44895894586 failed; failing step not yet independently classified. External witness, transactional outbox, authenticated review, and E2E acceptance remain outstanding."
     },
     {
       "id": "PR-03",
@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 remains open and unmerged. Previous exact head ef38dc447210dfbbc0ffed3bd0e1434880dbf235: governance run 44904456987 passed Stage B technical steps and failed mandatory Stage E authenticated governance enforcement; four other workflows succeeded. Added safe-integer PR identifier validation and regression test in commits 9aecae99 and b2ef63a1; new exact-head CI not yet established. Independent authenticated review, full E2E acceptance and merge outstanding."
+      "verification": "PR #201 open and unmerged at exact head 21aaeb7db4c459142a519e3220d8a59905768594. Exact-head governance workflow 44914989599: Stage B security, lint/typecheck, tests, build, and Stage C/D steps succeeded; Stage E authenticated governance enforcement failed. Four other exact-head workflows succeeded (academy, browser QA, Docker image canary, zero-API gate). Independent authenticated human review, external E2E acceptance, and merge remain outstanding."
     }
   ],
   "constraints": [
