@@ -88,6 +88,26 @@ describe('independent cryptographic audit witness acceptance', () => {
     expect(verifyIndependentAuditAnchor(journalId, entries, signed, key))
       .toEqual({ valid: true, reason: 'VERIFIED' });
   });
+  it('accepts ordinary dense nested arrays and rejects unsigned nested array properties', () => {
+    const nested = [{ ...entries[0], details: { values: [1, 2, { allowed: false }] } }] as AuditTrailEntry[];
+    nested[0].hash = CryptographicAuditTrail.computeEntryHash({
+      ...nested[0],
+      hash: undefined
+    } as never);
+    const statement = proposeAuditAnchorStatement(journalId, nested, timestamp);
+    const receipt = {
+      statement,
+      signatureBase64: crypto.sign(null, canonicalAuditAnchorBytes(statement), pair.privateKey).toString('base64')
+    };
+    expect(verifyIndependentAuditAnchor(journalId, nested, receipt, key))
+      .toEqual({ valid: true, reason: 'VERIFIED' });
+    const malicious = [{ ...nested[0], details: { values: [1, 2] } }] as AuditTrailEntry[];
+    Object.defineProperty((malicious[0].details as { values: number[] }).values, 'extra', {
+      value: 'unsigned', enumerable: true
+    });
+    expect(verifyIndependentAuditAnchor(journalId, malicious, receipt, key))
+      .toEqual({ valid: false, reason: 'AUDIT_CHAIN_INVALID' });
+  });
   it('rejects nested journal getters before cloning or invoking them', () => {
     let reads = 0;
     const nested = { ...entries[0], details: { get allowed() {
