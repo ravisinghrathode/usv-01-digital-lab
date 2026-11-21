@@ -84,20 +84,21 @@
   "iterationEvidence": {
     "workstream": "PR-02",
     "pullRequest": 191,
-    "previousExactHead": "f80bd1d38b1322fbe9ec87d28a11e95db45af884",
+    "previousExactHead": "3c1ecb4660b452bd06631298ca9ffd20f1c5987e",
     "previousWorkflow": {
-      "runId": 44861807465,
+      "runId": 44867617489,
       "conclusion": "failure",
-      "failureClassification": "Stage E authenticated governance enforcement; no executed Stage B technical failure"
+      "failureClassification": "Requires job-step inspection; workflow failure alone is not proof of a technical defect or Stage E-only failure"
     },
-    "testCommit": "1258316933d8a83ce26909e545eebf7fb41bd413",
-    "change": "Added regression for sparse and accessor-indexed persisted journal arrays, requiring fail-closed verification and checkpoint proposal rather than partial evidence admission.",
-    "verification": "New regression commit created; exact-head CI not yet verified. Test is not a claim of successful execution.",
-    "governanceBlocker": "Separate authenticated Stage E human approval, externally operated durable witness, transaction outbox, recovery drills and end-to-end acceptance remain outstanding.",
+    "implementationCommit": "9ba9e7ca986f2d23a5021b4ebba96e5f3997ef18",
+    "regressionCommit": "f10f1fa9a90fbb6f50804343f6fef2e92d27176c",
+    "change": "Reject persisted journal arrays with extra string/symbol properties, missing indices, accessor indices, or nonstandard array prototypes before checkpoint proposal or independent receipt verification.",
+    "verification": "New exact-head CI not yet verified; regression added but not independently confirmed passing.",
+    "governanceBlocker": "External durable witness, transactional outbox, independent authenticated Stage E approval, recovery drill and end-to-end acceptance remain outstanding.",
     "nextActions": [
-      "Check new exact-head CI; repair any real Stage B failures",
-      "Continue independently durable outbox and witness integration on scoped workstreams",
-      "Do not merge without separate authorized human approvals"
+      "Inspect exact-head workflow job steps and fix technical failures",
+      "Complete durable outbox and external witness integration separately",
+      "Preserve human approval gate and do not merge without authorized review"
     ]
   }
 }
