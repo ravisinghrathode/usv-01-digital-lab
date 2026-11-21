@@ -35,6 +35,8 @@ describe('independent engineering reference evidence path isolation', () => {
       'evidence/independent//reference.txt',
       'evidence/independent/reference.txt\n',
       'evidence/independent/reference.txt\r',
+      'evidence/independent/\u202ereference.txt',
+      'evidence/independent/\u2066reference\u2069.txt',
       'evidence/independent/\tfixture.txt',
       'evidence\\independent\\reference.txt'
     ]) expect(readIndependentReferenceBytes(root, name)).toBe(null);
