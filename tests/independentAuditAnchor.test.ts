@@ -29,6 +29,12 @@ const signed = {
 };
 
 describe('independent cryptographic audit witness acceptance', () => {
+  it('rejects non-string journal identifiers before proposing a signed checkpoint', () => {
+    for (const invalid of [42, true, {}, [], null, undefined]) {
+      expect(() => proposeAuditAnchorStatement(invalid as never, entries, timestamp))
+        .toThrow('Invalid audit journal identity');
+    }
+  });
   it('requires a separately supplied Ed25519 signature over the exact current journal tip', () => {
     expect(s.schemaVersion).toBe(AUDIT_ANCHOR_SCHEMA);
     expect(verifyIndependentAuditAnchor(journalId, entries, signed, key))
