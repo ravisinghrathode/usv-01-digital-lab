@@ -124,7 +124,7 @@ function hasOnlyPlainDataTree(
     for (const key of keys) {
       if (array && key === 'length') continue;
       if (typeof key !== 'string') return false;
-      if (array && (!/^(0|[1-9]\\d*)$/.test(key) || Number(key) >= value.length)) return false;
+      if (array && (!/^(0|[1-9]\d*)$/.test(key) || Number(key) >= value.length)) return false;
       const descriptor = Object.getOwnPropertyDescriptor(value, key);
       if (!descriptor || !('value' in descriptor) || !descriptor.enumerable ||
           !hasOnlyPlainDataTree(descriptor.value, seen, budget, depth + 1)) return false;
