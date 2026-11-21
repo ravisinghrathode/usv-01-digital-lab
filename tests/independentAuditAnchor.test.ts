@@ -174,6 +174,21 @@ describe('independent cryptographic audit witness acceptance', () => {
     expect(verifyIndependentAuditAnchor(journalId, entries, signed, key))
       .toEqual({ valid: true, reason: 'VERIFIED' });
   });
+  it('does not invoke proxy get traps for validated signed receipt fields', () => {
+    let fieldReads = 0;
+    const trapped = new Proxy(signed, {
+      get(target, property, receiver) {
+        if (property === 'statement' || property === 'signatureBase64') {
+          fieldReads += 1;
+          throw new Error('unexpected mutable property read');
+        }
+        return Reflect.get(target, property, receiver);
+      }
+    });
+    expect(verifyIndependentAuditAnchor(journalId, entries, trapped, key))
+      .toEqual({ valid: true, reason: 'VERIFIED' });
+    expect(fieldReads).toBe(0);
+  });
   it('rejects receipts with throwing getters without crashing verification', () => {
     const throwingStatement = {
       get statement(): never { throw new Error('untrusted getter'); },
