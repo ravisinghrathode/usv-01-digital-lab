@@ -13,7 +13,7 @@
       "id": "PR-02",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/191",
-      "verification": "PR #191 open and unmerged at exact head 8f0aee4980be7347dad141a699a6cf7f9dbae1e8. Exact-head governance workflow 44895894586 failed; failing step not yet independently classified. External witness, transactional outbox, authenticated review, and E2E acceptance remain outstanding."
+      "verification": "PR #191 open and unmerged at exact head 8f0aee4980be7347dad141a699a6cf7f9dbae1e8. Exact-head governance workflow 44895894586 failed specifically at mandatory Stage E governance enforcement; no failing Stage B technical step reported. External witness, transactional outbox, authenticated independent approval, and E2E acceptance remain outstanding."
     },
     {
       "id": "PR-03",
