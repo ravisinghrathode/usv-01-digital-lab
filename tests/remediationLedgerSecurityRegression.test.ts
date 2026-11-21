@@ -49,6 +49,18 @@ describe('unverified remediation ledger security regressions', () => {
     expect(summarizeUnverifiedRemediationLedger(distinct).notVerified).toBe(12);
   });
 
+  it('rejects whitespace-equivalent governance constraints without changing distinct constraints', () => {
+    const ledger = makeLedger();
+    ledger.constraints[0] = 'Independent human approval remains required';
+    ledger.constraints.push('Independent  human\tapproval remains required');
+    expect(() => summarizeUnverifiedRemediationLedger(ledger))
+      .toThrow('malformed provenance metadata');
+
+    const distinct = makeLedger();
+    distinct.constraints.push('Independent human acceptance remains required');
+    expect(summarizeUnverifiedRemediationLedger(distinct).notVerified).toBe(12);
+  });
+
   it('rejects fabricated noncanonical PR URLs for partial claims', () => {
     const ledger = makeLedger();
     ledger.items[0].state = 'partial-implementation-awaiting-review';
