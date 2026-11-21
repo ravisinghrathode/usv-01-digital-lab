@@ -84,21 +84,21 @@
   "iterationEvidence": {
     "workstream": "PR-02",
     "pullRequest": 191,
-    "previousExactHead": "b91500177f458b040e050c9fc770a847561578d5",
+    "previousExactHead": "3abeabc1acf39355cf3634dbe59f54181284684b",
     "previousWorkflow": {
-      "runId": 44884289481,
+      "runId": 44885767059,
       "conclusion": "failure",
-      "failureClassification": "All executed Stage B technical checks, Stage C and Stage D succeeded; Stage E authenticated governance enforcement failed"
+      "failureClassification": "Stage E governance enforcement failed; no failing Stage B job step reported"
     },
-    "implementationCommit": "8341a87f6c8c4ef72a235302ddc236527629d9f5",
-    "regressionCommit": "2cc208945d93b62fe5878b183bf6857ed21f6a46",
-    "change": "Bound recursive validation of untrusted persisted audit records to depth 64 and 10000 visited values per entry, before structuredClone; added deep and wide adversarial regression with valid signed receipt control.",
-    "verification": "New exact-head CI pending; not independently verified. Limits are per audit entry, not a global journal-size limit.",
-    "governanceBlocker": "Stage E authenticated human review, externally durable witness, transaction outbox, recovery drills and independent end-to-end acceptance remain outstanding.",
+    "implementationCommit": "0b86ce908a3f58a128bc9ff602ec53f8d0c1ab6c",
+    "regressionCommit": "427e09ce55946b571b61e096323f85ad6136c6e1",
+    "change": "Correct nested-array index validation regex to recognize decimal indices (previous literal backslash-d incorrectly rejected nonempty arrays); add signed valid nested-array and malicious extra-property regression.",
+    "verification": "Exact-head CI pending; no independent test or engineering acceptance claimed.",
+    "governanceBlocker": "Authenticated Stage E review, independent witness service, durable outbox, recovery drills and end-to-end acceptance outstanding.",
     "nextActions": [
-      "Inspect exact-head CI and repair any technical failures",
-      "Evaluate journal-wide size limits and external witness/outbox implementation",
-      "Preserve authenticated review and do not merge without required approvals"
+      "Verify exact-head technical CI and repair failures",
+      "Implement independent durable witness and transactional outbox separately",
+      "Preserve Stage E human review gate"
     ]
   }
 }
