@@ -19,7 +19,7 @@ export interface RemediationSummary {
 }
 
 // Reject bidirectional formatting controls that can visually reverse approval text.
-const UNSAFE_STATUS_TEXT = /[\x00-\x1f\x7f-\x9f\u00ad\u034f\u061c\u180e\u200b-\u200f\u2028-\u202e\u2060\u2066-\u206f\ufeff]/;
+const UNSAFE_STATUS_TEXT = /[\x00-\x1f\x7f-\x9f\u00ad\u034f\u061c\u180e\u200b-\u200f\u2028-\u202e\u2060\u2066-\u206f\ufeff\u{e0000}-\u{e007f}]/u;
 
 // JSON permits escaped lone UTF-16 surrogates, but their replacement glyphs can
 // obscure provenance or review wording in downstream terminals and dashboards.
