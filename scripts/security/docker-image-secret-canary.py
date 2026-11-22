@@ -87,7 +87,14 @@ def inspect_image_archive(archive: Path, token: bytes) -> int:
                     or not isinstance(tags, list)
                     or any(not isinstance(tag, str) or not tag.strip() for tag in tags)):
                 raise RuntimeError("Malformed Docker save manifest layer or tag entries")
-            layers.update(name.removeprefix("./") for name in record_layers)
+            # Manifest paths must be canonical relative archive members. Reject
+            # traversal, absolute paths and aliases rather than allowing a
+            # malicious manifest to ambiguously select layers.
+            for name in record_layers:
+                if (name.startswith(("/", "./")) or chr(92) in name
+                        or any(part in ("", ".", "..") for part in name.split("/"))):
+                    raise RuntimeError("Docker save manifest contains unsafe layer path")
+                layers.add(name)
             image_tags.update(tags)
         if not set(IMAGES).issubset(image_tags):
             raise RuntimeError("Docker save archive omitted a required build stage image")
