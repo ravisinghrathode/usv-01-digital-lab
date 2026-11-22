@@ -65,6 +65,52 @@ for location in ("name", "linkname", "pax"):
     expect(result.status, result.stderr || result.stdout).toBe(0);
   });
 
+  it('rejects synthetic credentials in outer Docker save archive headers', () => {
+    const python = `
+import importlib.util, io, json, pathlib, tarfile, tempfile
+script = pathlib.Path("scripts/security/docker-image-secret-canary.py").resolve()
+spec = importlib.util.spec_from_file_location("docker_canary", script)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+token = b"USV01_SYNTHETIC_SECRET_CANARY_TEST"
+for location in ("name", "linkname", "pax"):
+    with tempfile.TemporaryDirectory() as tmp:
+        archive = pathlib.Path(tmp) / "image.tar"
+        layer_bytes = io.BytesIO()
+        with tarfile.open(fileobj=layer_bytes, mode="w") as layer:
+            entry = tarfile.TarInfo("safe.txt")
+            entry.size = 4
+            layer.addfile(entry, io.BytesIO(b"safe"))
+        manifest = [{"RepoTags": list(module.IMAGES), "Layers": ["layer.tar"]}]
+        with tarfile.open(archive, mode="w") as outer:
+            for name, data in (
+                ("manifest.json", json.dumps(manifest).encode()),
+                ("layer.tar", layer_bytes.getvalue()),
+            ):
+                entry = tarfile.TarInfo(name)
+                entry.size = len(data)
+                outer.addfile(entry, io.BytesIO(data))
+            entry = tarfile.TarInfo("outer-metadata")
+            entry.type = tarfile.SYMTYPE
+            entry.linkname = "safe"
+            if location == "name":
+                entry.name = token.decode()
+            elif location == "linkname":
+                entry.linkname = token.decode()
+            else:
+                entry.pax_headers = {"comment": token.decode()}
+            outer.addfile(entry)
+        try:
+            module.inspect_image_archive(archive, token)
+        except RuntimeError as error:
+            assert "Docker archive header" in str(error), (location, error)
+        else:
+            raise AssertionError("Undetected outer archive credential in " + location)
+`;
+    const result = spawnSync('python3', ['-c', python], { cwd: root, encoding: 'utf8' });
+    expect(result.status, result.stderr || result.stdout).toBe(0);
+  });
+
   it('runs a dedicated GitHub Actions workflow with synthetic fixtures', () => {
     expect(workflow).toContain('pull_request:');
     expect(workflow).toContain('workflow_dispatch:');
