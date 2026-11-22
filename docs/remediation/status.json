@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "2026-11-22: exact-head f52cd98efb911b73355f321d3e4f4e136e07dc42: workflows 45021782304, 45021782357, 45021782214 and 45021782237 succeeded; governance workflow 45021782224 failed (Stage E versus technical step not independently classified in this observation). Added invisible Hangul filler rejection c93a603b and regression tests 951c49f6. Latest head CI not yet verified; authenticated independent Stage E approval, physical reference validation, 26-agent end-to-end acceptance and protected merge remain outstanding."
+      "verification": "2026-11-22: PR #201 exact-head 78783d4908c4a9eca5c15c3fb89fc2a382b8a0e8: four auxiliary workflows succeeded; governance workflow 45023559806 failed Stage B deterministic tests (1 failed / 1246; tests/remediationStatusContract.test.ts undefined verification fixture conflicted with PR-linked blocker guard), not merely Stage E. Fixed fixture isolation in commit d40b86848d67a410fac8054d44eefb71f8241aa6; exact-head CI for correction not yet observed. Independent Stage E approval, physical reference validation, full 26-agent acceptance and protected merge remain outstanding."
     }
   ],
   "constraints": [
