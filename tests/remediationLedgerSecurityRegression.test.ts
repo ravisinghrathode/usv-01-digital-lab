@@ -72,6 +72,19 @@ describe('unverified remediation ledger security regressions', () => {
     expect(summarizeUnverifiedRemediationLedger(distinct).notVerified).toBe(12);
   });
 
+  it('rejects Unicode variation selectors in evidence notes and governance constraints', () => {
+    for (const selector of ['\\uFE0F', String.fromCodePoint(0xE0100)]) {
+      const evidence = makeLedger();
+      evidence.items[0].verification = 'Review pending' + selector;
+      expect(() => summarizeUnverifiedRemediationLedger(evidence)).toThrow('invalid verification note');
+
+      const governance = makeLedger();
+      governance.constraints[0] += selector;
+      expect(() => summarizeUnverifiedRemediationLedger(governance)).toThrow('malformed provenance metadata');
+    }
+    expect(summarizeUnverifiedRemediationLedger(makeLedger()).notVerified).toBe(12);
+  });
+
   it('rejects fabricated noncanonical PR URLs for partial claims', () => {
     const ledger = makeLedger();
     ledger.items[0].state = 'partial-implementation-awaiting-review';
