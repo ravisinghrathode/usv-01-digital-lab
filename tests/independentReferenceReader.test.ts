@@ -236,7 +236,7 @@ describe('independent engineering reference evidence path isolation', () => {
       spy.mockRestore();
     }
     expect(readIndependentReferenceBytes(root, 'evidence/independent/reference.txt')?.toString())
-      .toBe('Verified reference fixture only\\n');
+      .toBe('Verified reference fixture only\n');
   });
 
   it('rejects hardlinked or zero-byte apparent reference evidence', () => {
