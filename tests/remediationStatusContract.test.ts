@@ -154,14 +154,16 @@ describe('closed-loop twelve-issue remediation reporting', () => {
 
   it('rejects undefined verification claims that cannot exist in canonical JSON', () => {
     const forged = structuredClone(ledger);
-    // Isolate the canonical JSON type check from the earlier partial-progress blocker check.
+    // Isolate the canonical JSON type check from the earlier PR-linked blocker check.
     forged.items[3].state = 'not-verified';
+    forged.items[3].pullRequest = '';
     forged.items[3].verification = undefined;
     expect(() => summarizeUnverifiedRemediationLedger(forged))
       .toThrow('invalid verification note');
     const explicitNull = structuredClone(ledger);
-    // A null note is valid only for a not-verified item; partial progress must retain a blocker.
+    // A null note is valid only for an unlinked not-verified item; PR-linked entries retain blockers.
     explicitNull.items[3].state = 'not-verified';
+    explicitNull.items[3].pullRequest = '';
     explicitNull.items[3].verification = null;
     expect(summarizeUnverifiedRemediationLedger(explicitNull).completeAndIndependentlyVerified).toBe(0);
   });
