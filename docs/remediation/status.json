@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "2026-11-22 exact-head aaec06f17f186bd1dd8b56e8afb0a6e0314ae3f2: four workflows succeeded; governance workflow 44930783228 failed only Stage E. Independent end-to-end acceptance and protected merge outstanding."
+      "verification": "2026-11-22 governance run 44991393870 on prior exact head 3105cda55f3695dd53b35b99275622de06b4bbd3: all executed Stage B steps passed; Stage E Governance Gate Enforcement failed. Four other workflows passed. This ledger commit changes the head and requires fresh exact-head CI; independent end-to-end acceptance, authenticated review and protected merge remain outstanding."
     }
   ],
   "constraints": [
