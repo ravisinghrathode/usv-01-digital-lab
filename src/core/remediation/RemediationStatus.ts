@@ -154,8 +154,11 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
     // A partial implementation must identify inspectable work and an explicit
     // outstanding verification note. Otherwise the dashboard could display
     // progress based solely on an unsubstantiated state string.
-    if (isPartial && (!link || typeof unknownItem.verification !== 'string' ||
-        !unknownItem.verification.trim())) {
+    // Any cited PR, even on a not-yet-verified workstream, must carry an
+    // explicit blocker. A bare URL is not evidence of technical progress.
+    if ((isPartial || link.length > 0) &&
+        (!link || typeof unknownItem.verification !== 'string' ||
+          !unknownItem.verification.trim())) {
       throw new Error('REMEDIATION_LEDGER_INVALID: partial item lacks PR or blocker');
     }
     if (unknownItem.verification !== null &&
