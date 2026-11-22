@@ -82,6 +82,17 @@ def inspect_image_archive(archive: Path, token: bytes) -> int:
                 scanned_layers += 1
                 with tarfile.open(fileobj=data, mode="r|*") as layer:
                     for entry in layer:
+                        # Docker layers may leak credential bytes through tar
+                        # member names, symlink targets or PAX metadata even
+                        # when no regular-file payload contains the marker.
+                        header_values = [entry.name, entry.linkname]
+                        header_values.extend(
+                            str(key) + "=" + str(value)
+                            for key, value in entry.pax_headers.items()
+                        )
+                        if any(token in value.encode("utf-8", "surrogateescape")
+                               for value in header_values):
+                            raise RuntimeError("Synthetic secret found in Docker layer header: " + entry.name)
                         if not entry.isfile():
                             continue
                         payload = layer.extractfile(entry)
