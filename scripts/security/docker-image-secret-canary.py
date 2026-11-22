@@ -62,6 +62,8 @@ def inspect_image_archive(archive: Path, token: bytes) -> int:
         manifest_member = next((item for item in members if item.name == "manifest.json"), None)
         if manifest_member is None:
             raise RuntimeError("Docker save archive missing manifest")
+        if not manifest_member.isfile():
+            raise RuntimeError("Docker save archive manifest is not a regular file")
         manifest_file = outer.extractfile(manifest_member)
         if manifest_file is None:
             raise RuntimeError("Docker save archive manifest unreadable")
@@ -87,6 +89,8 @@ def inspect_image_archive(archive: Path, token: bytes) -> int:
         if not layers:
             raise RuntimeError("Docker save archive contains no referenced layers")
         for member in members:
+            if member.name.removeprefix("./") in layers and not member.isfile():
+                raise RuntimeError("Referenced Docker layer is not a regular file")
             if not member.isfile():
                 continue
             data = outer.extractfile(member)
