@@ -97,7 +97,8 @@ export function readIndependentReferenceBytes(
       if (fs.realpathSync(candidate) !== realFile) return null;
       const namedAfter = fs.lstatSync(candidate);
       if (namedAfter.isSymbolicLink() || namedAfter.dev !== st.dev || namedAfter.ino !== st.ino) return null;
-      if (after.dev !== st.dev || after.ino !== st.ino ||
+      if (!after.isFile() || after.nlink !== 1 ||
+          after.dev !== st.dev || after.ino !== st.ino ||
           after.size !== st.size || after.mtimeMs !== st.mtimeMs ||
           after.ctimeMs !== st.ctimeMs) return null;
       return bytes;
