@@ -307,6 +307,20 @@ describe('closed-loop twelve-issue remediation reporting', () => {
     }
   });
 
+  it('rejects invisible supplementary-plane Unicode tags in provenance and notes', () => {
+    for (const codePoint of [0xe0001, 0xe0020, 0xe0061, 0xe007f]) {
+      const tag = String.fromCodePoint(codePoint);
+      const note = structuredClone(ledger);
+      note.items[0].verification = 'pending' + tag + 'approved';
+      expect(() => summarizeUnverifiedRemediationLedger(note))
+        .toThrow('invalid verification note');
+      const constraint = structuredClone(ledger);
+      constraint.constraints[0] = 'review' + tag + 'accepted';
+      expect(() => summarizeUnverifiedRemediationLedger(constraint))
+        .toThrow('malformed provenance metadata');
+    }
+  });
+
   it('rejects unpaired UTF-16 surrogate escapes without rejecting valid Unicode pairs', () => {
     for (const invalid of [0xd800, 0xdbff, 0xdc00, 0xdfff].map(unit => String.fromCharCode(unit)).concat('pending' + String.fromCharCode(0xd800) + 'approved')) {
       const note = structuredClone(ledger);
