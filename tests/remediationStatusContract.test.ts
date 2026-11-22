@@ -324,6 +324,24 @@ describe('closed-loop twelve-issue remediation reporting', () => {
     expect(summarizeUnverifiedRemediationLedger(valid).completeAndIndependentlyVerified).toBe(0);
   });
 
+  it('rejects non-NFC evidence text that can disguise visually identical provenance', () => {
+    const decomposed = 'review pending e\\u0301';
+    const note = structuredClone(ledger);
+    note.items[0].verification = decomposed;
+    expect(() => summarizeUnverifiedRemediationLedger(note))
+      .toThrow('invalid verification note');
+
+    const constraint = structuredClone(ledger);
+    constraint.constraints[0] = decomposed;
+    expect(() => summarizeUnverifiedRemediationLedger(constraint))
+      .toThrow('malformed provenance metadata');
+
+    const canonical = structuredClone(ledger);
+    canonical.items[0].verification = decomposed.normalize('NFC');
+    canonical.constraints[0] = decomposed.normalize('NFC');
+    expect(summarizeUnverifiedRemediationLedger(canonical).completeAndIndependentlyVerified).toBe(0);
+  });
+
   it('adds read-only status utility without rewriting authoritative source', () => {
     const manifest = JSON.parse(fs.readFileSync(
       path.join(process.cwd(), 'package.json'), 'utf8'
