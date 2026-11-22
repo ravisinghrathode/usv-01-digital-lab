@@ -186,6 +186,35 @@ describe('independent engineering reference evidence path isolation', () => {
       .toContain('Concurrent modification');
   });
 
+  it('rejects a reference hardlinked concurrently during descriptor reading', () => {
+    const { root, base, file } = setup();
+    const alias = path.join(base, 'concurrent-hardlink.txt');
+    const originalRead = fs.readSync.bind(fs) as (
+      fd: number, buffer: Buffer, offset: number, length: number, position: number | null
+    ) => number;
+    let injected = false;
+    const injectedRead = (
+      fd: number, buffer: Buffer, offset: number, length: number, position: number | null
+    ): number => {
+      const count = originalRead(fd, buffer, offset, length, position);
+      if (!injected) {
+        injected = true;
+        fs.linkSync(file, alias);
+      }
+      return count;
+    };
+    const spy = vi.spyOn(fs, 'readSync').mockImplementation(injectedRead as typeof fs.readSync);
+    try {
+      expect(readIndependentReferenceBytes(root, 'evidence/independent/reference.txt')).toBe(null);
+    } finally {
+      spy.mockRestore();
+    }
+    expect(injected).toBe(true);
+    fs.unlinkSync(alias);
+    expect(readIndependentReferenceBytes(root, 'evidence/independent/reference.txt')?.toString())
+      .toBe('Verified reference fixture only\n');
+  });
+
   it('rejects hardlinked or zero-byte apparent reference evidence', () => {
     const { root, base, file } = setup();
     const alias = path.join(base, 'alias.txt');
