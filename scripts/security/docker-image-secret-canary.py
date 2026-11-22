@@ -52,6 +52,11 @@ def inspect_image_archive(archive: Path, token: bytes) -> int:
     scanned_layers = 0
     with tarfile.open(archive, "r:*") as outer:
         members = outer.getmembers()
+        # Duplicate archive paths make manifest and layer resolution ambiguous.
+        # Reject rather than trusting the first matching member.
+        normalized_names = [item.name.removeprefix("./") for item in members]
+        if len(normalized_names) != len(set(normalized_names)):
+            raise RuntimeError("Docker save archive contains duplicate member paths")
         # The docker-save envelope itself can carry secret bytes in tar
         # names, link targets or extended headers, even without payloads.
         for item in members:
