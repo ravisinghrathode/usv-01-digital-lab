@@ -111,6 +111,39 @@ for location in ("name", "linkname", "pax"):
     expect(result.status, result.stderr || result.stdout).toBe(0);
   });
 
+  it('fails closed on malformed Docker-save manifest tags and layer names', () => {
+    const python = `
+import importlib.util, io, json, pathlib, tarfile, tempfile
+script = pathlib.Path("scripts/security/docker-image-secret-canary.py").resolve()
+spec = importlib.util.spec_from_file_location("docker_canary", script)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+token = b"USV01_SYNTHETIC_SECRET_CANARY_TEST"
+invalid = [
+    {"RepoTags": "not-a-list", "Layers": ["layer.tar"]},
+    {"RepoTags": [None], "Layers": ["layer.tar"]},
+    {"RepoTags": list(module.IMAGES), "Layers": [None]},
+    {"RepoTags": list(module.IMAGES), "Layers": []},
+]
+for record in invalid:
+    with tempfile.TemporaryDirectory() as tmp:
+        archive = pathlib.Path(tmp) / "image.tar"
+        with tarfile.open(archive, mode="w") as outer:
+            data = json.dumps([record]).encode()
+            entry = tarfile.TarInfo("manifest.json")
+            entry.size = len(data)
+            outer.addfile(entry, io.BytesIO(data))
+        try:
+            module.inspect_image_archive(archive, token)
+        except RuntimeError as error:
+            assert "manifest" in str(error).lower(), (record, error)
+        else:
+            raise AssertionError("Accepted malformed manifest: " + repr(record))
+`;
+    const result = spawnSync('python3', ['-c', python], { cwd: root, encoding: 'utf8' });
+    expect(result.status, result.stderr || result.stdout).toBe(0);
+  });
+
   it('runs a dedicated GitHub Actions workflow with synthetic fixtures', () => {
     expect(workflow).toContain('pull_request:');
     expect(workflow).toContain('workflow_dispatch:');
