@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-21",
+  "updatedAt": "2026-11-22",
   "items": [
     {
       "id": "PR-01",
@@ -13,31 +13,31 @@
       "id": "PR-02",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/191",
-      "verification": "PR #191 open and unmerged at exact head 8f0aee4980be7347dad141a699a6cf7f9dbae1e8. Exact-head governance workflow 44895894586 failed specifically at mandatory Stage E governance enforcement; no failing Stage B technical step reported. External witness, transactional outbox, authenticated independent approval, and E2E acceptance remain outstanding."
+      "verification": "2026-11-22 exact-head 8f0aee4980be7347dad141a699a6cf7f9dbae1e8: workflow 44895894586 failed (step-level cause not reverified in this observation); external audit anchoring, outbox and independent approval outstanding."
     },
     {
       "id": "PR-03",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/193",
-      "verification": "PR #193 open; Docker image canary workflow passed exact head, governance Stage E failed; runtime bootstrap and restore drills outstanding"
+      "verification": "2026-11-22 exact-head 46dfae1e8e2041828dd33ed08cd5cbd7837ff0a2: workflows 44716720426 success and 44716720508 failure; failing step not reverified in this observation. Production credential bootstrap, backup/restore and approval outstanding."
     },
     {
       "id": "PR-04",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/196",
-      "verification": "PRs #194 and #196 open; isolated browser and zero-API checks passed, Stage E failed; migration, cross-process transaction and power-loss recovery outstanding"
+      "verification": "2026-11-22 PR #194 exact-head 2c6ee2e8a9639dd46c98ae608576879d97c4efb7 and #196 exact-head 446e8bb15fb3681376e2e35c8c161a91b4162205 remain open; each has successful workflows and one failing workflow. Interprocess transactions, migrations and power-loss acceptance outstanding."
     },
     {
       "id": "PR-05",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/195",
-      "verification": "PR #195 open; zero-API check passed, Stage E failed; independent restart/lease acceptance outstanding"
+      "verification": "2026-11-22 exact-head effa6b5688cd28929ee7065460becf64f341df60: workflow 44733179580 succeeded, 44733179559 failed. Restart/lease acceptance and independent approval outstanding."
     },
     {
       "id": "PR-06",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/197",
-      "verification": "PR #197 open; browser and zero-API checks passed, Stage E failed; server orchestration acceptance outstanding"
+      "verification": "2026-11-22 exact-head 475666d37822c0f28038b1e10086ceb8cf881428: workflows 44749521250 and 44749521313 succeeded; 44749521443 failed. Persistent server orchestration and independent approval outstanding."
     },
     {
       "id": "PR-07",
@@ -49,7 +49,7 @@
       "id": "PR-08",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/198",
-      "verification": "PR #198 open; browser and zero-API checks passed, Stage E failed; independent evidence-admission acceptance outstanding"
+      "verification": "2026-11-22 exact-head c50eebc84014e4198a5e17bbf02a0ff06f50522c: workflows 44759312155 and 44759312174 succeeded; 44759311978 failed. Independent evidence admission outstanding."
     },
     {
       "id": "PR-09",
@@ -61,19 +61,19 @@
       "id": "PR-10",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/199",
-      "verification": "PR #199 open; browser and zero-API checks passed, Stage E failed; deploy and session security remain outstanding"
+      "verification": "2026-11-22 exact-head 407f3a7e2e94588ed88c304c74e635e857970a18: workflows 44763635067 and 44763635177 succeeded; 44763635450 failed. Deployment/session security and independent approval outstanding."
     },
     {
       "id": "PR-11",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/200",
-      "verification": "PR #200 open; governance Stage E failed; independent 26-agent evaluation and physical reference verification outstanding"
+      "verification": "2026-11-22 exact-head ae7669de155f9dfafebc25e4559de21440904a72: workflow 44986796716 failed only at Stage E Governance Gate Enforcement; no failed Stage B step reported. Physical reference and 26-agent independent acceptance outstanding."
     },
     {
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "PR #201 remains partial and unmerged. Exact-head b593b1b2 governance workflow 44928221495 failed; four other exact-head workflows succeeded. Commit 096b35bb rejects case-equivalent duplicate governance constraints, with regression coverage in e3d86d35; new head technical CI remains unverified until exact-head workflows complete. Stage E authenticated independent review, external E2E acceptance and merge remain outstanding."
+      "verification": "2026-11-22 exact-head aaec06f17f186bd1dd8b56e8afb0a6e0314ae3f2: four workflows succeeded; governance workflow 44930783228 failed only Stage E. Independent end-to-end acceptance and protected merge outstanding."
     }
   ],
   "constraints": [
