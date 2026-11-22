@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "2026-11-22: PR #201 exact-head 6c1b3fbbb01ab15524aa2a149cc97d4cbe75b0f6 governance workflow 45013615159 failed Stage B deterministic test suite: 1 of 1244 tests failed in remediationLedgerSecurityRegression.test.ts because the variation-selector fixture used a literal backslash-u rather than a Unicode selector; 1243 tests passed. Fixed fixture with String.fromCodePoint(0xFE0F) at commit e52461da6741d31cda76bc64c976f2f21f609211. Added explicit blocker requirement for any cited PR, including not-verified items, with regression tests at commits dcfcddb9 and cf106ae7. Latest exact-head CI remains unverified; Stage E authenticated human approval, physical-reference validation, 26-agent independent end-to-end acceptance and protected merge remain outstanding. No certification or acceptance inferred."
+      "verification": "2026-11-22: exact-head f52cd98efb911b73355f321d3e4f4e136e07dc42: workflows 45021782304, 45021782357, 45021782214 and 45021782237 succeeded; governance workflow 45021782224 failed (Stage E versus technical step not independently classified in this observation). Added invisible Hangul filler rejection c93a603b and regression tests 951c49f6. Latest head CI not yet verified; authenticated independent Stage E approval, physical reference validation, 26-agent end-to-end acceptance and protected merge remain outstanding."
     }
   ],
   "constraints": [
