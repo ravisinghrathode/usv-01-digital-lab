@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "2026-11-22 exact-head c8e9b3e1c0d49aa928da2406cbfc3cccb67a2d51: governance workflow 45004842778 passed executed Stage B dependency audit, secret scanning, lint/typecheck, deterministic tests, restricted worker tests, CalculiX known-case commissioning and production build; Stage C and Stage D verification steps succeeded but are not independent human acceptance. Stage E Governance Gate Enforcement failed. Other exact-head workflows 45004842750 (Agent Academy), 45004842766 (browser QA), 45004842761 (Docker synthetic secret canary), 45004842785 (Mission Control) succeeded. Several acceptance stages were skipped; authenticated Stage E approval, independent physical references, 26-agent end-to-end acceptance and protected merge remain outstanding. No engineering certification is claimed."
+      "verification": "2026-11-22: PR #201 provenance hardening added variation-selector rejection (commit da18cce14f6093919c8a725e65b064b8b929a5c4) and BMP/supplementary regression tests (commit dfdd1004a375d2c56bb562fb60d0f56535662f6b). New exact-head CI pending verification; earlier exact-head c8e9b3e1c0d49aa928da2406cbfc3cccb67a2d51 passed four ancillary workflows but governance workflow 45004842778 failed mandatory Stage E after technical stages. Independent approval, physical references, 26-agent E2E acceptance and protected merge remain outstanding. No engineering certification claimed."
     }
   ],
   "constraints": [
