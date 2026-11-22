@@ -73,7 +73,7 @@ describe('unverified remediation ledger security regressions', () => {
   });
 
   it('rejects Unicode variation selectors in evidence notes and governance constraints', () => {
-    for (const selector of ['\\uFE0F', String.fromCodePoint(0xE0100)]) {
+    for (const selector of [String.fromCodePoint(0xFE0F), String.fromCodePoint(0xE0100)]) {
       const evidence = makeLedger();
       evidence.items[0].verification = 'Review pending' + selector;
       expect(() => summarizeUnverifiedRemediationLedger(evidence)).toThrow('invalid verification note');
