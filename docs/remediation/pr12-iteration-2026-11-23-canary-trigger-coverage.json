@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "USV-REMEDIATION-ITERATION-1",
+  "observedDate": "2026-11-23",
+  "workstream": "PR-03 / PR-09 / PR-12",
+  "pullRequest": 201,
+  "previousHead": "f08fc65d3b41cb01bbf48513764544a48cfd64c6",
+  "implementationCommit": "18e06e22491e83d509666c13c7db6651a1bf8640",
+  "change": "Docker synthetic-secret image canary pull_request path filters now include Python fixture-confinement and TypeScript Docker canary regression test files; previously test-only changes could omit this workflow.",
+  "priorExactHead": {
+    "governanceRun": 45078801935,
+    "failedStep": "Stage E — Governance Gate Enforcement",
+    "auxiliaryRuns": [
+      45078801870,
+      45078801932,
+      45078801880,
+      45078801865
+    ],
+    "auxiliaryConclusion": "success"
+  },
+  "verification": {
+    "implementationHeadWorkflowRunsAtInspection": [],
+    "state": "pending-exact-head-CI",
+    "notClaimed": [
+      "Stage E human approval",
+      "full twelve-workstream acceptance",
+      "vessel certification"
+    ]
+  },
+  "blockers": [
+    "Independent authenticated Stage E review",
+    "Production recovery acceptance",
+    "Physical-reference verification",
+    "26-agent end-to-end acceptance",
+    "Protected merges"
+  ],
+  "nextActions": [
+    "Inspect workflow runs on latest PR head",
+    "Repair any technical CI failures without bypassing Stage E",
+    "Continue independent unblocked remediation"
+  ]
+}
