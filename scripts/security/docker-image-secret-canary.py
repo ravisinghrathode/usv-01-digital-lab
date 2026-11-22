@@ -73,8 +73,15 @@ def inspect_image_archive(archive: Path, token: bytes) -> int:
         for record in manifest:
             if not isinstance(record, dict) or not isinstance(record.get("Layers"), list):
                 raise RuntimeError("Malformed Docker save manifest")
-            layers.update(str(name).removeprefix("./") for name in record["Layers"])
-            image_tags.update(record.get("RepoTags") or [])
+            record_layers = record["Layers"]
+            tags = record.get("RepoTags")
+            if (not record_layers or any(not isinstance(name, str) or not name.strip()
+                                         for name in record_layers)
+                    or not isinstance(tags, list)
+                    or any(not isinstance(tag, str) or not tag.strip() for tag in tags)):
+                raise RuntimeError("Malformed Docker save manifest layer or tag entries")
+            layers.update(name.removeprefix("./") for name in record_layers)
+            image_tags.update(tags)
         if not set(IMAGES).issubset(image_tags):
             raise RuntimeError("Docker save archive omitted a required build stage image")
         if not layers:
