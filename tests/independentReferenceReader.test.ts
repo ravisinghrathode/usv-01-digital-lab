@@ -215,6 +215,30 @@ describe('independent engineering reference evidence path isolation', () => {
       .toBe('Verified reference fixture only\n');
   });
 
+  it('fails closed on a truncated descriptor read without accepting partial evidence', () => {
+    const { root } = setup();
+    const originalRead = fs.readSync.bind(fs) as (
+      fd: number, buffer: Buffer, offset: number, length: number, position: number | null
+    ) => number;
+    let calls = 0;
+    const injectedRead = (
+      fd: number, buffer: Buffer, offset: number, length: number, position: number | null
+    ): number => {
+      calls += 1;
+      if (calls === 1) return originalRead(fd, buffer, offset, Math.min(3, length), position);
+      return 0; // Simulated premature EOF after a partial read.
+    };
+    const spy = vi.spyOn(fs, 'readSync').mockImplementation(injectedRead as typeof fs.readSync);
+    try {
+      expect(readIndependentReferenceBytes(root, 'evidence/independent/reference.txt')).toBe(null);
+      expect(calls).toBe(2);
+    } finally {
+      spy.mockRestore();
+    }
+    expect(readIndependentReferenceBytes(root, 'evidence/independent/reference.txt')?.toString())
+      .toBe('Verified reference fixture only\\n');
+  });
+
   it('rejects hardlinked or zero-byte apparent reference evidence', () => {
     const { root, base, file } = setup();
     const alias = path.join(base, 'alias.txt');
