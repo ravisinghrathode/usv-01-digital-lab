@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 
 const root = process.cwd();
 const script = fs.readFileSync(path.join(root, 'scripts/security/docker-image-secret-canary.py'), 'utf8');
@@ -21,6 +22,49 @@ describe('Docker build and runtime secret-leak regression workflow', () => {
     expect(script).toContain('finally:');
     expect(script).toContain('file.unlink(missing_ok=True)');
   });
+  it('rejects synthetic credentials in Docker layer symlink names and targets', () => {
+    const python = `
+import importlib.util, io, json, pathlib, tarfile, tempfile
+script = pathlib.Path("scripts/security/docker-image-secret-canary.py").resolve()
+spec = importlib.util.spec_from_file_location("docker_canary", script)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+token = b"USV01_SYNTHETIC_SECRET_CANARY_TEST"
+for location in ("name", "linkname", "pax"):
+    with tempfile.TemporaryDirectory() as tmp:
+        archive = pathlib.Path(tmp) / "image.tar"
+        layer_bytes = io.BytesIO()
+        with tarfile.open(fileobj=layer_bytes, mode="w") as layer:
+            entry = tarfile.TarInfo("safe")
+            entry.type = tarfile.SYMTYPE
+            entry.linkname = "safe"
+            if location == "name":
+                entry.name = token.decode()
+            elif location == "linkname":
+                entry.linkname = token.decode()
+            else:
+                entry.pax_headers = {"comment": token.decode()}
+            layer.addfile(entry)
+        manifest = [{"RepoTags": list(module.IMAGES), "Layers": ["layer.tar"]}]
+        with tarfile.open(archive, mode="w") as outer:
+            for name, data in (
+                ("manifest.json", json.dumps(manifest).encode()),
+                ("layer.tar", layer_bytes.getvalue()),
+            ):
+                entry = tarfile.TarInfo(name)
+                entry.size = len(data)
+                outer.addfile(entry, io.BytesIO(data))
+        try:
+            module.inspect_image_archive(archive, token)
+        except RuntimeError as error:
+            assert "Docker layer header" in str(error), (location, error)
+        else:
+            raise AssertionError("Undetected credential in " + location)
+`;
+    const result = spawnSync('python3', ['-c', python], { cwd: root, encoding: 'utf8' });
+    expect(result.status, result.stderr || result.stdout).toBe(0);
+  });
+
   it('runs a dedicated GitHub Actions workflow with synthetic fixtures', () => {
     expect(workflow).toContain('pull_request:');
     expect(workflow).toContain('workflow_dispatch:');
