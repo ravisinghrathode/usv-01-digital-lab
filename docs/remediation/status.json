@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "2026-11-22 governance run 44991393870 on prior exact head 3105cda55f3695dd53b35b99275622de06b4bbd3: all executed Stage B steps passed; Stage E Governance Gate Enforcement failed. Four other workflows passed. This ledger commit changes the head and requires fresh exact-head CI; independent end-to-end acceptance, authenticated review and protected merge remain outstanding."
+      "verification": "2026-11-22 exact-head 7ae4de959d465d8f9911089bf692b1b4185c2b39: governance run 44996907969 failed Stage B deterministic tests (1/1242: non-NFC fixture used literal backslash-u rather than combining codepoint). Test fixture corrected at 44d85b5a1e74e088a6d89fef04275e808d019332; latest exact-head CI pending. Stage E authenticated independent approval and E2E acceptance remain mandatory."
     }
   ],
   "constraints": [
