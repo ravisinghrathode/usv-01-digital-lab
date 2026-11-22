@@ -19,7 +19,7 @@
       "id": "PR-03",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/193",
-      "verification": "2026-11-22 exact-head 46dfae1e8e2041828dd33ed08cd5cbd7837ff0a2: workflows 44716720426 success and 44716720508 failure; failing step not reverified in this observation. Production credential bootstrap, backup/restore and approval outstanding."
+      "verification": "2026-11-22 PR #193 exact-head 46dfae1e8e2041828dd33ed08cd5cbd7837ff0a2: Docker image canary workflow 44716720426 succeeded; governance workflow 44716720508 failed (failure stage not independently classified this iteration). Additional Docker layer tar header and symlink credential leak detection implemented on PR #201 head 9b6565af0469536dc422e2bab62159f9fd670fbf with executable regression tests; no exact-head CI runs returned at observation time. Credential bootstrap, backup/restore and independent approval remain outstanding."
     },
     {
       "id": "PR-04",
@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "2026-11-22 exact-head 65e19d9517a4a499486e59703bd5bf1a46261844: governance workflow 45034272779 passed executed technical checks and failed only Stage E Governance Gate Enforcement; four auxiliary workflows 45034272723, 45034272842, 45034272737 and 45034272754 succeeded. Authenticated independent review, physical reference verification, 26-agent end-to-end acceptance and protected merge remain outstanding. This ledger update requires its own exact-head CI recheck."
+      "verification": "2026-11-22 previous exact-head 98fba2d1c3192542876c88ddb400860f5934641e: governance workflow 45039906141 failed at Stage E only; four auxiliary workflows succeeded. Subsequent PR #201 changes include Docker image tar header secret leak detection and executable regression coverage at 9b6565af0469536dc422e2bab62159f9fd670fbf; latest ledger update requires fresh exact-head CI. Authenticated review, physical reference verification, 26-agent end-to-end acceptance and protected merge outstanding."
     }
   ],
   "constraints": [
