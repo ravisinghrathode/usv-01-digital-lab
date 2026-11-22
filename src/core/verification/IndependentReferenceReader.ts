@@ -42,11 +42,15 @@ export function readIndependentReferenceBytes(
     if (!baseBefore.isDirectory()) return null;
     if (realBase !== path.join(realRoot, 'evidence', 'independent')) return null;
     let entry = root;
+    const directoryIdentities: Array<{ pathname: string; dev: number; ino: number }> = [];
     for (const component of components) {
       entry = path.join(entry, component);
       const componentStat = fs.lstatSync(entry);
       if (componentStat.isSymbolicLink()) return null;
-      if (entry !== candidate && !componentStat.isDirectory()) return null;
+      if (entry !== candidate) {
+        if (!componentStat.isDirectory()) return null;
+        directoryIdentities.push({ pathname: entry, dev: componentStat.dev, ino: componentStat.ino });
+      }
     }
     const realFile = fs.realpathSync(candidate);
     if (!realFile.startsWith(realBase + path.sep)) return null;
@@ -83,6 +87,13 @@ export function readIndependentReferenceBytes(
       const baseAfter = fs.lstatSync(acceptedBase);
       if (!baseAfter.isDirectory() || baseAfter.dev !== baseBefore.dev ||
           baseAfter.ino !== baseBefore.ino) return null;
+      // A nested directory can be swapped and restored with a different inode
+      // while the checkout and independent base remain unchanged.
+      for (const directory of directoryIdentities) {
+        const current = fs.lstatSync(directory.pathname);
+        if (!current.isDirectory() || current.dev !== directory.dev ||
+            current.ino !== directory.ino) return null;
+      }
       if (fs.realpathSync(candidate) !== realFile) return null;
       const namedAfter = fs.lstatSync(candidate);
       if (namedAfter.isSymbolicLink() || namedAfter.dev !== st.dev || namedAfter.ino !== st.ino) return null;
