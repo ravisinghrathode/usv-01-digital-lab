@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "USV-REMEDIATION-ITERATION-1",
+  "date": "2026-11-23",
+  "workstream": "PR-03",
+  "integrationPR": 201,
+  "baselineHead": "723e09bd3394b8ed917ee11d98405c5aa360f70c",
+  "implementationCommits": [
+    "1e4c6f9b452b7d44e505cdd32d9fb23e1f42ba4c",
+    "8d5a75e2da60fd0bd5dbd61ee648a54ce7f29238"
+  ],
+  "change": "Reject duplicate normalized Docker-save tar member paths before selecting manifest or referenced layers; add executable duplicate-manifest and duplicate-layer regression fixtures.",
+  "verification": {
+    "exactHead": "8d5a75e2da60fd0bd5dbd61ee648a54ce7f29238",
+    "githubActionsRunsReturned": 0,
+    "technicalResult": "not yet verified on exact head",
+    "previousHead": "723e09bd3394b8ed917ee11d98405c5aa360f70c",
+    "previousHeadDockerCanary": "success",
+    "previousHeadGovernance": "failure; Stage E classification not independently established this iteration"
+  },
+  "blockers": [
+    "Exact-head CI validation",
+    "Authenticated independent Stage E review",
+    "Production credential and recovery acceptance",
+    "Physical reference verification",
+    "Complete 26-agent independent end-to-end acceptance",
+    "Protected PR merges"
+  ],
+  "engineeringCertified": false
+}
