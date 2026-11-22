@@ -8,6 +8,22 @@ const ledger = JSON.parse(fs.readFileSync(
 )) as Record<string, any>;
 
 describe('closed-loop twelve-issue remediation reporting', () => {
+  it('rejects an unexplained PR citation on a not-verified workstream', () => {
+    const cited = structuredClone(ledger);
+    const item = cited.items[6]; // PR-07: no verified implementation
+    item.state = 'not-verified';
+    item.pullRequest = 'https://github.com/ravisinghrathode/usv-01-digital-lab/pull/191';
+    for (const missing of [null, '', '   ']) {
+      item.verification = missing;
+      expect(() => summarizeUnverifiedRemediationLedger(cited))
+        .toThrow('partial item lacks PR or blocker');
+    }
+    item.verification = 'PR cited for investigation only; implementation not verified';
+    const report = summarizeUnverifiedRemediationLedger(cited);
+    expect(report.issues[6].status).toBe('NOT_VERIFIED');
+    expect(report.completeAndIndependentlyVerified).toBe(0);
+  });
+
   it('does not convert successful technical workflows or Stage E holds into independent acceptance', () => {
     const observed = structuredClone(ledger);
     observed.items[11].state = 'partial-implementation-awaiting-review';
