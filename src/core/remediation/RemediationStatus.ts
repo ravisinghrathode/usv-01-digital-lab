@@ -18,8 +18,8 @@ export interface RemediationSummary {
   warning: 'A repository status declaration is not a verified GitHub merge, CI run, independent reviewer signature, or naval engineering release';
 }
 
-// Reject bidirectional formatting controls that can visually reverse approval text.
-const UNSAFE_STATUS_TEXT = /[\x00-\x1f\x7f-\x9f\u00ad\u034f\u061c\u180e\u200b-\u200f\u2028-\u202e\u2060\u2066-\u206f\ufe00-\ufe0f\ufeff\u{e0000}-\u{e007f}\u{e0100}-\u{e01ef}]/u;
+// Reject bidirectional controls, invisible fillers and variation selectors that can disguise provenance text.
+const UNSAFE_STATUS_TEXT = /[\x00-\x1f\x7f-\x9f\u00ad\u034f\u061c\u115f\u1160\u180e\u3164\uffa0\u200b-\u200f\u2028-\u202e\u2060\u2066-\u206f\ufe00-\ufe0f\ufeff\u{e0000}-\u{e007f}\u{e0100}-\u{e01ef}]/u;
 
 // Variation selectors can conceal visually distinct provenance strings while
 // preserving otherwise ordinary text; reject both BMP and supplementary ranges.
