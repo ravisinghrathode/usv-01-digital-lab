@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "USV-REMEDIATION-ITERATION-1",
+  "observedAt": "2026-11-22",
+  "pullRequest": 201,
+  "baseMainSha": "907ab7a418e11ed78a5c635f7b8721a090cca122",
+  "implementation": {
+    "scannerCommit": "a3be6afba23a4b379c07a9c83ce0853d5ca91539",
+    "regressionCommit": "c74dddf0f409ec1e478ee01163c4acaf33f91780",
+    "scope": "Reject synthetic secret bytes in Docker save outer archive tar member names, symlink targets and PAX headers; add executable three-case regression test",
+    "certification": "none"
+  },
+  "exactHeadCI": {
+    "head": "c74dddf0f409ec1e478ee01163c4acaf33f91780",
+    "runsReturnedAtObservation": 0,
+    "result": "unverified"
+  },
+  "priorHeadCI": {
+    "head": "ba893c2ccda810773d849f9474bb307d92f71413",
+    "successfulRuns": [
+      45048662111,
+      45048662114,
+      45048662177,
+      45048662121
+    ],
+    "failedGovernanceRun": 45048662107,
+    "stageEApproval": "not established"
+  },
+  "trackedPRsOpen": [
+    191,
+    193,
+    194,
+    195,
+    196,
+    197,
+    198,
+    199,
+    200,
+    201
+  ],
+  "outstanding": [
+    "Exact-head regression CI",
+    "Authenticated independent Stage E approvals",
+    "Production credential and backup/recovery acceptance",
+    "Independent physical-reference verification",
+    "Full 26-agent end-to-end acceptance",
+    "Protected merges and independently accepted 12-workstream closure"
+  ]
+}
