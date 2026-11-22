@@ -325,7 +325,7 @@ describe('closed-loop twelve-issue remediation reporting', () => {
   });
 
   it('rejects non-NFC evidence text that can disguise visually identical provenance', () => {
-    const decomposed = 'review pending e\\u0301';
+    const decomposed = 'review pending e' + String.fromCharCode(0x0301);
     const note = structuredClone(ledger);
     note.items[0].verification = decomposed;
     expect(() => summarizeUnverifiedRemediationLedger(note))
