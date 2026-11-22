@@ -122,7 +122,7 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
       value.constraints.length > 32 ||
       new Set(value.constraints.filter((entry): entry is string => typeof entry === 'string').map(entry => entry.trim().replace(/\s+/g, ' ').toLocaleLowerCase('en-US'))).size !== value.constraints.length ||
       value.constraints.some(constraint => typeof constraint !== 'string' ||
-        !constraint.trim() || constraint.length > 1000 || (UNSAFE_STATUS_TEXT.test(constraint) || hasUnpairedSurrogate(constraint)))) {
+        !constraint.trim() || constraint.length > 1000 || (UNSAFE_STATUS_TEXT.test(constraint) || hasUnpairedSurrogate(constraint) || constraint.normalize('NFC') !== constraint))) {
     throw new Error('REMEDIATION_LEDGER_INVALID: malformed provenance metadata');
   }
   const itemFields = new Set(['id', 'state', 'pullRequest', 'verification']);
@@ -159,7 +159,7 @@ export function summarizeUnverifiedRemediationLedger(value: unknown): Remediatio
     if (unknownItem.verification !== null &&
         (typeof unknownItem.verification !== 'string' ||
           unknownItem.verification.length > 4000 ||
-          (UNSAFE_STATUS_TEXT.test(unknownItem.verification) || hasUnpairedSurrogate(unknownItem.verification)))) {
+          (UNSAFE_STATUS_TEXT.test(unknownItem.verification) || hasUnpairedSurrogate(unknownItem.verification) || unknownItem.verification.normalize('NFC') !== unknownItem.verification))) {
       throw new Error('REMEDIATION_LEDGER_INVALID: invalid verification note');
     }
     issues.push({
