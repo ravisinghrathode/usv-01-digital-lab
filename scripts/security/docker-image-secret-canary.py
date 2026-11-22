@@ -52,6 +52,13 @@ def inspect_image_archive(archive: Path, token: bytes) -> int:
     scanned_layers = 0
     with tarfile.open(archive, "r:*") as outer:
         members = outer.getmembers()
+        # The docker-save envelope itself can carry secret bytes in tar
+        # names, link targets or extended headers, even without payloads.
+        for item in members:
+            metadata = [item.name, item.linkname]
+            metadata.extend(str(k) + "=" + str(v) for k, v in item.pax_headers.items())
+            if any(token in value.encode("utf-8", "surrogateescape") for value in metadata):
+                raise RuntimeError("Synthetic secret found in Docker archive header")
         manifest_member = next((item for item in members if item.name == "manifest.json"), None)
         if manifest_member is None:
             raise RuntimeError("Docker save archive missing manifest")
