@@ -85,6 +85,16 @@ export function readIndependentReferenceBytes(
         read += consumed;
       }
       const after = fs.fstatSync(fd);
+      // The checkout may have been redirected through a newly installed
+      // symlink in an ancestor while the descriptor was open. Recheck the
+      // entire trust-root ancestry before accepting the read.
+      let finalAncestor = root;
+      while (true) {
+        if (fs.lstatSync(finalAncestor).isSymbolicLink()) return null;
+        const parent = path.dirname(finalAncestor);
+        if (parent === finalAncestor) break;
+        finalAncestor = parent;
+      }
       // Revalidate the pathname after reading to catch parent replacement
       // during the read. This narrows, but cannot eliminate, TOCTOU races.
       // A renamed checkout or swapped evidence parent must not be accepted
