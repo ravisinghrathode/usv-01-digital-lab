@@ -94,6 +94,37 @@ describe('independent engineering reference evidence path isolation', () => {
       .toBe('Verified reference fixture only\n');
   });
 
+  it('rejects an ancestor that becomes a symlink during the descriptor read', () => {
+    const { root } = setup();
+    const ancestor = path.dirname(root);
+    const originalRead = fs.readSync.bind(fs);
+    const originalLstat = fs.lstatSync.bind(fs);
+    let readStarted = false;
+    const readSpy = vi.spyOn(fs, 'readSync').mockImplementation(((...args: Parameters<typeof fs.readSync>) => {
+      const count = (originalRead as (...args: Parameters<typeof fs.readSync>) => number)(...args);
+      readStarted = true;
+      return count;
+    }) as typeof fs.readSync);
+    const statSpy = vi.spyOn(fs, 'lstatSync').mockImplementation(((pathname: fs.PathLike, ...args: unknown[]) => {
+      const stat = (originalLstat as (...args: unknown[]) => fs.Stats)(pathname, ...args);
+      if (readStarted && String(pathname) === ancestor) {
+        return Object.assign(Object.create(Object.getPrototypeOf(stat)), stat, {
+          isSymbolicLink: () => true
+        });
+      }
+      return stat;
+    }) as typeof fs.lstatSync);
+    try {
+      expect(readIndependentReferenceBytes(root, 'evidence/independent/reference.txt')).toBe(null);
+      expect(readStarted).toBe(true);
+    } finally {
+      statSpy.mockRestore();
+      readSpy.mockRestore();
+    }
+    expect(readIndependentReferenceBytes(root, 'evidence/independent/reference.txt')?.toString())
+      .toBe('Verified reference fixture only\\n');
+  });
+
   it('rejects evidence when the trusted checkout is replaced during a read', () => {
     const { root } = setup();
     const moved = root + '-moved';
