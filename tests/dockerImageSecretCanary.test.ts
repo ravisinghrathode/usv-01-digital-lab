@@ -262,6 +262,41 @@ with tempfile.TemporaryDirectory() as tmp:
     expect(result.status, result.stderr || result.stdout).toBe(0);
   });
 
+
+  it('rejects missing, symlinked and unsafe declared Docker image configs', () => {
+    const python = `
+import importlib.util, io, json, pathlib, tarfile, tempfile
+spec = importlib.util.spec_from_file_location("docker_canary", pathlib.Path("scripts/security/docker-image-secret-canary.py").resolve())
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+for config, include, symlink in (("../escape.json", False, False), ("config.json", False, False), ("config.json", True, True)):
+    with tempfile.TemporaryDirectory() as tmp:
+        archive = pathlib.Path(tmp) / "image.tar"
+        record = {"RepoTags": list(module.IMAGES), "Layers": ["layer.tar"], "Config": config}
+        layer = io.BytesIO()
+        with tarfile.open(fileobj=layer, mode="w") as inner:
+            pass
+        with tarfile.open(archive, "w") as outer:
+            for name, data in (("manifest.json", json.dumps([record]).encode()), ("layer.tar", layer.getvalue())):
+                entry = tarfile.TarInfo(name)
+                entry.size = len(data)
+                outer.addfile(entry, io.BytesIO(data))
+            if include:
+                entry = tarfile.TarInfo(config)
+                entry.type = tarfile.SYMTYPE if symlink else tarfile.REGTYPE
+                entry.linkname = "outside" if symlink else ""
+                outer.addfile(entry)
+        try:
+            module.inspect_image_archive(archive, b"TEST_SECRET_TOKEN")
+        except RuntimeError as error:
+            assert "config" in str(error).lower(), (config, error)
+        else:
+            raise AssertionError("Accepted invalid image config " + config)
+`;
+    const result = spawnSync('python3', ['-c', python], { cwd: root, encoding: 'utf8' });
+    expect(result.status, result.stderr || result.stdout).toBe(0);
+  });
+
   it('runs a dedicated GitHub Actions workflow with synthetic fixtures', () => {
     expect(workflow).toContain('pull_request:');
     expect(workflow).toContain('workflow_dispatch:');
