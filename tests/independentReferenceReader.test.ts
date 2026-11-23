@@ -37,6 +37,17 @@ describe('independent engineering reference evidence path isolation', () => {
       .toBe('Verified reference fixture only\n');
   });
 
+  it('rejects oversized or control-character checkout roots before filesystem access', () => {
+    const { root } = setup();
+    const evidence = 'evidence/independent/reference.txt';
+    for (const invalidRoot of [root + '\\0', root + '\\n', root + '\\r', root + '\\t', root + 'x'.repeat(4097)]) {
+      expect(() => readIndependentReferenceBytes(invalidRoot, evidence)).not.toThrow();
+      expect(readIndependentReferenceBytes(invalidRoot, evidence)).toBe(null);
+    }
+    expect(readIndependentReferenceBytes(root, evidence)?.toString())
+      .toBe('Verified reference fixture only\\n');
+  });
+
   it('fails closed for malformed runtime evidence path values', () => {
     const { root } = setup();
     for (const invalidPath of [undefined, null, 0, 42, false, {}, [], '']) {
