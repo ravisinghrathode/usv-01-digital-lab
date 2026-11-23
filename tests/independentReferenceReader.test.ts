@@ -203,6 +203,34 @@ describe('independent engineering reference evidence path isolation', () => {
     }
   });
 
+  it('rejects a final evidence pathname swapped to a symlink during descriptor reading', () => {
+    const { root, base, file } = setup();
+    const replacement = path.join(base, 'replacement.txt');
+    fs.writeFileSync(replacement, 'Untrusted replacement');
+    const moved = file + '-original';
+    const originalRead = fs.readSync.bind(fs) as (
+      fd: number, buffer: Buffer, offset: number, length: number, position: number | null
+    ) => number;
+    let injected = false;
+    const spy = vi.spyOn(fs, 'readSync').mockImplementation(((
+      fd: number, buffer: Buffer, offset: number, length: number, position: number | null
+    ): number => {
+      const count = originalRead(fd, buffer, offset, length, position);
+      if (!injected) {
+        injected = true;
+        fs.renameSync(file, moved);
+        fs.symlinkSync(replacement, file);
+      }
+      return count;
+    }) as typeof fs.readSync);
+    try {
+      expect(readIndependentReferenceBytes(root, 'evidence/independent/reference.txt')).toBe(null);
+      expect(injected).toBe(true);
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
   it('rejects evidence modified in place while a descriptor is being read', () => {
     const { root, file } = setup();
     const originalRead = fs.readSync.bind(fs) as (
