@@ -417,7 +417,7 @@ describe('independent engineering reference evidence path isolation', () => {
         .toBe(null);
     }
     expect(readIndependentReferenceBytes(root, 'evidence/independent/reference.txt')?.toString())
-      .toBe('Verified reference fixture only\\n');
+      .toBe('Verified reference fixture only\n');
   });
 
   it('routes signed engineering review artifact lookups through the safe reader', () => {
