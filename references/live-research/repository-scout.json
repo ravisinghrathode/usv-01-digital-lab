@@ -5,9 +5,9 @@
   "reviewStatus": "UNVERIFIED_REVIEW_REQUIRED",
   "engineeringReleaseApproved": false,
   "softwareAdoptionApproved": false,
-  "runId": "43842744715",
-  "sourceRevision": "db11491392ac991df789874ef987bb88758aec45",
-  "generatedAt": "2026-11-16T09:46:33.311Z",
+  "runId": "45159445697",
+  "sourceRevision": "907ab7a418e11ed78a5c635f7b8721a090cca122",
+  "generatedAt": "2026-11-23T10:48:49.560Z",
   "provider": "GITHUB_PUBLIC_REPOSITORY_SEARCH",
   "completedQueries": 24,
   "plannedQueries": 24,
@@ -40,8 +40,8 @@
         "A24",
         "A26"
       ],
-      "stars": 410,
-      "lastPushedAt": "2026-11-15T12:21:07Z",
+      "stars": 411,
+      "lastPushedAt": "2026-11-22T19:13:06Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -74,7 +74,7 @@
         "A24"
       ],
       "stars": 785,
-      "lastPushedAt": "2026-11-14T14:44:33Z",
+      "lastPushedAt": "2026-11-19T19:40:31Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -159,6 +159,41 @@
       "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
     },
     {
+      "name": "arpitg1304/robotics-agent-skills",
+      "url": "https://github.com/arpitg1304/robotics-agent-skills",
+      "description": "Agent skills that make AI coding assistants write production-grade robotics software. ROS1, ROS2, design patterns, SOLID principles, and testing — for Claude Code, Cursor, Copilot, and any SKILL.md-compatible agent.",
+      "score": 89,
+      "categories": [
+        "autonomy-control",
+        "mission-digital-twin",
+        "verification-safety"
+      ],
+      "agentReviewers": [
+        "A01",
+        "A15",
+        "A16",
+        "A17",
+        "A18",
+        "A19",
+        "A20",
+        "A22",
+        "A23",
+        "A24",
+        "A25",
+        "A26"
+      ],
+      "stars": 406,
+      "lastPushedAt": "2026-11-19T06:02:10Z",
+      "licenseSpdx": "Apache-2.0",
+      "licenseReview": "PERMISSIVE_REVIEW",
+      "flags": [
+        "SECURITY_NOT_AUDITED",
+        "ENGINEERING_VALIDITY_NOT_VERIFIED"
+      ],
+      "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
+      "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
+    },
+    {
       "name": "fkkarakurt/katai2d",
       "url": "https://github.com/fkkarakurt/katai2d",
       "description": "Geotechnical finite element analysis, built in the open.",
@@ -184,7 +219,7 @@
         "A23",
         "A24"
       ],
-      "stars": 6,
+      "stars": 8,
       "lastPushedAt": "2026-11-03T18:18:50Z",
       "licenseSpdx": "Apache-2.0",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -295,7 +330,7 @@
         "A26"
       ],
       "stars": 9,
-      "lastPushedAt": "2026-11-12T09:04:28Z",
+      "lastPushedAt": "2026-11-18T10:56:46Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -326,7 +361,7 @@
         "A21",
         "A24"
       ],
-      "stars": 544,
+      "stars": 549,
       "lastPushedAt": "2026-10-21T09:31:06Z",
       "licenseSpdx": null,
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
@@ -360,7 +395,7 @@
         "A24",
         "A26"
       ],
-      "stars": 652,
+      "stars": 653,
       "lastPushedAt": "2026-10-22T22:08:50Z",
       "licenseSpdx": "BSD-3-Clause",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -431,7 +466,7 @@
         "A18",
         "A24"
       ],
-      "stars": 68,
+      "stars": 69,
       "lastPushedAt": "2026-10-12T17:10:31Z",
       "licenseSpdx": "CC0-1.0",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -466,7 +501,7 @@
         "A25",
         "A26"
       ],
-      "stars": 935,
+      "stars": 937,
       "lastPushedAt": "2026-04-29T14:25:54Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -545,7 +580,7 @@
         "A25",
         "A26"
       ],
-      "stars": 39,
+      "stars": 40,
       "lastPushedAt": "2026-08-31T16:37:47Z",
       "licenseSpdx": "NOASSERTION",
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
@@ -614,7 +649,7 @@
         "A24"
       ],
       "stars": 50,
-      "lastPushedAt": "2026-11-15T11:30:54Z",
+      "lastPushedAt": "2026-11-23T06:24:26Z",
       "licenseSpdx": "GPL-3.0",
       "licenseReview": "COPYLEFT_REVIEW",
       "flags": [
@@ -647,7 +682,7 @@
         "A24"
       ],
       "stars": 14,
-      "lastPushedAt": "2026-11-12T12:51:27Z",
+      "lastPushedAt": "2026-11-19T12:51:55Z",
       "licenseSpdx": "Apache-2.0",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -682,7 +717,7 @@
         "A25",
         "A26"
       ],
-      "stars": 198,
+      "stars": 199,
       "lastPushedAt": "2026-06-05T11:56:55Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -718,7 +753,7 @@
         "A26"
       ],
       "stars": 21,
-      "lastPushedAt": "2026-11-13T01:05:06Z",
+      "lastPushedAt": "2026-11-22T22:04:46Z",
       "licenseSpdx": null,
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
       "flags": [
@@ -771,6 +806,42 @@
       "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
     },
     {
+      "name": "mathworks-robotics/awesome-matlab-robotics",
+      "url": "https://github.com/mathworks-robotics/awesome-matlab-robotics",
+      "description": "This is a list of awesome demos, tutorials, utilities and overall resources for the robotics community that use MATLAB and Simulink.",
+      "score": 78,
+      "categories": [
+        "autonomy-control",
+        "marine-simulation",
+        "mission-digital-twin",
+        "navigation-colregs"
+      ],
+      "agentReviewers": [
+        "A01",
+        "A08",
+        "A16",
+        "A17",
+        "A18",
+        "A19",
+        "A20",
+        "A22",
+        "A24",
+        "A25",
+        "A26"
+      ],
+      "stars": 1889,
+      "lastPushedAt": "2026-10-12T14:40:12Z",
+      "licenseSpdx": "NOASSERTION",
+      "licenseReview": "LICENSE_UNKNOWN_REVIEW",
+      "flags": [
+        "SECURITY_NOT_AUDITED",
+        "ENGINEERING_VALIDITY_NOT_VERIFIED",
+        "LICENSE_UNKNOWN_REVIEW"
+      ],
+      "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
+      "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
+    },
+    {
       "name": "protontypes/open-sustainable-technology",
       "url": "https://github.com/protontypes/open-sustainable-technology",
       "description": "A directory and analysis of the open source ecosystem in the areas of climate change, sustainable energy, biodiversity and natural resources.  https://docs.getgrist.com/doc/gSscJkc5Rb1Rw45gh1o1Yc",
@@ -796,8 +867,8 @@
         "A25",
         "A26"
       ],
-      "stars": 2587,
-      "lastPushedAt": "2026-11-12T08:27:13Z",
+      "stars": 2591,
+      "lastPushedAt": "2026-11-20T14:05:39Z",
       "licenseSpdx": "CC-BY-4.0",
       "licenseReview": "OTHER_LICENSE_REVIEW",
       "flags": [
@@ -871,7 +942,7 @@
         "A25",
         "A26"
       ],
-      "stars": 3923,
+      "stars": 3929,
       "lastPushedAt": "2023-11-20T07:13:29Z",
       "licenseSpdx": "CC0-1.0",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -963,7 +1034,7 @@
         "A22",
         "A24"
       ],
-      "stars": 1081,
+      "stars": 1098,
       "lastPushedAt": "2026-11-15T23:14:04Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -1080,41 +1151,6 @@
       "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
     },
     {
-      "name": "Source-Robotics/Faze4-Robotic-arm",
-      "url": "https://github.com/Source-Robotics/Faze4-Robotic-arm",
-      "description": "Faze4: open-source 3D-printed 6-axis robot arm with cycloidal gearboxes and the wiring inside the arm, the files to build it.",
-      "score": 75,
-      "categories": [
-        "mission-digital-twin",
-        "propulsion-power",
-        "verification-safety"
-      ],
-      "agentReviewers": [
-        "A01",
-        "A11",
-        "A13",
-        "A14",
-        "A15",
-        "A18",
-        "A22",
-        "A23",
-        "A24",
-        "A25",
-        "A26"
-      ],
-      "stars": 923,
-      "lastPushedAt": "2026-11-10T12:22:12Z",
-      "licenseSpdx": "CERN-OHL-S-2.0",
-      "licenseReview": "OTHER_LICENSE_REVIEW",
-      "flags": [
-        "SECURITY_NOT_AUDITED",
-        "ENGINEERING_VALIDITY_NOT_VERIFIED",
-        "OTHER_LICENSE_REVIEW"
-      ],
-      "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
-      "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
-    },
-    {
       "name": "aixuexisun/pyfoamsetup",
       "url": "https://github.com/aixuexisun/pyfoamsetup",
       "description": "A python library for setting up CFD simulations with OpenFOAM, with special focus on marine applications.",
@@ -1166,7 +1202,7 @@
         "A24"
       ],
       "stars": 42,
-      "lastPushedAt": "2026-11-16T07:45:11Z",
+      "lastPushedAt": "2026-11-23T08:18:06Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -1226,46 +1262,14 @@
         "A25",
         "A26"
       ],
-      "stars": 1507,
-      "lastPushedAt": "2026-11-11T19:19:51Z",
+      "stars": 1509,
+      "lastPushedAt": "2026-11-19T07:54:53Z",
       "licenseSpdx": "CC-BY-SA-4.0",
       "licenseReview": "OTHER_LICENSE_REVIEW",
       "flags": [
         "SECURITY_NOT_AUDITED",
         "ENGINEERING_VALIDITY_NOT_VERIFIED",
         "OTHER_LICENSE_REVIEW"
-      ],
-      "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
-      "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
-    },
-    {
-      "name": "mathworks-robotics/awesome-matlab-robotics",
-      "url": "https://github.com/mathworks-robotics/awesome-matlab-robotics",
-      "description": "This is a list of awesome demos, tutorials, utilities and overall resources for the robotics community that use MATLAB and Simulink.",
-      "score": 74,
-      "categories": [
-        "marine-simulation",
-        "mission-digital-twin",
-        "navigation-colregs"
-      ],
-      "agentReviewers": [
-        "A01",
-        "A08",
-        "A17",
-        "A18",
-        "A22",
-        "A24",
-        "A25",
-        "A26"
-      ],
-      "stars": 1753,
-      "lastPushedAt": "2026-10-12T14:40:12Z",
-      "licenseSpdx": "NOASSERTION",
-      "licenseReview": "LICENSE_UNKNOWN_REVIEW",
-      "flags": [
-        "SECURITY_NOT_AUDITED",
-        "ENGINEERING_VALIDITY_NOT_VERIFIED",
-        "LICENSE_UNKNOWN_REVIEW"
       ],
       "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
       "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
@@ -1367,7 +1371,7 @@
         "A25",
         "A26"
       ],
-      "stars": 1185,
+      "stars": 1186,
       "lastPushedAt": "2026-10-29T05:13:59Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -1396,7 +1400,7 @@
         "A23",
         "A24"
       ],
-      "stars": 1511,
+      "stars": 1516,
       "lastPushedAt": "2026-08-16T10:59:49Z",
       "licenseSpdx": "Apache-2.0",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -1426,7 +1430,7 @@
         "A25",
         "A26"
       ],
-      "stars": 4505,
+      "stars": 4503,
       "lastPushedAt": "2026-10-29T04:41:10Z",
       "licenseSpdx": "BSD-3-Clause",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -1457,46 +1461,13 @@
         "A22",
         "A24"
       ],
-      "stars": 32,
+      "stars": 31,
       "lastPushedAt": "2025-08-01T09:53:09Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
         "SECURITY_NOT_AUDITED",
         "ENGINEERING_VALIDITY_NOT_VERIFIED"
-      ],
-      "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
-      "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
-    },
-    {
-      "name": "2600th/web-ocean-3d",
-      "url": "https://github.com/2600th/web-ocean-3d",
-      "description": "A real-time spectral ocean and tropical island in Three.js, WebGPU and TSL: FFT waves, water optics, shore break, foam, caustics, buoyancy, wakes, underwater transitions and a volumetric sky, with a WebGL2 fallback.",
-      "score": 71,
-      "categories": [
-        "cfd-resistance",
-        "marine-simulation",
-        "structures-materials"
-      ],
-      "agentReviewers": [
-        "A07",
-        "A08",
-        "A10",
-        "A11",
-        "A12",
-        "A13",
-        "A17",
-        "A18",
-        "A24"
-      ],
-      "stars": 54,
-      "lastPushedAt": "2026-11-15T10:11:11Z",
-      "licenseSpdx": "NOASSERTION",
-      "licenseReview": "LICENSE_UNKNOWN_REVIEW",
-      "flags": [
-        "SECURITY_NOT_AUDITED",
-        "ENGINEERING_VALIDITY_NOT_VERIFIED",
-        "LICENSE_UNKNOWN_REVIEW"
       ],
       "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
       "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
@@ -1518,8 +1489,8 @@
         "A12",
         "A13"
       ],
-      "stars": 390,
-      "lastPushedAt": "2026-11-15T21:34:22Z",
+      "stars": 391,
+      "lastPushedAt": "2026-11-22T13:53:38Z",
       "licenseSpdx": "Unlicense",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -1553,7 +1524,7 @@
         "A25",
         "A26"
       ],
-      "stars": 35,
+      "stars": 34,
       "lastPushedAt": "2022-12-07T20:57:53Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -1584,8 +1555,8 @@
         "A25",
         "A26"
       ],
-      "stars": 26409,
-      "lastPushedAt": "2026-11-16T06:01:10Z",
+      "stars": 27190,
+      "lastPushedAt": "2026-11-23T04:13:22Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -1619,7 +1590,7 @@
         "A25",
         "A26"
       ],
-      "stars": 37,
+      "stars": 38,
       "lastPushedAt": "2022-05-19T14:49:53Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -1627,38 +1598,6 @@
         "SECURITY_NOT_AUDITED",
         "ENGINEERING_VALIDITY_NOT_VERIFIED",
         "STALE_OVER_TWO_YEARS"
-      ],
-      "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
-      "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
-    },
-    {
-      "name": "uhub/awesome-matlab",
-      "url": "https://github.com/uhub/awesome-matlab",
-      "description": "A curated list of awesome MATLAB frameworks, libraries and software.",
-      "score": 70,
-      "categories": [
-        "marine-iot",
-        "propulsion-power",
-        "structures-materials"
-      ],
-      "agentReviewers": [
-        "A10",
-        "A11",
-        "A12",
-        "A13",
-        "A14",
-        "A19",
-        "A20",
-        "A21"
-      ],
-      "stars": 1766,
-      "lastPushedAt": "2026-10-24T12:14:10Z",
-      "licenseSpdx": null,
-      "licenseReview": "LICENSE_UNKNOWN_REVIEW",
-      "flags": [
-        "SECURITY_NOT_AUDITED",
-        "ENGINEERING_VALIDITY_NOT_VERIFIED",
-        "LICENSE_UNKNOWN_REVIEW"
       ],
       "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
       "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
@@ -1679,7 +1618,7 @@
         "A25",
         "A26"
       ],
-      "stars": 1920,
+      "stars": 1921,
       "lastPushedAt": "2026-03-30T01:34:37Z",
       "licenseSpdx": "BSD-3-Clause",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -1774,8 +1713,8 @@
         "A25",
         "A26"
       ],
-      "stars": 121,
-      "lastPushedAt": "2026-11-15T18:28:12Z",
+      "stars": 123,
+      "lastPushedAt": "2026-11-22T21:54:24Z",
       "licenseSpdx": "Apache-2.0",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -1899,7 +1838,7 @@
         "A25",
         "A26"
       ],
-      "stars": 2270,
+      "stars": 2280,
       "lastPushedAt": "2026-11-09T16:11:44Z",
       "licenseSpdx": "NOASSERTION",
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
@@ -1930,8 +1869,8 @@
         "A25",
         "A26"
       ],
-      "stars": 9259,
-      "lastPushedAt": "2026-11-16T08:34:43Z",
+      "stars": 9298,
+      "lastPushedAt": "2026-11-23T08:31:47Z",
       "licenseSpdx": "GPL-3.0",
       "licenseReview": "COPYLEFT_REVIEW",
       "flags": [
@@ -1992,7 +1931,7 @@
         "A23",
         "A24"
       ],
-      "stars": 40,
+      "stars": 41,
       "lastPushedAt": "2026-03-26T23:25:33Z",
       "licenseSpdx": "CC0-1.0",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -2077,8 +2016,8 @@
         "A20",
         "A21"
       ],
-      "stars": 203,
-      "lastPushedAt": "2026-11-14T12:12:34Z",
+      "stars": 205,
+      "lastPushedAt": "2026-11-19T11:53:52Z",
       "licenseSpdx": "NOASSERTION",
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
       "flags": [
@@ -2151,7 +2090,7 @@
         "A26"
       ],
       "stars": 1,
-      "lastPushedAt": "2026-11-12T00:43:39Z",
+      "lastPushedAt": "2026-11-19T16:07:40Z",
       "licenseSpdx": null,
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
       "flags": [
@@ -2181,7 +2120,7 @@
         "A24"
       ],
       "stars": 7,
-      "lastPushedAt": "2026-11-15T16:30:09Z",
+      "lastPushedAt": "2026-11-22T09:23:15Z",
       "licenseSpdx": "CC-BY-SA-4.0",
       "licenseReview": "OTHER_LICENSE_REVIEW",
       "flags": [
@@ -2193,30 +2132,61 @@
       "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
     },
     {
-      "name": "hookprobe/naval-ai",
-      "url": "https://github.com/hookprobe/naval-ai",
-      "description": "Naval-AI is an open-source AI-driven naval design platform. Generate parametric hulls, run physics-based CFD, evaluate stability and performance, and evolve optimized vessels with AI—from sustainable leisure boats to autonomous maritime drones. #drone #maritime #boats #cfd #solarBoat #kiteBoat #diyBoat #navalAI #freeBoatDesign #boatDesign #boatPla",
+      "name": "H-mmer/pentest-agents",
+      "url": "https://github.com/H-mmer/pentest-agents",
+      "description": "Bug bounty agent framework for Claude Code, Codex, Gemini, Cursor, Windsurf, Copilot, and OpenClaw — 48 agents, 26 commands, 19 CLI tools, 2 MCP servers, autonomous hunt loops, exploit chain builder.",
       "score": 59,
       "categories": [
-        "cfd-resistance",
-        "hull-design"
+        "usv-platforms",
+        "verification-safety"
       ],
       "agentReviewers": [
-        "A05",
-        "A06",
-        "A07",
-        "A08",
-        "A09",
-        "A13"
+        "A01",
+        "A03",
+        "A15",
+        "A18",
+        "A22",
+        "A23",
+        "A24",
+        "A26"
       ],
-      "stars": 3,
-      "lastPushedAt": "2026-09-04T13:32:03Z",
-      "licenseSpdx": "AGPL-3.0",
-      "licenseReview": "COPYLEFT_REVIEW",
+      "stars": 1326,
+      "lastPushedAt": "2026-06-12T08:59:58Z",
+      "licenseSpdx": null,
+      "licenseReview": "LICENSE_UNKNOWN_REVIEW",
       "flags": [
         "SECURITY_NOT_AUDITED",
         "ENGINEERING_VALIDITY_NOT_VERIFIED",
-        "COPYLEFT_REVIEW"
+        "LICENSE_UNKNOWN_REVIEW"
+      ],
+      "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
+      "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
+    },
+    {
+      "name": "uhub/awesome-matlab",
+      "url": "https://github.com/uhub/awesome-matlab",
+      "description": "A curated list of awesome MATLAB frameworks, libraries and software.",
+      "score": 59,
+      "categories": [
+        "marine-iot",
+        "propulsion-power"
+      ],
+      "agentReviewers": [
+        "A11",
+        "A13",
+        "A14",
+        "A19",
+        "A20",
+        "A21"
+      ],
+      "stars": 1771,
+      "lastPushedAt": "2026-10-24T12:14:10Z",
+      "licenseSpdx": null,
+      "licenseReview": "LICENSE_UNKNOWN_REVIEW",
+      "flags": [
+        "SECURITY_NOT_AUDITED",
+        "ENGINEERING_VALIDITY_NOT_VERIFIED",
+        "LICENSE_UNKNOWN_REVIEW"
       ],
       "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
       "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
@@ -2262,8 +2232,8 @@
         "A11",
         "A12"
       ],
-      "stars": 7534,
-      "lastPushedAt": "2026-11-14T06:49:36Z",
+      "stars": 7539,
+      "lastPushedAt": "2026-11-22T17:14:36Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -2286,8 +2256,33 @@
         "A11",
         "A12"
       ],
-      "stars": 1079,
+      "stars": 1086,
       "lastPushedAt": "2026-10-18T19:44:29Z",
+      "licenseSpdx": "MIT",
+      "licenseReview": "PERMISSIVE_REVIEW",
+      "flags": [
+        "SECURITY_NOT_AUDITED",
+        "ENGINEERING_VALIDITY_NOT_VERIFIED"
+      ],
+      "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
+      "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
+    },
+    {
+      "name": "marmelo/tech-companies-in-portugal",
+      "url": "https://github.com/marmelo/tech-companies-in-portugal",
+      "description": ":portugal: List of technology companies in Portugal.",
+      "score": 57,
+      "categories": [
+        "mission-digital-twin"
+      ],
+      "agentReviewers": [
+        "A01",
+        "A18",
+        "A25",
+        "A26"
+      ],
+      "stars": 1531,
+      "lastPushedAt": "2026-11-20T00:34:17Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -2381,9 +2376,34 @@
         "A23",
         "A24"
       ],
-      "stars": 104417,
-      "lastPushedAt": "2026-11-16T06:24:21Z",
+      "stars": 104896,
+      "lastPushedAt": "2026-11-23T06:23:09Z",
       "licenseSpdx": "MIT",
+      "licenseReview": "PERMISSIVE_REVIEW",
+      "flags": [
+        "SECURITY_NOT_AUDITED",
+        "ENGINEERING_VALIDITY_NOT_VERIFIED"
+      ],
+      "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
+      "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
+    },
+    {
+      "name": "sacridini/Awesome-Geospatial",
+      "url": "https://github.com/sacridini/Awesome-Geospatial",
+      "description": "Long list of geospatial tools and resources",
+      "score": 57,
+      "categories": [
+        "mission-digital-twin"
+      ],
+      "agentReviewers": [
+        "A01",
+        "A18",
+        "A25",
+        "A26"
+      ],
+      "stars": 5387,
+      "lastPushedAt": "2026-11-18T20:03:15Z",
+      "licenseSpdx": "CC0-1.0",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
         "SECURITY_NOT_AUDITED",
@@ -2405,8 +2425,8 @@
         "A16",
         "A21"
       ],
-      "stars": 10301,
-      "lastPushedAt": "2026-11-07T14:51:35Z",
+      "stars": 10312,
+      "lastPushedAt": "2026-11-21T15:12:45Z",
       "licenseSpdx": "Apache-2.0",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -2431,8 +2451,8 @@
         "A23",
         "A24"
       ],
-      "stars": 9188,
-      "lastPushedAt": "2026-11-16T09:09:49Z",
+      "stars": 9196,
+      "lastPushedAt": "2026-11-23T09:16:03Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -2509,6 +2529,35 @@
       "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
     },
     {
+      "name": "pdrakeweb/even-keel",
+      "url": "https://github.com/pdrakeweb/even-keel",
+      "description": "Boat monitoring",
+      "score": 55,
+      "categories": [
+        "marine-iot",
+        "marine-simulation"
+      ],
+      "agentReviewers": [
+        "A08",
+        "A17",
+        "A18",
+        "A19",
+        "A20",
+        "A21",
+        "A24"
+      ],
+      "stars": 1,
+      "lastPushedAt": "2026-04-30T16:48:05Z",
+      "licenseSpdx": "Apache-2.0",
+      "licenseReview": "PERMISSIVE_REVIEW",
+      "flags": [
+        "SECURITY_NOT_AUDITED",
+        "ENGINEERING_VALIDITY_NOT_VERIFIED"
+      ],
+      "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
+      "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
+    },
+    {
       "name": "aalavandhaann/blueprint-js",
       "url": "https://github.com/aalavandhaann/blueprint-js",
       "description": "The Javascript es6 version of the original furnishup/blueprint3d. Need some royalty free low poly models for the inventory. Can someone help me with this?",
@@ -2521,7 +2570,7 @@
         "A06",
         "A09"
       ],
-      "stars": 592,
+      "stars": 591,
       "lastPushedAt": "2026-11-11T02:40:56Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -2560,30 +2609,6 @@
       "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
     },
     {
-      "name": "Ashutosh0x/rust-finance",
-      "url": "https://github.com/Ashutosh0x/rust-finance",
-      "description": "A high-performance, ultra low-latency trading terminal and AI-infused daemon built completely in Rust.",
-      "score": 54,
-      "categories": [
-        "structures-materials"
-      ],
-      "agentReviewers": [
-        "A10",
-        "A11",
-        "A12"
-      ],
-      "stars": 422,
-      "lastPushedAt": "2026-08-21T10:05:01Z",
-      "licenseSpdx": "MIT",
-      "licenseReview": "PERMISSIVE_REVIEW",
-      "flags": [
-        "SECURITY_NOT_AUDITED",
-        "ENGINEERING_VALIDITY_NOT_VERIFIED"
-      ],
-      "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
-      "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
-    },
-    {
       "name": "aws/nova-act",
       "url": "https://github.com/aws/nova-act",
       "description": "Amazon Nova Act is an AWS service for building and deploying highly reliable AI agents that automate UI-based workflows at scale.",
@@ -2598,7 +2623,7 @@
         "A20"
       ],
       "stars": 920,
-      "lastPushedAt": "2026-11-10T19:13:33Z",
+      "lastPushedAt": "2026-11-19T19:33:20Z",
       "licenseSpdx": "Apache-2.0",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -2621,8 +2646,8 @@
         "A16",
         "A21"
       ],
-      "stars": 144,
-      "lastPushedAt": "2026-11-10T02:37:40Z",
+      "stars": 143,
+      "lastPushedAt": "2026-11-21T20:31:52Z",
       "licenseSpdx": "Apache-2.0",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -2670,8 +2695,8 @@
         "A06",
         "A09"
       ],
-      "stars": 3737,
-      "lastPushedAt": "2026-11-16T01:20:31Z",
+      "stars": 3825,
+      "lastPushedAt": "2026-11-23T00:37:31Z",
       "licenseSpdx": "Apache-2.0",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -2697,7 +2722,7 @@
         "A24"
       ],
       "stars": 66,
-      "lastPushedAt": "2026-11-01T03:35:00Z",
+      "lastPushedAt": "2026-11-21T15:59:48Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -2721,7 +2746,7 @@
         "A21"
       ],
       "stars": 79,
-      "lastPushedAt": "2026-11-15T01:01:09Z",
+      "lastPushedAt": "2026-11-22T01:03:45Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -2744,7 +2769,7 @@
         "A08",
         "A13"
       ],
-      "stars": 248,
+      "stars": 256,
       "lastPushedAt": "2026-10-02T16:05:56Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -2769,7 +2794,7 @@
         "A12"
       ],
       "stars": 395,
-      "lastPushedAt": "2026-10-28T11:45:22Z",
+      "lastPushedAt": "2026-11-23T08:16:30Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -2793,7 +2818,7 @@
         "A19",
         "A20"
       ],
-      "stars": 110,
+      "stars": 111,
       "lastPushedAt": "2026-10-27T10:54:57Z",
       "licenseSpdx": "Apache-2.0",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -2817,7 +2842,7 @@
         "A13",
         "A14"
       ],
-      "stars": 3401,
+      "stars": 3408,
       "lastPushedAt": "2026-07-22T09:18:26Z",
       "licenseSpdx": "Apache-2.0",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -3062,7 +3087,7 @@
         "A03",
         "A26"
       ],
-      "stars": 472,
+      "stars": 474,
       "lastPushedAt": "2026-08-26T16:15:53Z",
       "licenseSpdx": "Apache-2.0",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -3076,7 +3101,7 @@
     {
       "name": "bilawalsidhu/gods-eye-view",
       "url": "https://github.com/bilawalsidhu/gods-eye-view",
-      "description": "A spy satellite simulator in your browser, except the data is real. Live open source spatial intelligence on a photorealistic 3D globe.",
+      "description": "God's Eye View: a spy satellite simulator in your browser, except the data is real. Live open source spatial intelligence on a photorealistic 3D globe. Official site: godseyeview.ai",
       "score": 51,
       "categories": [
         "marine-simulation"
@@ -3087,8 +3112,8 @@
         "A18",
         "A24"
       ],
-      "stars": 65203,
-      "lastPushedAt": "2026-11-16T08:46:53Z",
+      "stars": 66432,
+      "lastPushedAt": "2026-11-23T03:13:48Z",
       "licenseSpdx": "NOASSERTION",
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
       "flags": [
@@ -3130,36 +3155,6 @@
       "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
     },
     {
-      "name": "FishPi/FishPi-POCV---Command---Control",
-      "url": "https://github.com/FishPi/FishPi-POCV---Command---Control",
-      "description": "FishPi: An autonomous drop In the Ocean.",
-      "score": 51,
-      "categories": [
-        "autonomy-control",
-        "usv-platforms"
-      ],
-      "agentReviewers": [
-        "A01",
-        "A03",
-        "A16",
-        "A17",
-        "A19",
-        "A20",
-        "A26"
-      ],
-      "stars": 33,
-      "lastPushedAt": "2014-06-12T17:05:54Z",
-      "licenseSpdx": "BSD-2-Clause",
-      "licenseReview": "PERMISSIVE_REVIEW",
-      "flags": [
-        "SECURITY_NOT_AUDITED",
-        "ENGINEERING_VALIDITY_NOT_VERIFIED",
-        "STALE_OVER_TWO_YEARS"
-      ],
-      "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
-      "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
-    },
-    {
       "name": "Abhinavbwj/Claude-skills-for-Computational-Designers",
       "url": "https://github.com/Abhinavbwj/Claude-skills-for-Computational-Designers",
       "description": "Claude skills for Computational Designers",
@@ -3172,7 +3167,7 @@
         "A06",
         "A09"
       ],
-      "stars": 228,
+      "stars": 237,
       "lastPushedAt": "2026-03-26T05:27:16Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -3196,14 +3191,38 @@
         "A11",
         "A12"
       ],
-      "stars": 3490,
-      "lastPushedAt": "2026-11-15T08:10:31Z",
+      "stars": 3520,
+      "lastPushedAt": "2026-11-17T19:48:55Z",
       "licenseSpdx": "GPL-3.0",
       "licenseReview": "COPYLEFT_REVIEW",
       "flags": [
         "SECURITY_NOT_AUDITED",
         "ENGINEERING_VALIDITY_NOT_VERIFIED",
         "COPYLEFT_REVIEW"
+      ],
+      "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
+      "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
+    },
+    {
+      "name": "Ashutosh0x/rust-finance",
+      "url": "https://github.com/Ashutosh0x/rust-finance",
+      "description": "A high-performance, ultra low-latency trading terminal and AI-infused daemon built completely in Rust.",
+      "score": 50,
+      "categories": [
+        "structures-materials"
+      ],
+      "agentReviewers": [
+        "A10",
+        "A11",
+        "A12"
+      ],
+      "stars": 423,
+      "lastPushedAt": "2026-08-21T10:05:01Z",
+      "licenseSpdx": "MIT",
+      "licenseReview": "PERMISSIVE_REVIEW",
+      "flags": [
+        "SECURITY_NOT_AUDITED",
+        "ENGINEERING_VALIDITY_NOT_VERIFIED"
       ],
       "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
       "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
@@ -3247,7 +3266,7 @@
         "A25",
         "A26"
       ],
-      "stars": 895,
+      "stars": 897,
       "lastPushedAt": "2026-07-09T02:14:59Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -3271,7 +3290,7 @@
         "A11",
         "A12"
       ],
-      "stars": 61,
+      "stars": 67,
       "lastPushedAt": "2026-11-08T20:03:07Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -3296,7 +3315,7 @@
         "A21"
       ],
       "stars": 14,
-      "lastPushedAt": "2026-11-13T22:28:50Z",
+      "lastPushedAt": "2026-11-17T16:45:45Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -3319,7 +3338,7 @@
         "A16",
         "A21"
       ],
-      "stars": 822,
+      "stars": 779,
       "lastPushedAt": "2026-06-13T06:29:56Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -3368,8 +3387,8 @@
         "A25",
         "A26"
       ],
-      "stars": 114,
-      "lastPushedAt": "2026-11-13T23:42:02Z",
+      "stars": 115,
+      "lastPushedAt": "2026-11-20T23:36:03Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -3392,7 +3411,7 @@
         "A13",
         "A14"
       ],
-      "stars": 478,
+      "stars": 479,
       "lastPushedAt": "2026-03-13T09:14:23Z",
       "licenseSpdx": "CC0-1.0",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -3440,9 +3459,34 @@
         "A13",
         "A14"
       ],
-      "stars": 44,
-      "lastPushedAt": "2026-11-11T23:18:23Z",
+      "stars": 45,
+      "lastPushedAt": "2026-11-19T22:26:19Z",
       "licenseSpdx": "MIT",
+      "licenseReview": "PERMISSIVE_REVIEW",
+      "flags": [
+        "SECURITY_NOT_AUDITED",
+        "ENGINEERING_VALIDITY_NOT_VERIFIED"
+      ],
+      "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
+      "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
+    },
+    {
+      "name": "Peco602/awesome-space-security",
+      "url": "https://github.com/Peco602/awesome-space-security",
+      "description": "A curated list of awesome resources about the security of space systems.",
+      "score": 50,
+      "categories": [
+        "mission-digital-twin"
+      ],
+      "agentReviewers": [
+        "A01",
+        "A18",
+        "A25",
+        "A26"
+      ],
+      "stars": 92,
+      "lastPushedAt": "2026-11-18T07:16:31Z",
+      "licenseSpdx": "CC0-1.0",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
         "SECURITY_NOT_AUDITED",
@@ -3465,7 +3509,7 @@
         "A14"
       ],
       "stars": 5,
-      "lastPushedAt": "2026-11-15T22:59:12Z",
+      "lastPushedAt": "2026-11-21T17:19:57Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -3512,7 +3556,7 @@
         "A11",
         "A12"
       ],
-      "stars": 86,
+      "stars": 88,
       "lastPushedAt": "2026-09-05T02:11:09Z",
       "licenseSpdx": "Apache-2.0",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -3536,7 +3580,7 @@
         "A16",
         "A21"
       ],
-      "stars": 611,
+      "stars": 610,
       "lastPushedAt": "2025-01-18T15:15:58Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -3660,7 +3704,7 @@
         "A03",
         "A26"
       ],
-      "stars": 6026,
+      "stars": 6065,
       "lastPushedAt": "2026-10-27T14:12:42Z",
       "licenseSpdx": "NOASSERTION",
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
@@ -3716,7 +3760,7 @@
         "A11",
         "A12"
       ],
-      "stars": 72,
+      "stars": 73,
       "lastPushedAt": "2026-11-12T06:32:12Z",
       "licenseSpdx": "MPL-2.0",
       "licenseReview": "COPYLEFT_REVIEW",
@@ -3743,7 +3787,7 @@
         "A24"
       ],
       "stars": 57,
-      "lastPushedAt": "2026-11-13T21:35:46Z",
+      "lastPushedAt": "2026-11-17T06:24:55Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -3766,14 +3810,39 @@
         "A11",
         "A12"
       ],
-      "stars": 8396,
-      "lastPushedAt": "2026-10-20T04:13:53Z",
+      "stars": 8422,
+      "lastPushedAt": "2026-11-22T15:15:55Z",
       "licenseSpdx": null,
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
       "flags": [
         "SECURITY_NOT_AUDITED",
         "ENGINEERING_VALIDITY_NOT_VERIFIED",
         "LICENSE_UNKNOWN_REVIEW"
+      ],
+      "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
+      "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
+    },
+    {
+      "name": "havan/SeaCraft",
+      "url": "https://github.com/havan/SeaCraft",
+      "description": "Hull modelling, hydrostatics and stability in Rust, compatible with FREE!ship .fef files",
+      "score": 47,
+      "categories": [
+        "hull-design"
+      ],
+      "agentReviewers": [
+        "A05",
+        "A06",
+        "A09"
+      ],
+      "stars": 2,
+      "lastPushedAt": "2026-11-22T09:02:48Z",
+      "licenseSpdx": "GPL-3.0",
+      "licenseReview": "COPYLEFT_REVIEW",
+      "flags": [
+        "SECURITY_NOT_AUDITED",
+        "ENGINEERING_VALIDITY_NOT_VERIFIED",
+        "COPYLEFT_REVIEW"
       ],
       "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
       "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
@@ -3791,7 +3860,7 @@
         "A03",
         "A26"
       ],
-      "stars": 768,
+      "stars": 770,
       "lastPushedAt": "2026-08-02T18:49:12Z",
       "licenseSpdx": "Apache-2.0",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -3816,7 +3885,7 @@
         "A13"
       ],
       "stars": 33,
-      "lastPushedAt": "2026-11-16T02:57:44Z",
+      "lastPushedAt": "2026-11-17T20:50:17Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -3839,8 +3908,8 @@
         "A16",
         "A21"
       ],
-      "stars": 1223,
-      "lastPushedAt": "2026-11-07T14:05:35Z",
+      "stars": 1227,
+      "lastPushedAt": "2026-11-22T17:11:55Z",
       "licenseSpdx": null,
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
       "flags": [
@@ -3866,8 +3935,8 @@
         "A23",
         "A24"
       ],
-      "stars": 4722,
-      "lastPushedAt": "2026-11-16T06:40:04Z",
+      "stars": 4811,
+      "lastPushedAt": "2026-11-23T09:42:53Z",
       "licenseSpdx": "CERN-OHL-W-2.0",
       "licenseReview": "OTHER_LICENSE_REVIEW",
       "flags": [
@@ -3893,8 +3962,8 @@
         "A23",
         "A24"
       ],
-      "stars": 1728,
-      "lastPushedAt": "2026-09-07T03:35:04Z",
+      "stars": 1738,
+      "lastPushedAt": "2026-11-17T09:08:28Z",
       "licenseSpdx": "NOASSERTION",
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
       "flags": [
@@ -3918,7 +3987,7 @@
         "A20",
         "A21"
       ],
-      "stars": 3686,
+      "stars": 3683,
       "lastPushedAt": "2026-10-23T07:57:21Z",
       "licenseSpdx": null,
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
@@ -3933,7 +4002,7 @@
     {
       "name": "Daisuke134/anicca",
       "url": "https://github.com/Daisuke134/anicca",
-      "description": "A no-human-in-the-loop money printer for your Mac: AI agents build and run businesses with your ChatGPT subscription.",
+      "description": "Anicca is a behavior intervention company: Manager, our behavior AI, plus meditation and comedy products that end suffering. Built and run by AI agents in the cloud.",
       "score": 46,
       "categories": [
         "verification-safety"
@@ -3946,7 +4015,7 @@
         "A24"
       ],
       "stars": 8,
-      "lastPushedAt": "2026-11-16T09:22:45Z",
+      "lastPushedAt": "2026-11-23T10:36:04Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -3971,31 +4040,6 @@
       ],
       "stars": 1,
       "lastPushedAt": "2026-08-28T09:50:36Z",
-      "licenseSpdx": "MIT",
-      "licenseReview": "PERMISSIVE_REVIEW",
-      "flags": [
-        "SECURITY_NOT_AUDITED",
-        "ENGINEERING_VALIDITY_NOT_VERIFIED"
-      ],
-      "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
-      "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
-    },
-    {
-      "name": "embeddedos-org/eCAD-Hardware-Products",
-      "url": "https://github.com/embeddedos-org/eCAD-Hardware-Products",
-      "description": "Hardware designs + EE docs + Board datasheets of Multiple products ",
-      "score": 46,
-      "categories": [
-        "mission-digital-twin"
-      ],
-      "agentReviewers": [
-        "A01",
-        "A18",
-        "A25",
-        "A26"
-      ],
-      "stars": 8,
-      "lastPushedAt": "2026-11-16T09:19:28Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -4093,7 +4137,7 @@
         "A06",
         "A09"
       ],
-      "stars": 54,
+      "stars": 56,
       "lastPushedAt": "2026-06-29T17:51:45Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -4118,7 +4162,7 @@
         "A13"
       ],
       "stars": 18,
-      "lastPushedAt": "2026-11-16T08:37:04Z",
+      "lastPushedAt": "2026-11-23T10:23:49Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -4146,7 +4190,7 @@
         "A25",
         "A26"
       ],
-      "stars": 609,
+      "stars": 610,
       "lastPushedAt": "2024-01-04T22:47:02Z",
       "licenseSpdx": null,
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
@@ -4191,8 +4235,8 @@
       "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
     },
     {
-      "name": "ITUAV/UNDROIP",
-      "url": "https://github.com/ITUAV/UNDROIP",
+      "name": "ITUAV/undroip",
+      "url": "https://github.com/ITUAV/undroip",
       "description": "Underwater Image Processing Toolbox",
       "score": 44,
       "categories": [
@@ -4234,8 +4278,8 @@
         "A13",
         "A14"
       ],
-      "stars": 641,
-      "lastPushedAt": "2026-11-14T17:41:22Z",
+      "stars": 644,
+      "lastPushedAt": "2026-11-21T12:23:29Z",
       "licenseSpdx": "NOASSERTION",
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
       "flags": [
@@ -4290,8 +4334,8 @@
         "A25",
         "A26"
       ],
-      "stars": 928,
-      "lastPushedAt": "2026-11-16T04:54:27Z",
+      "stars": 930,
+      "lastPushedAt": "2026-11-22T23:47:31Z",
       "licenseSpdx": "NOASSERTION",
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
       "flags": [
@@ -4315,7 +4359,7 @@
         "A08",
         "A13"
       ],
-      "stars": 129,
+      "stars": 131,
       "lastPushedAt": "2026-01-18T12:04:28Z",
       "licenseSpdx": "NOASSERTION",
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
@@ -4395,7 +4439,7 @@
         "A06",
         "A09"
       ],
-      "stars": 123,
+      "stars": 124,
       "lastPushedAt": "2026-10-28T12:39:56Z",
       "licenseSpdx": "GPL-3.0",
       "licenseReview": "COPYLEFT_REVIEW",
@@ -4421,7 +4465,7 @@
         "A14"
       ],
       "stars": 5,
-      "lastPushedAt": "2026-10-23T19:22:13Z",
+      "lastPushedAt": "2026-11-20T14:59:40Z",
       "licenseSpdx": "GPL-3.0",
       "licenseReview": "COPYLEFT_REVIEW",
       "flags": [
@@ -4446,7 +4490,7 @@
         "A09"
       ],
       "stars": 2,
-      "lastPushedAt": "2026-11-09T11:08:39Z",
+      "lastPushedAt": "2026-11-22T11:30:51Z",
       "licenseSpdx": "GPL-3.0",
       "licenseReview": "COPYLEFT_REVIEW",
       "flags": [
@@ -4472,7 +4516,7 @@
         "A23",
         "A24"
       ],
-      "stars": 1108,
+      "stars": 1110,
       "lastPushedAt": "2026-07-21T18:06:50Z",
       "licenseSpdx": "NOASSERTION",
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
@@ -4501,7 +4545,7 @@
         "A22",
         "A24"
       ],
-      "stars": 11,
+      "stars": 12,
       "lastPushedAt": "2026-02-11T20:29:58Z",
       "licenseSpdx": null,
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
@@ -4510,6 +4554,30 @@
         "ENGINEERING_VALIDITY_NOT_VERIFIED",
         "LICENSE_UNKNOWN_REVIEW",
         "DESCRIPTION_MISSING"
+      ],
+      "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
+      "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
+    },
+    {
+      "name": "spgi-ci/spgci-python",
+      "url": "https://github.com/spgi-ci/spgci-python",
+      "description": "Python SDK for SPGCI APIs",
+      "score": 43,
+      "categories": [
+        "propulsion-power"
+      ],
+      "agentReviewers": [
+        "A11",
+        "A13",
+        "A14"
+      ],
+      "stars": 10,
+      "lastPushedAt": "2026-10-28T15:20:50Z",
+      "licenseSpdx": "Apache-2.0",
+      "licenseReview": "PERMISSIVE_REVIEW",
+      "flags": [
+        "SECURITY_NOT_AUDITED",
+        "ENGINEERING_VALIDITY_NOT_VERIFIED"
       ],
       "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
       "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
@@ -4609,7 +4677,7 @@
         "A21"
       ],
       "stars": 0,
-      "lastPushedAt": "2026-11-16T06:03:01Z",
+      "lastPushedAt": "2026-11-23T06:02:57Z",
       "licenseSpdx": "Apache-2.0",
       "licenseReview": "PERMISSIVE_REVIEW",
       "flags": [
@@ -4632,7 +4700,7 @@
         "A06",
         "A09"
       ],
-      "stars": 18,
+      "stars": 19,
       "lastPushedAt": "2024-12-05T21:47:03Z",
       "licenseSpdx": "MIT",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -4710,7 +4778,7 @@
         "A03",
         "A26"
       ],
-      "stars": 61,
+      "stars": 62,
       "lastPushedAt": "2026-05-11T17:10:42Z",
       "licenseSpdx": "NOASSERTION",
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
@@ -4735,7 +4803,7 @@
         "A13",
         "A14"
       ],
-      "stars": 124,
+      "stars": 125,
       "lastPushedAt": "2026-09-22T04:48:44Z",
       "licenseSpdx": null,
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
@@ -4786,7 +4854,7 @@
         "A14"
       ],
       "stars": 113,
-      "lastPushedAt": "2026-11-15T00:52:24Z",
+      "lastPushedAt": "2026-11-16T21:42:58Z",
       "licenseSpdx": null,
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
       "flags": [
@@ -4810,8 +4878,8 @@
         "A08",
         "A13"
       ],
-      "stars": 136,
-      "lastPushedAt": "2026-11-16T07:56:25Z",
+      "stars": 137,
+      "lastPushedAt": "2026-11-23T08:50:51Z",
       "licenseSpdx": "GPL-3.0",
       "licenseReview": "COPYLEFT_REVIEW",
       "flags": [
@@ -4860,7 +4928,7 @@
         "A16",
         "A21"
       ],
-      "stars": 32,
+      "stars": 33,
       "lastPushedAt": "2026-07-20T07:03:39Z",
       "licenseSpdx": null,
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
@@ -4887,8 +4955,8 @@
         "A23",
         "A24"
       ],
-      "stars": 321,
-      "lastPushedAt": "2026-11-09T16:22:55Z",
+      "stars": 324,
+      "lastPushedAt": "2026-11-19T19:58:19Z",
       "licenseSpdx": null,
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
       "flags": [
@@ -4913,7 +4981,7 @@
         "A16",
         "A21"
       ],
-      "stars": 98,
+      "stars": 99,
       "lastPushedAt": "2024-07-25T17:21:58Z",
       "licenseSpdx": "Apache-2.0",
       "licenseReview": "PERMISSIVE_REVIEW",
@@ -4939,13 +5007,39 @@
         "A12"
       ],
       "stars": 7,
-      "lastPushedAt": "2026-09-27T19:52:07Z",
+      "lastPushedAt": "2026-11-22T09:08:22Z",
       "licenseSpdx": "GPL-3.0",
       "licenseReview": "COPYLEFT_REVIEW",
       "flags": [
         "SECURITY_NOT_AUDITED",
         "ENGINEERING_VALIDITY_NOT_VERIFIED",
         "COPYLEFT_REVIEW"
+      ],
+      "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
+      "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
+    },
+    {
+      "name": "tomojitakasu/PocketSDR",
+      "url": "https://github.com/tomojitakasu/PocketSDR",
+      "description": "",
+      "score": 39,
+      "categories": [
+        "navigation-colregs"
+      ],
+      "agentReviewers": [
+        "A17",
+        "A22",
+        "A24"
+      ],
+      "stars": 543,
+      "lastPushedAt": "2026-11-13T11:18:50Z",
+      "licenseSpdx": "NOASSERTION",
+      "licenseReview": "LICENSE_UNKNOWN_REVIEW",
+      "flags": [
+        "SECURITY_NOT_AUDITED",
+        "ENGINEERING_VALIDITY_NOT_VERIFIED",
+        "LICENSE_UNKNOWN_REVIEW",
+        "DESCRIPTION_MISSING"
       ],
       "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
       "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
@@ -4992,7 +5086,7 @@
         "A20",
         "A26"
       ],
-      "stars": 44,
+      "stars": 45,
       "lastPushedAt": "2020-10-15T17:06:30Z",
       "licenseSpdx": "NOASSERTION",
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
@@ -5018,7 +5112,7 @@
         "A16",
         "A21"
       ],
-      "stars": 1805,
+      "stars": 1804,
       "lastPushedAt": "2025-05-31T02:13:33Z",
       "licenseSpdx": null,
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
@@ -5162,7 +5256,7 @@
         "A21"
       ],
       "stars": 5,
-      "lastPushedAt": "2026-11-06T14:37:07Z",
+      "lastPushedAt": "2026-11-22T23:28:21Z",
       "licenseSpdx": null,
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
       "flags": [
@@ -5212,7 +5306,7 @@
         "A06",
         "A09"
       ],
-      "stars": 425,
+      "stars": 424,
       "lastPushedAt": "2026-06-26T09:14:14Z",
       "licenseSpdx": "NOASSERTION",
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
@@ -5289,7 +5383,7 @@
         "A06",
         "A09"
       ],
-      "stars": 23,
+      "stars": 24,
       "lastPushedAt": "2026-06-05T13:15:36Z",
       "licenseSpdx": null,
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
@@ -5315,7 +5409,7 @@
         "A14"
       ],
       "stars": 24,
-      "lastPushedAt": "2026-09-18T17:13:23Z",
+      "lastPushedAt": "2026-11-20T18:48:37Z",
       "licenseSpdx": "NOASSERTION",
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
       "flags": [
@@ -5416,7 +5510,7 @@
         "A06",
         "A09"
       ],
-      "stars": 99,
+      "stars": 100,
       "lastPushedAt": "2025-01-29T16:00:15Z",
       "licenseSpdx": null,
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
@@ -5424,32 +5518,6 @@
         "SECURITY_NOT_AUDITED",
         "ENGINEERING_VALIDITY_NOT_VERIFIED",
         "LICENSE_UNKNOWN_REVIEW"
-      ],
-      "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
-      "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
-    },
-    {
-      "name": "Peco602/awesome-space-security",
-      "url": "https://github.com/Peco602/awesome-space-security",
-      "description": "A curated list of awesome resources about the security of space systems.",
-      "score": 35,
-      "categories": [
-        "mission-digital-twin"
-      ],
-      "agentReviewers": [
-        "A01",
-        "A18",
-        "A25",
-        "A26"
-      ],
-      "stars": 92,
-      "lastPushedAt": "2024-07-23T07:30:53Z",
-      "licenseSpdx": "CC0-1.0",
-      "licenseReview": "PERMISSIVE_REVIEW",
-      "flags": [
-        "SECURITY_NOT_AUDITED",
-        "ENGINEERING_VALIDITY_NOT_VERIFIED",
-        "STALE_OVER_TWO_YEARS"
       ],
       "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
       "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
@@ -5782,7 +5850,7 @@
         "A03",
         "A26"
       ],
-      "stars": 2399,
+      "stars": 2398,
       "lastPushedAt": "2024-03-15T17:19:11Z",
       "licenseSpdx": null,
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
@@ -5885,7 +5953,7 @@
         "A11",
         "A12"
       ],
-      "stars": 52,
+      "stars": 51,
       "lastPushedAt": "2026-04-09T05:24:30Z",
       "licenseSpdx": null,
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
@@ -5946,6 +6014,32 @@
         "SECURITY_NOT_AUDITED",
         "ENGINEERING_VALIDITY_NOT_VERIFIED",
         "LICENSE_UNKNOWN_REVIEW"
+      ],
+      "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
+      "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
+    },
+    {
+      "name": "parleychou/Civill_AI_Skills",
+      "url": "https://github.com/parleychou/Civill_AI_Skills",
+      "description": "",
+      "score": 31,
+      "categories": [
+        "structures-materials"
+      ],
+      "agentReviewers": [
+        "A10",
+        "A11",
+        "A12"
+      ],
+      "stars": 5,
+      "lastPushedAt": "2026-11-23T04:53:37Z",
+      "licenseSpdx": null,
+      "licenseReview": "LICENSE_UNKNOWN_REVIEW",
+      "flags": [
+        "SECURITY_NOT_AUDITED",
+        "ENGINEERING_VALIDITY_NOT_VERIFIED",
+        "LICENSE_UNKNOWN_REVIEW",
+        "DESCRIPTION_MISSING"
       ],
       "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
       "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
@@ -6052,32 +6146,6 @@
       "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
     },
     {
-      "name": "wkipling/piais",
-      "url": "https://github.com/wkipling/piais",
-      "description": "",
-      "score": 30,
-      "categories": [
-        "marine-iot"
-      ],
-      "agentReviewers": [
-        "A19",
-        "A20",
-        "A21"
-      ],
-      "stars": 0,
-      "lastPushedAt": "2026-10-25T13:09:36Z",
-      "licenseSpdx": "GPL-3.0",
-      "licenseReview": "COPYLEFT_REVIEW",
-      "flags": [
-        "SECURITY_NOT_AUDITED",
-        "ENGINEERING_VALIDITY_NOT_VERIFIED",
-        "COPYLEFT_REVIEW",
-        "DESCRIPTION_MISSING"
-      ],
-      "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
-      "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
-    },
-    {
       "name": "gt-marine-robotics-group/stinger-software",
       "url": "https://github.com/gt-marine-robotics-group/stinger-software",
       "description": "Stinger Tug Core Software",
@@ -6092,7 +6160,7 @@
         "A24"
       ],
       "stars": 3,
-      "lastPushedAt": "2026-11-13T06:21:19Z",
+      "lastPushedAt": "2026-11-19T22:38:53Z",
       "licenseSpdx": null,
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
       "flags": [
@@ -6144,7 +6212,7 @@
         "A19",
         "A20"
       ],
-      "stars": 17,
+      "stars": 18,
       "lastPushedAt": "2026-06-23T08:21:34Z",
       "licenseSpdx": null,
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
@@ -6196,7 +6264,7 @@
         "A23",
         "A24"
       ],
-      "stars": 1362,
+      "stars": 1363,
       "lastPushedAt": "2024-05-27T23:01:07Z",
       "licenseSpdx": null,
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
@@ -6356,7 +6424,7 @@
         "A16",
         "A21"
       ],
-      "stars": 123,
+      "stars": 124,
       "lastPushedAt": "2023-12-13T23:56:24Z",
       "licenseSpdx": null,
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
@@ -6488,6 +6556,32 @@
       ],
       "stars": 179,
       "lastPushedAt": "2023-05-22T04:32:35Z",
+      "licenseSpdx": null,
+      "licenseReview": "LICENSE_UNKNOWN_REVIEW",
+      "flags": [
+        "SECURITY_NOT_AUDITED",
+        "ENGINEERING_VALIDITY_NOT_VERIFIED",
+        "LICENSE_UNKNOWN_REVIEW",
+        "STALE_OVER_TWO_YEARS"
+      ],
+      "adoptionStatus": "DISCOVERED_AWAITING_HUMAN_AND_INDEPENDENT_REVIEW",
+      "evidenceType": "GITHUB_API_METADATA_NOT_SOFTWARE_VERIFICATION"
+    },
+    {
+      "name": "oiricaud/Battleship",
+      "url": "https://github.com/oiricaud/Battleship",
+      "description": "⛴  ⚓️ Ever played battleship? Well with this repository you will be able to play on your android phone with a computer or other players. 🚢   🛳",
+      "score": 21,
+      "categories": [
+        "structures-materials"
+      ],
+      "agentReviewers": [
+        "A10",
+        "A11",
+        "A12"
+      ],
+      "stars": 10,
+      "lastPushedAt": "2017-04-19T03:50:40Z",
       "licenseSpdx": null,
       "licenseReview": "LICENSE_UNKNOWN_REVIEW",
       "flags": [
