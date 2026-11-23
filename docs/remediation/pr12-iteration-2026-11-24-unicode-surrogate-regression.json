@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "USV-REMEDIATION-ITERATION-1",
+  "observedDate": "2026-11-24",
+  "workstream": "PR-12",
+  "pullRequest": 201,
+  "baseMain": "3aac06ee39101853c9dd85ab31c2553b3c54c56d",
+  "implementationCommit": "c23daf4265b90c21ef70faf976b48b927f90af46",
+  "change": "Added regression tests rejecting unpaired UTF-16 surrogates in remediation verification notes and constraints, retaining a valid Unicode control.",
+  "verification": {
+    "localTests": "NOT_RUN",
+    "exactHeadCI": "NOT_VERIFIED",
+    "priorGovernanceRunForPR200": 45216901776,
+    "priorGovernanceFailedStep": "Stage E — Governance Gate Enforcement",
+    "priorPR201AuxiliaryRuns": [
+      45243933089
+    ],
+    "limitations": "Workflow conclusions from prior heads do not certify the new commit; full exact-head jobs and independent approval remain required."
+  },
+  "trackedPRs": [
+    191,
+    193,
+    194,
+    195,
+    196,
+    197,
+    198,
+    199,
+    200,
+    201
+  ],
+  "mergedAndIndependentlyAccepted": 0,
+  "blockers": [
+    "Independent authenticated Stage E review not evidenced",
+    "Protected merges not evidenced",
+    "Physical reference verification and 26-agent independent acceptance not evidenced"
+  ],
+  "nextActions": [
+    "Inspect exact-head CI for new commit",
+    "Address any technical failures without changing governance gates",
+    "Pursue independently unblocked remediation workstreams"
+  ]
+}

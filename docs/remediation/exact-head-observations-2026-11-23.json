@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "USV-REMEDIATION-EXACT-HEAD-OBSERVATION-1",
+  "observedAt": "2026-11-23",
+  "scope": "Historical exact-head GitHub pull-request workflow observations (first page only); PR #201 observations refer to prior head f652c661 and are not verification of subsequent commits. Governance Stage E failures do not establish technical-check outcomes.",
+  "independentAcceptance": false,
+  "engineeringCertification": false,
+  "prs": [
+    {
+      "pullRequest": 191,
+      "headSha": "8f0aee4980be7347dad141a699a6cf7f9dbae1e8",
+      "governanceRunId": 44895894586,
+      "governanceConclusion": "failure",
+      "failedStep": "Stage E — Governance Gate Enforcement",
+      "technicalFailureObserved": null
+    },
+    {
+      "pullRequest": 193,
+      "headSha": "46dfae1e8e2041828dd33ed08cd5cbd7837ff0a2",
+      "governanceRunId": 44716720508,
+      "governanceConclusion": "failure",
+      "failedStep": "Stage E — Governance Gate Enforcement",
+      "technicalFailureObserved": null
+    },
+    {
+      "pullRequest": 194,
+      "headSha": "2c6ee2e8a9639dd46c98ae608576879d97c4efb7",
+      "governanceRunId": 44724954484,
+      "governanceConclusion": "failure",
+      "failedStep": "Stage E — Governance Gate Enforcement",
+      "technicalFailureObserved": null
+    },
+    {
+      "pullRequest": 195,
+      "headSha": "effa6b5688cd28929ee7065460becf64f341df60",
+      "governanceRunId": 44733179559,
+      "governanceConclusion": "failure",
+      "failedStep": "Stage E — Governance Gate Enforcement",
+      "technicalFailureObserved": null
+    },
+    {
+      "pullRequest": 196,
+      "headSha": "446e8bb15fb3681376e2e35c8c161a91b4162205",
+      "governanceRunId": 44738063446,
+      "governanceConclusion": "failure",
+      "failedStep": "Stage E — Governance Gate Enforcement",
+      "technicalFailureObserved": null
+    },
+    {
+      "pullRequest": 197,
+      "headSha": "475666d37822c0f28038b1e10086ceb8cf881428",
+      "governanceRunId": 44749521443,
+      "governanceConclusion": "failure",
+      "failedStep": "Stage E — Governance Gate Enforcement",
+      "technicalFailureObserved": null
+    },
+    {
+      "pullRequest": 198,
+      "headSha": "c50eebc84014e4198a5e17bbf02a0ff06f50522c",
+      "governanceRunId": 44759311978,
+      "governanceConclusion": "failure",
+      "failedStep": "Stage E — Governance Gate Enforcement",
+      "technicalFailureObserved": null
+    },
+    {
+      "pullRequest": 199,
+      "headSha": "407f3a7e2e94588ed88c304c74e635e857970a18",
+      "governanceRunId": 44763635450,
+      "governanceConclusion": "failure",
+      "failedStep": "Stage E — Governance Gate Enforcement",
+      "technicalFailureObserved": null
+    },
+    {
+      "pullRequest": 200,
+      "headSha": "ae7669de155f9dfafebc25e4559de21440904a72",
+      "governanceRunId": 44986796716,
+      "governanceConclusion": "failure",
+      "failedStep": "Stage E — Governance Gate Enforcement",
+      "technicalFailureObserved": null
+    },
+    {
+      "pullRequest": 201,
+      "headSha": "f652c66119e498af6032214cc107fcb8186d2dee",
+      "governanceRunId": 45127115467,
+      "governanceConclusion": "failure",
+      "failedStep": "Stage E — Governance Gate Enforcement",
+      "technicalFailureObserved": null,
+      "auxiliaryWorkflowRuns": [
+        {
+          "name": "Engineering Sessions — Isolated Browser QA",
+          "runId": 45127115496,
+          "conclusion": "success"
+        },
+        {
+          "name": "USV-01 Docker Synthetic Secret Image Canary",
+          "runId": 45127115354,
+          "conclusion": "success"
+        },
+        {
+          "name": "USV-01 Mission Control Zero-API Gate",
+          "runId": 45127115350,
+          "conclusion": "success"
+        },
+        {
+          "name": "Agent Academy - 26 Role Curriculum and Evidence Gates",
+          "runId": 45127115408,
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "blockers": [
+    "Authenticated separate Stage E human approval on exact head",
+    "Protected merges and independent full 26-agent acceptance",
+    "Production recovery and physical reference validation"
+  ],
+  "nextActions": [
+    "Obtain separate authorized human governance reviews without self-approval",
+    "Continue independent technical remediation and regression tests",
+    "Recheck exact-head CI after every change",
+    "Inspect exact-head Stage B/auxiliary job logs before asserting any technical pass or failure; null means not established by this observation",
+    "Recheck PR #201 exact-head CI after this observation update; previous-head successes must not be carried forward",
+    "Treat recorded PR #201 SHA as historical after this commit; do not reuse its CI outcomes as exact-head verification",
+    "Check CI on new commit d12acd4a and this ledger update; neither is covered by the historical successful auxiliary runs."
+  ]
+}

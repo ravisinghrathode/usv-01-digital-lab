@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "USV-REMEDIATION-ITERATION-1",
+  "date": "2026-11-23",
+  "workstream": "PR-03/PR-12",
+  "pullRequest": 201,
+  "branch": "remediation/pr12-closed-loop-acceptance-ledger",
+  "implementationCommit": "e93c992dd007283c7fcb1a5f80c104f66d332833",
+  "regressionCommit": "7c1f2989a4c96ef220308c798e98c5d9b9386110",
+  "change": "Raw-byte scan of exported Docker archive catches synthetic credential markers in trailing tar data and unparsed padding; added executable regression fixture.",
+  "verification": {
+    "exactHeadCI": [],
+    "localExecution": "not-run",
+    "technicalAcceptance": "pending-exact-head-CI"
+  },
+  "blockers": [
+    "Mandatory authenticated Stage E human approval",
+    "Protected PR merge",
+    "Independent production credential and backup/recovery acceptance",
+    "Independent physical-reference verification",
+    "26-agent end-to-end acceptance"
+  ],
+  "engineeringCertified": false
+}

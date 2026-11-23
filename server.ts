@@ -10,6 +10,7 @@ import { generateBoundApproverSignature, verifyBoundApproverSignature, setDirect
 import { AUTHORIZED_MEMBERS, type StaffMember } from './src/core/auth/staffDirectory.ts';
 import { authorizeLabRoute } from './src/core/auth/routeAuthorization.ts';
 import { guardEngineeringDraftWrite, EngineeringWritePolicyError } from './src/core/auth/engineeringDraftPolicy.ts';
+import { bindAgentExecutionRequest, AgentExecutionRequestError } from './src/core/auth/agentExecutionRequestPolicy.ts';
 import {
   verifyStaffCredential,
   isLockedOut,
@@ -39,10 +40,12 @@ import { loadA26ResearchFeed } from './src/server/a26ResearchFeed.ts';
 import http from 'http';
 import { VerifyUsv01Engine } from './src/core/verification/VerifyUsv01Engine.ts';
 import { getLabReadinessSnapshot } from './src/core/verification/LabReadiness.ts';
-import { loadProjectStore, saveProjectStore } from './src/core/storage/ProjectStorePersistence.ts';
+import { evidenceAdmissionForOutput, evidenceAdmissionForTasks } from './src/core/verification/ExecutionEvidenceAdmission.ts';
+import { loadProjectStore, saveProjectStore, commitProjectStoreMutation } from './src/core/storage/ProjectStorePersistence.ts';
 import { AgentRegistry } from './src/core/registry/AgentRegistry.ts';
 import { BaseAgent } from './src/core/engine/BaseAgent.ts';
 import { CentralOrchestrator } from './src/core/orchestrator/CentralOrchestrator.ts';
+import { sanitizeWorkflowInput, validateServerWorkflowReplacement, WorkflowSubmissionError } from './src/core/orchestrator/WorkflowSubmissionGuard.ts';
 import { ApprovalGateManager } from './src/core/safety/HumanApprovalGate.ts';
 import type { EngineeringTask } from './src/core/types/orchestrator.ts';
 import { AuditLogger } from './src/core/safety/AuditLogger.ts';
@@ -117,6 +120,12 @@ const validateDataCollection = (req: express.Request, res: express.Response, nex
 const saveStoreToFile = () => {
   // Never acknowledge a persisted change if atomic writing failed.
   saveProjectStore(dbStore, STORE_PATH);
+};
+
+/** Only publish speculative engineering CRUD state after disk persistence succeeds. */
+const commitEngineeringStoreMutation = (mutate: (nextStore: Record<string, any[]>) => void) => {
+  const committed = commitProjectStoreMutation(dbStore, STORE_PATH, mutate);
+  dbStore = committed.store;
 };
 
 const loadStoreFromFile = (): boolean => {
@@ -566,13 +575,14 @@ app.post('/api/auth/provision-initial', (req, res) => {
 
 // --- SECURE SERVER-SIDE AGENT EXECUTION INTERFACE ---
 app.post('/api/agents/execute', async (req, res) => {
-  const correlationId = req.body?.correlationId || `corr-srv-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
+  // Client-provided correlation IDs are not authoritative audit identities.
+  const correlationId = 'corr-srv-' + crypto.randomUUID();
   try {
     const authHeader = req.headers['authorization'];
     const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : (req.headers['x-auth-token'] as string);
     const user = token ? verifySessionToken(token) : null;
 
-    const { agentId, taskId, parameters, context, priorAgentOutputs, userNotes } = req.body || {};
+    const { agentId } = req.body || {};
 
     if (!agentId || typeof agentId !== 'string') {
       return res.status(400).json({ success: false, error: "Missing required parameter 'agentId'." });
@@ -605,14 +615,7 @@ app.post('/api/agents/execute', async (req, res) => {
 
     // Server-controlled execution with timeout and correlation ID
     const agent = new BaseAgent(spec);
-    const executionInput = {
-      taskId: taskId || `TASK-${Date.now()}`,
-      parameters: parameters || {},
-      context: { ...(context || {}), isExploratoryStudy: undefined, safetyCritical: undefined, authenticatedUserId: user.userId, authenticatedUserRole: user.role },
-      priorAgentOutputs: priorAgentOutputs || {},
-      userNotes,
-      correlationId
-    };
+    const executionInput = bindAgentExecutionRequest(req.body, user, correlationId);
 
     const output = await Promise.race([
       agent.execute(executionInput),
@@ -624,9 +627,17 @@ app.post('/api/agents/execute', async (req, res) => {
     res.json({
       success: output.status !== 'FAILED',
       correlationId,
-      output
+      output,
+      // A live provider response (even SUCCESS or HUMAN_APPROVED) is not
+      // an independently verified engineering or vessel-release artifact.
+      evidenceAdmission: evidenceAdmissionForOutput(executionInput.taskId, output)
     });
   } catch (err: any) {
+    if (err instanceof AgentExecutionRequestError) {
+      return res.status(err.httpStatus).json({
+        success: false, correlationId, error: err.message
+      });
+    }
     AuditLogger.getInstance().log({
       severity: 'SAFETY_CRITICAL',
       agentId: req.body?.agentId || 'UNKNOWN',
@@ -663,8 +674,8 @@ app.post('/api/orchestrator/execute-workflow', async (req, res) => {
     }
 
     const submitted = req.body?.tasks;
-    if (!Array.isArray(submitted) || submitted.length < 1 || submitted.length > 25) {
-      return res.status(400).json({ success: false, error: 'Provide between 1 and 25 workflow tasks.' });
+    if (!Array.isArray(submitted) || submitted.length < 1 || submitted.length > 26) {
+      return res.status(400).json({ success: false, error: 'Provide between 1 and 26 workflow tasks.' });
     }
     const registry = AgentRegistry.getInstance();
     const prepared: EngineeringTask[] = [];
@@ -672,14 +683,12 @@ app.post('/api/orchestrator/execute-workflow', async (req, res) => {
       if (!item || typeof item.id !== 'string' || !/^[a-zA-Z0-9_-]{1,100}$/.test(item.id) ||
           typeof item.assignedAgentId !== 'string' || !Array.isArray(item.dependencies) ||
           item.dependencies.length > 25 || item.dependencies.some((d: unknown) => typeof d !== 'string') ||
-          !item.input || typeof item.input.parameters !== 'object' || Array.isArray(item.input.parameters)) {
+          !item.input || !item.input.parameters || typeof item.input.parameters !== 'object' || Array.isArray(item.input.parameters)) {
         return res.status(400).json({ success: false, error: 'Invalid workflow task definition.' });
       }
       const spec = registry.getAgent(item.assignedAgentId);
       if (!spec) return res.status(400).json({ success: false, error: 'Unknown workflow agent.' });
-      const context = item.input.context && typeof item.input.context === 'object' ? item.input.context : {};
-      const { isExploratoryStudy: _flag, safetyCritical: _clientSafety, ...safeContext } = context;
-      const { isExploratoryStudy: _parameterFlag, ...safeParameters } = item.input.parameters;
+      const safeInput = sanitizeWorkflowInput(item.input.context, item.input.parameters, user.userId);
       prepared.push({
         id: item.id,
         title: String(item.title || item.id).slice(0, 150),
@@ -690,8 +699,8 @@ app.post('/api/orchestrator/execute-workflow', async (req, res) => {
         dependencies: item.dependencies,
         input: {
           taskId: item.id,
-          context: { ...safeContext, authenticatedUserId: user.userId },
-          parameters: safeParameters
+          context: safeInput.context,
+          parameters: safeInput.parameters
         },
         status: 'PENDING',
         createdAt: new Date().toISOString(),
@@ -703,22 +712,34 @@ app.post('/api/orchestrator/execute-workflow', async (req, res) => {
     workflowInProgress = true;
     try {
       const orchestrator = CentralOrchestrator.getInstance();
-      // A single workflow owns the in-memory state during execution.
+      // Reject duplicates/cycles and preserve in-flight or awaiting-review
+      // workflows BEFORE mutating the current server-owned task map.
+      validateServerWorkflowReplacement(prepared, orchestrator.getAllTasks());
+      if (ApprovalGateManager.getInstance().getPendingGates().length > 0) {
+        throw new WorkflowSubmissionError(
+          'Unresolved approval gates must be finalized before replacing a workflow', 409
+        );
+      }
       orchestrator.clearTasks();
       for (const task of prepared) orchestrator.registerTask(task);
       orchestrator.getExecutionPlan(); // Reject missing or cyclic dependencies before execution.
       const result = await orchestrator.executeWorkflow(pinnedSourceSha());
+      const tasks = orchestrator.getAllTasks();
       return res.json({
         success: result.failed === 0,
         results: result,
-        tasks: orchestrator.getAllTasks(),
+        tasks,
+        evidenceAdmission: evidenceAdmissionForTasks(tasks),
         pendingGates: ApprovalGateManager.getInstance().getPendingGates()
       });
     } finally {
       workflowInProgress = false;
     }
   } catch (err: any) {
-    res.status(500).json({ success: false, error: err.message || String(err) });
+    if (err instanceof WorkflowSubmissionError) {
+      return res.status(err.httpStatus).json({ success: false, error: err.message });
+    }
+    res.status(500).json({ success: false, error: 'Server workflow execution failed; refer to controlled audit logs.' });
   }
 });
 
@@ -749,7 +770,9 @@ app.post('/api/orchestrator/decide-gate', authMiddleware, (req, res) => {
     const result = task?.approvalGateId === gateId && (task.status === 'COMPLETED' || task.status === 'FAILED')
       ? { taskId: task.id, newStatus: task.status }
       : orchestrator.resolveGateDecision(gateId, decision);
-    return res.json({ success: true, gate, result, tasks: orchestrator.getAllTasks(),
+    const tasks = orchestrator.getAllTasks();
+    return res.json({ success: true, gate, result, tasks,
+      evidenceAdmission: evidenceAdmissionForTasks(tasks),
       pendingGates: ApprovalGateManager.getInstance().getPendingGates() });
   } catch (err: any) {
     return res.status(400).json({ success: false, error: err.message || String(err) });
@@ -1245,9 +1268,6 @@ app.get('/api/data/:collection', validateDataCollection, (req, res) => {
 
 app.post('/api/data/:collection', validateDataCollection, (req, res) => {
   const coll = req.params.collection;
-  if (!dbStore[coll]) {
-    dbStore[coll] = [];
-  }
   let draft: Record<string, unknown>;
   try { draft = guardEngineeringDraftWrite(coll, req.body); }
   catch (err) {
@@ -1265,24 +1285,24 @@ app.post('/api/data/:collection', validateDataCollection, (req, res) => {
     updatedAt: now
   };
 
-  dbStore[coll].unshift(newItem);
-
-  // Auto-log activity
-  if (coll !== 'activity_log') {
-    dbStore.activity_log.unshift({
-      id: `LOG-${Date.now()}`,
-      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
-      userId: (req as any).user.userId,
-      userName: (req as any).user.userName,
-      action: 'CREATE',
-      recordType: coll.toUpperCase(),
-      recordId: newItem.id,
-      details: `Created new ${coll} record: ${String(draft.title ?? draft.name ?? draft.partNumber ?? newItem.id)}`
+  try {
+    commitEngineeringStoreMutation(nextStore => {
+      nextStore[coll].unshift(newItem);
+      nextStore.activity_log.unshift({
+        id: 'LOG-' + crypto.randomUUID(),
+        timestamp: now,
+        userId: (req as any).user.userId,
+        userName: (req as any).user.userName,
+        action: 'CREATE',
+        recordType: coll.toUpperCase(),
+        recordId: newItem.id,
+        details: `Created new ${coll} record: ${String(draft.title ?? draft.name ?? draft.partNumber ?? newItem.id)}`
+      });
     });
+  } catch {
+    return res.status(503).json({ success: false, error: 'Engineering record was not committed; persistent storage unavailable.' });
   }
-
-  saveStoreToFile();
-  res.json({ success: true, item: newItem });
+  return res.json({ success: true, item: newItem });
 });
 
 app.put('/api/data/:collection/:id', validateDataCollection, (req, res) => {
@@ -1290,7 +1310,6 @@ app.put('/api/data/:collection/:id', validateDataCollection, (req, res) => {
   const id = req.params.id;
   const items = dbStore[coll] || [];
   const idx = items.findIndex((i: any) => i.id === id);
-
   if (idx === -1) {
     return res.status(404).json({ success: false, error: 'Record not found' });
   }
@@ -1302,27 +1321,25 @@ app.put('/api/data/:collection/:id', validateDataCollection, (req, res) => {
       success: false, error: err instanceof Error ? err.message : 'Invalid engineering draft.'
     });
   }
-  items[idx] = {
-    ...items[idx],
-    ...draftChanges,
-    updatedAt: new Date().toISOString()
-  };
-
-  if (coll !== 'activity_log') {
-    dbStore.activity_log.unshift({
-      id: `LOG-${Date.now()}`,
-      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
-      userId: (req as any).user.userId,
-      userName: (req as any).user.userName,
-      action: req.body.status === 'Archived' ? 'ARCHIVE' : 'UPDATE',
-      recordType: coll.toUpperCase(),
-      recordId: id,
-      details: `Updated ${coll} record ${id}: status=${items[idx].status || 'nominal'}`
+  const updatedItem = { ...items[idx], ...draftChanges, updatedAt: new Date().toISOString() };
+  try {
+    commitEngineeringStoreMutation(nextStore => {
+      nextStore[coll][idx] = updatedItem;
+      nextStore.activity_log.unshift({
+        id: 'LOG-' + crypto.randomUUID(),
+        timestamp: new Date().toISOString(),
+        userId: (req as any).user.userId,
+        userName: (req as any).user.userName,
+        action: req.body.status === 'Archived' ? 'ARCHIVE' : 'UPDATE',
+        recordType: coll.toUpperCase(),
+        recordId: id,
+        details: `Updated ${coll} record ${id}: status=${updatedItem.status || 'nominal'}`
+      });
     });
+  } catch {
+    return res.status(503).json({ success: false, error: 'Engineering record was not committed; persistent storage unavailable.' });
   }
-
-  saveStoreToFile();
-  res.json({ success: true, item: items[idx] });
+  return res.json({ success: true, item: updatedItem });
 });
 
 app.delete('/api/data/:collection/:id', validateDataCollection, (req, res) => {
@@ -1330,30 +1347,33 @@ app.delete('/api/data/:collection/:id', validateDataCollection, (req, res) => {
   const id = req.params.id;
   const items = dbStore[coll] || [];
   const idx = items.findIndex((i: any) => i.id === id);
-
   if (idx === -1) {
     return res.status(404).json({ success: false, error: 'Record not found' });
   }
-
   try { guardEngineeringDraftWrite(coll, {}, items[idx]); }
   catch {
     return res.status(409).json({ success: false, error: 'Controlled engineering records require governed supersession.' });
   }
-  const removed = items.splice(idx, 1)[0];
 
-  dbStore.activity_log.unshift({
-    id: `LOG-${Date.now()}`,
-    timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
-    userId: (req as any).user.userId,
-    userName: (req as any).user.userName,
-    action: 'ARCHIVE',
-    recordType: coll.toUpperCase(),
-    recordId: id,
-    details: `Archived ${coll} record ${id}`
-  });
-
-  saveStoreToFile();
-  res.json({ success: true, removed });
+  const removed = items[idx];
+  try {
+    commitEngineeringStoreMutation(nextStore => {
+      nextStore[coll].splice(idx, 1);
+      nextStore.activity_log.unshift({
+        id: 'LOG-' + crypto.randomUUID(),
+        timestamp: new Date().toISOString(),
+        userId: (req as any).user.userId,
+        userName: (req as any).user.userName,
+        action: 'ARCHIVE',
+        recordType: coll.toUpperCase(),
+        recordId: id,
+        details: `Archived ${coll} record ${id}`
+      });
+    });
+  } catch {
+    return res.status(503).json({ success: false, error: 'Engineering record was not committed; persistent storage unavailable.' });
+  }
+  return res.json({ success: true, removed });
 });
 
 // 5. Export and Import

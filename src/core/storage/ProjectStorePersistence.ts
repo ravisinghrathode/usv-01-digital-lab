@@ -24,14 +24,41 @@ export function validateProjectStore(value: unknown): asserts value is Record<st
   }
 }
 
+/**
+ * Flush the parent directory after a successful atomic rename. Some local
+ * filesystems cannot fsync directory handles; callers still have the durable
+ * temp-file sync, and production acceptance must document that limitation.
+ */
+function syncStoreDirectory(dir: string): void {
+  let fd: number | undefined;
+  try {
+    fd = fs.openSync(dir, 'r');
+    fs.fsyncSync(fd);
+  } catch (error) {
+    const code = (error as NodeJS.ErrnoException).code;
+    if (!['EINVAL', 'ENOTSUP', 'EISDIR', 'EBADF'].includes(String(code))) throw error;
+  } finally {
+    if (fd !== undefined) fs.closeSync(fd);
+  }
+}
 export function saveProjectStore(store: unknown, filename: string): void {
   validateProjectStore(store);
-  fs.mkdirSync(path.dirname(filename), { recursive: true });
+  const dir = path.dirname(filename);
+  fs.mkdirSync(dir, { recursive: true, mode: 0o700 });
   const tmp = filename + '.' + randomBytes(8).toString('hex') + '.tmp';
   try {
-    fs.writeFileSync(tmp, JSON.stringify(store, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
-    // Rename on same filesystem is atomic; existing target is never partially overwritten.
+    // The temporary file must be on stable storage BEFORE exposing the rename.
+    // A failed write or file fsync leaves the previous snapshot untouched.
+    const fd = fs.openSync(tmp, 'wx', 0o600);
+    try {
+      fs.writeFileSync(fd, JSON.stringify(store, null, 2) + '\n', 'utf8');
+      fs.fsyncSync(fd);
+    } finally {
+      fs.closeSync(fd);
+    }
+    // Rename on same filesystem is atomic; target is never partially replaced.
     fs.renameSync(tmp, filename);
+    syncStoreDirectory(dir);
   } finally {
     if (fs.existsSync(tmp)) fs.rmSync(tmp, { force: true });
   }
@@ -61,6 +88,24 @@ export function loadProjectStore(filename: string): Record<string, any[]> | null
   }
   validateProjectStore(decoded);
   return decoded;
+}
+
+/**
+ * Commit a related record mutation and activity-log mutation as ONE snapshot.
+ * Never publish the speculative in-memory copy before the atomic file write
+ * succeeds. This is a single-process rollback boundary, NOT a multi-process
+ * serializable database and NOT a replacement for a durable audit outbox.
+ */
+export function commitProjectStoreMutation<T>(
+  current: Record<string, any[]>,
+  filename: string,
+  mutate: (draft: Record<string, any[]>) => T
+): { store: Record<string, any[]>; result: T } {
+  validateProjectStore(current);
+  const draft = structuredClone(current);
+  const result = mutate(draft);
+  saveProjectStore(draft, filename);
+  return { store: draft, result };
 }
 
 export function runIsolatedRestoreDrill(store: unknown) {

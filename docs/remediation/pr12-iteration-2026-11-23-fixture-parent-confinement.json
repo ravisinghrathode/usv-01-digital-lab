@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "USV-REMEDIATION-ITERATION-1",
+  "date": "2026-11-23",
+  "workstreams": [
+    "PR-03",
+    "PR-12"
+  ],
+  "pullRequest": 201,
+  "branch": "remediation/pr12-closed-loop-acceptance-ledger",
+  "priorHead": "57ed75abaf2008fa415fa979c77d5841f50ed71a",
+  "priorExactHeadCI": {
+    "governanceRun": 45076108747,
+    "governanceConclusion": "failure",
+    "failedStep": "Stage E — Governance Gate Enforcement",
+    "dockerCanaryRun": 45076108758,
+    "dockerCanaryConclusion": "success"
+  },
+  "changes": [
+    {
+      "commit": "cb39a780311fd09ee111f20cffc6caa1490e28fb",
+      "purpose": "Reject synthetic secret fixture paths with symlinked or non-directory ancestors"
+    },
+    {
+      "commit": "7155e14cf3c2053a4b53dbee6f0637e6b9f9d450",
+      "purpose": "Regression tests for symlink escape, file ancestor, ordinary missing parents, outside checkout"
+    },
+    {
+      "commit": "34319c68374b57d45feb18b744bc3aad97625793",
+      "purpose": "Run new regression tests in Docker canary workflow"
+    }
+  ],
+  "verification": {
+    "newHeadCI": "not yet verified",
+    "localTests": "not executed in connector-only iteration",
+    "engineeringCertification": false
+  },
+  "blockers": [
+    "Authenticated independent Stage E review",
+    "Exact-head CI for new commits",
+    "Protected merges",
+    "Production credential and backup recovery acceptance",
+    "Independent physical reference verification",
+    "Full 26-agent end-to-end acceptance"
+  ],
+  "nextActions": [
+    "Inspect exact-head CI and fix technical failures",
+    "Continue independent unblocked workstreams without bypassing human approval"
+  ]
+}

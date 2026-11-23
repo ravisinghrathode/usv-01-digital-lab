@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "USV-REMEDIATION-ITERATION-1",
+  "observedDate": "2026-11-23",
+  "workstream": "PR-03 / PR-12",
+  "pullRequest": 201,
+  "implementationHead": "b5f1435eb0d980ace276ce3af0265063efe3f593",
+  "changes": [
+    "Validate declared Docker-save Config paths as canonical relative member paths",
+    "Reject missing or non-regular declared config archive members",
+    "Add synthetic negative regression tests for traversal, missing config, and symlink config"
+  ],
+  "verification": {
+    "exactHeadWorkflowRunsAtInspection": [],
+    "status": "CI_NOT_YET_VERIFIED",
+    "previousHead": "0cec1a5639b220861e8395705c75e8757f777305",
+    "previousHeadDockerCanary": "success",
+    "previousHeadGovernance": "failure",
+    "previousHeadGovernanceRunId": 45090575100
+  },
+  "blockers": [
+    "Exact-head CI and technical regression execution",
+    "Authenticated independent Stage E approval",
+    "Protected merge",
+    "Production credential and recovery validation",
+    "Independent physical-reference and 26-agent end-to-end acceptance"
+  ],
+  "nextActions": [
+    "Inspect exact-head CI, repair any technical failures",
+    "Preserve Stage E human review boundary",
+    "Proceed with other independent remediation PRs"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "USV-REMEDIATION-ITERATION-1",
+  "date": "2026-11-23",
+  "scope": [
+    "PR-03",
+    "PR-12"
+  ],
+  "baseMain": "907ab7a418e11ed78a5c635f7b8721a090cca122",
+  "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
+  "implementationCommits": [
+    "8a31bd881a1bb9d84cc4b30e0c86c2a4e82ddbdd",
+    "c8eecd5e554186ec7d27df9c4fa74c789336b474"
+  ],
+  "change": "Fail closed on non-array Docker-save RepoTags, invalid tag elements, empty/malformed layer references; executable synthetic archive regression fixtures.",
+  "previousExactHead": "7522bb0bd6603a2ddf16ffced07069cfa0970da2",
+  "previousExactHeadCI": {
+    "governance": {
+      "runId": 45052118238,
+      "result": "failure",
+      "failingStep": "Stage E — Governance Gate Enforcement"
+    },
+    "auxiliary": "four successful workflows including Docker synthetic image canary"
+  },
+  "newExactHeadCI": "not-yet-verified",
+  "blockers": [
+    "Authenticated independent Stage E approval",
+    "CI on final head",
+    "Protected merge",
+    "Production credential and recovery acceptance",
+    "Independent physical-reference validation",
+    "Full 26-agent end-to-end acceptance"
+  ],
+  "acceptance": "not-accepted",
+  "engineeringCertified": false
+}

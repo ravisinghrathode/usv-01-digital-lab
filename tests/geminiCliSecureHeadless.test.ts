@@ -29,6 +29,10 @@ describe('Gemini CLI redacted command and source-bound synthetic fallback diagno
         '--model',hydrogen]);
       expect(options.env.GEMINI_API_KEY).toBeUndefined();
       expect(options.env.GOOGLE_GENAI_USE_VERTEXAI).toBeUndefined();
+      // Trust is granted only to this owned, isolated execution directory.
+      // The global sanitized environment must never be trusted implicitly.
+      expect(options.env.GEMINI_CLI_TRUST_WORKSPACE).toBe('true');
+      expect(fs.statSync(options.cwd).mode & 0o077).toBe(0);
       const policy=options.env.GEMINI_CLI_SYSTEM_SETTINGS_PATH!;
       expect(fs.existsSync(policy)).toBe(true);
       expect(JSON.parse(fs.readFileSync(policy,'utf8')).security.auth.enforcedType)
@@ -102,6 +106,15 @@ describe('Gemini CLI redacted command and source-bound synthetic fallback diagno
       expect(err.message).not.toContain('DO_NOT_DISCLOSE_PRIVATE');
       expect(recoverableGeminiCliFailure(err)).toBe(false);
     }
+  });
+
+  it('classifies headless workspace trust refusal (exit 55) without leaking diagnostics',()=>{
+    const error=classifiedGeminiCliFailure(failure(
+      'FatalUntrustedWorkspaceError: PRIVATE_SYNTHETIC_PROMPT_MUST_NOT_LEAK',55));
+    expect(error.message).toBe(
+      'USV_GEMINI_CLI_UNTRUSTED_WORKSPACE: private headless workspace rejected (exitCode=55); fail closed');
+    expect(error.message).not.toContain('PRIVATE_SYNTHETIC_PROMPT_MUST_NOT_LEAK');
+    expect(recoverableGeminiCliFailure(error)).toBe(false);
   });
 
   it('reads only structured error fields of nonzero headless JSON, never stdout text',()=>{

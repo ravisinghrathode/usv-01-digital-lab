@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "USV-REMEDIATION-ITERATION-1",
+  "date": "2026-11-23",
+  "workstream": "PR-03",
+  "trackedPR": 201,
+  "scope": "Docker-save layer manifest path canonicality",
+  "implementationCommits": [
+    "7a8e164a17e222e8a1bfb852f3aeea8e6640ab67",
+    "7e7e7958831c7160f1c5c2bc5092741a8e5ef4e5"
+  ],
+  "changes": [
+    "Reject absolute, traversal, noncanonical, empty-component and backslash layer references before selecting archive members",
+    "Add executable Python archive regression fixtures invoked through Vitest"
+  ],
+  "verification": {
+    "status": "pending-exact-head-ci",
+    "lastVerifiedHead": "5da622b78eec5f6f9a24a1986bff08dd95b7edda",
+    "lastVerifiedDockerCanary": "success",
+    "lastVerifiedGovernance": "failed-Stage-E",
+    "newTests": "not-yet-verified"
+  },
+  "blockers": [
+    "Mandatory independent authenticated Stage E approval",
+    "Exact-head CI verification",
+    "Protected merges and independent 26-agent and physical-reference acceptance"
+  ],
+  "certification": "NOT_CERTIFIED"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "USV-REMEDIATION-ITERATION-1",
+  "date": "2026-11-23",
+  "workstreams": [
+    "PR-03",
+    "PR-12"
+  ],
+  "pullRequest": 201,
+  "base": "main",
+  "implementationHead": "507fd2ad6424564db12c1d87955f5627324aabf2",
+  "changes": [
+    "Reject non-regular manifest.json Docker-save members",
+    "Reject non-regular referenced layer members rather than skipping them",
+    "Add executable synthetic symlink manifest and layer regression tests"
+  ],
+  "verification": {
+    "implementationHeadCI": "no workflow runs returned at inspection; unverified",
+    "priorHead": "8d5b4ad58fe786900c920ee9f8f5cca1456f09c4",
+    "priorAuxiliaryWorkflows": "four successful",
+    "priorGovernanceWorkflow": "failure; Stage E cause not independently reclassified in this iteration",
+    "localTests": "not executed; connector-only repository edit"
+  },
+  "blockers": [
+    "Authenticated Stage E independent approval",
+    "Production image credential and backup/recovery acceptance",
+    "Independent physical-reference validation",
+    "Complete 26-agent end-to-end acceptance",
+    "Protected merges and exact-head CI"
+  ],
+  "completionClaim": false
+}
