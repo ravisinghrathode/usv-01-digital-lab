@@ -36,9 +36,12 @@ describe('remediation exact-head observations remain non-authoritative', () => {
     expect(pr201.technicalFailureObserved).toBeNull();
     expect(pr201.auxiliaryWorkflowRuns).toHaveLength(4);
     const runIds = new Set<number>();
+    const workflowNames = new Set<string>();
     for (const run of pr201.auxiliaryWorkflowRuns) {
       expect(run.name).toEqual(expect.any(String));
       expect(run.name.length).toBeGreaterThan(0);
+      expect(workflowNames.has(run.name)).toBe(false);
+      workflowNames.add(run.name);
       expect(Number.isSafeInteger(run.runId)).toBe(true);
       expect(run.runId).toBeGreaterThan(0);
       expect(runIds.has(run.runId)).toBe(false);
@@ -47,6 +50,7 @@ describe('remediation exact-head observations remain non-authoritative', () => {
         .toContain(run.conclusion);
     }
     expect(runIds.has(pr201.governanceRunId)).toBe(false);
+    expect(workflowNames.has('USV-01 Safety & Governance Branch Protection Gate')).toBe(false);
     expect(observation.independentAcceptance).toBe(false);
   });
 
