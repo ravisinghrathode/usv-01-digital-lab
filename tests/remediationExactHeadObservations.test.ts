@@ -50,6 +50,28 @@ describe('remediation exact-head observations remain non-authoritative', () => {
     expect(observation.independentAcceptance).toBe(false);
   });
 
+  it('keeps all observed workflow identifiers and commit heads distinct across PRs', () => {
+    const governanceRuns = new Set<number>();
+    const allRuns = new Set<number>();
+    const heads = new Set<string>();
+    for (const entry of observation.prs) {
+      expect(heads.has(entry.headSha)).toBe(false);
+      heads.add(entry.headSha);
+      expect(governanceRuns.has(entry.governanceRunId)).toBe(false);
+      governanceRuns.add(entry.governanceRunId);
+      const runs = [entry.governanceRunId, ...(entry.auxiliaryWorkflowRuns ?? []).map(
+        (run: { runId: number }) => run.runId
+      )];
+      for (const runId of runs) {
+        expect(allRuns.has(runId)).toBe(false);
+        allRuns.add(runId);
+      }
+    }
+    // This ledger is a historical observation, never a current-head approval.
+    expect(observation.independentAcceptance).toBe(false);
+    expect(observation.engineeringCertification).toBe(false);
+  });
+
   it('preserves explicit unfulfilled governance and physical acceptance blockers', () => {
     expect(observation.blockers).toEqual(expect.arrayContaining([
       expect.stringContaining('Stage E'),
