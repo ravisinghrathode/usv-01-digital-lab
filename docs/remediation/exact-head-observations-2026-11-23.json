@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-EXACT-HEAD-OBSERVATION-1",
   "observedAt": "2026-11-23",
-  "scope": "GitHub pull-request workflow runs returned for exact PR head SHA; first-page results only; governance failures alone do not establish technical-check outcomes; PR #201 auxiliary workflow results are observed at the recorded prior head, not evidence of future commits; PR #201 updated with workflow results from head 18112343, which becomes historical when this documentation commit lands",
+  "scope": "Historical exact-head GitHub pull-request workflow observations (first page only); PR #201 observations refer to prior head f652c661 and are not verification of subsequent commits. Governance Stage E failures do not establish technical-check outcomes.",
   "independentAcceptance": false,
   "engineeringCertification": false,
   "prs": [
@@ -79,30 +79,30 @@
     },
     {
       "pullRequest": 201,
-      "headSha": "181123433ed2fed94a9c64f0ef22f1f41ab3c144",
-      "governanceRunId": 45117914210,
+      "headSha": "f652c66119e498af6032214cc107fcb8186d2dee",
+      "governanceRunId": 45127115467,
       "governanceConclusion": "failure",
       "failedStep": "Stage E — Governance Gate Enforcement",
       "technicalFailureObserved": null,
       "auxiliaryWorkflowRuns": [
         {
           "name": "Engineering Sessions — Isolated Browser QA",
-          "runId": 45117914180,
+          "runId": 45127115496,
           "conclusion": "success"
         },
         {
           "name": "USV-01 Docker Synthetic Secret Image Canary",
-          "runId": 45117914153,
+          "runId": 45127115354,
           "conclusion": "success"
         },
         {
           "name": "USV-01 Mission Control Zero-API Gate",
-          "runId": 45117914157,
+          "runId": 45127115350,
           "conclusion": "success"
         },
         {
           "name": "Agent Academy - 26 Role Curriculum and Evidence Gates",
-          "runId": 45117914167,
+          "runId": 45127115408,
           "conclusion": "success"
         }
       ]
@@ -119,6 +119,7 @@
     "Recheck exact-head CI after every change",
     "Inspect exact-head Stage B/auxiliary job logs before asserting any technical pass or failure; null means not established by this observation",
     "Recheck PR #201 exact-head CI after this observation update; previous-head successes must not be carried forward",
-    "Treat recorded PR #201 SHA as historical after this commit; do not reuse its CI outcomes as exact-head verification"
+    "Treat recorded PR #201 SHA as historical after this commit; do not reuse its CI outcomes as exact-head verification",
+    "Check CI on new commit d12acd4a and this ledger update; neither is covered by the historical successful auxiliary runs."
   ]
 }
