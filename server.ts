@@ -10,6 +10,7 @@ import { generateBoundApproverSignature, verifyBoundApproverSignature, setDirect
 import { AUTHORIZED_MEMBERS, type StaffMember } from './src/core/auth/staffDirectory.ts';
 import { authorizeLabRoute } from './src/core/auth/routeAuthorization.ts';
 import { guardEngineeringDraftWrite, EngineeringWritePolicyError } from './src/core/auth/engineeringDraftPolicy.ts';
+import { bindAgentExecutionRequest, AgentExecutionRequestError } from './src/core/auth/agentExecutionRequestPolicy.ts';
 import {
   verifyStaffCredential,
   isLockedOut,
@@ -566,13 +567,14 @@ app.post('/api/auth/provision-initial', (req, res) => {
 
 // --- SECURE SERVER-SIDE AGENT EXECUTION INTERFACE ---
 app.post('/api/agents/execute', async (req, res) => {
-  const correlationId = req.body?.correlationId || `corr-srv-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
+  // Client-provided correlation IDs are not authoritative audit identities.
+  const correlationId = 'corr-srv-' + crypto.randomUUID();
   try {
     const authHeader = req.headers['authorization'];
     const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : (req.headers['x-auth-token'] as string);
     const user = token ? verifySessionToken(token) : null;
 
-    const { agentId, taskId, parameters, context, priorAgentOutputs, userNotes } = req.body || {};
+    const { agentId } = req.body || {};
 
     if (!agentId || typeof agentId !== 'string') {
       return res.status(400).json({ success: false, error: "Missing required parameter 'agentId'." });
@@ -605,14 +607,7 @@ app.post('/api/agents/execute', async (req, res) => {
 
     // Server-controlled execution with timeout and correlation ID
     const agent = new BaseAgent(spec);
-    const executionInput = {
-      taskId: taskId || `TASK-${Date.now()}`,
-      parameters: parameters || {},
-      context: { ...(context || {}), isExploratoryStudy: undefined, safetyCritical: undefined, authenticatedUserId: user.userId, authenticatedUserRole: user.role },
-      priorAgentOutputs: priorAgentOutputs || {},
-      userNotes,
-      correlationId
-    };
+    const executionInput = bindAgentExecutionRequest(req.body, user, correlationId);
 
     const output = await Promise.race([
       agent.execute(executionInput),
@@ -627,6 +622,11 @@ app.post('/api/agents/execute', async (req, res) => {
       output
     });
   } catch (err: any) {
+    if (err instanceof AgentExecutionRequestError) {
+      return res.status(err.httpStatus).json({
+        success: false, correlationId, error: err.message
+      });
+    }
     AuditLogger.getInstance().log({
       severity: 'SAFETY_CRITICAL',
       agentId: req.body?.agentId || 'UNKNOWN',
