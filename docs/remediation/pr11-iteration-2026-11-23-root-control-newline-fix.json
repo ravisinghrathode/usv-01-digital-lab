@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "USV01-REMEDIATION-ITERATION-1",
+  "workstream": "PR-11",
+  "pullRequest": 200,
+  "baseBranch": "main",
+  "priorHead": "e9deaa2b738095bc4d37d558e4c23ebedf2506c8",
+  "changeCommit": "b8898fdd952bd9eaf9f2b3b676c9dd9eb0a1e94c",
+  "change": "Correct root-control validation regression expectation from literal backslash-n to actual newline written by setup fixture.",
+  "evidence": {
+    "source": "tests/independentReferenceReader.test.ts",
+    "priorExactHeadGovernanceRun": 45206781623,
+    "priorExactHeadGovernanceConclusion": "failure",
+    "newHeadCI": "not verified at record creation"
+  },
+  "acceptance": {
+    "status": "pending",
+    "stageE": "independent authenticated human approval required",
+    "physicalReference": "not verified",
+    "engineeringCertification": false
+  },
+  "nextActions": [
+    "Inspect exact-head workflow run and diagnose deterministic failure separately from Stage E",
+    "Run regression suite, lint and build through protected CI",
+    "Obtain independent human review and validate 26-agent physical references before acceptance"
+  ]
+}

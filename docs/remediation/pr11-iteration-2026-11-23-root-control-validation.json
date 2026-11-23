@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "USV-REMEDIATION-ITERATION-1",
+  "date": "2026-11-23",
+  "workstream": "PR-11",
+  "pullRequest": 200,
+  "baseMainObserved": "907ab7a418e11ed78a5c635f7b8721a090cca122",
+  "implementationCommits": [
+    "a3e9b4d05eb803d69b239d61ca9bc86934d9818b",
+    "25116e429081042a96c1f33eef25eb4c243b0fae",
+    "803005638ee073b9e88de472b593e0cce9b4dbbf"
+  ],
+  "change": "Fail closed on oversized or ASCII-control-bearing checkout root strings before filesystem traversal; regression tests use actual control characters.",
+  "verification": {
+    "local": "not-run",
+    "priorExactHead": "2ad64d4f5a23332f9674220197b459664eea8395",
+    "priorGovernanceRun": 45194255070,
+    "priorGovernanceFailureStep": "Stage E — Governance Gate Enforcement",
+    "priorTechnicalStage": "Stage B passed",
+    "newHeadBeforeLedger": "803005638ee073b9e88de472b593e0cce9b4dbbf",
+    "newHeadWorkflowRun": 45206704147,
+    "newHeadWorkflowStatusAtObservation": "in_progress",
+    "finalHeadCI": "not-yet-confirmed"
+  },
+  "acceptance": "not-accepted",
+  "blockers": [
+    "Authenticated independent exact-head Stage E human approval",
+    "Protected merge",
+    "Independent physical-reference review and 26-agent end-to-end acceptance"
+  ],
+  "nextActions": [
+    "Recheck final exact-head technical CI and fix any genuine defects",
+    "Continue independent unblocked workstreams",
+    "Obtain separate authorized governance approvals before merge"
+  ]
+}

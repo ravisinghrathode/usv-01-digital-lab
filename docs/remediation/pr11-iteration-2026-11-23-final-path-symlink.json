@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "USV-REMEDIATION-ITERATION-1",
+  "date": "2026-11-23",
+  "workstream": "PR-11",
+  "pullRequest": 200,
+  "baseMain": "907ab7a418e11ed78a5c635f7b8721a090cca122",
+  "implementationCommit": "7c100260b513625bbc90dd23a613f9a6ff08fde1",
+  "change": "Add adversarial regression simulating final evidence pathname replacement with a symlink after descriptor read starts; must fail closed.",
+  "priorExactHead": "578d04d802abed75e6fd662cf1e6d33c5eb4fecf",
+  "priorGovernanceRun": 45172361312,
+  "priorStageB": "passed",
+  "priorStageE": "failed: independent authenticated human approval absent",
+  "verification": {
+    "newExactHeadCI": "not-yet-confirmed",
+    "local": "not-run"
+  },
+  "limitations": [
+    "Regression coverage is not proof of race freedom",
+    "No physical-reference or 26-agent independent acceptance",
+    "No authorized Stage E approval or merge"
+  ],
+  "nextActions": [
+    "Inspect exact-head CI and repair technical defects",
+    "Pursue independent Stage E human review without bypass",
+    "Continue other independent remediation workstreams"
+  ]
+}

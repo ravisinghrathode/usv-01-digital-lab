@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "USV-REMEDIATION-ITERATION-1",
+  "date": "2026-11-23",
+  "workstream": "PR-11",
+  "pullRequest": 200,
+  "baseMain": "907ab7a418e11ed78a5c635f7b8721a090cca122",
+  "implementationCommits": [
+    "7d4eb35e00802fd5d661803336f3fd7cbe33b872",
+    "bf74686f15e5cb07649f9be426d8e7d585eae82d"
+  ],
+  "change": "Reject checkout roots beneath symlinked ancestor directories before independent evidence reads; add regression test.",
+  "verification": {
+    "local": "not-run",
+    "exactHeadCI": "not-yet-confirmed",
+    "previousHeadGovernanceRun": 44986796716,
+    "previousHeadGovernanceConclusion": "failure",
+    "stageE": "not-approved"
+  },
+  "acceptance": "not-accepted",
+  "blockers": [
+    "Independent authenticated Stage E review",
+    "Exact-head technical CI",
+    "Physical reference verification and full end-to-end acceptance"
+  ],
+  "nextActions": [
+    "Inspect exact-head CI and fix technical failures",
+    "Preserve independent reviewer gates",
+    "Continue other unblocked workstreams"
+  ]
+}

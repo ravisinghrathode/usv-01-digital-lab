@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "USV01-REMEDIATION-ITERATION-1",
+  "observedDate": "2026-11-24",
+  "workstream": "PR-11",
+  "pullRequest": 200,
+  "baseMainObserved": "3aac06ee39101853c9dd85ab31c2553b3c54c56d",
+  "implementationCommits": [
+    "322ecf317070c35f39f621ddad866b4003af95fa",
+    "3180692f85ff9126c99756c57a3ee3bd982f4c7f"
+  ],
+  "change": "Added fail-closed regression for symlinked independent evidence base and dangling symlink, plus restored real directory positive control.",
+  "priorExactHead": {
+    "sha": "79267d3fd6e820d76052222cc00554052756d3c7",
+    "runId": 45216901776,
+    "failedStep": "Stage E — Governance Gate Enforcement",
+    "deterministicStageFailureObserved": false
+  },
+  "verification": {
+    "newHeadCI": "not yet verified",
+    "localTests": "not run",
+    "engineeringAcceptance": false
+  },
+  "blockers": [
+    "Authenticated independent Stage E human approval",
+    "Exact-head CI on latest commit",
+    "Physical reference verification and independent end-to-end acceptance"
+  ],
+  "nextActions": [
+    "Inspect latest exact-head workflow after GitHub schedules it",
+    "Resolve any deterministic technical failures without weakening governance",
+    "Continue other independent workstreams pending human approval"
+  ]
+}

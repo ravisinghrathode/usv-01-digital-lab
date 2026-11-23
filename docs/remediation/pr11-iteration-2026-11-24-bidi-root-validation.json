@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "USV01-REMEDIATION-ITERATION-1",
+  "date": "2026-11-24",
+  "workstream": "PR-11",
+  "pullRequest": 200,
+  "branch": "remediation/pr11-independent-evidence-path-hardening",
+  "baseMainObserved": "3aac06ee39101853c9dd85ab31c2553b3c54c56d",
+  "previousExactHead": "be3e2e5da6cba8a15882979797c660c7ba470a67",
+  "previousGovernanceRun": 45278430042,
+  "previousRunStageB": "success on inspected deterministic steps",
+  "previousRunStageE": "failure; authenticated independent approval not established",
+  "changes": [
+    {
+      "commit": "a6c70c40bcaba6ebf681d7e3feb36319e86ce5d1",
+      "description": "Reject Unicode bidi formatting controls in independent checkout-root paths"
+    },
+    {
+      "commit": "d2e0c99c6b01d2dbc9c5be4296b8e0dca378aeb8",
+      "description": "Add malformed checkout-root regression and valid-root control"
+    },
+    {
+      "commit": "64c4bc24811d07029deffdb8d642a56b334d2fb1",
+      "description": "Correct fixture newline assertion"
+    }
+  ],
+  "verification": {
+    "latestChangesCI": "pending exact-head GitHub Actions",
+    "independentEngineeringAcceptance": false,
+    "physicalReferenceVerified": false
+  },
+  "blockers": [
+    "Stage E requires authenticated independent human approval",
+    "Protected merge and end-to-end physical verification outstanding"
+  ],
+  "nextActions": [
+    "Inspect exact-head deterministic test result and fix any technical failure",
+    "Retain Stage E enforcement",
+    "Continue independent workstreams while awaiting external approvals"
+  ]
+}
