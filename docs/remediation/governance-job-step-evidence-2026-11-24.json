@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "USV-REMEDIATION-GOVERNANCE-JOB-STEP-EVIDENCE-1",
+  "observedOn": "2026-11-24",
+  "mainSha": "907ab7a418e11ed78a5c635f7b8721a090cca122",
+  "scope": "Historical exact-head GitHub Actions job-step observations; not current-head acceptance after this commit",
+  "entries": [
+    {
+      "pr": 191,
+      "headSha": "8f0aee4980be7347dad141a699a6cf7f9dbae1e8",
+      "runId": 44895894586,
+      "workflowConclusion": "failure",
+      "observedFailedSteps": [
+        "Stage E — Governance Gate Enforcement"
+      ],
+      "stageBFailureObserved": false,
+      "stageEApprovalSatisfied": false,
+      "merged": false
+    },
+    {
+      "pr": 193,
+      "headSha": "46dfae1e8e2041828dd33ed08cd5cbd7837ff0a2",
+      "runId": 44716720508,
+      "workflowConclusion": "failure",
+      "observedFailedSteps": [
+        "Stage E — Governance Gate Enforcement"
+      ],
+      "stageBFailureObserved": false,
+      "stageEApprovalSatisfied": false,
+      "merged": false
+    },
+    {
+      "pr": 194,
+      "headSha": "2c6ee2e8a9639dd46c98ae608576879d97c4efb7",
+      "runId": 44724954484,
+      "workflowConclusion": "failure",
+      "observedFailedSteps": [
+        "Stage E — Governance Gate Enforcement"
+      ],
+      "stageBFailureObserved": false,
+      "stageEApprovalSatisfied": false,
+      "merged": false
+    },
+    {
+      "pr": 195,
+      "headSha": "effa6b5688cd28929ee7065460becf64f341df60",
+      "runId": 44733179559,
+      "workflowConclusion": "failure",
+      "observedFailedSteps": [
+        "Stage E — Governance Gate Enforcement"
+      ],
+      "stageBFailureObserved": false,
+      "stageEApprovalSatisfied": false,
+      "merged": false
+    },
+    {
+      "pr": 196,
+      "headSha": "446e8bb15fb3681376e2e35c8c161a91b4162205",
+      "runId": 44738063446,
+      "workflowConclusion": "failure",
+      "observedFailedSteps": [
+        "Stage E — Governance Gate Enforcement"
+      ],
+      "stageBFailureObserved": false,
+      "stageEApprovalSatisfied": false,
+      "merged": false
+    },
+    {
+      "pr": 197,
+      "headSha": "475666d37822c0f28038b1e10086ceb8cf881428",
+      "runId": 44749521443,
+      "workflowConclusion": "failure",
+      "observedFailedSteps": [
+        "Stage E — Governance Gate Enforcement"
+      ],
+      "stageBFailureObserved": false,
+      "stageEApprovalSatisfied": false,
+      "merged": false
+    },
+    {
+      "pr": 198,
+      "headSha": "c50eebc84014e4198a5e17bbf02a0ff06f50522c",
+      "runId": 44759311978,
+      "workflowConclusion": "failure",
+      "observedFailedSteps": [
+        "Stage E — Governance Gate Enforcement"
+      ],
+      "stageBFailureObserved": false,
+      "stageEApprovalSatisfied": false,
+      "merged": false
+    },
+    {
+      "pr": 199,
+      "headSha": "407f3a7e2e94588ed88c304c74e635e857970a18",
+      "runId": 44763635450,
+      "workflowConclusion": "failure",
+      "observedFailedSteps": [
+        "Stage E — Governance Gate Enforcement"
+      ],
+      "stageBFailureObserved": false,
+      "stageEApprovalSatisfied": false,
+      "merged": false
+    },
+    {
+      "pr": 200,
+      "headSha": "79267d3fd6e820d76052222cc00554052756d3c7",
+      "runId": 45216901776,
+      "workflowConclusion": "failure",
+      "observedFailedSteps": [
+        "Stage E — Governance Gate Enforcement"
+      ],
+      "stageBFailureObserved": false,
+      "stageEApprovalSatisfied": false,
+      "merged": false
+    },
+    {
+      "pr": 201,
+      "headSha": "36faa3f5dea5a4250684af66ccc48381859b723a",
+      "runId": 45236430754,
+      "workflowConclusion": "failure",
+      "observedFailedSteps": [
+        "Stage E — Governance Gate Enforcement"
+      ],
+      "stageBFailureObserved": false,
+      "stageEApprovalSatisfied": false,
+      "merged": false
+    }
+  ],
+  "engineeringCertified": false,
+  "independentlyAccepted": false,
+  "limitations": [
+    "A Stage E failure does not establish complete Stage B coverage or independent acceptance",
+    "Workflow-run lookup returns a first page and job-step inspection returns the latest attempt's first page",
+    "A subsequent commit invalidates exact-head currency for the changed PR"
+  ],
+  "nextActions": [
+    "Recheck CI on every updated head",
+    "Preserve independent authenticated Stage E review and protected merge gates",
+    "Pursue technical work on independent unblocked branches"
+  ]
+}
