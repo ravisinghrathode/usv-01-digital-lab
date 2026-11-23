@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "USV01-REMEDIATION-ITERATION-1",
+  "date": "2026-11-23",
+  "workstream": "PR-11",
+  "pullRequest": 200,
+  "baseMain": "907ab7a418e11ed78a5c635f7b8721a090cca122",
+  "priorHead": "3d9c82eb15f44278848c60bf842810f6ff3e7593",
+  "implementationCommits": [
+    "b8a0a244ad7453dc70528bb4598f062083e64818",
+    "e6a5ac4859de5929d9abc3505dd4af87fe066ee4",
+    "b38fe435583c2389904ca2a504a513a7e9455e99"
+  ],
+  "change": "Reject non-string, absent, and whitespace-only runtime trust-root inputs before path.resolve; add malformed-input regression and valid fixture control.",
+  "priorExactHeadCI": [
+    {
+      "runId": 45175942499,
+      "conclusion": "failure",
+      "workflow": "USV-01 Safety & Governance Branch Protection Gate"
+    }
+  ],
+  "technicalTestsAtNewHead": "not_verified",
+  "stageE": "independent authenticated approval outstanding",
+  "merged": false,
+  "independentAcceptance": false,
+  "nextActions": [
+    "Inspect exact-head CI after push",
+    "Resolve any technical failures without altering Stage E",
+    "Obtain separate authenticated human review and acceptance before protected merge"
+  ]
+}
