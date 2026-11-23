@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-22",
+  "updatedAt": "2026-11-23",
   "items": [
     {
       "id": "PR-01",
@@ -73,7 +73,7 @@
       "id": "PR-12",
       "state": "partial-implementation-awaiting-review",
       "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/201",
-      "verification": "2026-11-22 previous exact-head 98fba2d1c3192542876c88ddb400860f5934641e: governance workflow 45039906141 failed at Stage E only; four auxiliary workflows succeeded. Subsequent PR #201 changes include Docker image tar header secret leak detection and executable regression coverage at 9b6565af0469536dc422e2bab62159f9fd670fbf; latest ledger update requires fresh exact-head CI. Authenticated review, physical reference verification, 26-agent end-to-end acceptance and protected merge outstanding."
+      "verification": "2026-11-23 PR #201 exact-head 512fcea7cddb243b70c9c3d2a07f9be53a6e62dc: four auxiliary workflows succeeded; governance run 45098636424 failed at Stage B deterministic tests, not Stage E. Job 137444066343 logs identify 2 failing Docker canary tests of 1254 tests (1252 passed): assertions expected layer/archive header rejection but raw archive byte scanner correctly rejected secrets first. Test expectations corrected in commit 8958149e3c991fb0ad031b1ab6ca1186155d3a0a; new exact-head CI pending, no verified pass claimed. Stage E authenticated human approval, physical reference verification, full 26-agent end-to-end acceptance and protected merge remain outstanding."
     }
   ],
   "constraints": [
