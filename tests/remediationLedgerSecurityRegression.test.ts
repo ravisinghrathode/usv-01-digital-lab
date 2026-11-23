@@ -195,4 +195,18 @@ describe('unverified remediation ledger security regressions', () => {
   });
 
 
+  it('rejects unpaired UTF-16 surrogate provenance while preserving valid Unicode', () => {
+    for (const malformed of ['\\uD800', '\\uDC00', 'review\\uD800pending', 'review\\uDC00pending']) {
+      const note = makeLedger();
+      note.items[0].verification = malformed;
+      expect(() => summarizeUnverifiedRemediationLedger(note)).toThrow('invalid verification note');
+      const constraint = makeLedger();
+      constraint.constraints[0] = malformed;
+      expect(() => summarizeUnverifiedRemediationLedger(constraint)).toThrow('malformed provenance metadata');
+    }
+    const valid = makeLedger();
+    valid.items[0].verification = 'Independent review pending — \\uD83D\\uDEE0';
+    expect(summarizeUnverifiedRemediationLedger(valid).notVerified).toBe(12);
+  });
+
 });
