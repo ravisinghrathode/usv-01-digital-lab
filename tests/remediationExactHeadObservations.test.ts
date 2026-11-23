@@ -83,4 +83,23 @@ describe('remediation exact-head observations remain non-authoritative', () => {
     ]));
     expect(observation.nextActions.length).toBeGreaterThan(0);
   });
+  it('never promotes a later historical observation to current approval', () => {
+    const later = JSON.parse(fs.readFileSync(
+      'docs/remediation/exact-head-observation-2026-11-23-turn11.json', 'utf8'
+    )) as Record<string, any>;
+    expect(later.verifiedMergedAndAcceptedCount).toBe(0);
+    expect(later.tracked).toHaveLength(10);
+    expect(later.tracked.map((entry: any) => entry.pr))
+      .toEqual([191, 193, 194, 195, 196, 197, 198, 199, 200, 201]);
+    for (const entry of later.tracked) {
+      expect(entry.open).toBe(true);
+      expect(entry.merged).toBe(false);
+      expect(entry.governanceConclusion).toBe('failure');
+      expect(entry.headSha).toMatch(/^[0-9a-f]{40}$/);
+      expect(entry.failureStage).toContain('not independently reclassified');
+    }
+    expect(later.claimLimit).toContain('stale');
+    expect(later.blockers.join(' ')).toContain('Stage E');
+  });
+
 });
