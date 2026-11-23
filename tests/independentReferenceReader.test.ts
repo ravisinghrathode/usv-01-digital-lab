@@ -37,6 +37,16 @@ describe('independent engineering reference evidence path isolation', () => {
       .toBe('Verified reference fixture only\n');
   });
 
+  it('fails closed for malformed runtime evidence path values', () => {
+    const { root } = setup();
+    for (const invalidPath of [undefined, null, 0, 42, false, {}, [], '']) {
+      expect(() => readIndependentReferenceBytes(root, invalidPath as string)).not.toThrow();
+      expect(readIndependentReferenceBytes(root, invalidPath as string)).toBe(null);
+    }
+    expect(readIndependentReferenceBytes(root, 'evidence/independent/reference.txt')?.toString())
+      .toBe('Verified reference fixture only\\n');
+  });
+
   it('refuses relative traversal, absolute paths and malformed evidence names', () => {
     const { root } = setup();
     for (const name of [
