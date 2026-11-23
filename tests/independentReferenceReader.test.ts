@@ -113,7 +113,7 @@ describe('independent engineering reference evidence path isolation', () => {
     fs.unlinkSync(base);
     fs.renameSync(moved, base);
     expect(readIndependentReferenceBytes(root, 'evidence/independent/reference.txt')?.toString())
-      .toBe('Verified reference fixture only\\n');
+      .toBe('Verified reference fixture only\n');
   });
 
   it('rejects a symlinked checkout trust root even when its target has valid evidence', () => {
