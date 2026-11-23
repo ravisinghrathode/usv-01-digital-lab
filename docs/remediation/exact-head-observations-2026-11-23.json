@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "USV-REMEDIATION-EXACT-HEAD-OBSERVATION-1",
+  "observedAt": "2026-11-23",
+  "scope": "GitHub pull-request workflow runs returned for exact PR head SHA; first-page results only",
+  "independentAcceptance": false,
+  "engineeringCertification": false,
+  "prs": [
+    {
+      "pullRequest": 191,
+      "headSha": "8f0aee4980be7347dad141a699a6cf7f9dbae1e8",
+      "governanceRunId": 44895894586,
+      "governanceConclusion": "failure",
+      "failedStep": "Stage E — Governance Gate Enforcement",
+      "technicalFailureObserved": false
+    },
+    {
+      "pullRequest": 193,
+      "headSha": "46dfae1e8e2041828dd33ed08cd5cbd7837ff0a2",
+      "governanceRunId": 44716720508,
+      "governanceConclusion": "failure",
+      "failedStep": "Stage E — Governance Gate Enforcement",
+      "technicalFailureObserved": false
+    },
+    {
+      "pullRequest": 194,
+      "headSha": "2c6ee2e8a9639dd46c98ae608576879d97c4efb7",
+      "governanceRunId": 44724954484,
+      "governanceConclusion": "failure",
+      "failedStep": "Stage E — Governance Gate Enforcement",
+      "technicalFailureObserved": false
+    },
+    {
+      "pullRequest": 195,
+      "headSha": "effa6b5688cd28929ee7065460becf64f341df60",
+      "governanceRunId": 44733179559,
+      "governanceConclusion": "failure",
+      "failedStep": "Stage E — Governance Gate Enforcement",
+      "technicalFailureObserved": false
+    },
+    {
+      "pullRequest": 196,
+      "headSha": "446e8bb15fb3681376e2e35c8c161a91b4162205",
+      "governanceRunId": 44738063446,
+      "governanceConclusion": "failure",
+      "failedStep": "Stage E — Governance Gate Enforcement",
+      "technicalFailureObserved": false
+    },
+    {
+      "pullRequest": 197,
+      "headSha": "475666d37822c0f28038b1e10086ceb8cf881428",
+      "governanceRunId": 44749521443,
+      "governanceConclusion": "failure",
+      "failedStep": "Stage E — Governance Gate Enforcement",
+      "technicalFailureObserved": false
+    },
+    {
+      "pullRequest": 198,
+      "headSha": "c50eebc84014e4198a5e17bbf02a0ff06f50522c",
+      "governanceRunId": 44759311978,
+      "governanceConclusion": "failure",
+      "failedStep": "Stage E — Governance Gate Enforcement",
+      "technicalFailureObserved": false
+    },
+    {
+      "pullRequest": 199,
+      "headSha": "407f3a7e2e94588ed88c304c74e635e857970a18",
+      "governanceRunId": 44763635450,
+      "governanceConclusion": "failure",
+      "failedStep": "Stage E — Governance Gate Enforcement",
+      "technicalFailureObserved": false
+    },
+    {
+      "pullRequest": 200,
+      "headSha": "ae7669de155f9dfafebc25e4559de21440904a72",
+      "governanceRunId": 44986796716,
+      "governanceConclusion": "failure",
+      "failedStep": "Stage E — Governance Gate Enforcement",
+      "technicalFailureObserved": false
+    },
+    {
+      "pullRequest": 201,
+      "headSha": "986f1ca329dc560251136ad1e73f4f1ace9aadbe",
+      "governanceRunId": 45102044808,
+      "governanceConclusion": "failure",
+      "failedStep": "Stage E — Governance Gate Enforcement",
+      "technicalFailureObserved": false
+    }
+  ],
+  "blockers": [
+    "Authenticated separate Stage E human approval on exact head",
+    "Protected merges and independent full 26-agent acceptance",
+    "Production recovery and physical reference validation"
+  ],
+  "nextActions": [
+    "Obtain separate authorized human governance reviews without self-approval",
+    "Continue independent technical remediation and regression tests",
+    "Recheck exact-head CI after every change"
+  ]
+}
