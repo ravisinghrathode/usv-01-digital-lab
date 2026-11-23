@@ -229,6 +229,39 @@ for bad in ("../layer.tar", "/layer.tar", "./layer.tar", "dir//layer.tar", "dir/
     expect(result.status, result.stderr || result.stdout).toBe(0);
   });
 
+  it('rejects synthetic credentials hidden after the tar end marker', () => {
+    const python = `
+import importlib.util, io, json, pathlib, tarfile, tempfile
+spec = importlib.util.spec_from_file_location("docker_canary", pathlib.Path("scripts/security/docker-image-secret-canary.py").resolve())
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+token = b"USV01_SYNTHETIC_SECRET_CANARY_TRAILING"
+with tempfile.TemporaryDirectory() as tmp:
+    archive = pathlib.Path(tmp) / "image.tar"
+    layer_bytes = io.BytesIO()
+    with tarfile.open(fileobj=layer_bytes, mode="w") as layer:
+        entry = tarfile.TarInfo("safe.txt")
+        entry.size = 4
+        layer.addfile(entry, io.BytesIO(b"safe"))
+    manifest = json.dumps([{"RepoTags": list(module.IMAGES), "Layers": ["layer.tar"]}]).encode()
+    with tarfile.open(archive, "w") as outer:
+        for name, data in (("manifest.json", manifest), ("layer.tar", layer_bytes.getvalue())):
+            entry = tarfile.TarInfo(name)
+            entry.size = len(data)
+            outer.addfile(entry, io.BytesIO(data))
+    with archive.open("ab") as out:
+        out.write(token)
+    try:
+        module.inspect_image_archive(archive, token)
+    except RuntimeError as error:
+        assert "raw Docker archive bytes" in str(error), error
+    else:
+        raise AssertionError("Accepted credential after tar end marker")
+`;
+    const result = spawnSync('python3', ['-c', python], { cwd: root, encoding: 'utf8' });
+    expect(result.status, result.stderr || result.stdout).toBe(0);
+  });
+
   it('runs a dedicated GitHub Actions workflow with synthetic fixtures', () => {
     expect(workflow).toContain('pull_request:');
     expect(workflow).toContain('workflow_dispatch:');
