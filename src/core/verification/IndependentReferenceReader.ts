@@ -13,7 +13,9 @@ const MAX_REFERENCE_BYTES = 5 * 1024 * 1024;
 export function readIndependentReferenceBytes(
   referenceRootDir: string | undefined, relativePath: string
 ): Buffer | null {
-  if (typeof referenceRootDir !== 'string' || !referenceRootDir.trim() || typeof relativePath !== 'string' ||
+  if (typeof referenceRootDir !== 'string' || !referenceRootDir.trim() ||
+      referenceRootDir.length > 4096 || /[\x00-\x1f\x7f]/u.test(referenceRootDir) ||
+      typeof relativePath !== 'string' ||
       relativePath.length > 4096 ||
       !relativePath.startsWith('evidence/independent/') ||
       relativePath.includes('\\') || relativePath.includes('\0') || /[\x00-\x1f\x7f\u202a-\u202e\u2066-\u2069]/u.test(relativePath)) {
