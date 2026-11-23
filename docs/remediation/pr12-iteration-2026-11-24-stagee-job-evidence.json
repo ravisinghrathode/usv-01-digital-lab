@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "USV-REMEDIATION-ITERATION-1",
+  "observedOn": "2026-11-24",
+  "workstream": "PR-12",
+  "pullRequest": 201,
+  "implementationCommit": "eff38862ace62fa35abc2ba025b0422a853cc175",
+  "change": "Added regression assertion that later historical exact-head observations cannot be treated as approval or certification",
+  "verifiedTests": [],
+  "ciStatus": "No GitHub Actions runs returned for implementation exact head at inspection",
+  "governanceEvidence": "All ten inspected governance workflows failed exclusively at Stage E job step; this does not establish acceptance",
+  "repositoryMutationNote": "A historical job-step evidence JSON file was also committed directly to main in commit 3aac06ee39101853c9dd85ab31c2553b3c54c56d; this was not a focused-branch change and must be reviewed separately. No protections or approvals were modified.",
+  "blockers": [
+    "Authenticated independent Stage E review outstanding",
+    "Protected merges outstanding",
+    "Independent physical reference and end-to-end acceptance outstanding"
+  ],
+  "nextActions": [
+    "Verify exact-head CI when runs become available",
+    "Review unintended main documentation commit separately; avoid further direct-main writes",
+    "Continue independent technical implementation without bypassing governance"
+  ]
+}
