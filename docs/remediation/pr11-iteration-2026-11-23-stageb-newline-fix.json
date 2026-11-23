@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "USV-REMEDIATION-ITERATION-1",
+  "date": "2026-11-23",
+  "workstream": "PR-11",
+  "pullRequest": 200,
+  "observedFailingHead": "484a30f9b71269f85719b0b00c783e31c6e3790f",
+  "failingWorkflowRun": 45164734400,
+  "failingJob": 137658637351,
+  "stage": "Stage B — Execute Deterministic & Safety Test Suite",
+  "testResult": {
+    "passed": 1155,
+    "failed": 1,
+    "failedTest": "tests/independentReferenceReader.test.ts:125",
+    "cause": "Expected literal backslash-n while fixture has an actual newline"
+  },
+  "fixCommit": "3ddad08b6ae755378cb628feed94cc4d8d807c4a",
+  "verification": {
+    "sourceReadBack": true,
+    "fixCommitWorkflowRunsAtInspection": 0,
+    "localTests": "not-run",
+    "latestHeadCI": "pending",
+    "stageEApproval": "not-established",
+    "independentPhysicalReference": "not-established",
+    "engineeringAcceptance": "not-established",
+    "merged": false
+  },
+  "nextActions": [
+    "Inspect exact-head CI after this record commit",
+    "Repair any remaining technical failures",
+    "Retain authenticated independent Stage E and physical verification requirements"
+  ]
+}
