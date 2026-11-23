@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-EXACT-HEAD-OBSERVATION-1",
   "observedAt": "2026-11-23",
-  "scope": "GitHub pull-request workflow runs returned for exact PR head SHA; first-page results only",
+  "scope": "GitHub pull-request workflow runs returned for exact PR head SHA; first-page results only; governance failures alone do not establish technical-check outcomes",
   "independentAcceptance": false,
   "engineeringCertification": false,
   "prs": [
@@ -11,7 +11,7 @@
       "governanceRunId": 44895894586,
       "governanceConclusion": "failure",
       "failedStep": "Stage E — Governance Gate Enforcement",
-      "technicalFailureObserved": false
+      "technicalFailureObserved": null
     },
     {
       "pullRequest": 193,
@@ -19,7 +19,7 @@
       "governanceRunId": 44716720508,
       "governanceConclusion": "failure",
       "failedStep": "Stage E — Governance Gate Enforcement",
-      "technicalFailureObserved": false
+      "technicalFailureObserved": null
     },
     {
       "pullRequest": 194,
@@ -27,7 +27,7 @@
       "governanceRunId": 44724954484,
       "governanceConclusion": "failure",
       "failedStep": "Stage E — Governance Gate Enforcement",
-      "technicalFailureObserved": false
+      "technicalFailureObserved": null
     },
     {
       "pullRequest": 195,
@@ -35,7 +35,7 @@
       "governanceRunId": 44733179559,
       "governanceConclusion": "failure",
       "failedStep": "Stage E — Governance Gate Enforcement",
-      "technicalFailureObserved": false
+      "technicalFailureObserved": null
     },
     {
       "pullRequest": 196,
@@ -43,7 +43,7 @@
       "governanceRunId": 44738063446,
       "governanceConclusion": "failure",
       "failedStep": "Stage E — Governance Gate Enforcement",
-      "technicalFailureObserved": false
+      "technicalFailureObserved": null
     },
     {
       "pullRequest": 197,
@@ -51,7 +51,7 @@
       "governanceRunId": 44749521443,
       "governanceConclusion": "failure",
       "failedStep": "Stage E — Governance Gate Enforcement",
-      "technicalFailureObserved": false
+      "technicalFailureObserved": null
     },
     {
       "pullRequest": 198,
@@ -59,7 +59,7 @@
       "governanceRunId": 44759311978,
       "governanceConclusion": "failure",
       "failedStep": "Stage E — Governance Gate Enforcement",
-      "technicalFailureObserved": false
+      "technicalFailureObserved": null
     },
     {
       "pullRequest": 199,
@@ -67,7 +67,7 @@
       "governanceRunId": 44763635450,
       "governanceConclusion": "failure",
       "failedStep": "Stage E — Governance Gate Enforcement",
-      "technicalFailureObserved": false
+      "technicalFailureObserved": null
     },
     {
       "pullRequest": 200,
@@ -75,7 +75,7 @@
       "governanceRunId": 44986796716,
       "governanceConclusion": "failure",
       "failedStep": "Stage E — Governance Gate Enforcement",
-      "technicalFailureObserved": false
+      "technicalFailureObserved": null
     },
     {
       "pullRequest": 201,
@@ -83,7 +83,7 @@
       "governanceRunId": 45102044808,
       "governanceConclusion": "failure",
       "failedStep": "Stage E — Governance Gate Enforcement",
-      "technicalFailureObserved": false
+      "technicalFailureObserved": null
     }
   ],
   "blockers": [
@@ -94,6 +94,7 @@
   "nextActions": [
     "Obtain separate authorized human governance reviews without self-approval",
     "Continue independent technical remediation and regression tests",
-    "Recheck exact-head CI after every change"
+    "Recheck exact-head CI after every change",
+    "Inspect exact-head Stage B/auxiliary job logs before asserting any technical pass or failure; null means not established by this observation"
   ]
 }
