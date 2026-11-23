@@ -99,6 +99,23 @@ describe('independent engineering reference evidence path isolation', () => {
       .toBe(null);
   });
 
+  it('rejects a symlinked independent evidence base and dangling base link', () => {
+    const { root, base } = setup();
+    const moved = base + '-original';
+    fs.renameSync(base, moved);
+    fs.symlinkSync(moved, base, 'dir');
+    expect(readIndependentReferenceBytes(root, 'evidence/independent/reference.txt'))
+      .toBe(null);
+    fs.unlinkSync(base);
+    fs.symlinkSync(path.join(root, 'missing-independent-base'), base, 'dir');
+    expect(readIndependentReferenceBytes(root, 'evidence/independent/reference.txt'))
+      .toBe(null);
+    fs.unlinkSync(base);
+    fs.renameSync(moved, base);
+    expect(readIndependentReferenceBytes(root, 'evidence/independent/reference.txt')?.toString())
+      .toBe('Verified reference fixture only\\n');
+  });
+
   it('rejects a symlinked checkout trust root even when its target has valid evidence', () => {
     const { root } = setup();
     const aliasParent = fs.mkdtempSync(path.join(os.tmpdir(), 'usv01-root-alias-'));
