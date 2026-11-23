@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "USV-REMEDIATION-ITERATION-1",
+  "date": "2026-11-23",
+  "workstream": "PR-11",
+  "pullRequest": 200,
+  "baseMain": "907ab7a418e11ed78a5c635f7b8721a090cca122",
+  "implementationCommits": [
+    "53216fe3526d547323bd17f4697791b93b019cad",
+    "0742fc93ee9d8ed9f26e24629558660d5a0b6703"
+  ],
+  "change": "Regression test for malformed runtime relativePath values (undefined, null, numeric, boolean, object, array, empty string), plus valid evidence control.",
+  "verification": {
+    "local": "not-run",
+    "exactHeadCI": "not-confirmed",
+    "priorHead": "6f39f126a23787d9e8aa32e55b4c32be34239a6d",
+    "priorGovernanceRun": 45187941074,
+    "priorStageE": "failed",
+    "priorTechnicalStageB": "passed in inspected governance job; independent acceptance not established"
+  },
+  "acceptance": "not-accepted",
+  "blockers": [
+    "Authenticated exact-head independent Stage E approval",
+    "Protected merge",
+    "Physical-reference verification and full 26-agent acceptance"
+  ],
+  "nextActions": [
+    "Inspect CI for latest exact head and correct technical failures",
+    "Continue independent remediation workstreams",
+    "Do not infer engineering acceptance from deterministic CI"
+  ]
+}
