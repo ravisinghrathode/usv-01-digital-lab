@@ -49,6 +49,11 @@ def contains_token(stream, token: bytes) -> bool:
 
 
 def inspect_image_archive(archive: Path, token: bytes) -> int:
+    # Inspect raw archive bytes as well as parsed tar entries: tar parsers can
+    # ignore trailing data and padding that still ship in the image artifact.
+    with archive.open("rb") as raw_archive:
+        if contains_token(raw_archive, token):
+            raise RuntimeError("Synthetic secret found in raw Docker archive bytes")
     scanned_layers = 0
     with tarfile.open(archive, "r:*") as outer:
         members = outer.getmembers()
