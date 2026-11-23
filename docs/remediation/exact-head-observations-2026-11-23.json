@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-EXACT-HEAD-OBSERVATION-1",
   "observedAt": "2026-11-23",
-  "scope": "GitHub pull-request workflow runs returned for exact PR head SHA; first-page results only; governance failures alone do not establish technical-check outcomes",
+  "scope": "GitHub pull-request workflow runs returned for exact PR head SHA; first-page results only; governance failures alone do not establish technical-check outcomes; PR #201 auxiliary workflow results are observed at the recorded prior head, not evidence of future commits",
   "independentAcceptance": false,
   "engineeringCertification": false,
   "prs": [
@@ -79,11 +79,33 @@
     },
     {
       "pullRequest": 201,
-      "headSha": "986f1ca329dc560251136ad1e73f4f1ace9aadbe",
-      "governanceRunId": 45102044808,
+      "headSha": "e4f68812d1b0d0949f4305d63ea9c5d5c65bd411",
+      "governanceRunId": 45117206265,
       "governanceConclusion": "failure",
       "failedStep": "Stage E — Governance Gate Enforcement",
-      "technicalFailureObserved": null
+      "technicalFailureObserved": null,
+      "auxiliaryWorkflowRuns": [
+        {
+          "name": "USV-01 Mission Control Zero-API Gate",
+          "runId": 45117206205,
+          "conclusion": "success"
+        },
+        {
+          "name": "Engineering Sessions — Isolated Browser QA",
+          "runId": 45117206233,
+          "conclusion": "success"
+        },
+        {
+          "name": "USV-01 Docker Synthetic Secret Image Canary",
+          "runId": 45117206226,
+          "conclusion": "success"
+        },
+        {
+          "name": "Agent Academy - 26 Role Curriculum and Evidence Gates",
+          "runId": 45117206231,
+          "conclusion": "success"
+        }
+      ]
     }
   ],
   "blockers": [
@@ -95,6 +117,7 @@
     "Obtain separate authorized human governance reviews without self-approval",
     "Continue independent technical remediation and regression tests",
     "Recheck exact-head CI after every change",
-    "Inspect exact-head Stage B/auxiliary job logs before asserting any technical pass or failure; null means not established by this observation"
+    "Inspect exact-head Stage B/auxiliary job logs before asserting any technical pass or failure; null means not established by this observation",
+    "Recheck PR #201 exact-head CI after this observation update; previous-head successes must not be carried forward"
   ]
 }
