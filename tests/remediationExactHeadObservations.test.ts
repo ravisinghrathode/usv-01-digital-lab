@@ -29,6 +29,27 @@ describe('remediation exact-head observations remain non-authoritative', () => {
     }
   });
 
+
+  it('records auxiliary CI as head-bound observations rather than acceptance', () => {
+    const pr201 = observation.prs.find((entry: any) => entry.pullRequest === 201);
+    expect(pr201.headSha).toMatch(/^[0-9a-f]{40}$/);
+    expect(pr201.technicalFailureObserved).toBeNull();
+    expect(pr201.auxiliaryWorkflowRuns).toHaveLength(4);
+    const runIds = new Set<number>();
+    for (const run of pr201.auxiliaryWorkflowRuns) {
+      expect(run.name).toEqual(expect.any(String));
+      expect(run.name.length).toBeGreaterThan(0);
+      expect(Number.isSafeInteger(run.runId)).toBe(true);
+      expect(run.runId).toBeGreaterThan(0);
+      expect(runIds.has(run.runId)).toBe(false);
+      runIds.add(run.runId);
+      expect(['success', 'failure', 'cancelled', 'skipped', 'timed_out', 'action_required'])
+        .toContain(run.conclusion);
+    }
+    expect(runIds.has(pr201.governanceRunId)).toBe(false);
+    expect(observation.independentAcceptance).toBe(false);
+  });
+
   it('preserves explicit unfulfilled governance and physical acceptance blockers', () => {
     expect(observation.blockers).toEqual(expect.arrayContaining([
       expect.stringContaining('Stage E'),
