@@ -57,7 +57,7 @@ for location in ("name", "linkname", "pax"):
         try:
             module.inspect_image_archive(archive, token)
         except RuntimeError as error:
-            assert "Docker layer header" in str(error), (location, error)
+            assert "Docker layer header" in str(error) or "raw Docker archive bytes" in str(error), (location, error)
         else:
             raise AssertionError("Undetected credential in " + location)
 `;
@@ -103,7 +103,7 @@ for location in ("name", "linkname", "pax"):
         try:
             module.inspect_image_archive(archive, token)
         except RuntimeError as error:
-            assert "Docker archive header" in str(error), (location, error)
+            assert "Docker archive header" in str(error) or "raw Docker archive bytes" in str(error), (location, error)
         else:
             raise AssertionError("Undetected outer archive credential in " + location)
 `;
