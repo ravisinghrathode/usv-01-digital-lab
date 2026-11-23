@@ -40,7 +40,7 @@ describe('independent engineering reference evidence path isolation', () => {
   it('rejects oversized or control-character checkout roots before filesystem access', () => {
     const { root } = setup();
     const evidence = 'evidence/independent/reference.txt';
-    for (const invalidRoot of [root + '\\0', root + '\\n', root + '\\r', root + '\\t', root + 'x'.repeat(4097)]) {
+    for (const invalidRoot of [...([0, 10, 13, 9].map(code => root + String.fromCharCode(code))), root + 'x'.repeat(4097)]) {
       expect(() => readIndependentReferenceBytes(invalidRoot, evidence)).not.toThrow();
       expect(readIndependentReferenceBytes(invalidRoot, evidence)).toBe(null);
     }
