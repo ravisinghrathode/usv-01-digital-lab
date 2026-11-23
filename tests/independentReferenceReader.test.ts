@@ -80,6 +80,20 @@ describe('independent engineering reference evidence path isolation', () => {
       .toBe('Verified reference fixture only\n');
   });
 
+  it('rejects a checkout nested beneath a symlinked ancestor', () => {
+    const { root } = setup();
+    const parent = fs.mkdtempSync(path.join(os.tmpdir(), 'usv01-ancestor-alias-'));
+    folders.push(parent);
+    const alias = path.join(parent, 'redirect');
+    fs.symlinkSync(path.dirname(root), alias, 'dir');
+    const checkout = path.join(alias, path.basename(root));
+    expect(fs.lstatSync(checkout).isDirectory()).toBe(true);
+    expect(readIndependentReferenceBytes(checkout, 'evidence/independent/reference.txt'))
+      .toBe(null);
+    expect(readIndependentReferenceBytes(root, 'evidence/independent/reference.txt')?.toString())
+      .toBe('Verified reference fixture only\\n');
+  });
+
   it('rejects evidence when the trusted checkout is replaced during a read', () => {
     const { root } = setup();
     const moved = root + '-moved';
