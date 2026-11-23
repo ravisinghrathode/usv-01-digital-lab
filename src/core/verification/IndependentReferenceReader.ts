@@ -34,6 +34,15 @@ export function readIndependentReferenceBytes(
     // evidence directory outside the checkout through a symbolic link.
     // The checkout root itself must not be a symlink: otherwise a caller
     // can redirect the entire trust root before evidence validation.
+    // A symlink in any ancestor of the checkout can redirect the trust root
+    // even when lstat(root) itself reports an ordinary directory.
+    let ancestor = root;
+    while (true) {
+      if (fs.lstatSync(ancestor).isSymbolicLink()) return null;
+      const parent = path.dirname(ancestor);
+      if (parent === ancestor) break;
+      ancestor = parent;
+    }
     const rootBefore = fs.lstatSync(root);
     if (!rootBefore.isDirectory()) return null;
     const realRoot = fs.realpathSync(root);
