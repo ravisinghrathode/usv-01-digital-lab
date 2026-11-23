@@ -34,7 +34,7 @@ describe('independent engineering reference evidence path isolation', () => {
       expect(readIndependentReferenceBytes(invalidRoot as string, evidence)).toBe(null);
     }
     expect(readIndependentReferenceBytes(root, evidence)?.toString())
-      .toBe('Verified reference fixture only\\n');
+      .toBe('Verified reference fixture only\n');
   });
 
   it('refuses relative traversal, absolute paths and malformed evidence names', () => {
