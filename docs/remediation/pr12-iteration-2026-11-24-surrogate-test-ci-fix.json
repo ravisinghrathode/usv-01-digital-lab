@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "USV-REMEDIATION-ITERATION-1",
+  "date": "2026-11-24",
+  "workstream": "PR-12",
+  "pullRequest": 201,
+  "priorHead": "8d2ad2d38903d33b8a1e21e80944cbb888aba9b5",
+  "failedRun": 45258387391,
+  "failedJob": 137986162817,
+  "classification": "Stage B deterministic test failure",
+  "failure": "tests/remediationLedgerSecurityRegression.test.ts surrogate regression expected rejection but used escaped backslash-u text rather than actual surrogate code units",
+  "observedResult": {
+    "failed": 1,
+    "passed": 1260
+  },
+  "fixCommit": "3b8fddaa9b5394fe7c618612811db5bc4d767ae1",
+  "fix": "Use JavaScript single-backslash Unicode escape sequences for actual isolated high/low surrogate code units and valid surrogate-pair control",
+  "verification": "Await exact-head CI for final ledger commit; no passing result claimed",
+  "blockers": [
+    "Stage E authenticated independent human approval",
+    "Protected merges and independent end-to-end acceptance",
+    "Physical reference validation and full 26-agent acceptance"
+  ],
+  "nextActions": [
+    "Inspect exact-head CI and resolve any deterministic failure",
+    "Keep Stage E enforcement intact",
+    "Continue independent remediation workstreams"
+  ]
+}
