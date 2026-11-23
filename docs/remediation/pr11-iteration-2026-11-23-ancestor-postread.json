@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "USV-REMEDIATION-ITERATION-1",
+  "date": "2026-11-23",
+  "workstream": "PR-11",
+  "pullRequest": 200,
+  "implementationCommits": [
+    "92b8238ecd952578958ae2ee29e2a1a4cb204ae2",
+    "55cc069f21b16c29cb595c762d93ecdbc4c36fa4"
+  ],
+  "change": "Revalidate all checkout-root ancestors after reading independent evidence and inject a simulated mid-read ancestor symlink in a regression test.",
+  "verification": {
+    "local": "not-run",
+    "exactHeadCI": "not-confirmed",
+    "priorHead": "0e0f3bc273ed0951f08a14977bd623a8edee6009",
+    "priorGovernanceRun": 45149368349,
+    "priorStageB": "passed",
+    "priorStageE": "blocked: authenticated independent exact-head human review pending"
+  },
+  "limitations": [
+    "Symlink checks narrow but do not eliminate filesystem TOCTOU",
+    "No independent physical-reference attestation or engineering acceptance",
+    "No merge or authorization"
+  ],
+  "nextActions": [
+    "Inspect exact-head lint/test/build for regression",
+    "Fix technical failures without weakening governance",
+    "Obtain authorized exact-head Stage C/D approval before protected merge"
+  ]
+}
