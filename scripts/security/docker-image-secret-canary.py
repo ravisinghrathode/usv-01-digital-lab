@@ -87,11 +87,12 @@ def inspect_image_archive(archive: Path, token: bytes) -> int:
             if not isinstance(record, dict) or not isinstance(record.get("Layers"), list):
                 raise RuntimeError("Malformed Docker save manifest")
             config = record.get("Config")
-            if (not isinstance(config, str) or not config.strip()
+            if (config is not None and (not isinstance(config, str) or not config.strip()
                     or config.startswith(("/", "./")) or chr(92) in config
-                    or any(part in ("", ".", "..") for part in config.split("/"))):
+                    or any(part in ("", ".", "..") for part in config.split("/")))):
                 raise RuntimeError("Docker save manifest contains missing or unsafe config path")
-            configs.add(config)
+            if config is not None:
+                configs.add(config)
             record_layers = record["Layers"]
             tags = record.get("RepoTags")
             if (not record_layers or any(not isinstance(name, str) or not name.strip()
