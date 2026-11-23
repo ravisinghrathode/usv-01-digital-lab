@@ -18,7 +18,14 @@ describe('remediation exact-head observations remain non-authoritative', () => {
       expect(entry.governanceRunId).toBeGreaterThan(0);
       expect(entry.governanceConclusion).toBe('failure');
       expect(entry.failedStep).toBe('Stage E — Governance Gate Enforcement');
-      expect(entry.technicalFailureObserved).toBe(false);
+      // A failed governance step alone cannot establish that technical checks passed.
+      expect(entry.technicalFailureObserved).toBeNull();
+    }
+  });
+
+  it('rejects unsupported claims that governance-only evidence proves technical success', () => {
+    for (const entry of observation.prs) {
+      expect(entry.technicalFailureObserved).not.toBe(false);
     }
   });
 
