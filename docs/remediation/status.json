@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-17",
+  "updatedAt": "2026-11-20",
   "items": [
     {
       "id": "PR-01",
@@ -29,9 +29,9 @@
     },
     {
       "id": "PR-05",
-      "state": "not-verified",
-      "pullRequest": "",
-      "verification": null
+      "state": "partial-implementation-awaiting-review",
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/195",
+      "verification": "Exact-head 9917ee5d90662bfe11018d1bee250c42f6d8a71e Mission Control Zero-API succeeded; governance workflow failed (Stage E vs technical failure requires job-level confirmation). Recovered queue checkpoints previously accepted restricted or missing data classifications although enqueue rejects them. Added fail-closed recovered classification validation in 6220a8e49824225b58ba1420de91f56eebbfb778 and negative tests in 77d0a7e35b4da33e71366a6db972799c01177193. Latest exact-head CI pending; cross-host recovery, power-loss drill, authenticated review and independent acceptance remain outstanding."
     },
     {
       "id": "PR-06",

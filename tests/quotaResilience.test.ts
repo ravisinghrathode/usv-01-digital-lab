@@ -222,11 +222,18 @@ describe('Resilient A01-A26 task queue', () => {
     await queue.enqueue(request('INTERRUPTED'));
     const state = JSON.parse(await readFile(file, 'utf8'));
     state.tasks.INTERRUPTED.state = 'RUNNING';
+    // Model an actual in-flight attempt; zero attempts is separately corrupt.
+    state.tasks.INTERRUPTED.attempts = 1;
     state.tasks.INTERRUPTED.leaseId = 'expired';
     state.tasks.INTERRUPTED.leaseExpiresAt = new Date(now - 1).toISOString();
     await writeFile(file, JSON.stringify(state));
     expect((await queue.runOne(dir)).taskId).toBeNull();
     expect((await queue.status()).counts.BLOCKED_REVIEW).toBe(1);
+    const recovered = JSON.parse(await readFile(file, 'utf8')).tasks.INTERRUPTED;
+    expect(recovered.leaseId).toBeUndefined();
+    expect(recovered.leaseExpiresAt).toBeUndefined();
+    expect(recovered.lastError).toMatch(/UNCERTAIN_INFLIGHT_RESULT/);
+    expect((await queue.runOne(dir)).taskId).toBeNull();
     expect(calls).toBe(0);
   });
 });

@@ -79,10 +79,97 @@ function recordEvent(store: QueueStateFile, task: QueueRecord, note: string): vo
   store.events.push({ at: task.updatedAt, taskId: task.taskId, state: task.state, note });
   if (store.events.length > 1000) store.events = store.events.slice(-1000);
 }
+function isObject(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+function isUtcTimestamp(value: unknown): value is string {
+  return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(value) &&
+    Number.isFinite(Date.parse(value)) && new Date(value).toISOString() === value;
+}
+function invalidState(reason: string): never {
+  throw new Error('QUEUE_STATE_CORRUPT: ' + reason + '; manual inspection required');
+}
+/**
+ * Validate the entire recovered queue before issuing new model calls.
+ * Never interpret attacker-supplied completion/approval claims as receipts.
+ */
 function validateStore(state: QueueStateFile): void {
-  if (state.schemaVersion !== 1 || !state.tasks || Array.isArray(state.tasks) ||
-    !Array.isArray(state.events)) {
-    throw new Error('QUEUE_STATE_CORRUPT: operator inspection required');
+  if (!isObject(state) || state.schemaVersion !== 1 ||
+    !isObject(state.tasks) || !Array.isArray(state.events)) {
+    invalidState('invalid root schema');
+  }
+  if (Object.keys(state.tasks).length > 1000 || state.events.length > 1000) {
+    invalidState('bounded queue capacity exceeded');
+  }
+  for (const [id, value] of Object.entries(state.tasks)) {
+    if (!isObject(value)) invalidState('malformed task');
+    const row = value as unknown as QueueRecord;
+    if (!/^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$/.test(id) ||
+      row.taskId !== id ||
+      !isObject(row.input) || row.input.taskId !== id ||
+      !isObject(row.input.context) ||
+      !['PUBLIC_SOURCE_SAFE_ONLY', 'SYNTHETIC_TEST_ONLY_NON_OPERATIONAL'].includes(
+        String(row.input.context.dataClassification || '')) ||
+      typeof row.agentId !== 'string' || !row.agentId ||
+      typeof row.commitSha !== 'string' || !/^[a-f0-9]{40}$/i.test(row.commitSha) ||
+      (row.lane !== 'MODEL_AGENT' && row.lane !== 'OFFLINE_SCHEMA_CHECK') ||
+      !Number.isSafeInteger(row.priority) || row.priority < 0 || row.priority > 10 ||
+      typeof row.digest !== 'string' || !/^sha256:[a-f0-9]{64}$/.test(row.digest) ||
+      !STATE_VALUES.includes(row.state) ||
+      !Number.isSafeInteger(row.attempts) || row.attempts < 0 ||
+      row.attempts > MAX_ATTEMPTS ||
+      !isUtcTimestamp(row.createdAt) || !isUtcTimestamp(row.updatedAt) ||
+      Date.parse(row.updatedAt) < Date.parse(row.createdAt)) {
+      invalidState('invalid task identity, revision, state or provenance');
+    }
+    if ((row.leaseId !== undefined && (typeof row.leaseId !== 'string' || !row.leaseId)) ||
+      (row.leaseExpiresAt !== undefined && !isUtcTimestamp(row.leaseExpiresAt)) ||
+      (row.nextAttemptAt !== undefined && !isUtcTimestamp(row.nextAttemptAt)) ||
+      (row.lastError !== undefined &&
+        (typeof row.lastError !== 'string' || row.lastError.length > 1000))) {
+      invalidState('malformed lease or retry metadata');
+    }
+    // A lease is meaningful only while an attempt is running. Reject orphaned
+    // lease metadata rather than treating a corrupted checkpoint as claimable.
+    if ((row.leaseId === undefined) !== (row.leaseExpiresAt === undefined) ||
+      (row.state === 'RUNNING' && row.attempts === 0) ||
+      (row.state !== 'RUNNING' && row.leaseId !== undefined)) {
+      invalidState('lease metadata inconsistent with running attempt');
+    }
+    // A receipt is an execution artifact, never a pending-task authorization.
+    // In particular, an unattempted task cannot legitimately have a receipt.
+    if (row.receipt !== undefined &&
+      (row.attempts === 0 || !['COMPLETED', 'BLOCKED_REVIEW'].includes(row.state))) {
+      invalidState('receipt is inconsistent with task execution state');
+    }
+    if (row.state === 'COMPLETED' && row.receipt === undefined) {
+      invalidState('completed task lacks an execution receipt');
+    }
+    if (row.receipt !== undefined) {
+      const receipt = row.receipt;
+      if (!isObject(receipt) ||
+        receipt.humanApprovalSatisfied !== false ||
+        receipt.engineeringReleaseApproved !== false ||
+        (receipt.provider !== 'codex_cli' && receipt.provider !== 'NO_MODEL_CALL') ||
+        typeof receipt.modelRequested !== 'string' ||
+        typeof receipt.executionMode !== 'string' ||
+        typeof receipt.responseSha256 !== 'string' ||
+        !/^sha256:[a-f0-9]{64}$/.test(receipt.responseSha256) ||
+        !isUtcTimestamp(receipt.producedAt) ||
+        (receipt.provider === 'NO_MODEL_CALL' &&
+          (row.lane !== 'OFFLINE_SCHEMA_CHECK' ||
+            receipt.executionMode !== 'SCHEMA_VALIDATION_ONLY'))) {
+        invalidState('forged or malformed execution receipt');
+      }
+    }
+  }
+  for (const event of state.events) {
+    if (!isObject(event) || !isUtcTimestamp(event.at) ||
+      typeof event.taskId !== 'string' || !Object.hasOwn(state.tasks, event.taskId) ||
+      !STATE_VALUES.includes(event.state as QueueState) ||
+      typeof event.note !== 'string' || event.note.length > 1000) {
+      invalidState('corrupt task event history');
+    }
   }
 }
 export function defaultAgentQueuePath(): string {
@@ -116,7 +203,10 @@ export class ResilientAgentQueue {
     const sourceDigest = digest(normalized);
     return mutateDurableState(this.file, emptyQueue, state => {
       validateStore(state);
-      const existing = state.tasks[request.taskId];
+      // JSON.parse creates ordinary objects: avoid inherited names such as
+      // "constructor" and "toString" being mistaken for existing task records.
+      const existing = Object.hasOwn(state.tasks, request.taskId)
+        ? state.tasks[request.taskId] : undefined;
       if (existing) {
         if (existing.digest !== sourceDigest) {
           throw new Error('TASK_ID_CONFLICT: refusing to replace previously queued evidence');
@@ -168,6 +258,7 @@ export class ResilientAgentQueue {
           row.updatedAt = new Date(now).toISOString();
           row.lastError = 'UNCERTAIN_INFLIGHT_RESULT: operator must inspect prior execution';
           delete row.leaseId;
+          delete row.leaseExpiresAt;
           recordEvent(state, row, 'CRASH_RECOVERY_REQUIRES_REVIEW');
         }
       }
