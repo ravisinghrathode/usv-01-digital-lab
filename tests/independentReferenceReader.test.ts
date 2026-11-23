@@ -409,6 +409,17 @@ describe('independent engineering reference evidence path isolation', () => {
     expect(readIndependentReferenceBytes(root, 'evidence/independent/pipe')).toBe(null);
   });
 
+  it('rejects bidirectional control characters in checkout-root paths before traversal', () => {
+    const { root } = setup();
+    for (const control of ['\u202a', '\u202b', '\u202c', '\u202d', '\u202e',
+      '\u2066', '\u2067', '\u2068', '\u2069']) {
+      expect(readIndependentReferenceBytes(root + control, 'evidence/independent/reference.txt'))
+        .toBe(null);
+    }
+    expect(readIndependentReferenceBytes(root, 'evidence/independent/reference.txt')?.toString())
+      .toBe('Verified reference fixture only\\n');
+  });
+
   it('routes signed engineering review artifact lookups through the safe reader', () => {
     const source = fs.readFileSync(path.join(process.cwd(),
       'src/core/verification/EngineeringCampaignAcceptance.ts'), 'utf8');
