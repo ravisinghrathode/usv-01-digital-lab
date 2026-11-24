@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-20T13:01:42.686Z",
+  "generatedAt": "2026-11-24T14:58:07.367Z",
   "records": [
     {
       "key": "martac:mantast12",
@@ -16,11 +16,11 @@
         {
           "id": "martac-t12",
           "url": "https://martacsystems.com/proven-products/mantas-t12/",
-          "retrievedAt": "2026-11-20T13:01:31.797Z",
-          "sha256": "sha256:659bcd6d815edc7eb1b101e317e383cd6f97e927a1f5aaa2c89ae48855d5e86c",
-          "byteLength": 396474,
+          "retrievedAt": "2026-11-24T14:57:54.328Z",
+          "sha256": "sha256:1d703a72bad2f9fed41defcc26c9cd428cb273cff2a2a65f51efa81c94608651",
+          "byteLength": 396478,
           "contentType": "text/html; charset=utf-8",
-          "blobPath": "blobs/659bcd6d815edc7eb1b101e317e383cd6f97e927a1f5aaa2c89ae48855d5e86c.html",
+          "blobPath": "blobs/1d703a72bad2f9fed41defcc26c9cd428cb273cff2a2a65f51efa81c94608651.html",
           "identityConfirmed": true,
           "claims": [
             {
@@ -30,8 +30,8 @@
               "quotation": "Length - 12 ft (3.6 m)",
               "sourceId": "martac-t12",
               "sourceUrl": "https://martacsystems.com/proven-products/mantas-t12/",
-              "sha256": "sha256:659bcd6d815edc7eb1b101e317e383cd6f97e927a1f5aaa2c89ae48855d5e86c",
-              "acquiredAt": "2026-11-20T13:01:31.797Z",
+              "sha256": "sha256:1d703a72bad2f9fed41defcc26c9cd428cb273cff2a2a65f51efa81c94608651",
+              "acquiredAt": "2026-11-24T14:57:54.328Z",
               "evidenceStatus": "QUOTE_MATCHED_UNREVIEWED"
             }
           ],
@@ -47,8 +47,8 @@
             "quotation": "Length - 12 ft (3.6 m)",
             "sourceId": "martac-t12",
             "sourceUrl": "https://martacsystems.com/proven-products/mantas-t12/",
-            "sha256": "sha256:659bcd6d815edc7eb1b101e317e383cd6f97e927a1f5aaa2c89ae48855d5e86c",
-            "acquiredAt": "2026-11-20T13:01:31.797Z",
+            "sha256": "sha256:1d703a72bad2f9fed41defcc26c9cd428cb273cff2a2a65f51efa81c94608651",
+            "acquiredAt": "2026-11-24T14:57:54.328Z",
             "evidenceStatus": "QUOTE_MATCHED_UNREVIEWED"
           }
         ],
@@ -82,11 +82,11 @@
         {
           "id": "martac-t24",
           "url": "https://martacsystems.com/proven-products/devil-ray-t24/",
-          "retrievedAt": "2026-11-20T13:01:32.758Z",
-          "sha256": "sha256:f1cfd0304662aecba9148c1691edd734158d5d151c421fa1bd9ced5c5abae3d9",
-          "byteLength": 395611,
+          "retrievedAt": "2026-11-24T14:57:55.295Z",
+          "sha256": "sha256:9be2863471e1a154441654abe2c4e32681adc4f6477dcb97570f9befb390770a",
+          "byteLength": 395615,
           "contentType": "text/html; charset=utf-8",
-          "blobPath": "blobs/f1cfd0304662aecba9148c1691edd734158d5d151c421fa1bd9ced5c5abae3d9.html",
+          "blobPath": "blobs/9be2863471e1a154441654abe2c4e32681adc4f6477dcb97570f9befb390770a.html",
           "identityConfirmed": true,
           "claims": [],
           "evidenceStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED"
@@ -136,11 +136,11 @@
         {
           "id": "navalnews-2026-triton",
           "url": "https://www.navalnews.com/naval-news/2026/06/u-s-transfers-ocean-aero-tritons-to-philippine-navy-usv-unit/",
-          "retrievedAt": "2026-11-20T13:01:35.581Z",
-          "sha256": "sha256:e2191849adc075eb05c1d625c54cfc75b53884ecfdbba28fe423d1955f3cfc19",
-          "byteLength": 389039,
+          "retrievedAt": "2026-11-24T14:57:58.118Z",
+          "sha256": "sha256:c27c7b91eb4b74c551c88d510922d43a8ba8030b6ef8e2260ce2169069f1ddcc",
+          "byteLength": 389072,
           "contentType": "text/html; charset=utf-8",
-          "blobPath": "blobs/e2191849adc075eb05c1d625c54cfc75b53884ecfdbba28fe423d1955f3cfc19.html",
+          "blobPath": "blobs/c27c7b91eb4b74c551c88d510922d43a8ba8030b6ef8e2260ce2169069f1ddcc.html",
           "identityConfirmed": true,
           "claims": [],
           "evidenceStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED"
@@ -184,11 +184,11 @@
         {
           "id": "exail-h8",
           "url": "https://www.exail.com/product/drix-h8-medium-range-usv",
-          "retrievedAt": "2026-11-20T13:01:37.579Z",
-          "sha256": "sha256:ee1e3ce5ae9e41909524bdf4f539512b24374def8c7d6476a35b2b69b7a0ad28",
+          "retrievedAt": "2026-11-24T14:58:01.396Z",
+          "sha256": "sha256:26f4cd5d99cef68d209f04f995456f3583b7f187f786e0e2f46a7ff4c26e514c",
           "byteLength": 554062,
           "contentType": "text/html; charset=utf-8",
-          "blobPath": "blobs/ee1e3ce5ae9e41909524bdf4f539512b24374def8c7d6476a35b2b69b7a0ad28.html",
+          "blobPath": "blobs/26f4cd5d99cef68d209f04f995456f3583b7f187f786e0e2f46a7ff4c26e514c.html",
           "identityConfirmed": true,
           "claims": [],
           "evidenceStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED"
@@ -226,11 +226,11 @@
         {
           "id": "exail-series-h9",
           "url": "https://www.exail.com/product-range/drix-series-uncrewed-surface-vessels",
-          "retrievedAt": "2026-11-20T13:01:38.595Z",
-          "sha256": "sha256:975422613e761c692d9580853f1570cd1006fa6be0779a025160ca03563b3083",
+          "retrievedAt": "2026-11-24T14:58:02.727Z",
+          "sha256": "sha256:9619a06b26cd080de450851300d39bcd7f6e78954627fbd34a8ea7a79e06acf6",
           "byteLength": 546032,
           "contentType": "text/html; charset=utf-8",
-          "blobPath": "blobs/975422613e761c692d9580853f1570cd1006fa6be0779a025160ca03563b3083.html",
+          "blobPath": "blobs/9619a06b26cd080de450851300d39bcd7f6e78954627fbd34a8ea7a79e06acf6.html",
           "identityConfirmed": true,
           "claims": [],
           "evidenceStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED"
@@ -268,11 +268,11 @@
         {
           "id": "exail-o16",
           "url": "https://www.exail.com/product/drix-o-16",
-          "retrievedAt": "2026-11-20T13:01:39.706Z",
-          "sha256": "sha256:ded01368aa5476775db1f4460c3da82d7ff8039edf3bd6ef035a310254e46018",
+          "retrievedAt": "2026-11-24T14:58:03.851Z",
+          "sha256": "sha256:c3721d16357f03017e3c6c6ba3bdbf539f37f4078b2d0a0529149959ff33d66a",
           "byteLength": 485853,
           "contentType": "text/html; charset=utf-8",
-          "blobPath": "blobs/ded01368aa5476775db1f4460c3da82d7ff8039edf3bd6ef035a310254e46018.html",
+          "blobPath": "blobs/c3721d16357f03017e3c6c6ba3bdbf539f37f4078b2d0a0529149959ff33d66a.html",
           "identityConfirmed": true,
           "claims": [],
           "evidenceStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED"
@@ -310,11 +310,11 @@
         {
           "id": "ocius-bluebottle",
           "url": "https://ocius.com.au/products/bluebottle/",
-          "retrievedAt": "2026-11-20T13:01:40.444Z",
-          "sha256": "sha256:4048758c773f046aec36dccfe6945ea84aab1ea91daf718ce553e498669f8325",
+          "retrievedAt": "2026-11-24T14:58:04.587Z",
+          "sha256": "sha256:91da2c1f30d2d7ed60c5e8ca6ffe1b814083d54c077f5e786d9b8d07731f1fff",
           "byteLength": 151315,
           "contentType": "text/html; charset=utf-8",
-          "blobPath": "blobs/4048758c773f046aec36dccfe6945ea84aab1ea91daf718ce553e498669f8325.html",
+          "blobPath": "blobs/91da2c1f30d2d7ed60c5e8ca6ffe1b814083d54c077f5e786d9b8d07731f1fff.html",
           "identityConfirmed": true,
           "claims": [],
           "evidenceStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED"
@@ -352,7 +352,7 @@
         {
           "id": "jamstec-kuroshio",
           "url": "https://www.jamstec.go.jp/team-kuroshio/en/technology/",
-          "retrievedAt": "2026-11-20T13:01:42.079Z",
+          "retrievedAt": "2026-11-24T14:58:05.960Z",
           "sha256": "sha256:7fea645add1162fcf276d5b3f2aadc4e704f13faf5d03390d90d53a22e7d9b00",
           "byteLength": 5766,
           "contentType": "text/html",
@@ -394,7 +394,7 @@
         {
           "id": "maritimerobotics-otter",
           "url": "https://www.maritimerobotics.com/otter",
-          "retrievedAt": "2026-11-20T13:01:42.510Z",
+          "retrievedAt": "2026-11-24T14:58:07.141Z",
           "sha256": "sha256:996e49f011799169dc7ffe596b529ddf7c2468e865128acd55536a1ebd3df9c1",
           "byteLength": 154664,
           "contentType": "text/html; charset=utf-8",
@@ -436,11 +436,11 @@
         {
           "id": "oor-dataxplorer",
           "url": "https://www.openoceanrobotics.com/government-operations",
-          "retrievedAt": "2026-11-20T13:01:42.673Z",
-          "sha256": "sha256:59308e44ba01cc46d6d9f08c256f64944342b2426cf12687082e3c9ac340405d",
-          "byteLength": 1322942,
+          "retrievedAt": "2026-11-24T14:58:07.354Z",
+          "sha256": "sha256:b9c0292a0782fff83757d5f7d18dbf3edf38c5e507a0d60379387a0688fac2e1",
+          "byteLength": 1324351,
           "contentType": "text/html; charset=utf-8",
-          "blobPath": "blobs/59308e44ba01cc46d6d9f08c256f64944342b2426cf12687082e3c9ac340405d.html",
+          "blobPath": "blobs/b9c0292a0782fff83757d5f7d18dbf3edf38c5e507a0d60379387a0688fac2e1.html",
           "identityConfirmed": true,
           "claims": [],
           "evidenceStatus": "SOURCE_IDENTITY_CORROBORATED_UNREVIEWED"
@@ -534,7 +534,7 @@
     "https://www.openoceanrobotics.com/usv-fleet-operations"
   ],
   "report": {
-    "generatedAt": "2026-11-20T13:01:42.686Z",
+    "generatedAt": "2026-11-24T14:58:07.367Z",
     "agentId": "INTEL-USV-26",
     "classification": "PUBLIC_SOURCE_SAFE_ONLY",
     "totalCandidateModels": 10,
