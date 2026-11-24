@@ -49,7 +49,7 @@ def contains_token(stream, token: bytes) -> bool:
 
 
 def inspect_image_archive(archive: Path, token: bytes) -> int:
-    scanned_layers = 0
+    scanned_layers: set[str] = set()
     with tarfile.open(archive, "r:*") as outer:
         members = outer.getmembers()
         manifest_matches = [item for item in members if item.name.removeprefix("./") == "manifest.json"]
@@ -89,7 +89,10 @@ def inspect_image_archive(archive: Path, token: bytes) -> int:
             if data is None:
                 raise RuntimeError("Unable to read image member")
             if member.name.removeprefix("./") in layers:
-                scanned_layers += 1
+                layer_name = member.name.removeprefix("./")
+                if layer_name in scanned_layers:
+                    raise RuntimeError("Docker archive contains duplicate referenced layer")
+                scanned_layers.add(layer_name)
                 with tarfile.open(fileobj=data, mode="r|*") as layer:
                     for entry in layer:
                         if token in entry.name.encode("utf-8", "surrogateescape") or token in entry.linkname.encode("utf-8", "surrogateescape"):
@@ -105,9 +108,9 @@ def inspect_image_archive(archive: Path, token: bytes) -> int:
                             raise RuntimeError("Synthetic secret found in Docker layer: " + entry.name)
             elif contains_token(data, token):
                 raise RuntimeError("Synthetic secret found in Docker image metadata")
-    if scanned_layers != len(layers):
+    if scanned_layers != layers:
         raise RuntimeError("Docker archive omitted referenced layers; refusing a false pass")
-    return scanned_layers
+    return len(scanned_layers)
 
 
 def assert_safe_fixture_parents(root: Path, paths: list[Path]) -> None:
