@@ -1,0 +1,24 @@
+{
+  "workstream": "PR-03",
+  "pr": 193,
+  "baseObserved": "3aac06ee39101853c9dd85ab31c2553b3c54c56d",
+  "previousHead": "46dfae1e8e2041828dd33ed08cd5cbd7837ff0a2",
+  "previousGovernanceRun": 44716720508,
+  "previousCanaryRun": 44716720426,
+  "previousGovernanceFailure": "Stage E enforcement",
+  "implementation": "f8a96d1d7fa4d96f48de020b8a929f6d18009120",
+  "regression": "336031a221a9a9b24a2057cc25aeae8a122e29",
+  "defect": "Duplicate normalized archive layer names could mask a missing referenced layer when only counts were compared.",
+  "verification": "Regression added; new exact-head CI not yet verified.",
+  "merged": false,
+  "independentAcceptance": false,
+  "blockers": [
+    "Authenticated governance approval",
+    "Exact-head CI",
+    "Independent credential bootstrap and backup/recovery acceptance"
+  ],
+  "next": [
+    "Verify exact-head Python regression and actual Docker canary",
+    "Preserve mandatory governance gate"
+  ]
+}
