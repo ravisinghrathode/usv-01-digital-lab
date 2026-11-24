@@ -1,0 +1,188 @@
+#!/usr/bin/env python3
+"""Fail-closed Docker image-layer canary for local development secret exclusions.
+
+Creates synthetic credentials in a checkout, builds BOTH stages of Dockerfile,
+exports their layers and scans all image archive bytes. Never uses real secrets
+or claims that a passing canary proves a production credential inventory.
+"""
+from __future__ import annotations
+
+import os
+import json
+from pathlib import Path
+import secrets
+import shutil
+import subprocess
+import sys
+import tarfile
+import tempfile
+
+
+ROOT = Path(__file__).resolve().parents[2]
+FIXTURES = (
+    ".env",
+    ".secrets/ci-test/credential.txt",
+    ".ssh/id_ed25519",
+    ".aws/credentials",
+    ".config/gcloud/application_default_credentials.json",
+    ".npmrc",
+    "subdir/service-account-ci-canary.json",
+    "data/ci-canary.json",
+)
+IMAGES = ("usv01-build-secret-canary:ci", "usv01-runtime-secret-canary:ci")
+
+
+def run(*args: str, timeout: int = 900) -> None:
+    subprocess.run(args, check=True, cwd=ROOT, timeout=timeout)
+
+
+def contains_token(stream, token: bytes) -> bool:
+    overlap = b""
+    while True:
+        chunk = stream.read(1024 * 1024)
+        if not chunk:
+            return False
+        window = overlap + chunk
+        if token in window:
+            return True
+        overlap = window[-(len(token) - 1):]
+
+
+def inspect_image_archive(archive: Path, token: bytes) -> int:
+    scanned_layers: set[str] = set()
+    with tarfile.open(archive, "r:*") as outer:
+        members = outer.getmembers()
+        manifest_matches = [item for item in members if item.name.removeprefix("./") == "manifest.json"]
+        if len(manifest_matches) != 1 or not manifest_matches[0].isfile():
+            raise RuntimeError("Docker save archive requires exactly one regular manifest")
+        manifest_member = manifest_matches[0]
+        manifest_file = outer.extractfile(manifest_member)
+        if manifest_file is None:
+            raise RuntimeError("Docker save archive manifest unreadable")
+        manifest = json.load(manifest_file)
+        if not isinstance(manifest, list) or not manifest:
+            raise RuntimeError("Docker save manifest has no image records")
+        layers: set[str] = set()
+        image_tags: set[str] = set()
+        for record in manifest:
+            if not isinstance(record, dict) or not isinstance(record.get("Layers"), list):
+                raise RuntimeError("Malformed Docker save manifest")
+            if any(not isinstance(name, str) or not name or name.startswith("/") or ".." in Path(name).parts for name in record["Layers"]):
+                raise RuntimeError("Docker save manifest contains invalid layer paths")
+            tags = record.get("RepoTags")
+            if not isinstance(tags, list) or any(not isinstance(tag, str) for tag in tags):
+                raise RuntimeError("Docker save manifest contains invalid image tags")
+            layers.update(name.removeprefix("./") for name in record["Layers"])
+            image_tags.update(tags)
+        if not set(IMAGES).issubset(image_tags):
+            raise RuntimeError("Docker save archive omitted a required build stage image")
+        if not layers:
+            raise RuntimeError("Docker save archive contains no referenced layers")
+        for member in members:
+            if token in member.name.encode("utf-8", "surrogateescape") or token in member.linkname.encode("utf-8", "surrogateescape"):
+                raise RuntimeError("Synthetic secret found in Docker archive member metadata")
+            if any(token in str(value).encode("utf-8", "surrogateescape") for value in member.pax_headers.values()):
+                raise RuntimeError("Synthetic secret found in Docker archive extended metadata")
+            if not member.isfile():
+                continue
+            data = outer.extractfile(member)
+            if data is None:
+                raise RuntimeError("Unable to read image member")
+            if member.name.removeprefix("./") in layers:
+                layer_name = member.name.removeprefix("./")
+                if layer_name in scanned_layers:
+                    raise RuntimeError("Docker archive contains duplicate referenced layer")
+                scanned_layers.add(layer_name)
+                with tarfile.open(fileobj=data, mode="r|*") as layer:
+                    for entry in layer:
+                        if token in entry.name.encode("utf-8", "surrogateescape") or token in entry.linkname.encode("utf-8", "surrogateescape"):
+                            raise RuntimeError("Synthetic secret found in Docker layer entry metadata")
+                        if any(token in str(value).encode("utf-8", "surrogateescape") for value in entry.pax_headers.values()):
+                            raise RuntimeError("Synthetic secret found in Docker layer extended metadata")
+                        if not entry.isfile():
+                            continue
+                        payload = layer.extractfile(entry)
+                        if payload is None:
+                            raise RuntimeError("Unable to read image layer entry")
+                        if contains_token(payload, token):
+                            raise RuntimeError("Synthetic secret found in Docker layer: " + entry.name)
+            elif contains_token(data, token):
+                raise RuntimeError("Synthetic secret found in Docker image metadata")
+    if scanned_layers != layers:
+        raise RuntimeError("Docker archive omitted referenced layers; refusing a false pass")
+    return len(scanned_layers)
+
+
+def assert_safe_fixture_parents(root: Path, paths: list[Path]) -> None:
+    """Reject symlinked or non-directory parents before writing synthetic credentials."""
+    for file in paths:
+        if not file.is_relative_to(root):
+            raise RuntimeError("Synthetic fixture path escapes checkout")
+        parent = file.parent
+        while parent != root:
+            if parent.is_symlink():
+                raise RuntimeError("Synthetic fixture parent is a symlink: " + str(parent))
+            if parent.exists() and not parent.is_dir():
+                raise RuntimeError("Synthetic fixture parent is not a directory: " + str(parent))
+            parent = parent.parent
+
+
+def main() -> int:
+    if not shutil.which("docker"):
+        print("FAIL: Docker must be installed to verify image layers", file=sys.stderr)
+        return 2
+    if not (ROOT / "Dockerfile").is_file() or not (ROOT / ".dockerignore").is_file():
+        print("FAIL: Run against a repository with Dockerfile and .dockerignore", file=sys.stderr)
+        return 2
+    token = ("USV01_SYNTHETIC_SECRET_CANARY_" + secrets.token_hex(48)).encode("ascii")
+    paths = [ROOT / relative for relative in FIXTURES]
+    try:
+        assert_safe_fixture_parents(ROOT, paths)
+    except RuntimeError as error:
+        print(f"FAIL: {error}", file=sys.stderr)
+        return 2
+    preexisting = [p for p in paths if p.exists() or p.is_symlink()]
+    if preexisting:
+        print("FAIL: Synthetic fixtures collide with local files; refusing to overwrite anything", file=sys.stderr)
+        return 2
+    created_dirs: list[Path] = []
+    created_paths: list[Path] = []
+    try:
+        for file in paths:
+            missing = []
+            parent = file.parent
+            while not parent.exists() and parent != ROOT:
+                missing.append(parent)
+                parent = parent.parent
+            for directory in reversed(missing):
+                directory.mkdir(mode=0o700)
+                created_dirs.append(directory)
+            with file.open("xb") as out:
+                out.write(token + b"\n")
+            os.chmod(file, 0o600)
+            created_paths.append(file)
+        with tempfile.TemporaryDirectory(prefix="usv01-image-canary-") as temp:
+            archive = Path(temp) / "docker-images.tar"
+            run("docker", "build", "--target", "build", "--tag", IMAGES[0], ".", timeout=1200)
+            run("docker", "build", "--target", "runtime", "--tag", IMAGES[1], ".", timeout=1200)
+            run("docker", "save", "--output", str(archive), *IMAGES, timeout=600)
+            number = inspect_image_archive(archive, token)
+        print(f"PASS: Scanned {number} exported layers across Docker build and runtime images; synthetic secret bytes absent")
+        print("NOTE: Independent production credential and backup acceptance is still required")
+        return 0
+    except (OSError, ValueError, RuntimeError, subprocess.CalledProcessError,
+            subprocess.TimeoutExpired, tarfile.TarError) as error:
+        print(f"FAIL: Docker synthetic secret image canary did not pass: {type(error).__name__}: {error}", file=sys.stderr)
+        return 1
+    finally:
+        for file in reversed(created_paths):
+            file.unlink(missing_ok=True)
+        for directory in reversed(created_dirs):
+            try:
+                directory.rmdir()
+            except OSError:
+                pass
+
+
+if __name__ == "__main__":
+    sys.exit(main())

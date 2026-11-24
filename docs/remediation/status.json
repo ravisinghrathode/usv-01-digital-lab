@@ -1,7 +1,7 @@
 {
   "schemaVersion": "USV-REMEDIATION-1",
   "baseline": "dd01da4f0323608c6a12b08cbad268ccfa3fdec3",
-  "updatedAt": "2026-11-17",
+  "updatedAt": "2026-11-20",
   "items": [
     {
       "id": "PR-01",
@@ -18,8 +18,8 @@
     {
       "id": "PR-03",
       "state": "partial-implementation-awaiting-review",
-      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/188",
-      "verification": "Docker context exclusions, runtime secret volume and tests added; CI latest success, but image-layer leak canary, provisioned cold-start and backup-restore still outstanding"
+      "pullRequest": "https://github.com/ravisinghrathode/usv-01-digital-lab/pull/193",
+      "verification": "PR #193: exact-head Docker image canary workflow 44591766898 passed at prior head 55bd5cab; governance 44591766567 failed and Stage E classification remains to be confirmed at job-step level. Security fix 4246c8e rejects symlinked/non-directory synthetic credential fixture parents before writing; regression commit 7c9f190 adds three negative/positive tests. Latest head after ledger update requires fresh exact-head CI. Production credentials, cold-start, backup/restore, independent human approval and acceptance remain outstanding."
     },
     {
       "id": "PR-04",
