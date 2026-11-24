@@ -55,6 +55,43 @@ class DockerCanaryManifestTests(unittest.TestCase):
         self.assert_rejected([{"Layers": ["layer.tar"], "RepoTags": [42]}])
 
 
+    def test_duplicate_layer_cannot_mask_missing_layer(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "image.tar"
+            manifest = [{"Layers": ["a.tar", "b.tar"], "RepoTags": list(canary.IMAGES)}]
+            layer = io.BytesIO()
+            with tarfile.open(fileobj=layer, mode="w"):
+                pass
+            with tarfile.open(path, "w") as archive:
+                for name, payload in [
+                    ("manifest.json", json.dumps(manifest).encode()),
+                    ("a.tar", layer.getvalue()),
+                    ("./a.tar", layer.getvalue()),
+                ]:
+                    info = tarfile.TarInfo(name)
+                    info.size = len(payload)
+                    archive.addfile(info, io.BytesIO(payload))
+            with self.assertRaisesRegex(RuntimeError, "duplicate referenced layer"):
+                canary.inspect_image_archive(path, b"SYNTHETIC_SECRET")
+
+    def test_distinct_referenced_layers_are_accepted(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "image.tar"
+            manifest = [{"Layers": ["a.tar", "b.tar"], "RepoTags": list(canary.IMAGES)}]
+            layer = io.BytesIO()
+            with tarfile.open(fileobj=layer, mode="w"):
+                pass
+            with tarfile.open(path, "w") as archive:
+                for name, payload in [
+                    ("manifest.json", json.dumps(manifest).encode()),
+                    ("a.tar", layer.getvalue()),
+                    ("b.tar", layer.getvalue()),
+                ]:
+                    info = tarfile.TarInfo(name)
+                    info.size = len(payload)
+                    archive.addfile(info, io.BytesIO(payload))
+            self.assertEqual(canary.inspect_image_archive(path, b"SYNTHETIC_SECRET"), 2)
+
 class DockerCanaryFixtureSafetyTests(unittest.TestCase):
     def test_symlinked_parent_is_rejected_without_writing_outside_checkout(self):
         with tempfile.TemporaryDirectory() as directory:
