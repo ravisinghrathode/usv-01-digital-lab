@@ -3,20 +3,19 @@
 **All entries are UNVERIFIED source metadata pending independent review.**
 No paper, formula, dimension or file is approved as engineering evidence.
 
-Discovered scholarly identifiers: 414
+Discovered scholarly identifiers: 406
 
 | Paper ID | Title | Primary link / DOI | OA license metadata | Review |
 | --- | --- | --- | --- | --- |
 | A26-PAPER-W1500296249 | Design for manufacturing analysis on the Small Unmanned Ground Vehicle | https://openalex.org/W1500296249 | cc-by-nc | REVIEW_REQUIRED |
 | A26-PAPER-W1524944333 | SIMULATION AND CONTROL OF A QUADROTOR UNMANNED AERIAL VEHICLE | https://uknowledge.uky.edu/gradschool_theses/93 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W1527432449 | Design Considerations for Long Endurance Unmanned Aerial Vehicles | https://doi.org/10.5772/6482 | cc-by-nc-sa | REVIEW_REQUIRED |
-| A26-PAPER-W1533628301 | Unmanned surface combatant considerations for concept exploration | https://openalex.org/W1533628301 | UNKNOWN | METADATA_CHANGE_PENDING |
+| A26-PAPER-W1533628301 | Unmanned surface combatant considerations for concept exploration | https://openalex.org/W1533628301 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W1550740504 | Unmanned Vehicles for U.S. Naval Forces: Background and Issues for Congress | https://digital.library.unt.edu/ark:/67531/metacrs10259/ | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W1577844889 | Stability analysis of a towed body for shipboard unmanned surface vehicle recovery | https://openalex.org/W1577844889 | UNKNOWN | METADATA_CHANGE_PENDING |
 | A26-PAPER-W1587923959 | Interval Kalman Filtering Techniques for Unmanned Surface Vehicle Navigation | https://doi.org/10.24382/1491 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W1606641854 | Sampling sea surfaces with SESAMO: an autonomous craft for the study of sea-air interactions | https://doi.org/10.1109/mra.2005.1511873 | other-oa | REVIEW_REQUIRED |
 | A26-PAPER-W1760137457 | The Unmanned Port Security Vessel: An autonomous platform for monitoring ports and harbors | https://doi.org/10.23919/oceans.2011.6107217 | UNKNOWN | REVIEW_REQUIRED |
-| A26-PAPER-W176211386 | On Structural Design of High-Speed Craft | https://openalex.org/W176211386 | other-oa | REVIEW_REQUIRED |
 | A26-PAPER-W1764228514 | China Naval Modernization: Implications for U.S. Navy Capabilities--Background and Issues for Congress | https://digital.library.unt.edu/ark:/67531/metadc806192/ | public-domain | REVIEW_REQUIRED |
 | A26-PAPER-W1817626460 | Autonomous and adaptive oceanographic feature tracking on board autonomous underwater vehicles | https://doi.org/10.1575/1912/7129 | public-domain | REVIEW_REQUIRED |
 | A26-PAPER-W1822274696 | Unmanned Aerial Vehicles: Background and Issues for Congress | https://digital.library.unt.edu/ark:/67531/metacrs5693/ | UNKNOWN | REVIEW_REQUIRED |
@@ -34,7 +33,6 @@ Discovered scholarly identifiers: 414
 | A26-PAPER-W2011706048 | Navigation and Control System of a Deep-sea Unmanned Underwater Vehicle 'HEMIRE' | https://doi.org/10.1109/oceansap.2006.4393939 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2012977702 | BathyBoat: An Autonomous Surface Vessel for Stand-alone Survey and Underwater Vehicle Network Supervision | https://doi.org/10.4031/mtsj.44.4.5 | cc-by-nc-nd | REVIEW_REQUIRED |
 | A26-PAPER-W201984726 | Autonomous underwater robots’ cooperative behaviour | https://doi.org/10.12681/eadd/33051 | cc-by-nc-sa | REVIEW_REQUIRED |
-| A26-PAPER-W2031404716 | Path planning algorithm for unmanned surface vehicle formations in a practical maritime environment | https://doi.org/10.1016/j.oceaneng.2015.01.008 | cc-by-nc-nd | REVIEW_REQUIRED |
 | A26-PAPER-W2040921824 | Control-Oriented Planar Motion Modeling of Unmanned Surface Vehicles | https://doi.org/10.1109/oceans.2010.5664297 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2041638786 | On parallel hybrid-electric propulsion system for unmanned aerial vehicles | https://doi.org/10.1016/j.paerosci.2011.12.001 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2050179365 | Autonomous Inland Water Monitoring: Design and Application of a Surface Vessel | https://doi.org/10.1109/mra.2011.2181771 | other-oa | REVIEW_REQUIRED |
@@ -44,6 +42,7 @@ Discovered scholarly identifiers: 414
 | A26-PAPER-W2124850271 | An unmanned aircraft system for maritime search and rescue | https://openalex.org/W2124850271 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2128707647 | Site Planning and On-Board Collision Avoidance Software to Optimize Autonomous Surface Craft Surveys | https://doi.org/10.23860/thesis-filimon-michael-2013 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W2129563024 | Pneumatic Energy Sources for Autonomous and Wearable Soft Robotics | https://doi.org/10.1089/soro.2014.0018 | UNKNOWN | METADATA_CHANGE_PENDING |
+| A26-PAPER-W2149147459 | Development of a Low Cost Multi-Robot Autonomous Marine Surface Platform | https://doi.org/10.1007/978-3-642-40686-7_43 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2160182931 | FASt - an autonomous sailing platform for oceanographic missions | https://doi.org/10.1109/oceans.2008.5152114 | cc-by-nc | REVIEW_REQUIRED |
 | A26-PAPER-W2162619157 | Light Unmanned Aerial Vehicles (UAVs) for Cooperative Inspection of PV Plants | https://doi.org/10.1109/jphotov.2014.2323714 | other-oa | REVIEW_REQUIRED |
 | A26-PAPER-W2164233554 | Modeling, Identification, and Control of an Unmanned Surface Vehicle | https://doi.org/10.1002/rob.21452 | UNKNOWN | REVIEW_REQUIRED |
@@ -51,13 +50,13 @@ Discovered scholarly identifiers: 414
 | A26-PAPER-W2182654257 | Dynamic Analysis of a SWATH Vessel | https://openalex.org/W2182654257 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2191698155 | Navigation, guidance and control of an overactuated marine surface vehicle | https://doi.org/10.1016/j.arcontrol.2015.08.005 | cc-by-nc-nd | REVIEW_REQUIRED |
 | A26-PAPER-W220239119 | Unmanned Three-Environment Vehicle (U3V) | https://doi.org/10.21236/ada612283 | public-domain | REVIEW_REQUIRED |
-| A26-PAPER-W2218694104 | On small satellites for oceanography: A survey | https://doi.org/10.1016/j.actaastro.2016.06.007 | UNKNOWN | METADATA_CHANGE_PENDING |
+| A26-PAPER-W2218694104 | On small satellites for oceanography: A survey | https://doi.org/10.1016/j.actaastro.2016.06.007 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2247882266 | Mechanical Design of a Sonar Mount for an Unmanned Surface Vehicle | https://openalex.org/W2247882266 | public-domain | REVIEW_REQUIRED |
-| A26-PAPER-W226033124 | Collision Avoidance for Unmanned Surface Vehicles | https://nva.sikt.no/registration/0198ec6dcc54-62cecb0c-c53b-4a6c-8226-c5c3d56a4316 | other-oa | REVIEW_REQUIRED |
 | A26-PAPER-W2268751503 | Wireless communications with unmanned aerial vehicles: opportunities and challenges | https://doi.org/10.1109/mcom.2016.7470933 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W22831488 | Vertical Payload Profiling from a Wave Propelled Unmanned Surface Vehicle | https://escholarship.org/uc/item/3f1079b5 | UNKNOWN | METADATA_CHANGE_PENDING |
 | A26-PAPER-W2303431639 | Adaptive path planning for depth‐constrained bathymetric mapping with an autonomous surface vessel | https://doi.org/10.1002/rob.21718 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2314695253 | Development of a Solar-Powered Unmanned Aerial Vehicle | https://doi.org/10.2514/6.2014-0539 | UNKNOWN | REVIEW_REQUIRED |
+| A26-PAPER-W2345628628 | Automated Cinematography with Unmanned Aerial Vehicles | https://doi.org/10.2312/wiced.20161097 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2395352269 | Design of Unmanned Surface Vessels Experiment Platform | https://doi.org/10.2991/ameii-16.2016.285 | cc-by-nc | REVIEW_REQUIRED |
 | A26-PAPER-W2410485755 | Investigation into launch and recovery systems for unmanned surface vessels from ships | https://openalex.org/W2410485755 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2422864676 | Power electronics, microelectronics and propulsion systems for solar-powered unmanned aerial vehicles | https://doi.org/10.1109/elnano.2016.7493073 | UNKNOWN | REVIEW_REQUIRED |
@@ -73,17 +72,17 @@ Discovered scholarly identifiers: 414
 | A26-PAPER-W2519500724 | Hydrogen Fuel Cells for Unmanned Undersea Vehicle Propulsion | https://doi.org/10.1149/07514.0479ecst | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2559172883 | Resistance and Seakeeping Investigation for Optimization of the Floating Hull of Wave Glider | https://doi.org/10.4236/wjet.2016.43d029 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W2566830730 | Aspects of a reliable autonomous navigation and guidance system for an unmanned surface vehicle | https://doi.org/10.1109/oceans.2016.7761415 | UNKNOWN | REVIEW_REQUIRED |
-| A26-PAPER-W2587344361 | Guidance and Control of Robot Manipulators and Autonomous Marine Robots | https://nva.sikt.no/registration/0198ec7f8755-4646bf41-4d71-4d6a-8f68-f2b72958492b | other-oa | REVIEW_REQUIRED |
 | A26-PAPER-W2588422468 | MARV: Marine Autonomous Research Vessel | https://scholarcommons.scu.edu/idp_senior/20 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2590659785 | Design and validation of an unmanned surface vehicle simulation model | https://doi.org/10.1016/j.apm.2017.02.028 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2612848726 | Survey on advances on terrain based navigation for autonomous underwater vehicles | https://doi.org/10.1016/j.oceaneng.2017.04.047 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2620410549 | Design of SWATH Based Unmanned Surface Vehicle | https://doi.org/10.21535/proicius.2010.v6.513 | UNKNOWN | REVIEW_REQUIRED |
-| A26-PAPER-W2623662808 | Autonomous Robotic Intervention using ROV | https://openalex.org/W2623662808 | UNKNOWN | METADATA_CHANGE_PENDING |
-| A26-PAPER-W268369090 | Uniform system for the rapid prototyping and testing of controllers for unmanned aerial vehicles | https://openalex.org/W268369090 | UNKNOWN | METADATA_CHANGE_PENDING |
-| A26-PAPER-W2732733425 | HYDRODYNAMIC PERFORMANCES OF SMALL SIZE SWATH CRAFT | https://doaj.org/article/e3202ef21ac041e8b9b018a72ef63f25 | cc-by-sa | METADATA_CHANGE_PENDING |
+| A26-PAPER-W2623662808 | Autonomous Robotic Intervention using ROV | https://openalex.org/W2623662808 | UNKNOWN | REVIEW_REQUIRED |
+| A26-PAPER-W268369090 | Uniform system for the rapid prototyping and testing of controllers for unmanned aerial vehicles | https://openalex.org/W268369090 | UNKNOWN | REVIEW_REQUIRED |
+| A26-PAPER-W2732733425 | HYDRODYNAMIC PERFORMANCES OF SMALL SIZE SWATH CRAFT | https://doaj.org/article/e3202ef21ac041e8b9b018a72ef63f25 | cc-by-sa | REVIEW_REQUIRED |
 | A26-PAPER-W2733160965 | COLREGs-Compliant Path Planning for Autonomous Surface Vehicles: A Multiobjective Optimization Approach | https://doi.org/10.1016/j.ifacol.2017.08.2525 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2735654539 | The fast marching method based intelligent navigation of an unmanned surface vehicle | https://doi.org/10.1016/j.oceaneng.2017.07.021 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2750029608 | Unmanned Systems In Integrating Cross domain Naval Fires | https://openalex.org/W2750029608 | UNKNOWN | REVIEW_REQUIRED |
+| A26-PAPER-W2756831958 | Prototype of HIL Test Platform for Autonomous USV - Simulation of Vessel Dynamics | https://nva.sikt.no/registration/0198ec97e8ac-5e47e051-1822-4ac7-8781-b86ecdc68c32 | other-oa | REVIEW_REQUIRED |
 | A26-PAPER-W2759944384 | Safety of Unmanned Ships - Safe Shipping with Autonomous and Remote Controlled Ships | https://aaltodoc.aalto.fi/handle/123456789/28061 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2763450331 | Obstacle Avoidance Approaches for Autonomous Navigation of Unmanned Surface Vehicles | https://doi.org/10.1017/s0373463317000753 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2766016749 | History and recent advancements of electric propulsion and integrated electrical power systems for commercial  | https://nottingham-repository.worktribe.com/output/836783 | cc-by | REVIEW_REQUIRED |
@@ -100,21 +99,18 @@ Discovered scholarly identifiers: 414
 | A26-PAPER-W2810956456 | Conceptual design of high performance Unmanned Aerial Vehicle | https://doi.org/10.1088/1757-899x/376/1/012056 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W2810991294 | ISME activity on the use of Autonomous Surface and Underwater Vehicles for acoustic surveys at sea | https://doi.org/10.21014/acta_imeko.v7i2.539 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W2883527107 | Design Challenges of a Maritime Multipurpose Unmanned Vehicle | https://doi.org/10.1088/1755-1315/172/1/012024 | cc-by | REVIEW_REQUIRED |
-| A26-PAPER-W2884628842 | Artificial Intelligence for Long-Term Robot Autonomy: A Survey | https://doi.org/10.1109/lra.2018.2860628 | UNKNOWN | METADATA_CHANGE_PENDING |
+| A26-PAPER-W2884628842 | Artificial Intelligence for Long-Term Robot Autonomy: A Survey | https://doi.org/10.1109/lra.2018.2860628 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2891370793 | Launch and Recovery of an Autonomous Underwater Vehicle From a Station-Keeping Unmanned Surface Vehicle | https://doi.org/10.1109/joe.2018.2867988 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2895710281 | Design and Implementation of Control System for Green Unmanned Surface Vehicle | https://openalex.org/W2895710281 | other-oa | REVIEW_REQUIRED |
-| A26-PAPER-W2899133847 | COLREGS Compatible Motion Planning for Autonomous Surface Vessels | https://hdl.handle.net/11250/2564484 | other-oa | REVIEW_REQUIRED |
 | A26-PAPER-W2899525663 | Concept development of an unmanned, non-lethal, anti-piracy craft: The Beagle | https://openalex.org/W2899525663 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2905962242 | A review of unmanned surface vehicle development | https://doi.org/10.33175/mtr.2019.140730 | cc-by-nc-nd | REVIEW_REQUIRED |
-| A26-PAPER-W2906432547 | Improving Seaglider Efficiency: An Analysis of Wing Shapes, Hull Morphologies, and Propulsion Methods | https://commons.erau.edu/edt/418 | cc-by-nc-nd | REVIEW_REQUIRED |
 | A26-PAPER-W2906888451 | Survival strategies for unmanned surface vehicles in harsh ocean environments | https://research.library.mun.ca/13042/ | UNKNOWN | REVIEW_REQUIRED |
-| A26-PAPER-W2908188234 | Autonomous landing on a moving vehicle with an unmanned aerial vehicle | https://doi.org/10.1002/rob.21858 | cc-by-nc-nd | REVIEW_REQUIRED |
 | A26-PAPER-W2909116197 | A review of unmanned vehicles for the detection and monitoring of marine fauna | https://doi.org/10.1016/j.marpolbul.2019.01.009 | cc-by-nc-nd | REVIEW_REQUIRED |
 | A26-PAPER-W2913393332 | A Survey on Unmanned Surface Vehicles for Disaster Robotics: Main Challenges and Directions | https://doi.org/10.3390/s19030702 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W2914059179 | The Prospect for the Launche of a Mini Unmanned Aerial Vehicle from an Unmanned Surface Vehicle | https://doi.org/10.2478/sjpna-2018-0001 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W2914839582 | Project AUTONOMAD : The design of an unmanned coast guard vessel integrating the use of drones for emission re | https://strathprints.strath.ac.uk/65815/ | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2915468503 | U-SWATH: An innovative USV design towards the extended ship | https://doi.org/10.24868/issn.2631-8741.2018.002 | cc-by-nc-nd | REVIEW_REQUIRED |
-| A26-PAPER-W2917082428 | Securing interoperable and integrated command and control of unmanned systems – building on the successes of U | https://doi.org/10.24868/issn.2515-818x.2018.066 | cc-by-nc-nd | METADATA_CHANGE_PENDING |
+| A26-PAPER-W2917082428 | Securing interoperable and integrated command and control of unmanned systems – building on the successes of U | https://doi.org/10.24868/issn.2515-818x.2018.066 | cc-by-nc-nd | REVIEW_REQUIRED |
 | A26-PAPER-W2922010548 | Evaluation of Mechanical Strength Characteristics of Double Ducted Unmanned Amphibious Aerial Vehicle using Fi | https://doi.org/10.33889/ijmems.2019.4.2-034 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W2925510744 | A Process for the Design and Manufacture of Propellers for Small Unmanned Aerial Vehicles | https://doi.org/10.22215/etd/2014-10450 | other-oa | REVIEW_REQUIRED |
 | A26-PAPER-W2938544154 | Cooperative Swarm Optimisation of Unmanned Surface Vehicles | https://doi.org/10.24382/1174 | cc-by-nc | REVIEW_REQUIRED |
@@ -129,7 +125,7 @@ Discovered scholarly identifiers: 414
 | A26-PAPER-W2963971223 | Towards a COLREGS compliant autonomous surface vessel | https://doi.org/10.17760/d20317964 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2965032262 | A Launch and Recovery System for Unmanned Surface Vehicle Based on Floating Bracket | https://doi.org/10.1007/978-3-030-27532-7_19 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2971969325 | Finite-Time PLOS-Based Integral Sliding-Mode Adaptive Neural Path Following for Unmanned Surface Vessels With  | https://doi.org/10.1109/tase.2019.2925657 | UNKNOWN | REVIEW_REQUIRED |
-| A26-PAPER-W2973163281 | A critical review on unmanned aerial vehicles power supply and energy management: Solutions, strategies, and p | https://doi.org/10.1016/j.apenergy.2019.113823 | UNKNOWN | REVIEW_REQUIRED |
+| A26-PAPER-W2978626209 | Swarms of Unmanned Aerial Vehicles — A Survey | https://doi.org/10.1016/j.jii.2019.100106 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W2979367241 | Recent progress of reinforcement materials: a comprehensive overview of composite materials | https://doi.org/10.1016/j.jmrt.2019.09.068 | cc-by-nc-nd | REVIEW_REQUIRED |
 | A26-PAPER-W2980045985 | Implementation of an Autonomous Surface Vessel Prototype: A Case Study | https://doi.org/10.33012/2019.16948 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W2981784301 | A launch and recovery system for integrating unmanned ocean vehicles onto surface platforms | https://hdl.handle.net/1721.1/122311 | cc-by-nc | METADATA_CHANGE_PENDING |
@@ -149,7 +145,6 @@ Discovered scholarly identifiers: 414
 | A26-PAPER-W3018515321 | The Autonomous Underwater Vehicle Integrated with the Unmanned Surface Vessel Mapping the Southern Ionian Sea. | https://doi.org/10.3390/rs12081344 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W3021042096 | Study on Control System of Integrated Unmanned Surface Vehicle and Underwater Vehicle | https://doi.org/10.3390/s20092633 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W3024998080 | Path Following of a Water-Jetted USV Based on Maneuverability Tests | https://doi.org/10.3390/jmse8050354 | cc-by | REVIEW_REQUIRED |
-| A26-PAPER-W3029203949 | Autonomy for Unmanned Surface Vehicle | https://openalex.org/W3029203949 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W3043276110 | A Pioneer of Naval Ship Design | https://doi.org/10.1080/17445302.2020.1787590 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W3047495616 | Deep Learning-Based Water Segmentation for Autonomous Surface Vessel | https://doi.org/10.1088/1755-1315/540/1/012055 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W3048579935 | Scientific Challenges and Present Capabilities in Underwater Robotic Vehicle Design and Navigation for Oceanog | https://doi.org/10.3390/rs12162588 | cc-by | REVIEW_REQUIRED |
@@ -176,7 +171,7 @@ Discovered scholarly identifiers: 414
 | A26-PAPER-W3149280499 | COLREGs-Informed RRT* for Collision Avoidance of Marine Crafts | https://doi.org/10.1109/icra48506.2021.9560909 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W3153491230 | Study On The Application Of Thermoelectric Coolers Inside Unmanned Surface Vehicles | https://doi.org/10.37934/arfmts.82.1.1220 | cc-by-nc | REVIEW_REQUIRED |
 | A26-PAPER-W3157950181 | Autonomous surface vessel for search and rescue operation | https://doi.org/10.11591/eei.v10i3.2599 | cc-by-sa | REVIEW_REQUIRED |
-| A26-PAPER-W3161968954 | Design of a low-cost unmanned surface vehicle for swarm robotics research in laboratory environments | https://doi.org/10.48336/fjsf-kg16 | other-oa | REVIEW_REQUIRED |
+| A26-PAPER-W3161968954 | Design of a low-cost unmanned surface vehicle for swarm robotics research in laboratory environments | https://doi.org/10.48336/fjsf-kg16 | other-oa | METADATA_CHANGE_PENDING |
 | A26-PAPER-W3161969303 | Regulatory framework analysis for the unmanned inland waterway vessel | https://doi.org/10.1007/s13437-021-00237-z | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W3163273066 | ROV launch and recovery from an unmanned autonomous surface vessel – Hydrodynamic modelling and system integra | https://doi.org/10.1016/j.oceaneng.2021.109019 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W3164623820 | Development of a Solar-Powered Unmanned Aerial Vehicle for Extended Flight Endurance | https://doi.org/10.3390/drones5020044 | cc-by | REVIEW_REQUIRED |
@@ -189,14 +184,13 @@ Discovered scholarly identifiers: 414
 | A26-PAPER-W3193640404 | Collision avoidance guidance and control scheme for vector propulsion unmanned surface vehicle with disturbanc | https://doi.org/10.1016/j.apor.2021.102799 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W3199034102 | Integrated Simulation of Virtual Prototypes and Control Algorithms of Unmanned Surface Vehicles Based on a Rob | https://doi.org/10.51400/2709-6998.1583 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W3204505605 | Autonomous Surface Vessel with Remote Human on the Loop: System Design for STCW Compliance | https://doi.org/10.1016/j.ifacol.2021.10.097 | UNKNOWN | REVIEW_REQUIRED |
-| A26-PAPER-W3208629165 | Study of Principles in COLREGs and Interpretations and Amendments COLREGs for Maritime Autonomous Surface Ship | https://doi.org/10.18949/jintransnavi.6.1_11 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W3209229893 | A Distributed Unmanned Aerial Vehicles Traffic Management System | https://orbilu.uni.lu/handle/10993/48454 | other-oa | REVIEW_REQUIRED |
 | A26-PAPER-W3210357596 | Unmanned Aerial Vehicles in Hydrology and Water Management: Applications, Challenges, and Perspectives | https://doi.org/10.1029/2021wr029925 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W3211400496 | Design principles for onboard engineering diagnostics systems of unmanned maritime vessels | https://doi.org/10.1088/1742-6596/2061/1/012103 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W3215237054 | Risk-based implementation of COLREGs for autonomous surface vehicles using deep reinforcement learning | https://doi.org/10.1016/j.neunet.2022.04.008 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W346088156 | Design and rapid prototyping of flight control and navigation system for an unmanned aerial vehicle | https://openalex.org/W346088156 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W39073163 | An autonomous surface vehicle for water quality monitoring | https://openalex.org/W39073163 | UNKNOWN | REVIEW_REQUIRED |
-| A26-PAPER-W413726496 | Coordinated Control of Marine Craft | https://openalex.org/W413726496 | UNKNOWN | METADATA_CHANGE_PENDING |
+| A26-PAPER-W413726496 | Coordinated Control of Marine Craft | https://openalex.org/W413726496 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W4205417604 | Design and test of an improved active disturbance rejection control system for water sampling unmanned surface | https://doi.org/10.1016/j.oceaneng.2021.110367 | UNKNOWN | METADATA_CHANGE_PENDING |
 | A26-PAPER-W4205667203 | Uncrewed Surface Vessel Technological Diffusion Depends on Cross-Sectoral Investment in Open-Ocean Archetypes: | https://doi.org/10.3389/fmars.2021.736984 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4205670214 | Underwater Drone Architecture for Marine Digital Twin: Lessons Learned from SUSHI DROP Project | https://doi.org/10.3390/s22030744 | cc-by | REVIEW_REQUIRED |
@@ -212,6 +206,7 @@ Discovered scholarly identifiers: 414
 | A26-PAPER-W4229459807 | An improved real-time collision-avoidance algorithm based on Hybrid A* in a multi-object-encountering scenario | https://doi.org/10.1016/j.oceaneng.2022.111406 | other-oa | REVIEW_REQUIRED |
 | A26-PAPER-W4236236480 | Fully autonomous focused exploration for robotic environmental monitoring | https://doi.org/10.1109/icra.2014.6907240 | other-oa | REVIEW_REQUIRED |
 | A26-PAPER-W4250355406 | Robotic oceanography: Revealing ocean-scale biochemical structure with a deep-diving autonomous vehicle. | https://doi.org/10.36227/techrxiv.12921530 | cc-by | REVIEW_REQUIRED |
+| A26-PAPER-W4280507004 | Predicting the Speed of a Wave-Propelled Autonomous Surface Vehicle Using Metocean Forecasts | https://doi.org/10.1109/oceanschennai45887.2022.9775485 | other-oa | REVIEW_REQUIRED |
 | A26-PAPER-W4281745313 | Dynamic Energy-Efficient Path Planning of Unmanned Surface Vehicle under Time-Varying Current and Wind | https://doi.org/10.3390/jmse10060759 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4281926880 | Gain-scheduled steering control for a wave-propelled unmanned surface vehicle | https://doi.org/10.1016/j.oceaneng.2022.111618 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4282842107 | Comprehensive Review on Electric Propulsion System of Unmanned Aerial Vehicles | https://doi.org/10.3389/fenrg.2022.752012 | cc-by | REVIEW_REQUIRED |
@@ -226,12 +221,12 @@ Discovered scholarly identifiers: 414
 | A26-PAPER-W4295592010 | A Concept of Autonomous Multi-Agent Navigation System for Unmanned Surface Vessels | https://doi.org/10.3390/electronics11182853 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4296908516 | Unmanned Aerial Vehicle Communications for Civil Applications: A Review | https://doi.org/10.1109/access.2022.3208571 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4297833673 | UNMANNED SURFACE VEHICLE – TRITOR | https://doi.org/10.21278/brod73308 | cc-by | METADATA_CHANGE_PENDING |
-| A26-PAPER-W4303969215 | The Bathy-Drone: An Autonomous Uncrewed Drone-Tethered Sonar System | https://doi.org/10.3390/drones6100294 | cc-by | REVIEW_REQUIRED |
+| A26-PAPER-W4303969215 | The Bathy-Drone: An Autonomous Uncrewed Drone-Tethered Sonar System | https://doi.org/10.3390/drones6100294 | cc-by | METADATA_CHANGE_PENDING |
 | A26-PAPER-W4304136604 | Towards Integrated Digital-Twins: An Application Framework for Autonomous Maritime Surface Vessel Development | https://doi.org/10.3390/jmse10101469 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4307923462 | Design of Fast Patrol Boat for Improving Resistance, Stability, and Seakeeping Performance | https://doi.org/10.3390/designs6060105 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4308275239 | Design of the Bengawan Unmanned Vehicle (UV) Roboboat: Mandakini Neo | https://doi.org/10.20961/mekanika.v21i2.61624 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4308832118 | Intention modeling and inference for autonomous collision avoidance at sea | https://doi.org/10.1016/j.oceaneng.2022.113080 | cc-by | REVIEW_REQUIRED |
-| A26-PAPER-W4311800117 | Assessment of Atmospheric and Oceanographic Measurements from an Autonomous Surface Vehicle | https://doi.org/10.1175/jtech-d-22-0060.1 | public-domain | METADATA_CHANGE_PENDING |
+| A26-PAPER-W4311800117 | Assessment of Atmospheric and Oceanographic Measurements from an Autonomous Surface Vehicle | https://doi.org/10.1175/jtech-d-22-0060.1 | public-domain | REVIEW_REQUIRED |
 | A26-PAPER-W4313287919 | Underwater Wireless Charging System of Unmanned Surface Vehicles with High Power, Large Misalignment Tolerance | https://doi.org/10.3390/en15249529 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4313334187 | Unmanned aerial vehicles: A review | https://doi.org/10.1016/j.cogr.2022.12.004 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4313430819 | Real-Time Emergency Collision Avoidance for Unmanned Surface Vehicles with COLREGS Flexibly Obeyed | https://doi.org/10.3390/jmse10122025 | cc-by | REVIEW_REQUIRED |
@@ -251,6 +246,7 @@ Discovered scholarly identifiers: 414
 | A26-PAPER-W4367322257 | Uncrewed surface systems facilitating a new era of global ocean exploration | https://doi.org/10.58440/ihr-29-a05 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W4367598839 | An Unmanned Surface Vehicle (USV): Development of an Autonomous Boat with a Sensor Integration System for Bath | https://doi.org/10.3390/s23094420 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4367611274 | Digital Twins of the Ocean can foster a sustainable blue economy in a protected marine environment | https://doi.org/10.58440/ihr-29-a04 | UNKNOWN | REVIEW_REQUIRED |
+| A26-PAPER-W4380632179 | Explainable Artificial Intelligence for Autonomous Surface Vessels by Fuzzy-Based Collision Avoidance System | https://doi.org/10.1007/978-981-99-0838-7_12 | other-oa | REVIEW_REQUIRED |
 | A26-PAPER-W4382135822 | Unmanned Aerial Vehicles for Search and Rescue: A Survey | https://doi.org/10.3390/rs15133266 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4382236847 | Digital Twin in the Maritime Domain: A Review and Emerging Trends | https://doi.org/10.3390/jmse11051021 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4383108227 | Deep Reinforcement Learning Based Tracking Control of an Autonomous Surface Vessel in Natural Waters | https://doi.org/10.1109/icra48891.2023.10160858 | UNKNOWN | METADATA_CHANGE_PENDING |
@@ -278,7 +274,7 @@ Discovered scholarly identifiers: 414
 | A26-PAPER-W4390752480 | A Bibliometric Analysis and Overall Review of the New Technology and Development of Unmanned Surface Vessels | https://doi.org/10.3390/jmse12010146 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4390755780 | An Unmanned Surface Vehicle for the Launch and Recovery of Autonomous Underwater Vehicles: A Novel Design | https://doi.org/10.1109/mra.2023.3348302 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W4390872255 | Cooperative Unmanned Aerial and Surface Vehicles for Extended Coverage in Maritime Environments | https://doi.org/10.1109/access.2024.3353046 | cc-by-nc-nd | REVIEW_REQUIRED |
-| A26-PAPER-W4391386902 | Perspectives for the development of unmanned surface vehicles in Colombia: Cotecmar case | https://doi.org/10.25043/19098642.247 | cc-by | METADATA_CHANGE_PENDING |
+| A26-PAPER-W4391386902 | Perspectives for the development of unmanned surface vehicles in Colombia: Cotecmar case | https://doi.org/10.25043/19098642.247 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4391422742 | Marine $\mathcal{X}$: Design and Implementation of Unmanned Surface Vessel for Vision Guided Navigation | https://doi.org/10.1109/icar58858.2023.10406475 | public-domain | REVIEW_REQUIRED |
 | A26-PAPER-W4391784785 | A systems approach to hazard identification for solar-powered and wave-propelled unmanned surface vehicle | https://doi.org/10.1080/20464177.2024.2315646 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4392030711 | Optimizing Multi-Vessel Collision Avoidance Decision Making for Autonomous Surface Vessels: A COLREGs-Complian | https://doi.org/10.3390/jmse12030372 | cc-by | REVIEW_REQUIRED |
@@ -298,8 +294,6 @@ Discovered scholarly identifiers: 414
 | A26-PAPER-W4396941348 | Unmanned Aerial Vehicle for Precision Agriculture: A Review | https://doi.org/10.1109/access.2024.3401018 | cc-by-nc-nd | REVIEW_REQUIRED |
 | A26-PAPER-W4398141862 | Design and Implementation of a Low-Cost Intelligent Unmanned Surface Vehicle | https://doi.org/10.3390/s24103254 | cc-by | METADATA_CHANGE_PENDING |
 | A26-PAPER-W4399491059 | Design of An Unmanned Surface Vehicle for Oil Spill Sampling | https://doi.org/10.18260/1-2-1139-46329 | UNKNOWN | REVIEW_REQUIRED |
-| A26-PAPER-W4400056042 | Challenge for multifaceted data acquisition around active volcanoes using uncrewed surface vessel | https://doi.org/10.3389/fmars.2024.1406381 | cc-by | REVIEW_REQUIRED |
-| A26-PAPER-W4400884558 | An Improved NSGA-II Algorithm for MASS Autonomous Collision Avoidance under COLREGs | https://doi.org/10.3390/jmse12071224 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4401154837 | A Study on the Development of Unmanned Surface Vehicle(USV) Launch and Recovery Device using ARIZ-85C | https://doi.org/10.47116/apjcri.2024.07.01 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W4401330701 | An Innovative Monitoring System Based on UAV and Auto-Remote Surface Vessel | https://doi.org/10.23919/splitech61897.2024.10612515 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W4401415396 | Robust Model Predictive Control with Control Barrier Functions for Autonomous Surface Vessels | https://doi.org/10.1109/icra57147.2024.10610620 | other-oa | REVIEW_REQUIRED |
@@ -307,15 +301,14 @@ Discovered scholarly identifiers: 414
 | A26-PAPER-W4402410111 | Prescribed performance actuator-tolerance control for path following of unmanned surface vessels via the trigg | https://doi.org/10.1016/j.compeleceng.2024.109617 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W4402449210 | Path following control of underactuated unmanned surface vessel using virtual circle guidance method | https://doi.org/10.1201/9781003508779-43 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W4402575011 | Uncrewed surface vehicles (USVs) as platforms for fisheries and plankton acoustics | https://doi.org/10.1093/icesjms/fsae130 | cc-by | METADATA_CHANGE_PENDING |
+| A26-PAPER-W4402594739 | Towards a Digital Twin for a Drinking Water Source in Norway | https://doi.org/10.1109/iciea61579.2024.10665254 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4402658861 | AN AUTOMATED ANCHORING SYSTEM FOR AN UNMANNED SURFACE VEHICLE | https://www.osti.gov/biblio/2434096 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W4402862213 | COLREGs-Adaptive trajectory planning and decision-making in maritime autonomous surface ships | https://doi.org/10.1016/j.oceaneng.2024.119308 | other-oa | REVIEW_REQUIRED |
 | A26-PAPER-W4403193235 | SOME TASKS OF CONTROL AUTOMATION OF AN UNMANNED SURFACE VESSEL AS A CARRIER OF A GROUP OF AUTONOMOUS UNDERWATE | https://doi.org/10.30525/978-9934-26-468-9-4 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W4403214835 | Seal Pipeline: Enhancing Dynamic Object Detection and Tracking for Autonomous Unmanned Surface Vehicles in Mar | https://doi.org/10.3390/drones8100561 | cc-by | REVIEW_REQUIRED |
-| A26-PAPER-W4403400826 | Unmanned Surface Vessel–Unmanned Aerial Vehicle Cooperative Path Following Based on a Predictive Line of Sight | https://doi.org/10.3390/jmse12101818 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4403497828 | Analysis of the Impact of Ground Proximity on Basic Aerodynamic Characteristics on the Example of an Unmanned  | https://doi.org/10.15866/irease.v17i3.25166 | cc-by-nc-nd | REVIEW_REQUIRED |
 | A26-PAPER-W4403610089 | Development of a Low Cost Unmanned Surface Vessel for Autonomous Navigation in Shallow Water | https://doi.org/10.24868/11137 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4403610485 | Towards Design of an Autonomous Navigation Framework for Unmanned Surface Vessels using Marine Robotics Unity  | https://doi.org/10.24868/11139 | cc-by | REVIEW_REQUIRED |
-| A26-PAPER-W4403679879 | Evolution of Algorithms and Applications for Unmanned Surface Vehicles in the Context of Small Craft: A System | https://doi.org/10.3390/app14219693 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4404187708 | The Economic and Regulatory Challenges of Implementing Digital Twins and Autonomous Vessels in U.S. Maritime F | https://doi.org/10.38124/ijisrt/ijisrt24nov075 | cc-by-nc | REVIEW_REQUIRED |
 | A26-PAPER-W4404354591 | Digital Twin for Autonomous Surface Vessels: Enabler for Safe Maritime Navigation | https://doi.org/10.48550/arxiv.2411.03465 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4404688851 | On the Field Test of the Autonomous Collision Avoidance Among the Swarm of Four Unmanned Surface Vehicles | https://doi.org/10.1109/oceans55160.2024.10753803 | UNKNOWN | REVIEW_REQUIRED |
@@ -325,14 +318,10 @@ Discovered scholarly identifiers: 414
 | A26-PAPER-W4406637169 | Making do with less: Extending an acoustic-based time series of euphausiid abundance using an uncrewed surface | https://doi.org/10.1016/j.fishres.2025.107270 | cc-by-nc-nd | REVIEW_REQUIRED |
 | A26-PAPER-W4406694244 | Analysis of wing in ground-craft water landing | https://doi.org/10.12913/22998624/196259 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4407704133 | Changing Tides in Maritime Warfare Closing the Reporting Gap on Uncrewed Maritime Systems in the United Nation | https://doi.org/10.37559/caap/25/erc/03 | UNKNOWN | REVIEW_REQUIRED |
-| A26-PAPER-W4407954258 | Development of a High-Reliability Hybrid Data Transmission System for Unmanned Surface Vehicles Under Interfer | https://doi.org/10.3390/drones9030174 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4407995428 | An Overview of Recent Advances in Pursuit–Evasion Games with Unmanned Surface Vehicles | https://doi.org/10.3390/jmse13030458 | cc-by | REVIEW_REQUIRED |
-| A26-PAPER-W4408129766 | A COMPREHENSIVE REVIEW OF GENERATIVE DESIGN APPLICATIONS IN UNMANNED AERIAL VEHICLES | https://doi.org/10.11113/aej.v15.21286 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W4408571362 | Digital twin syncing for autonomous surface vessels using reinforcement learning and nonlinear model predictiv | https://doi.org/10.1038/s41598-025-93635-9 | cc-by | REVIEW_REQUIRED |
-| A26-PAPER-W4408694080 | Electric Machine Design and Integration for an Electric Propulsion System in Medium-Altitude Long-Endurance Un | https://doi.org/10.3390/app15073438 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4408928805 | Performance Analysis of a 2-Blades Propeller Design for USV (Unmanned Surface Vehicle) | https://doi.org/10.2991/978-94-6463-668-0_7 | cc-by-nc | REVIEW_REQUIRED |
 | A26-PAPER-W4409140705 | Pressurised Fuel Vessel Mass Estimation for High-Altitude PEM Unmanned Aircraft Systems | https://doi.org/10.3390/fuels6020026 | cc-by | REVIEW_REQUIRED |
-| A26-PAPER-W4409177313 | Solgenia—A test vessel toward energy-efficient autonomous water taxi applications | https://doi.org/10.1016/j.oceaneng.2025.121011 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4409607535 | Simplified Model Characterization and Control of an Unmanned Surface Vehicle | https://doi.org/10.3390/jmse13040813 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4409700881 | Operative Unmanned Surface Vessels (USVs): A Review of Market-Ready Solutions | https://doi.org/10.3390/automation6020017 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4410069154 | A Novel COLREGs-Based Automatic Berthing Scheme for Autonomous Surface Vessels | https://doi.org/10.3390/jmse13050903 | cc-by | REVIEW_REQUIRED |
@@ -342,10 +331,10 @@ Discovered scholarly identifiers: 414
 | A26-PAPER-W4411336869 | Design and Implementation of a Dual Uncrewed Surface Vessel Platform for Bathymetry Research Under High-Flow C | https://doi.org/10.1109/access.2025.3580343 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4412046035 | Yara: An Ocean Virtual Environment for Research and Development of Autonomous Sailing Robots and Other Unmanne | https://doi.org/10.1007/s10846-024-02212-1 | cc-by-nc-nd | REVIEW_REQUIRED |
 | A26-PAPER-W4412113745 | Numerical Study on the Motion and Wave Loads of an Uncrewed Surface Vehicle Catamaran at Low Speed in Sea Wave | https://doi.org/10.47176/jafm.18.9.3330 | cc-by-nc-nd | REVIEW_REQUIRED |
-| A26-PAPER-W4412398792 | Recovery of Rocket Payloads and First Stages Using Unmanned Vehicles - a Proof-of-concept | https://doi.org/10.1109/aero63441.2025.11068664 | UNKNOWN | REVIEW_REQUIRED |
+| A26-PAPER-W4412398792 | Recovery of Rocket Payloads and First Stages Using Unmanned Vehicles - a Proof-of-concept | https://doi.org/10.1109/aero63441.2025.11068664 | UNKNOWN | METADATA_CHANGE_PENDING |
 | A26-PAPER-W4412513792 | Digital twin of USV thruster based on CFD simulations and towing tank experiments | https://doi.org/10.21278/brod76403 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4413156325 | Aerial-Marine Cross-Domain Uncrewed Systems: An Overview of Cyberphysical Coordination Frameworks for Marine A | https://doi.org/10.1109/mcs.2025.3576275 | other-oa | REVIEW_REQUIRED |
-| A26-PAPER-W4413205316 | Interoperable and Modular System Architecture for Green-Energy Unmanned Surface Vehicles in Ocean Science | https://doi.org/10.1109/oceans58557.2025.11104792 | UNKNOWN | REVIEW_REQUIRED |
+| A26-PAPER-W4413205316 | Interoperable and Modular System Architecture for Green-Energy Unmanned Surface Vehicles in Ocean Science | https://doi.org/10.1109/oceans58557.2025.11104792 | UNKNOWN | METADATA_CHANGE_PENDING |
 | A26-PAPER-W4413205852 | Digital Twin and Control for Emulating Autonomous Sailboats with Conventional USVs: The Digital Sibling Concep | https://doi.org/10.1109/oceans58557.2025.11104368 | other-oa | REVIEW_REQUIRED |
 | A26-PAPER-W4413394658 | True-Proportional-Navigation based Time Constrained Guidance of Unmanned Surface Vessel | https://doi.org/10.23919/acc63710.2025.11107896 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W4413451942 | Smart Ship Design: Engineering Considerations for Autonomous Maritime Vessels | https://doi.org/10.70315/uloap.ulete.2025.0203011 | other-oa | REVIEW_REQUIRED |
@@ -355,7 +344,6 @@ Discovered scholarly identifiers: 414
 | A26-PAPER-W4414030463 | A parallel guidance and control method for path planning and collision avoidance of unmanned surface vehicles | https://doi.org/10.1016/j.oceaneng.2025.122533 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W4414040204 | Developing Human-Autonomy Teaming Strategies for Maritime Cyber Security Resilience in Uncrewed Autonomous and | https://doi.org/10.12716/1001.19.02.35 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4414424102 | Using the Robot Operating System for uncrewed surface vehicle navigation to avoid beaching | https://doi.org/10.21079/11681/49959 | UNKNOWN | REVIEW_REQUIRED |
-| A26-PAPER-W4414512247 | I-VoxICP: A Fast Point Cloud Registration Method for Unmanned Surface Vessels | https://doi.org/10.3390/jmse13101854 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4414742232 | Review of Explainable Decision Support and Adaptive Human–Machine Interfaces for Automation Transparency in Ma | https://doi.org/10.1109/tits.2026.3724365 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W4414798229 | Design and Implementation of an Unmanned Surface Vehicle with Four-Thruster Motion Model | https://doi.org/10.36227/techrxiv.175952239.92721704/v1 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W4415008327 | The Seakeeping Performance of the Tritor Unmanned Surface Vehicle | https://doi.org/10.3390/jmse13101931 | cc-by | REVIEW_REQUIRED |
@@ -387,7 +375,7 @@ Discovered scholarly identifiers: 414
 | A26-PAPER-W7143476945 | Swarm Intelligence-Based Path Planning for Unmanned Surface Vehicles in Maritime Patrol Missions | https://doi.org/10.55927/ijar.v5i3.16262 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W7147548658 | A Classification of Heterogeneity in Uncrewed Vehicle Swarms and the Effects of Its Inclusion on Overall Swarm | https://doi.org/10.48550/arxiv.2603.28831 | cc-by-sa | REVIEW_REQUIRED |
 | A26-PAPER-W7148629844 | An Integrated Controller System For Unmanned Surface Vehicles (USV) | https://doi.org/10.33093/ijoras.2026.8.1.2 | cc-by-nc-nd | REVIEW_REQUIRED |
-| A26-PAPER-W7150707661 | Flapping Hydrofoil Propulsion for Uncrewed Surface Vehicles: Design and Experimental Evaluation | https://doi.org/10.1109/lra.2026.3681184 | cc-by | METADATA_CHANGE_PENDING |
+| A26-PAPER-W7150707661 | Flapping Hydrofoil Propulsion for Uncrewed Surface Vehicles: Design and Experimental Evaluation | https://doi.org/10.1109/lra.2026.3681184 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W7151493845 | Design Of an Unmanned Surface Vehicle and Flow and Structural Analysis of Its Hull | https://doi.org/10.65520/erciyesfen.1881181 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W7155416604 | Numerical Investigation of Aerodynamic Characteristics of Biomimetic Wingsails for Unmanned Surface Vehicles | https://doi.org/10.3390/jmse14090777 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W7159787265 | Mechanism Analysis, Hydrodynamic Modeling, and Parameter Optimization of a Wave-Driven Unmanned Surface Vehicl | https://doi.org/10.63367/199115992026043702019 | UNKNOWN | REVIEW_REQUIRED |
@@ -400,7 +388,7 @@ Discovered scholarly identifiers: 414
 | A26-PAPER-W7162686286 | Human-in-the-Loop-Based Secure Prescribed-Time Cooperative Path Following Control for Uncrewed Surface Vehicle | https://doi.org/10.1109/jsyst.2026.3691271 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W7163348006 | Autonomous surface vessel trajectory tracking with machine learning | https://doi.org/10.48336/398 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W7165048296 | THE RISE OF NAVAL DRONES AND THE REDEFINITION OF THE MARITIME BATTLESPACE | https://doi.org/10.53477/3045-2309-26-16 | cc-by | REVIEW_REQUIRED |
-| A26-PAPER-W7165769469 | NUMERICAL PREDICTION AND HULL FORM REFINEMENT FOR SEAKEEPING IMPROVEMENT OF A CATAMARAN TYPE UNMANNED SURFACE  | https://doi.org/10.11113/jm.v49.702 | UNKNOWN | METADATA_CHANGE_PENDING |
+| A26-PAPER-W7165769469 | NUMERICAL PREDICTION AND HULL FORM REFINEMENT FOR SEAKEEPING IMPROVEMENT OF A CATAMARAN TYPE UNMANNED SURFACE  | https://doi.org/10.11113/jm.v49.702 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W7167382570 | Design of a Hybrid USV–AUV with a Twin-Hull Configuration | https://vbn.aau.dk/da/publications/b49c48e2-4efc-47d3-b315-8c65eb6bfb8d | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W7168156380 | Recent advances and opportunities for multi-robot systems in oceanography | https://doi.org/10.3389/fmars.2026.1823155 | cc-by | REVIEW_REQUIRED |
 | A26-PAPER-W7169866174 | Adaptive supervisory control strategy integrating fuzzy-LQR/LQI for unmanned surface vehicles (USVs) under var | https://doi.org/10.57001/huih5804.2026.103 | other-oa | REVIEW_REQUIRED |
@@ -419,8 +407,12 @@ Discovered scholarly identifiers: 414
 | A26-PAPER-W7224084375 | Autonomous Marine Waste Collection Integrating Real-Time Perception, Energy-Aware Control, and Mission-Level P | https://doi.org/10.1016/j.sciaf.2026.e03723 | cc-by-nc-nd | REVIEW_REQUIRED |
 | A26-PAPER-W7225108649 | Interaction-Aware Sampling-Based Motion Planning for Autonomous Surface Vessels in Urban Waterways | https://doi.org/10.48550/arxiv.2610.41676 | UNKNOWN | REVIEW_REQUIRED |
 | A26-PAPER-W7225175772 | When appearance and motion disagree: evaluating class-motion consistency against disguised uncrewed surface ve | https://doi.org/10.48550/arxiv.2611.00367 | UNKNOWN | REVIEW_REQUIRED |
-| A26-PAPER-W7228292869 | Development of Unmanned Surface Vehicle, including hull, energy, propulsion, and intelligence: A review | https://doi.org/10.65218/jius.2026.155 | cc-by | REVIEW_REQUIRED |
-| A26-PAPER-W7237387583 | A Study on Control and Navigation of a Hard sail–Based Unmanned Surface Vehicle | https://openalex.org/W7237387583 | UNKNOWN | REVIEW_REQUIRED |
+| A26-PAPER-W7236933381 | Navigating the Legal Seas of Shipowner Liability for Maritime Autonomous Surface Ships: Norway and the UK in C | https://hdl.handle.net/11250/5365451 | other-oa | REVIEW_REQUIRED |
+| A26-PAPER-W7236938237 | Digital Twin and Systems Integration for a Fixed-Wing Unmanned Aircraft System | https://hdl.handle.net/11250/5561009 | other-oa | REVIEW_REQUIRED |
+| A26-PAPER-W7236956055 | Underwater Intervention Drone and Unmanned Surface Vessel operations | https://hdl.handle.net/11250/5514502 | cc-by | REVIEW_REQUIRED |
+| A26-PAPER-W7236959160 | A LiDAR-Based Situational Awareness System for Autonomous Surface Vessels in Near-Shore Environments | https://hdl.handle.net/11250/3220332 | other-oa | REVIEW_REQUIRED |
+| A26-PAPER-W7238724183 | BRINA: Bottom-Referenced Inertial Navigation with AKAZE, a Sonar SLAM for Autonomous Marine Vehicles | https://doi.org/10.48550/arxiv.2611.27817 | UNKNOWN | REVIEW_REQUIRED |
+| A26-PAPER-W7239383506 | World Models for Ocean Engineering: A Critical Review of Maritime Autonomy, Adaptive Latent Prediction, Digita | https://doi.org/10.48550/arxiv.2611.28978 | cc-by | REVIEW_REQUIRED |
 
 ## Release process
 
